@@ -42,7 +42,7 @@ CPPFLAGS += -I$(STARSPHERE_INSTALL)/include
 CPPFLAGS += $(shell $(STARSPHERE_INSTALL)/bin/sdl-config --cflags)
 CPPFLAGS += $(shell $(STARSPHERE_INSTALL)/bin/freetype-config --cflags)
 CPPFLAGS += $(shell $(STARSPHERE_INSTALL)/bin/xml2-config --cflags)
-CPPFLAGS += -I$(STARSPHERE_INSTALL)/include/BOINC -I/usr/include
+CPPFLAGS += -I$(STARSPHERE_INSTALL)/include/boinc -I/usr/include
 
 DEPS = Makefile
 OBJS = Starsphere.o StarsphereS5R3.o StarsphereRadio.o EinsteinS5R3Adapter.o EinsteinRadioAdapter.o starlist.o snr_list.o pulsar_list.o $(RESOURCESPEC).o
@@ -55,24 +55,24 @@ CPPFLAGS += -I$(STARSPHERE_SRC) -I$(STARSPHERE_SRC)/../framework
 default: release
 debug: starsphere
 release: clean starsphere
-starsphere: starsphere_EinsteinS5R3 starsphere_EinsteinRadio
+starsphere: starsphere_Einstein_LVC starsphere_Einstein_ABP
 memcheck: clean debug starsphere
 callgrind: clean debug starsphere
 
 # target specific options
 debug: CPPFLAGS += -pg -ggdb3 -O0 -Wall -Wno-switch-enum
 release: CPPFLAGS += -DNDEBUG -ggdb3 -O3 -Wall -Wno-switch-enum
-starsphere_EinsteinS5R3: CPPFLAGS += -D SCIENCE_APP=EinsteinS5R3
-starsphere_EinsteinRadio: CPPFLAGS += -D SCIENCE_APP=EinsteinRadio
+starsphere_Einstein_LVC: CPPFLAGS += -D SCIENCE_APP=EinsteinS5R3
+starsphere_Einstein_ABP: CPPFLAGS += -D SCIENCE_APP=EinsteinRadio
 memcheck: CPPFLAGS += $(DEBUGFLAGSCPP) -D DEBUG_VALGRIND
 callgrind: CPPFLAGS += $(DEBUGFLAGSCPP) -D DEBUG_VALGRIND
 
 # file based targets
-starsphere_EinsteinS5R3: $(DEPS) $(STARSPHERE_SRC)/main.cpp $(OBJS)
-	$(CXX) -g $(CPPFLAGS) $(LDFLAGS) $(STARSPHERE_SRC)/main.cpp -o starsphere_EinsteinS5R3 $(OBJS) $(LIBS)
+starsphere_Einstein_LVC: $(DEPS) $(STARSPHERE_SRC)/main.cpp $(OBJS)
+	$(CXX) -g $(CPPFLAGS) $(LDFLAGS) $(STARSPHERE_SRC)/main.cpp -o "graphics_app=einstein_RUNLABEL_VERSION_graphics_i686-pc-linux-gnu" $(OBJS) $(LIBS)
 
-starsphere_EinsteinRadio: $(DEPS) $(STARSPHERE_SRC)/main.cpp $(OBJS)
-	$(CXX) -g $(CPPFLAGS) $(LDFLAGS) $(STARSPHERE_SRC)/main.cpp -o starsphere_EinsteinRadio $(OBJS) $(LIBS)
+starsphere_Einstein_ABP: $(DEPS) $(STARSPHERE_SRC)/main.cpp $(OBJS)
+	$(CXX) -g $(CPPFLAGS) $(LDFLAGS) $(STARSPHERE_SRC)/main.cpp -o "graphics_app=einsteinbinary_RUNLABEL_VERSION_graphics_i686-pc-linux-gnu" $(OBJS) $(LIBS)
 
 Starsphere.o: $(DEPS) $(STARSPHERE_SRC)/Starsphere.cpp $(STARSPHERE_SRC)/Starsphere.h
 	$(CXX) -g $(CPPFLAGS) -c $(STARSPHERE_SRC)/Starsphere.cpp
@@ -106,13 +106,14 @@ $(RESOURCESPEC).o: $(STARSPHERE_SRC)/$(RESOURCESPEC).orc
 
 # tools
 memcheck:
-	valgrind --tool=memcheck --track-fds=yes --time-stamp=yes --log-file=$(PWD)/memcheck.out.%p --leak-check=full $(PWD)/starsphere
+	valgrind --tool=memcheck --track-fds=yes --time-stamp=yes --log-file=$(PWD)/memcheck.out.%p --leak-check=full $(PWD)/graphics_app=einstein_RUNLABEL_VERSION_graphics_i686-pc-linux-gnu
 
 callgrind:
-	valgrind --tool=callgrind --track-fds=yes --time-stamp=yes $(PWD)/starsphere
+	valgrind --tool=callgrind --track-fds=yes --time-stamp=yes $(PWD)/graphics_app=einstein_RUNLABEL_VERSION_graphics_i686-pc-linux-gnu
 
 install:
-	cp starsphere_* $(STARSPHERE_INSTALL)/bin
+	mkdir -p $(STARSPHERE_INSTALL)/../dist
+	cp graphics_app* $(STARSPHERE_INSTALL)/../dist
 
 clean:
-	rm -f $(RESOURCESPEC).cpp $(OBJS) starsphere_*
+	rm -f $(RESOURCESPEC).cpp $(OBJS) graphics_app*

@@ -58,7 +58,7 @@ check_prerequisites()
 	echo "Checking prerequisites..." | tee -a $LOGFILE
 	
 	# required toolchain
-	TOOLS="automake autoconf m4 cmake wget svn cvs tar patch gcc g++ ld libtool ar lex yacc"
+	TOOLS="automake autoconf m4 cmake wget svn cvs tar patch gcc g++ ld libtool ar lex yacc pkg-config"
 
 	for tool in $TOOLS; do
 		if ! ( type $tool >/dev/null 2>&1 ); then
@@ -166,7 +166,7 @@ prepare_generic()
 		svn update >> $LOGFILE  2>&1 || failure
 	else
 		echo "Retrieving BOINC (this may take a while)..." | tee -a $LOGFILE
-		svn checkout http://boinc.berkeley.edu/svn/branches/boinc_core_release_6_2 . >> $LOGFILE 2>&1 || failure
+		svn checkout http://boinc.berkeley.edu/svn/branches/server_stable . >> $LOGFILE 2>&1 || failure
 	fi
 
 	return 0
@@ -263,13 +263,26 @@ build_generic()
 	cd $ROOT/build/boinc || failure
 	if [ "$1" == "$TARGET_MAC_INTEL" -o "$1" == "$TARGET_MAC_PPC" ]; then
 		export CPPFLAGS=-I/sw/include
-		$ROOT/3rdparty/boinc/configure --prefix=$ROOT/install --enable-shared=no --enable-static=yes --disable-server --disable-client --with-apple-opengl-framework >> $LOGFILE 2>&1 || failure
+		$ROOT/3rdparty/boinc/configure --prefix=$ROOT/install --enable-shared=no --enable-static=yes --disable-server --disable-client --with-apple-opengl-framework --enable-install-headers --enable-libraries --disable-manager --disable-fcgi >> $LOGFILE 2>&1 || failure
 	else
-		$ROOT/3rdparty/boinc/configure --prefix=$ROOT/install --enable-shared=no --enable-static=yes --disable-server --disable-client >> $LOGFILE 2>&1 || failure
+		$ROOT/3rdparty/boinc/configure --prefix=$ROOT/install --enable-shared=no --enable-static=yes --disable-server --disable-client --enable-install-headers --enable-libraries --disable-manager --disable-fcgi >> $LOGFILE 2>&1 || failure
 	fi
 	make >> $LOGFILE 2>&1 || failure
 	make install >> $LOGFILE 2>&1 || failure
 	echo "Successfully built and installed BOINC!" | tee -a $LOGFILE
+
+	return 0
+}
+
+
+build_mingw()
+{
+	TARGET_HOST=i586-pc-mingw32
+
+	echo "Building MinGW (this will take quite a while)..." | tee -a $LOGFILE
+	# note: the script's current config for unattended setup expects it to be run from three levels below root!
+	cd $ROOT/3rdparty/mingw/xscripts || failure
+	./x86-mingw32-build.sh --unattended $TARGET_HOST >> $LOGFILE 2>&1 || failure
 
 	return 0
 }
@@ -358,8 +371,7 @@ build_generic_win32()
 	cd $ROOT/3rdparty/boinc/lib || failure
 	# patch: fix a couple of BOINC vs. MinGW issues
 	patch boinc_win.h < $ROOT/patches/boinc.boinc_win.h.minggw.patch >> $LOGFILE 2>&1 || failure
-	patch filesys.C < $ROOT/patches/boinc.filesys.C.mingw.patch >> $LOGFILE 2>&1 || failure
-	# patch: add graphics2 and customize build path (see below)
+	patch filesys.cpp < $ROOT/patches/boinc.filesys.cpp.mingw.patch >> $LOGFILE 2>&1 || failure
 	echo "Building BOINC (this may take a while)..." | tee -a $LOGFILE
 	cd $ROOT/3rdparty/boinc || failure
 	chmod +x _autosetup >> $LOGFILE 2>&1 || failure
@@ -367,43 +379,36 @@ build_generic_win32()
 	chmod +x configure >> $LOGFILE 2>&1 || failure
 	cd $ROOT/build/boinc || failure
 	# note: configure is still required but we don't use the generated Makefile
-	$ROOT/3rdparty/boinc/configure --host=$TARGET_HOST --build=$BUILD_HOST --prefix=$ROOT/install --includedir=$ROOT/install/include --oldincludedir=$ROOT/install/include --enable-shared=no --enable-static=yes --disable-server --disable-client >> $LOGFILE 2>&1 || failure
+	$ROOT/3rdparty/boinc/configure --host=$TARGET_HOST --build=$BUILD_HOST --prefix=$ROOT/install --includedir=$ROOT/install/include --oldincludedir=$ROOT/install/include --enable-shared=no --enable-static=yes --disable-server --disable-client --enable-install-headers --enable-libraries --disable-manager --disable-fcgi >> $LOGFILE 2>&1 || failure
 	cd $ROOT/build/boinc/api || failure
 	cp $ROOT/3rdparty/boinc/api/Makefile.mingw . >> $LOGFILE 2>&1 || failure
+	# patch: add graphics2 and customize build path (see below)
 	patch Makefile.mingw < $ROOT/patches/boinc.Makefile.mingw.patch >> $LOGFILE 2>&1 || failure
 	export BOINC_SRC=$ROOT/3rdparty/boinc || failure
 	cd $ROOT/build/boinc || failure
+	# required for out-of-tree build
+	cp config.h $ROOT/3rdparty/boinc >> $LOGFILE 2>&1 || failure
 	make -f api/Makefile.mingw >> $LOGFILE 2>&1 || failure
 	cp $ROOT/build/boinc/libboinc.a $ROOT/install/lib >> $LOGFILE 2>&1 || failure
-	mkdir -p $ROOT/install/include/BOINC >> $LOGFILE 2>&1 || failure
-	cp $ROOT/3rdparty/boinc/api/boinc_api.h $ROOT/install/include/BOINC >> $LOGFILE 2>&1 || failure
-	cp $ROOT/3rdparty/boinc/api/graphics2.h $ROOT/install/include/BOINC >> $LOGFILE 2>&1 || failure
-	cp $ROOT/3rdparty/boinc/lib/app_ipc.h $ROOT/install/include/BOINC >> $LOGFILE 2>&1 || failure
-	cp $ROOT/3rdparty/boinc/lib/boinc_win.h $ROOT/install/include/BOINC >> $LOGFILE 2>&1 || failure
-	cp $ROOT/3rdparty/boinc/lib/common_defs.h $ROOT/install/include/BOINC >> $LOGFILE 2>&1 || failure
-	cp $ROOT/3rdparty/boinc/lib/diagnostics.h $ROOT/install/include/BOINC >> $LOGFILE 2>&1 || failure
-	cp $ROOT/3rdparty/boinc/lib/filesys.h $ROOT/install/include/BOINC >> $LOGFILE 2>&1 || failure
-	cp $ROOT/3rdparty/boinc/lib/hostinfo.h $ROOT/install/include/BOINC >> $LOGFILE 2>&1 || failure
-	cp $ROOT/3rdparty/boinc/lib/proxy_info.h $ROOT/install/include/BOINC >> $LOGFILE 2>&1 || failure
-	cp $ROOT/3rdparty/boinc/lib/prefs.h $ROOT/install/include/BOINC >> $LOGFILE 2>&1 || failure
-	cp $ROOT/3rdparty/boinc/lib/miofile.h $ROOT/install/include/BOINC >> $LOGFILE 2>&1 || failure
-	cp $ROOT/3rdparty/boinc/lib/mfile.h $ROOT/install/include/BOINC >> $LOGFILE 2>&1 || failure
-	cp $ROOT/3rdparty/boinc/lib/parse.h $ROOT/install/include/BOINC >> $LOGFILE 2>&1 || failure
-	cp $ROOT/3rdparty/boinc/lib/util.h $ROOT/install/include/BOINC >> $LOGFILE 2>&1 || failure
+	mkdir -p $ROOT/install/include/boinc >> $LOGFILE 2>&1 || failure
+	cp $ROOT/build/boinc/config.h $ROOT/install/include/boinc >> $LOGFILE 2>&1 || failure
+	cp $ROOT/build/boinc/version.h $ROOT/install/include/boinc >> $LOGFILE 2>&1 || failure
+	cp $ROOT/3rdparty/boinc/api/boinc_api.h $ROOT/install/include/boinc >> $LOGFILE 2>&1 || failure
+	cp $ROOT/3rdparty/boinc/api/graphics2.h $ROOT/install/include/boinc >> $LOGFILE 2>&1 || failure
+	cp $ROOT/3rdparty/boinc/lib/app_ipc.h $ROOT/install/include/boinc >> $LOGFILE 2>&1 || failure
+	cp $ROOT/3rdparty/boinc/lib/boinc_win.h $ROOT/install/include/boinc >> $LOGFILE 2>&1 || failure
+	cp $ROOT/3rdparty/boinc/lib/common_defs.h $ROOT/install/include/boinc >> $LOGFILE 2>&1 || failure
+	cp $ROOT/3rdparty/boinc/lib/diagnostics.h $ROOT/install/include/boinc >> $LOGFILE 2>&1 || failure
+	cp $ROOT/3rdparty/boinc/lib/diagnostics_win.h $ROOT/install/include/boinc >> $LOGFILE 2>&1 || failure
+	cp $ROOT/3rdparty/boinc/lib/filesys.h $ROOT/install/include/boinc >> $LOGFILE 2>&1 || failure
+	cp $ROOT/3rdparty/boinc/lib/hostinfo.h $ROOT/install/include/boinc >> $LOGFILE 2>&1 || failure
+	cp $ROOT/3rdparty/boinc/lib/proxy_info.h $ROOT/install/include/boinc >> $LOGFILE 2>&1 || failure
+	cp $ROOT/3rdparty/boinc/lib/prefs.h $ROOT/install/include/boinc >> $LOGFILE 2>&1 || failure
+	cp $ROOT/3rdparty/boinc/lib/miofile.h $ROOT/install/include/boinc >> $LOGFILE 2>&1 || failure
+	cp $ROOT/3rdparty/boinc/lib/mfile.h $ROOT/install/include/boinc >> $LOGFILE 2>&1 || failure
+	cp $ROOT/3rdparty/boinc/lib/parse.h $ROOT/install/include/boinc >> $LOGFILE 2>&1 || failure
+	cp $ROOT/3rdparty/boinc/lib/util.h $ROOT/install/include/boinc >> $LOGFILE 2>&1 || failure
 	echo "Successfully built and installed BOINC!" | tee -a $LOGFILE
-}
-
-
-build_mingw()
-{
-	TARGET_HOST=i586-pc-mingw32
-
-	echo "Building MinGW (this will take quite a while)..." | tee -a $LOGFILE
-	# note: the script's current config for unattended setup expects it to be run from three levels below root!
-	cd $ROOT/3rdparty/mingw/xscripts || failure
-	./x86-mingw32-build.sh --unattended $TARGET_HOST >> $LOGFILE 2>&1 || failure
-
-	return 0
 }
 
 

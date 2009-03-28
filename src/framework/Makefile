@@ -29,7 +29,7 @@ CXX?=g++
 CPPFLAGS += $(shell $(FRAMEWORK_INSTALL)/bin/sdl-config --cflags)
 CPPFLAGS += $(shell $(FRAMEWORK_INSTALL)/bin/freetype-config --cflags)
 CPPFLAGS += $(shell $(FRAMEWORK_INSTALL)/bin/xml2-config --cflags)
-CPPFLAGS += -I$(FRAMEWORK_INSTALL)/include/BOINC -I/usr/include
+CPPFLAGS += -I$(FRAMEWORK_INSTALL)/include/boinc -I/usr/include
 
 DEPS = Makefile
 OBJS = AbstractGraphicsEngine.o GraphicsEngineFactory.o WindowManager.o Resource.o ResourceFactory.o BOINCClientAdapter.o Libxml2Adapter.o
