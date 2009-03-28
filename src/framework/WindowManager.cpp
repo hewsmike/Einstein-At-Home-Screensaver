@@ -150,8 +150,7 @@ bool WindowManager::initialize(const int width, const int height, const int fram
 							m_VideoModeFlags);
 
 	if (m_DisplaySurface == NULL) {
-		cerr << "Could not acquire rendering surface: " << SDL_GetError() << endl;
-		return false;
+		cerr << "Could not acquire rendering surface (" << SDL_GetError() << "): will try fallback..." << endl;
 	}
 
 	// check if we got acceleration
@@ -160,8 +159,8 @@ bool WindowManager::initialize(const int width, const int height, const int fram
 		cerr << "Could not ensure accelerated rendering surface. Assuming no acceleration..." << endl;
 	}
 
-	if (!accelerated) {
-		cerr << "Hardware acceleration isn't available! Disabling high quality features..." << endl;
+	if (m_DisplaySurface == NULL || !accelerated) {
+		cerr << "Disabling high quality features..." << endl;
 
 		// disable features that demand acceleration
 //		SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 0);
@@ -179,7 +178,7 @@ bool WindowManager::initialize(const int width, const int height, const int fram
 								m_VideoModeFlags);
 
 		if (m_DisplaySurface == NULL) {
-			cerr << "Could not acquire rendering surface: " << SDL_GetError() << endl;
+			cerr << "Could not acquire rendering surface (" << SDL_GetError() << "): giving up!" << endl;
 			return false;
 		}
 	}
