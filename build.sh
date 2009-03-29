@@ -255,7 +255,7 @@ build_generic()
 	cp liboglft/liboglft.a $ROOT/install/lib >> $LOGFILE 2>&1 || failure
 	echo "Successfully built and installed OGLFT!" | tee -a $LOGFILE
 
-	echo "Building BOINC (this may take a while)..." | tee -a $LOGFILE
+	echo "Configuring BOINC..." | tee -a $LOGFILE
 	cd $ROOT/3rdparty/boinc || failure
 	chmod +x _autosetup >> $LOGFILE 2>&1 || failure
 	./_autosetup >> $LOGFILE 2>&1 || failure
@@ -264,9 +264,13 @@ build_generic()
 	if [ "$1" == "$TARGET_MAC_INTEL" -o "$1" == "$TARGET_MAC_PPC" ]; then
 		export CPPFLAGS=-I/sw/include
 		$ROOT/3rdparty/boinc/configure --prefix=$ROOT/install --enable-shared=no --enable-static=yes --disable-server --disable-client --with-apple-opengl-framework --enable-install-headers --enable-libraries --disable-manager --disable-fcgi >> $LOGFILE 2>&1 || failure
+	elif [ -d "/usr/local/ssl" ]; then
+		echo "Using local SSL library..." | tee -a $LOGFILE
+		$ROOT/3rdparty/boinc/configure --prefix=$ROOT/install --enable-shared=no --enable-static=yes --disable-server --disable-client --enable-install-headers --enable-libraries --disable-manager --disable-fcgi CPPFLAGS=-I/usr/local/ssl/include LDFLAGS=-L/usr/local/ssl/lib >> $LOGFILE 2>&1 || failure
 	else
 		$ROOT/3rdparty/boinc/configure --prefix=$ROOT/install --enable-shared=no --enable-static=yes --disable-server --disable-client --enable-install-headers --enable-libraries --disable-manager --disable-fcgi >> $LOGFILE 2>&1 || failure
 	fi
+	echo "Building BOINC (this may take a while)..." | tee -a $LOGFILE
 	make >> $LOGFILE 2>&1 || failure
 	make install >> $LOGFILE 2>&1 || failure
 	echo "Successfully built and installed BOINC!" | tee -a $LOGFILE
