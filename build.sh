@@ -292,16 +292,20 @@ build_mingw()
 }
 
 
-build_generic_win32()
+prepare_win32_environment()
 {
-	# general config
+	echo "Preparing MinGW cross-compile environment..." | tee -a $LOGFILE
 	PREFIX=$ROOT/install
 	TARGET_HOST=i586-pc-mingw32
 	BUILD_HOST=i386-linux
 	PATH_MINGW="$PREFIX/bin:$PREFIX/$TARGET_HOST/bin:$PATH"
 	PATH="$PATH_MINGW"
 	export PATH
+}
 
+
+build_generic_win32()
+{
 	echo "Building SDL (this may take a while)..." | tee -a $LOGFILE
 	cd $ROOT/3rdparty/sdl || failure
 	chmod +x autogen.sh >> $LOGFILE 2>&1 || failure
@@ -493,6 +497,7 @@ build_win32()
 {
 	prepare_win32 || failure
 	build_mingw || failure
+	prepare_win32_environment || failure
 	build_generic_win32 || failure
 	build_starsphere $TARGET_WIN32 || failure
 
