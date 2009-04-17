@@ -1,0 +1,11 @@
+--- SDL_sysevents.c	2009-04-17 17:18:07.000000000 +0200
++++ SDL_sysevents.c.new	2009-04-17 17:14:41.000000000 +0200
+@@ -799,7 +799,7 @@
+ #define CS_BYTEALIGNCLIENT	0
+ #endif
+ 	if ( ! name && ! SDL_Appname ) {
+-		name = "SDL_app";
++		name = "BOINC_app";
+ 		SDL_Appstyle = CS_BYTEALIGNCLIENT;
+ 		SDL_Instance = hInst ? hInst : SDL_GetModuleHandle();
+ 	}

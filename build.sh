@@ -306,6 +306,10 @@ prepare_win32_environment()
 
 build_generic_win32()
 {
+	echo "Patching SDL..." | tee -a $LOGFILE
+	cd $ROOT/3rdparty/sdl/src/video/wincommon || failure
+	# patch: amend window class name (required by BOINC v6 screensaver!)
+	patch < $ROOT/patches/SDL_sysevents.c.patch >> $LOGFILE 2>&1 || failure
 	echo "Building SDL (this may take a while)..." | tee -a $LOGFILE
 	cd $ROOT/3rdparty/sdl || failure
 	chmod +x autogen.sh >> $LOGFILE 2>&1 || failure
