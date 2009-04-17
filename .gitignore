@@ -2,6 +2,7 @@
 build
 3rdparty
 install
+dist
 doc/html
 
 # patterns
