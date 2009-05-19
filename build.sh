@@ -635,6 +635,19 @@ case $TARGET in
 		build_linux || failure
 		;;
 	$TARGET_MAC_INTEL)
+		if [ -d /Developer/SDKs/MacOSX10.4u.sdk ]; then
+			echo "Preparing Mac OS X 10.4 SDK build environment..." | tee -a $LOGFILE
+			# use 10.4 (Tiger) SDK because of BOINC/10.5 incompatibility (http://boinc.berkeley.edu/doxygen/api/html/QBacktrace_8h.html)
+			export LDFLAGS="-isysroot /Developer/SDKs/MacOSX10.4u.sdk -Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk -arch i386 $LDFLAGS"
+			export CPPFLAGS="-isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch i386 $CPPFLAGS"
+			export CFLAGS="-isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch i386 $CFLAGS"
+			export CXXFLAGS="-isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch i386 $CXXFLAGS"
+			export SDKROOT="/Developer/SDKs/MacOSX10.4u.sdk"
+			export MACOSX_DEPLOYMENT_TARGET=10.4
+		else
+			echo "Mac OS X 10.4 SDK required but missing!" | tee -a $LOGFILE
+			failure
+		fi
 		check_prerequisites || failure
 		prepare_generic || failure
 		build_mac $TARGET_MAC_INTEL || failure
