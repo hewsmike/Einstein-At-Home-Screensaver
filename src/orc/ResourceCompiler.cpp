@@ -45,7 +45,7 @@ void ResourceCompiler::compile()
 
 	map<string, vector<unsigned char> >::iterator mapPos;
 	vector<unsigned char>::iterator dataPos;
-	unsigned int currentIndex = 0;
+	size_t currentIndex = 0;
 
 	// store total amount of resources
 	resourceIndexInitializer << "{0x" << hex << m_ResourceDataMap.size() << ", 0x0},";
@@ -64,7 +64,7 @@ void ResourceCompiler::compile()
 		// iterate over the data content byte by byte
 		for(dataPos = mapPos->second.begin(); dataPos != mapPos->second.end(); ++dataPos) {
 			// store byte value as part of array initializer
-			resourceStorageInitializer << "0x" << hex << (int)*dataPos << ",";
+			resourceStorageInitializer << "0x" << hex << (size_t)*dataPos << ",";
 		}
 	}
 
@@ -89,7 +89,7 @@ void ResourceCompiler::compile()
 		outputFile << endl << "};" << endl << endl;
 
 		output = resourceIndexInitializer.str();
-		outputFile << "extern const unsigned int c_ResourceIndex[][2] = {" << endl;
+		outputFile << "extern const unsigned size_t c_ResourceIndex[][2] = {" << endl;
 		outputFile << output.substr(0, output.length() - 1);
 		outputFile << endl << "};" << endl << endl;
 
@@ -124,13 +124,13 @@ void ResourceCompiler::parseInputFile()
 		// read input file line by line
 		while(getline(inputFile, line)) {
 
-			unsigned int firstCharacter = line.find_first_not_of(" \t\r\n\f");
+			size_t firstCharacter = line.find_first_not_of(" \t\r\n\f");
 
 			// we (sort of) allow for empty lines and comments
 			if(firstCharacter != string::npos && line.substr(firstCharacter, 1) != "#") {
 
 				// find our token delimiter
-				unsigned int separator = line.find("|");
+				size_t separator = line.find("|");
 
 				// make sure there's exactly one delimiter
 				if(separator == string::npos || separator != line.rfind("|")) {
