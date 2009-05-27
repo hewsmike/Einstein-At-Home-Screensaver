@@ -21,6 +21,12 @@
 #ifndef RESOURCECOMPILER_H_
 #define RESOURCECOMPILER_H_
 
+#include <string>
+#include <map>
+#include <vector>
+
+using namespace std;
+
 /**
  * \addtogroup orc Open Resource Compiler
  * @{

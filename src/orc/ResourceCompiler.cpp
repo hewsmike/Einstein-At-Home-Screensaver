@@ -21,16 +21,11 @@
 #include "ResourceCompiler.h"
 
 #include <cstdlib>
-#include <string>
-#include <map>
-#include <vector>
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <iterator>
 #include <stdexcept>
-
-using namespace std;
 
 
 ResourceCompiler::ResourceCompiler(const string inputFilename, const string outputFilename)
