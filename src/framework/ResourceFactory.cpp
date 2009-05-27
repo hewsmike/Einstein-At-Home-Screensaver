@@ -23,10 +23,10 @@
 ResourceFactory::ResourceFactory()
 {
 	// determine number of resources
-	int resourceCount = c_ResourceIndex[0][0];
+	size_t resourceCount = c_ResourceIndex[0][0];
 
 	// import each resource into factory cache
-	for(int i = 0; i < resourceCount; ++i) {
+	for(size_t i = 0; i < resourceCount; ++i) {
 
 		// prepare temporary buffer
 		size_t resourceSize = c_ResourceIndex[i+1][1];

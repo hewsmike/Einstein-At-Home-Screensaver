@@ -105,7 +105,7 @@ extern const string c_ResourceIdentifiers[];
  * \todo Does this need to be global?
  * Maybe we should wrap a class around the generated resources?
  */
-extern const unsigned int c_ResourceIndex[][2];
+extern const size_t c_ResourceIndex[][2];
 
 /**
  * \brief Declaration of the external resource storage container

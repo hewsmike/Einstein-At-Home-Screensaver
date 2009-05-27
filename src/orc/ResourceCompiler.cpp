@@ -97,7 +97,7 @@ void ResourceCompiler::compile()
         outputFile << endl << "};" << endl << endl;
 
         output = resourceIndexInitializer.str();
-        outputFile << "extern const unsigned size_t c_ResourceIndex[][2] = {" << endl;
+        outputFile << "extern const size_t c_ResourceIndex[][2] = {" << endl;
         outputFile << output.substr(0, output.length() - 1);
         outputFile << endl << "};" << endl << endl;
 
