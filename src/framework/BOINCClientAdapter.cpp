@@ -156,12 +156,9 @@ string BOINCClientAdapter::projectInformation() const
 {
 	string temp("<project_preferences />\n");
 
-	// preferences available? (BOINC initializes them with 0)
+	// use preferences if available (BOINC initializes them with 0)
 	if(m_UserData.project_preferences != 0) {
-		// ugly workaround for incomplete XML fragment returned by BOINC!
-		temp = "<project_preferences>\n";
-		temp += string(m_UserData.project_preferences);
-		temp += "</project_preferences>\n";
+		temp = string(m_UserData.project_preferences);
 	}
 
 	return temp;
