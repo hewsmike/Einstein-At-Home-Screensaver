@@ -21,17 +21,6 @@
 #ifndef RESOURCECOMPILER_H_
 #define RESOURCECOMPILER_H_
 
-#include <cstdlib>
-#include <string>
-#include <map>
-#include <vector>
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <iterator>
-
-using namespace std;
-
 /**
  * \addtogroup orc Open Resource Compiler
  * @{

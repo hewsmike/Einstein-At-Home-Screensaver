@@ -20,6 +20,19 @@
 
 #include "ResourceCompiler.h"
 
+#include <cstdlib>
+#include <string>
+#include <map>
+#include <vector>
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <iterator>
+#include <stdexcept>
+
+using namespace std;
+
+
 ResourceCompiler::ResourceCompiler(const string inputFilename, const string outputFilename)
 {
     m_ResourceSpecFile = inputFilename;
@@ -101,6 +114,9 @@ void ResourceCompiler::compile()
     catch(const ios::failure& error) {
         cerr << "Error during output file processing: " << error.what() << endl;
     }
+    catch(const std::logic_error& error) {
+            cerr << "Error during output file processing: " << error.what() << endl;
+    }
 
     // clean up and clode file
     outputFile.flush();
@@ -148,6 +164,9 @@ void ResourceCompiler::parseInputFile()
         if(!inputFile.eof()) {
             cerr << "Error during input file processing: " << error.what();
         }
+    }
+    catch(const std::logic_error& error) {
+            cerr << "Error during input file processing: " << error.what() << endl;
     }
 
     // close input file
