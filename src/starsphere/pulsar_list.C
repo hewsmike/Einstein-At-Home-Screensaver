@@ -1301,7 +1301,7 @@ float pulsar_info[][N_PULSAR_ITEMS] = {
  {  346.92f ,    22.43f } ,
  {  349.29f ,    14.66f } ,
  {  350.59f ,    20.95f } ,
- {  356.71f ,    -6.17f } 
+ {  356.71f ,    -6.17f }
 };
 
 int Npulsars = sizeof(pulsar_info)/(N_PULSAR_ITEMS*sizeof(float));
