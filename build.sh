@@ -597,7 +597,7 @@ build_oglft_mingw()
     return 0
 }
 
-build_boinc_win32()
+build_boinc_mingw()
 {
     if [ $BUILDSTATE -ge $BS_BUILD_BOINC_MINGW ]; then
         return 0
@@ -750,7 +750,7 @@ build_win32()
     build_freetype_mingw || failure
     build_libxml_mingw || failure
     build_oglft_mingw || failure
-    build_boinc_mingw || failur
+    build_boinc_mingw || failure
     build_starsphere $TARGET_WIN32 || failure
 
     return 0
