@@ -56,19 +56,19 @@ BS_BUILD_BOINC_MINGW=15
 
 failure()
 {
-	echo "************************************" | tee -a $LOGFILE
-	echo "Error detected! Stopping build!" | tee -a $LOGFILE
-	echo "`date`" | tee -a $LOGFILE
+    echo "************************************" | tee -a $LOGFILE
+    echo "Error detected! Stopping build!" | tee -a $LOGFILE
+    echo "`date`" | tee -a $LOGFILE
 
     if [ -f "$LOGFILE" ]; then
-		echo "------------------------------------"
-		echo "Please check logfile: `basename $LOGFILE`"
-		echo "These are the final ten lines:"
-		echo "------------------------------------"
-		tail -n 14 $LOGFILE | head -n 10
+        echo "------------------------------------"
+        echo "Please check logfile: `basename $LOGFILE`"
+        echo "These are the final ten lines:"
+        echo "------------------------------------"
+        tail -n 14 $LOGFILE | head -n 10
     fi
 
-	echo "************************************" | tee -a $LOGFILE
+    echo "************************************" | tee -a $LOGFILE
 
     exit 1
 }
@@ -663,52 +663,52 @@ build_starsphere()
     mkdir -p $ROOT/build/starsphere >> $LOGFILE || failure
     export PATH=$PATH_ORG
 
-	echo "Building Starsphere [ORC]..." | tee -a $LOGFILE
-	export ORC_SRC=$ROOT/src/orc || failure
-	export ORC_INSTALL=$ROOT/install || failure
-	cd $ROOT/build/orc || failure
-	cp $ROOT/src/orc/Makefile . >> $LOGFILE 2>&1 || failure
-	make $2 >> $LOGFILE 2>&1 || failure
-	make install >> $LOGFILE 2>&1 || failure
-	echo "Successfully built and installed Starsphere [ORC]!" | tee -a $LOGFILE
+    echo "Building Starsphere [ORC]..." | tee -a $LOGFILE
+    export ORC_SRC=$ROOT/src/orc || failure
+    export ORC_INSTALL=$ROOT/install || failure
+    cd $ROOT/build/orc || failure
+    cp $ROOT/src/orc/Makefile . >> $LOGFILE 2>&1 || failure
+    make $2 >> $LOGFILE 2>&1 || failure
+    make install >> $LOGFILE 2>&1 || failure
+    echo "Successfully built and installed Starsphere [ORC]!" | tee -a $LOGFILE
 
-	# set main include directory
-	if [ "$1" == "$TARGET_WIN32" ]; then
-		export PATH=$PATH_MINGW
-	else
-		export PATH=$PATH_ORG
-	fi
+    # set main include directory
+    if [ "$1" == "$TARGET_WIN32" ]; then
+        export PATH=$PATH_MINGW
+    else
+        export PATH=$PATH_ORG
+    fi
 
-	echo "Building Starsphere [Framework]..." | tee -a $LOGFILE
-	export FRAMEWORK_SRC=$ROOT/src/framework || failure
-	export FRAMEWORK_INSTALL=$ROOT/install || failure
-	cd $ROOT/build/framework || failure
-	if [ "$1" == "$TARGET_WIN32" ]; then
-		cp -f $ROOT/src/framework/Makefile.mingw Makefile >> $LOGFILE 2>&1 || failure
-	else
-		cp -f $ROOT/src/framework/Makefile . >> $LOGFILE 2>&1 || failure
-	fi
-	make $2 >> $LOGFILE 2>&1 || failure
-	make install >> $LOGFILE 2>&1 || failure
-	echo "Successfully built and installed Starsphere [Framework]!" | tee -a $LOGFILE
+    echo "Building Starsphere [Framework]..." | tee -a $LOGFILE
+    export FRAMEWORK_SRC=$ROOT/src/framework || failure
+    export FRAMEWORK_INSTALL=$ROOT/install || failure
+    cd $ROOT/build/framework || failure
+    if [ "$1" == "$TARGET_WIN32" ]; then
+        cp -f $ROOT/src/framework/Makefile.mingw Makefile >> $LOGFILE 2>&1 || failure
+    else
+        cp -f $ROOT/src/framework/Makefile . >> $LOGFILE 2>&1 || failure
+    fi
+    make $2 >> $LOGFILE 2>&1 || failure
+    make install >> $LOGFILE 2>&1 || failure
+    echo "Successfully built and installed Starsphere [Framework]!" | tee -a $LOGFILE
 
-	echo "Building Starsphere [Application]..." | tee -a $LOGFILE
-	export STARSPHERE_SRC=$ROOT/src/starsphere || failure
-	export STARSPHERE_INSTALL=$ROOT/install || failure
-	cd $ROOT/build/starsphere || failure
-	cp $ROOT/src/starsphere/*.res . >> $LOGFILE 2>&1 || failure
-	if [ "$1" == "$TARGET_MAC_INTEL" ] || [ "$1" == "$TARGET_MAC_PPC" ]; then
-		cp -f $ROOT/src/starsphere/Makefile.macos Makefile >> $LOGFILE 2>&1 || failure
-	elif [ "$1" == "$TARGET_WIN32" ]; then
-		cp -f $ROOT/src/starsphere/Makefile.mingw Makefile >> $LOGFILE 2>&1 || failure
-	else
-		cp -f $ROOT/src/starsphere/Makefile . >> $LOGFILE 2>&1 || failure
-	fi
-	make $2 >> $LOGFILE 2>&1 || failure
-	make install >> $LOGFILE 2>&1 || failure
-	echo "Successfully built and installed Starsphere [Application]!" | tee -a $LOGFILE
+    echo "Building Starsphere [Application]..." | tee -a $LOGFILE
+    export STARSPHERE_SRC=$ROOT/src/starsphere || failure
+    export STARSPHERE_INSTALL=$ROOT/install || failure
+    cd $ROOT/build/starsphere || failure
+    cp $ROOT/src/starsphere/*.res . >> $LOGFILE 2>&1 || failure
+    if [ "$1" == "$TARGET_MAC_INTEL" ] || [ "$1" == "$TARGET_MAC_PPC" ]; then
+        cp -f $ROOT/src/starsphere/Makefile.macos Makefile >> $LOGFILE 2>&1 || failure
+    elif [ "$1" == "$TARGET_WIN32" ]; then
+        cp -f $ROOT/src/starsphere/Makefile.mingw Makefile >> $LOGFILE 2>&1 || failure
+    else
+        cp -f $ROOT/src/starsphere/Makefile . >> $LOGFILE 2>&1 || failure
+    fi
+    make $2 >> $LOGFILE 2>&1 || failure
+    make install >> $LOGFILE 2>&1 || failure
+    echo "Successfully built and installed Starsphere [Application]!" | tee -a $LOGFILE
 
-	return 0
+    return 0
 }
 
 
@@ -760,22 +760,22 @@ build_win32()
 
 print_usage()
 {
-	cd $ROOT
+    cd $ROOT
 
-	echo "*************************"
-	echo "Usage: `basename $0` <target>"
-	echo
-	echo "Available targets:"
-	echo "  --linux"
-	echo "  --mac-intel"
-	echo "  --mac-ppc"
-	echo "  --win32"
-	echo "  --doc"
-	echo "*************************"
+    echo "*************************"
+    echo "Usage: `basename $0` <target>"
+    echo
+    echo "Available targets:"
+    echo "  --linux"
+    echo "  --mac-intel"
+    echo "  --mac-ppc"
+    echo "  --win32"
+    echo "  --doc"
+    echo "*************************"
 
-	echo "Wrong usage. Stopping!" >> $LOGFILE
+    echo "Wrong usage. Stopping!" >> $LOGFILE
 
-	return 0
+    return 0
 }
 
 
@@ -794,98 +794,98 @@ if [ $# -ne 1 ]; then
 fi
 
 case "$1" in
-	"--linux")
-		TARGET=$TARGET_LINUX
-		check_last_build "$1" || failure
-		echo "Building linux version:" | tee -a $LOGFILE
+    "--linux")
+        TARGET=$TARGET_LINUX
+        check_last_build "$1" || failure
+        echo "Building linux version:" | tee -a $LOGFILE
         check_build_state || failure
-		;;
-	"--mac-intel")
-		TARGET=$TARGET_MAC_INTEL
-		check_last_build "$1" || failure
-		echo "Building mac (Intel) version:" | tee -a $LOGFILE
+        ;;
+    "--mac-intel")
+        TARGET=$TARGET_MAC_INTEL
+        check_last_build "$1" || failure
+        echo "Building mac (Intel) version:" | tee -a $LOGFILE
         check_build_state || failure
-		;;
-	"--mac-ppc")
-		TARGET=$TARGET_MAC_PPC
-		check_last_build "$1" || failure
-		echo "Building mac (PPC) version:" | tee -a $LOGFILE
+        ;;
+    "--mac-ppc")
+        TARGET=$TARGET_MAC_PPC
+        check_last_build "$1" || failure
+        echo "Building mac (PPC) version:" | tee -a $LOGFILE
         check_build_state || failure
-		;;
-	"--win32")
-		TARGET=$TARGET_WIN32
-		check_last_build "$1" || failure
-		echo "Building win32 version:" | tee -a $LOGFILE
+        ;;
+    "--win32")
+        TARGET=$TARGET_WIN32
+        check_last_build "$1" || failure
+        echo "Building win32 version:" | tee -a $LOGFILE
         check_build_state || failure
-		;;
-	"--doc")
-		TARGET=$TARGET_DOC
-		echo "Building documentation..." | tee -a $LOGFILE
-		;;
-	"--distclean")
-		distclean || failure
-		exit 0
-		;;
-	"--starsphere")
-		# "hidden" bonus option :-)
-		TARGET=$TARGET_LINUX
-		build_starsphere $TARGET "debug" || failure
-		exit 0
-		;;
-	*)
-		print_usage
-		exit 1
-		;;
+        ;;
+    "--doc")
+        TARGET=$TARGET_DOC
+        echo "Building documentation..." | tee -a $LOGFILE
+        ;;
+    "--distclean")
+        distclean || failure
+        exit 0
+        ;;
+    "--starsphere")
+        # "hidden" bonus option :-)
+        TARGET=$TARGET_LINUX
+        build_starsphere $TARGET "debug" || failure
+        exit 0
+        ;;
+    *)
+        print_usage
+        exit 1
+        ;;
 esac
 
 # here we go...
 
 case $TARGET in
-	$TARGET_LINUX)
-		check_prerequisites || failure
-		prepare_tree || failure
-		build_linux || failure
-		;;
-	$TARGET_MAC_INTEL)
-		if [ -d /Developer/SDKs/MacOSX10.4u.sdk ]; then
-			echo "Preparing Mac OS X 10.4 SDK build environment..." | tee -a $LOGFILE
-			# use 10.4 (Tiger) SDK because of BOINC/10.5 incompatibility (http://boinc.berkeley.edu/doxygen/api/html/QBacktrace_8h.html)
-			export LDFLAGS="-isysroot /Developer/SDKs/MacOSX10.4u.sdk -Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk -arch i386 $LDFLAGS"
-			export CPPFLAGS="-isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch i386 $CPPFLAGS"
-			export CFLAGS="-isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch i386 $CFLAGS"
-			export CXXFLAGS="-isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch i386 $CXXFLAGS"
-			export SDKROOT="/Developer/SDKs/MacOSX10.4u.sdk"
-			export MACOSX_DEPLOYMENT_TARGET=10.4
-		else
-			echo "Mac OS X 10.4 SDK required but missing!" | tee -a $LOGFILE
-			failure
-		fi
-		check_prerequisites || failure
-		prepare_tree || failure
-		build_mac $TARGET_MAC_INTEL || failure
-		;;
-	$TARGET_MAC_PPC)
-		export CFLAGS=-mcpu=G3 || failure
-		export CXXFLAGS=-mcpu=G3 || failure
-		check_prerequisites || failure
-		prepare_tree || failure
-		build_mac $TARGET_MAC_PPC || failure
-		;;
-	$TARGET_WIN32)
-		check_prerequisites || failure
-		prepare_tree || failure
-		build_win32 || failure
-		;;
-	$TARGET_DOC)
-		doxygen Doxyfile >> $LOGFILE 2>&1 || failure
-		cp -f $ROOT/doc/default/*.png $ROOT/doc/html >> $LOGFILE 2>&1 || failure
-		cp -f $ROOT/doc/default/*.gif $ROOT/doc/html >> $LOGFILE 2>&1 || failure
-		;;
-	*)
-		# should be unreachable
-		print_usage
-		exit 1
-		;;
+    $TARGET_LINUX)
+        check_prerequisites || failure
+        prepare_tree || failure
+        build_linux || failure
+        ;;
+    $TARGET_MAC_INTEL)
+        if [ -d /Developer/SDKs/MacOSX10.4u.sdk ]; then
+            echo "Preparing Mac OS X 10.4 SDK build environment..." | tee -a $LOGFILE
+            # use 10.4 (Tiger) SDK because of BOINC/10.5 incompatibility (http://boinc.berkeley.edu/doxygen/api/html/QBacktrace_8h.html)
+            export LDFLAGS="-isysroot /Developer/SDKs/MacOSX10.4u.sdk -Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk -arch i386 $LDFLAGS"
+            export CPPFLAGS="-isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch i386 $CPPFLAGS"
+            export CFLAGS="-isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch i386 $CFLAGS"
+            export CXXFLAGS="-isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch i386 $CXXFLAGS"
+            export SDKROOT="/Developer/SDKs/MacOSX10.4u.sdk"
+            export MACOSX_DEPLOYMENT_TARGET=10.4
+        else
+            echo "Mac OS X 10.4 SDK required but missing!" | tee -a $LOGFILE
+            failure
+        fi
+        check_prerequisites || failure
+        prepare_tree || failure
+        build_mac $TARGET_MAC_INTEL || failure
+        ;;
+    $TARGET_MAC_PPC)
+        export CFLAGS=-mcpu=G3 || failure
+        export CXXFLAGS=-mcpu=G3 || failure
+        check_prerequisites || failure
+        prepare_tree || failure
+        build_mac $TARGET_MAC_PPC || failure
+        ;;
+    $TARGET_WIN32)
+        check_prerequisites || failure
+        prepare_tree || failure
+        build_win32 || failure
+        ;;
+    $TARGET_DOC)
+        doxygen Doxyfile >> $LOGFILE 2>&1 || failure
+        cp -f $ROOT/doc/default/*.png $ROOT/doc/html >> $LOGFILE 2>&1 || failure
+        cp -f $ROOT/doc/default/*.gif $ROOT/doc/html >> $LOGFILE 2>&1 || failure
+        ;;
+    *)
+        # should be unreachable
+        print_usage
+        exit 1
+        ;;
 esac
 
 echo "************************************" | tee -a $LOGFILE
