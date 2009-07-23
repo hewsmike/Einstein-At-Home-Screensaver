@@ -740,6 +740,7 @@ build_mac()
 
 build_win32()
 {
+    export CPPFLAGS="-D_WIN32_WINDOWS=0x0410 $CPPFLAGS"
     export CFLAGS="-mms-bitfields $CFLAGS"
     export CXXFLAGS="-mms-bitfields $CXXFLAGS"
 
