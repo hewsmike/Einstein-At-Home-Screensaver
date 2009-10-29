@@ -1,5 +1,16 @@
 --- boinc_win.h
 +++ boinc_win.h	2008-06-03 17:35:38.000000000 +0200
+@@ -73,6 +73,10 @@
+ #include <userenv.h>
+ #include <aclapi.h>
+ 
++#if defined(__MINGW32__)
++#include <stdint.h>
++#endif
++
+ #if !defined(__CYGWIN32__) || defined(USE_WINSOCK)
+ 
+ /* If we're not running under CYGWIN use windows networking */
 @@ -108,7 +108,7 @@
  
  #include <commctrl.h>
