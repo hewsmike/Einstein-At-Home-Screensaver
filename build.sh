@@ -651,6 +651,8 @@ build_boinc_mingw()
     cp $ROOT/3rdparty/boinc/lib/mfile.h $ROOT/install/include/boinc >> $LOGFILE 2>&1 || failure
     cp $ROOT/3rdparty/boinc/lib/parse.h $ROOT/install/include/boinc >> $LOGFILE 2>&1 || failure
     cp $ROOT/3rdparty/boinc/lib/util.h $ROOT/install/include/boinc >> $LOGFILE 2>&1 || failure
+    # invoke MinGW's (Debian Squeeze) ranlib as the archive lacks an index
+    /usr/i586-mingw32msvc/bin/ranlib $ROOT/install/lib/libboinc.a
     echo "Successfully built and installed BOINC!" | tee -a $LOGFILE
 
     store_build_state $BS_BUILD_BOINC_MINGW || failure
