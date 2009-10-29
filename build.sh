@@ -503,11 +503,16 @@ set_mingw()
 {
     # general config
     PREFIX=$ROOT/install
-    TARGET_HOST=i586-pc-mingw32
+    TARGET_HOST=i586-mingw32msvc
     BUILD_HOST=i386-linux
     PATH_MINGW="$PREFIX/bin:$PREFIX/$TARGET_HOST/bin:$PATH"
     PATH="$PATH_MINGW"
     export PATH
+
+    export CC=`which ${TARGET_HOST}-gcc`
+    export CXX=`which ${TARGET_HOST}-g++`
+
+    export CPPFLAGS="-D_WIN32_WINDOWS=0x0410 $CPPFLAGS"
 }
 
 
@@ -780,10 +785,6 @@ build_mac()
 
 build_win32()
 {
-    export CPPFLAGS="-D_WIN32_WINDOWS=0x0410 $CPPFLAGS"
-
-    prepare_mingw || failure
-    build_mingw || failure
     set_mingw || failure
     build_sdl_mingw || failure
     build_freetype_mingw || failure
