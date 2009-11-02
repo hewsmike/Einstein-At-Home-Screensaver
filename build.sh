@@ -465,7 +465,7 @@ set_mingw()
 {
     # general config
     PREFIX=$ROOT/install
-    TARGET_HOST=i586-mingw32msvc
+    export TARGET_HOST=i586-mingw32msvc
     BUILD_HOST=i386-linux
     PATH_MINGW="$PREFIX/bin:$PREFIX/$TARGET_HOST/bin:$PATH"
     PATH="$PATH_MINGW"
@@ -652,7 +652,7 @@ build_boinc_mingw()
     cp $ROOT/3rdparty/boinc/lib/parse.h $ROOT/install/include/boinc >> $LOGFILE 2>&1 || failure
     cp $ROOT/3rdparty/boinc/lib/util.h $ROOT/install/include/boinc >> $LOGFILE 2>&1 || failure
     # invoke MinGW's (Debian Squeeze) ranlib as the archive lacks an index
-    /usr/i586-mingw32msvc/bin/ranlib $ROOT/install/lib/libboinc.a
+    ${TARGET_HOST}-ranlib $ROOT/install/lib/libboinc.a
     echo "Successfully built and installed BOINC!" | tee -a $LOGFILE
 
     store_build_state $BS_BUILD_BOINC_MINGW || failure
@@ -674,7 +674,20 @@ build_starsphere()
     export ORC_INSTALL=$ROOT/install || failure
     cd $ROOT/build/orc || failure
     cp $ROOT/src/orc/Makefile . >> $LOGFILE 2>&1 || failure
+    if [ "$1" == "$TARGET_WIN32" ]; then
+        # backup MinGW compiler settings
+        CC_MINGW=$CC
+        CXX_MINGW=$CXX
+        # set the native compilers (ORC will be run on host, not on target)
+        export CC=`which gcc`
+        export CXX=`which g++`
+    fi
     make $2 >> $LOGFILE 2>&1 || failure
+    if [ "$1" == "$TARGET_WIN32" ]; then
+        # restore MinGW compiler settings
+        export CC=$CC_MINGW
+        export CXX=$CXX_MINGW
+    fi
     make install >> $LOGFILE 2>&1 || failure
     echo "Successfully built and installed Starsphere [ORC]!" | tee -a $LOGFILE
 
