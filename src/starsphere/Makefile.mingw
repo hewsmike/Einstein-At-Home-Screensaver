@@ -24,6 +24,7 @@ STARSPHERE_INSTALL?=$(PWD)
 
 # config values
 CXX ?= g++
+TARGET_HOST ?= i586-pc-mingw32
 
 # variables
 LIBS += -Wl,-Bstatic
@@ -106,7 +107,7 @@ $(RESOURCESPEC).o: $(STARSPHERE_SRC)/$(RESOURCESPEC).orc
 
 $(RESOURCESPEC)_mingw.o: $(STARSPHERE_SRC)/$(RESOURCESPEC).rc
 	cp $(STARSPHERE_SRC)/*.ico .
-	$(STARSPHERE_INSTALL)/bin/i586-pc-mingw32-windres -O coff -o $(RESOURCESPEC)_mingw.o $(STARSPHERE_SRC)/$(RESOURCESPEC).rc
+	$(TARGET_HOST)-windres -O coff -o $(RESOURCESPEC)_mingw.o $(STARSPHERE_SRC)/$(RESOURCESPEC).rc
 
 # tools
 install:
