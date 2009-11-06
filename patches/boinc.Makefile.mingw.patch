@@ -14,7 +14,7 @@
  #
 -CXXFLAGS = $(CXXINCS) $(DEBUG) --include $(BOINCDIR)/version.h -DWIN32 -D_WIN32 -D_WIN32_WINDOWS=0x0501 -D_MT -DNDEBUG -D_WINDOWS  -DBOINC -DCLIENT -DNODB -D_CONSOLE -Wall -mtune=pentium-m   -fexceptions -march=i386 -O1
 -CFLAGS = $(INCS) $(DEBUG) --include $(BOINCDIR)/version.h -DWIN32 -D_WIN32 -D_WIN32_WINDOWS=0x0501 -D_MT -DNDEBUG -D_WINDOWS  -DBOINC -DCLIENT -DNODB -D_CONSOLE -Wall -mtune=pentium-m   -fexceptions -march=i386 -O1
-+CXXFLAGS = $(CXXINCS) $(DEBUG) --include $(BOINCDIR)/version.h -DWIN32 -D_WIN32 -D_WIN32_WINDOWS=0x0410 -D_MT -DNDEBUG -D_WINDOWS  -DBOINC -DCLIENT -DNODB -D_CONSOLE -Wall -mtune=pentium-m   -fexceptions -march=i386 -O1
++CXXFLAGS = $(CXXINCS) $(DEBUG) --include $(BOINCDIR)/version.h -DMINGW_WIN32 -DWIN32 -D_WIN32 -D_WIN32_WINDOWS=0x0410 -D_MT -DNDEBUG -D_WINDOWS  -DBOINC -DCLIENT -DNODB -D_CONSOLE -Wall -mtune=pentium-m   -fexceptions -march=i386 -O1
 +CFLAGS = $(INCS) $(DEBUG) --include $(BOINCDIR)/version.h -DWIN32 -D_WIN32 -D_WIN32_WINDOWS=0x0410 -D_MT -DNDEBUG -D_WINDOWS  -DBOINC -DCLIENT -DNODB -D_CONSOLE -Wall -mtune=pentium-m   -fexceptions -march=i386 -O1
  
  

@@ -1,0 +1,19 @@
+--- diagnostics_win.cpp
++++ diagnostics_win.cpp	2009-11-06 15:00:28.000000000 +0100
+@@ -2069,9 +2069,15 @@
+ //   library this function will write whatever trace information it can and
+ //   then throw a breakpoint exception to dump all the rest of the useful
+ //   information.
++#ifdef MINGW_WIN32
++void boinc_catch_signal_invalid_parameter(
++    const wchar_t* expression, const wchar_t* function, const wchar_t* file, unsigned int line)
++#else
+ void boinc_catch_signal_invalid_parameter(
+     const wchar_t* expression, const wchar_t* function, const wchar_t* file, unsigned int line,	uintptr_t /* pReserved */
+-) {
++)
++#endif
++{
+ 	fprintf(
+ 		stderr,
+         "ERROR: Invalid parameter detected in function %s. File: %s Line: %d\n",
