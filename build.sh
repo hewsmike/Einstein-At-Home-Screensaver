@@ -503,7 +503,9 @@ set_mingw()
 {
     # general config
     PREFIX=$ROOT/install
-    export TARGET_HOST=i586-mingw32msvc
+    # the following target host spec is Debian specific!
+    # use "i586-pc-mingw32" when building MinGW automatically
+    TARGET_HOST=i586-mingw32msvc
     BUILD_HOST=i386-linux
     PATH_MINGW="$PREFIX/bin:$PREFIX/$TARGET_HOST/bin:$PATH"
     PATH="$PATH_MINGW"
@@ -689,7 +691,7 @@ build_boinc_mingw()
     cp $ROOT/3rdparty/boinc/lib/mfile.h $ROOT/install/include/boinc >> $LOGFILE 2>&1 || failure
     cp $ROOT/3rdparty/boinc/lib/parse.h $ROOT/install/include/boinc >> $LOGFILE 2>&1 || failure
     cp $ROOT/3rdparty/boinc/lib/util.h $ROOT/install/include/boinc >> $LOGFILE 2>&1 || failure
-    # invoke MinGW's (Debian Squeeze) ranlib as the archive lacks an index
+    # invoke MinGW's ranlib as the archive lacks an index
     ${TARGET_HOST}-ranlib $ROOT/install/lib/libboinc.a
     echo "Successfully built and installed BOINC!" | tee -a $LOGFILE
 
@@ -800,7 +802,10 @@ build_mac()
 
 build_win32()
 {
+    # no more prepare/build steps for MinGW
+    # we use Debian's MinGW with GCC 4.4 support
     set_mingw || failure
+
     build_sdl_mingw || failure
     build_freetype_mingw || failure
     build_libxml_mingw || failure
