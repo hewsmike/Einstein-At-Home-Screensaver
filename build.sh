@@ -514,7 +514,7 @@ set_mingw()
     export CC=`which ${TARGET_HOST}-gcc`
     export CXX=`which ${TARGET_HOST}-g++`
 
-    export CPPFLAGS="-D_WIN32_WINDOWS=0x0410 $CPPFLAGS"
+    export CPPFLAGS="-D_WIN32_WINDOWS=0x0410 -DMINGW_WIN32 $CPPFLAGS"
 }
 
 
@@ -651,9 +651,13 @@ build_boinc_mingw()
     prepare_boinc $TAG_GFXAPPS || failure
 
     echo "Patching BOINC..." | tee -a $LOGFILE
+    # patch: fix BOINC vs. MinGW issues
+    cd $ROOT/3rdparty/boinc/api || failure
+    patch boinc_api.h < $ROOT/patches/boinc.boinc_api.h.mingw.patch >> $LOGFILE 2>&1 || failure                     # patch sent upstream!
     cd $ROOT/3rdparty/boinc/lib || failure
-    # patch: fix a couple of BOINC vs. MinGW issues
-    patch boinc_win.h < $ROOT/patches/boinc.boinc_win.h.minggw.patch >> $LOGFILE 2>&1 || failure
+    patch diagnostics.cpp < $ROOT/patches/boinc.diagnostics.cpp.mingw.patch >> $LOGFILE 2>&1 || failure             # patch sent upstream!
+    patch diagnostics_win.cpp < $ROOT/patches/boinc.diagnostics_win.cpp.mingw.1.patch >> $LOGFILE 2>&1 || failure   # patch sent upstream!
+    patch diagnostics_win.cpp < $ROOT/patches/boinc.diagnostics_win.cpp.mingw.2.patch >> $LOGFILE 2>&1 || failure   # patch sent upstream!
     patch filesys.cpp < $ROOT/patches/boinc.filesys.cpp.mingw.patch >> $LOGFILE 2>&1 || failure
     echo "Building BOINC (this may take a while)..." | tee -a $LOGFILE
     cd $ROOT/3rdparty/boinc || failure

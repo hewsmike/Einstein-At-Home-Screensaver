@@ -1,0 +1,13 @@
+--- boinc_api.h
++++ boinc_api.h	2009-11-06 16:30:39.000000000 +0100
+@@ -22,6 +22,10 @@
+ #include <Carbon/Carbon.h>
+ #endif
+ 
++#ifdef _WIN32
++#include "boinc_win.h"
++#endif
++
+ // ANSI C API BEGINS HERE
+ // Do not put implementation stuff here
+ 
