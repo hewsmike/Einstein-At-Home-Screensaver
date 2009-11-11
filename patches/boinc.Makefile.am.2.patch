@@ -1,0 +1,11 @@
+--- Makefile.am
++++ Makefile.am	2009-11-11 16:01:46.000000000 +0100
+@@ -47,7 +47,7 @@
+ 
+ BUILT_SOURCES = svn_version.h
+ svn_version.h: generate_svn_version.sh
+-	sh generate_svn_version.sh
++	cd $(srcdir) && sh generate_svn_version.sh
+ .PHONY: svn_version.h
+ 
+ # Add a stage target for staging a distribution
