@@ -505,7 +505,7 @@ set_mingw()
     PREFIX=$ROOT/install
     # the following target host spec is Debian specific!
     # use "i586-pc-mingw32" when building MinGW automatically
-    TARGET_HOST=i586-mingw32msvc
+    export TARGET_HOST=i586-mingw32msvc
     BUILD_HOST=i386-linux
     PATH_MINGW="$PREFIX/bin:$PREFIX/$TARGET_HOST/bin:$PATH"
     PATH="$PATH_MINGW"
