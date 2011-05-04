@@ -30,10 +30,9 @@ LOGFILE=$ROOT/build.log
 
 TARGET=0
 TARGET_LINUX=1
-TARGET_MAC_INTEL=2
-TARGET_MAC_PPC=4
-TARGET_WIN32=8
-TARGET_DOC=16
+TARGET_MAC=2
+TARGET_WIN32=3
+TARGET_DOC=4
 
 BUILDSTATE=0
 BS_PREREQUISITES=1
@@ -347,7 +346,7 @@ build_sdl()
     ./autogen.sh >> $LOGFILE 2>&1 || failure
     chmod +x configure >> $LOGFILE 2>&1 || failure
     cd $ROOT/build/sdl || failure
-    if [ "$1" == "$TARGET_MAC_INTEL" -o "$1" == "$TARGET_MAC_PPC" ]; then
+    if [ "$1" == "$TARGET_MAC" ]; then
         $ROOT/3rdparty/sdl/configure --prefix=$ROOT/install --enable-shared=no --enable-static=yes --enable-screensaver=yes --enable-video-x11=no >> $LOGFILE 2>&1 || failure
     else
         $ROOT/3rdparty/sdl/configure --prefix=$ROOT/install --enable-shared=no --enable-static=yes --enable-screensaver=yes >> $LOGFILE 2>&1 || failure 
@@ -454,7 +453,7 @@ build_boinc()
     ./_autosetup >> $LOGFILE 2>&1 || failure
     chmod +x configure >> $LOGFILE 2>&1 || failure
     cd $ROOT/build/boinc || failure
-    if [ "$1" == "$TARGET_MAC_INTEL" -o "$1" == "$TARGET_MAC_PPC" ]; then
+    if [ "$1" == "$TARGET_MAC" ]; then
         export CPPFLAGS=-I/sw/include
         $ROOT/3rdparty/boinc/configure --prefix=$ROOT/install --enable-shared=no --enable-static=yes --disable-server --disable-client --with-apple-opengl-framework --enable-install-headers --enable-libraries --disable-manager --disable-fcgi >> $LOGFILE 2>&1 || failure
     elif [ -d "/usr/local/ssl" ]; then
@@ -725,7 +724,7 @@ build_starsphere()
     export STARSPHERE_INSTALL=$ROOT/install || failure
     cd $ROOT/build/starsphere || failure
     cp $ROOT/src/starsphere/*.res . >> $LOGFILE 2>&1 || failure
-    if [ "$1" == "$TARGET_MAC_INTEL" ] || [ "$1" == "$TARGET_MAC_PPC" ]; then
+    if [ "$1" == "$TARGET_MAC" ]; then
         cp -f $ROOT/src/starsphere/Makefile.macos Makefile >> $LOGFILE 2>&1 || failure
     elif [ "$1" == "$TARGET_WIN32" ]; then
         cp -f $ROOT/src/starsphere/Makefile.mingw Makefile >> $LOGFILE 2>&1 || failure
@@ -794,8 +793,7 @@ print_usage()
     echo
     echo "Available targets:"
     echo "  --linux"
-    echo "  --mac-intel"
-    echo "  --mac-ppc"
+    echo "  --mac"
     echo "  --win32"
     echo "  --doc"
     echo "*************************"
@@ -827,16 +825,10 @@ case "$1" in
         echo "Building linux version:" | tee -a $LOGFILE
         check_build_state || failure
         ;;
-    "--mac-intel")
-        TARGET=$TARGET_MAC_INTEL
+    "--mac")
+        TARGET=$TARGET_MAC
         check_last_build "$1" || failure
         echo "Building mac (Intel) version:" | tee -a $LOGFILE
-        check_build_state || failure
-        ;;
-    "--mac-ppc")
-        TARGET=$TARGET_MAC_PPC
-        check_last_build "$1" || failure
-        echo "Building mac (PPC) version:" | tee -a $LOGFILE
         check_build_state || failure
         ;;
     "--win32")
@@ -873,7 +865,7 @@ case $TARGET in
         prepare_tree || failure
         build_linux || failure
         ;;
-    $TARGET_MAC_INTEL)
+    $TARGET_MAC)
         if [ -d /Developer/SDKs/MacOSX10.4u.sdk ]; then
             echo "Preparing Mac OS X 10.4 SDK build environment..." | tee -a $LOGFILE
             # use 10.4 (Tiger) SDK because of BOINC/10.5 incompatibility (http://boinc.berkeley.edu/doxygen/api/html/QBacktrace_8h.html)
@@ -889,14 +881,7 @@ case $TARGET in
         fi
         check_prerequisites || failure
         prepare_tree || failure
-        build_mac $TARGET_MAC_INTEL || failure
-        ;;
-    $TARGET_MAC_PPC)
-        export CFLAGS=-mcpu=G3 || failure
-        export CXXFLAGS=-mcpu=G3 || failure
-        check_prerequisites || failure
-        prepare_tree || failure
-        build_mac $TARGET_MAC_PPC || failure
+        build_mac $TARGET_MAC || failure
         ;;
     $TARGET_WIN32)
         check_prerequisites || failure
