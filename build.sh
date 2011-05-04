@@ -146,7 +146,7 @@ check_prerequisites()
     echo "Checking prerequisites..." | tee -a $LOGFILE
 
     # required toolchain
-    TOOLS="automake autoconf m4 cmake wget svn cvs tar patch gcc g++ ld libtool ar lex yacc pkg-config"
+    TOOLS="automake autoconf m4 cmake wget svn cvs tar patch gcc g++ ld libtool ar lex yacc pkg-config hg"
 
     for tool in $TOOLS; do
         if ! ( type $tool >/dev/null 2>&1 ); then
@@ -215,14 +215,13 @@ prepare_sdl()
     mkdir -p $ROOT/build/sdl >> $LOGFILE || failure
 
     cd $ROOT/3rdparty/sdl || failure
-    if [ -d .svn ]; then
+    if [ -d .hg ]; then
         echo "Updating SDL..." | tee -a $LOGFIL
-        # make sure local changes (patches) are reverted, hence also updated
-        svn revert -R . >> $LOGFILE 2>&1 || failure
-        svn update >> $LOGFILE 2>&1 || failure
+        # local changes (patches) are reverted, hence also updated
+        hg update --clean >> $LOGFILE 2>&1 || failure
     else
         echo "Retrieving SDL (this may take a while)..." | tee -a $LOGFILE
-        svn checkout http://svn.libsdl.org/branches/SDL-1.2 . >> $LOGFILE 2>&1 || failure
+        hg clone -r SDL-1.2 http://hg.libsdl.org/SDL . >> $LOGFILE 2>&1 || failure
     fi
 
     return 0
