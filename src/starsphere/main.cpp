@@ -24,6 +24,8 @@
 #include <diagnostics.h>
 #include <boinc_api.h>
 
+#include "../erp_git_version.h"
+
 #include "WindowManager.h"
 #include "ResourceFactory.h"
 #include "AbstractGraphicsEngine.h"
@@ -43,7 +45,18 @@ extern "C" {
 
 int main(int argc, char **argv)
 {
-	// enable BOINC diagnostics
+    // print version info
+    if(argc == 2) {
+        string param(argv[1]);
+        if(param == "--version" || param = "-v") {
+            cout << "Version information:" << endl;
+            cout << "Graphics Application Revision: " << ERP_GIT_VERSION << endl;
+            cout << "BOINC Revision: " << SVN_VERSION << endl;
+            exit(0);
+        }
+    }
+
+    // enable BOINC diagnostics
 	// TODO: we might want to optimize this for glibc- and mingw-based stacktraces!
 	boinc_init_graphics_diagnostics(BOINC_DIAG_DEFAULTS);
 

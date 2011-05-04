@@ -176,6 +176,34 @@ prepare_tree()
 }
 
 
+prepare_version_header()
+{
+    HEADER_FILE="$ROOT/src/erp_git_version.h"
+
+    cd $ROOT || failure
+
+    echo "Retrieving git version information..." | tee -a $LOGFILE
+
+    if [ -d .git ]; then
+        GIT_LOG=`git log -n1 --pretty="format:%H"` || failure
+        HOST=`hostname` || failure
+    fi
+
+    echo "#ifndef ERP_GIT_VERSION_H" > $HEADER_FILE || failure
+    echo "#define ERP_GIT_VERSION_H" >> $HEADER_FILE || failure
+    echo "" >> $HEADER_FILE || failure
+
+    if [ "no$GIT_LOG" != "no" ]; then
+        echo "#define ERP_GIT_VERSION \"$GIT_LOG ($HOST:$PWD)\"" >> $HEADER_FILE || failure
+    else
+        echo "#define ERP_GIT_VERSION \"unknown (git repository not found!)\"" >> $HEADER_FILE || failure
+    fi
+
+    echo "" >> $HEADER_FILE || failure
+    echo "#endif" >> $HEADER_FILE || failure
+}
+
+
 prepare_mingw()
 {
     if [ $BUILDSTATE -ge $BS_PREPARE_MINGW ]; then
