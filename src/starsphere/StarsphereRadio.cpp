@@ -66,7 +66,7 @@ void StarsphereRadio::initialize(const int width, const int height, const Resour
 		m_PowerSpectrumAxesWidth = 2.0;
 		m_PowerSpectrumBinWidth = 3.0;
 		m_PowerSpectrumBinDistance = 2.0;
-		m_PowerSpectrumLabelXOffset = (m_PowerSpectrumWidth - 120.0) / 2;
+		m_PowerSpectrumLabelXOffset = (m_PowerSpectrumWidth - 150.0) / 2;
 		m_PowerSpectrumLabelYOffset = 15.0;
 		m_PowerSpectrumLabelXPos = m_PowerSpectrumXPos + m_PowerSpectrumLabelXOffset;
 		m_PowerSpectrumLabelYPos = m_PowerSpectrumYPos - m_PowerSpectrumLabelYOffset;
@@ -227,7 +227,7 @@ void StarsphereRadio::renderSearchInformation()
 	m_FontText->draw(m_XStartPosRight, m_Y6StartPosBottom, m_WUTemplateOrbitalPhase.c_str());
 
 	// power spectrum label
-	m_FontText->draw(m_PowerSpectrumLabelXPos, m_PowerSpectrumLabelYPos, "Arecibo Power Spectrum");
+	m_FontText->draw(m_PowerSpectrumLabelXPos, m_PowerSpectrumLabelYPos, "Radio Signal Power Spectrum");
 
 	// disable opt-in quality feature for power spectrum
 	if(m_QualitySetting == BOINCClientAdapter::HighGraphicsQualitySetting) {
