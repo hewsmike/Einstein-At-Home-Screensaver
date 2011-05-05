@@ -28,6 +28,8 @@ PATH_ORG="$PATH"
 PATH_MINGW="$PATH"
 LOGFILE=$ROOT/build.log
 
+TAG_GFXAPPS="current_gfx_apps"
+
 TARGET=0
 TARGET_LINUX=1
 TARGET_MAC=2
@@ -316,18 +318,28 @@ prepare_boinc()
     echo "Preparing BOINC..." | tee -a $LOGFILE
     mkdir -p $ROOT/3rdparty/boinc >> $LOGFILE || failure
     mkdir -p $ROOT/build/boinc >> $LOGFILE || failure
-
+ 
     cd $ROOT/3rdparty/boinc || failure
-    if [ -d .svn ]; then
-        echo "Updating BOINC..." | tee -a $LOGFILE
-        # make sure local changes (patches) are reverted, hence also updated
-        svn revert -R . >> $LOGFILE  2>&1 || failure
-        svn update >> $LOGFILE  2>&1 || failure
+    if [ -d .git ]; then
+        echo "Updating BOINC (tag: $1)..." | tee -a $LOGFILE
+        # make sure local changes (patches) are reverted to ensure fast-forward merge
+        git checkout -f $1 >> $LOGFILE  2>&1 || failure
+        # update tag info
+        git remote update >> $LOGFILE  2>&1 || failure
+        git fetch --tags >> $LOGFILE  2>&1 || failure
+        # checkout build revision
+        git checkout -f $1 >> $LOGFILE  2>&1 || failure
     else
-        echo "Retrieving BOINC (this may take a while)..." | tee -a $LOGFILE
-        svn checkout http://boinc.berkeley.edu/svn/branches/server_stable . >> $LOGFILE 2>&1 || failure
+        # workaround for old git versions
+        rm -rf $ROOT/3rdparty/boinc >> $LOGFILE || failure
+ 
+        echo "Retrieving BOINC (tag: $1) (this may take a while)..." | tee -a $LOGFILE
+        cd $ROOT/3rdparty || failure
+        git clone git://git.aei.uni-hannover.de/shared/einsteinathome/boinc.git boinc >> $LOGFILE 2>&1 || failure
+        cd $ROOT/3rdparty/boinc || failure
+        git checkout $1 >> $LOGFILE  2>&1 || failure
     fi
-
+ 
     return 0
 }
 
@@ -443,7 +455,7 @@ build_boinc()
         return 0
     fi
 
-    prepare_boinc || failure
+    prepare_boinc $TAG_GFXAPPS || failure
 
     echo "Configuring BOINC..." | tee -a $LOGFILE
     cd $ROOT/3rdparty/boinc || failure
@@ -629,7 +641,7 @@ build_boinc_mingw()
         return 0
     fi
 
-    prepare_boinc || failure
+    prepare_boinc $TAG_GFXAPPS || failure
 
     echo "Patching BOINC..." | tee -a $LOGFILE
     cd $ROOT/3rdparty/boinc/lib || failure
