@@ -11,3 +11,6 @@ doc/*.tag
 # eclipse
 .project
 .cproject
+
+# files
+erp_git_version.h

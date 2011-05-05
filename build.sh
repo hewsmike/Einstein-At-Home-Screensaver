@@ -688,6 +688,8 @@ build_starsphere()
     mkdir -p $ROOT/build/starsphere >> $LOGFILE || failure
     export PATH=$PATH_ORG
 
+    prepare_version_header || failure
+
     echo "Building Starsphere [ORC]..." | tee -a $LOGFILE
     export ORC_SRC=$ROOT/src/orc || failure
     export ORC_INSTALL=$ROOT/install || failure
