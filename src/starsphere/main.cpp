@@ -23,6 +23,7 @@
 
 #include <diagnostics.h>
 #include <boinc_api.h>
+#include <svn_version.h>
 
 #include "../erp_git_version.h"
 
@@ -48,7 +49,7 @@ int main(int argc, char **argv)
     // print version info
     if(argc == 2) {
         string param(argv[1]);
-        if(param == "--version" || param = "-v") {
+        if(param == "--version" || param == "-v") {
             cout << "Version information:" << endl;
             cout << "Graphics Application Revision: " << ERP_GIT_VERSION << endl;
             cout << "BOINC Revision: " << SVN_VERSION << endl;
