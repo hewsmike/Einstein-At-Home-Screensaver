@@ -447,8 +447,6 @@ build_boinc()
 
     echo "Configuring BOINC..." | tee -a $LOGFILE
     cd $ROOT/3rdparty/boinc || failure
-    # fix svn_version.h update for out-of-tree builds (patch sent upstream)
-    patch $ROOT/3rdparty/boinc/Makefile.am < $ROOT/patches/boinc.Makefile.am.2.patch >> $LOGFILE 2>&1 || failure
     chmod +x _autosetup >> $LOGFILE 2>&1 || failure
     ./_autosetup >> $LOGFILE 2>&1 || failure
     chmod +x configure >> $LOGFILE 2>&1 || failure
