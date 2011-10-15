@@ -20,31 +20,40 @@
 
 #include "GraphicsEngineFactory.h"
 
-GraphicsEngineFactory::~GraphicsEngineFactory()
-{
+GraphicsEngineFactory::~GraphicsEngineFactory(){
 }
-GraphicsEngineFactory::GraphicsEngineFactory()
-{
+GraphicsEngineFactory::GraphicsEngineFactory(){
 }
 
-AbstractGraphicsEngine * GraphicsEngineFactory::createInstance(
+AbstractGraphicsEngine* GraphicsEngineFactory::createInstance(
 							GraphicsEngineFactory::Engines engine,
-							GraphicsEngineFactory::Applications application)
-{
-	switch(engine) {
-		case Starsphere:
-			switch(application) {
-				case EinsteinS5R3:
-					return new StarsphereS5R3();
-					break;
-				case EinsteinRadio:
-					return new StarsphereRadio();
-					break;
-				default:
-					return NULL;
-			}
-			break;
-		default:
-			return NULL;
-	}
-}
+							GraphicsEngineFactory::Applications application){
+   switch(engine) {
+      case SolarSystem:
+         switch(application) {
+            case EinsteinS5R3:
+               return new SolarSystemS5R3();
+               break;
+            case EinsteinRadio:
+               return new SolarSystemRadio();
+               break;
+            default:
+               return NULL;
+            }
+         break;
+      //case Starsphere:
+         //switch(application) {
+            //case EinsteinS5R3:
+               //return new StarsphereS5R3();
+               //break;
+            //case EinsteinRadio:
+               //return new StarsphereRadio();
+               //break;
+            //default:
+               //return NULL;
+            //}
+         //break;
+      default:
+         return NULL;
+      }
+   }

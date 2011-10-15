@@ -22,8 +22,10 @@
 #define GRAPHICSENGINEFACTORY_H_
 
 #include "AbstractGraphicsEngine.h"
-#include "StarsphereS5R3.h"
-#include "StarsphereRadio.h"
+#include "SolarSystemS5R3.h"
+#include "SolarSystemRadio.h"
+// #include "StarsphereS5R3.h"
+// #include "StarsphereRadio.h"
 
 /**
  * \addtogroup framework Framework
@@ -37,22 +39,22 @@
  * Max-Planck-Institute for Gravitational Physics\n
  * Hannover, Germany
  */
-class GraphicsEngineFactory
-{
+class GraphicsEngineFactory {
 public:
 	/// Destructor
 	virtual ~GraphicsEngineFactory();
 
 	/// Identifiers of supported graphics engines
 	enum Engines {
-		Starsphere = 1
-	};
+      // Starsphere = 1,
+      SolarSystem = 50
+	   };
 
 	/// Identifiers of supported science applications
 	enum Applications {
 		EinsteinS5R3 = 53,
-		EinsteinRadio = 42
-	};
+      EinsteinRadio = 42
+      };
 
 	/**
 	 * \brief Instantiates a new graphics engine
@@ -69,12 +71,12 @@ public:
 	 * \see Engines
 	 * \see Applications
 	 */
-	static AbstractGraphicsEngine * createInstance(Engines engine, Applications application);
+	static AbstractGraphicsEngine* createInstance(Engines engine, Applications application);
 
 private:
 	/// Contructor (private since this a purely static factory)
 	GraphicsEngineFactory();
-};
+   };
 
 /**
  * @}
