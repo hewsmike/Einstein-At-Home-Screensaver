@@ -39,7 +39,7 @@ using namespace std;
  * All graphics engines (Open GL visualisation code) have to be derived from this class.
  * First of all it defines the common interface which the rest of the graphics framework
  * expects any implementing classes to support. Apart from that, this class also defines
- * common properties like event idetifiers and basic access to BOINC client information.
+ * common properties like event identifiers and basic access to BOINC client information.
  *
  * \author Oliver Bock\n
  * Max-Planck-Institute for Gravitational Physics\n
@@ -143,6 +143,14 @@ public:
 		KeyX = 0x800000,
 		KeyY = 0x1000000,
 		KeyZ = 0x2000000,
+      KeyF1 = 0x2000001,
+      KeyF2 = 0x2000002,
+      KeyF3 = 0x2000003,
+      KeyF4 = 0x2000004,
+      KeyF5 = 0x2000005,
+      KeyF6 = 0x2000006,
+      KeyF7 = 0x2000007,
+      KeyF8 = 0x2000008,
 		KeyEnter = 0x4000000,
 		KeyEscape = 0x8000000
 	};
