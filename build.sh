@@ -245,7 +245,7 @@ prepare_sdl()
 
     cd $ROOT/3rdparty/sdl || failure
     if [ -d .hg ]; then
-        echo "Updating SDL..." | tee -a $LOGFIL
+        echo "Updating SDL..." | tee -a $LOGFILE
         # local changes (patches) are reverted, hence also updated
         hg update --clean >> $LOGFILE 2>&1 || failure
     else
@@ -318,7 +318,7 @@ prepare_boinc()
     echo "Preparing BOINC..." | tee -a $LOGFILE
     mkdir -p $ROOT/3rdparty/boinc >> $LOGFILE || failure
     mkdir -p $ROOT/build/boinc >> $LOGFILE || failure
- 
+
     cd $ROOT/3rdparty/boinc || failure
     if [ -d .git ]; then
         echo "Updating BOINC (tag: $1)..." | tee -a $LOGFILE
@@ -332,14 +332,14 @@ prepare_boinc()
     else
         # workaround for old git versions
         rm -rf $ROOT/3rdparty/boinc >> $LOGFILE || failure
- 
+
         echo "Retrieving BOINC (tag: $1) (this may take a while)..." | tee -a $LOGFILE
         cd $ROOT/3rdparty || failure
         git clone git://git.aei.uni-hannover.de/shared/einsteinathome/boinc.git boinc >> $LOGFILE 2>&1 || failure
         cd $ROOT/3rdparty/boinc || failure
         git checkout $1 >> $LOGFILE  2>&1 || failure
     fi
- 
+
     return 0
 }
 
@@ -361,7 +361,7 @@ build_sdl()
     if [ "$1" == "$TARGET_MAC" ]; then
         $ROOT/3rdparty/sdl/configure --prefix=$ROOT/install --enable-shared=no --enable-static=yes --enable-screensaver=yes --enable-video-x11=no >> $LOGFILE 2>&1 || failure
     else
-        $ROOT/3rdparty/sdl/configure --prefix=$ROOT/install --enable-shared=no --enable-static=yes --enable-screensaver=yes >> $LOGFILE 2>&1 || failure 
+        $ROOT/3rdparty/sdl/configure --prefix=$ROOT/install --enable-shared=no --enable-static=yes --enable-screensaver=yes >> $LOGFILE 2>&1 || failure
     fi
     make >> $LOGFILE 2>&1 || failure
     make install >> $LOGFILE 2>&1 || failure
@@ -691,25 +691,25 @@ build_boinc_mingw()
 }
 
 
-build_starsphere()
+build_solarsystem()
 {
-    # make sure ORC is always compiled for host platform (it's exexuted during starsphere build!)
-    echo "Preparing Starsphere..." | tee -a $LOGFILE
+    # make sure ORC is always compiled for host platform (it's executed during solarsystem build!)
+    echo "Preparing SolarSystem..." | tee -a $LOGFILE
     mkdir -p $ROOT/build/orc >> $LOGFILE || failure
     mkdir -p $ROOT/build/framework >> $LOGFILE || failure
-    mkdir -p $ROOT/build/starsphere >> $LOGFILE || failure
+    mkdir -p $ROOT/build/solarsystem >> $LOGFILE || failure
     export PATH=$PATH_ORG
 
     prepare_version_header || failure
 
-    echo "Building Starsphere [ORC]..." | tee -a $LOGFILE
+    echo "Building SolarSystem [ORC]..." | tee -a $LOGFILE
     export ORC_SRC=$ROOT/src/orc || failure
     export ORC_INSTALL=$ROOT/install || failure
     cd $ROOT/build/orc || failure
     cp $ROOT/src/orc/Makefile . >> $LOGFILE 2>&1 || failure
     make $2 >> $LOGFILE 2>&1 || failure
     make install >> $LOGFILE 2>&1 || failure
-    echo "Successfully built and installed Starsphere [ORC]!" | tee -a $LOGFILE
+    echo "Successfully built and installed SolarSystem [ORC]!" | tee -a $LOGFILE
 
     # set main include directory
     if [ "$1" == "$TARGET_WIN32" ]; then
@@ -718,7 +718,7 @@ build_starsphere()
         export PATH=$PATH_ORG
     fi
 
-    echo "Building Starsphere [Framework]..." | tee -a $LOGFILE
+    echo "Building SolarSystem [Framework]..." | tee -a $LOGFILE
     export FRAMEWORK_SRC=$ROOT/src/framework || failure
     export FRAMEWORK_INSTALL=$ROOT/install || failure
     cd $ROOT/build/framework || failure
@@ -729,23 +729,23 @@ build_starsphere()
     fi
     make $2 >> $LOGFILE 2>&1 || failure
     make install >> $LOGFILE 2>&1 || failure
-    echo "Successfully built and installed Starsphere [Framework]!" | tee -a $LOGFILE
+    echo "Successfully built and installed SolarSystem [Framework]!" | tee -a $LOGFILE
 
-    echo "Building Starsphere [Application]..." | tee -a $LOGFILE
-    export STARSPHERE_SRC=$ROOT/src/starsphere || failure
-    export STARSPHERE_INSTALL=$ROOT/install || failure
-    cd $ROOT/build/starsphere || failure
-    cp $ROOT/src/starsphere/*.res . >> $LOGFILE 2>&1 || failure
+    echo "Building SolarSystem [Application]..." | tee -a $LOGFILE
+    export SOLARSYSTEM_SRC=$ROOT/src/solarsystem || failure
+    export SOLARSYSTEM_INSTALL=$ROOT/install || failure
+    cd $ROOT/build/solarsystem || failure
+    cp $ROOT/src/solarsystem/*.res . >> $LOGFILE 2>&1 || failure
     if [ "$1" == "$TARGET_MAC" ]; then
-        cp -f $ROOT/src/starsphere/Makefile.macos Makefile >> $LOGFILE 2>&1 || failure
+        cp -f $ROOT/src/solarsystem/Makefile.macos Makefile >> $LOGFILE 2>&1 || failure
     elif [ "$1" == "$TARGET_WIN32" ]; then
-        cp -f $ROOT/src/starsphere/Makefile.mingw Makefile >> $LOGFILE 2>&1 || failure
+        cp -f $ROOT/src/solarsystem/Makefile.mingw Makefile >> $LOGFILE 2>&1 || failure
     else
-        cp -f $ROOT/src/starsphere/Makefile . >> $LOGFILE 2>&1 || failure
+        cp -f $ROOT/src/solarsystem/Makefile . >> $LOGFILE 2>&1 || failure
     fi
     make $2 >> $LOGFILE 2>&1 || failure
     make install >> $LOGFILE 2>&1 || failure
-    echo "Successfully built and installed Starsphere [Application]!" | tee -a $LOGFILE
+    echo "Successfully built and installed SolarSystem [Application]!" | tee -a $LOGFILE
 
     return 0
 }
@@ -759,7 +759,7 @@ build_linux()
     build_libxml || failure
     build_oglft || failure
     build_boinc || failure
-    build_starsphere $1 $2 || failure
+    build_solarsystem $1 $2 || failure
 
     return 0
 }
@@ -772,7 +772,7 @@ build_mac()
     build_libxml || failure
     build_oglft || failure
     build_boinc $1 || failure
-    build_starsphere $1 || failure
+    build_solarsystem $1 || failure
 
     return 0
 }
@@ -790,7 +790,7 @@ build_win32()
     build_libxml_mingw || failure
     build_oglft_mingw || failure
     build_boinc_mingw || failure
-    build_starsphere $TARGET_WIN32 || failure
+    build_solarsystem $TARGET_WIN32 || failure
 
     return 0
 }
@@ -817,6 +817,9 @@ print_usage()
 
 
 ### main control ##########################################################
+
+# Delete any prior build log
+rm -f ./build.log
 
 echo "************************************" | tee -a $LOGFILE
 echo "Starting new build!" | tee -a $LOGFILE
@@ -857,10 +860,10 @@ case "$1" in
         distclean || failure
         exit 0
         ;;
-    "--starsphere")
+    "--solarsystem")
         # "hidden" bonus option :-)
         TARGET=$TARGET_LINUX
-        build_starsphere $TARGET "debug" || failure
+        build_solarsystem $TARGET "debug" || failure
         exit 0
         ;;
     *)
