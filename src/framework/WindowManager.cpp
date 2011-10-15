@@ -294,31 +294,31 @@ void WindowManager::eventLoop()
 		else if (event.type == SDL_KEYDOWN) {
 			switch (event.key.keysym.sym) {
 				// notify our observers (currently exactly one, hence front())
-				case SDLK_s:
-					eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyS);
-					break;
-				case SDLK_c:
-					eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyC);
-					break;
-				case SDLK_o:
-					eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyO);
-					break;
-				case SDLK_x:
-					eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyX);
-					break;
-				case SDLK_p:
-					eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyP);
-					break;
-				case SDLK_r:
-					eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyR);
-					break;
-				case SDLK_g:
-					eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyG);
-					break;
-				case SDLK_a:
+            case SDLK_a:
 					eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyA);
 					break;
-				case SDLK_i:
+            case SDLK_b:
+					eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyB);
+					break;
+            case SDLK_c:
+					eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyC);
+					break;
+            case SDLK_d:
+					eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyD);
+					break;
+            case SDLK_e:
+					eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyE);
+					break;
+            case SDLK_f:
+					eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyF);
+					break;
+            case SDLK_g:
+					eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyG);
+					break;
+            case SDLK_h:
+					eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyH);
+					break;
+            case SDLK_i:
 					eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyI);
 					break;
 				case SDLK_l:
@@ -326,6 +326,63 @@ void WindowManager::eventLoop()
 					break;
 				case SDLK_m:
 					eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyM);
+					break;
+            case SDLK_n:
+					eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyN);
+					break;
+				case SDLK_o:
+					eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyO);
+					break;
+				case SDLK_p:
+					eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyP);
+					break;
+            case SDLK_q:
+					eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyQ);
+					break;
+				case SDLK_r:
+					eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyR);
+					break;
+            case SDLK_s:
+					eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyS);
+					break;
+            case SDLK_t:
+					eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyT);
+					break;
+            case SDLK_v:
+					eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyV);
+					break;
+            case SDLK_w:
+					eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyW);
+					break;
+            case SDLK_x:
+					eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyX);
+					break;
+            case SDLK_z:
+					eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyZ);
+					break;
+            case SDLK_F1:
+					eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyF1);
+					break;
+            case SDLK_F2:
+					eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyF2);
+					break;
+            case SDLK_F3:
+					eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyF3);
+					break;
+            case SDLK_F4:
+					eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyF4);
+					break;
+            case SDLK_F5:
+					eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyF5);
+					break;
+            case SDLK_F6:
+					eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyF6);
+					break;
+            case SDLK_F7:
+					eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyF7);
+					break;
+            case SDLK_F8:
+					eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyF8);
 					break;
 				case SDLK_RETURN:
 					toggleFullscreen();
