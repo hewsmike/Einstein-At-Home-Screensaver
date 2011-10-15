@@ -1,0 +1,212 @@
+###########################################################################
+#   Copyright (C) 2011 by Mike Hewson                                     #
+#   hewsmike@iinet.net.au                                                 #
+#                                                                         #
+#   This file is part of Einstein@Home.                                   #
+#                                                                         #
+#   Einstein@Home is free software: you can redistribute it and/or modify #
+#   it under the terms of the GNU General Public License as published     #
+#   by the Free Software Foundation, version 2 of the License.            #
+#                                                                         #
+#   Einstein@Home is distributed in the hope that it will be useful,      #
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of        #
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the          #
+#   GNU General Public License for more details.                          #
+#                                                                         #
+#   You should have received a copy of the GNU General Public License     #
+#   along with Einstein@Home. If not, see <http://www.gnu.org/licenses/>. #
+#                                                                         #
+###########################################################################
+
+# path settings
+SOLARSYSTEM_SRC?=$(PWD)
+SOLARSYSTEM_INSTALL?=$(PWD)
+
+# config values
+CXX ?= g++
+
+# variables
+LIBS += -Wl,-Bstatic -lframework -loglft -L$(SOLARSYSTEM_INSTALL)/lib
+LIBS += $(shell $(SOLARSYSTEM_INSTALL)/bin/freetype-config --libs)
+LIBS += $(shell $(SOLARSYSTEM_INSTALL)/bin/xml2-config --libs)
+LIBS += -lboinc_api -lboinc
+LIBS += -lstdc++
+LIBS += -L/usr/lib
+LIBS += -Wl,-Bdynamic $(shell $(SOLARSYSTEM_INSTALL)/bin/sdl-config --static-libs)
+LIBS += -lGL -lGLU
+LIBS += -lpthread -lm -lc
+
+LDFLAGS += -static-libgcc
+
+CPPFLAGS += -I$(SOLARSYSTEM_INSTALL)/include
+CPPFLAGS += $(shell $(SOLARSYSTEM_INSTALL)/bin/sdl-config --cflags)
+CPPFLAGS += $(shell $(SOLARSYSTEM_INSTALL)/bin/freetype-config --cflags)
+CPPFLAGS += $(shell $(SOLARSYSTEM_INSTALL)/bin/xml2-config --cflags)
+CPPFLAGS += -I$(SOLARSYSTEM_INSTALL)/include/boinc -I/usr/include
+CPPFLAGS += -I$(SOLARSYSTEM_INSTALL)/include/SDL
+CPPFLAGS += -I$(FRAMEWORK_SRC) -I$(SOLARSYSTEM_SRC)/../framework
+CPPFLAGS += -DGL_GLEXT_PROTOTYPES
+
+DEPS = Makefile
+OBJS = Buffer_OBJ.o Constellation.o Constellations.o Craft.o Earth.o
+OBJS += EinsteinRadioAdapter.o EinsteinS5R3Adapter.o ErrorHandler.o GridGlobe.o
+OBJS += InertialPlatform.o OGL_ID.o
+OBJS += OrdStar.o OrthoPlatform.o Pulsar.o Pulsars.o Renderable.o
+OBJS += SolarSystem.o
+OBJS += SolarSystemS5R3.o SolarSystemRadio.o
+OBJS += SolarSystemGlobals.o Sphere.o Star.o
+OBJS += Supernova.o Supernovae.o Texture_OBJ.o Universe.o Vector3D.o
+OBJS += VectorSP.o Vertex.o
+OBJS += $(RESOURCESPEC).o
+RESOURCESPEC = resources
+
+# TODO: GraphicsEngineFactory obviously depends on the actual implementations (here solarsystem)! need to change the structure! what about plugins?
+CPPFLAGS += -I$(SOLARSYSTEM_SRC) -I$(SOLARSYSTEM_SRC)/../framework
+
+# primary role based targets
+# Both GW and ABP versions will be built by default !!
+default: release
+debug: solarsystem
+release: clean solarsystem
+solarsystem: solarsystem_Einstein_LVC
+memcheck: clean debug solarsystem
+callgrind: clean debug solarsystem
+
+# target specific options
+debug: CPPFLAGS += -pg -ggdb3 -O0 -Wall -Wno-switch-enum
+release: CPPFLAGS += -DNDEBUG -ggdb3 -O3 -Wall -Wno-switch-enum
+solarsystem_Einstein_LVC: CPPFLAGS += -D SCIENCE_APP=EinsteinS5R3
+solarsystem_Einstein_ABP: CPPFLAGS += -D SCIENCE_APP=EinsteinRadio
+memcheck: CPPFLAGS += $(DEBUGFLAGSCPP) -D DEBUG_VALGRIND
+callgrind: CPPFLAGS += $(DEBUGFLAGSCPP) -D DEBUG_VALGRIND
+
+# file based targets
+solarsystem_Einstein_LVC: $(DEPS) $(SOLARSYSTEM_SRC)/main.cpp $(OBJS)
+	$(CXX) -g $(CPPFLAGS) $(LDFLAGS) $(SOLARSYSTEM_SRC)/main.cpp -o "graphics_app=einstein_RUNLABEL_VERSION_graphics_i686-pc-linux-gnu" $(OBJS) $(LIBS)
+
+solarsystem_Einstein_ABP: $(DEPS) $(SOLARSYSTEM_SRC)/main.cpp $(OBJS)
+	$(CXX) -g $(CPPFLAGS) $(LDFLAGS) $(SOLARSYSTEM_SRC)/main.cpp -o "graphics_app=einsteinbinary_RUNLABEL_VERSION_graphics_i686-pc-linux-gnu" $(OBJS) $(LIBS)
+
+SolarSystem.o: $(DEPS) $(SOLARSYSTEM_SRC)/SolarSystem.cpp $(SOLARSYSTEM_SRC)/SolarSystem.h
+	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/SolarSystem.cpp
+
+SolarSystemRadio.o: $(DEPS) $(SOLARSYSTEM_SRC)/SolarSystemRadio.cpp $(SOLARSYSTEM_SRC)/SolarSystemRadio.h
+	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/SolarSystemRadio.cpp
+
+SolarSystemS5R3.o: $(DEPS) $(SOLARSYSTEM_SRC)/SolarSystemS5R3.cpp $(SOLARSYSTEM_SRC)/SolarSystemS5R3.h
+	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/SolarSystemS5R3.cpp
+
+Axes.o: $(DEPS) $(SOLARSYSTEM_SRC)/Axes.cpp $(SOLARSYSTEM_SRC)/Axes.h
+	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/Axes.cpp
+
+Buffer_OBJ.o: $(DEPS) $(SOLARSYSTEM_SRC)/Buffer_OBJ.cpp $(SOLARSYSTEM_SRC)/Buffer_OBJ.h
+	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/Buffer_OBJ.cpp
+
+Constellation.o: $(DEPS) $(SOLARSYSTEM_SRC)/Constellation.cpp $(SOLARSYSTEM_SRC)/Constellation.h
+	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/Constellation.cpp
+
+Constellations.o: $(DEPS) $(SOLARSYSTEM_SRC)/Constellations.cpp $(SOLARSYSTEM_SRC)/Constellations.h
+	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/Constellations.cpp
+
+Craft.o: $(DEPS) $(SOLARSYSTEM_SRC)/Craft.cpp $(SOLARSYSTEM_SRC)/Craft.h
+	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/Craft.cpp
+
+DisplayList.o: $(DEPS) $(SOLARSYSTEM_SRC)/DisplayList.cpp $(SOLARSYSTEM_SRC)/DisplayList.h
+	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/DisplayList.cpp
+
+Earth.o: $(DEPS) $(SOLARSYSTEM_SRC)/Earth.cpp $(SOLARSYSTEM_SRC)/Earth.h
+	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/Earth.cpp
+
+Ecliptic.o: $(DEPS) $(SOLARSYSTEM_SRC)/Ecliptic.cpp $(SOLARSYSTEM_SRC)/Ecliptic.h
+	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/Ecliptic.cpp
+
+EinsteinS5R3Adapter.o: $(DEPS) $(SOLARSYSTEM_SRC)/EinsteinS5R3Adapter.cpp $(SOLARSYSTEM_SRC)/EinsteinS5R3Adapter.h
+	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/EinsteinS5R3Adapter.cpp
+
+EinsteinRadioAdapter.o: $(SOLARSYSTEM_SRC)/EinsteinRadioAdapter.cpp $(SOLARSYSTEM_SRC)/EinsteinRadioAdapter.h
+	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/EinsteinRadioAdapter.cpp
+
+ErrorHandler.o: $(DEPS) $(SOLARSYSTEM_SRC)/ErrorHandler.cpp $(SOLARSYSTEM_SRC)/ErrorHandler.h
+	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/ErrorHandler.cpp
+
+GridGlobe.o: $(DEPS) $(SOLARSYSTEM_SRC)/GridGlobe.cpp $(SOLARSYSTEM_SRC)/GridGlobe.h
+	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/GridGlobe.cpp
+
+InertialPlatform.o: $(DEPS) $(SOLARSYSTEM_SRC)/InertialPlatform.cpp $(SOLARSYSTEM_SRC)/InertialPlatform.h
+	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/InertialPlatform.cpp
+
+OGL_ID.o: $(DEPS) $(SOLARSYSTEM_SRC)/OGL_ID.cpp $(SOLARSYSTEM_SRC)/OGL_ID.h
+	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/OGL_ID.cpp
+
+OrdStar.o: $(DEPS) $(SOLARSYSTEM_SRC)/OrdStar.cpp $(SOLARSYSTEM_SRC)/OrdStar.h
+	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/OrdStar.cpp
+
+OrthoPlatform.o: $(DEPS) $(SOLARSYSTEM_SRC)/OrthoPlatform.cpp $(SOLARSYSTEM_SRC)/OrthoPlatform.h
+	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/OrthoPlatform.cpp
+
+Pulsar.o: $(DEPS) $(SOLARSYSTEM_SRC)/Pulsar.cpp $(SOLARSYSTEM_SRC)/Pulsar.h
+	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/Pulsar.cpp
+
+Pulsars.o: $(DEPS) $(SOLARSYSTEM_SRC)/Pulsars.cpp $(SOLARSYSTEM_SRC)/Pulsars.h
+	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/Pulsars.cpp
+
+Renderable.o: $(DEPS) $(SOLARSYSTEM_SRC)/Renderable.cpp $(SOLARSYSTEM_SRC)/Renderable.h
+	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/Renderable.cpp
+
+SolarSystemGlobals.o: $(DEPS) $(SOLARSYSTEM_SRC)/SolarSystemGlobals.cpp $(SOLARSYSTEM_SRC)/SolarSystemGlobals.h
+	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/SolarSystemGlobals.cpp
+
+Sphere.o: $(DEPS) $(SOLARSYSTEM_SRC)/Sphere.cpp $(SOLARSYSTEM_SRC)/Sphere.h
+	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/Sphere.cpp
+
+SphericalCoordSystem.o: $(DEPS) $(SOLARSYSTEM_SRC)/SphericalCoordSystem.cpp $(SOLARSYSTEM_SRC)/SphericalCoordSystem.h
+	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/SphericalCoordSystem.cpp
+
+SphericalCoordSystemAngles.o: $(DEPS) $(SOLARSYSTEM_SRC)/SphericalCoordSystemAngles.cpp $(SOLARSYSTEM_SRC)/SphericalCoordSystemAngles.h
+	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/SphericalCoordSystemAngles.cpp
+
+SphericalCoordSystemLabels.o: $(DEPS) $(SOLARSYSTEM_SRC)/SphericalCoordSystemLabels.cpp $(SOLARSYSTEM_SRC)/SphericalCoordSystemLabels.h
+	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/SphericalCoordSystemLabels.cpp
+
+Star.o: $(DEPS) $(SOLARSYSTEM_SRC)/Star.cpp $(SOLARSYSTEM_SRC)/Star.h
+	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/Star.cpp
+
+Supernova.o: $(DEPS) $(SOLARSYSTEM_SRC)/Supernova.cpp $(SOLARSYSTEM_SRC)/Supernova.h
+	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/Supernova.cpp
+
+Supernovae.o: $(DEPS) $(SOLARSYSTEM_SRC)/Supernovae.cpp $(SOLARSYSTEM_SRC)/Supernovae.h
+	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/Supernovae.cpp
+
+Texture_OBJ.o: $(DEPS) $(SOLARSYSTEM_SRC)/Texture_OBJ.cpp $(SOLARSYSTEM_SRC)/Texture_OBJ.h
+	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/Texture_OBJ.cpp
+
+Universe.o: $(DEPS) $(SOLARSYSTEM_SRC)/Universe.cpp $(SOLARSYSTEM_SRC)/Universe.h
+	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/Universe.cpp
+
+Vector3D.o: $(DEPS) $(SOLARSYSTEM_SRC)/Vector3D.cpp $(SOLARSYSTEM_SRC)/Vector3D.h
+	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/Vector3D.cpp
+
+VectorSP.o: $(DEPS) $(SOLARSYSTEM_SRC)/VectorSP.cpp $(SOLARSYSTEM_SRC)/VectorSP.h
+	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/VectorSP.cpp
+
+Vertex.o: $(DEPS) $(SOLARSYSTEM_SRC)/Vertex.cpp $(SOLARSYSTEM_SRC)/Vertex.h
+	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/Vertex.cpp
+
+# resource compiler
+$(RESOURCESPEC).o: $(SOLARSYSTEM_SRC)/$(RESOURCESPEC).orc
+	$(SOLARSYSTEM_INSTALL)/bin/orc $(SOLARSYSTEM_SRC)/$(RESOURCESPEC).orc $(RESOURCESPEC).cpp
+	$(CXX) -g $(CPPFLAGS) -c $(RESOURCESPEC).cpp -o $(RESOURCESPEC).o
+
+# tools
+memcheck:
+	valgrind --tool=memcheck --track-fds=yes --time-stamp=yes --log-file=$(PWD)/memcheck.out.%p --leak-check=full $(PWD)/graphics_app=einstein_RUNLABEL_VERSION_graphics_i686-pc-linux-gnu
+
+callgrind:
+	valgrind --tool=callgrind --track-fds=yes --time-stamp=yes $(PWD)/graphics_app=einstein_RUNLABEL_VERSION_graphics_i686-pc-linux-gnu
+
+install:
+	mkdir -p $(SOLARSYSTEM_INSTALL)/../dist
+	cp graphics_app* $(SOLARSYSTEM_INSTALL)/../dist
+
+clean:
+	rm -f $(RESOURCESPEC).cpp $(OBJS) graphics_app*
