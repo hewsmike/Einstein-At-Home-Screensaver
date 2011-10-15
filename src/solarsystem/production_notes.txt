@@ -1,0 +1,24 @@
+Herewith more detailed advice for adapting the starsphere build system code for your own use :  
+	- you are cross-compiling, that is you are building executables/binaries to be run within a potentially different OS from that which they were built under.
+
+	- Linux is the build system.
+
+	- Linux, Windows and Mac OSX are the potential target systems.
+
+	- Linux and OSX are 'Linux' anyway so will use the system compiler called gcc/g++, which you can think of as 'the GNU compiler collection' and 'the c++ compiler for gnu systems' respectively. Indeed for 'official' or project sanctioned/release use you want particular versions of gcc/g++, currently = 4.0.3
+
+	- so you can basically lump together Linux and Mac builds, there are only minor differences or extra switches for Mac. Mac PPC/G5 builds were supported once-upon-a-time .....
+
+	- a Windows build needs a crosscompiler called 'MinGW' which means 'minimalist GNU compiler for Windows'. It runs on Linux but the code produced needs to be transferred to a Windows machine to run. However you have to install MinGW on your Linux machine in order to use it, which can be tricky.
+
+There are the following libraries to incorporate into your code :
+
+	- they are free ( as in beer ) and thus unencumbered by difficult copyright et al stuff. Typically they have the GNU GPL version 2.x or somesuch .... read it up if this sort of thing worries you. I guess it should if you want to release any binaries to the public.
+
+	- Simple Direct Media layer or SDL for short. This contains a platform independent API for the OpenGL functionality. In particular you obtain an OpenGL 'context' : basically a window to render your frames upon/into. It also takes care of keyboard and mouse ( actually joystick too if you're keen ) input, handles the 'message' queue typical of windowing systems and perhaps other aspects like sounds etc. Well your code has to respond to such stuff, but it wont need to know any OS detail. If you include the SDL header - SDL.h - then that will manage the correct inclusion of OS specific stuff for you. Especially : you do not have to find freeglut etc for Windows which can be problematic/unsupported/complex. If you look at the initial chapters of most of the 'official' OpenGL texts then most that gets mentioned there will not apply. Look at the WindowManager class - hey, which is already written for you - in the framework subdirectory. You may be altering that, say for new key bindings ....
+
+	- Freetype is a font API with the same platform independence and copyright aspects.
+
+	- oglft is the OpenGL font
+
+build.sh : the high level shell script which is invoked from the Linux

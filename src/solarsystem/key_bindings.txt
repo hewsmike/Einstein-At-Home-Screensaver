@@ -1,0 +1,52 @@
+Keyboard Functional Bindings ( * indicates currently implemented : as of 26/11/2011 ) :
+
+ESC* : Exit the program
+
+F1  : Help
+
+F2  : Low level rendering
+
+F3  : Medium level
+
+F4  : High level rendering
+
+F5* : Toggle constellations display
+
+F6* : Toggle pulsars display
+
+F7* : Toggle supernovae display
+
+F8* : Toggle celestial sphere right ascension and declination grid
+
+Consider the screen view as looking out to the front of the spacecraft
+
+Q*  : Stop craft movement
+
+A*  : Forward craft thrust ( translation of centre of mass )
+
+Z*  : Reverse craft thrust ( translation of centre of mass )
+
+W*  : Leftwards craft thrust ( translation of centre of mass )
+
+R*  : Rightwards craft thrust ( translation of centre of mass )
+
+T*  : Upwards craft thrust ( translation of centre of mass )
+
+B*  : Downwards craft thrust ( translation of centre of mass )
+
+E*  : Upwards pitch of craft ( rotation about centre of mass )
+
+D*  : Downwards pitch of craft ( rotation about centre of mass )
+
+X*  : Leftwards yaw of craft  ( rotation about centre of mass )
+
+V*  : Rightwards yaw of craft  ( rotation about centre of mass )
+
+S*  : Leftwards roll of craft  ( rotation about centre of mass )
+
+F*  : Rightwards roll of craft  ( rotation about centre of mass )
+
+G*  : go home to initial craft position
+
+NB Current controller model is 'inertial', that is : it will happen in a certain way until you stop it.
+   If in doubt hit Q and get your bearings. You will bounce off the Earth and get punted back if you go too far way.

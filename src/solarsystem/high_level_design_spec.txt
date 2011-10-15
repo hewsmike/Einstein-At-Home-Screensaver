@@ -1,0 +1,79 @@
+Project : Einstein At Home Screensaver
+
+Author : Mike Hewson
+
+Name : SolarSystem
+
+Concept : A program which will operate as a BOINC screensaver for the Einstein At Home work units, distributed alongside such downloads in the usual fashion as the graphics application. Einstein At Home has markedly progressed as a BOINC project since inception and this program is meant to reflect such advances. Much of what follows is an extension-of/impetus-from the original Starsphere code. Specific goals/features to implement ( a wish list to aim for, with key implementation aspects mentioned  ) :
+
+	- multi-messenger detection ie. in addition to searching for gravitational waves the project is now sourcing data streams to analyse from a variety of radio-telescopes and a gamma-ray satellite.
+
+	- ( potential ) extensions of the existing GW network.
+
+	- incorporate some audio effects, especially some representation in the audio band of what the signals ought sound like to the human ear. Probably implement this last.
+
+	- teach/demonstrate some basic astronomy, with reference to our ever changing position in the cosmos. The Earth rotates around it's own axis, the Earth travels in orbit around the Sun etc. A considerable amount of the computational work at E@H is 'de-Dopplering' a signal to the solarsystem barycenter to account for these cyclic motions, so understanding why that is required is A Good Thing. 
+
+	- teach/demonstrate some basic physics, with reference to flying a spacecraft about. If one can 'fly around' and look at Earth's situation in space it can be easier to grasp stuff.
+
+	- if in the screensaver mode of operation, it will drop out of execution as specifed for the required behaviour of BOINC screensavers.
+
+	- include interactivity in a non-screensaver mode ie. standalone.
+
+Visual Features : Screen view is an out-of-front-window picture from a hypothetical craft/spaceship which can be manouevred around by the user ( or if in 'autopilot' mode eg. screensaver mode, some variety of motion and viewpoint scripting ) a 3D scene-scape with these elements :
+
+	- the Earth at the centre of the coordinate system ( 3D right handed Cartesian ), complete with an overlying texture - currently sourced from the NASA WorldWind project as that has a great image which is free ( as in beer, and public licencing for non-profit usage too, plus will attribute this source ). Will rotate as per a time scale ( target system based or other time standard ) and have lighting/shading to reflect position of the Sun ( see below ). Models of the various interferometers/radio-telescopes ( not to proper scale as that would be too small ! )  sited on the surface at their proper geographic positions. Text labelling of poles and the ground features. An extended axis of rotation from north and south poles to the celestial sphere.
+
+	- the Sun at a distant position ( we have a geocentric theme ) positioned with regard to date ( target system based or other time standard ) including the mildly elliptic orbital shape and proper movement with the distant sky ie. along the ecliptic great circle. A fairly bland texture overlay evidently but will include some sunspots to trigger upon, probably have them rotate over time too. For best visual impact and/or pedagogical value I will distort true scale of Sun/Earth relative size ( decrease ), Earth-to-Sun distance with respect to their sizes ( decrease )  and ellipticity of orbit ( increase ). An extended axis of ecliptic ( from the north-to-south pole axis of the Sun that is ) to the celestial sphere.
+
+	- a representation of the orbital curve of the Sun around the Earth ie. closer than, but in the same plane of, the ecliptic great circle showing ellipticity ( labelled points of peri- and ap- helion )
+
+	- the FermiLAT satellite orbiting the Earth. Not it's actual orbital behaviour but some sensible approximation, at a minumum it's orbital inclination wrt Earth's equator. Text labelled and can come real close to it to inspect. Need a good visual & geometric model. 
+
+	- grid of celestial right ascension and declination as a very distant celestial sphere.
+
+	- ecliptic great circle on the celestial sphere, plus ecliptic poles.
+
+	- galactic great circle on the celestial sphere, plus galactic poles.
+
+	- constellations ( the 48 official ones ) on the celestial sphere with colorised stars as per their spectral category, and 'join-the-dots' representation of the constellation 'shapes'. Text labelling of constellation names. Text labelling of the significant brighter stars ( eg. Arcturus, Capella, Antares, Procyon, Proxima Centauri, Betelgeuse, Sirius et al ).
+
+	- set of radio pulsars plotted on the celestial sphere. Special rendering and text labelling of those which E@H has assisted discovery of ( the new ones ).
+
+	- set of supernovae plotted on the celestial sphere.
+
+	- set of gamma ray pulsars plotted on the celestial sphere. Ditto re. labelling if E@H assist.
+
+	- animated signal representations coming in from some celestial sphere source to some GW/radio/gamma receiver with associated sounds ( ambitious ....  )
+
+	- 'flat' HUD overlay. In screensaver mode indicates current work unit activity ( retrieved via BOINC API ) much like current Starsphere behaviour. In interactive mode shows spacecraft 'controls and instruments'. In both cases include a 'scrolling text' information bar. 
+
+Interactivity :
+
+	- choice of controller models for the craft. Essentially a choice b/w value ( absolute ) or rate ( derivative ), rotation about center of mass and/or translation of center of mass. The Gemini/Apollo craft had the one physical controller for the pilot that could be switched into one of several modes. For example a right roll would be triggered by a brief right lateral control movement : in one mode the roll would stop if the control movement ceased, in another the roll-rate would be set when control movement ceased. Basically the difference is whether one has to stop the right roll with a left lateral control movement or just 'let go' of the the controller.  Probably ought have easy/medium/hard control interface choice. [ The first two things the Apollo 11 guys did upon landing on the moon was (a) turn off the descent engine (b) disarm the joystick ( 'detent' mode ) .... :-) ]
+
+	- craft dynamics currently inertial or gravity-free. Maybe include the 'pull' from the Earth and the Sun ? Can't be 'real' due to scaling etc, but could Mickey-Mouse it.
+
+	- collision detection of craft with objects eg. too far from Earth -> come back, to close to Earth/Sun -> rebound. That sort of thing, to stop one flying around inside stuff as not intellectually useful and can optimise graphics if so.
+
+	- turn on/off the various visual features.
+
+Some Implementation Requirements/Choices :
+
+	- C++ language
+
+	- OpenGL API to hardware ( minimum version TBA )
+
+	- originating from the official development framework as specified 
+
+	- three binary level versions : for Windows, Linux/Unix and Mac 10+
+
+	- three choices of rendering quality 
+
+	- interactivity via keyboard input
+	
+	- as much as practicable have server-side/graphics-card static data to render per frame ( yes, this looks like Evil Premature Optimisation but need to have this in mind for detailed design. Want to keep memory and CPU/GPU cycle footprint down )
+
+Well that's enough for now. The spacecraft stuff isn't as hard as it sounds, it's a question of defining the user experience and working back from that. All of the above will probably change depending upon feasibility as discovered, basically if not too much work to implement and/or not too much footprint at execution.
+
+Cheers, Mike. :-)
