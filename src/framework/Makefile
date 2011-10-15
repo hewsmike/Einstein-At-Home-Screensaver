@@ -32,10 +32,13 @@ CPPFLAGS += $(shell $(FRAMEWORK_INSTALL)/bin/xml2-config --cflags)
 CPPFLAGS += -I$(FRAMEWORK_INSTALL)/include/boinc -I/usr/include
 
 DEPS = Makefile
-OBJS = AbstractGraphicsEngine.o GraphicsEngineFactory.o WindowManager.o Resource.o ResourceFactory.o BOINCClientAdapter.o Libxml2Adapter.o
+OBJS = AbstractGraphicsEngine.o GraphicsEngineFactory.o
+OBJS += WindowManager.o Resource.o ResourceFactory.o BOINCClientAdapter.o Libxml2Adapter.o
 
-# TODO: GraphicsEngineFactory obviously depends on the actual implementations (here starsphere)! need to change the structure! what about plugins?
-CPPFLAGS += -I$(FRAMEWORK_SRC) -I$(FRAMEWORK_SRC)/../starsphere
+# TODO: GraphicsEngineFactory obviously depends on the actual implementations (here solarsystem & starsphere)! need to change the structure! what about plugins?
+CPPFLAGS += -I$(FRAMEWORK_SRC)
+CPPFLAGS += -I$(FRAMEWORK_SRC)/../solarsystem
+# CPPFLAGS += -I$(FRAMEWORK_SRC)/../starsphere
 
 # primary role based tagets
 default: release
