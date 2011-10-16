@@ -45,31 +45,23 @@ class OGL_ID {
       /// Default initialiser for the identifier.
       static const GLuint NO_ID;
 
-   private:
-      void cleanup(void);
-
-   protected:
-      // The identifier as allocated by OpenGL.
-      GLuint ident;
-
-   public:
       /**
        * \brief Constructor
        */
-      OGL_ID();
+      OGL_ID(void);
 
       /**
-       * \brief Destructor
+       * \brief Destructor - any derived class destructor must call release()
        */
-      ~OGL_ID();
+      virtual ~OGL_ID();
 
       /**
-       * \brief Obtains the OpenGL resources.
+       * \brief Obtains the OpenGL resource.
        */
       virtual void acquire(void) = 0;
 
       /**
-       * \brief Releases the OpenGL resources.
+       * \brief Releases the OpenGL resource.
        */
       virtual void release(void) = 0;
 
@@ -77,6 +69,10 @@ class OGL_ID {
        * \brief Get the OpenGL resource identifier.
        */
       GLuint ID(void) const;
+
+   protected:
+      /// The identifier as allocated by OpenGL.
+      GLuint ident;
    };
 
 /**

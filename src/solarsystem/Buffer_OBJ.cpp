@@ -24,6 +24,8 @@ Buffer_OBJ::Buffer_OBJ() {
    }
 
 Buffer_OBJ::~Buffer_OBJ() {
+   // Must call this here in this derived class.
+   release();
    }
 
 void Buffer_OBJ::acquire(void) {

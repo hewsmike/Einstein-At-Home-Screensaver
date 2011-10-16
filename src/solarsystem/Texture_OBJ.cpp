@@ -24,6 +24,8 @@ Texture_OBJ::Texture_OBJ(void) {
    }
 
 Texture_OBJ::~Texture_OBJ() {
+   // Must call this here in this derived class.
+   release();
    }
 
 void Texture_OBJ::acquire(void) {

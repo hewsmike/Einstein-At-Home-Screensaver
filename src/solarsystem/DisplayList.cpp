@@ -24,6 +24,8 @@ DisplayList::DisplayList() {
    }
 
 DisplayList::~DisplayList() {
+   // Must call this here in this derived class.
+   release();
    }
 
 void DisplayList::acquire(void) {

@@ -50,12 +50,12 @@ class Texture_OBJ : public OGL_ID {
       /**
        * \brief Obtains the texture object resources.
        */
-      void acquire(void);
+      virtual void acquire(void);
 
       /**
        * \brief Releases the texture object resources.
        */
-      void release(void);
+      virtual void release(void);
    };
 
 /**

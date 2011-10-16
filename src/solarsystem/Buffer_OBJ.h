@@ -44,7 +44,7 @@ class Buffer_OBJ : public OGL_ID {
       /**
       * \brief Constructor
       */
-      Buffer_OBJ();
+      Buffer_OBJ(void);
 
       /**
        * \brief Destructor
@@ -54,12 +54,12 @@ class Buffer_OBJ : public OGL_ID {
       /**
        * \brief Obtains the buffer object resources.
        */
-      void acquire(void);
+      virtual void acquire(void);
 
       /**
        * \brief Releases the buffer object resources.
        */
-      void release(void);
+      virtual void release(void);
    };
 
 /**

@@ -40,7 +40,7 @@ class DisplayList : public OGL_ID {
       /**
        * \brief Constructor
        */
-      DisplayList();
+      DisplayList(void);
 
       /**
        * \brief Destructor
@@ -50,12 +50,12 @@ class DisplayList : public OGL_ID {
       /**
        * \brief Obtains the display list resources.
        */
-      void acquire(void);
+      virtual void acquire(void);
 
       /**
        * \brief Releases the display list resources.
        */
-      void release(void);
+      virtual void release(void);
    };
 
 /**

@@ -30,13 +30,8 @@ OGL_ID::OGL_ID() : ident(OGL_ID::NO_ID) {
    }
 
 OGL_ID::~OGL_ID() {
-   cleanup();
    }
 
 GLuint OGL_ID::ID(void) const {
    return ident;
-   }
-
-void OGL_ID::cleanup(void) {
-   release();
    }
