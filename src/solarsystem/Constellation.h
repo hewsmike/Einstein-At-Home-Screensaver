@@ -21,17 +21,102 @@
 #ifndef CONSTELLATION_H_
 #define CONSTELLATION_H_
 
-#include <cmath>
-#include <iostream>
+#include <algorithm>
 #include <string>
 #include <utility>
 #include <vector>
 
+#include "ErrorHandler.h"
 #include "OrdStar.h"
-#include "SolarSystemGlobals.h"
+
+/**
+ * \addtogroup solarsystem Solarsystem
+ * @{
+ */
+
+/**
+ * \brief This class holds star and linkage data for a constellation
+ *
+ * A constellation is a named grouping of stars with an additional pattern of lines
+ * like 'join the dots' to hint at the appearance of something indicated by the
+ * constellations name. I recommend that all star additions are made to a given
+ * constellation prior to linkages being defined for them : as when a link is added
+ * bounds checking occurs on the contents of the star store AT THE TIME THE LINK IS
+ * ADDED. This is to prevent references to not-yet ( or ever ) entered stars.
+ *
+ * \author Mike Hewson\n
+ */
 
 class Constellation {
-	private:
+	public:
+      /**
+       * \brief Constructor
+       *
+       * \param nm : the name of the constellation
+       */
+      Constellation(const std::string nm);
+
+      /**
+       * \brief Destructor
+       */
+		~Constellation();
+
+      /**
+       * \brief Add a star to the constellation
+       *
+       * The order in which stars are added is important for later reference
+       * to them when linkages are defined. Each star has a zero based index
+       * assigned. The first star entered has index 0, the second index 1 ... etc
+       *
+       * @param star : the star to add
+       */
+		void add_star(OrdStar star);
+
+      /**
+       * \brief Add a link between two stars
+       *
+       * Bounds checking occurs which discovers
+       *    - attempts to link when no stars are in the constellation
+       *    - attempts to link to a non-existent star index
+       *    - attempts to link a star to itself
+       *
+       * @param first : the index of the first star
+       *
+       * @param second : the index of the second star
+       */
+      void add_link(unsigned int first, unsigned int second);
+
+      /**
+       * \brief Retrieve the name of the constellation
+       */
+      const std::string& name(void) const;
+
+      /**
+       * \brief Retrieve a reference to an immutable listing of the stars
+       */
+      const std::vector<OrdStar>& stars(void) const;
+
+      /**
+       * \brief Retrieve a reference to an immutable listing of the star linkages
+       */
+      const std::vector< std::pair<unsigned int, unsigned int> >& links(void) const;
+
+      /**
+       * \brief Retrieve the number of stars in the constellation
+       */
+      GLuint total_stars(void) const;
+
+      /**
+       * \brief Retrieve the number of linkages defined for the constellation
+       */
+      GLuint total_links(void) const;
+
+   private:
+      /**
+       * \brief Helper function to detect invalid star indices
+       */
+      bool isValidIndex(unsigned int) const;
+
       std::string cons_name;
 
       /// The stars in this constellation.
@@ -39,22 +124,6 @@ class Constellation {
 
       /// Which star is connected to which.
 		std::vector< std::pair<unsigned int, unsigned int> > link_list;
-		
-		GLuint t_stars;
-		
-		GLuint t_links;
-
-	public:
-      Constellation(const std::string nm);
-		~Constellation();
-
-		void add_star(OrdStar star);
-		void add_link(unsigned int first, unsigned int second);
-		const std::string& name(void) const;
-      const std::vector<OrdStar>& stars(void) const;
-      const std::vector< std::pair<unsigned int, unsigned int> >& links(void) const;
-      GLuint total_stars(void) const;
-      GLuint total_links(void) const;
    };
 
 #endif // CONSTELLATION_H_
