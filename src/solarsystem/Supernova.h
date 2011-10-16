@@ -32,14 +32,12 @@
  * \brief %Solarsystem Supernova data type.
  *
  * This class comprises the astronomical data relating to a specific supernova.
- * TODO maybe include a name field ?
+ * TODO maybe include a name field in constructor, passed through to base class?
  *
  * \author Mike Hewson\n
  */
 
 class Supernova : public Star {
-   private:
-
    public:
       /**
        * \brief Constructor, giving fully specified member values.

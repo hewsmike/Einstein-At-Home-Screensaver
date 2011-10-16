@@ -49,11 +49,6 @@ class Pulsar : public Star {
                           PALFA_EAH_NEW,  // Pulsar ALFA with E@H co-disovery.
                           DMB};           // Deep Multi-Beam ( Parkes ).
 
-   private:
-      /// The catalog from which information was derived.
-		pulsar_source source;
-
-   public:
       /**
        * \brief Constructor, giving fully specified member values.
        *
@@ -78,6 +73,10 @@ class Pulsar : public Star {
        * \return The catalog source
        */
       pulsar_source get_source(void) const;
+
+   private:
+      /// The catalog from which information was derived.
+		pulsar_source source;
    };
 
 /**

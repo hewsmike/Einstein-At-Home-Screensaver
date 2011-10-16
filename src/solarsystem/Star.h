@@ -46,26 +46,6 @@ typedef vec_t starpos_t;
  */
 
 class Star {
-   private:
-      /// Bounds for right ascension and declination values.
-      static const starpos_t DECLINATION_HIGH;
-      static const starpos_t DECLINATION_LOW;
-      static const starpos_t RIGHT_ASCENSION_HIGH;
-      static const starpos_t RIGHT_ASCENSION_LOW;
-
-      /// Position coordinate on celestial sphere in decimal degrees,
-      /// from 1st point of Aries ( zero of celestial longitude ) and
-      /// increasing towards the east. It's actually in Pisces now .....
-      starpos_t right_asc;
-
-      /// Position coordinate on celestial sphere in decimal degrees,
-      /// above ( +ve ) and below ( -ve ) the celestial equator ( zero of
-      /// celestial latitude ).
-      starpos_t decl;
-
-      /// The name of the star.
-      std::string s_name;
-
    public:
       /**
        * \brief Constructor, giving fully specified member values
@@ -108,6 +88,26 @@ class Star {
        * \return The name
        */
       std::string name(void) const;
+
+   private:
+      /// Bounds for right ascension and declination values.
+      static const starpos_t DECLINATION_HIGH;
+      static const starpos_t DECLINATION_LOW;
+      static const starpos_t RIGHT_ASCENSION_HIGH;
+      static const starpos_t RIGHT_ASCENSION_LOW;
+
+      /// Position coordinate on celestial sphere in decimal degrees,
+      /// from 1st point of Aries ( zero of celestial longitude ) and
+      /// increasing towards the east. It's actually in Pisces now .....
+      starpos_t right_asc;
+
+      /// Position coordinate on celestial sphere in decimal degrees,
+      /// above ( +ve ) and below ( -ve ) the celestial equator ( zero of
+      /// celestial latitude ).
+      starpos_t decl;
+
+      /// The name of the star.
+      std::string s_name;
    };
 
 /**

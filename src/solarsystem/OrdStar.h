@@ -45,14 +45,6 @@ class OrdStar : public Star {
       /// Identifiers of star spectral class.
       enum spectral_type {SPEC_A, SPEC_B, SPEC_F, SPEC_G, SPEC_K, SPEC_M, SPEC_O};
 
-   private:
-      /// The star's brightness.
-      GLfloat mag;
-
-      /// The star's color.
-      spectral_type spect_class;
-
-   public:
       /**
        * \brief Constructor, giving fully specified member values.
        *
@@ -87,6 +79,13 @@ class OrdStar : public Star {
        * \return The spectral class
        */
       spectral_type spectral_class(void) const;
+
+   private:
+      /// The star's brightness.
+      GLfloat mag;
+
+      /// The star's color.
+      spectral_type spect_class;
    };
 
 /**
