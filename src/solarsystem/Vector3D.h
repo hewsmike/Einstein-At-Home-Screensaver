@@ -39,7 +39,7 @@ typedef GLfloat vec_t;
 /**
  * \brief %Solarsystem Three dimensional vector data type.
  *
- * This class comprises an orthogonal basis co-ordinate triplet, with
+ * This class comprises an orthogonal basis coordinate triplet, with
  * standard Euclidean 3D vectorial behaviours. Specifically a right
  * handed system where the x-axis rotates into the y-axis by a 90
  * degree anticlockwise turn around the positive z-axis.
@@ -48,28 +48,11 @@ typedef GLfloat vec_t;
  */
 
 class Vector3D {
-   private:
-      /// Initialisers for the null vector.
-      static const GLfloat NULL_LENGTH;
-      static const GLfloat NULL_X;
-      static const GLfloat NULL_Y;
-      static const GLfloat NULL_Z;
-
-   protected:
-      /// The x co-ordinate.
-      vec_t x_comp;
-
-      /// The y co-ordinate.
-      vec_t y_comp;
-
-      /// The z co-ordinate.
-      vec_t z_comp;
-
    public:
       /**
        * \brief Constructor, no arguments, gives the null vector
        */
-      Vector3D();
+      Vector3D(void);
 
       /**
        * \brief Constructor, giving fully specified member values
@@ -81,7 +64,7 @@ class Vector3D {
        *
        * \param zc the z co-ordinate
        */
-		Vector3D(vec_t xc, vec_t yc, vec_t zc);
+      Vector3D(vec_t xc, vec_t yc, vec_t zc);
 
       /**
        * \brief Copy constructor
@@ -112,7 +95,7 @@ class Vector3D {
       /**
        * \brief Determine if the vector is null
        *
-       * \return A boolean indicating if it is null
+       * \return A boolean indicating true it is null, false otherwise
        */
       bool isNullVector(void);
 
@@ -157,9 +140,26 @@ class Vector3D {
        * \param The z-component
        */
       void set_z(vec_t zc);
+      
+   protected:
+      /// The x co-ordinate.
+      vec_t x_comp;
+
+      /// The y co-ordinate.
+      vec_t y_comp;
+
+      /// The z co-ordinate.
+      vec_t z_comp;
+      
+   private:
+      /// Initialisers for the null vector.
+      static const GLfloat NULL_LENGTH;
+      static const GLfloat NULL_X;
+      static const GLfloat NULL_Y;
+      static const GLfloat NULL_Z;
 	};
 
-// Non member operators. Probably simpler to do than static methods ....
+/// Non member operators. Probably simpler to do than static methods ....
 
 /**
  * \brief Vector summation, linear addition per component

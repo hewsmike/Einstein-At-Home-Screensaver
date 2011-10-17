@@ -63,6 +63,7 @@ Vector3D Vector3D::unit(void) {
    vec_t mag = this->len();
 
    // Careful that I am not already the zero vector.
+   // TODO some tolerance level rather exact nullity ??
    if (mag != Vector3D::NULL_LENGTH) {
       // OK, safe to divide each component by the length of the vector.
       // TODO - Consider if we might get machine infinity here? Maybe a
