@@ -27,12 +27,17 @@ Universe::Universe() : cs(CELESTIAL_SPHERE_RADIUS),
                        sn(CELESTIAL_SPHERE_RADIUS - 50),
                        gg(CELESTIAL_SPHERE_RADIUS + 50, 36, 19),
                        home() {
+   // Radius of rendering is ( slightly ) different for each scene element.
+   // I'm not actually sure why, but I think that looks better ie. less
+   // pixel level flickering than when all at the same radius. Presumably
+   // as I have essentially reduced any z-order contention by use of offsets ??
 	}
 
 Universe::~Universe() {
    }
 
 void Universe::draw() {
+   // Invoke the draw method for each scene element.
    ps.draw();
    sn.draw();
    cs.draw();
@@ -41,9 +46,10 @@ void Universe::draw() {
    }
 
 void Universe::activate() {
+   // Examine current render-level choice.
    switch(SolarSystemGlobals::get_render_level()) {
-      /// One can fiddle with these per-case calls to include/exclude
-      /// features according to desired rendering quality.
+      /// One could fiddle with these per-case calls to include/exclude
+      /// features according to desired rendering 'quality'.
       case SolarSystemGlobals::RENDER_LOWEST:
          ps.activate();
          sn.activate();
@@ -74,6 +80,7 @@ void Universe::activate() {
 	}
 
 void Universe::toggle(Universe::content ct) {
+   // Which scene element to toggle?
    switch(ct) {
       case Universe::AXES:
 			break;
