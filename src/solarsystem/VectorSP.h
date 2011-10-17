@@ -35,7 +35,7 @@
  * \brief %Solarsystem Three dimensional vector data type.
  *
  *    This class comprises a spherical polar co-ordinate triplet. Within the
- * current inheritance heirarchy this class acts as a converter of spherical
+ * current inheritance hierarchy this class acts as a converter of spherical
  * polar to Cartesian coordinates, but not vice-versa.
  *    A spherical coordinate system is classically described as having two
  * angles and a length for each point in 3D space. The length is that of the
@@ -68,6 +68,8 @@
  * position of objects thereupon using the two angles ie. the sky becomes a
  * two dimensional area albeit curved and not flat.
  *
+ * \see Vector3D
+ *
  * \author Mike Hewson\n
  */
 
@@ -76,7 +78,7 @@ class VectorSP : public Vector3D {
       /**
        * \brief Constructor, no arguments, gives the null vector
        */
-      VectorSP();
+      VectorSP(void);
 
       /**
        * \brief Constructor, giving fully specified member values
