@@ -32,7 +32,7 @@
  */
 
 /**
- * \brief This class encapsulates data relevant to a vertex.
+ * \brief This class encapsulates data relevant to an OpenGL vertex.
  *
  * It contains a position in 3D space, a normal vector of 3 components
  * and a pair of coordinate values for 2D texture mapping.
@@ -41,17 +41,7 @@
  */
 
 class Vertex {
-   private:
-      /// Position in 3D space.
-      Vector3D pos;
-
-      /// Normal vector.
-      Vector3D norm;
-
-      /// Coordinate values for 2D texturing.
-      std::pair<GLfloat, GLfloat> t_cds;
-
-	public:
+   public:
       /**
        * \brief Constructor ( fully qualified )
        *
@@ -61,13 +51,13 @@ class Vertex {
        *
        * \param tc The texture coordinates of the vertex
        */
-		Vertex(const Vector3D& ps, const Vector3D& nm,
+      Vertex(const Vector3D& ps, const Vector3D& nm,
              const std::pair<GLfloat, GLfloat>& tc);
 
 		/**
        * \brief Destructor
        */
-		~Vertex();
+      ~Vertex();
 
       /**
        * \brief Obtains the position of the vertex
@@ -83,6 +73,16 @@ class Vertex {
        * \brief Obtains texture coordinates of the vertex
        */
       const std::pair<GLfloat, GLfloat>& texture_co_ords(void) const;
+      
+   private:
+      /// Position in 3D space.
+      Vector3D pos;
+
+      /// Normal vector.
+      Vector3D norm;
+
+      /// Coordinate value pair for 2D texturing.
+      std::pair<GLfloat, GLfloat> t_cds;
 	};
 
 #endif // VERTEX_H_
