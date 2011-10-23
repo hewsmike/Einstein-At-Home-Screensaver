@@ -48,8 +48,9 @@ void Universe::draw() {
 void Universe::activate() {
    // Examine current render-level choice.
    switch(SolarSystemGlobals::get_render_level()) {
-      /// One could fiddle with these per-case calls to include/exclude
-      /// features according to desired rendering 'quality'.
+      // One could fiddle with these per-case calls to include/exclude
+      // features according to desired rendering 'quality'. This is also
+      // the point of control for default behaviour in screensaver mode.
       case SolarSystemGlobals::RENDER_LOWEST:
          ps.activate();
          sn.activate();

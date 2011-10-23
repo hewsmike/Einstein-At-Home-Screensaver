@@ -18,13 +18,10 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef VERTEX_H_
-#define VERTEX_H_
+#ifndef SPIN_PLATFORM_H_
+#define SPIN_PLATFORM_H_
 
-#include <utility>
-
-#include "SDL_opengl.h"
-#include "Vector3D.h"
+#include "OrthoNormalPlatform.h"
 
 /**
  * \addtogroup solarsystem Solarsystem
@@ -32,61 +29,54 @@
  */
 
 /**
- * \brief This class encapsulates data relevant to an OpenGL vertex.
+ * \brief %Solarsystem Cartesian orthonormal vector set
  *
- * It contains a position in 3D space, a normal vector of 3 components
- * and a pair of coordinate values for 2D texture mapping.
+ * This class comprises angular velocity state data, accessors and mutators thereof.
  *
  * \author Mike Hewson\n
  */
 
-class Vertex {
+class SpinPlatform : public OrthoNormalPlatform {
    public:
       /**
-       * \brief Constructor ( fully qualified )
-       *
-       * \param ps The position of the vertex
-       *
-       * \param nm The normal to the vertex
-       *
-       * \param tc The texture coordinates of the vertex
+       * \brief Constructor
        */
-      Vertex(const Vector3D& ps, const Vector3D& nm,
-             const std::pair<GLfloat, GLfloat>& tc);
+      SpinPlatform(void);
 
-		/**
+      /**
        * \brief Destructor
        */
-      ~Vertex();
+      virtual ~SpinPlatform();
+
+      void pitch(vec_t angle);
+
+      void roll(vec_t angle);
+
+      void yaw(vec_t angle);
+
+   protected:
+      /**
+       * \brief Reset the platform in spin
+       */
+      virtual void reset(void);
 
       /**
-       * \brief Obtains the position of the vertex
+       * \brief Reset the platform in spin
        */
-      const Vector3D& position(void) const;
+      virtual void step(void);
 
-      /**
-       * \brief Obtains the normal to the vertex
-       */
-      const Vector3D& normal(void) const;
+      // Current pitch rate.
+      vec_t pitch_rate;
 
-      /**
-       * \brief Obtains texture coordinates of the vertex
-       */
-      const std::pair<GLfloat, GLfloat>& texture_co_ords(void) const;
-      
+      vec_t roll_rate;
+
+      vec_t yaw_rate;
    private:
-      /// Position in 3D space.
-      Vector3D pos;
-
-      /// Normal vector.
-      Vector3D norm;
-
-      /// Coordinate value pair for 2D texturing.
-      std::pair<GLfloat, GLfloat> t_cds;
+      static const vec_t NULL_RATE;
 	};
-	
+
 /**
  * @}
  */
 
-#endif // VERTEX_H_
+#endif // SPIN_PLATFORM_H_

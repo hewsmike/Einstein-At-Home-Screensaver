@@ -18,34 +18,51 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "InertialPlatform.h"
+#include "SpinPlatform.h"
 
-// The initial velocity is motionless.
-const Vector3D InertialPlatform::INIT_VEL(Vector3D::NULLV);
+const vec_t SpinPlatform::NULL_RATE(0.0f);
 
-InertialPlatform::InertialPlatform(void) : vel(InertialPlatform::INIT_VEL) {
+SpinPlatform::SpinPlatform(void) {
+   reset();
 	}
 
-InertialPlatform::~InertialPlatform() {
+SpinPlatform::~SpinPlatform() {
    }
 
-Vector3D InertialPlatform::velocity(void) const {
-   return vel;
+void SpinPlatform::pitch(vec_t angle) {
+   // Here's the trig for the rotation.
+   Vector3D new_up = cos(angle)*up() - sin(angle)*look();
+   Vector3D new_look = cos(angle)*look() + sin(angle)*up();
+
+   // Normalise and store 'up' and 'look' before you go.
+   set_up(new_up.unit());
+   set_look(new_look.unit());
    }
 
-void InertialPlatform::set_velocity(const Vector3D& vc) {
-   vel = vc;
+void SpinPlatform::roll(vec_t angle) {
+   Vector3D new_up = cos(angle)*up() - sin(angle)*cross();
+
+   // Normalise and store 'up' before you go.
+   set_up(new_up.unit());
    }
 
-void InertialPlatform::reset(void) {
-   // Not only reset to a choice of initial velocity ...
-   set_velocity(InertialPlatform::INIT_VEL);
+void SpinPlatform::yaw(vec_t angle) {
+   Vector3D new_look = cos(angle)*look() - sin(angle)*cross();
 
-   // ... but also reset the position, and hence orientation too.
-   TranslatablePlatform::reset();
+   // Normalise and store 'look' before you go.
+   set_look(new_look.unit());
    }
 
-void InertialPlatform::step(void) {
-   // Evolve in position as per current velocity.
-   TranslatablePlatform::set_position(TranslatablePlatform::position() + vel);
+void SpinPlatform::reset(void) {
+   pitch_rate = NULL_RATE;
+   roll_rate = NULL_RATE;
+   yaw_rate = NULL_RATE;
+
+   OrthoNormalPlatform::reset();
    }
+
+void SpinPlatform::step(void) {
+   pitch(pitch_rate);
+   roll(roll_rate);
+   yaw(yaw_rate);
+	}

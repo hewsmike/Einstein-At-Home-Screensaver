@@ -25,7 +25,7 @@
 
 #include "Earth.h"
 #include "SolarSystemGlobals.h"
-#include "InertialPlatform.h"
+#include "AcceleratedPlatform.h"
 #include "Universe.h"
 
 class Craft{
@@ -57,7 +57,7 @@ class Craft{
       /// Speed change step for the floor-to-ceiling craft axis
       static const vec_t VERTICAL_THRUST_RATE;
 
-      InertialPlatform state;
+      AcceleratedPlatform state;
 
       void vector_thrust(Vector3D thrust);
 
@@ -78,10 +78,11 @@ class Craft{
       void yaw_right();
       void right_thrust(void);
       void left_thrust(void);
+      void null_rotation(void);
       void up_thrust(void);
       void down_thrust(void);
 
-		const InertialPlatform& get_platform() const;
+		const AcceleratedPlatform& get_platform() const;
 	};
 
 #endif // CRAFT_H_

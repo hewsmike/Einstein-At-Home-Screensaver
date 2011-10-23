@@ -32,10 +32,9 @@
  */
 
 /**
- * \brief %Solarsystem dynamical platform state
+ * \brief Directional platform state
  *
  * This class comprises the viewpoint state data only.
- * It has no dynamical model.
  *
  * \author Mike Hewson\n
  * hewsmike@iinet.net.au
@@ -67,7 +66,7 @@ class OrthoPlatform{
       // Cross vector is derived from the other two via lazy evaluation.
       // NOTE : Accumulated rounding error can be a source of 'platform drift'
       // with respect to orientation axes. That is, there is no check that
-      // the first two vectors are orthogonal or will remain so .....
+      // the first two vectors are orthogonal or will remain so ..... TODO what exactly ??
       Vector3D cross(void) const;
 
       Vector3D look(void) const;

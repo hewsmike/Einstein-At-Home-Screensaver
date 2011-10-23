@@ -18,12 +18,9 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef VERTEX_H_
-#define VERTEX_H_
+#ifndef TRANSLATABLE_PLATFORM_H_
+#define TRANSLATABLE_PLATFORM_H_
 
-#include <utility>
-
-#include "SDL_opengl.h"
 #include "Vector3D.h"
 
 /**
@@ -32,61 +29,51 @@
  */
 
 /**
- * \brief This class encapsulates data relevant to an OpenGL vertex.
+ * \brief %Solarsystem Translatable Cartesian orthonormal vector set
  *
- * It contains a position in 3D space, a normal vector of 3 components
- * and a pair of coordinate values for 2D texture mapping.
+ * This class comprises position state data, accessors and mutators thereof.
  *
  * \author Mike Hewson\n
  */
 
-class Vertex {
-   public:
+class TranslatablePlatform {
+	public:
       /**
-       * \brief Constructor ( fully qualified )
-       *
-       * \param ps The position of the vertex
-       *
-       * \param nm The normal to the vertex
-       *
-       * \param tc The texture coordinates of the vertex
+       * \brief Constructor
        */
-      Vertex(const Vector3D& ps, const Vector3D& nm,
-             const std::pair<GLfloat, GLfloat>& tc);
+      TranslatablePlatform(void);
 
-		/**
+      /**
        * \brief Destructor
        */
-      ~Vertex();
+      virtual ~TranslatablePlatform();
 
       /**
-       * \brief Obtains the position of the vertex
+       * \brief Get the position
        */
-      const Vector3D& position(void) const;
+      Vector3D position(void) const;
 
       /**
-       * \brief Obtains the normal to the vertex
+       * \brief Set the position
        */
-      const Vector3D& normal(void) const;
+      void set_position(const Vector3D& vc);
 
+   protected:
       /**
-       * \brief Obtains texture coordinates of the vertex
+       * \brief Reset the platform in position and rotation
        */
-      const std::pair<GLfloat, GLfloat>& texture_co_ords(void) const;
-      
+      virtual void reset(void);
+
    private:
-      /// Position in 3D space.
+      /// Fiducial position
+      static const Vector3D INIT_POS;
+
+      /// Current position in space.
       Vector3D pos;
+   };
 
-      /// Normal vector.
-      Vector3D norm;
-
-      /// Coordinate value pair for 2D texturing.
-      std::pair<GLfloat, GLfloat> t_cds;
-	};
-	
 /**
  * @}
  */
 
-#endif // VERTEX_H_
+#endif // TRANSLATABLE_PLATFORM_H_

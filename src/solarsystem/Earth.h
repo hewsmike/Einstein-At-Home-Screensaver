@@ -35,7 +35,11 @@ class Earth : public Renderable {
    public:
       // How big is the Earth ?
       static const GLuint EARTH_RADIUS;
-      
+
+      Earth(void);
+
+		virtual ~Earth();
+
 	private:
       static const GLfloat EARTH_GRID_RADIUS;
       static const GLuint EARTH_GRID_SLICES;
@@ -92,11 +96,6 @@ class Earth : public Renderable {
       void loadNorthBuffer(void);
       void loadWaistBuffer(void);
       void loadSouthBuffer(void);
-
-	public:
-		Earth();
-
-		virtual ~Earth();
 	};
 
 #endif // EARTH_H_

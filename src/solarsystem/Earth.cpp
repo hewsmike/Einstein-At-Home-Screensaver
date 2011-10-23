@@ -55,7 +55,7 @@ Earth::~Earth() {
 void Earth::prepare(SolarSystemGlobals::render_quality rq) {
    // Get an OpenGL buffer object.
    buff_obj_points.acquire();
-   // Preparations depend upon the requested rendering quality level.
+   // Preparations may depend upon the requested rendering quality level ?
    switch (rq) {
       case SolarSystemGlobals::RENDER_LOWEST :
       case SolarSystemGlobals::RENDER_MEDIUM :

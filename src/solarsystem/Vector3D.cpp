@@ -25,6 +25,8 @@ const GLfloat Vector3D::NULL_X(0.0f);
 const GLfloat Vector3D::NULL_Y(0.0f);
 const GLfloat Vector3D::NULL_Z(0.0f);
 
+const Vector3D Vector3D::NULLV(NULL_X, NULL_Y, NULL_Z);
+
 Vector3D::Vector3D() : x_comp(Vector3D::NULL_X),
                        y_comp(Vector3D::NULL_Y),
                        z_comp(Vector3D::NULL_Z) {
@@ -73,6 +75,11 @@ Vector3D Vector3D::unit(void) {
       ret_val.set_z(z_comp / mag);
       }
    return ret_val;
+   }
+
+Vector3D Vector3D::nullv(void) {
+   // Return a vector with zero for all components.
+   return Vector3D(NULL_X, NULL_Y, NULL_Z);
    }
 
 bool Vector3D::isNullVector(void) {

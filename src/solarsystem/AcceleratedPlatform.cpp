@@ -18,34 +18,55 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "InertialPlatform.h"
+#include "AcceleratedPlatform.h"
 
-// The initial velocity is motionless.
-const Vector3D InertialPlatform::INIT_VEL(Vector3D::NULLV);
+// The initial acceleration is none.
+const Vector3D AcceleratedPlatform::INIT_ACC(Vector3D::NULLV);
 
-InertialPlatform::InertialPlatform(void) : vel(InertialPlatform::INIT_VEL) {
+AcceleratedPlatform::AcceleratedPlatform(void) : acc(INIT_ACC) {
 	}
 
-InertialPlatform::~InertialPlatform() {
+AcceleratedPlatform::~AcceleratedPlatform() {
    }
 
-Vector3D InertialPlatform::velocity(void) const {
-   return vel;
+Vector3D AcceleratedPlatform::linear_acceleration(void) const {
+   return acc;
    }
 
-void InertialPlatform::set_velocity(const Vector3D& vc) {
-   vel = vc;
+void AcceleratedPlatform::set_linear_acceleration(const Vector3D& ac) {
+   acc = ac;
    }
 
-void InertialPlatform::reset(void) {
-   // Not only reset to a choice of initial velocity ...
-   set_velocity(InertialPlatform::INIT_VEL);
-
-   // ... but also reset the position, and hence orientation too.
-   TranslatablePlatform::reset();
+void AcceleratedPlatform::set_pitch_rate(vec_t rate){
+   SpinPlatform::pitch_rate = rate;
    }
 
-void InertialPlatform::step(void) {
-   // Evolve in position as per current velocity.
-   TranslatablePlatform::set_position(TranslatablePlatform::position() + vel);
+void AcceleratedPlatform::set_roll_rate(vec_t rate) {
+   SpinPlatform::roll_rate = rate;
+   }
+
+void AcceleratedPlatform::set_yaw_rate(vec_t rate) {
+   SpinPlatform::yaw_rate = rate;
+   }
+
+void AcceleratedPlatform::reset(void) {
+   // Not only reset to a choice of initial acceleration ...
+   set_linear_acceleration(INIT_ACC);
+
+   // ... but also reset the velocity, position.
+   InertialPlatform::reset();
+
+   // ... and in rotation and orientation.
+   SpinPlatform::reset();
+   }
+
+void AcceleratedPlatform::step(void) {
+   // Evolve in velocity as per current linear acceleration.
+   InertialPlatform::set_velocity(InertialPlatform::velocity() + acc);
+
+   // Call parent class to further state evolution in translation.
+   InertialPlatform::step();
+
+   // Call parent class to further state evolution in rotation.
+   SpinPlatform::step();
    }

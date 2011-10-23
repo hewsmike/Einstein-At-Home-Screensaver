@@ -18,34 +18,27 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "InertialPlatform.h"
+#include "TranslatablePlatform.h"
 
-// The initial velocity is motionless.
-const Vector3D InertialPlatform::INIT_VEL(Vector3D::NULLV);
+// The initial stance is at origin.
+const Vector3D TranslatablePlatform::INIT_POS(Vector3D::NULLV);
 
-InertialPlatform::InertialPlatform(void) : vel(InertialPlatform::INIT_VEL) {
+TranslatablePlatform::TranslatablePlatform(void) : pos(TranslatablePlatform::INIT_POS) {
 	}
 
-InertialPlatform::~InertialPlatform() {
+TranslatablePlatform::~TranslatablePlatform() {
    }
 
-Vector3D InertialPlatform::velocity(void) const {
-   return vel;
+Vector3D TranslatablePlatform::position(void) const {
+   return pos;
    }
 
-void InertialPlatform::set_velocity(const Vector3D& vc) {
-   vel = vc;
+void TranslatablePlatform::set_position(const Vector3D& ps) {
+   pos = ps;
    }
 
-void InertialPlatform::reset(void) {
-   // Not only reset to a choice of initial velocity ...
-   set_velocity(InertialPlatform::INIT_VEL);
+void TranslatablePlatform::reset(void) {
+   // Reset to a choice of initial position ...
+   set_position(TranslatablePlatform::INIT_POS);
 
-   // ... but also reset the position, and hence orientation too.
-   TranslatablePlatform::reset();
-   }
-
-void InertialPlatform::step(void) {
-   // Evolve in position as per current velocity.
-   TranslatablePlatform::set_position(TranslatablePlatform::position() + vel);
    }

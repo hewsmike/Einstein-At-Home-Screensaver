@@ -48,11 +48,11 @@
  *
  * \author Mike Hewson\n
  */
-
+ 
 class Universe {
    public:
       // TODO - arbitrary distance units here, what of 'realistic' scaling ??
-      /// How far away is the distant sky ?
+      // How far away is the distant sky ?
       static const GLuint CELESTIAL_SPHERE_RADIUS;
 
       /// Enumerants for the scene elements
@@ -62,7 +62,7 @@ class Universe {
        * \brief Constructor
        */
       Universe(void);
-
+      
       /**
        * \brief Destructor
        */
@@ -73,14 +73,14 @@ class Universe {
        *        rendering quality choice
        */
       void activate(void);
-
+      
       /**
        * \brief Toggle the activation setting of an enclosed scene element
        *
        * \param ct the chosen content enumerator
        */
       void toggle(Universe::content ct);
-
+      
       /**
        * \brief Draw the activated enclosed elements for a single frame
        */
@@ -94,5 +94,9 @@ class Universe {
       GridGlobe gg;
       Earth home;
    };
+
+/**
+ * @}
+ */
 
 #endif /*UNIVERSE_H_*/

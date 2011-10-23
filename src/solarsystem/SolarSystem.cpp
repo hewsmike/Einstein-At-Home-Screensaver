@@ -118,7 +118,7 @@ void SolarSystem::initialize(const int width, const int height, const Resource *
          break;
 	   }
 
-   // create pre-drawn display lists
+   // Specify that the scene elements in the universe are to rendered.
    uni.activate();
 
 	glDisable(GL_CLIP_PLANE0);
@@ -140,7 +140,7 @@ void SolarSystem::render(const double tOD) {
    flyboy.step();
 
    // Where are we etc .... in our virtual world?
-   const InertialPlatform& here = flyboy.get_platform();
+   const AcceleratedPlatform& here = flyboy.get_platform();
 
    // Set up the camera position and orientation.
 	gluLookAt(here.position().x(),
@@ -309,6 +309,11 @@ void SolarSystem::keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey k
          // Toggle the state of celestial sphere grid display.
 			uni.toggle(Universe::GRID);
          message += "keyboard F8 : toggle grid";
+         break;
+       case KeySpace:
+         // stop any craft rotation
+			flyboy.null_rotation();
+         message += "keyboard Space : null all rotations";
          break;
 		default:
       	break;

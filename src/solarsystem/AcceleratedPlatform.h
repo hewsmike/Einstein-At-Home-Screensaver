@@ -18,13 +18,11 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef VERTEX_H_
-#define VERTEX_H_
+#ifndef ACCELERATED_PLATFORM_H_
+#define ACCELERATED_PLATFORM_H_
 
-#include <utility>
-
-#include "SDL_opengl.h"
-#include "Vector3D.h"
+#include "InertialPlatform.h"
+#include "SpinPlatform.h"
 
 /**
  * \addtogroup solarsystem Solarsystem
@@ -32,61 +30,65 @@
  */
 
 /**
- * \brief This class encapsulates data relevant to an OpenGL vertex.
+ * \brief Accelerated Cartesian translatable orthonormal vector set
  *
- * It contains a position in 3D space, a normal vector of 3 components
- * and a pair of coordinate values for 2D texture mapping.
+ * This class comprises acceleration state data, accessors and mutators thereof.
+ * HOWEVER this doesn't model angular acceleration ( around centre of mass ),
+ * only linear ( of centre of mass ). A constant angular rotation rate is
+ * already an acceleration ... :-)
  *
  * \author Mike Hewson\n
  */
 
-class Vertex {
+class AcceleratedPlatform : public InertialPlatform, public SpinPlatform {
    public:
       /**
-       * \brief Constructor ( fully qualified )
-       *
-       * \param ps The position of the vertex
-       *
-       * \param nm The normal to the vertex
-       *
-       * \param tc The texture coordinates of the vertex
+       * \brief Constructor
        */
-      Vertex(const Vector3D& ps, const Vector3D& nm,
-             const std::pair<GLfloat, GLfloat>& tc);
+      AcceleratedPlatform(void);
 
-		/**
+      /**
        * \brief Destructor
        */
-      ~Vertex();
+      virtual ~AcceleratedPlatform();
 
       /**
-       * \brief Obtains the position of the vertex
+       * \brief Get the acceleration
        */
-      const Vector3D& position(void) const;
+      Vector3D linear_acceleration(void) const;
 
       /**
-       * \brief Obtains the normal to the vertex
+       * \brief Set the acceleration
        */
-      const Vector3D& normal(void) const;
+      void set_linear_acceleration(const Vector3D& ac);
+
+      void set_pitch_rate(vec_t rate);
+
+      void set_roll_rate(vec_t rate);
+
+      void set_yaw_rate(vec_t rate);
 
       /**
-       * \brief Obtains texture coordinates of the vertex
+       * \brief Reset the platform in acceleration, velocity, position
+       * and rotation
        */
-      const std::pair<GLfloat, GLfloat>& texture_co_ords(void) const;
-      
+      virtual void reset(void);
+
+      /**
+       * \brief Evolve platform one unit step in time
+       */
+      virtual void step(void);
+
    private:
-      /// Position in 3D space.
-      Vector3D pos;
+      /// Fiducial acceleration.
+      static const Vector3D INIT_ACC;
 
-      /// Normal vector.
-      Vector3D norm;
+      // Current acceleration in space.
+      Vector3D acc;
+   };
 
-      /// Coordinate value pair for 2D texturing.
-      std::pair<GLfloat, GLfloat> t_cds;
-	};
-	
 /**
  * @}
  */
 
-#endif // VERTEX_H_
+#endif // ACCELERATED_PLATFORM_H_

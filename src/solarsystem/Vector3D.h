@@ -49,6 +49,8 @@ typedef GLfloat vec_t;
 
 class Vector3D {
    public:
+      static const Vector3D NULLV;
+
       /**
        * \brief Constructor, no arguments, gives the null vector
        */
@@ -84,6 +86,13 @@ class Vector3D {
        * \return The length of the vector
        */
       vec_t len(void);
+
+      /**
+       * \brief Obtain the null vector
+       *
+       * \return The null vector
+       */
+      Vector3D nullv(void);
 
       /**
        * \brief Obtain a unit vector in the same direction as the vector
@@ -140,7 +149,7 @@ class Vector3D {
        * \param The z-component
        */
       void set_z(vec_t zc);
-      
+
    protected:
       /// The x co-ordinate.
       vec_t x_comp;
@@ -150,7 +159,7 @@ class Vector3D {
 
       /// The z co-ordinate.
       vec_t z_comp;
-      
+
    private:
       /// Initialisers for the null vector.
       static const GLfloat NULL_LENGTH;

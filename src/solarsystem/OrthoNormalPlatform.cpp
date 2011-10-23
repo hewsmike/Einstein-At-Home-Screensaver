@@ -18,34 +18,48 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "InertialPlatform.h"
+#include "OrthoNormalPlatform.h"
 
-// The initial velocity is motionless.
-const Vector3D InertialPlatform::INIT_VEL(Vector3D::NULLV);
+// NOTE we want to have these class invariants :
+//    'up' , 'look' and 'cross' vectors form a right handed
+//    orthonormal Cartesian set
 
-InertialPlatform::InertialPlatform(void) : vel(InertialPlatform::INIT_VEL) {
+// The initial stance puts one looking along the negative x-axis with the z-axis
+// being 'up', thus implying the positive y-axis is to the right of view.
+const Vector3D OrthoNormalPlatform::INIT_LOOK(-1.0f, 0.0f, 0.0f);
+const Vector3D OrthoNormalPlatform::INIT_UP(0.0f, 0.0f, 1.0f);
+
+OrthoNormalPlatform::OrthoNormalPlatform(void) {
+   reset();
 	}
 
-InertialPlatform::~InertialPlatform() {
+OrthoNormalPlatform::~OrthoNormalPlatform() {
    }
 
-Vector3D InertialPlatform::velocity(void) const {
-   return vel;
+Vector3D OrthoNormalPlatform::cross(void) const {
+   // Lazy evaluated as per current values of 'look' and 'up' vectors.
+   return look_dir * up_dir;
    }
 
-void InertialPlatform::set_velocity(const Vector3D& vc) {
-   vel = vc;
+Vector3D OrthoNormalPlatform::look(void) const {
+   return look_dir;
    }
 
-void InertialPlatform::reset(void) {
-   // Not only reset to a choice of initial velocity ...
-   set_velocity(InertialPlatform::INIT_VEL);
-
-   // ... but also reset the position, and hence orientation too.
-   TranslatablePlatform::reset();
+Vector3D OrthoNormalPlatform::up(void) const {
+   return up_dir;
    }
 
-void InertialPlatform::step(void) {
-   // Evolve in position as per current velocity.
-   TranslatablePlatform::set_position(TranslatablePlatform::position() + vel);
+void OrthoNormalPlatform::set_look(const Vector3D& n_look) {
+   look_dir = n_look;
    }
+
+void OrthoNormalPlatform::set_up(const Vector3D& n_up) {
+   up_dir = n_up;
+   }
+
+void OrthoNormalPlatform::reset(void) {
+   // This will set 'look' and 'up' as orthogonal according to the
+   // definitions of INIT_LOOK and INIT_UP.
+   look_dir = INIT_LOOK;
+	up_dir = INIT_UP;
+	}

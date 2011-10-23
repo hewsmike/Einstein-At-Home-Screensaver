@@ -152,6 +152,7 @@ public:
       KeyF7 = 0x2000007,
       KeyF8 = 0x2000008,
 		KeyEnter = 0x4000000,
+      KeySpace = 0x4000001,
 		KeyEscape = 0x8000000
 	};
 

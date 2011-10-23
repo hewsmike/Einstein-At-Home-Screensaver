@@ -384,6 +384,9 @@ void WindowManager::eventLoop()
             case SDLK_F8:
 					eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyF8);
 					break;
+            case SDLK_SPACE:
+               eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeySpace);
+					break;
 				case SDLK_RETURN:
 					toggleFullscreen();
 				default:

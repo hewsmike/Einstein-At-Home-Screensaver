@@ -21,6 +21,7 @@
 #ifndef SOLARSYSTEM_GLOBALS_H_
 #define SOLARSYSTEM_GLOBALS_H_
 
+#include <cmath>
 #include <iostream>
 #include <string>
 
@@ -55,7 +56,7 @@ class SolarSystemGlobals {
       // Levels of rendering quality.
       enum render_quality {RENDER_LOWEST, RENDER_MEDIUM, RENDER_HIGHEST};
 
-      /// Degree measures of arc.
+      /// Useful degree measures of arc.
       static const GLfloat FULL_CIRCLE_DEG;
       static const GLfloat HALF_CIRCLE_DEG;
       static const GLfloat QUARTER_CIRCLE_DEG;

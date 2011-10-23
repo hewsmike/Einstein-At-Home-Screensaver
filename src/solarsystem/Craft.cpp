@@ -25,13 +25,14 @@ const vec_t Craft::MIN_EARTH_RANGE(Earth::EARTH_RADIUS*(1.2f));
 const vec_t Craft::START_RADIUS(Earth::EARTH_RADIUS*(2.0f));
 const vec_t Craft::RETURN_SPEED(5.0f);
 const vec_t Craft::MAX_SPEED(50.0f);
-const vec_t Craft::PITCH_RATE((PI*2.0f)/180.0f);
-const vec_t Craft::ROLL_RATE((PI*2.0f)/180.0f);
 const vec_t Craft::SPEED_DEC(2.5f);
 const vec_t Craft::SPEED_INC(2.5f);
 const vec_t Craft::LATERAL_THRUST_RATE(0.5f);
 const vec_t Craft::VERTICAL_THRUST_RATE(0.5f);
-const vec_t Craft::YAW_RATE((PI*2.0f)/180.0f);
+
+const vec_t Craft::PITCH_RATE(PI/360.0f);
+const vec_t Craft::ROLL_RATE(PI/360.0f);
+const vec_t Craft::YAW_RATE(PI/360.0f);
 
 Craft::Craft() {
    go_home();
@@ -40,12 +41,12 @@ Craft::Craft() {
 Craft::~Craft() {
 	}
 
-const InertialPlatform& Craft::get_platform() const {
+const AcceleratedPlatform& Craft::get_platform() const {
 	return state;
 	}
 
 void Craft::step(void) {
-   state.translate();
+   state.step();
    // Bounds and collision checking ....
 
    // Too far away from home.
@@ -87,19 +88,33 @@ void Craft::reverse_thrust(void) {
    }
 
 void Craft::nose_down() {
-   state.pitch_down(Craft::PITCH_RATE);
+   state.set_pitch_rate(-Craft::PITCH_RATE);
    }
 
 void Craft::nose_up() {
-   state.pitch_up(Craft::PITCH_RATE);
+   state.set_pitch_rate(Craft::PITCH_RATE);
    }
 
 void Craft::roll_right() {
-   state.roll_right(Craft::ROLL_RATE);
+   state.set_roll_rate(-Craft::ROLL_RATE);
    }
 
 void Craft::roll_left() {
-   state.roll_left(Craft::ROLL_RATE);
+   state.set_roll_rate(Craft::ROLL_RATE);
+   }
+
+void Craft::yaw_right() {
+   state.set_yaw_rate(-Craft::YAW_RATE);
+   }
+
+void Craft::yaw_left() {
+   state.set_yaw_rate(Craft::YAW_RATE);
+   }
+
+void Craft::null_rotation(void) {
+   state.set_pitch_rate(0.0f);
+   state.set_roll_rate(0.0f);
+   state.set_yaw_rate(0.0f);
    }
 
 void Craft::stop(void) {
@@ -128,14 +143,6 @@ void Craft::down_thrust() {
    // Subtract from the current velocity vector a fraction of the 'up' vector.
    // That is : thrust is applied along the ceiling to floor axis.
    vector_thrust(-Craft::VERTICAL_THRUST_RATE*state.up());
-   }
-
-void Craft::yaw_right() {
-   state.yaw_right(Craft::YAW_RATE);
-   }
-
-void Craft::yaw_left() {
-   state.yaw_left(Craft::YAW_RATE);
    }
 
 void Craft::vector_thrust(Vector3D thrust) {
