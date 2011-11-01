@@ -20,21 +20,17 @@
 
 #include "Resource.h"
 
-Resource::Resource(const string identifier, const vector<unsigned char>& data) : m_Data(data)
-{
-	m_Identifier = identifier;
-}
+Resource::Resource(const string identifier, const vector<unsigned char>& data) : m_Data(data) {
+   m_Identifier = identifier;
+   }
 
-Resource::~Resource()
-{
-}
+Resource::~Resource() {
+   }
 
-string Resource::identifier() const
-{
-	return m_Identifier;
-}
+string Resource::identifier() const {
+   return m_Identifier;
+   }
 
-const vector<unsigned char>* Resource::data() const
-{
-	return &m_Data;
-}
+const vector<unsigned char>* Resource::data() const {
+   return &m_Data;
+   }

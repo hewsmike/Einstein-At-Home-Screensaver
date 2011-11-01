@@ -44,45 +44,45 @@ using namespace std;
  * Max-Planck-Institute for Gravitational Physics\n
  * Hannover, Germany
  */
-class Resource
-{
-public:
-	/**
-	 * \brief Constructor
-	 *
-	 * \param identifier The string used to identify this resource
-	 * \param data A vector of byte values used to initialize the resource's data container
-	 */
-	Resource(const string identifier, const vector<unsigned char>& data);
 
-	/// Destructor
-	virtual ~Resource();
+class Resource {
+   public:
+      /**
+       * \brief Constructor
+       *
+       * \param identifier The string used to identify this resource
+       * \param data A vector of byte values used to initialize the resource's data container
+       */
+      Resource(const string identifier, const vector<unsigned char>& data);
 
-	/**
-	 * \brief Retrieve the identifier of this resource
-	 *
-	 * \return The identifier of this resource
-	 */
-	string identifier() const;
+      /// Destructor
+      virtual ~Resource();
 
-	/**
-	 * \brief Retrieve the data stored in this resource
-	 *
-	 * The data can be accessed using the constant pointer returned by this method.
-	 * The pointer points to the beginning of a byte value sequence. The length of the
-	 * vector equals the the size of the data content.
-	 *
-	 * \return The base pointer to the data contained in this resource
-	 */
-	const vector<unsigned char> * data() const;
+      /**
+       * \brief Retrieve the identifier of this resource
+       *
+       * \return The identifier of this resource
+       */
+      string identifier() const;
 
-private:
-	/// The identifer of this resource
-	string m_Identifier;
+      /**
+       * \brief Retrieve the data stored in this resource
+       *
+       * The data can be accessed using the constant pointer returned by this method.
+       * The pointer points to the beginning of a byte value sequence. The length of the
+       * vector equals the the size of the data content.
+       *
+       * \return The base pointer to the data contained in this resource
+       */
+      const vector<unsigned char> * data() const;
 
-	/// The data storage container of this resource
-	const vector<unsigned char> m_Data;
-};
+   private:
+      /// The identifer of this resource
+      string m_Identifier;
+
+      /// The data storage container of this resource
+      const vector<unsigned char> m_Data;
+   };
 
 /**
  * @}
