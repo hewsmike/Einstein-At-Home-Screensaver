@@ -21,15 +21,12 @@
 #include "AbstractGraphicsEngine.h"
 
 AbstractGraphicsEngine::AbstractGraphicsEngine(string sharedMemoryIdentifier) :
-	m_BoincAdapter(sharedMemoryIdentifier)
-{
-}
+   m_BoincAdapter(sharedMemoryIdentifier) {
+   }
 
-AbstractGraphicsEngine::~AbstractGraphicsEngine()
-{
-}
+AbstractGraphicsEngine::~AbstractGraphicsEngine() {
+   }
 
-void AbstractGraphicsEngine::refreshLocalBOINCInformation()
-{
-	m_BoincAdapter.refresh();
-}
+void AbstractGraphicsEngine::refreshLocalBOINCInformation() {
+   m_BoincAdapter.refresh();
+   }
