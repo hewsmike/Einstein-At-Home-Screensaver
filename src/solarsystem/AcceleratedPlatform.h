@@ -68,6 +68,12 @@ class AcceleratedPlatform : public InertialPlatform, public SpinPlatform {
 
       void set_yaw_rate(vec_t rate);
 
+      vec_t get_pitch_rate(void);
+
+      vec_t get_roll_rate(void);
+
+      vec_t get_yaw_rate(void);
+
       /**
        * \brief Reset the platform in acceleration, velocity, position
        * and rotation

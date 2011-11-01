@@ -24,7 +24,7 @@ const vec_t SpinPlatform::NULL_RATE(0.0f);
 
 SpinPlatform::SpinPlatform(void) {
    reset();
-	}
+   }
 
 SpinPlatform::~SpinPlatform() {
    }
@@ -62,7 +62,10 @@ void SpinPlatform::reset(void) {
    }
 
 void SpinPlatform::step(void) {
+   // Confession here : these operations don't actually commute, but you have to pick
+   // some ordering. Commutation is approached in the limit of tiny rates. But hey,
+   // don't use this code to land the Space Shuttle ! :-)
    pitch(pitch_rate);
    roll(roll_rate);
    yaw(yaw_rate);
-	}
+   }

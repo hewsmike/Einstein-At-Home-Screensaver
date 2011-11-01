@@ -28,8 +28,8 @@
 #include "AcceleratedPlatform.h"
 #include "Universe.h"
 
-class Craft{
-	private:
+class Craft {
+   private:
       /// Global bounds for craft position
       static const vec_t MAX_RANGE;
       static const vec_t MIN_EARTH_RANGE;
@@ -40,9 +40,10 @@ class Craft{
       static const vec_t MAX_SPEED;
 
       /// Rates for about centre of mass craft rotations
-      static const vec_t PITCH_RATE;
-      static const vec_t ROLL_RATE;
-      static const vec_t YAW_RATE;
+      static const vec_t PITCH_RATE_INC;
+      static const vec_t ROLL_RATE_INC;
+      static const vec_t YAW_RATE_INC;
+      static const vec_t RATE_FUDGE;
 
       /// Speed setting post 'bounce' off object
       static const vec_t RETURN_SPEED;
@@ -61,9 +62,9 @@ class Craft{
 
       void vector_thrust(Vector3D thrust);
 
-	public:
-		Craft();
-		~Craft();
+   public:
+      Craft();
+      ~Craft();
 
       void go_home(void);
       void nose_down();
@@ -82,7 +83,7 @@ class Craft{
       void up_thrust(void);
       void down_thrust(void);
 
-		const AcceleratedPlatform& get_platform() const;
-	};
+      const AcceleratedPlatform& get_platform() const;
+   };
 
 #endif // CRAFT_H_

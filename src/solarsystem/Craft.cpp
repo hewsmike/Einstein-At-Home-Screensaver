@@ -21,8 +21,8 @@
 #include "Craft.h"
 
 const vec_t Craft::MAX_RANGE(Universe::CELESTIAL_SPHERE_RADIUS * 8);
-const vec_t Craft::MIN_EARTH_RANGE(Earth::EARTH_RADIUS*(1.2f));
-const vec_t Craft::START_RADIUS(Earth::EARTH_RADIUS*(2.0f));
+const vec_t Craft::MIN_EARTH_RANGE(Universe::EARTH_RADIUS*(1.2f));
+const vec_t Craft::START_RADIUS(Universe::EARTH_RADIUS*(2.0f));
 const vec_t Craft::RETURN_SPEED(5.0f);
 const vec_t Craft::MAX_SPEED(50.0f);
 const vec_t Craft::SPEED_DEC(2.5f);
@@ -30,9 +30,10 @@ const vec_t Craft::SPEED_INC(2.5f);
 const vec_t Craft::LATERAL_THRUST_RATE(0.5f);
 const vec_t Craft::VERTICAL_THRUST_RATE(0.5f);
 
-const vec_t Craft::PITCH_RATE(PI/360.0f);
-const vec_t Craft::ROLL_RATE(PI/360.0f);
-const vec_t Craft::YAW_RATE(PI/360.0f);
+const vec_t Craft::RATE_FUDGE(0.2f);
+const vec_t Craft::PITCH_RATE_INC(RATE_FUDGE*(PI/360.0f));
+const vec_t Craft::ROLL_RATE_INC(RATE_FUDGE*(PI/360.0f));
+const vec_t Craft::YAW_RATE_INC(RATE_FUDGE*(PI/360.0f));
 
 Craft::Craft() {
    go_home();
@@ -88,27 +89,28 @@ void Craft::reverse_thrust(void) {
    }
 
 void Craft::nose_down() {
-   state.set_pitch_rate(-Craft::PITCH_RATE);
+   // TODO - cap these rotation rates
+   state.set_pitch_rate(state.get_pitch_rate() - Craft::PITCH_RATE_INC);
    }
 
 void Craft::nose_up() {
-   state.set_pitch_rate(Craft::PITCH_RATE);
+   state.set_pitch_rate(state.get_pitch_rate() + Craft::PITCH_RATE_INC);
    }
 
 void Craft::roll_right() {
-   state.set_roll_rate(-Craft::ROLL_RATE);
+   state.set_roll_rate(state.get_roll_rate() - Craft::ROLL_RATE_INC);
    }
 
 void Craft::roll_left() {
-   state.set_roll_rate(Craft::ROLL_RATE);
+   state.set_roll_rate(state.get_roll_rate() + Craft::ROLL_RATE_INC);
    }
 
 void Craft::yaw_right() {
-   state.set_yaw_rate(-Craft::YAW_RATE);
+   state.set_yaw_rate(state.get_yaw_rate() - Craft::YAW_RATE_INC);
    }
 
 void Craft::yaw_left() {
-   state.set_yaw_rate(Craft::YAW_RATE);
+   state.set_yaw_rate(state.get_yaw_rate() + Craft::YAW_RATE_INC);
    }
 
 void Craft::null_rotation(void) {

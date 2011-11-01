@@ -37,7 +37,7 @@ void AcceleratedPlatform::set_linear_acceleration(const Vector3D& ac) {
    acc = ac;
    }
 
-void AcceleratedPlatform::set_pitch_rate(vec_t rate){
+void AcceleratedPlatform::set_pitch_rate(vec_t rate) {
    SpinPlatform::pitch_rate = rate;
    }
 
@@ -47,6 +47,18 @@ void AcceleratedPlatform::set_roll_rate(vec_t rate) {
 
 void AcceleratedPlatform::set_yaw_rate(vec_t rate) {
    SpinPlatform::yaw_rate = rate;
+   }
+
+vec_t AcceleratedPlatform::get_pitch_rate(void) {
+   return SpinPlatform::pitch_rate;
+   }
+
+vec_t AcceleratedPlatform::get_roll_rate(void) {
+   return SpinPlatform::roll_rate;
+   }
+
+vec_t AcceleratedPlatform::get_yaw_rate(void) {
+   return SpinPlatform::yaw_rate;
    }
 
 void AcceleratedPlatform::reset(void) {
