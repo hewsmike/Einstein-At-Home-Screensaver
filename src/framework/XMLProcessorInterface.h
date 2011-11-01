@@ -43,51 +43,50 @@ using namespace std;
  * Max-Planck-Institute for Gravitational Physics\n
  * Hannover, Germany
  */
-class XMLProcessorInterface
-{
-public:
 
-	/// Empty Destructor
-	virtual ~XMLProcessorInterface() {};
+class XMLProcessorInterface {
+   public:
+      /// Empty Destructor
+      virtual ~XMLProcessorInterface() {};
 
-	/**
-	 * \brief Sets the XML document to be processed
-	 *
-	 * \param xml The XML document to be used for processing
-	 * \param url The base URL of the document
-	 */
-	virtual void setXmlDocument(const string xml, const string url) = 0;
+      /**
+       * \brief Sets the XML document to be processed
+       *
+       * \param xml The XML document to be used for processing
+       * \param url The base URL of the document
+       */
+      virtual void setXmlDocument(const string xml, const string url) = 0;
 
-	/**
-	 * \brief Retrieves a single node's (element or attribute) content
-	 *
-	 * This method takes a XPath expression that properly defines how to search
-	 * for a specific node (element or attribute). If the XPath search results
-	 * in more than one instance or if the node (or its content) can't be found
-	 * the return value is NULL.
-	 *
-	 * \param xpath The XPath expression to be used for seaching
-	 *
-	 * \return The node's content or NULL in case of an error
-	 */
-	virtual string getSingleNodeContentByXPath(const string xpath) = 0;
+      /**
+       * \brief Retrieves a single node's (element or attribute) content
+       *
+       * This method takes a XPath expression that properly defines how to search
+       * for a specific node (element or attribute). If the XPath search results
+       * in more than one instance or if the node (or its content) can't be found
+       * the return value is NULL.
+       *
+       * \param xpath The XPath expression to be used for seaching
+       *
+       * \return The node's content or NULL in case of an error
+       */
+      virtual string getSingleNodeContentByXPath(const string xpath) = 0;
 
-	/**
-	 * \brief Retrieves a single node's (element or attribute) content
-	 *
-	 * This method takes a XPath expression that properly defines how to search
-	 * for a specific node (element or attribute). If the XPath search results
-	 * in more than one instance or if the node (or its content) can't be found
-	 * the return value is NULL.
-	 *
-	 * \param xml The XML document to be used for processing
-	 * \param url The base URL of the document
-	 * \param xpath The XPath expression to be used for seaching
-	 *
-	 * \return The node's content or NULL in case of an error
-	 */
-	virtual string getSingleNodeContentByXPath(const string xml, const string url, const string xpath) = 0;
-};
+      /**
+       * \brief Retrieves a single node's (element or attribute) content
+       *
+       * This method takes a XPath expression that properly defines how to search
+       * for a specific node (element or attribute). If the XPath search results
+       * in more than one instance or if the node (or its content) can't be found
+       * the return value is NULL.
+       *
+       * \param xml The XML document to be used for processing
+       * \param url The base URL of the document
+       * \param xpath The XPath expression to be used for seaching
+       *
+       * \return The node's content or NULL in case of an error
+       */
+      virtual string getSingleNodeContentByXPath(const string xml, const string url, const string xpath) = 0;
+   };
 
 /**
  * @}
