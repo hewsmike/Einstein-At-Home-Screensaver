@@ -56,34 +56,34 @@ using namespace std;
  * Max-Planck-Institute for Gravitational Physics\n
  * Hannover, Germany
  */
-class ResourceFactory
-{
-public:
-	/// Default constructor
-	ResourceFactory();
 
-	/// Destructor
-	virtual ~ResourceFactory();
+class ResourceFactory {
+   public:
+      /// Default constructor
+      ResourceFactory();
 
-	/**
-	 * \brief Creates an instance of the requested resource
-	 *
-	 * The identifier has to be the same as the one specified in the \c *.orc file
-	 * used to compile the resources
-	 *
-	 * \param identifier The identifer of the resource to be instantiated
-	 *
-	 * \return A constant pointer to the newly instantiated resource
-	 * or NULL if the specified resource could not be found
-	 *
-	 * \see ResourceCompiler
-	 */
-	const Resource* createInstance(const string identifier);
+      /// Destructor
+      virtual ~ResourceFactory();
 
-private:
-	/// Hashtable mapping identifiers to resource data
-	map<string, vector<unsigned char> > m_ResourceMap;
-};
+      /**
+       * \brief Creates an instance of the requested resource
+       *
+       * The identifier has to be the same as the one specified in the \c *.orc file
+       * used to compile the resources
+       *
+       * \param identifier The identifer of the resource to be instantiated
+       *
+       * \return A constant pointer to the newly instantiated resource
+       * or NULL if the specified resource could not be found
+       *
+       * \see ResourceCompiler
+       */
+      const Resource* createInstance(const string identifier);
+
+   private:
+      /// Hashtable mapping identifiers to resource data
+      map<string, vector<unsigned char> > m_ResourceMap;
+   };
 
 /**
  * \brief Declaration of the external list of resource identifiers
