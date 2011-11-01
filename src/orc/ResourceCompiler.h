@@ -61,65 +61,65 @@ using namespace std;
  * Max-Planck-Institute for Gravitational Physics\n
  * Hannover, Germany
  */
-class ResourceCompiler
-{
-public:
-    /**
-     * \brief Constructor
-     *
-     * \param inputFilename Name of the resource specification file (source, \c *.orc)
-     * \param outputFilename Name of the converted recources file (destination, \c *.cpp)
-     */
-    ResourceCompiler(const string inputFilename, const string outputFilename);
 
-    /// Destructor
-    virtual ~ResourceCompiler();
+class ResourceCompiler {
+   public:
+      /**
+       * \brief Constructor
+       *
+       * \param inputFilename Name of the resource specification file (source, \c *.orc)
+       * \param outputFilename Name of the converted recources file (destination, \c *.cpp)
+       */
+      ResourceCompiler(const string inputFilename, const string outputFilename);
 
-    /**
-     * \brief Converts the specified resources into the specified source code file
-     *
-     * It iterates over all resources found in the local cache and stores their data
-     * and meta information as source code in the destination file. Thus parseInputFile()
-     * and loadBinaryData() have to be called first for this to work.
-     *
-     * \see parseInputFile
-     * \see loadBinaryData
-     */
-    void compile();
+      /// Destructor
+      virtual ~ResourceCompiler();
 
-private:
-    /**
-     * \brief Parses the specified input file
-     *
-     * After validating the resource specification file its contents are
-     * stored for later use.
-     *
-     * \see loadBinaryData
-     */
-    void parseInputFile();
+      /**
+       * \brief Converts the specified resources into the specified source code file
+       *
+       * It iterates over all resources found in the local cache and stores their data
+       * and meta information as source code in the destination file. Thus parseInputFile()
+       * and loadBinaryData() have to be called first for this to work.
+       *
+       * \see parseInputFile
+       * \see loadBinaryData
+       */
+      void compile();
 
-    /**
-     * \brief Loads binary resource file data into the local cache
-     *
-     * This methods tries to open all resource files found by loadBinaryData()
-     * and copies their binary data into the local cache.
-     *
-     * \see parseInputFile
-     */
-    void loadBinaryData();
+   private:
+      /**
+       * \brief Parses the specified input file
+       *
+       * After validating the resource specification file its contents are
+       * stored for later use.
+       *
+       * \see loadBinaryData
+       */
+      void parseInputFile();
 
-    /// Path and filename of the resource specification file (source)
-    string m_ResourceSpecFile;
+      /**
+       * \brief Loads binary resource file data into the local cache
+       *
+       * This methods tries to open all resource files found by loadBinaryData()
+       * and copies their binary data into the local cache.
+       *
+       * \see parseInputFile
+       */
+      void loadBinaryData();
 
-    /// Path and filename of the converted source code file (destination)
-    string m_ResourceCodeFile;
+      /// Path and filename of the resource specification file (source)
+      string m_ResourceSpecFile;
 
-    /// Mapping between logical and physical resource names
-    map<string, string> m_ResourceFileMap;
+      /// Path and filename of the converted source code file (destination)
+      string m_ResourceCodeFile;
 
-    /// %Resource cache (identified by logical resource name)
-    map<string, vector<unsigned char> > m_ResourceDataMap;
-};
+      /// Mapping between logical and physical resource names
+      map<string, string> m_ResourceFileMap;
+
+      /// %Resource cache (identified by logical resource name)
+      map<string, vector<unsigned char> > m_ResourceDataMap;
+   };
 
 /**
  * @}
