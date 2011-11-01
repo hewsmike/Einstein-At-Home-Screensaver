@@ -35,48 +35,48 @@
  *        just like below. One doesn't ever compile this file by the way!! :-)
  *
  * A somewhat longer explanation with further detail
- * 
+ *
  * \see SomeKnownClassOfInterest
  *
  * \author Mike Hewson\n
  */
- 
+
 class DocumentationExample {
    public:
-   /**
-    * \brief Constructor
-    *
-    * \param parameter1 : a brief note about parameter1
-    * \param parameter2 : a brief note about parameter2
-    */
-   DocumentationExample(sometype parameter1, sometype parameter2);
+      /**
+       * \brief Constructor
+       *
+       * \param parameter1 : a brief note about parameter1
+       * \param parameter2 : a brief note about parameter2
+       */
+      DocumentationExample(sometype parameter1, sometype parameter2);
 
-   /**
-    * \brief Destructor
-    */
-   ~DocumentationExample();
+      /**
+       * \brief Destructor
+       */
+      ~DocumentationExample();
 
-   /**
-    * \brief A short explanation of some public member function
-    *
-    * The more detailed longer explanation.
-    *
-    * \see someMemberFunctionOfInterest
-    */
-   return_type publicMemberFunction();
+      /**
+       * \brief A short explanation of some public member function
+       *
+       * The more detailed longer explanation.
+       *
+       * \see someMemberFunctionOfInterest
+       */
+      return_type publicMemberFunction();
 
    private:
-    /**
-     * \brief A short explanation of some private member function
-     *
-     * The more detailed longer explanation.
-     *
-     * \see someMemberFunctionOfInterest
-     */
-   return_type privateMemberFunction();
+      /**
+       * \brief A short explanation of some private member function
+       *
+       * The more detailed longer explanation.
+       *
+       * \see someMemberFunctionOfInterest
+       */
+      return_type privateMemberFunction();
 
-   /// Comment upon some private data member
-   sometype some_private_data_member;
+      /// Comment upon some private data member
+      sometype some_private_data_member;
    };
 
 /**
