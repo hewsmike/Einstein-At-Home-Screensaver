@@ -24,6 +24,7 @@
 #include <string>
 
 #include "Constellations.h"
+#include "Craft.h"
 #include "ErrorHandler.h"
 #include "Globe.h"
 #include "GridGlobe.h"
@@ -31,6 +32,7 @@
 #include "SolarSystemGlobals.h"
 #include "Sphere.h"
 #include "Supernovae.h"
+#include "Vector3D.h"
 #include "VectorSP.h"
 
 /**
@@ -51,12 +53,6 @@
 
 class Simulation {
    public:
-      // TODO - arbitrary distance units here, what of 'realistic' scaling ??
-      // How far away is the distant sky ?
-      static const GLuint CELESTIAL_SPHERE_RADIUS;
-
-      static const GLuint EARTH_RADIUS;
-
       /// Enumerants for the scene elements
       enum content {AXES, CONSTELLATIONS, EARTH, GRID, PULSARS, SUPERNOVAE};
 
@@ -88,6 +84,16 @@ class Simulation {
        */
       void draw(void);
 
+      Vector3D getViewPosition(void) const;
+
+      Vector3D getViewDirection(void) const;
+
+      Vector3D getViewUp(void) const;
+
+      void step(void);
+
+      void moveRequest(SolarSystemGlobals::movements mv);
+
    private:
       static const std::string EARTH_NAME;
       static const std::string EARTH_IMAGE_FILE;
@@ -111,6 +117,8 @@ class Simulation {
       Supernovae sn;
       GridGlobe gg;
       Globe earth;
+
+      Craft flyboy;
    };
 
 /**

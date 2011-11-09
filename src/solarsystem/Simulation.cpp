@@ -20,11 +20,9 @@
 
 #include "Simulation.h"
 
-const GLuint Simulation::CELESTIAL_SPHERE_RADIUS(10000);
-
 const std::string Simulation::EARTH_NAME("Earth");
 const std::string Simulation::EARTH_IMAGE_FILE("earthmap.bmp");
-const GLuint Simulation::EARTH_RADIUS(100);
+
 const GLuint Simulation::EARTH_STACKS(37);
 const GLuint Simulation::EARTH_SLICES(72);
 const GLfloat Simulation::GREENWICH_TEXTURE_OFFSET(-0.5f);
@@ -32,13 +30,13 @@ const GLfloat Simulation::GREENWICH_TEXTURE_OFFSET(-0.5f);
 const unsigned int Simulation::COUNT_START(110000);
 const unsigned int Simulation::COUNT_END(0);
 
-Simulation::Simulation() : cs(CELESTIAL_SPHERE_RADIUS),
-                       ps(CELESTIAL_SPHERE_RADIUS - 25),
-                       sn(CELESTIAL_SPHERE_RADIUS - 50),
-                       gg(CELESTIAL_SPHERE_RADIUS + 50, 36, 19),
+Simulation::Simulation() : cs(SolarSystemGlobals::CELESTIAL_SPHERE_RADIUS),
+                       ps(SolarSystemGlobals::CELESTIAL_SPHERE_RADIUS - 25),
+                       sn(SolarSystemGlobals::CELESTIAL_SPHERE_RADIUS - 50),
+                       gg(SolarSystemGlobals::CELESTIAL_SPHERE_RADIUS + 50, 36, 19),
                        earth(EARTH_NAME,
                              EARTH_IMAGE_FILE,
-                             EARTH_RADIUS,
+                             SolarSystemGlobals::EARTH_RADIUS,
                              EARTH_STACKS,
                              EARTH_SLICES,
                              GREENWICH_TEXTURE_OFFSET) {
@@ -126,4 +124,24 @@ void Simulation::toggle(Simulation::content ct) {
          ErrorHandler::record(msg, ErrorHandler::FATAL);
          break;
       }
+   }
+
+Vector3D Simulation::getViewPosition(void) const {
+   return flyboy.get_platform().position();
+   }
+
+Vector3D Simulation::getViewDirection(void) const {
+   return flyboy.get_platform().look();
+   }
+
+Vector3D Simulation::getViewUp(void) const {
+   return flyboy.get_platform().up();
+   }
+
+void Simulation::step(void) {
+   flyboy.step();
+   }
+
+void Simulation::moveRequest(SolarSystemGlobals::movements mv) {
+   flyboy.manouevre(mv);
    }

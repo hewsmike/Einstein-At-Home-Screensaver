@@ -53,8 +53,30 @@
 
 class SolarSystemGlobals {
    public:
+      enum movements {GO_HOME,
+                      STOP_TRANSLATION,
+                      STOP_ROTATION,
+                      FORWARD,
+                      REVERSE,
+                      UPWARDS,
+                      DOWNWARDS,
+                      LEFTWARDS,
+                      RIGHTWARDS,
+                      PITCH_UP,
+                      PITCH_DOWN,
+                      ROLL_LEFT,
+                      ROLL_RIGHT,
+                      YAW_LEFT,
+                      YAW_RIGHT };
+
       // Levels of rendering quality.
       enum render_quality {RENDER_LOWEST, RENDER_MEDIUM, RENDER_HIGHEST};
+
+      // TODO - arbitrary distance units here, what of 'realistic' scaling ??
+      // How far away is the distant sky ?
+      static const GLuint CELESTIAL_SPHERE_RADIUS;
+
+      static const GLuint EARTH_RADIUS;
 
       /// Useful degree measures of arc.
       static const GLfloat FULL_CIRCLE_DEG;

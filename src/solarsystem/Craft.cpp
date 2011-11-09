@@ -20,9 +20,9 @@
 
 #include "Craft.h"
 
-const vec_t Craft::MAX_RANGE(Universe::CELESTIAL_SPHERE_RADIUS * 8);
-const vec_t Craft::MIN_EARTH_RANGE(Universe::EARTH_RADIUS*(1.2f));
-const vec_t Craft::START_RADIUS(Universe::EARTH_RADIUS*(2.0f));
+const vec_t Craft::MAX_RANGE(SolarSystemGlobals::CELESTIAL_SPHERE_RADIUS * 8);
+const vec_t Craft::MIN_EARTH_RANGE(SolarSystemGlobals::EARTH_RADIUS*(1.2f));
+const vec_t Craft::START_RADIUS(SolarSystemGlobals::EARTH_RADIUS*(2.0f));
 const vec_t Craft::RETURN_SPEED(5.0f);
 const vec_t Craft::MAX_SPEED(50.0f);
 const vec_t Craft::SPEED_DEC(2.5f);
@@ -37,14 +37,67 @@ const vec_t Craft::YAW_RATE_INC(RATE_FUDGE*(PI/360.0f));
 
 Craft::Craft() {
    go_home();
-  	}
+   }
 
 Craft::~Craft() {
-	}
+   }
 
 const AcceleratedPlatform& Craft::get_platform() const {
-	return state;
-	}
+   return state;
+   }
+
+void Craft::manouevre(SolarSystemGlobals::movements mov) {
+   switch(mov) {
+      case SolarSystemGlobals::GO_HOME :
+         go_home();
+         break;
+      case SolarSystemGlobals::STOP_TRANSLATION :
+         stop();
+         break;
+      case SolarSystemGlobals::STOP_ROTATION :
+         null_rotation();
+         break;
+      case SolarSystemGlobals::FORWARD :
+         forward_thrust();
+         break;
+      case SolarSystemGlobals::REVERSE :
+         reverse_thrust();
+         break;
+      case SolarSystemGlobals::UPWARDS :
+         up_thrust();
+         break;
+      case SolarSystemGlobals::DOWNWARDS :
+         down_thrust();
+         break;
+      case SolarSystemGlobals::LEFTWARDS :
+         left_thrust();
+         break;
+      case SolarSystemGlobals::RIGHTWARDS :
+         right_thrust();
+         break;
+      case SolarSystemGlobals::PITCH_UP :
+         nose_up();
+         break;
+      case SolarSystemGlobals::PITCH_DOWN :
+         nose_down();
+         break;
+      case SolarSystemGlobals::ROLL_LEFT :
+         roll_left();
+         break;
+      case SolarSystemGlobals::ROLL_RIGHT :
+         roll_right();
+         break;
+      case SolarSystemGlobals::YAW_LEFT :
+         yaw_left();
+         break;
+      case SolarSystemGlobals::YAW_RIGHT :
+         yaw_right();
+         break;
+      default :
+         ErrorHandler::record("Craft::manouevre() - bad switch case reached (default)", ErrorHandler::FATAL);
+         break;
+      }
+   }
 
 void Craft::step(void) {
    state.step();

@@ -23,15 +23,15 @@
 const int SolarSystem::FAR_LOOK_RATIO(1000);
 const GLdouble SolarSystem::FOV_ANGLE(45.0f);
 const GLdouble SolarSystem::NEAR_CLIP(0.5f);
-const GLdouble SolarSystem::FAR_CLIP(Universe::CELESTIAL_SPHERE_RADIUS * 10);
-const int SolarSystem::FAR_LOOK_DISTANCE(Universe::CELESTIAL_SPHERE_RADIUS*SolarSystem::FAR_LOOK_RATIO);
+const GLdouble SolarSystem::FAR_CLIP(SolarSystemGlobals::CELESTIAL_SPHERE_RADIUS * 10);
+const int SolarSystem::FAR_LOOK_DISTANCE(SolarSystemGlobals::CELESTIAL_SPHERE_RADIUS*SolarSystem::FAR_LOOK_RATIO);
 
 SolarSystem::SolarSystem(string sharedMemoryAreaIdentifier) :
-	AbstractGraphicsEngine(sharedMemoryAreaIdentifier) {
+   AbstractGraphicsEngine(sharedMemoryAreaIdentifier) {
    /**
-	 * Parameters and State info
-	 */
-	}
+    * Parameters and State info
+    */
+   }
 
 SolarSystem::~SolarSystem() {
 }
@@ -40,51 +40,51 @@ SolarSystem::~SolarSystem() {
  * Window resize/remap
  */
 void SolarSystem::resize(const int width, const int height) {
-	// store current settings
-	m_CurrentWidth = width;
-	m_CurrentHeight = height;
-	aspect = (float)width / (float)height;
+   // store current settings
+   m_CurrentWidth = width;
+   m_CurrentHeight = height;
+   aspect = (float)width / (float)height;
 
-	// adjust aspect ratio and projection
-	glViewport(0, 0, (GLsizei) width, (GLsizei) height);
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	gluPerspective(FOV_ANGLE, aspect, NEAR_CLIP, FAR_CLIP);
-	glMatrixMode(GL_MODELVIEW);
-}
+   // adjust aspect ratio and projection
+   glViewport(0, 0, (GLsizei) width, (GLsizei) height);
+   glMatrixMode(GL_PROJECTION);
+   glLoadIdentity();
+   gluPerspective(FOV_ANGLE, aspect, NEAR_CLIP, FAR_CLIP);
+   glMatrixMode(GL_MODELVIEW);
+ }
 
 /**
  *  What to do when graphics are "initialized".
  */
 void SolarSystem::initialize(const int width, const int height, const Resource *font, const bool recycle) {
-	// setup initial dimensions
-	resize(width, height);
+   // setup initial dimensions
+   resize(width, height);
 
-	// more font setup and optimizations
-	glPixelStorei( GL_UNPACK_ALIGNMENT, 1 );
+   // more font setup and optimizations
+   glPixelStorei( GL_UNPACK_ALIGNMENT, 1 );
 #if defined( GL_RASTER_POSITION_UNCLIPPED_IBM )
-	glEnable( GL_RASTER_POSITION_UNCLIPPED_IBM );
+   glEnable( GL_RASTER_POSITION_UNCLIPPED_IBM );
 #endif
 
-	// drawing setup:
-	glClearColor(0.0, 0.0, 0.0, 0.0); // background is black
-	glEnable(GL_CULL_FACE);
-	glFrontFace(GL_CCW);
-	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+   // drawing setup:
+   glClearColor(0.0, 0.0, 0.0, 0.0); // background is black
+   glEnable(GL_CULL_FACE);
+   glFrontFace(GL_CCW);
+   glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 
-	// FSAA will be enabled explicitly when needed!
-	glDisable(GL_MULTISAMPLE_ARB);
+   // FSAA will be enabled explicitly when needed!
+   glDisable(GL_MULTISAMPLE_ARB);
 
-	// we need alpha blending for proper font rendering
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+   // we need alpha blending for proper font rendering
+   glEnable(GL_BLEND);
+   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	// enable depth buffering for 3D graphics
-	glClearDepth(1.0f);
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LEQUAL);
+   // enable depth buffering for 3D graphics
+   glClearDepth(1.0f);
+   glEnable(GL_DEPTH_TEST);
+   glDepthFunc(GL_LEQUAL);
 
-	// enable opt-in quality feature
+   // enable opt-in quality feature
    switch (m_BoincAdapter.graphicsQualitySetting()) {
       case BOINCClientAdapter::LowGraphicsQualitySetting :
          SolarSystemGlobals::set_render_level(SolarSystemGlobals::RENDER_LOWEST);
@@ -92,37 +92,37 @@ void SolarSystem::initialize(const int width, const int height, const Resource *
       case BOINCClientAdapter::MediumGraphicsQualitySetting :
          SolarSystemGlobals::set_render_level(SolarSystemGlobals::RENDER_MEDIUM);
          // fog aids depth perception
-		   glEnable(GL_FOG);
-		   glFogi(GL_FOG_MODE, GL_EXP2);
-		   glFogf(GL_FOG_DENSITY, 0.085);
-		   glHint(GL_FOG_HINT, GL_DONT_CARE);
+         glEnable(GL_FOG);
+         glFogi(GL_FOG_MODE, GL_EXP2);
+         glFogf(GL_FOG_DENSITY, 0.085);
+         glHint(GL_FOG_HINT, GL_DONT_CARE);
          break;
       case BOINCClientAdapter::HighGraphicsQualitySetting :
          SolarSystemGlobals::set_render_level(SolarSystemGlobals::RENDER_HIGHEST);
-	      // fog aids depth perception
-		   glEnable(GL_FOG);
-		   glFogi(GL_FOG_MODE, GL_EXP2);
-		   glFogf(GL_FOG_DENSITY, 0.085);
-		   glHint(GL_FOG_HINT, GL_DONT_CARE);
+         // fog aids depth perception
+         glEnable(GL_FOG);
+         glFogi(GL_FOG_MODE, GL_EXP2);
+         glFogf(GL_FOG_DENSITY, 0.085);
+         glHint(GL_FOG_HINT, GL_DONT_CARE);
          // some polishing
-		   glShadeModel(GL_SMOOTH);
-		   glEnable(GL_POINT_SMOOTH);
-		   glEnable(GL_LINE_SMOOTH);
-		   glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
-		   glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+         glShadeModel(GL_SMOOTH);
+         glEnable(GL_POINT_SMOOTH);
+         glEnable(GL_LINE_SMOOTH);
+         glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
+         glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
          break;
       default :
          // Ought not get here !!
          std::string msg = "SolarSystem::initialize() - bad switch case reached (default)";
          ErrorHandler::record(msg, ErrorHandler::FATAL);
          break;
-	   }
+      }
 
-   // Specify that the scene elements in the universe are to rendered.
-   uni.activate();
+   // Specify that the scene elements in the Simulation are to rendered.
+   sim.activate();
 
-	glDisable(GL_CLIP_PLANE0);
-	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+   glDisable(GL_CLIP_PLANE0);
+   glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
    SolarSystemGlobals::check_OpenGL_Error();
    }
 
@@ -131,90 +131,92 @@ void SolarSystem::initialize(const int width, const int height, const Resource *
  */
 void SolarSystem::render(const double tOD) {
    // Clear the canvas plus set z ordering to the far-clip plane.
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
    // Set modelview matrix to unity.
    glLoadIdentity();
 
    // Evolve the craft's mechanics.
-   flyboy.step();
+   sim.step();
 
    // Where are we etc .... in our virtual world?
-   const AcceleratedPlatform& here = flyboy.get_platform();
+   Vector3D view_position = sim.getViewPosition();
+   Vector3D view_direction = sim.getViewDirection();
+   Vector3D view_up = sim.getViewUp();
 
    // Set up the camera position and orientation.
-	gluLookAt(here.position().x(),
-             here.position().y(),                  // eyes position
-             here.position().z(),
-				 SolarSystem::FAR_LOOK_DISTANCE*here.look().x(),
-             SolarSystem::FAR_LOOK_DISTANCE*here.look().y(),    // looking towards here
-             SolarSystem::FAR_LOOK_DISTANCE*here.look().z(),
-				 here.up().x(),
-             here.up().y(),                        // which way is up?
-             here.up().z());
+   gluLookAt(view_position.x(),
+             view_position.y(),                  // eyes position
+             view_position.z(),
+             SolarSystem::FAR_LOOK_DISTANCE*view_direction.x(),
+             SolarSystem::FAR_LOOK_DISTANCE*view_direction.y(),    // looking towards here
+             SolarSystem::FAR_LOOK_DISTANCE*view_direction.z(),
+             view_up.x(),
+             view_up.y(),                        // which way is up?
+             view_up.z());
 
-   uni.draw();
+   sim.draw();
 
    // Check for and report any errors generated.
    SolarSystemGlobals::check_OpenGL_Error();
 
    // Switch frames.
-	SDL_GL_SwapBuffers();
+   SDL_GL_SwapBuffers();
 }
 
 void SolarSystem::mouseButtonEvent(const int positionX, const int positionY,
-								  const AbstractGraphicsEngine::MouseButton buttonPressed) {
+                                   const AbstractGraphicsEngine::MouseButton buttonPressed) {
 
 }
 
 void SolarSystem::mouseMoveEvent(const int deltaX, const int deltaY,
-								const AbstractGraphicsEngine::MouseButton buttonPressed) {
-	switch(buttonPressed) {
-		case MouseButtonLeft:
-			break;
-		case MouseButtonRight:
-			break;
-		default:
-			break;
-	}
+                                 const AbstractGraphicsEngine::MouseButton buttonPressed) {
+   switch(buttonPressed) {
+      case MouseButtonLeft:
+         break;
+      case MouseButtonRight:
+         break;
+      default:
+         break;
+   }
 }
 
 void SolarSystem::keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey keyPressed) {
-	std::string message = "SolarSystem::keyboardPressEvent() - ";
-	switch(keyPressed) {
+   std::string message = "SolarSystem::keyboardPressEvent() - ";
+   switch(keyPressed) {
       case KeyA:
-			// Thrust forwards.
-         flyboy.forward_thrust();
+         // Thrust forwards.
+         sim.moveRequest(SolarSystemGlobals::FORWARD);
          message += "keyboard A : forward thrust";
          break;
       case KeyB:
-			// Thrust down.
-         flyboy.down_thrust();
+         // Thrust down.
+         sim.moveRequest(SolarSystemGlobals::DOWNWARDS);
          message += "keyboard B : downwards thrust";
          break;
       case KeyC:
-			// Toggle the state of constellation display.
-			// uni.toggle_feature(CelestialSphere::);
+         // Toggle the state of constellation display.
+         // sim.toggle_feature(CelestialSphere::);
          message += "keyboard C : unassigned";
          break;
       case KeyD:
-			// Pull nose up.
-			flyboy.nose_up();
+         // Pull nose up.
+         sim.moveRequest(SolarSystemGlobals::PITCH_UP);
          message += "keyboard D : nose up";
          break;
       case KeyE:
-			// Push nose down.
-			flyboy.nose_down();
+         // Push nose down.
+         sim.moveRequest(SolarSystemGlobals::PITCH_DOWN);
          message += "keyboard E : nose down";
          break;
       case KeyF:
-			// Roll to the right.
-         flyboy.roll_right();
+         // Roll to the right.
+         sim.moveRequest(SolarSystemGlobals::ROLL_RIGHT);
          message += "keyboard F : roll right";
          break;
       case KeyG:
-			// Go home.
-         flyboy.go_home();
+         // Go home.
+         sim.moveRequest(SolarSystemGlobals::GO_HOME);
          message += "keyboard G : go home";
          break;
       case KeyH:
@@ -222,54 +224,54 @@ void SolarSystem::keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey k
          break;
       case KeyM:
          // Toggle the state of axes display.
-         // uni.toggle_axes();
+         // sim.toggle_axes();
          message += "keyboard M : toggle axes";
          break;
       case KeyN:
          message += "keyboard N : unassigned";
          break;
-		case KeyP:
-			// Toggle the state of pulsar display.
-			message += "keyboard P : unassigned";
+      case KeyP:
+         // Toggle the state of pulsar display.
+         message += "keyboard P : unassigned";
          break;
       case KeyQ:
-			// Stop.
-			flyboy.stop();
+         // Stop.
+         sim.moveRequest(SolarSystemGlobals::STOP_TRANSLATION);
          message += "keyboard Q : stop";
          break;
       case KeyR:
-			// Thrust to the right.
-			flyboy.right_thrust();
+         // Thrust to the right.
+         sim.moveRequest(SolarSystemGlobals::RIGHTWARDS);
          message += "keyboard R : right thrust";
          break;
-		case KeyS:
-			// Roll to the left.
-         flyboy.roll_left();
+      case KeyS:
+         // Roll to the left.
+         sim.moveRequest(SolarSystemGlobals::ROLL_LEFT);
          message += "keyboard S : roll left";
          break;
       case KeyT:
-			// Thrust up.
-         flyboy.up_thrust();
+         // Thrust up.
+         sim.moveRequest(SolarSystemGlobals::UPWARDS);
          message += "keyboard T : upwards thrust";
          break;
       case KeyV:
-			// Yaw right.
-         flyboy.yaw_right();
+         // Yaw right.
+         sim.moveRequest(SolarSystemGlobals::YAW_RIGHT);
          message += "keyboard V : yaw right";
          break;
       case KeyW:
-			// Thrust to the left.
-			flyboy.left_thrust();
+         // Thrust to the left.
+         sim.moveRequest(SolarSystemGlobals::LEFTWARDS);
          message += "keyboard W : left thrust";
          break;
       case KeyX:
-			// Yaw left.
-         flyboy.yaw_left();
+         // Yaw left.
+         sim.moveRequest(SolarSystemGlobals::YAW_LEFT);
          message += "keyboard X : yaw left";
          break;
       case KeyZ:
-			// Reverse thrust.
-         flyboy.reverse_thrust();
+         // Reverse thrust.
+         sim.moveRequest(SolarSystemGlobals::REVERSE);
          message += "keyboard Z : reverse thrust";
          break;
       case KeyF1:
@@ -291,35 +293,35 @@ void SolarSystem::keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey k
          message += "keyboard F4 : set render level to HIGHEST";
          break;
       case KeyF5:
-       	// Toggle the state of constellation display.
-			uni.toggle(Universe::CONSTELLATIONS);
+         // Toggle the state of constellation display.
+         sim.toggle(Simulation::CONSTELLATIONS);
          message += "keyboard F5 : toggle constellations";
          break;
       case KeyF6:
          // Toggle the state of pulsar display.
-			uni.toggle(Universe::PULSARS);
+         sim.toggle(Simulation::PULSARS);
          message += "keyboard F6 : toggle pulsars";
          break;
       case KeyF7:
          // Toggle the state of pulsar display.
-			uni.toggle(Universe::SUPERNOVAE);
+         sim.toggle(Simulation::SUPERNOVAE);
          message += "keyboard F7 : toggle supernovae";
          break;
       case KeyF8:
          // Toggle the state of celestial sphere grid display.
-			uni.toggle(Universe::GRID);
+         sim.toggle(Simulation::GRID);
          message += "keyboard F8 : toggle grid";
          break;
        case KeySpace:
          // stop any craft rotation
-			flyboy.null_rotation();
+         sim.moveRequest(SolarSystemGlobals::STOP_ROTATION);
          message += "keyboard Space : null all rotations";
          break;
-		default:
-      	break;
-	   }
+      default:
+         break;
+      }
    ErrorHandler::record(message, ErrorHandler::INFORM);
-	}
+   }
 
 void SolarSystem::refreshLocalBOINCInformation() {
    }

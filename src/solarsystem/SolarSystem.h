@@ -36,7 +36,7 @@
 #include "Craft.h"
 #include "ErrorHandler.h"
 #include "SolarSystemGlobals.h"
-#include "Universe.h"
+#include "Simulation.h"
 
 /**
  * \addtogroup solarsystem SolarSystem
@@ -60,106 +60,106 @@ public:
    static const int FAR_LOOK_RATIO;
 
    /// Destructor
-	virtual ~SolarSystem();
+   virtual ~SolarSystem();
 
-	/**
-	 * \brief This method is called to initialize the engine
-	 *
-	 * \param width The current width of the display surface
-	 * \param height The current height of the display surface
-	 * \param font A pointer to a Resource object containing TTF font faces for text rendering
-	 * \param recycle This flag indicates whether we initialize (FALSE) or reinitialize (TRUE) the context
-	 */
-	virtual void initialize(const int width, const int height, const Resource *font, const bool recycle = false);
+   /**
+    * \brief This method is called to initialize the engine
+    *
+    * \param width The current width of the display surface
+    * \param height The current height of the display surface
+    * \param font A pointer to a Resource object containing TTF font faces for text rendering
+    * \param recycle This flag indicates whether we initialize (FALSE) or reinitialize (TRUE) the context
+    */
+   virtual void initialize(const int width, const int height, const Resource *font, const bool recycle = false);
 
-	/**
-	 * \brief This method is called when the windowing system encounters a window resize event
-	 *
-	 * \param width The new width of the display surface
-	 * \param height The new height of the display surface
-	 */
-	virtual void resize(const int width, const int height);
+   /**
+    * \brief This method is called when the windowing system encounters a window resize event
+    *
+    * \param width The new width of the display surface
+    * \param height The new height of the display surface
+    */
+   virtual void resize(const int width, const int height);
 
-	/**
-	 * \brief This method renders one frame of the animation
-	 *
-	 */
-	void render(const double timeOfDay);
+   /**
+    * \brief This method renders one frame of the animation
+    *
+    */
+   void render(const double timeOfDay);
 
-	/**
-	 * \brief Event handler for mouse button events
-	 *
-	 * \param positionX The mouse position's x-coordinate
-	 * \param positionY The mouse position's y-coordinate
-	 * \param buttonPressed The mouse button pressed
-	 */
-	void mouseButtonEvent(const int positionX,
+   /**
+    * \brief Event handler for mouse button events
+    *
+    * \param positionX The mouse position's x-coordinate
+    * \param positionY The mouse position's y-coordinate
+    * \param buttonPressed The mouse button pressed
+    */
+   void mouseButtonEvent(const int positionX,
                          const int positionY,
-						       const AbstractGraphicsEngine::MouseButton buttonPressed);
+                        const AbstractGraphicsEngine::MouseButton buttonPressed);
 
-	/**
-	 * \brief Event handler for mouse move events
-	 *
-	 * \param deltaX The relative mouse movement in the x-direction
-	 * \param deltaY The relative mouse movement in the y-direction
-	 * \param buttonPressed The mouse button pressed
-	 */
-	void mouseMoveEvent(const int deltaX,
+   /**
+    * \brief Event handler for mouse move events
+    *
+    * \param deltaX The relative mouse movement in the x-direction
+    * \param deltaY The relative mouse movement in the y-direction
+    * \param buttonPressed The mouse button pressed
+    */
+   void mouseMoveEvent(const int deltaX,
                        const int deltaY,
-						     const AbstractGraphicsEngine::MouseButton buttonPressed);
+                     const AbstractGraphicsEngine::MouseButton buttonPressed);
 
-	/**
-	 * \brief Event handler for key press events
-	 *
-	 * \param keyPressed The key pressed
-	 */
-	void keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey keyPressed);
+   /**
+    * \brief Event handler for key press events
+    *
+    * \param keyPressed The key pressed
+    */
+   void keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey keyPressed);
 
 protected:
    /**
-	 * \brief Constructor
-	 *
-	 * The constructor is protected since this is an abstract class. It takes
-	 * as an argument the name of the shared memory area which is propagated
-	 * to the BOINC client adapter instance (during construction).
-	 *
-	 * \param sharedMemoryIdentifier The identifier of the shared memory area
-	 *
-	 * \see BOINCClientAdapter::BOINCClientAdapter()
-	 */
-	SolarSystem(string sharedMemoryIdentifier);
+    * \brief Constructor
+    *
+    * The constructor is protected since this is an abstract class. It takes
+    * as an argument the name of the shared memory area which is propagated
+    * to the BOINC client adapter instance (during construction).
+    *
+    * \param sharedMemoryIdentifier The identifier of the shared memory area
+    *
+    * \see BOINCClientAdapter::BOINCClientAdapter()
+    */
+   SolarSystem(string sharedMemoryIdentifier);
 
    /**
-	 * \brief Render science run specific logo
-	 *
-	 * This abstract method is to be defined by derived classes implementing
-	 * the science run specific logo rendering.
-	 */
-	inline virtual void renderLogo() = 0;
+    * \brief Render science run specific logo
+    *
+    * This abstract method is to be defined by derived classes implementing
+    * the science run specific logo rendering.
+    */
+   inline virtual void renderLogo() = 0;
 
    /**
-	 * \brief Render science run specific search information
-	 *
-	 * This abstract method is to be defined by derived classes implementing
-	 * the science run specific search information handling and rendering.
-	 *
-	 * Note: for this engine this also includes the "BOINC Statistics"
-	 * as it is top-aligned to the "Search Information".
-	 */
-	inline virtual void renderSearchInformation() = 0;
+    * \brief Render science run specific search information
+    *
+    * This abstract method is to be defined by derived classes implementing
+    * the science run specific search information handling and rendering.
+    *
+    * Note: for this engine this also includes the "BOINC Statistics"
+    * as it is top-aligned to the "Search Information".
+    */
+   inline virtual void renderSearchInformation() = 0;
 
    virtual void refreshLocalBOINCInformation(void);
 
    virtual void generateObservatories() = 0;
 
-	/// Current window width (x-resolution)
-	int m_CurrentWidth;
+   /// Current window width (x-resolution)
+   int m_CurrentWidth;
 
-	/// Current window height (y-resolution)
-	int m_CurrentHeight;
+   /// Current window height (y-resolution)
+   int m_CurrentHeight;
 
-	/// Current window aspect ration
-	float aspect;
+   /// Current window aspect ration
+   float aspect;
 
 private:
    static const GLdouble FOV_ANGLE;
@@ -171,9 +171,7 @@ private:
    static const int FAR_LOOK_DISTANCE;
 
    /// The objects to be rendered.
-   Universe uni;
-
-   Craft flyboy;
+   Simulation sim;
    };
 
 /**

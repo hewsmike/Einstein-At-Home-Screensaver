@@ -20,6 +20,10 @@
 
 #include "SolarSystemGlobals.h"
 
+const GLuint SolarSystemGlobals::CELESTIAL_SPHERE_RADIUS(10000);
+
+const GLuint SolarSystemGlobals::EARTH_RADIUS(100);
+
 // Default rendering quality is the lowest.
 SolarSystemGlobals::render_quality SolarSystemGlobals::qual = SolarSystemGlobals::RENDER_LOWEST;
 
@@ -28,10 +32,10 @@ const GLfloat SolarSystemGlobals::HALF_CIRCLE_DEG(180.0f);
 const GLfloat SolarSystemGlobals::QUARTER_CIRCLE_DEG(90.0f);
 
 SolarSystemGlobals::SolarSystemGlobals() {
-	}
+   }
 
 SolarSystemGlobals::~SolarSystemGlobals() {
-	}
+   }
 
 void SolarSystemGlobals::check_OpenGL_Error() {
    GLenum error_code = glGetError();

@@ -23,12 +23,22 @@
 
 #include <iostream>
 
-#include "Earth.h"
-#include "SolarSystemGlobals.h"
 #include "AcceleratedPlatform.h"
-#include "Universe.h"
+#include "Earth.h"
+#include "ErrorHandler.h"
+#include "SolarSystemGlobals.h"
 
 class Craft {
+   public:
+      Craft();
+      ~Craft();
+
+      void manouevre(SolarSystemGlobals::movements mov);
+
+      const AcceleratedPlatform& get_platform() const;
+
+      void step(void);
+
    private:
       /// Global bounds for craft position
       static const vec_t MAX_RANGE;
@@ -60,18 +70,11 @@ class Craft {
 
       AcceleratedPlatform state;
 
-      void vector_thrust(Vector3D thrust);
-
-   public:
-      Craft();
-      ~Craft();
-
       void go_home(void);
       void nose_down();
       void nose_up();
       void roll_left();
       void roll_right();
-      void step(void);
       void stop(void);
       void reverse_thrust(void);
       void forward_thrust(void);
@@ -83,7 +86,7 @@ class Craft {
       void up_thrust(void);
       void down_thrust(void);
 
-      const AcceleratedPlatform& get_platform() const;
+      void vector_thrust(Vector3D thrust);
    };
 
 #endif // CRAFT_H_
