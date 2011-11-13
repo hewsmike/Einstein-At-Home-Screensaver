@@ -143,8 +143,9 @@ public:
 		KeyX = 0x800000,
 		KeyY = 0x1000000,
 		KeyZ = 0x2000000,
+      KeyF1 = 0x2000001,
 		KeyEnter = 0x4000000,
-		KeyEscape = 0x8000000
+      KeyEscape = 0x8000000
 	};
 
 	/**
