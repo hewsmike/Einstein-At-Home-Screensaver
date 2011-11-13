@@ -45,7 +45,9 @@ CPPFLAGS += $(shell $(STARSPHERE_INSTALL)/bin/xml2-config --cflags)
 CPPFLAGS += -I$(STARSPHERE_INSTALL)/include/boinc -I/usr/include
 
 DEPS = Makefile
-OBJS = Starsphere.o StarsphereS5R3.o StarsphereRadio.o EinsteinS5R3Adapter.o EinsteinRadioAdapter.o starlist.o snr_list.o pulsar_list.o $(RESOURCESPEC).o
+OBJS = Starsphere.o StarsphereS5R3.o StarsphereRadio.o EinsteinS5R3Adapter.o
+OBJS += EinsteinRadioAdapter.o starlist.o snr_list.o pulsar_list.o $(RESOURCESPEC).o
+OBJS += Vector3D.o VectorSPR.o
 RESOURCESPEC = resources
 
 # TODO: GraphicsEngineFactory obviously depends on the actual implementations (here starsphere)! need to change the structure! what about plugins?
@@ -97,6 +99,12 @@ snr_list.o: $(DEPS) $(STARSPHERE_SRC)/snr_list.C
 
 pulsar_list.o: $(DEPS) $(STARSPHERE_SRC)/pulsar_list.C
 	$(CXX) -g $(CPPFLAGS) -c $(STARSPHERE_SRC)/pulsar_list.C
+
+Vector3D.o: $(DEPS) $(STARSPHERE_SRC)/Vector3D.cpp $(STARSPHERE_SRC)/Vector3D.h
+	$(CXX) -g $(CPPFLAGS) -c $(STARSPHERE_SRC)/Vector3D.cpp
+
+VectorSPR.o: $(DEPS) $(STARSPHERE_SRC)/VectorSPR.cpp $(STARSPHERE_SRC)/VectorSPR.h
+	$(CXX) -g $(CPPFLAGS) -c $(STARSPHERE_SRC)/VectorSPR.cpp
 
 # resource compiler
 $(RESOURCESPEC).o: $(STARSPHERE_SRC)/$(RESOURCESPEC).orc
