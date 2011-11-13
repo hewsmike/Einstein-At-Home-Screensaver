@@ -60,6 +60,9 @@ Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
 	m_CurrentRightAscension = -1.0;
 	m_CurrentDeclination = -1.0;
 	m_RefreshSearchMarker = true;
+
+   // Gather star, pulsar and supernovae coordinate data for later sampling.
+   loadForSVG();
 }
 
 Starsphere::~Starsphere()
@@ -929,6 +932,9 @@ void Starsphere::keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey ke
 		case KeyM:
 			setFeature(MARKER, isFeature(MARKER) ? false : true);
 			break;
+      case KeyF1:
+         sampleForSVG();
+         break;
 		default:
 			break;
 	}
@@ -998,3 +1004,61 @@ void Starsphere::refreshLocalBOINCInformation()
 	m_UserRACredit = buffer.str();
 	buffer.str("");
 }
+
+void Starsphere::loadForSVG(void) {
+   std::cout << "Starsphere::loadForSVG()" << std::endl;
+
+   // Get the stars.
+   for(int index = 0; index < Nstars; index ++) {
+      VectorSPR current = VectorSPR(star_info[index][0], star_info[index][1], sphRadius);
+
+      // But we have to exclude repeated entries ( star_info[] array has many )
+
+      // Assume it's not already entered into our std::vector of star coordinates.
+      bool already_in = false;
+
+      // Iterate over all entries currently within our std::vector
+      for(std::vector<VectorSPR>::const_iterator search_star = stars.begin();
+          search_star < stars.end();
+          search_star++) {
+          // Have we found a matching entry?
+          if(search_star->isEqual(current)) {
+            // Yes, we have found a match. Set the flag and exit this search.
+            already_in = true;
+            break;
+            }
+         // No, keep looking .....
+         }
+
+      // If, after looking through all of what is currently in our std::vector ...
+      if(!already_in) {
+         // ..... and then it's not mentioned, then include it.
+         stars.push_back(current);
+         }
+      }
+
+   // Get the pulsars.
+   for(int index = 0; index < Npulsars; index ++) {
+      VectorSPR current = VectorSPR(pulsar_info[index][0], pulsar_info[index][1], sphRadius);
+
+      pulsars.push_back(current);
+      }
+
+   // Get the supernovae
+   for(int index = 0; index < Npulsars; index ++) {
+      VectorSPR current = VectorSPR(SNR_info[index][0], SNR_info[index][1], sphRadius);
+
+      supernovae.push_back(current);
+      }
+   }
+
+
+void Starsphere::sampleForSVG(void) {
+   std::cout << "Starsphere::sampleForSVG() - "
+             << "\tviewpt_azimuth = " << viewpt_azimuth
+             << "\tviewpt_elev =  " << viewpt_elev
+             << "\trotation_offset =  " << rotation_offset
+             << std::endl;
+
+
+   }

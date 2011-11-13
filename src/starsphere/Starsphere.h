@@ -31,6 +31,7 @@
 #include <iostream>
 #include <iomanip>
 #include <sstream>
+#include <vector>
 
 #include <SDL.h>
 #include <SDL_opengl.h>
@@ -41,6 +42,7 @@
 
 #include "AbstractGraphicsEngine.h"
 #include "EinsteinS5R3Adapter.h"
+#include "VectorSPR.h"
 
 // SIN and COS take arguments in DEGREES
 #define PI 3.14159265
@@ -463,6 +465,22 @@ private:
 	 * \see Starsphere::mouseMoveEvent()
 	 */
 	void zoomSphere(const int relativeZoom);
+
+   /**
+	 * \brief Collects the star/pulsar/SNR coordinate data for later use.
+	 */
+   void loadForSVG(void);
+
+   /**
+	 * \brief Collects the current starsphere view and forms an SVG file
+	 */
+   void sampleForSVG(void);
+
+   std::vector<VectorSPR> stars;
+
+   std::vector<VectorSPR> pulsars;
+
+   std::vector<VectorSPR> supernovae;
 };
 
 /// Constellation & star coordinates (starlist.C)
