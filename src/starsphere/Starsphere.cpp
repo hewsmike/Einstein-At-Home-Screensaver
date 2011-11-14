@@ -1074,7 +1074,12 @@ void Starsphere::sampleForSVG(void) {
    // Sooo ........
    // Save the current transform state.
    glPushMatrix();
+      // Start with the identity transform.
+      glLoadIdentity();
+
       // The viewpoint transform as applied during rendering.
+      // This is, in effect, a call to glMultMatrix() followed by a
+      // call to glTranslate().
       gluLookAt(xvp, yvp, zvp,
 	             0.0, 0.0, 0.0,
 	             0.0, 1.0, 0.0);
