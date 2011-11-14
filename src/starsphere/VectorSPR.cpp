@@ -30,9 +30,15 @@ VectorSPR::VectorSPR() {
    }
 
 VectorSPR::VectorSPR(vec_t ra, vec_t dec, vec_t rd) {
+   // Using right-handed spherical polar where positive y-axis
+   // is a declination of positive 90 degrees, and positive x-axis
+   // is of right ascension of zero, where right ascension increases
+   // in a counter-clockwise fashion when looking down from positive
+   // y-axis onto the z-x plane ie. to the 'East' if the positive y-axis
+   // is 'North'.
    x_comp = rd * COS(dec) * COS(ra);
-   y_comp = rd * COS(dec) * SIN(ra);
-   z_comp = rd * SIN(dec);
+   z_comp = -rd * COS(dec) * SIN(ra);
+   y_comp = rd * SIN(dec);
    }
 
 VectorSPR::~VectorSPR() {
