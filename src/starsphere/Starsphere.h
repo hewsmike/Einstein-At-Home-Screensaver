@@ -447,6 +447,10 @@ private:
 
 	// view control
 
+   // Expose these to the whole class as needed for SVG transforms
+   GLfloat xvp, yvp, zvp;
+   GLfloat Zrot;
+
 	/**
 	 * \brief Rotates the sphere by changing the viewpoint rotation/elevation relatively
 	 *
@@ -474,7 +478,7 @@ private:
    /**
 	 * \brief Collects the current starsphere view and forms an SVG file
 	 */
-   void sampleForSVG(void);
+   void sampleForSVG();
 
    /**
 	 * \brief Write to the nominated SVG output file, the transformed coordinates.
@@ -499,7 +503,7 @@ private:
 
    // Holder for transform matrix entries ( 4 x 4 as in projective
    // geometry usage ) but we will ignore the 4th row and the 4th column.
-   double transformSVG[4][4];
+   double transformSVG[16];
 };
 
 /// Constellation & star coordinates (starlist.C)

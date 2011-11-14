@@ -743,8 +743,9 @@ void Starsphere::initialize(const int width, const int height, const Resource *f
  */
 void Starsphere::render(const double timeOfDay)
 {
-	GLfloat xvp, yvp, zvp, vp_theta, vp_phi, vp_rad;
-	GLfloat Zrot = 0.0, Zobs=0.0;
+	GLfloat vp_theta, vp_phi, vp_rad;
+	GLfloat Zobs=0.0;
+   Zrot = 0.0;
 	double revs, t, dt = 0;
 	static double start_time=-1.0, last_time=-1.0;
 
@@ -1088,7 +1089,7 @@ void Starsphere::sampleForSVG(void) {
       glRotatef(Zrot - rotation_offset, 0.0, 1.0, 0.0);
 
       // Get the transform matrix entries by inquiring of OpenGL.
-      glGetDoublev(GL_MODELVIEW_MATRIX, &transform);
+      glGetDoublev(GL_MODELVIEW_MATRIX, transformSVG);
 
    // Restore the previous transform state.
    glPopMatrix();
@@ -1102,21 +1103,21 @@ void Starsphere::sampleForSVG(void) {
    for(std::vector<VectorSPR>::const_iterator star = stars.begin();
       star < stars.end();
       star++) {
-      stars_trans.push_back(transform(star));
+      stars_trans.push_back(transform(*star));
       }
 
    // Then the pulsars.
    for(std::vector<VectorSPR>::const_iterator pulsar = pulsars.begin();
       pulsar < pulsars.end();
       pulsar++) {
-      pulsars_trans.push_back(transform(pulsar));
+      pulsars_trans.push_back(transform(*pulsar));
       }
 
    // Finally the supernovae.
    for(std::vector<VectorSPR>::const_iterator supernova = supernovae.begin();
       supernova < supernovae.end();
       supernova++) {
-      supernovae_trans.push_back(transform(supernova));
+      supernovae_trans.push_back(transform(*supernova));
       }
    }
 
@@ -1131,21 +1132,21 @@ Vector3D Starsphere::transform(const Vector3D& vec_in) {
    // Component wise multiplication of a 3 x 3 matrix times a
    // 3 x 1 column matrix. Start with matrix's 1st row inner product with
    // our input, giving 1st component of output.
-   vec_out.set_x(transform[0][0]*vec_in.x() +
-                 transform[0][1]*vec_in.y() +
-                 transform[0][2]*vec_in.z());
+   vec_out.set_x(transformSVG[0*4 + 0]*vec_in.x() +
+                 transformSVG[0*4 + 1]*vec_in.y() +
+                 transformSVG[0*4 + 2]*vec_in.z());
 
    // Followed by matrix's 2nd row inner product with our input, giving
    // 2nd component of our output.
-   vec_out.set_y(transform[1][0]*vec_in.x() +
-                 transform[1][1]*vec_in.y() +
-                 transform[1][2]*vec_in.z());
+   vec_out.set_y(transformSVG[1*4 + 0]*vec_in.x() +
+                 transformSVG[1*4 + 1]*vec_in.y() +
+                 transformSVG[1*4 + 2]*vec_in.z());
 
    // Lastly matrix's 3rd row inner product with our input, giving 3rd
    // component of our output.
-   vec_out.set_z(transform[2][0]*vec_in.x() +
-                 transform[2][1]*vec_in.y() +
-                 transform[2][2]*vec_in.z());
+   vec_out.set_z(transformSVG[2*4 + 0]*vec_in.x() +
+                 transformSVG[2*4 + 1]*vec_in.y() +
+                 transformSVG[2*4 + 2]*vec_in.z());
 
    return vec_out;
    }
