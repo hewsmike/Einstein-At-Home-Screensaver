@@ -476,11 +476,30 @@ private:
 	 */
    void sampleForSVG(void);
 
+   /**
+	 * \brief Write to the nominated SVG output file, the transformed coordinates.
+	 */
+   void emitSVG(void);
+
+   /**
+	 * \brief Applies the transform as defined by transfrom[][] to a given
+	 *        vector.
+	 */
+   Vector3D transform(const Vector3D& vec);
+
+   // Holders for original coordinates in spherical polar form.
    std::vector<VectorSPR> stars;
-
    std::vector<VectorSPR> pulsars;
-
    std::vector<VectorSPR> supernovae;
+
+   // Holders for transformed coordinates in Cartesian form.
+   std::vector<Vector3D> stars_trans;
+   std::vector<Vector3D> pulsars_trans;
+   std::vector<Vector3D> supernovae_trans;
+
+   // Holder for transform matrix entries ( 4 x 4 as in projective
+   // geometry usage ) but we will ignore the 4th row and the 4th column.
+   double transformSVG[4][4];
 };
 
 /// Constellation & star coordinates (starlist.C)

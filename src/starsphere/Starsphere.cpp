@@ -934,6 +934,7 @@ void Starsphere::keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey ke
 			break;
       case KeyF1:
          sampleForSVG();
+         emitSVG();
          break;
 		default:
 			break;
@@ -1055,10 +1056,91 @@ void Starsphere::loadForSVG(void) {
 
 void Starsphere::sampleForSVG(void) {
    std::cout << "Starsphere::sampleForSVG() - "
-             << "\tviewpt_azimuth = " << viewpt_azimuth
-             << "\tviewpt_elev =  " << viewpt_elev
-             << "\trotation_offset =  " << rotation_offset
+             << "\txvp = " << xvp
+             << "\tyvp = " << yvp
+             << "\tzvp = " << zvp
              << std::endl;
 
+   // To determine the transform to apply of a given point ( star/pulsar/SNR
+   // coordinates ) under those performed for rendering, a simple
+   // approach is to repeat those transforms as applied during
+   // rendering but :
+   //    - do no rendering
+   //    - isolate the transform  by saving and restoring the OpenGL
+   //      MODELVIEW matrix stack.
+   //    - read out the MODELVIEW matrix entries before restoration.
+   //    - save & later use those entries to perform point transforms.
 
+   // Sooo ........
+   // Save the current transform state.
+   glPushMatrix();
+      // The viewpoint transform as applied during rendering.
+      gluLookAt(xvp, yvp, zvp,
+	             0.0, 0.0, 0.0,
+	             0.0, 1.0, 0.0);
+
+      // The rotation about the y-axis as applied during rendering.
+      glRotatef(Zrot - rotation_offset, 0.0, 1.0, 0.0);
+
+      // Get the transform matrix entries by inquiring of OpenGL.
+      glGetDoublev(GL_MODELVIEW_MATRIX, &transform);
+
+   // Restore the previous transform state.
+   glPopMatrix();
+
+   // So now our transform[][] matrix of doubles retains the means to
+   // reproduce the exact same coordinate manipulation as OpenGL
+   // has performed during rendering!! Well, upon the assumption that
+   // a given OpenGL state machine is reproducibly deterministic ....
+
+   // Do the stars.
+   for(std::vector<VectorSPR>::const_iterator star = stars.begin();
+      star < stars.end();
+      star++) {
+      stars_trans.push_back(transform(star));
+      }
+
+   // Then the pulsars.
+   for(std::vector<VectorSPR>::const_iterator pulsar = pulsars.begin();
+      pulsar < pulsars.end();
+      pulsar++) {
+      pulsars_trans.push_back(transform(pulsar));
+      }
+
+   // Finally the supernovae.
+   for(std::vector<VectorSPR>::const_iterator supernova = supernovae.begin();
+      supernova < supernovae.end();
+      supernova++) {
+      supernovae_trans.push_back(transform(supernova));
+      }
+   }
+
+void Starsphere::emitSVG(void) {
+
+   }
+
+Vector3D Starsphere::transform(const Vector3D& vec_in) {
+   // What is to be returned, gives null vector by constructor default.
+   Vector3D vec_out;
+
+   // Component wise multiplication of a 3 x 3 matrix times a
+   // 3 x 1 column matrix. Start with matrix's 1st row inner product with
+   // our input, giving 1st component of output.
+   vec_out.set_x(transform[0][0]*vec_in.x() +
+                 transform[0][1]*vec_in.y() +
+                 transform[0][2]*vec_in.z());
+
+   // Followed by matrix's 2nd row inner product with our input, giving
+   // 2nd component of our output.
+   vec_out.set_y(transform[1][0]*vec_in.x() +
+                 transform[1][1]*vec_in.y() +
+                 transform[1][2]*vec_in.z());
+
+   // Lastly matrix's 3rd row inner product with our input, giving 3rd
+   // component of our output.
+   vec_out.set_z(transform[2][0]*vec_in.x() +
+                 transform[2][1]*vec_in.y() +
+                 transform[2][2]*vec_in.z());
+
+   return vec_out;
    }
