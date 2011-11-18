@@ -18,8 +18,8 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef VECTORSPR_H_
-#define VECTORSPR_H_
+#ifndef VECTOR_SPR_H_
+#define VECTOR_SPR_H_
 
 #include <cmath>
 
@@ -97,4 +97,4 @@ class VectorSPR : public Vector3D {
       virtual ~VectorSPR();
    };
 
-#endif // VECTORSPR_H_
+#endif // VECTOR_SPR_H_

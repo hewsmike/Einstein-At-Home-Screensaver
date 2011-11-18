@@ -26,11 +26,10 @@
 #include <svn_version.h>
 
 #include "../erp_git_version.h"
-
-#include "WindowManager.h"
-#include "ResourceFactory.h"
 #include "AbstractGraphicsEngine.h"
 #include "GraphicsEngineFactory.h"
+#include "ResourceFactory.h"
+#include "WindowManager.h"
 
 #ifdef __APPLE__
 #include "EaHMacIcon.h"
@@ -43,21 +42,19 @@ extern "C" {
 #endif
 #endif
 
+int main(int argc, char **argv) {
+   // Print version info
+   if(argc == 2) {
+      string param(argv[1]);
+      if(param == "--version" || param == "-v") {
+         cout << "Version information:" << endl;
+         cout << "Graphics Application Revision: " << ERP_GIT_VERSION << endl;
+         cout << "BOINC Revision: " << SVN_VERSION << endl;
+         exit(0);
+         }
+      }
 
-int main(int argc, char **argv)
-{
-    // print version info
-    if(argc == 2) {
-        string param(argv[1]);
-        if(param == "--version" || param == "-v") {
-            cout << "Version information:" << endl;
-            cout << "Graphics Application Revision: " << ERP_GIT_VERSION << endl;
-            cout << "BOINC Revision: " << SVN_VERSION << endl;
-            exit(0);
-        }
-    }
-
-    // enable BOINC diagnostics
+   // Enable BOINC diagnostics
 	// TODO: we might want to optimize this for glibc- and mingw-based stacktraces!
 	boinc_init_graphics_diagnostics(BOINC_DIAG_DEFAULTS);
 
@@ -65,7 +62,7 @@ int main(int argc, char **argv)
   setMacIcon(argv[0], MacAppIconData, sizeof(MacAppIconData));
 #endif
 
-	// choose application to be build/used
+	// Choose application to be build/used
 	GraphicsEngineFactory::Applications scienceApplication;
 #ifdef SCIENCE_APP
 	scienceApplication = GraphicsEngineFactory::SCIENCE_APP;
@@ -73,26 +70,26 @@ int main(int argc, char **argv)
 	scienceApplication = GraphicsEngineFactory::EinsteinS5R3;
 #endif
 
-	// prepare main objects
+	// Prepare main objects
 	WindowManager window;
 	ResourceFactory factory;
 	AbstractGraphicsEngine *graphics = GraphicsEngineFactory::createInstance(
-											GraphicsEngineFactory::Starsphere,
-											scienceApplication);
+											       GraphicsEngineFactory::Starsphere,
+											       scienceApplication);
 
-	if(!graphics) {
-		cerr << "Requested graphics engine could not be found/instantiated!" << endl;
+   if(!graphics) {
+      cerr << "Requested graphics engine could not be found/instantiated!" << endl;
 		exit(1);
-	}
+      }
 
-    // initialize window manager
-    if(!window.initialize()) {
-    	cerr << "Window manager could not be initialized!" << endl;
+   // Initialize window manager
+   if(!window.initialize()) {
+      cerr << "Window manager could not be initialized!" << endl;
     	delete graphics;
-        exit(1);
-    }
+      exit(1);
+      }
 
-	// create font and icon resource instances
+	// Create font and icon resource instances
 	const Resource *fontResource = factory.createInstance("FontSansSerif");
 	const Resource *iconResource = factory.createInstance("AppIconBMP");
 
@@ -100,55 +97,55 @@ int main(int argc, char **argv)
 		cerr << "Font resource could not be loaded!" << endl;
 		delete graphics;
 		exit(1);
-	}
+      }
 
 	if(fontResource->data()->size() <= 0) {
 		cerr << "Font resource could not be loaded!" << endl;
 		delete graphics;
 		delete fontResource;
 		exit(1);
-	}
+	   }
 
 	if(iconResource != NULL && iconResource->data()->size() > 0) {
-		window.setWindowIcon(&iconResource->data()->at(0), iconResource->data()->size());
+      window.setWindowIcon(&iconResource->data()->at(0), iconResource->data()->size());
 		delete iconResource;
-	}
+      }
 	else {
-		cerr << "Icon resource could not be loaded! Continuing anyway..." << endl;
-	}
+      cerr << "Icon resource could not be loaded! Continuing anyway..." << endl;
+      }
 
-    window.setWindowCaption("Einstein@Home");
+   window.setWindowCaption("Einstein@Home");
 
-    // register starsphere as event observer
-    window.registerEventObserver(graphics);
+   // Register starsphere as event observer
+   window.registerEventObserver(graphics);
 
-	// pepare rendering
+	// Prepare rendering
 	graphics->initialize(window.windowWidth(), window.windowHeight(), fontResource);
 	graphics->refreshBOINCInformation();
 
-	// check optional command line parameters
+	// Check optional command line parameters
 	if(argc == 2) {
-		string param(argv[1]);
+      string param(argv[1]);
 		if(param == "--fullscreen") {
-			// set non-interactive mode (must do this first on Apple)
+			// Set non-interactive mode (must do this first on Apple)
 			window.setScreensaverMode(true);
-		}
-		if(param == "--fullscreen" || param == "--demo") {
-			// switch to fullscreen (on windoze: after init!)
+		    }
+      if(param == "--fullscreen" || param == "--demo") {
+			// Switch to fullscreen (on windoze: after init!)
 			window.toggleFullscreen();
 #ifdef __APPLE__
 			SetMacSSLevel();
 #endif
-		}
-	}
+         }
+   	}
 
-	// enter main event loop
+	// Enter main event loop
 	window.eventLoop();
 
-	// clean up end exit
+	// Clean up end exit
 	window.unregisterEventObserver(graphics);
 	delete graphics;
 	delete fontResource;
 
 	exit(0);
-}
+   }
