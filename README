@@ -1,0 +1,48 @@
+Viewpoint sampling mod to Starsphere application
+
+NB : I have taken the liberty of stopping the time based evolution of the Starsphere, so
+that one can position the view to suit without having to continually fiddle using the
+mouse to keep the view constant. Let me know if that was a bad idea.
+
+usage : press F1 when you want a sample taken of the screen view
+
+An SVG file is emitted into the graphics application's working directory, overwriting
+any prior identically named files , with incrementing of filenames per session :
+
+E@H_starsphere_sample_0.svg
+E@H_starsphere_sample_1.svg
+E@H_starsphere_sample_2.svg
+
+.... etc
+
+containing ( in XML comment labelled sections ) suitably transformed co-ordinates of the
+stars, pulsars and supernovae ( colors designated using the SVG color names of "white",
+"purple" and "sienna" respectively ) with each as a filled unit circle like so :
+
+<circle cx="575.256" cy="271.912" r="1" stroke="white" fill="white"/>
+
+Aspect ratio is preserved ie. the sphericity of the Starsphere. Coordinates have been
+shifted and scaled to resemble the view, with the exception of the sense of the
+horizontal and vertical coordinates ie. in which directions do they increase/decrease -
+as that in turn will depend on your SVG viewer/editor ( so I left that alone ). That is,
+you may have to flip in the horizontal and/or vertical axis ....
+
+The key named program variables for reproduction of a given view/transform are :
+
+   xvp
+   yvp
+   zvp
+
+and the expression
+
+   Zrot - rotation_offset
+
+I have indicated the points of control in the code for important aspects using a comment
+line beginning thus :
+
+   // TODO/CONTROL :
+
+Enjoy ! :-)
+
+Cheers, Mike.
+hewsmike@iinet.net.au

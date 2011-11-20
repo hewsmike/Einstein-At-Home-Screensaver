@@ -62,6 +62,7 @@ Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
 
    // Set SVG file emit counter to zero.
    SVG_emit_count = 0;
+   SVGSample = false;
    }
 
 Starsphere::~Starsphere() {
@@ -680,10 +681,10 @@ void Starsphere::initialize(const int width,
 	if(m_BoincAdapter.graphicsQualitySetting() == BOINCClientAdapter::MediumGraphicsQualitySetting ||
 	   m_BoincAdapter.graphicsQualitySetting() == BOINCClientAdapter::HighGraphicsQualitySetting) {
 		// fog aids depth perception
-		//glEnable(GL_FOG);
-		//glFogi(GL_FOG_MODE, GL_EXP2);
-		//glFogf(GL_FOG_DENSITY, 0.085);
-		//glHint(GL_FOG_HINT, GL_DONT_CARE);
+		glEnable(GL_FOG);
+		glFogi(GL_FOG_MODE, GL_EXP2);
+		glFogf(GL_FOG_DENSITY, 0.085);
+		glHint(GL_FOG_HINT, GL_DONT_CARE);
       }
 
 	// create pre-drawn display lists
@@ -702,6 +703,15 @@ void Starsphere::initialize(const int width,
  * Rendering routine:  this is what does the drawing:
  */
 void Starsphere::render(const double timeOfDay) {
+   // If a sample was desired since last render, then capture it.
+   if(SVGSample == true) {
+      loadForSVG();
+      sampleForSVG();
+      emitSVG();
+      // Reset sampling flag.
+      SVGSample = false;
+      }
+
    GLfloat Zrot = 0;
 	GLfloat vp_theta, vp_phi, vp_rad;
 	GLfloat Zobs=0.0;
@@ -729,8 +739,7 @@ void Starsphere::render(const double timeOfDay) {
 	// rises in the East, so the sky sphere rotates E to W).
 
 	// RESTORE : Zrot = t*rotation_speed/60.0;
-   Zrot = rotation_speed/60.0;
-	revs = Zrot/360.0;
+   revs = Zrot/360.0;
 	Zrot = -360.0 * (revs - (int)revs);
 
 	// and start drawing...
@@ -741,14 +750,18 @@ void Starsphere::render(const double timeOfDay) {
 
 	// Vary the viewpoint with both a long period wobble of the elevation
 	// of the view and a longer period zoom in/out that might even penetrate
-	// The starsphere for a brief time.   Increase the power in pow(,) to
+	// the starsphere for a brief time.   Increase the power in pow(,) to
 	// make the visit inside briefer.
+
 	// RESTORE : vp_theta = 90.0 - viewpt_elev + wobble_amp*sin(PI2*t/(wobble_period*60.0));
    vp_theta = 90.0 - viewpt_elev;
-	vp_phi = viewpt_azimuth;
+
+   vp_phi = viewpt_azimuth;
+
    // RESTORE : vp_rad = viewpt_radius - zoom_amp*sin(PI2*t/(zoom_period*60.0));
    vp_rad = viewpt_radius;
-	if(vp_rad <0.0) vp_rad = 0.0; // cannot pass origin (confusing)
+
+   if(vp_rad <0.0) vp_rad = 0.0; // cannot pass origin (confusing)
 
 	// TRIED THIS TOO: -zoom_amp*pow(fabs(sin(PI2*t/(zoom_period*60.0))),3);
 	xvp = vp_rad * SIN(vp_theta) * SIN(vp_phi);
@@ -766,7 +779,7 @@ void Starsphere::render(const double timeOfDay) {
 	glPushMatrix();
 	glRotatef(Zrot - rotation_offset, 0.0, 1.0, 0.0);
 
-	// stars, pulsars, supernovae, grid
+   // stars, pulsars, supernovae, grid
 	if(isFeature(STARS))			glCallList(Stars);
 	if(isFeature(PULSARS))			glCallList(Pulsars);
 	if(isFeature(SNRS))			glCallList(SNRs);
@@ -894,10 +907,9 @@ void Starsphere::keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey ke
 		case KeyM:
 			setFeature(MARKER, isFeature(MARKER) ? false : true);
 			break;
+      // TODO/CONTROL : point of control for key used to trigger SVG production
       case KeyF1:
-         loadForSVG();
-         sampleForSVG();
-         emitSVG();
+         SVGSample = true;
          break;
 		default:
 			break;
@@ -969,56 +981,62 @@ void Starsphere::refreshLocalBOINCInformation() {
    }
 
 void Starsphere::loadForSVG(void) {
-   // Get the stars.
-   stars.clear();
-   for(int index = 0; index < Nstars; index ++) {
-      VectorSPR current = VectorSPR(star_info[index][0],
+   // Do the stars, if enabled.
+   if(isFeature(STARS)) {
+      stars.clear();
+      for(int index = 0; index < Nstars; index ++) {
+         VectorSPR star = VectorSPR(star_info[index][0],
                                     star_info[index][1],
                                     sphRadius);
 
-      // But we have to exclude repeated entries ( star_info[] array has many )
+         // But we have to exclude repeated entries ( star_info[] array has many )
 
-      // Assume it's not already entered into our std::vector of star coordinates.
-      bool already_in = false;
+         // Assume it's not already entered into our std::vector of star coordinates.
+         bool already_in = false;
 
-      // Iterate over all entries currently within our std::vector
-      for(std::vector<VectorSPR>::const_iterator search_star = stars.begin();
-          search_star < stars.end();
-          search_star++) {
-          // Have we found a matching entry?
-          if(search_star->isEqual(current)) {
-            // Yes, we have found a match. Set the flag and exit this search.
-            already_in = true;
-            break;
+         // Iterate over all entries currently within our std::vector
+         for(std::vector<VectorSPR>::const_iterator search_star = stars.begin();
+             search_star < stars.end();
+             search_star++) {
+             // Have we found a matching entry?
+             if(search_star->isEqual(star)) {
+               // Yes, we have found a match. Set the flag and exit this search.
+               already_in = true;
+               break;
+               }
+            // No, keep looking .....
             }
-         // No, keep looking .....
-         }
 
-      // If, after looking through all of what is currently in our std::vector ...
-      if(!already_in) {
-         // ..... and then it's not mentioned, then include it.
-         stars.push_back(current);
+         // If, after looking through all of what is currently in our std::vector ...
+         if(!already_in) {
+            // ..... and then it's not mentioned, then include it.
+            stars.push_back(star);
+            }
          }
       }
 
-   // Get the pulsars.
-   pulsars.clear();
-   for(int index = 0; index < Npulsars; index ++) {
-      VectorSPR current = VectorSPR(pulsar_info[index][0],
-                                    pulsar_info[index][1],
-                                    sphRadius);
+    // Do the pulsars, if enabled.
+   if(isFeature(PULSARS)) {
+      pulsars.clear();
+      for(int index = 0; index < Npulsars; index ++) {
+         VectorSPR pulsar = VectorSPR(pulsar_info[index][0],
+                                      pulsar_info[index][1],
+                                      sphRadius);
 
-      pulsars.push_back(current);
+         pulsars.push_back(pulsar);
+         }
       }
 
-   // Get the supernovae
-   supernovae.clear();
-   for(int index = 0; index < Npulsars; index ++) {
-      VectorSPR current = VectorSPR(SNR_info[index][0],
-                                    SNR_info[index][1],
-                                    sphRadius);
+   // Do the supernovae, if enabled.
+   if(isFeature(SNRS)) {
+      supernovae.clear();
+      for(int index = 0; index < NSNRs; index ++) {
+         VectorSPR supernova = VectorSPR(SNR_info[index][0],
+                                     SNR_info[index][1],
+                                     sphRadius);
 
-      supernovae.push_back(current);
+         supernovae.push_back(supernova);
+         }
       }
    }
 
@@ -1050,76 +1068,82 @@ void Starsphere::sampleForSVG(void) {
    glGetDoublev(GL_PROJECTION_MATRIX, projMatrix);
    glGetIntegerv(GL_VIEWPORT, viewport);
 
-   // Do the stars.
-   stars_trans.clear();
-   for(std::vector<VectorSPR>::const_iterator star = stars.begin();
-      star < stars.end();
-      star++) {
-      glRotatef(Zrot - rotation_offset, 0.0, 1.0, 0.0);
-      // Perform the transform.
-      transform_flag = gluProject(star->x(), star->y(), star->z(),
-                                  modelMatrix,
-                                  projMatrix,
-                                  viewport,
-                                  &winx, &winy, &winz);
+   // Do the stars, if enabled.
+   if(isFeature(STARS)) {
+      stars_trans.clear();
+      for(std::vector<VectorSPR>::const_iterator star = stars.begin();
+         star < stars.end();
+         star++) {
+         glRotatef(Zrot - rotation_offset, 0.0, 1.0, 0.0);
+         // Perform the transform.
+         transform_flag = gluProject(star->x(), star->y(), star->z(),
+                                     modelMatrix,
+                                     projMatrix,
+                                     viewport,
+                                     &winx, &winy, &winz);
 
-      // Check the outcome.
-      if(transform_flag == GL_TRUE) {
-         // Transform has succeeded, store the result.
-         stars_trans.push_back(Vector3D(winx, winy, winz));
-         }
-      else {
-         // Notify failure.
-         std::cerr << "Starsphere::sampleForSVG() : failed star transform"
-                   << std::endl;
-         }
-      }
-
-   // Then the pulsars.
-   pulsars_trans.clear();
-   for(std::vector<VectorSPR>::const_iterator pulsar = pulsars.begin();
-      pulsar < pulsars.end();
-      pulsar++) {
-      // Perform the transform.
-      transform_flag = gluProject(pulsar->x(), pulsar->y(), pulsar->z(),
-                                  modelMatrix,
-                                  projMatrix,
-                                  viewport,
-                                  &winx, &winy, &winz);
-
-      // Check the outcome.
-      if(transform_flag == GL_TRUE) {
-         // Transform has succeeded, store the result.
-         pulsars_trans.push_back(Vector3D(winx, winy, winz));
-         }
-      else {
-         // Notify failure.
-         std::cerr << "Starsphere::sampleForSVG() : failed pulsar transform"
-                   << std::endl;
+         // Check the outcome.
+         if(transform_flag == GL_TRUE) {
+            // Transform has succeeded, store the result.
+            stars_trans.push_back(Vector3D(winx, winy, winz));
+            }
+         else {
+            // Notify failure.
+            std::cerr << "Starsphere::sampleForSVG() : failed star transform"
+                      << std::endl;
+            }
          }
       }
 
-   // Finally the supernovae.
-   supernovae_trans.clear();
-   for(std::vector<VectorSPR>::const_iterator supernova = supernovae.begin();
-      supernova < supernovae.end();
-      supernova++) {
-      // Perform the transform.
-      transform_flag = gluProject(supernova->x(), supernova->y(), supernova->z(),
-                                  modelMatrix,
-                                  projMatrix,
-                                  viewport,
-                                  &winx, &winy, &winz);
+    // Do the pulsars, if enabled.
+   if(isFeature(PULSARS)) {
+      pulsars_trans.clear();
+      for(std::vector<VectorSPR>::const_iterator pulsar = pulsars.begin();
+         pulsar < pulsars.end();
+         pulsar++) {
+         // Perform the transform.
+         transform_flag = gluProject(pulsar->x(), pulsar->y(), pulsar->z(),
+                                     modelMatrix,
+                                     projMatrix,
+                                     viewport,
+                                     &winx, &winy, &winz);
 
-      // Check the outcome.
-      if(transform_flag == GL_TRUE) {
-         // Transform has succeeded, store the result.
-         supernovae_trans.push_back(Vector3D(winx, winy, winz));
+         // Check the outcome.
+         if(transform_flag == GL_TRUE) {
+            // Transform has succeeded, store the result.
+            pulsars_trans.push_back(Vector3D(winx, winy, winz));
+            }
+         else {
+            // Notify failure.
+            std::cerr << "Starsphere::sampleForSVG() : failed pulsar transform"
+                      << std::endl;
+            }
          }
-      else {
-         // Notify failure.
-         std::cerr << "Starsphere::sampleForSVG() : failed supernova transform"
-                   << std::endl;
+      }
+
+   // Do the supernovae, if enabled.
+   if(isFeature(SNRS)) {
+      supernovae_trans.clear();
+      for(std::vector<VectorSPR>::const_iterator supernova = supernovae.begin();
+         supernova < supernovae.end();
+         supernova++) {
+         // Perform the transform.
+         transform_flag = gluProject(supernova->x(), supernova->y(), supernova->z(),
+                                     modelMatrix,
+                                     projMatrix,
+                                     viewport,
+                                     &winx, &winy, &winz);
+
+         // Check the outcome.
+         if(transform_flag == GL_TRUE) {
+            // Transform has succeeded, store the result.
+            supernovae_trans.push_back(Vector3D(winx, winy, winz));
+            }
+         else {
+            // Notify failure.
+            std::cerr << "Starsphere::sampleForSVG() : failed supernova transform"
+                      << std::endl;
+            }
          }
       }
 
@@ -1128,15 +1152,18 @@ void Starsphere::sampleForSVG(void) {
    }
 
 void Starsphere::emitSVG(void) {
-   // Point of control for color specification. Substitute other acceptable
-   // SVG versions of color declaration here .... for stroke and fill
-   // attributes.
+   const int UNIT_CIRCLE(1);
+
+   // TODO/CONTROL : point of control for color specification. Substitute other acceptable
+   // SVG versions of color declaration here .... for stroke and fill attributes.
    std::string star_color("white");
    std::string pulsar_color("purple");
    std::string supernova_color("sienna");
 
    // Set start and end of filename pattern.
+   // TODO/CONTROL : point of control for output file base name.
    static const std::string filename_stub = "E@H_starsphere_sample_";
+   // TODO/CONTROL : point of control for output file extension.
    static const std::string filename_ext = ".svg";
 
    // Construct string to represent file emission counter.
@@ -1176,7 +1203,7 @@ void Starsphere::emitSVG(void) {
                  << "\" cy=\""
                  << star->y()
                  << "\" r=\""
-                 << 1
+                 << UNIT_CIRCLE
                  << "\""
                  << " stroke=\""
                  << star_color.c_str()
@@ -1198,7 +1225,7 @@ void Starsphere::emitSVG(void) {
                  << "\" cy=\""
                  << pulsar->y()
                  << "\" r=\""
-                 << 1
+                 << UNIT_CIRCLE
                  << "\""
                  << " stroke=\""
                  << pulsar_color.c_str()
@@ -1220,7 +1247,7 @@ void Starsphere::emitSVG(void) {
                  << "\" cy=\""
                  << supernova->y()
                  << "\" r=\""
-                 << 1
+                 << UNIT_CIRCLE
                  << "\""
                  << " stroke=\""
                  << supernova_color.c_str()

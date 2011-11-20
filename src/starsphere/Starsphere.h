@@ -446,6 +446,8 @@ class Starsphere : public AbstractGraphicsEngine {
    	GLfloat rotation_speed;
 
    	// view control
+
+      // Expose these to entire class as needed for SVG sampling.
       GLfloat xvp, yvp, zvp;
       GLfloat Zrot;
 
@@ -495,6 +497,8 @@ class Starsphere : public AbstractGraphicsEngine {
 
       // Counter of number of SVG files emitted this session.
       int SVG_emit_count;
+
+      bool SVGSample;
       };
 
 /// Constellation & star coordinates (starlist.C)
