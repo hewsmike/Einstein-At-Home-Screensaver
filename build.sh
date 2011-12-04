@@ -229,7 +229,13 @@ prepare_mingw()
     echo "Preparing MinGW build script..." | tee -a $LOGFILE
     cd $ROOT/3rdparty/mingw/xscripts || failure
     # note: svn has no force/overwrite switch. the file might not be updated when patched
-    patch x86-mingw32-build.sh.conf < $ROOT/patches/x86-mingw32-build.sh.conf.patch >> $LOGFILE || failure
+    # RESTORE patch x86-mingw32-build.sh.conf < $ROOT/patches/x86-mingw32-build.sh.conf.patch >> $LOGFILE || failure
+
+    # This is not readily updated if significant aspects of the conf file changes,
+    # but gets around the silly mingw build-script/download-mirror conundrum.
+    # Hence just force overwrite to what we want ....
+    cp -f $ROOT/patches/x86-mingw32-build.sh.conf $ROOT/3rdparty/mingw/xscripts/x86-mingw32-build.sh.conf || failure
+
     chmod +x x86-mingw32-build.sh >> $LOGFILE || failure
 
     store_build_state $BS_PREPARE_MINGW
@@ -318,7 +324,7 @@ prepare_boinc()
     echo "Preparing BOINC..." | tee -a $LOGFILE
     mkdir -p $ROOT/3rdparty/boinc >> $LOGFILE || failure
     mkdir -p $ROOT/build/boinc >> $LOGFILE || failure
- 
+
     cd $ROOT/3rdparty/boinc || failure
     if [ -d .git ]; then
         echo "Updating BOINC (tag: $1)..." | tee -a $LOGFILE
@@ -332,14 +338,14 @@ prepare_boinc()
     else
         # workaround for old git versions
         rm -rf $ROOT/3rdparty/boinc >> $LOGFILE || failure
- 
+
         echo "Retrieving BOINC (tag: $1) (this may take a while)..." | tee -a $LOGFILE
         cd $ROOT/3rdparty || failure
         git clone git://git.aei.uni-hannover.de/shared/einsteinathome/boinc.git boinc >> $LOGFILE 2>&1 || failure
         cd $ROOT/3rdparty/boinc || failure
         git checkout $1 >> $LOGFILE  2>&1 || failure
     fi
- 
+
     return 0
 }
 
@@ -361,7 +367,7 @@ build_sdl()
     if [ "$1" == "$TARGET_MAC" ]; then
         $ROOT/3rdparty/sdl/configure --prefix=$ROOT/install --enable-shared=no --enable-static=yes --enable-screensaver=yes --enable-video-x11=no >> $LOGFILE 2>&1 || failure
     else
-        $ROOT/3rdparty/sdl/configure --prefix=$ROOT/install --enable-shared=no --enable-static=yes --enable-screensaver=yes >> $LOGFILE 2>&1 || failure 
+        $ROOT/3rdparty/sdl/configure --prefix=$ROOT/install --enable-shared=no --enable-static=yes --enable-screensaver=yes >> $LOGFILE 2>&1 || failure
     fi
     make >> $LOGFILE 2>&1 || failure
     make install >> $LOGFILE 2>&1 || failure
@@ -817,6 +823,9 @@ print_usage()
 
 
 ### main control ##########################################################
+
+# Delete any prior build log
+rm -f ./build.log
 
 echo "************************************" | tee -a $LOGFILE
 echo "Starting new build!" | tee -a $LOGFILE
