@@ -67,11 +67,11 @@ bool WindowManager::initialize(const int width, const int height, const int fram
 	m_RenderEventInterval = 1000.0f / (preferredFrameRate != 0 ? preferredFrameRate : frameRate);
 
 	/*
-	 * SDL_ASYNCBLIT - Surface benutzt asynchrone Blits, wenn mÃ¶glich
+	 * SDL_ASYNCBLIT - Surface benutzt asynchrone Blits, wenn möglich
 	 * SDL_ANYFORMAT - Erlaubt jedes Pixel-Format (nur beim display-surface)
 	 * SDL_FULLSCREEN - Surface im Full-Screen-Mode initialisieren (nur display-surface)
 	 * SDL_OPENGL - Surface nutzt OpenGL (nur display-surface)
-	 * SDL_RESIZABLE - Surfacefenster ist verÃ¤nderbar (nur display-Surface)
+	 * SDL_RESIZABLE - Surfacefenster ist veränderbar (nur display-Surface)
 	 * SDL_HWACCEL- Surface blit nutzt Hardwarebeschleunigung
 	 * SDL_SRCCOLORKEY - Surface nutzt colorkey blitting
 	 * SDL_RLEACCEL - Colorkey blitting ist durch RLE beschleunigt
@@ -329,6 +329,9 @@ void WindowManager::eventLoop()
 					break;
             case SDLK_F1:
                eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyF1);
+               break;
+            case SDLK_SPACE:
+               eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeySpace);
                break;
 				case SDLK_RETURN:
 					toggleFullscreen();
