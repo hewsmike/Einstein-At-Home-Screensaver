@@ -23,46 +23,188 @@
 
 #include "Starsphere.h"
 
+const GLfloat Starsphere::FULL_CIRCLE_DEG(360);
+const GLfloat Starsphere::HALF_CIRCLE_DEG(FULL_CIRCLE_DEG/2);
+const GLfloat Starsphere::QUARTER_CIRCLE_DEG(FULL_CIRCLE_DEG/4);
+
+const int Starsphere::RIGHT_ASCENSION_SLICES(24);
+const int Starsphere::DECLINATION_STACKS(12);
+const int Starsphere::RIGHT_ASCENSION_STEP_DEG(FULL_CIRCLE_DEG/RIGHT_ASCENSION_SLICES);
+const int Starsphere::DECLINATION_STEP_DEG(HALF_CIRCLE_DEG/DECLINATION_STACKS);
+const int Starsphere::GLOBE_GRID_STEPS(100);
+
+const uint Starsphere::RA_ARR_POS(0);
+const uint Starsphere::DEC_ARR_POS(1);
+
+const GLfloat Starsphere::LLO_LAT(30.56377);
+const GLfloat Starsphere::LLO_LONG(90.77408);
+const GLfloat Starsphere::LLO_ARM_LEN_DEG(3.0);
+
+const GLfloat Starsphere::LHO_LAT(46.45510);
+const GLfloat Starsphere::LHO_LONG(119.40627);
+const GLfloat Starsphere::LHO_ARM_LEN_DEG(3.0);
+const GLfloat Starsphere::LHO_H2_OFFSET(0.4);
+
+const GLfloat Starsphere::GEO_LAT(52.24452);
+const GLfloat Starsphere::GEO_LONG(-9.80683);
+const GLfloat Starsphere::GEO_ARM_LEN_DEG(1.5);
+
+const GLfloat Starsphere::VIRGO_LAT(43.63139);
+const GLfloat Starsphere::VIRGO_LONG(-10.505);
+const GLfloat Starsphere::VIRGO_ARM_LEN_DEG(3.0);
+
+const GLfloat Starsphere::ROTATION_SPEED(180.0);
+const GLfloat Starsphere::WOBBLE_AMP(37.0);
+const GLfloat Starsphere::WOBBLE_PERIOD(17.0);
+const GLfloat Starsphere::ZOOM_AMP(0.0);
+const GLfloat Starsphere::ZOOM_PERIOD(29.0);
+
+const GLfloat Starsphere::SECONDS_PER_MINUTE(60.0);
+const GLfloat Starsphere::MINUTES_PER_HOUR(60.0);
+const GLfloat Starsphere::SECONDS_PER_HOUR(SECONDS_PER_MINUTE * MINUTES_PER_HOUR);
+const GLfloat Starsphere::HOURS_PER_DAY(24.0);
+const GLfloat Starsphere::SECS_PER_DAY(SECONDS_PER_HOUR * HOURS_PER_DAY);
+const GLfloat Starsphere::MEAN_SIDERIAL_DAYS_PER_YEAR(366.24);
+const GLfloat Starsphere::MEAN_SOLAR_DAYS_PER_YEAR(365.24);
+const GLfloat Starsphere::YEARS_PER_CENTURY(100.0);
+const GLfloat Starsphere::SECONDS_PER_CENTURY(SECS_PER_DAY *
+                                              MEAN_SOLAR_DAYS_PER_YEAR *
+                                              YEARS_PER_CENTURY);
+
+const GLfloat Starsphere::AXES_LINE_WIDTH(2.0);
+const GLfloat Starsphere::AXES_RATIO(1.1);
+
+// Stars are white.
+const GLfloat Starsphere::STAR_MAG_SIZE(2.0f);
+const GLfloat Starsphere::STAR_RED(1.0f);
+const GLfloat Starsphere::STAR_GREEN(1.0f);
+const GLfloat Starsphere::STAR_BLUE(1.0f);
+
+// _P_ulsars are _P_urple
+const GLfloat Starsphere::PULSAR_MAG_SIZE(1.5f);
+const GLfloat Starsphere::PULSAR_RED(0.8f);
+const GLfloat Starsphere::PULSAR_GREEN(0.0f);
+const GLfloat Starsphere::PULSAR_BLUE(0.85f);
+
+// _S_NRs are _S_ienna
+const GLfloat Starsphere::SNR_MAG_SIZE(2.0f);
+const GLfloat Starsphere::SNR_RED(0.7f);
+const GLfloat Starsphere::SNR_GREEN(0.176f);
+const GLfloat Starsphere::SNR_BLUE(0.0f);
+
+// Constellation links are light yellow.
+const GLfloat Starsphere::CONS_LINK_SIZE(1.0f);
+const GLfloat Starsphere::CONS_LINK_RED(0.7f);
+const GLfloat Starsphere::CONS_LINK_GREEN(0.7f);
+const GLfloat Starsphere::CONS_LINK_BLUE(0.0f);
+
+// Globe meridians.
+const GLfloat Starsphere::MERID_LINE_SIZE(1.0f);
+const GLfloat Starsphere::MERID_RED(0.25f);
+const GLfloat Starsphere::MERID_GREEN(0.25f);
+const GLfloat Starsphere::MERID_BLUE(0.25f);
+// Globe prime meridian
+const GLfloat Starsphere::MERID_PRIME_RED(0.60f);
+const GLfloat Starsphere::MERID_PRIME_GREEN(0.60f);
+const GLfloat Starsphere::MERID_PRIME_BLUE(0.60f);
+
+const GLfloat Starsphere::OBS_LINE_SIZE(4.0f);
+
+// Livingstone is green
+const GLfloat Starsphere::LLO_RED(0.0f);
+const GLfloat Starsphere::LLO_GREEN(1.0f);
+const GLfloat Starsphere::LLO_BLUE(0.0f);
+
+// Hanford is blue
+const GLfloat Starsphere::LHO_RED(0.0f);
+const GLfloat Starsphere::LHO_GREEN(0.0f);
+const GLfloat Starsphere::LHO_BLUE(1.0f);
+
+// GEO is red
+const GLfloat Starsphere::GEO_RED(1.0f);
+const GLfloat Starsphere::GEO_GREEN(0.0f);
+const GLfloat Starsphere::GEO_BLUE(0.0f);
+
+// VIRGO is white
+const GLfloat Starsphere::VIRGO_RED(1.0f);
+const GLfloat Starsphere::VIRGO_GREEN(1.0f);
+const GLfloat Starsphere::VIRGO_BLUE(1.0f);
+
+// X-axis is red
+const GLfloat Starsphere::X_AXIS_RED(1.0f);
+const GLfloat Starsphere::X_AXIS_GREEN(0.0f);
+const GLfloat Starsphere::X_AXIS_BLUE(0.0f);
+
+// Y-axis is green
+const GLfloat Starsphere::Y_AXIS_RED(0.0f);
+const GLfloat Starsphere::Y_AXIS_GREEN(1.0f);
+const GLfloat Starsphere::Y_AXIS_BLUE(0.0f);
+
+// Z-axis is blue
+const GLfloat Starsphere::Z_AXIS_RED(0.0f);
+const GLfloat Starsphere::Z_AXIS_GREEN(0.0f);
+const GLfloat Starsphere::Z_AXIS_BLUE(1.0f);
+
+// Search marker is orange
+//const GLfloat Starsphere::Z_AXIS_RED(0.0f);
+//const GLfloat Starsphere::Z_AXIS_GREEN(0.0f);
+//const GLfloat Starsphere::Z_AXIS_BLUE(1.0f);
+
 Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
    AbstractGraphicsEngine(sharedMemoryAreaIdentifier) {
-	m_FontResource = 0;
-	m_FontLogo1 = 0;
-	m_FontLogo2 = 0;
-	m_FontHeader = 0;
-	m_FontText = 0;
+   static const GLfloat SPHERE_RADIUS_INIT(5.5);
+   static const GLfloat VIEWPT_AZIMUTH_INIT(30.0);
+   static const GLfloat VIEWPT_ELEVATION_INIT(23.6);
+   static const GLfloat VIEWPT_RADIUS_INIT(7.6);
+   static const GLfloat ROTATION_OFFSET_INIT(0.0);
+   static const GLfloat CURRENT_RA_INIT(-1.0);
+   static const GLfloat CURRENT_DEC_INIT(-1.0);
+   static const GLuint FEATURE_INIT(0);
+   static const GLuint FEATURE_FLAGS_INIT(0);
+   static const GLuint SVG_COUNT_INIT(0);
 
-	Axes=0, Stars=0, Constellations=0, Pulsars=0;
-	LLOmarker=0, LHOmarker=0, GEOmarker=0, VIRGOmarker=0;
-	sphGrid=0, SNRs=0, SearchMarker=0;
+	m_FontResource = NULL;
+	m_FontLogo1 = NULL;
+	m_FontLogo2 = NULL;
+	m_FontHeader = NULL;
+	m_FontText = NULL;
+
+	Axes = FEATURE_INIT;
+   Stars = FEATURE_INIT;
+   Constellations = FEATURE_INIT;
+   Pulsars = FEATURE_INIT;
+   LLOmarker = FEATURE_INIT;
+   LHOmarker = FEATURE_INIT;
+   GEOmarker = FEATURE_INIT;
+   VIRGOmarker = FEATURE_INIT;
+   sphGrid = FEATURE_INIT;
+   SNRs = FEATURE_INIT;
+   SearchMarker = FEATURE_INIT;
 
 	/**
 	 * Parameters and State info
 	 */
-	sphRadius = 5.5;
-	featureFlags = 0;
+	sphRadius = SPHERE_RADIUS_INIT;
+	featureFlags = FEATURE_FLAGS_INIT;
 
 	/**
 	 * Viewpoint (can be changed with mouse)
 	 */
-	viewpt_azimuth = 30.0;
-	viewpt_elev = 23.6;
-	viewpt_radius = 7.6;
+	viewpt_azimuth = VIEWPT_AZIMUTH_INIT;
+	viewpt_elev = VIEWPT_ELEVATION_INIT;
+	viewpt_radius = VIEWPT_RADIUS_INIT;
 
-	wobble_amp = 37.0;
-	wobble_period = 17.0;
-	zoom_amp = 0.00;
-	zoom_period = 29.0;
+	rotation_offset = ROTATION_OFFSET_INIT;
 
-	rotation_offset = 0.0;
-	rotation_speed = 180.0;
-
-	m_CurrentRightAscension = -1.0;
-	m_CurrentDeclination = -1.0;
+   m_CurrentRightAscension = CURRENT_RA_INIT;
+	m_CurrentDeclination = CURRENT_DEC_INIT;
 	m_RefreshSearchMarker = true;
 
-   // Set SVG file emit counter to zero.
-   SVG_emit_count = 0;
+   // Set SVG file emit counter to zero, and awaiting trigger.
+   SVG_emit_count = SVG_COUNT_INIT;
    SVGSample = false;
+   // Start off with the starsphere rotating.
+   rotate_sphere = true;
    }
 
 Starsphere::~Starsphere() {
@@ -102,38 +244,33 @@ void Starsphere::star_marker(float RAdeg, float DEdeg, float size) {
  *  Create Stars: markers for each star
  */
 void Starsphere::make_stars() {
-	int i, j;
-   // TODO - why are we counting the number of duplicates ? We don't do anything with
-   // that ....
-	bool is_dupe;
-	int Ndupes=0;
-
-	GLfloat star_mag_size = 2.0f;
-
-	// delete existing, create new (required for windoze)
+   // delete existing, create new (required for windoze)
 	if(Stars) glDeleteLists(Stars, 1);
 	Stars = glGenLists(1);
+
 	glNewList(Stars, GL_COMPILE);
-		glColor3f(1.0, 1.0, 1.0);
+		glColor3f(STAR_RED, STAR_GREEN, STAR_BLUE);
 
 		/**
 		 * At some point in the future star_info[][] will also contain
 		 * star magnitude and the marker size will vary with this.
 		 */
-		for(i=0; i < Nstars; i++) {
-			// same stars appear more than once in constallations so ignore dupes
-			is_dupe=false;
-			for(j=0; j< i; j++) {
-				if(star_info[j][0] == star_info[i][0] &&
-               star_info[j][0] == star_info[i][0]) {
-					is_dupe=true;
-					Ndupes++;
+		for(int star = 0; star < Nstars; ++star) {
+			// same stars appear more than once in constellations so ignore dupes
+			bool is_dupe = false;
+			for(int other_star = 0; other_star < star; ++other_star) {
+            // This logical 'AND' will short circuit evaluate ...
+				if((star_info[other_star][RA_ARR_POS] == star_info[star][RA_ARR_POS]) &&
+               (star_info[other_star][DEC_ARR_POS] == star_info[star][DEC_ARR_POS])) {
+					is_dupe = true;
 					break;
                }
             }
 			if(!is_dupe) {
 				// mag_size = 0.05 + 0.50*rand()/RAND_MAX;
-				star_marker(star_info[i][0], star_info[i][1], star_mag_size);
+				star_marker(star_info[star][RA_ARR_POS],
+                        star_info[star][DEC_ARR_POS],
+                        STAR_MAG_SIZE);
             }
          }
 	glEndList();
@@ -143,19 +280,17 @@ void Starsphere::make_stars() {
  *  Pulsar Markers:
  */
 void Starsphere::make_pulsars() {
-	int i;
-
-   GLfloat pulsar_mag_size = 1.5f;
-
-	// delete existing, create new (required for windoze)
+   // delete existing, create new (required for windoze)
 	if(Pulsars) glDeleteLists(Pulsars, 1);
 	Pulsars = glGenLists(1);
-	glNewList(Pulsars, GL_COMPILE);
-		glColor3f(0.80, 0.0, 0.85); // _P_ulsars are _P_urple
-		for (i=0; i < Npulsars; i++) {
-			star_marker(pulsar_info[i][0], pulsar_info[i][1], pulsar_mag_size);
-         }
 
+	glNewList(Pulsars, GL_COMPILE);
+		glColor3f(PULSAR_RED, PULSAR_GREEN, PULSAR_BLUE);
+		for(int pulsar = 0; pulsar < Npulsars; ++pulsar) {
+			star_marker(pulsar_info[pulsar][RA_ARR_POS],
+                     pulsar_info[pulsar][DEC_ARR_POS],
+                     PULSAR_MAG_SIZE);
+         }
 	glEndList();
    }
 
@@ -163,17 +298,16 @@ void Starsphere::make_pulsars() {
  * Super Novae Remenants (SNRs):
  */
 void Starsphere::make_snrs() {
-	int i;
-
-   GLfloat SNR_mag_size = 2.0f;
-
-	// delete existing, create new (required for windoze)
+   // delete existing, create new (required for windoze)
 	if(SNRs) glDeleteLists(SNRs, 1);
 	SNRs = glGenLists(1);
+
 	glNewList(SNRs, GL_COMPILE);
-		glColor3f(0.7, 0.176, 0.0); // _S_NRs are _S_ienna
-		for (i=0; i < NSNRs; i++) {
-			star_marker(SNR_info[i][0], SNR_info[i][1], SNR_mag_size);
+		glColor3f(SNR_RED, SNR_GREEN, SNR_BLUE);
+		for(int supernova = 0; supernova < NSNRs; ++supernova) {
+			star_marker(SNR_info[supernova][RA_ARR_POS],
+                     SNR_info[supernova][DEC_ARR_POS],
+                     SNR_MAG_SIZE);
          }
 	glEndList();
    }
@@ -183,20 +317,21 @@ void Starsphere::make_snrs() {
  * draws line links between pairs of stars in the list.
  */
 void Starsphere::make_constellations() {
-	GLint star_num=0;
-
-	// delete existing, create new (required for windoze)
+   // delete existing, create new (required for windoze)
 	if(Constellations) glDeleteLists(Constellations, 1);
 	Constellations = glGenLists(1);
-	glNewList(Constellations, GL_COMPILE);
-		glLineWidth(1.0);
-		glColor3f(0.7, 0.7, 0.0); // light yellow
+
+   glNewList(Constellations, GL_COMPILE);
+		glLineWidth(CONS_LINK_SIZE);
+		glColor3f(CONS_LINK_RED, CONS_LINK_GREEN, CONS_LINK_BLUE);
 
 		glBegin(GL_LINES); // draws lines between *pairs* of vertices
-			for (star_num=0; star_num < Nstars; ++star_num) {
-				sphVertex(star_info[star_num][0], star_info[star_num][1]);
+			for(int star_num = 0; star_num < Nstars; ++star_num) {
+				sphVertex(star_info[star_num][RA_ARR_POS],
+                      star_info[star_num][DEC_ARR_POS]);
 				star_num++;
-				sphVertex(star_info[star_num][0], star_info[star_num][1]);
+				sphVertex(star_info[star_num][RA_ARR_POS],
+                      star_info[star_num][DEC_ARR_POS]);
             }
 		glEnd();
 	glEndList();
@@ -207,84 +342,98 @@ void Starsphere::make_constellations() {
  * IFO corner positions are from Myers' personal GPS and are +/- 100m
  */
 
-GLfloat Starsphere::RAofZenith(double T, GLfloat LONdeg) {
-	// unix epoch at 12h  1/1/2000
-	const double T_0 = 946728000.0;
+GLfloat Starsphere::RAofZenith(double time_now, GLfloat longitude_deg) {
+   // unix epoch at 12h on 1/1/2000 - measured in seconds since 01/01/1970.
+   static const GLfloat UNIX_EPOCH_DATUM(946728000.0);
 
-	//  UT seconds of the day
-	double T_s = fmod(T, 24.0*3600.0);
+   // Right ascension offset from Greenwich of the First Point of Aries
+   // at UTC 00:00:00 on January 1st ( GHAA = Greenwich Hour Angle Aries ).
+   // This mildly varies year to year, equivalent ~ 100 degrees of Earth's
+   // rotation eastward.
+   static const GLfloat GHAA_HOURS(6.0);
+   static const GLfloat GHAA_MINUTES(41.0);
+   static const GLfloat GHAA_SECONDS(50.54841);
+
+   // Components of a quadratic model of Earth's rotational slowing.
+   static const GLfloat EARTH_ROT_BASE(8640184.812866);
+   static const GLfloat EARTH_ROT_SHIFT(0.093104);
+
+	//  Seconds of this day since midnite UTC
+	double seconds_since_midnite = fmod(time_now, static_cast<double>(SECS_PER_DAY));
 
 	// Julian centuries since 12h 1/1/2000 and 0h today
-	double T_c = (T - T_s - T_0)/3155760000.0;
+	double centuries_since_datum = (time_now - seconds_since_midnite - UNIX_EPOCH_DATUM)/SECONDS_PER_CENTURY;
 
-	// GMST at 0h today in seconds
-	double GMST0 = 6.0*3600.0 + 41.0*60.0 + 50.54841 + (8640184.812866
-	        + 0.093104*T_c)*T_c;
+	// GMST at 0h today in seconds. Derived from a formula accepted by official
+   // astronomy bodies. The first three terms account for the fact that at GMT
+   // 00:00:00 on 1/1/2000 the zero of celestial longitude ( First Point of
+   // Aries, now actually in Pisces ) was overhead nearby Mexico City. Which is
+   // about 100 degrees East of Greenwich in terrestrial longitude, or if you
+   // like a certain number of hours, minutes and seconds of right ascension.
+   // The second line of terms is a quadratic approximation indicating that
+   // as the centuries go by : the year ( sidereal or solar ) gets longer due
+   // to the slowing of the Earth's rotation ....
+	double GMST0 = GHAA_HOURS * SECONDS_PER_HOUR +
+                  GHAA_MINUTES * MINUTES_PER_HOUR +
+                  GHAA_SECONDS +
+                  (EARTH_ROT_BASE + EARTH_ROT_SHIFT * centuries_since_datum) *
+                  centuries_since_datum;
 
 	// GMST now in seconds
-	double GMST = GMST0 + 1.002738*T_s;
+	double GMST = GMST0 +
+                 (MEAN_SIDERIAL_DAYS_PER_YEAR/MEAN_SOLAR_DAYS_PER_YEAR) *
+                 seconds_since_midnite;
 
 	// longitude defined as west positive
-	GLfloat alpha = (GMST/(24.0*3600.0))*360.0 - LONdeg;
-
-	return alpha;
+	return (GMST/(SECS_PER_DAY)) * FULL_CIRCLE_DEG - longitude_deg;
    }
 
 /**
  * Draw the observatories at their zenith positions
  */
 void Starsphere::generateObservatories(float dimFactor) {
+   static const GLfloat DIM_FACTOR_LOW(0.0f);
+   static const GLfloat DIM_FACTOR_HIGH(1.0f);
+
 	// sanity check
-	if(dimFactor < 0.0) dimFactor = 0.0;
-	if(dimFactor > 1.0) dimFactor = 1.0;
+	if(dimFactor < DIM_FACTOR_LOW) dimFactor = DIM_FACTOR_LOW;
+	if(dimFactor > DIM_FACTOR_HIGH) dimFactor = DIM_FACTOR_HIGH;
 
-	GLfloat Lat, Lon; // Latitute/Longitude of IFO is
 	GLfloat RAdeg, DEdeg; // converted to RA/DEC of sky sphere position
-	GLfloat radius; // radius of sphere for obs
-
-	GLfloat arm_len_deg=3.000; // lenght of arms, in degrees (not to scale)
-	GLfloat h2=0.400; // slight offset for H2 arms
 
 	// get current time and UTC offset (for zenith position)
 	m_ObservatoryDrawTimeLocal = dtime();
 	time_t local = m_ObservatoryDrawTimeLocal;
 	tm *utc = gmtime(&local);
 	double utcOffset = difftime(local, mktime(utc));
-	double observatoryDrawTimeGMT = m_ObservatoryDrawTimeLocal - utcOffset;
-
-	radius = 1.0*sphRadius; // radius of sphere on which they are drawn
-
-	float lineSize = 4.0;
+	observatoryDrawTimeGMT = m_ObservatoryDrawTimeLocal - utcOffset;
 
 	/**
 	 * LIGO Livingston Observatory:
 	 */
 
-	Lat= 30.56377;
-	Lon= 90.77408;
-
-	RAdeg= RAofZenith(observatoryDrawTimeGMT, Lon);
-	DEdeg= Lat;
+	RAdeg = RAofZenith(observatoryDrawTimeGMT, LLO_LONG);
+	DEdeg = LLO_LAT;
 
 	// delete existing, create new (required for windoze)
 	if(LLOmarker) glDeleteLists(LLOmarker, 1);
 	LLOmarker = glGenLists(1);
 	glNewList(LLOmarker, GL_COMPILE);
-		glColor3f(dimFactor * 0.0, dimFactor * 1.0, dimFactor * 0.0);
-		glLineWidth(lineSize);
+		glColor3f(dimFactor * LLO_RED, dimFactor * LLO_GREEN, dimFactor * LLO_BLUE);
+		glLineWidth(OBS_LINE_SIZE);
 
 		glBegin(GL_LINE_STRIP);
 			//  North/South arm:
-			sphVertex3D(RAdeg, DEdeg-arm_len_deg, radius);
-			sphVertex3D(RAdeg, DEdeg, radius);
+			sphVertex3D(RAdeg, DEdeg - LLO_ARM_LEN_DEG, sphRadius);
+			sphVertex3D(RAdeg, DEdeg, sphRadius);
 			// East/West arm:
-			sphVertex3D(RAdeg-arm_len_deg, DEdeg, radius);
+			sphVertex3D(RAdeg - LLO_ARM_LEN_DEG, DEdeg, sphRadius);
 		glEnd();
 
       // arm joint H2
-		glPointSize((GLfloat) lineSize);
+		glPointSize(OBS_LINE_SIZE);
 		glBegin(GL_POINTS);
-			sphVertex3D(RAdeg, DEdeg, radius);
+			sphVertex3D(RAdeg, DEdeg, sphRadius);
 		glEnd();
 	glEndList();
 
@@ -292,78 +441,71 @@ void Starsphere::generateObservatories(float dimFactor) {
 	 * LIGO Hanford Observatory: H1 and H2
 	 */
 
-	Lat= 46.45510;
-	Lon= 119.40627;
-
-	RAdeg= RAofZenith(observatoryDrawTimeGMT, Lon);
-	DEdeg= Lat;
+	RAdeg = RAofZenith(observatoryDrawTimeGMT, LHO_LONG);
+	DEdeg = LHO_LAT;
 
 	// delete existing, create new (required for windoze)
 	if(LHOmarker) glDeleteLists(LHOmarker, 1);
 	LHOmarker = glGenLists(1);
 	glNewList(LHOmarker, GL_COMPILE);
-		glColor3f(dimFactor * 0.0, dimFactor * 0.0, dimFactor * 1.0);
-		glLineWidth(lineSize);
+		glColor3f(dimFactor * LHO_RED, dimFactor * LHO_GREEN, dimFactor * LHO_BLUE);
+		glLineWidth(OBS_LINE_SIZE);
 
 		glBegin(GL_LINE_STRIP);
 			// North/South arm:
-			sphVertex3D(RAdeg, DEdeg+arm_len_deg, radius);
-			sphVertex3D(RAdeg, DEdeg, radius);
+			sphVertex3D(RAdeg, DEdeg + LHO_ARM_LEN_DEG, sphRadius);
+			sphVertex3D(RAdeg, DEdeg, sphRadius);
 			// East/West arm:
-			sphVertex3D(RAdeg-arm_len_deg, DEdeg, radius);
+			sphVertex3D(RAdeg - LHO_ARM_LEN_DEG, DEdeg, sphRadius);
 		glEnd();
 
 		glBegin(GL_LINE_STRIP);
 			// North/South arm, H2:
-			sphVertex3D(RAdeg-h2, DEdeg+arm_len_deg/2.0+h2/2.0, radius);
-			sphVertex3D(RAdeg-h2, DEdeg+h2/2.0, radius);
+			sphVertex3D(RAdeg - LHO_H2_OFFSET, DEdeg + LHO_ARM_LEN_DEG/2.0 + LHO_H2_OFFSET, sphRadius);
+			sphVertex3D(RAdeg - LHO_H2_OFFSET, DEdeg + LHO_H2_OFFSET, sphRadius);
 			// East/West arm, H2;
-			sphVertex3D(RAdeg-arm_len_deg/2.0-h2, DEdeg+h2/2.0, radius);
+			sphVertex3D(RAdeg - LHO_ARM_LEN_DEG/2.0 - LHO_H2_OFFSET, DEdeg + LHO_H2_OFFSET, sphRadius);
 		glEnd();
 
 		// arm joint H1
-		glPointSize((GLfloat) lineSize);
+		glPointSize(OBS_LINE_SIZE);
 		glBegin(GL_POINTS);
-			sphVertex3D(RAdeg, DEdeg, radius);
+			sphVertex3D(RAdeg, DEdeg, sphRadius);
 		glEnd();
 
 		// arm joint H2
-		glPointSize((GLfloat) lineSize);
+		glPointSize(OBS_LINE_SIZE);
 		glBegin(GL_POINTS);
-			sphVertex3D(RAdeg-h2, DEdeg+h2/2.0, radius);
-		glEnd();
+			sphVertex3D(RAdeg - LHO_H2_OFFSET, DEdeg + LHO_H2_OFFSET, sphRadius);
+      glEnd();
 	glEndList();
 
 	/**
 	 *  GEO600 Interferometer:
 	 */
 
-	Lat= 52.24452;
-	Lon= -9.80683;
-	arm_len_deg=1.50; // not to scale
-
-	RAdeg= RAofZenith(observatoryDrawTimeGMT, Lon);
-	DEdeg= Lat;
+	RAdeg = RAofZenith(observatoryDrawTimeGMT, GEO_LONG);
+	DEdeg = GEO_LAT;
 
 	// delete existing, create new (required for windoze)
 	if(GEOmarker) glDeleteLists(GEOmarker, 1);
 	GEOmarker = glGenLists(1);
 	glNewList(GEOmarker, GL_COMPILE);
-		glColor3f(dimFactor * 1.0, dimFactor * 0.0, dimFactor * 0.0);
-		glLineWidth(lineSize);
+		glColor3f(dimFactor * GEO_RED, dimFactor * GEO_GREEN, dimFactor * GEO_BLUE);
+		glLineWidth(OBS_LINE_SIZE);
 
 		glBegin(GL_LINE_STRIP);
 			// North/South arm:
-			sphVertex3D(RAdeg, DEdeg+arm_len_deg, radius);
-			sphVertex3D(RAdeg, DEdeg, radius);
+			sphVertex3D(RAdeg, DEdeg + GEO_ARM_LEN_DEG, sphRadius);
+			sphVertex3D(RAdeg, DEdeg, sphRadius);
 			// West/East arm:
-			sphVertex3D(RAdeg+arm_len_deg, DEdeg, radius);
+			sphVertex3D(RAdeg + GEO_ARM_LEN_DEG, DEdeg, sphRadius);
 		glEnd();
 
 		// arm joint
-		glPointSize((GLfloat) lineSize);
+		glPointSize(OBS_LINE_SIZE);
 		glBegin(GL_POINTS);
-			sphVertex3D(RAdeg, DEdeg, radius);
+			sphVertex3D(RAdeg, DEdeg, sphRadius);
 		glEnd();
 	glEndList();
 
@@ -371,32 +513,28 @@ void Starsphere::generateObservatories(float dimFactor) {
 	 *  VIRGO Interferometer:
 	 */
 
-	Lat= 43.63139;
-	Lon= -10.505;
-	arm_len_deg=3.000; // not to scale
-
-	RAdeg= RAofZenith(observatoryDrawTimeGMT, Lon);
-	DEdeg= Lat;
+	RAdeg = RAofZenith(observatoryDrawTimeGMT, VIRGO_LONG);
+	DEdeg = VIRGO_LAT;
 
 	// delete existing, create new (required for windoze)
 	if(VIRGOmarker) glDeleteLists(VIRGOmarker, 1);
 	VIRGOmarker = glGenLists(1);
 	glNewList(VIRGOmarker, GL_COMPILE);
-		glColor3f(dimFactor * 1.0, dimFactor * 1.0, dimFactor * 1.0);
-		glLineWidth(lineSize);
+      glColor3f(dimFactor * VIRGO_RED, dimFactor * VIRGO_GREEN, dimFactor * VIRGO_BLUE);
+		glLineWidth(OBS_LINE_SIZE);
 
 		glBegin(GL_LINE_STRIP);
 			// North/South arm:
-			sphVertex3D(RAdeg, DEdeg+arm_len_deg, radius);
-			sphVertex3D(RAdeg, DEdeg, radius);
+			sphVertex3D(RAdeg, DEdeg + VIRGO_ARM_LEN_DEG, sphRadius);
+			sphVertex3D(RAdeg, DEdeg, sphRadius);
 			// West/East arm:
-			sphVertex3D(RAdeg-arm_len_deg, DEdeg, radius);
+			sphVertex3D(RAdeg - VIRGO_ARM_LEN_DEG, DEdeg, sphRadius);
 		glEnd();
 
 		// arm joint
-		glPointSize((GLfloat) lineSize);
+		glPointSize(OBS_LINE_SIZE);
 		glBegin(GL_POINTS);
-			sphVertex3D(RAdeg, DEdeg, radius);
+			sphVertex3D(RAdeg, DEdeg, sphRadius);
 		glEnd();
 	glEndList();
 
@@ -404,7 +542,7 @@ void Starsphere::generateObservatories(float dimFactor) {
    }
 
 void Starsphere::make_search_marker(GLfloat RAdeg, GLfloat DEdeg, GLfloat size) {
-	GLfloat x, y;
+   GLfloat x, y;
 	GLfloat r1, r2, r3;
 	float theta;
 	int i, Nstep=20;
@@ -479,26 +617,28 @@ void Starsphere::make_search_marker(GLfloat RAdeg, GLfloat DEdeg, GLfloat size) 
  * XYZ coordinate axes: (if we want them - most useful for testing)
  */
 void Starsphere::make_axes() {
-	GLfloat axl=10.0;
-
 	// delete existing, create new (required for windoze)
 	if(Axes) glDeleteLists(Axes, 1);
 	Axes = glGenLists(1);
+
+   // minimum of sphRadius and viewpt_radius
+   GLfloat axes_length = AXES_RATIO * sphRadius;
+
 	glNewList(Axes, GL_COMPILE);
-		glLineWidth(2.0);
+		glLineWidth(AXES_LINE_WIDTH);
 
 		glBegin(GL_LINES);
-			glColor3f(1.0, 0.0, 0.0);
-			glVertex3f(-axl, 0.0, 0.0);
-			glVertex3f(axl, 0.0, 0.0);
+			glColor3f(X_AXIS_RED, X_AXIS_GREEN, X_AXIS_BLUE);
+			glVertex3f(- axes_length, 0.0, 0.0);
+			glVertex3f(axes_length, 0.0, 0.0);
 
-			glColor3f(0.0, 1.0, 0.0);
-			glVertex3f(0.0, -axl, 0.0);
-			glVertex3f(0.0, axl, 0.0);
+			glColor3f(Y_AXIS_RED, Y_AXIS_GREEN, Y_AXIS_BLUE);
+			glVertex3f(0.0, - axes_length, 0.0);
+			glVertex3f(0.0, axes_length, 0.0);
 
-			glColor3f(0.0, 0.0, 1.0);
-			glVertex3f(0.0, 0.0, -axl);
-			glVertex3f(0.0, 0.0, axl);
+			glColor3f(Z_AXIS_RED, Z_AXIS_GREEN, Z_AXIS_BLUE);
+			glVertex3f(0.0, 0.0, - axes_length);
+			glVertex3f(0.0, 0.0, axes_length);
 		glEnd();
 	glEndList();
    }
@@ -507,37 +647,37 @@ void Starsphere::make_axes() {
  * RA/DEC coordinate grid on the sphere
  */
 void Starsphere::make_globe() {
-	int hr, j, i, iMax=100;
+
 	GLfloat RAdeg, DEdeg;
 
 	// delete existing, create new (required for windoze)
 	if(sphGrid) glDeleteLists(sphGrid, 1);
 	sphGrid = glGenLists(1);
 	glNewList(sphGrid, GL_COMPILE);
-		glLineWidth(1.0);
+		glLineWidth(MERID_LINE_SIZE);
 
-		// Lines of constant Right Ascencion (East Longitude)
-		for (hr=0; hr<24; hr++) {
-			RAdeg=hr*15.0;
-			glColor3f(0.25, 0.25, 0.25);
+		// Lines of constant Right Ascension ( East Longitude )
+		for(int asc_step = 0; asc_step < RIGHT_ASCENSION_SLICES; ++asc_step) {
+			RAdeg = asc_step * RIGHT_ASCENSION_STEP_DEG;
+			glColor3f(MERID_RED, MERID_GREEN, MERID_BLUE);
 
-			// mark median
-			if(hr==0) glColor3f(0.55, 0.55, 0.55);
+			// mark meridian
+			if(asc_step == 0) glColor3f(MERID_PRIME_RED, MERID_PRIME_GREEN, MERID_PRIME_BLUE);
 
 			glBegin(GL_LINE_STRIP);
-				for (i=0; i<=iMax; i++) {
-					DEdeg = i*180.0/iMax - 90.0;
+            for(int dec_step = 0; dec_step <= GLOBE_GRID_STEPS; ++dec_step) {
+					DEdeg = dec_step * HALF_CIRCLE_DEG/GLOBE_GRID_STEPS - QUARTER_CIRCLE_DEG;
 					sphVertex(RAdeg, DEdeg);
                }
 			glEnd();
          }
 
-		// Lines of constant Declination (Lattitude)
-		for (j=1; j<=12; j++) {
-			DEdeg = 90.0 - j*15.0;
+		// Lines of constant Declination ( latitude )
+		for(int dec_step = 1; dec_step < DECLINATION_STACKS; ++dec_step) {
+			DEdeg = QUARTER_CIRCLE_DEG - dec_step * DECLINATION_STEP_DEG;
 			glBegin(GL_LINE_STRIP);
-				for (i=0; i<=iMax; i++) {
-					RAdeg = i*360.0/iMax;
+				for(int asc_step = 0; asc_step <= GLOBE_GRID_STEPS; ++asc_step) {
+					RAdeg = asc_step * FULL_CIRCLE_DEG/GLOBE_GRID_STEPS;
 					sphVertex(RAdeg, DEdeg);
                }
 			glEnd();
@@ -614,10 +754,9 @@ void Starsphere::initialize(const int width,
 		// note: initialization of logo font instances is done in subclasses!
 
 		// create medium font instances using font resource (base address + size)
-		m_FontHeader = new OGLFT::TranslucentTexture(
-									&m_FontResource->data()->at(0),
-									m_FontResource->data()->size(),
-									13, 78 );
+		m_FontHeader = new OGLFT::TranslucentTexture(&m_FontResource->data()->at(0),
+                                                   m_FontResource->data()->size(),
+                                                   13, 78 );
 
 		if(m_FontHeader == 0 || !m_FontHeader->isValid()) {
 		     cerr << "Could not construct header font face from in memory resource!" << endl;
@@ -627,10 +766,9 @@ void Starsphere::initialize(const int width,
 		m_FontHeader->setForegroundColor(1.0, 1.0, 0.0, 1.0);
 
 		// create small font instances using font resource (base address + size)
-		m_FontText = new OGLFT::TranslucentTexture(
-									&m_FontResource->data()->at(0),
-									m_FontResource->data()->size(),
-									11, 72 );
+		m_FontText = new OGLFT::TranslucentTexture(&m_FontResource->data()->at(0),
+                                                 m_FontResource->data()->size(),
+                                                 11, 72 );
 
 		if(m_FontText == 0 || !m_FontText->isValid()) {
 		     cerr << "Could not construct text font face from in memory resource!" << endl;
@@ -703,44 +841,56 @@ void Starsphere::initialize(const int width,
  * Rendering routine:  this is what does the drawing:
  */
 void Starsphere::render(const double timeOfDay) {
-   // If a sample was desired since last render, then capture it.
+   // If a sample is desired since last render, then capture it
+   // first before Starsphere is evolved.
    if(SVGSample == true) {
       loadForSVG();
       sampleForSVG();
       emitSVG();
-      // Reset sampling flag.
+      // Reset sampling flag ie. it has to be manually
+      // re-triggered by the relevant keystroke.
       SVGSample = false;
       }
 
-   GLfloat Zrot = 0;
-	GLfloat vp_theta, vp_phi, vp_rad;
-	GLfloat Zobs=0.0;
+   GLfloat vp_theta, vp_phi, vp_rad;
+	GLfloat Zobs = 0.0;
 	double revs, t, dt = 0;
-	static double start_time=-1.0, last_time=-1.0;
+	static double start_time = -1.0, last_time = -1.0;
 
 	// Calculate the real time t since we started (or reset) and the
-	// time dt since the last render() call.    Both may be useful
-	// for timing animations.  Note that time_of_day is dtime().
+	// time dt since the last render() call. Both may be useful
+	// for timing animations. Note that time_of_day is dtime().
 
-	if(start_time < 0.0) {
+   if(start_time < 0.0) {
       start_time = timeOfDay;
       }
-	t = timeOfDay - start_time;
 
-	if(last_time < 0.0) {
+   if(rotate_sphere == true){
+      t = timeOfDay;
+      }
+   else{
+      t = last_time;
+      }
+
+   t -= start_time;
+
+   if(last_time < 0.0) {
       last_time = timeOfDay - 0.01;
       }
-	dt = timeOfDay - last_time;
 
-	last_time = timeOfDay; // remember for next time
+   dt = timeOfDay - last_time;
 
-	// Now determine the rotation angle based on the time since start
+   if(rotate_sphere == true){
+      last_time = timeOfDay; // remember for next time
+      }
+
+	// Now determine the rotation angle based on the time since start.
 	// It is negative to get the rotation direction correct (the sun
 	// rises in the East, so the sky sphere rotates E to W).
 
-	// RESTORE : Zrot = t*rotation_speed/60.0;
-   revs = Zrot/360.0;
-	Zrot = -360.0 * (revs - (int)revs);
+   Zrot = t*ROTATION_SPEED/60.0;
+   revs = Zrot/FULL_CIRCLE_DEG;
+	Zrot = - FULL_CIRCLE_DEG * (revs - (int)revs);
 
 	// and start drawing...
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -753,13 +903,10 @@ void Starsphere::render(const double timeOfDay) {
 	// the starsphere for a brief time.   Increase the power in pow(,) to
 	// make the visit inside briefer.
 
-	// RESTORE : vp_theta = 90.0 - viewpt_elev + wobble_amp*sin(PI2*t/(wobble_period*60.0));
-   vp_theta = 90.0 - viewpt_elev;
+   vp_theta = QUARTER_CIRCLE_DEG - viewpt_elev + WOBBLE_AMP*sin(PI2*t/(WOBBLE_PERIOD * 60.0));
+   vp_rad = viewpt_radius - ZOOM_AMP*sin(PI2*t/(ZOOM_PERIOD*60.0));
 
    vp_phi = viewpt_azimuth;
-
-   // RESTORE : vp_rad = viewpt_radius - zoom_amp*sin(PI2*t/(zoom_period*60.0));
-   vp_rad = viewpt_radius;
 
    if(vp_rad <0.0) vp_rad = 0.0; // cannot pass origin (confusing)
 
@@ -911,6 +1058,9 @@ void Starsphere::keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey ke
       case KeyF1:
          SVGSample = true;
          break;
+      case KeySpace:
+         toggleRotation();
+         break;
 		default:
 			break;
       }
@@ -981,6 +1131,23 @@ void Starsphere::refreshLocalBOINCInformation() {
    }
 
 void Starsphere::loadForSVG(void) {
+   // Do the axes, if enabled.
+   if(isFeature(AXES)) {
+      // minimum of sphRadius and viewpt_radius
+      GLfloat axes_length = AXES_RATIO * sphRadius;
+
+      // x axis is at RA of 0 and 180 degrees in the x-y plane.
+      axes.push_back(std::pair<VectorSPR, VectorSPR>(VectorSPR(0, 0, axes_length),
+                                                     VectorSPR(180, 0, axes_length)));
+      // y axis is at DEC of 90 and -90 degrees.
+      axes.push_back(std::pair<VectorSPR, VectorSPR>(VectorSPR(0, 90, axes_length),
+                                                     VectorSPR(0, -90, axes_length)));
+      // z axis is at RA of 90 and 270 degrees in the x-y plane.
+      VectorSPR first = VectorSPR(90, 0, axes_length);
+      VectorSPR second = VectorSPR(270, 0, axes_length);
+      axes.push_back(std::pair<VectorSPR, VectorSPR>(first, second));
+      }
+
    // Do the stars, if enabled.
    if(isFeature(STARS)) {
       stars.clear();
@@ -1015,7 +1182,7 @@ void Starsphere::loadForSVG(void) {
          }
       }
 
-    // Do the pulsars, if enabled.
+   // Do the pulsars, if enabled.
    if(isFeature(PULSARS)) {
       pulsars.clear();
       for(int index = 0; index < Npulsars; index ++) {
@@ -1032,35 +1199,139 @@ void Starsphere::loadForSVG(void) {
       supernovae.clear();
       for(int index = 0; index < NSNRs; index ++) {
          VectorSPR supernova = VectorSPR(SNR_info[index][0],
-                                     SNR_info[index][1],
-                                     sphRadius);
+                                         SNR_info[index][1],
+                                         sphRadius);
 
          supernovae.push_back(supernova);
          }
       }
+
+   // Do the constellations, if enabled.
+   if(isFeature(CONSTELLATIONS)) {
+      constellations.clear();
+
+      // This ensures only pairs of star positions will be
+      // taken up. If there's one left over, it will be ignored.
+      int NLinks = Nstars/2;
+      // Examine star pairings and form the links.
+      for(int index = 0; index < NLinks; index ++) {
+         VectorSPR link1 = VectorSPR(star_info[index*2][0],
+                                     star_info[index*2][1],
+                                     sphRadius);
+         VectorSPR link2 = VectorSPR(star_info[index*2 + 1][0],
+                                     star_info[index*2 + 1][1],
+                                     sphRadius);
+         constellations.push_back(std::pair<VectorSPR, VectorSPR>(link1, link2));
+         }
+      }
+
+   // Do the globe, if enabled.
+   if(isFeature(GLOBE)) {
+      // Lines of constant Right Ascension ( East Longitude )
+      globe_slices.clear();
+		for(int asc_step = 0; asc_step < RIGHT_ASCENSION_SLICES; ++asc_step) {
+			GLfloat RAdeg = asc_step * RIGHT_ASCENSION_STEP_DEG;
+         std::vector<VectorSPR> slice;
+
+			for(int dec_step = 0; dec_step <= GLOBE_GRID_STEPS; ++dec_step) {
+            GLfloat DEdeg = dec_step * HALF_CIRCLE_DEG/GLOBE_GRID_STEPS - QUARTER_CIRCLE_DEG;
+            slice.push_back(VectorSPR(RAdeg, DEdeg, sphRadius));
+            }
+         globe_slices.push_back(slice);
+			}
+
+      // Lines of constant Declination ( latitude )
+      globe_stacks.clear();
+		for(int dec_step = 1; dec_step < DECLINATION_STACKS; ++dec_step) {
+			GLfloat DEdeg = QUARTER_CIRCLE_DEG - dec_step * DECLINATION_STEP_DEG;
+         std::vector<VectorSPR> stack;
+
+			for(int asc_step = 0; asc_step <= GLOBE_GRID_STEPS; ++asc_step) {
+			   GLfloat RAdeg = asc_step * FULL_CIRCLE_DEG/GLOBE_GRID_STEPS;
+				stack.push_back(VectorSPR(RAdeg, DEdeg, sphRadius));
+            }
+         globe_stacks.push_back(stack);
+			}
+      }
+
+   if(isFeature(OBSERVATORIES)) {
+      GLfloat RAdeg;
+      GLfloat DEdeg;
+      // LLOmarker
+      LLO.clear();
+      RAdeg = RAofZenith(observatoryDrawTimeGMT, LLO_LONG);
+      DEdeg = LLO_LAT;
+
+      LLO.push_back(VectorSPR(RAdeg, DEdeg - LLO_ARM_LEN_DEG, sphRadius));
+      LLO.push_back(VectorSPR(RAdeg, DEdeg, sphRadius));
+      LLO.push_back(VectorSPR(RAdeg - LLO_ARM_LEN_DEG, DEdeg, sphRadius));
+      LLO.push_back(VectorSPR(RAdeg, DEdeg, sphRadius));
+
+		// LHOmarker
+      LH1.clear();
+      RAdeg = RAofZenith(observatoryDrawTimeGMT, LHO_LONG);
+      DEdeg = LHO_LAT;
+
+      LH1.push_back(VectorSPR(RAdeg, DEdeg + LHO_ARM_LEN_DEG, sphRadius));
+      LH1.push_back(VectorSPR(RAdeg, DEdeg, sphRadius));
+      LH1.push_back(VectorSPR(RAdeg - LHO_ARM_LEN_DEG, DEdeg, sphRadius));
+      LH1.push_back(VectorSPR(RAdeg, DEdeg, sphRadius));
+
+      LH2.push_back(VectorSPR(RAdeg - LHO_H2_OFFSET, DEdeg + LHO_ARM_LEN_DEG/2 + LHO_H2_OFFSET, sphRadius));
+      LH2.push_back(VectorSPR(RAdeg - LHO_H2_OFFSET, DEdeg + LHO_H2_OFFSET, sphRadius));
+      LH2.push_back(VectorSPR(RAdeg - LHO_ARM_LEN_DEG/2  - LHO_H2_OFFSET, DEdeg  + LHO_H2_OFFSET, sphRadius));
+      LH2.push_back(VectorSPR(RAdeg - LHO_H2_OFFSET, DEdeg + LHO_H2_OFFSET, sphRadius));
+
+      // GEOmarker
+      GEO.clear();
+      RAdeg = RAofZenith(observatoryDrawTimeGMT, GEO_LONG);
+      DEdeg = GEO_LAT;
+
+      GEO.push_back(VectorSPR(RAdeg, DEdeg + GEO_ARM_LEN_DEG, sphRadius));
+      GEO.push_back(VectorSPR(RAdeg, DEdeg, sphRadius));
+      GEO.push_back(VectorSPR(RAdeg + GEO_ARM_LEN_DEG, DEdeg, sphRadius));
+      GEO.push_back(VectorSPR(RAdeg, DEdeg, sphRadius));
+
+      // VIRGOmarker
+      VIRGO.clear();
+      RAdeg = RAofZenith(observatoryDrawTimeGMT, VIRGO_LONG);
+      DEdeg = VIRGO_LAT;
+
+      VIRGO.push_back(VectorSPR(RAdeg, DEdeg + VIRGO_ARM_LEN_DEG, sphRadius));
+      VIRGO.push_back(VectorSPR(RAdeg, DEdeg, sphRadius));
+      VIRGO.push_back(VectorSPR(RAdeg - VIRGO_ARM_LEN_DEG, DEdeg, sphRadius));
+      VIRGO.push_back(VectorSPR(RAdeg, DEdeg, sphRadius));
+      }
    }
 
 void Starsphere::sampleForSVG(void) {
-   // Transform matrix copies ( careful, OpenGL considers them column-major ).
-   GLdouble modelMatrix[16];
-   GLdouble projMatrix[16];
-   GLint viewport[4];
-
-   // Holders for window coordinate values returned by gluProject().
-   GLdouble winx;
-   GLdouble winy;
-   GLdouble winz;
-
-   // Flag to test success of transform effort.
-   int transform_flag = GL_TRUE;
-
-   // Reproduce the transform sequence as used for rendering, while isolating the
-   // effect using the matrix stack.
+   // Isolating the any effects using the matrix stack.
    glPushMatrix();
-   glLoadIdentity();
+	glLoadIdentity();
+
+   // Reproduce the transform sequence as used for rendering,
    gluLookAt(xvp, yvp, zvp, // eyes position
 	          0.0, 0.0, 0.0, // looking toward here
 	          0.0, 1.0, 0.0); // which way is up?  y axis!
+
+   // Take a snapshot of the transform matrices by inquiring of OpenGL.
+   glGetDoublev(GL_MODELVIEW_MATRIX, modelMatrix);
+   glGetDoublev(GL_PROJECTION_MATRIX, projMatrix);
+   glGetIntegerv(GL_VIEWPORT, viewport);
+
+   // Do the axes, if enabled.
+   if(isFeature(AXES)) {
+      axes_trans.clear();
+      for(std::vector<std::pair<VectorSPR, VectorSPR> >::const_iterator axis = axes.begin();
+         axis != axes.end();
+         axis++) {
+         Vector3D one = transformPoint(axis->first);
+         Vector3D two = transformPoint(axis->second);
+         axes_trans.push_back(std::pair<Vector3D, Vector3D>(one,two));
+         }
+      }
+
+   // Now rotate.
    glRotatef(Zrot - rotation_offset, 0.0, 1.0, 0.0);
 
    // Take a snapshot of the transform matrices by inquiring of OpenGL.
@@ -1070,81 +1341,66 @@ void Starsphere::sampleForSVG(void) {
 
    // Do the stars, if enabled.
    if(isFeature(STARS)) {
-      stars_trans.clear();
-      for(std::vector<VectorSPR>::const_iterator star = stars.begin();
-         star < stars.end();
-         star++) {
-         glRotatef(Zrot - rotation_offset, 0.0, 1.0, 0.0);
-         // Perform the transform.
-         transform_flag = gluProject(star->x(), star->y(), star->z(),
-                                     modelMatrix,
-                                     projMatrix,
-                                     viewport,
-                                     &winx, &winy, &winz);
-
-         // Check the outcome.
-         if(transform_flag == GL_TRUE) {
-            // Transform has succeeded, store the result.
-            stars_trans.push_back(Vector3D(winx, winy, winz));
-            }
-         else {
-            // Notify failure.
-            std::cerr << "Starsphere::sampleForSVG() : failed star transform"
-                      << std::endl;
-            }
-         }
+      transformContainer(stars, stars_trans);
       }
 
-    // Do the pulsars, if enabled.
+   // Do the pulsars, if enabled.
    if(isFeature(PULSARS)) {
-      pulsars_trans.clear();
-      for(std::vector<VectorSPR>::const_iterator pulsar = pulsars.begin();
-         pulsar < pulsars.end();
-         pulsar++) {
-         // Perform the transform.
-         transform_flag = gluProject(pulsar->x(), pulsar->y(), pulsar->z(),
-                                     modelMatrix,
-                                     projMatrix,
-                                     viewport,
-                                     &winx, &winy, &winz);
-
-         // Check the outcome.
-         if(transform_flag == GL_TRUE) {
-            // Transform has succeeded, store the result.
-            pulsars_trans.push_back(Vector3D(winx, winy, winz));
-            }
-         else {
-            // Notify failure.
-            std::cerr << "Starsphere::sampleForSVG() : failed pulsar transform"
-                      << std::endl;
-            }
-         }
+      transformContainer(pulsars, pulsars_trans);
       }
 
    // Do the supernovae, if enabled.
    if(isFeature(SNRS)) {
-      supernovae_trans.clear();
-      for(std::vector<VectorSPR>::const_iterator supernova = supernovae.begin();
-         supernova < supernovae.end();
-         supernova++) {
-         // Perform the transform.
-         transform_flag = gluProject(supernova->x(), supernova->y(), supernova->z(),
-                                     modelMatrix,
-                                     projMatrix,
-                                     viewport,
-                                     &winx, &winy, &winz);
+      transformContainer(supernovae, supernovae_trans);
+      }
 
-         // Check the outcome.
-         if(transform_flag == GL_TRUE) {
-            // Transform has succeeded, store the result.
-            supernovae_trans.push_back(Vector3D(winx, winy, winz));
-            }
-         else {
-            // Notify failure.
-            std::cerr << "Starsphere::sampleForSVG() : failed supernova transform"
-                      << std::endl;
-            }
+   // Do the constellations, if enabled.
+   if(isFeature(CONSTELLATIONS)) {
+      cons_trans.clear();
+      for(std::vector<std::pair<VectorSPR, VectorSPR> >::const_iterator link = constellations.begin();
+         link != constellations.end();
+         link++) {
+         cons_trans.push_back(std::pair<Vector3D, Vector3D>(transformPoint(link->first),
+                                                            transformPoint(link->second)));
          }
+      }
+
+   // Do the globe, if enabled.
+   if(isFeature(GLOBE)) {
+      // Lines of constant Right Ascension ( East Longitude )
+      globe_slices_trans.clear();
+      for(std::vector<std::vector<VectorSPR> >::const_iterator slice = globe_slices.begin();
+         slice != globe_slices.end();
+         ++slice) {
+         std::vector<Vector3D> slice_trans;
+         transformContainer(*slice, slice_trans);
+         globe_slices_trans.push_back(slice_trans);
+         }
+
+      // Lines of constant Declination ( latitude )
+      globe_stacks_trans.clear();
+      for(std::vector<std::vector<VectorSPR> >::const_iterator stack = globe_stacks.begin();
+         stack != globe_stacks.end();
+         ++stack) {
+         std::vector<Vector3D> stack_trans;
+         transformContainer(*stack, stack_trans);
+         globe_stacks_trans.push_back(stack_trans);
+         }
+      }
+
+   if(isFeature(OBSERVATORIES)) {
+      // LLO markers
+      transformContainer(LLO, LLO_trans);
+
+      // LHO markers
+      transformContainer(LH1, LH1_trans);
+      transformContainer(LH2, LH2_trans);
+
+      // GEOmarker
+      transformContainer(GEO, GEO_trans);
+
+      // VIRGOmarker
+      transformContainer(VIRGO, VIRGO_trans);
       }
 
    // Restore the matrix stack.
@@ -1152,17 +1408,30 @@ void Starsphere::sampleForSVG(void) {
    }
 
 void Starsphere::emitSVG(void) {
-   const int UNIT_CIRCLE(1);
+   static const GLfloat UNIT_CIRCLE(1);
+   static const GLfloat OBS_MARKER_WIDTH(4);
+   static const GLfloat GLOBE_LINE_WIDTH(1.5);
+   static const GLfloat CONSTELLATION_LINE_WIDTH(1);
 
    // TODO/CONTROL : point of control for color specification. Substitute other acceptable
    // SVG versions of color declaration here .... for stroke and fill attributes.
-   std::string star_color("white");
-   std::string pulsar_color("purple");
-   std::string supernova_color("sienna");
+   std::string star_color(SVGColorAttribute(STAR_RED, STAR_GREEN, STAR_BLUE));
+   std::string pulsar_color(SVGColorAttribute(PULSAR_RED, PULSAR_GREEN, PULSAR_BLUE));
+   std::string supernova_color(SVGColorAttribute(SNR_RED, SNR_GREEN, SNR_BLUE));
+   std::string link_color(SVGColorAttribute(CONS_LINK_RED, CONS_LINK_GREEN, CONS_LINK_BLUE));
+   std::string globe_meridian_color(SVGColorAttribute(MERID_RED, MERID_GREEN, MERID_BLUE));
+   std::string globe_prime_meridian_color(SVGColorAttribute(MERID_PRIME_RED, MERID_PRIME_GREEN, MERID_PRIME_BLUE));
+   std::string LLO_color(SVGColorAttribute(LLO_RED, LLO_GREEN, LLO_BLUE));
+   std::string LHO_color(SVGColorAttribute(LHO_RED, LHO_GREEN, LHO_BLUE));
+   std::string GEO_color(SVGColorAttribute(GEO_RED, GEO_GREEN, GEO_BLUE));
+   std::string VIRGO_color(SVGColorAttribute(VIRGO_RED, VIRGO_GREEN, VIRGO_BLUE));
+   std::string X_AXIS_color(SVGColorAttribute(X_AXIS_RED, X_AXIS_GREEN, X_AXIS_BLUE));
+   std::string Y_AXIS_color(SVGColorAttribute(Y_AXIS_RED, Y_AXIS_GREEN, Y_AXIS_BLUE));
+   std::string Z_AXIS_color(SVGColorAttribute(Z_AXIS_RED, Z_AXIS_GREEN, Z_AXIS_BLUE));
 
    // Set start and end of filename pattern.
    // TODO/CONTROL : point of control for output file base name.
-   static const std::string filename_stub = "E@H_starsphere_sample_";
+   static const std::string filename_stub = "EAH_starsphere_sample_";
    // TODO/CONTROL : point of control for output file extension.
    static const std::string filename_ext = ".svg";
 
@@ -1192,24 +1461,34 @@ void Starsphere::emitSVG(void) {
 
    outfile << "\t<desc>Screensaver View Sample</desc>\n";
 
+   // Do the axes, if enabled.
+   if(isFeature(AXES)) {
+      outfile << "\t<!-- axes START -->\n";
+      outfile << "\t\t"
+              << SVGLineTag(std::pair<Vector3D, Vector3D>(axes_trans[0].first, axes_trans[0].second),
+                            AXES_LINE_WIDTH,
+                            X_AXIS_color);
+      outfile << "\t\t"
+              << SVGLineTag(std::pair<Vector3D, Vector3D>(axes_trans[1].first, axes_trans[1].second),
+                            AXES_LINE_WIDTH,
+                            Y_AXIS_color);
+      outfile << "\t\t"
+              << SVGLineTag(std::pair<Vector3D, Vector3D>(axes_trans[2].first, axes_trans[2].second),
+                            AXES_LINE_WIDTH,
+                            Z_AXIS_color);
+      outfile << "\t<!-- axes END -->\n";
+      }
+
    // Do the stars, if enabled.
    if(isFeature(STARS)) {
       outfile << "\t<!-- stars START -->\n";
       for(std::vector<Vector3D>::const_iterator star = stars_trans.begin();
-         star < stars_trans.end();
-         star++) {
-         outfile << "\t\t<circle cx=\""
-                 << star->x()
-                 << "\" cy=\""
-                 << star->y()
-                 << "\" r=\""
-                 << UNIT_CIRCLE
-                 << "\""
-                 << " stroke=\""
-                 << star_color.c_str()
-                 << "\" fill=\""
-                 << star_color.c_str()
-                 << "\"/>\n";
+         star != stars_trans.end();
+         ++star) {
+         outfile << "\t\t"
+                 << SVGCircleTag(*star,
+                                 STAR_MAG_SIZE,
+                                 star_color);
          }
       outfile << "\t<!-- stars END -->\n";
       }
@@ -1218,20 +1497,12 @@ void Starsphere::emitSVG(void) {
    if(isFeature(PULSARS)) {
       outfile << "\t<!-- pulsars START -->\n";
       for(std::vector<Vector3D>::const_iterator pulsar = pulsars_trans.begin();
-         pulsar < pulsars_trans.end();
-         pulsar++) {
-         outfile << "\t\t<circle cx=\""
-                 << pulsar->x()
-                 << "\" cy=\""
-                 << pulsar->y()
-                 << "\" r=\""
-                 << UNIT_CIRCLE
-                 << "\""
-                 << " stroke=\""
-                 << pulsar_color.c_str()
-                 << "\" fill=\""
-                 << pulsar_color.c_str()
-                 << "\"/>\n";
+         pulsar != pulsars_trans.end();
+         ++pulsar) {
+         outfile << "\t\t"
+                 << SVGCircleTag(*pulsar,
+                                 UNIT_CIRCLE,
+                                 pulsar_color);
          }
       outfile << "\t<!-- pulsars END -->\n";
       }
@@ -1240,22 +1511,174 @@ void Starsphere::emitSVG(void) {
    if(isFeature(SNRS)) {
       outfile << "\t<!-- supernovae START -->\n";
       for(std::vector<Vector3D>::const_iterator supernova = supernovae_trans.begin();
-         supernova < supernovae_trans.end();
-         supernova++) {
-         outfile << "\t\t<circle cx=\""
-                 << supernova->x()
-                 << "\" cy=\""
-                 << supernova->y()
-                 << "\" r=\""
-                 << UNIT_CIRCLE
-                 << "\""
-                 << " stroke=\""
-                 << supernova_color.c_str()
-                 << "\" fill=\""
-                 << supernova_color.c_str()
-                 << "\"/>\n";
+         supernova != supernovae_trans.end();
+         ++supernova) {
+         outfile << "\t\t"
+                 << SVGCircleTag(*supernova,
+                                 UNIT_CIRCLE,
+                                 supernova_color);
          }
       outfile << "\t<!-- supernovae END -->\n";
+      }
+
+   // Do the constellations, if enabled.
+   if(isFeature(CONSTELLATIONS)) {
+      outfile << "\t<!-- constellation links START -->\n";
+      for(std::vector<std::pair<Vector3D, Vector3D> >::const_iterator link = cons_trans.begin();
+         link != cons_trans.end();
+         ++link) {
+         outfile << "\t\t\t"
+                 << SVGLineTag(std::pair<Vector3D, Vector3D>(link->first, link->second),
+                               CONSTELLATION_LINE_WIDTH,
+                               link_color);
+         }
+      outfile << "\t<!-- constellation links END -->\n";
+      }
+
+   if(isFeature(GLOBE)) {
+      outfile << "\t<!-- globe grid START -->\n";
+
+      outfile << "\t\t<!-- globe grid slices START -->\n";
+      for(std::vector<std::vector<Vector3D> >::const_iterator slice = globe_slices_trans.begin();
+         slice != globe_slices_trans.end();
+         ++slice) {
+         // Set the slice color.
+         std::string slice_color = globe_meridian_color;
+
+         // Special case is meridian or slice zero.
+         if(slice == globe_slices_trans.begin()) {
+            slice_color = globe_prime_meridian_color;
+            }
+
+         for(std::vector<Vector3D>::const_iterator point = slice->begin();
+            point != slice->end();
+            ++point) {
+
+            // Need a distinct iterator to the next point, if any.
+            std::vector<Vector3D>::const_iterator next = point;
+            ++next;
+            // Have we over-reached the container using 'next'? Or put another way,
+            // was 'point' therefore the last item?
+            if(next != slice->end()) {
+               // No, it wasn't, so use both iterators to dereference.
+               outfile << "\t\t\t"
+                       << SVGLineTag(std::pair<Vector3D, Vector3D>(*point, *next),
+                                     GLOBE_LINE_WIDTH,
+                                     slice_color);
+              }
+            }
+         }
+      outfile << "\t\t<!-- globe grid slices END -->\n";
+
+      outfile << "\t\t<!-- globe grid stacks START -->\n";
+      for(std::vector<std::vector<Vector3D> >::const_iterator stack = globe_stacks_trans.begin();
+         stack != globe_stacks_trans.end();
+         ++stack) {
+         for(std::vector<Vector3D>::const_iterator point = stack->begin();
+            point != stack->end();
+            ++point) {
+
+            // Need a distinct iterator to the next point, if any.
+            std::vector<Vector3D>::const_iterator next = point;
+            ++next;
+            // Have we over-reached the container using 'next'? Or put another way,
+            // was 'point' therefore the last item?
+            if(next == stack->end()) {
+               // Yes, so to make a line loop, hook to first point.
+               next = stack->begin();
+               }
+            outfile << "\t\t\t"
+                    << SVGLineTag(std::pair<Vector3D, Vector3D>(*point, *next),
+                                  GLOBE_LINE_WIDTH,
+                                  globe_meridian_color);
+            }
+         }
+      outfile << "\t\t<!-- globe grid stacks END -->\n";
+      outfile << "\t<!-- globe grid END -->\n";
+      }
+
+   if(isFeature(OBSERVATORIES)) {
+      outfile << "\t<!-- observatories START -->\n";
+      // LLO markers
+      outfile << "\t\t<!-- LLO marker START -->\n";
+      outfile << "\t\t"
+              << SVGLineTag(std::pair<Vector3D, Vector3D>(LLO_trans[0], LLO_trans[1]),
+                            OBS_MARKER_WIDTH,
+                            LLO_color);
+      outfile << "\t\t"
+              << SVGLineTag(std::pair<Vector3D, Vector3D>(LLO_trans[1], LLO_trans[2]),
+                            OBS_MARKER_WIDTH,
+                            LLO_color);
+      outfile << "\t\t"
+              << SVGLineTag(std::pair<Vector3D, Vector3D>(LLO_trans[3], LLO_trans[3]),
+                            OBS_MARKER_WIDTH,
+                            LLO_color);
+      outfile << "\t\t<!-- LLO marker END -->\n";
+
+      // LHO markers
+      outfile << "\t\t<!-- LHO markers START -->\n";
+      outfile << "\t\t\t<!-- LH1 marker START -->\n";
+      outfile << "\t\t"
+              << SVGLineTag(std::pair<Vector3D, Vector3D>(LH1_trans[0], LH1_trans[1]),
+                            OBS_MARKER_WIDTH,
+                            LHO_color);
+      outfile << "\t\t"
+              << SVGLineTag(std::pair<Vector3D, Vector3D>(LH1_trans[1], LH1_trans[2]),
+                            OBS_MARKER_WIDTH,
+                            LHO_color);
+      outfile << "\t\t"
+              << SVGLineTag(std::pair<Vector3D, Vector3D>(LH1_trans[3], LH1_trans[3]),
+                            OBS_MARKER_WIDTH,
+                            LHO_color);
+      outfile << "\t\t\t<!-- LH1 marker END -->\n";
+      outfile << "\t\t\t<!-- LH2 marker START -->\n";
+      outfile << "\t\t"
+              << SVGLineTag(std::pair<Vector3D, Vector3D>(LH2_trans[0], LH2_trans[1]),
+                            OBS_MARKER_WIDTH,
+                            LHO_color);
+      outfile << "\t\t"
+              << SVGLineTag(std::pair<Vector3D, Vector3D>(LH2_trans[1], LH2_trans[2]),
+                            OBS_MARKER_WIDTH,
+                            LHO_color);
+      outfile << "\t\t"
+              << SVGLineTag(std::pair<Vector3D, Vector3D>(LH2_trans[3], LH2_trans[3]),
+                            OBS_MARKER_WIDTH,
+                            LHO_color);
+      outfile << "\t\t\t<!-- LH2 marker END -->\n";
+      outfile << "\t\t<!-- LHO markers END -->\n";
+
+      // GEO marker
+      outfile << "\t\t<!-- GEO marker START -->\n";
+      outfile << "\t\t"
+              << SVGLineTag(std::pair<Vector3D, Vector3D>(GEO_trans[0], GEO_trans[1]),
+                            OBS_MARKER_WIDTH,
+                            GEO_color);
+      outfile << "\t\t"
+              << SVGLineTag(std::pair<Vector3D, Vector3D>(GEO_trans[1], GEO_trans[2]),
+                            OBS_MARKER_WIDTH,
+                            GEO_color);
+      outfile << "\t\t"
+              << SVGLineTag(std::pair<Vector3D, Vector3D>(GEO_trans[3], GEO_trans[3]),
+                            OBS_MARKER_WIDTH,
+                            GEO_color);
+      outfile << "\t\t<!-- GEO marker END -->\n";
+
+      // VIRGO marker
+      outfile << "\t\t<!-- VIRGO marker START -->\n";
+      outfile << "\t\t"
+              << SVGLineTag(std::pair<Vector3D, Vector3D>(VIRGO_trans[0], VIRGO_trans[1]),
+                            OBS_MARKER_WIDTH,
+                            VIRGO_color);
+      outfile << "\t\t"
+              << SVGLineTag(std::pair<Vector3D, Vector3D>(VIRGO_trans[1], VIRGO_trans[2]),
+                            OBS_MARKER_WIDTH,
+                            VIRGO_color);
+      outfile << "\t\t"
+              << SVGLineTag(std::pair<Vector3D, Vector3D>(VIRGO_trans[3], VIRGO_trans[3]),
+                            OBS_MARKER_WIDTH,
+                            VIRGO_color);
+      outfile << "\t\t<!-- VIRGO marker END -->\n";
+      outfile << "\t<!-- observatories END -->\n";
       }
 
    // Close off SVG/XML construct for well-formedness, then close the file.
@@ -1264,4 +1687,115 @@ void Starsphere::emitSVG(void) {
 
    // Bump up file emission counter.
    SVG_emit_count ++;
+   }
+
+void Starsphere::toggleRotation(void) {
+   rotate_sphere = !rotate_sphere;
+   }
+
+void Starsphere::transformContainer(const std::vector<VectorSPR>& input, std::vector<Vector3D>& output) {
+   // Erase the output container.
+   output.clear();
+
+   for(std::vector<VectorSPR>::const_iterator point = input.begin();
+       point != input.end();
+       ++point) {
+      output.push_back(transformPoint(*point));
+      }
+   }
+
+Vector3D Starsphere::transformPoint(const VectorSPR& input) {
+   Vector3D ret_val;
+
+   // Holders for window coordinate values returned by gluProject().
+   GLdouble winx;
+   GLdouble winy;
+   GLdouble winz;
+
+   // Flag to test success of transform effort.
+   int transform_flag = GL_TRUE;
+
+   // Perform the transform.
+   transform_flag = gluProject(input.x(), input.y(), input.z(),
+                               modelMatrix,
+                               projMatrix,
+                               viewport,
+                               &winx, &winy, &winz);
+
+   // Check the outcome.
+   if(transform_flag == GL_TRUE) {
+      // Transform has succeeded, store the result.
+      ret_val.set_x(winx);
+      ret_val.set_y(winy);
+      ret_val.set_z(winz);
+      }
+   else {
+      // Notify failure. NB the default constructed value of a Vector3D will
+      // now be returned : this is the null vector.
+      std::cerr << "Starsphere::transform_point() : failed point transform"
+                << std::endl;
+      }
+
+   return ret_val;
+   }
+
+std::string Starsphere::SVGColorAttribute(GLfloat red, GLfloat green, GLfloat blue) const {
+   static const uint FULL_COLOR(255);
+
+   stringstream tag;
+
+   tag << "rgb("
+       << static_cast<uint>(red * FULL_COLOR)
+       << ", "
+       << static_cast<uint>(green * FULL_COLOR)
+       << ", "
+       << static_cast<uint>(blue * FULL_COLOR)
+       << ")";
+
+   return tag.str();
+   }
+
+std::string Starsphere::SVGLineTag(std::pair<Vector3D, Vector3D> ends,
+                                   GLfloat width,
+                                   std::string color) const {
+   stringstream tag;
+
+   tag << "<line x1=\""
+       << ends.first.x()
+       << "\" y1=\""
+       << ends.first.y()
+       << "\" x2=\""
+       << ends.second.x()
+       << "\" y2=\""
+       << ends.second.y()
+       << "\" stroke-width=\""
+       << width
+       << "\" stroke=\""
+       << color.c_str()
+       << "\" fill=\""
+       << color.c_str()
+       << "\"/>\n";
+
+   return tag.str();
+   }
+
+std::string Starsphere::SVGCircleTag(Vector3D centre,
+                                     GLfloat radius,
+                                     std::string color) const {
+   stringstream tag;
+
+   tag << "<circle cx=\""
+       << centre.x()
+       << "\" cy=\""
+       << centre.y()
+       << "\" r=\""
+       << radius
+       << "\""
+       << " stroke=\""
+       << color.c_str()
+       << "\" fill=\""
+       << color.c_str()
+       << "\"/>\n";
+
+   return tag.str();
    }

@@ -33,7 +33,11 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+
+// These two headers are different and we need both !
+#include <utility>
 #include <util.h>
+
 #include <vector>
 
 #include <oglft/OGLFT.h>
@@ -80,7 +84,7 @@ using namespace std;
  * Note: all science run specific parts are implemented in specialized subclasses
  * of this engine.
  *
- * \todo The code of this implementaion is based on the former version of %Starsphere
+ * \todo The code of this implementation is based on the former version of %Starsphere
  * and there's still some refactoring, code cleanup and documenting left to be done.
  *
  * \author Oliver Bock\n
@@ -126,7 +130,7 @@ class Starsphere : public AbstractGraphicsEngine {
    	 * \param buttonPressed The mouse button pressed
    	 */
    	void mouseButtonEvent(const int positionX, const int positionY,
-   						  const AbstractGraphicsEngine::MouseButton buttonPressed);
+   						       const AbstractGraphicsEngine::MouseButton buttonPressed);
 
    	/**
    	 * \brief Event handler for mouse move events
@@ -136,7 +140,7 @@ class Starsphere : public AbstractGraphicsEngine {
    	 * \param buttonPressed The mouse button pressed
    	 */
    	void mouseMoveEvent(const int deltaX, const int deltaY,
-   						const AbstractGraphicsEngine::MouseButton buttonPressed);
+   						     const AbstractGraphicsEngine::MouseButton buttonPressed);
 
    	/**
    	 * \brief Event handler for key press events
@@ -163,7 +167,7 @@ class Starsphere : public AbstractGraphicsEngine {
    	/**
    	 * \brief Render science run specific logo
    	 *
-   	 * This abtract method is to be defined by derived classes implementing
+   	 * This abstract method is to be defined by derived classes implementing
    	 * the science run specific logo rendering.
    	 */
    	inline virtual void renderLogo() = 0;
@@ -171,7 +175,7 @@ class Starsphere : public AbstractGraphicsEngine {
    	/**
    	 * \brief Render science run specific search information
    	 *
-   	 * This abtract method is to be defined by derived classes implementing
+   	 * This abstract method is to be defined by derived classes implementing
    	 * the science run specific search information handling and rendering.
    	 *
    	 * Note: for this engine this also includes the "BOINC Statistics"
@@ -262,12 +266,12 @@ class Starsphere : public AbstractGraphicsEngine {
    	 * From 'The Cambridge Handbook of Physics Formulas', Graham Woan, 2003
    	 * edition, CUP. (NOT the first edition), p177.
    	 *
-   	 * \param T Current time in seconds since the epoch
-   	 * \param LONdeg Longitude in degrees
+   	 * \param time_now - Current time in seconds since the epoch
+   	 * \param longitude_deg - Longitude in degrees
    	 *
    	 * \return The right ascension of the zenith
    	 */
-   	GLfloat RAofZenith(double T, GLfloat LONdeg);
+   	GLfloat RAofZenith(double time_now, GLfloat longitude_deg);
 
    	/**
    	 * \brief Creates a GL vertex in 3D sky sphere coordinates
@@ -324,7 +328,6 @@ class Starsphere : public AbstractGraphicsEngine {
    	/// Current window aspect ration
    	float aspect;
 
-
    	// HUD text rendering config (maybe overridden in subclasses)
 
    	/// X-coordinate position for head up display (HUD) positioning
@@ -362,7 +365,132 @@ class Starsphere : public AbstractGraphicsEngine {
    	bool m_RefreshSearchMarker;
 
    private:
-   	/// Generate OpenGL display list for stars
+      /// Expose some constants for internal class usage.
+      static const GLfloat FULL_CIRCLE_DEG;
+      static const GLfloat HALF_CIRCLE_DEG;
+      static const GLfloat QUARTER_CIRCLE_DEG;
+
+      /// Indices within data arrays.
+      static const uint RA_ARR_POS;
+      static const uint DEC_ARR_POS;
+
+      /// To construct the globe with a grid
+      static const int RIGHT_ASCENSION_SLICES;
+      static const int DECLINATION_STACKS;
+      static const int RIGHT_ASCENSION_STEP_DEG;
+      static const int DECLINATION_STEP_DEG;
+      static const int GLOBE_GRID_STEPS;
+
+      /// Observatory data
+      /// Livingstone
+      static const GLfloat LLO_LAT;
+      static const GLfloat LLO_LONG;
+      static const GLfloat LLO_ARM_LEN_DEG;
+
+      /// Hanford
+      static const GLfloat LHO_LAT;
+      static const GLfloat LHO_LONG;
+      static const GLfloat LHO_ARM_LEN_DEG;
+      static const GLfloat LHO_H2_OFFSET;
+
+      /// GEO
+      static const GLfloat GEO_LAT;
+      static const GLfloat GEO_LONG;
+      static const GLfloat GEO_ARM_LEN_DEG;
+
+      /// VIRGO
+      static const GLfloat VIRGO_LAT;
+      static const GLfloat VIRGO_LONG;
+      static const GLfloat VIRGO_ARM_LEN_DEG;
+
+      /// Viewpoint
+      static const GLfloat ROTATION_SPEED;
+   	static const GLfloat WOBBLE_AMP;
+   	static const GLfloat WOBBLE_PERIOD;
+   	static const GLfloat ZOOM_AMP;
+   	static const GLfloat ZOOM_PERIOD;
+
+      // Axes
+   	static const GLfloat AXES_LINE_WIDTH;
+      static const GLfloat AXES_RATIO;
+
+      // Stars
+      static const GLfloat STAR_MAG_SIZE;
+      static const GLfloat STAR_RED;
+      static const GLfloat STAR_GREEN;
+      static const GLfloat STAR_BLUE;
+
+      // Pulsars
+      static const GLfloat PULSAR_MAG_SIZE;
+      static const GLfloat PULSAR_RED;
+      static const GLfloat PULSAR_GREEN;
+      static const GLfloat PULSAR_BLUE;
+
+      // Supernovae
+      static const GLfloat SNR_MAG_SIZE;
+      static const GLfloat SNR_RED;
+      static const GLfloat SNR_GREEN;
+      static const GLfloat SNR_BLUE;
+
+      // Constellations
+      static const GLfloat CONS_LINK_SIZE;
+      static const GLfloat CONS_LINK_RED;
+      static const GLfloat CONS_LINK_GREEN;
+      static const GLfloat CONS_LINK_BLUE;
+
+      // Globe
+      static const GLfloat MERID_LINE_SIZE;
+      static const GLfloat MERID_RED;
+      static const GLfloat MERID_GREEN;
+      static const GLfloat MERID_BLUE;
+      static const GLfloat MERID_PRIME_RED;
+      static const GLfloat MERID_PRIME_GREEN;
+      static const GLfloat MERID_PRIME_BLUE;
+
+      // Observatories
+      static const GLfloat OBS_LINE_SIZE;
+
+      static const GLfloat LHO_RED;
+      static const GLfloat LHO_GREEN;
+      static const GLfloat LHO_BLUE;
+
+      static const GLfloat LLO_RED;
+      static const GLfloat LLO_GREEN;
+      static const GLfloat LLO_BLUE;
+
+      static const GLfloat GEO_RED;
+      static const GLfloat GEO_GREEN;
+      static const GLfloat GEO_BLUE;
+
+      static const GLfloat VIRGO_RED;
+      static const GLfloat VIRGO_GREEN;
+      static const GLfloat VIRGO_BLUE;
+
+      // Axes
+      static const GLfloat X_AXIS_RED;
+      static const GLfloat X_AXIS_GREEN;
+      static const GLfloat X_AXIS_BLUE;
+
+      static const GLfloat Y_AXIS_RED;
+      static const GLfloat Y_AXIS_GREEN;
+      static const GLfloat Y_AXIS_BLUE;
+
+      static const GLfloat Z_AXIS_RED;
+      static const GLfloat Z_AXIS_GREEN;
+      static const GLfloat Z_AXIS_BLUE;
+
+   	/// Time
+   	static const GLfloat SECONDS_PER_MINUTE;
+      static const GLfloat MINUTES_PER_HOUR;
+      static const GLfloat SECONDS_PER_HOUR;
+      static const GLfloat HOURS_PER_DAY;
+      static const GLfloat SECS_PER_DAY;
+      static const GLfloat MEAN_SIDERIAL_DAYS_PER_YEAR;
+      static const GLfloat MEAN_SOLAR_DAYS_PER_YEAR;
+      static const GLfloat YEARS_PER_CENTURY;
+      static const GLfloat SECONDS_PER_CENTURY;
+
+      /// Generate OpenGL display list for stars
    	void make_stars();
 
    	/// Generate OpenGL display list for pulsars
@@ -442,14 +570,17 @@ class Starsphere : public AbstractGraphicsEngine {
    	/// Viewpoint rotation offset
    	GLfloat rotation_offset;
 
-   	/// Viewpoint rotations in degrees per minute
-   	GLfloat rotation_speed;
-
    	// view control
 
       // Expose these to entire class as needed for SVG sampling.
       GLfloat xvp, yvp, zvp;
       GLfloat Zrot;
+      double observatoryDrawTimeGMT;
+
+      // Transform matrix copies ( careful, OpenGL considers them column-major ).
+      GLdouble modelMatrix[16];
+      GLdouble projMatrix[16];
+      GLint viewport[4];
 
    	/**
    	 * \brief Rotates the sphere by changing the viewpoint rotation/elevation relatively
@@ -471,35 +602,123 @@ class Starsphere : public AbstractGraphicsEngine {
    	void zoomSphere(const int relativeZoom);
 
       /**
-   	 * \brief Collects the star/pulsar/SNR coordinate data for later use.
+   	 * \brief Collects the star/pulsar/SNR and other coordinate data
+       *        for transform use.
    	 */
       void loadForSVG(void);
 
       /**
-   	 * \brief Collects the current starsphere view and forms an SVG file
+   	 * \brief Takes the current view object coordinates and transforms them
    	 */
       void sampleForSVG(void);
 
       /**
-   	 * \brief Write to the nominated SVG output file, the transformed coordinates.
+   	 * \brief Write the SVG output file using transformed coordinates.
    	 */
       void emitSVG(void);
 
+      /**
+   	 * \brief Stop/start the Starsphere's rotation
+   	 */
+      void toggleRotation(void);
+
+      /**
+       * \brief Convert a container of spherical polar referenced points to
+       *        Cartesian referenced points using the current OpenGL
+       *        transform(s)
+       *
+       * \param input - a container of spherical polar points
+       * \param output - the container holding transformed points
+       */
+      void transformContainer(const std::vector<VectorSPR>& input, std::vector<Vector3D>& output);
+
+      /**
+       * \brief Convert a spherical polar referenced point to a Cartesian
+       *        referenced point using the current OpenGL transform(s)
+       *
+       * \param input - a spherical polar point
+       *
+       * \return a Vector 3D point
+       */
+      Vector3D transformPoint(const VectorSPR& input);
+
+      // SVG encoding utilities
+
+      /**
+       * \brief produce SVG color encoding in rgb format
+       *
+       * \param red - the red component in the range [0.0, 1.0]
+       * \param green - the green component in the range [0.0, 1.0]
+       * \param blue - the blue component in the range [0.0, 1.0]
+       *
+       * \return a string representing the SVG color attibute
+       */
+      std::string SVGColorAttribute(GLfloat red,
+                                    GLfloat green,
+                                    GLfloat blue) const;
+
+      /**
+       * \brief produce SVG line encoding
+       *
+       * \param ends - a Vector3D pair indicating the endpoints of the line
+       * \param width - the desired line width
+       * \param color - the desired line color
+       *
+       * \return a string representing the SVG tag
+       */
+      std::string SVGLineTag(std::pair<Vector3D, Vector3D> ends,
+                             GLfloat width,
+                             std::string color) const;
+
+      /**
+       * \brief produce SVG circle encoding
+       *
+       * \param centre - a Vector3D indicating the centre of the circle
+       * \param radius - the desired circle radius
+       * \param color - the desired cicrle color
+       *
+       * \return a string representing the SVG tag
+       */
+      std::string SVGCircleTag(Vector3D centre,
+                               GLfloat radius,
+                               std::string color) const;
+
+      // Rotation toggle flag.
+      bool rotate_sphere;
+
       // Holders for original coordinates in spherical polar form.
+      std::vector<std::pair<VectorSPR, VectorSPR> > axes;
       std::vector<VectorSPR> stars;
       std::vector<VectorSPR> pulsars;
       std::vector<VectorSPR> supernovae;
+      std::vector<std::pair<VectorSPR, VectorSPR> > constellations;
+      std::vector<std::vector<VectorSPR> > globe_slices;
+      std::vector<std::vector<VectorSPR> > globe_stacks;
+      std::vector<VectorSPR> LLO;
+      std::vector<VectorSPR> LH1;
+      std::vector<VectorSPR> LH2;
+      std::vector<VectorSPR> GEO;
+      std::vector<VectorSPR> VIRGO;
 
       // Holders for transformed coordinates in Cartesian form.
+      std::vector<std::pair<Vector3D, Vector3D> > axes_trans;
       std::vector<Vector3D> stars_trans;
       std::vector<Vector3D> pulsars_trans;
       std::vector<Vector3D> supernovae_trans;
+      std::vector<std::pair<Vector3D, Vector3D> > cons_trans;
+      std::vector<std::vector<Vector3D> > globe_slices_trans;
+      std::vector<std::vector<Vector3D> > globe_stacks_trans;
+      std::vector<Vector3D> LLO_trans;
+      std::vector<Vector3D> LH1_trans;
+      std::vector<Vector3D> LH2_trans;
+      std::vector<Vector3D> GEO_trans;
+      std::vector<Vector3D> VIRGO_trans;
 
       // Counter of number of SVG files emitted this session.
-      int SVG_emit_count;
+      GLuint SVG_emit_count;
 
       bool SVGSample;
-      };
+   };
 
 /// Constellation & star coordinates (starlist.C)
 extern float star_info[][2];
