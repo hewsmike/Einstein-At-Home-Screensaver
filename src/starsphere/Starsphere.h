@@ -439,7 +439,7 @@ class Starsphere : public AbstractGraphicsEngine {
       static const GLfloat CONS_LINK_BLUE;
 
       // Globe
-      static const GLfloat MERID_LINE_SIZE;
+      static const GLfloat GLOBE_LINE_SIZE;
       static const GLfloat MERID_RED;
       static const GLfloat MERID_GREEN;
       static const GLfloat MERID_BLUE;
@@ -478,6 +478,17 @@ class Starsphere : public AbstractGraphicsEngine {
       static const GLfloat Z_AXIS_RED;
       static const GLfloat Z_AXIS_GREEN;
       static const GLfloat Z_AXIS_BLUE;
+
+      // Search marker
+      static const GLfloat MARKER_LINE_WIDTH;
+      static const int MARKER_CURVE_STEPS;
+      static const GLfloat MARKER_INNER_RADIUS_FACTOR;
+      static const GLfloat MARKER_OUTER_RADIUS_FACTOR;
+      static const GLfloat MARKER_CROSSHAIR_RADIUS_FACTOR;
+      static const GLfloat MARKER_ANGULAR_SIZE;
+      static const GLfloat MARKER_RED;
+      static const GLfloat MARKER_GREEN;
+      static const GLfloat MARKER_BLUE;
 
    	/// Time
    	static const GLfloat SECONDS_PER_MINUTE;
@@ -699,6 +710,9 @@ class Starsphere : public AbstractGraphicsEngine {
       std::vector<VectorSPR> LH2;
       std::vector<VectorSPR> GEO;
       std::vector<VectorSPR> VIRGO;
+      std::vector<VectorSPR> marker_inner;
+      std::vector<VectorSPR> marker_outer;
+      std::vector<VectorSPR> marker_xhair;
 
       // Holders for transformed coordinates in Cartesian form.
       std::vector<std::pair<Vector3D, Vector3D> > axes_trans;
@@ -713,6 +727,9 @@ class Starsphere : public AbstractGraphicsEngine {
       std::vector<Vector3D> LH2_trans;
       std::vector<Vector3D> GEO_trans;
       std::vector<Vector3D> VIRGO_trans;
+      std::vector<Vector3D> marker_inner_trans;
+      std::vector<Vector3D> marker_outer_trans;
+      std::vector<Vector3D> marker_xhair_trans;
 
       // Counter of number of SVG files emitted this session.
       GLuint SVG_emit_count;

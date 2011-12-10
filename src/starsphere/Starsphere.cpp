@@ -99,7 +99,7 @@ const GLfloat Starsphere::CONS_LINK_GREEN(0.7f);
 const GLfloat Starsphere::CONS_LINK_BLUE(0.0f);
 
 // Globe meridians.
-const GLfloat Starsphere::MERID_LINE_SIZE(1.0f);
+const GLfloat Starsphere::GLOBE_LINE_SIZE(1.0f);
 const GLfloat Starsphere::MERID_RED(0.25f);
 const GLfloat Starsphere::MERID_GREEN(0.25f);
 const GLfloat Starsphere::MERID_BLUE(0.25f);
@@ -146,9 +146,15 @@ const GLfloat Starsphere::Z_AXIS_GREEN(0.0f);
 const GLfloat Starsphere::Z_AXIS_BLUE(1.0f);
 
 // Search marker is orange
-//const GLfloat Starsphere::Z_AXIS_RED(0.0f);
-//const GLfloat Starsphere::Z_AXIS_GREEN(0.0f);
-//const GLfloat Starsphere::Z_AXIS_BLUE(1.0f);
+const GLfloat Starsphere::MARKER_LINE_WIDTH(3.0);
+const int Starsphere::MARKER_CURVE_STEPS(20);
+const GLfloat Starsphere::MARKER_INNER_RADIUS_FACTOR(1.0f);
+const GLfloat Starsphere::MARKER_OUTER_RADIUS_FACTOR(3.0f);
+const GLfloat Starsphere::MARKER_CROSSHAIR_RADIUS_FACTOR(4.0f);
+const GLfloat Starsphere::MARKER_ANGULAR_SIZE(0.5f);
+const GLfloat Starsphere::MARKER_RED(1.0f);
+const GLfloat Starsphere::MARKER_GREEN(0.5f);
+const GLfloat Starsphere::MARKER_BLUE(0.0f);
 
 Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
    AbstractGraphicsEngine(sharedMemoryAreaIdentifier) {
@@ -241,7 +247,7 @@ void Starsphere::star_marker(float RAdeg, float DEdeg, float size) {
    }
 
 /**
- *  Create Stars: markers for each star
+ * Create Stars: markers for each star
  */
 void Starsphere::make_stars() {
    // delete existing, create new (required for windoze)
@@ -277,7 +283,7 @@ void Starsphere::make_stars() {
    }
 
 /**
- *  Pulsar Markers:
+ * Pulsar Markers:
  */
 void Starsphere::make_pulsars() {
    // delete existing, create new (required for windoze)
@@ -346,7 +352,7 @@ GLfloat Starsphere::RAofZenith(double time_now, GLfloat longitude_deg) {
    // unix epoch at 12h on 1/1/2000 - measured in seconds since 01/01/1970.
    static const GLfloat UNIX_EPOCH_DATUM(946728000.0);
 
-   // Right ascension offset from Greenwich of the First Point of Aries
+   // Right ascension offset of Greenwich from the First Point of Aries
    // at UTC 00:00:00 on January 1st ( GHAA = Greenwich Hour Angle Aries ).
    // This mildly varies year to year, equivalent ~ 100 degrees of Earth's
    // rotation eastward.
@@ -368,11 +374,12 @@ GLfloat Starsphere::RAofZenith(double time_now, GLfloat longitude_deg) {
    // astronomy bodies. The first three terms account for the fact that at GMT
    // 00:00:00 on 1/1/2000 the zero of celestial longitude ( First Point of
    // Aries, now actually in Pisces ) was overhead nearby Mexico City. Which is
-   // about 100 degrees East of Greenwich in terrestrial longitude, or if you
+   // about 100 degrees West of Greenwich in terrestrial longitude, or if you
    // like a certain number of hours, minutes and seconds of right ascension.
    // The second line of terms is a quadratic approximation indicating that
-   // as the centuries go by : the year ( sidereal or solar ) gets longer due
-   // to the slowing of the Earth's rotation ....
+   // as the centuries go by : the year ( siderial or solar ) gets longer ( ie.
+   // containing more seconds - assuming seconds are defined elsewhere by a method
+   // not related to Earth's rotation ) due to the slowing of the Earth's rotation ....
 	double GMST0 = GHAA_HOURS * SECONDS_PER_HOUR +
                   GHAA_MINUTES * MINUTES_PER_HOUR +
                   GHAA_SECONDS +
@@ -542,23 +549,21 @@ void Starsphere::generateObservatories(float dimFactor) {
    }
 
 void Starsphere::make_search_marker(GLfloat RAdeg, GLfloat DEdeg, GLfloat size) {
-   GLfloat x, y;
-	GLfloat r1, r2, r3;
-	float theta;
-	int i, Nstep=20;
-
-	// r1 is inner circle, r2 is outer circle, r3 is crosshairs
-	r1 = size, r2=3*size, r3=4*size;
+   // Relative dimensions of marker components
+	GLfloat inner_rad = MARKER_INNER_RADIUS_FACTOR * size;
+   GLfloat outer_rad = MARKER_OUTER_RADIUS_FACTOR * size;
+   GLfloat xhair_rad = MARKER_CROSSHAIR_RADIUS_FACTOR * size;
 
 	// delete existing, create new (required for windoze)
 	if(SearchMarker) glDeleteLists(SearchMarker, 1);
 	SearchMarker = glGenLists(1);
+
 	glNewList(SearchMarker, GL_COMPILE);
 		// start gunsight drawing
 		glPushMatrix();
 
-		glLineWidth(3.0);
-		glColor3f(1.0, 0.5, 0.0); // Orange
+		glLineWidth(MARKER_LINE_WIDTH);
+		glColor3f(MARKER_RED, MARKER_GREEN, MARKER_BLUE);
 
 		// First rotate east  to the RA position around y
 		glRotatef(RAdeg, 0.0, 1.0, 0.0);
@@ -567,49 +572,37 @@ void Starsphere::make_search_marker(GLfloat RAdeg, GLfloat DEdeg, GLfloat size) 
 
 		// Inner circle
 		glBegin(GL_LINE_LOOP);
-			for (i=0; i<Nstep; i++) {
-				theta = i*360.0/Nstep;
-				x = r1*COS(theta);
-				y = r1*SIN(theta);
-				sphVertex(x, y);
+			for(int step = 0; step < MARKER_CURVE_STEPS; ++step) {
+				sphVertex(inner_rad * COS(step*FULL_CIRCLE_DEG/MARKER_CURVE_STEPS),
+                      inner_rad * SIN(step*FULL_CIRCLE_DEG/MARKER_CURVE_STEPS ));
             }
 		glEnd();
 
 		// Outer circle
 		glBegin(GL_LINE_LOOP);
-			for (i=0; i<Nstep; i++) {
-				theta = i*360.0/Nstep;
-				x = r2*COS(theta);
-				y = r2*SIN(theta);
-				sphVertex(x, y);
+         for(int step = 0; step < MARKER_CURVE_STEPS; ++step) {
+				sphVertex(outer_rad * COS(step*FULL_CIRCLE_DEG/MARKER_CURVE_STEPS),
+                      outer_rad * SIN(step*FULL_CIRCLE_DEG/MARKER_CURVE_STEPS ));
             }
 		glEnd();
 
 		// Arms that form the gunsight
 		glBegin(GL_LINES);
 			//  North arm:
-			sphVertex(0.0, +r1);
-			sphVertex(0.0, +r3);
+			sphVertex(0.0, inner_rad);
+			sphVertex(0.0, xhair_rad);
 			//  South arm:
-			sphVertex(0.0, -r1);
-			sphVertex(0.0, -r3);
+			sphVertex(0.0, -inner_rad);
+			sphVertex(0.0, -xhair_rad);
 			// East arm:
-			sphVertex(-r1, 0.0);
-			sphVertex(-r3, 0.0);
+			sphVertex(-inner_rad, 0.0);
+			sphVertex(-xhair_rad, 0.0);
 			// West arm:
-			sphVertex(+r1, 0.0);
-			sphVertex(+r3, 0.0);
+			sphVertex(inner_rad, 0.0);
+			sphVertex(xhair_rad, 0.0);
 		glEnd();
 
 		glPopMatrix();
-
-		// searchlight line out to marker (OFF!)
-		if(false) {
-			glBegin(GL_LINES);
-				sphVertex3D(RAdeg, DEdeg, 0.50*sphRadius);
-				sphVertex3D(RAdeg, DEdeg, 0.95*sphRadius);
-			glEnd();
-         }
 	glEndList();
    }
 
@@ -654,7 +647,7 @@ void Starsphere::make_globe() {
 	if(sphGrid) glDeleteLists(sphGrid, 1);
 	sphGrid = glGenLists(1);
 	glNewList(sphGrid, GL_COMPILE);
-		glLineWidth(MERID_LINE_SIZE);
+		glLineWidth(GLOBE_LINE_SIZE);
 
 		// Lines of constant Right Ascension ( East Longitude )
 		for(int asc_step = 0; asc_step < RIGHT_ASCENSION_SLICES; ++asc_step) {
@@ -949,7 +942,7 @@ void Starsphere::render(const double timeOfDay) {
 	// draw the search marker (gunsight)
 	if (isFeature(MARKER)) {
 		if(m_RefreshSearchMarker) {
-			make_search_marker(m_CurrentRightAscension, m_CurrentDeclination, 0.5);
+			make_search_marker(m_CurrentRightAscension, m_CurrentDeclination, MARKER_ANGULAR_SIZE);
 			m_RefreshSearchMarker = false;
          }
 		else {
@@ -1143,25 +1136,24 @@ void Starsphere::loadForSVG(void) {
       axes.push_back(std::pair<VectorSPR, VectorSPR>(VectorSPR(0, 90, axes_length),
                                                      VectorSPR(0, -90, axes_length)));
       // z axis is at RA of 90 and 270 degrees in the x-y plane.
-      VectorSPR first = VectorSPR(90, 0, axes_length);
-      VectorSPR second = VectorSPR(270, 0, axes_length);
-      axes.push_back(std::pair<VectorSPR, VectorSPR>(first, second));
+      axes.push_back(std::pair<VectorSPR, VectorSPR>(VectorSPR(90, 0, axes_length),
+                                                     VectorSPR(270, 0, axes_length)));
       }
 
    // Do the stars, if enabled.
    if(isFeature(STARS)) {
       stars.clear();
       for(int index = 0; index < Nstars; index ++) {
-         VectorSPR star = VectorSPR(star_info[index][0],
-                                    star_info[index][1],
+         VectorSPR star = VectorSPR(star_info[index][RA_ARR_POS],
+                                    star_info[index][DEC_ARR_POS],
                                     sphRadius);
 
          // But we have to exclude repeated entries ( star_info[] array has many )
 
-         // Assume it's not already entered into our std::vector of star coordinates.
+         // Assume it's not already entered into our container of star coordinates.
          bool already_in = false;
 
-         // Iterate over all entries currently within our std::vector
+         // Iterate over all entries currently within our container
          for(std::vector<VectorSPR>::const_iterator search_star = stars.begin();
              search_star < stars.end();
              search_star++) {
@@ -1174,9 +1166,9 @@ void Starsphere::loadForSVG(void) {
             // No, keep looking .....
             }
 
-         // If, after looking through all of what is currently in our std::vector ...
+         // If, after looking through all of what is currently in our container ...
          if(!already_in) {
-            // ..... and then it's not mentioned, then include it.
+            // ..... and it's not mentioned, then include it.
             stars.push_back(star);
             }
          }
@@ -1186,10 +1178,9 @@ void Starsphere::loadForSVG(void) {
    if(isFeature(PULSARS)) {
       pulsars.clear();
       for(int index = 0; index < Npulsars; index ++) {
-         VectorSPR pulsar = VectorSPR(pulsar_info[index][0],
-                                      pulsar_info[index][1],
+         VectorSPR pulsar = VectorSPR(pulsar_info[index][RA_ARR_POS],
+                                      pulsar_info[index][DEC_ARR_POS],
                                       sphRadius);
-
          pulsars.push_back(pulsar);
          }
       }
@@ -1198,10 +1189,9 @@ void Starsphere::loadForSVG(void) {
    if(isFeature(SNRS)) {
       supernovae.clear();
       for(int index = 0; index < NSNRs; index ++) {
-         VectorSPR supernova = VectorSPR(SNR_info[index][0],
-                                         SNR_info[index][1],
+         VectorSPR supernova = VectorSPR(SNR_info[index][RA_ARR_POS],
+                                         SNR_info[index][DEC_ARR_POS],
                                          sphRadius);
-
          supernovae.push_back(supernova);
          }
       }
@@ -1215,11 +1205,11 @@ void Starsphere::loadForSVG(void) {
       int NLinks = Nstars/2;
       // Examine star pairings and form the links.
       for(int index = 0; index < NLinks; index ++) {
-         VectorSPR link1 = VectorSPR(star_info[index*2][0],
-                                     star_info[index*2][1],
+         VectorSPR link1 = VectorSPR(star_info[index*2][RA_ARR_POS],
+                                     star_info[index*2][DEC_ARR_POS],
                                      sphRadius);
-         VectorSPR link2 = VectorSPR(star_info[index*2 + 1][0],
-                                     star_info[index*2 + 1][1],
+         VectorSPR link2 = VectorSPR(star_info[index*2 + 1][RA_ARR_POS],
+                                     star_info[index*2 + 1][DEC_ARR_POS],
                                      sphRadius);
          constellations.push_back(std::pair<VectorSPR, VectorSPR>(link1, link2));
          }
@@ -1302,6 +1292,44 @@ void Starsphere::loadForSVG(void) {
       VIRGO.push_back(VectorSPR(RAdeg - VIRGO_ARM_LEN_DEG, DEdeg, sphRadius));
       VIRGO.push_back(VectorSPR(RAdeg, DEdeg, sphRadius));
       }
+
+   // Do the search marker, if enabled.
+   if(isFeature(MARKER)) {
+      GLfloat inner_rad = MARKER_INNER_RADIUS_FACTOR * MARKER_ANGULAR_SIZE;
+      GLfloat outer_rad = MARKER_OUTER_RADIUS_FACTOR * MARKER_ANGULAR_SIZE;
+      GLfloat xhair_rad = MARKER_CROSSHAIR_RADIUS_FACTOR * MARKER_ANGULAR_SIZE;
+
+      // Inner circle
+      for(int step = 0; step < MARKER_CURVE_STEPS; ++step) {
+         marker_inner.push_back(VectorSPR(inner_rad * COS(step*FULL_CIRCLE_DEG/MARKER_CURVE_STEPS),
+                                          inner_rad * SIN(step*FULL_CIRCLE_DEG/MARKER_CURVE_STEPS),
+                                          sphRadius));
+         }
+
+		// Outer circle
+      for(int step = 0; step < MARKER_CURVE_STEPS; ++step) {
+         marker_outer.push_back(VectorSPR(outer_rad * COS(step*FULL_CIRCLE_DEG/MARKER_CURVE_STEPS),
+                                          outer_rad * SIN(step*FULL_CIRCLE_DEG/MARKER_CURVE_STEPS),
+                                          sphRadius));
+         }
+
+		// Arms that form the gunsight
+      // North arm
+      marker_xhair.push_back(VectorSPR(0.0, inner_rad, sphRadius));
+      marker_xhair.push_back(VectorSPR(0.0, xhair_rad, sphRadius));
+
+      // South arm
+      marker_xhair.push_back(VectorSPR(0.0, -inner_rad, sphRadius));
+      marker_xhair.push_back(VectorSPR(0.0, -xhair_rad, sphRadius));
+
+      // East arm
+      marker_xhair.push_back(VectorSPR(-inner_rad, 0.0, sphRadius));
+      marker_xhair.push_back(VectorSPR(-xhair_rad, 0.0, sphRadius));
+
+      // West arm
+      marker_xhair.push_back(VectorSPR(inner_rad, 0.0, sphRadius));
+      marker_xhair.push_back(VectorSPR(xhair_rad, 0.0, sphRadius));
+      }
    }
 
 void Starsphere::sampleForSVG(void) {
@@ -1309,7 +1337,7 @@ void Starsphere::sampleForSVG(void) {
    glPushMatrix();
 	glLoadIdentity();
 
-   // Reproduce the transform sequence as used for rendering,
+   // Reproduce the transform sequence as used for rendering.
    gluLookAt(xvp, yvp, zvp, // eyes position
 	          0.0, 0.0, 0.0, // looking toward here
 	          0.0, 1.0, 0.0); // which way is up?  y axis!
@@ -1319,7 +1347,7 @@ void Starsphere::sampleForSVG(void) {
    glGetDoublev(GL_PROJECTION_MATRIX, projMatrix);
    glGetIntegerv(GL_VIEWPORT, viewport);
 
-   // Do the axes, if enabled.
+   // Do the axes, if enabled but before any coordinate rotation.
    if(isFeature(AXES)) {
       axes_trans.clear();
       for(std::vector<std::pair<VectorSPR, VectorSPR> >::const_iterator axis = axes.begin();
@@ -1403,15 +1431,30 @@ void Starsphere::sampleForSVG(void) {
       transformContainer(VIRGO, VIRGO_trans);
       }
 
+   // Do the search marker, if enabled.
+   if(isFeature(MARKER)) {
+      // First rotate east to the right ascension position, around the y-axis
+      glRotatef(m_CurrentRightAscension, 0.0, 1.0, 0.0);
+
+      // Then rotate up to the declination position around the z-axis
+		glRotatef(m_CurrentDeclination, 0.0, 0.0, 1.0);
+
+      // Take a snapshot of the transform matrices by inquiring of OpenGL.
+      glGetDoublev(GL_MODELVIEW_MATRIX, modelMatrix);
+      glGetDoublev(GL_PROJECTION_MATRIX, projMatrix);
+      glGetIntegerv(GL_VIEWPORT, viewport);
+
+      transformContainer(marker_inner, marker_inner_trans);
+      transformContainer(marker_outer, marker_outer_trans);
+      transformContainer(marker_xhair, marker_xhair_trans);
+      }
+
    // Restore the matrix stack.
    glPopMatrix();
    }
 
 void Starsphere::emitSVG(void) {
-   static const GLfloat UNIT_CIRCLE(1);
-   static const GLfloat OBS_MARKER_WIDTH(4);
-   static const GLfloat GLOBE_LINE_WIDTH(1.5);
-   static const GLfloat CONSTELLATION_LINE_WIDTH(1);
+   // For point objects we need the SVG radius to be half of the OpenGL size.
 
    // TODO/CONTROL : point of control for color specification. Substitute other acceptable
    // SVG versions of color declaration here .... for stroke and fill attributes.
@@ -1428,6 +1471,7 @@ void Starsphere::emitSVG(void) {
    std::string X_AXIS_color(SVGColorAttribute(X_AXIS_RED, X_AXIS_GREEN, X_AXIS_BLUE));
    std::string Y_AXIS_color(SVGColorAttribute(Y_AXIS_RED, Y_AXIS_GREEN, Y_AXIS_BLUE));
    std::string Z_AXIS_color(SVGColorAttribute(Z_AXIS_RED, Z_AXIS_GREEN, Z_AXIS_BLUE));
+   std::string marker_color(SVGColorAttribute(MARKER_RED, MARKER_GREEN, MARKER_BLUE));
 
    // Set start and end of filename pattern.
    // TODO/CONTROL : point of control for output file base name.
@@ -1444,22 +1488,33 @@ void Starsphere::emitSVG(void) {
                                  filename_postfix.str() +
                                  filename_ext;
 
+   // Create the output stream to write to.
    ofstream outfile(output_filename.c_str());
 
-   // Confusion can reign here due to need to embed double quotes via escapes.
+   // Confusion can reign here due to need to embed double quotes via escapes,
+   // so \" inside a string delimited by " gets you a lone " in the file.
+   // TODO/CONTROL for data type declarations, xml version etc
    outfile << "<?xml version=\"1.0\"?>\n";
 
+   // Apparently the latest and greatest.
    outfile << "<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.0//EN\" "
            << "\"http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd\">\n";
 
+   // SVG document dimensions
    outfile << "<svg width=\""
            << m_CurrentWidth
            << "\" height=\""
            << m_CurrentHeight
-           << "\">\n"
-           << "\t<title>Einstein At Home Starsphere</title>\n";
+           << "\">\n";
 
+   // SVG document title
+   outfile << "\t<title>Einstein At Home Starsphere</title>\n";
+
+   // SVG short description
    outfile << "\t<desc>Screensaver View Sample</desc>\n";
+
+   // FWIW features are included in the file in the order in which they
+   // were presented to OpenGL for rendering.
 
    // Do the axes, if enabled.
    if(isFeature(AXES)) {
@@ -1487,7 +1542,7 @@ void Starsphere::emitSVG(void) {
          ++star) {
          outfile << "\t\t"
                  << SVGCircleTag(*star,
-                                 STAR_MAG_SIZE,
+                                 STAR_MAG_SIZE/2,
                                  star_color);
          }
       outfile << "\t<!-- stars END -->\n";
@@ -1501,7 +1556,7 @@ void Starsphere::emitSVG(void) {
          ++pulsar) {
          outfile << "\t\t"
                  << SVGCircleTag(*pulsar,
-                                 UNIT_CIRCLE,
+                                 PULSAR_MAG_SIZE/2,
                                  pulsar_color);
          }
       outfile << "\t<!-- pulsars END -->\n";
@@ -1515,7 +1570,7 @@ void Starsphere::emitSVG(void) {
          ++supernova) {
          outfile << "\t\t"
                  << SVGCircleTag(*supernova,
-                                 UNIT_CIRCLE,
+                                 SNR_MAG_SIZE/2,
                                  supernova_color);
          }
       outfile << "\t<!-- supernovae END -->\n";
@@ -1529,7 +1584,7 @@ void Starsphere::emitSVG(void) {
          ++link) {
          outfile << "\t\t\t"
                  << SVGLineTag(std::pair<Vector3D, Vector3D>(link->first, link->second),
-                               CONSTELLATION_LINE_WIDTH,
+                               CONS_LINK_SIZE,
                                link_color);
          }
       outfile << "\t<!-- constellation links END -->\n";
@@ -1563,7 +1618,7 @@ void Starsphere::emitSVG(void) {
                // No, it wasn't, so use both iterators to dereference.
                outfile << "\t\t\t"
                        << SVGLineTag(std::pair<Vector3D, Vector3D>(*point, *next),
-                                     GLOBE_LINE_WIDTH,
+                                     GLOBE_LINE_SIZE,
                                      slice_color);
               }
             }
@@ -1589,7 +1644,7 @@ void Starsphere::emitSVG(void) {
                }
             outfile << "\t\t\t"
                     << SVGLineTag(std::pair<Vector3D, Vector3D>(*point, *next),
-                                  GLOBE_LINE_WIDTH,
+                                  GLOBE_LINE_SIZE,
                                   globe_meridian_color);
             }
          }
@@ -1603,15 +1658,15 @@ void Starsphere::emitSVG(void) {
       outfile << "\t\t<!-- LLO marker START -->\n";
       outfile << "\t\t"
               << SVGLineTag(std::pair<Vector3D, Vector3D>(LLO_trans[0], LLO_trans[1]),
-                            OBS_MARKER_WIDTH,
+                            OBS_LINE_SIZE,
                             LLO_color);
       outfile << "\t\t"
               << SVGLineTag(std::pair<Vector3D, Vector3D>(LLO_trans[1], LLO_trans[2]),
-                            OBS_MARKER_WIDTH,
+                            OBS_LINE_SIZE,
                             LLO_color);
       outfile << "\t\t"
               << SVGLineTag(std::pair<Vector3D, Vector3D>(LLO_trans[3], LLO_trans[3]),
-                            OBS_MARKER_WIDTH,
+                            OBS_LINE_SIZE,
                             LLO_color);
       outfile << "\t\t<!-- LLO marker END -->\n";
 
@@ -1620,29 +1675,29 @@ void Starsphere::emitSVG(void) {
       outfile << "\t\t\t<!-- LH1 marker START -->\n";
       outfile << "\t\t"
               << SVGLineTag(std::pair<Vector3D, Vector3D>(LH1_trans[0], LH1_trans[1]),
-                            OBS_MARKER_WIDTH,
+                            OBS_LINE_SIZE,
                             LHO_color);
       outfile << "\t\t"
               << SVGLineTag(std::pair<Vector3D, Vector3D>(LH1_trans[1], LH1_trans[2]),
-                            OBS_MARKER_WIDTH,
+                            OBS_LINE_SIZE,
                             LHO_color);
       outfile << "\t\t"
               << SVGLineTag(std::pair<Vector3D, Vector3D>(LH1_trans[3], LH1_trans[3]),
-                            OBS_MARKER_WIDTH,
+                            OBS_LINE_SIZE,
                             LHO_color);
       outfile << "\t\t\t<!-- LH1 marker END -->\n";
       outfile << "\t\t\t<!-- LH2 marker START -->\n";
       outfile << "\t\t"
               << SVGLineTag(std::pair<Vector3D, Vector3D>(LH2_trans[0], LH2_trans[1]),
-                            OBS_MARKER_WIDTH,
+                            OBS_LINE_SIZE,
                             LHO_color);
       outfile << "\t\t"
               << SVGLineTag(std::pair<Vector3D, Vector3D>(LH2_trans[1], LH2_trans[2]),
-                            OBS_MARKER_WIDTH,
+                            OBS_LINE_SIZE,
                             LHO_color);
       outfile << "\t\t"
               << SVGLineTag(std::pair<Vector3D, Vector3D>(LH2_trans[3], LH2_trans[3]),
-                            OBS_MARKER_WIDTH,
+                            OBS_LINE_SIZE,
                             LHO_color);
       outfile << "\t\t\t<!-- LH2 marker END -->\n";
       outfile << "\t\t<!-- LHO markers END -->\n";
@@ -1651,15 +1706,15 @@ void Starsphere::emitSVG(void) {
       outfile << "\t\t<!-- GEO marker START -->\n";
       outfile << "\t\t"
               << SVGLineTag(std::pair<Vector3D, Vector3D>(GEO_trans[0], GEO_trans[1]),
-                            OBS_MARKER_WIDTH,
+                            OBS_LINE_SIZE,
                             GEO_color);
       outfile << "\t\t"
               << SVGLineTag(std::pair<Vector3D, Vector3D>(GEO_trans[1], GEO_trans[2]),
-                            OBS_MARKER_WIDTH,
+                            OBS_LINE_SIZE,
                             GEO_color);
       outfile << "\t\t"
               << SVGLineTag(std::pair<Vector3D, Vector3D>(GEO_trans[3], GEO_trans[3]),
-                            OBS_MARKER_WIDTH,
+                            OBS_LINE_SIZE,
                             GEO_color);
       outfile << "\t\t<!-- GEO marker END -->\n";
 
@@ -1667,18 +1722,81 @@ void Starsphere::emitSVG(void) {
       outfile << "\t\t<!-- VIRGO marker START -->\n";
       outfile << "\t\t"
               << SVGLineTag(std::pair<Vector3D, Vector3D>(VIRGO_trans[0], VIRGO_trans[1]),
-                            OBS_MARKER_WIDTH,
+                            OBS_LINE_SIZE,
                             VIRGO_color);
       outfile << "\t\t"
               << SVGLineTag(std::pair<Vector3D, Vector3D>(VIRGO_trans[1], VIRGO_trans[2]),
-                            OBS_MARKER_WIDTH,
+                            OBS_LINE_SIZE,
                             VIRGO_color);
       outfile << "\t\t"
               << SVGLineTag(std::pair<Vector3D, Vector3D>(VIRGO_trans[3], VIRGO_trans[3]),
-                            OBS_MARKER_WIDTH,
+                            OBS_LINE_SIZE,
                             VIRGO_color);
       outfile << "\t\t<!-- VIRGO marker END -->\n";
       outfile << "\t<!-- observatories END -->\n";
+      }
+
+   // Do the search marker, if enabled.
+   if(isFeature(MARKER)) {
+      outfile << "\t<!-- search marker START -->\n";
+      outfile << "\t\t<!-- inner marker START -->\n";
+      for(std::vector<Vector3D>::const_iterator point = marker_inner_trans.begin();
+          point != marker_inner_trans.end();
+          ++point) {
+         // Need a distinct iterator to the next point, if any.
+         std::vector<Vector3D>::const_iterator next = point;
+         ++next;
+         // Have we over-reached the container using 'next'? Or put another way,
+         // was 'point' therefore the last item?
+         if(next == marker_inner_trans.end()) {
+            // Yes, so to make a line loop, hook to first point.
+            next = marker_inner_trans.begin();
+            }
+         outfile << "\t\t\t"
+                 << SVGLineTag(std::pair<Vector3D, Vector3D>(*point, *next),
+                               MARKER_LINE_WIDTH,
+                               marker_color);
+         }
+      outfile << "\t\t<!-- inner marker END -->\n";
+      outfile << "\t\t<!-- outer marker START -->\n";
+      for(std::vector<Vector3D>::const_iterator point = marker_outer_trans.begin();
+          point != marker_outer_trans.end();
+          ++point) {
+         // Need a distinct iterator to the next point, if any.
+         std::vector<Vector3D>::const_iterator next = point;
+         ++next;
+         // Have we over-reached the container using 'next'? Or put another way,
+         // was 'point' therefore the last item?
+         if(next == marker_outer_trans.end()) {
+            // Yes, so to make a line loop, hook to first point.
+            next = marker_outer_trans.begin();
+            }
+         outfile << "\t\t\t"
+                 << SVGLineTag(std::pair<Vector3D, Vector3D>(*point, *next),
+                               MARKER_LINE_WIDTH,
+                               marker_color);
+         }
+      outfile << "\t\t<!-- outer marker END -->\n";
+      outfile << "\t\t<!-- cross-hair marker START -->\n";
+      outfile << "\t\t\t"
+              << SVGLineTag(std::pair<Vector3D, Vector3D>(marker_xhair_trans[0], marker_xhair_trans[1]),
+                            MARKER_LINE_WIDTH,
+                            marker_color);
+      outfile << "\t\t\t"
+              << SVGLineTag(std::pair<Vector3D, Vector3D>(marker_xhair_trans[2], marker_xhair_trans[3]),
+                            MARKER_LINE_WIDTH,
+                            marker_color);
+      outfile << "\t\t\t"
+              << SVGLineTag(std::pair<Vector3D, Vector3D>(marker_xhair_trans[4], marker_xhair_trans[5]),
+                            MARKER_LINE_WIDTH,
+                            marker_color);
+      outfile << "\t\t\t"
+              << SVGLineTag(std::pair<Vector3D, Vector3D>(marker_xhair_trans[6], marker_xhair_trans[7]),
+                            MARKER_LINE_WIDTH,
+                            marker_color);
+      outfile << "\t\t<!-- cross-hair marker END -->\n";
+
+      outfile << "\t<!-- search marker END -->\n";
       }
 
    // Close off SVG/XML construct for well-formedness, then close the file.
