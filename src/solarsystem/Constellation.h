@@ -23,11 +23,13 @@
 
 #include <algorithm>
 #include <string>
+#include <sstream>
 #include <utility>
 #include <vector>
 
 #include "ErrorHandler.h"
 #include "OrdStar.h"
+#include "SolarSystemGlobals.h"
 
 /**
  * \addtogroup solarsystem Solarsystem
@@ -111,7 +113,28 @@ class Constellation {
        */
       GLuint total_links(void) const;
 
+      /**
+       * \brief Retrieve the coordinates as a right-ascension/declination pair
+       *        of the centroid of the given points.
+       */
+      std::pair<GLfloat, GLfloat> centre(void);
+
    private:
+      bool first_quadrant;
+      bool fourth_quadrant;
+      bool middle_quadrants;
+
+      /// Flag to indicate if right ascension values in constellation span
+      /// across a right ascension of zero. Important for calculating the
+      /// centroid and other metrics.
+
+      bool crosses_first_point_Aries;
+
+      starpos_t ra_centre;
+      starpos_t dec_centre;
+
+      bool centre_evaluated;
+
       /**
        * \brief Helper function to detect invalid star indices
        */
