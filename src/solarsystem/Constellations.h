@@ -22,6 +22,7 @@
 #define CONSTELLATIONS_H_
 
 #include <iostream>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -35,6 +36,16 @@
 #include "Vector3D.h"
 
 class Constellations : public Renderable {
+   public:
+
+
+		Constellations(vec_t rad);
+
+      /**
+       * \brief Destructor
+       */
+		~Constellations();
+
 	private:
       static const GLfloat OFFSET;
 		static const GLfloat LINK_WIDTH;
@@ -51,11 +62,13 @@ class Constellations : public Renderable {
 		static const GLuint COORDS_PER_VERTEX;
 		static const GLuint BYTE_STRIDE_PER_VERTEX;
 
+      static const GLfloat TEXT_RATIO;
+
       /// Store constellation star data here
       std::vector<Constellation> cons_list;
 
       /// At what radius from the origin do the constellations lie?
-      vec_t c_rad;
+      vec_t radius;
 
       /// The OpenGL buffer object wrapper for vertex data.
       Buffer_OBJ buff_obj_points;
@@ -84,15 +97,11 @@ class Constellations : public Renderable {
 
       void loadIndexBuffer(void);
 
+      void createMarkerLists(void);
+
       static void class_color(OrdStar::spectral_type spectral_class, GLfloat* colors);
 
-	public:
-		Constellations(vec_t rad);
-
-      /**
-       * \brief Destructor
-       */
-		~Constellations();
+      std::vector<std::vector<GLuint> > marker_lists;
    };
 
 #endif // CONSTELLATIONS_H_
