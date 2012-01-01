@@ -1,22 +1,22 @@
 /***************************************************************************
- *   Copyright (C) 2011 by Mike Hewson                                     *
- *   hewsmike@iinet.net.au                                                 *
- *                                                                         *
- *   This file is part of Einstein@Home.                                   *
- *                                                                         *
- *   Einstein@Home is free software: you can redistribute it and/or modify *
- *   it under the terms of the GNU General Public License as published     *
- *   by the Free Software Foundation, version 2 of the License.            *
- *                                                                         *
- *   Einstein@Home is distributed in the hope that it will be useful,      *
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the          *
- *   GNU General Public License for more details.                          *
- *                                                                         *
- *   You should have received a copy of the GNU General Public License     *
- *   along with Einstein@Home. If not, see <http://www.gnu.org/licenses/>. *
- *                                                                         *
- ***************************************************************************/
+* Copyright (C) 2011 by Mike Hewson                                        *
+* hewsmike@iinet.net.au                                                    *
+*                                                                          *
+* This file is part of Einstein@Home.                                      *
+*                                                                          *
+* Einstein@Home is free software: you can redistribute it and/or modify    *
+* it under the terms of the GNU General Public License as published        *
+* by the Free Software Foundation, version 2 of the License.               *
+*                                                                          *
+* Einstein@Home is distributed in the hope that it will be useful,         *
+* but WITHOUT ANY WARRANTY; without even the implied warranty of           *
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the             *
+* GNU General Public License for more details.                             *
+*                                                                          *
+* You should have received a copy of the GNU General Public License        *
+* along with Einstein@Home. If not, see <http://www.gnu.org/licenses/>.    *
+*                                                                          *
+***************************************************************************/
 #include "Globe.h"
 
 // In 3D space there are three position coordinate values per vertex.
@@ -39,9 +39,13 @@ const GLuint Globe::ARRAY_START(0);
 // No padding between vertex data entries
 const GLsizei Globe::ARRAY_STRIDE(0);
 
-// Four color channels with the alpha, three without.
-const GLuint Globe::ALPHA_CHANNEL(4);
+// Four channels with the alpha, three without.
 const GLuint Globe::NO_ALPHA_CHANNEL(3);
+const GLuint Globe::ALPHA_CHANNEL(NO_ALPHA_CHANNEL + 1);
+
+// Don't ever change these !!
+const bool Globe::STAGGERING(true);
+const bool Globe::STITCHING(true);
 
 Globe::Globe(std::string name,
              std::string image_file_name,
@@ -50,16 +54,13 @@ Globe::Globe(std::string name,
              GLuint slices,
              GLfloat zero_longitude_offset) :
                  nm(name),
+                 sp(radius, slices, stacks, STAGGERING, STITCHING),
                  ifn(image_file_name),
                  zlo(zero_longitude_offset),
-                 sp(radius, slices, stacks, Sphere::STAGGERED),
                  surface(NULL),
                  image_format(0),
-                 num_colors(0) {
-   // Because of the extra 'stitch' vertex to get full wrap of the
-   // texture around the globe, this is the number of vertices per
-   // latitudinal band.
-   verts_per_lat = sp.slices() + 1;
+                 num_colors(0),
+                 verts_per_lat(slices + 1) {
    }
 
 Globe::~Globe() {
@@ -152,13 +153,13 @@ void Globe::loadTexture(void) {
       // The target for the following specifying calls is GL_TEXTURE_2D. We're
       // gonna let the Graphics Utility Library do the hard work of mipmap
       // production.
-      gluBuild2DMipmaps(GL_TEXTURE_2D,          // it's a 2D texture
-                        num_colors,             // the number of RGBA components we will use
-                        surface->w,             // width in pixels
-                        surface->h,             // height in pixels
-                        image_format,           // the bitmap format type as discovered
-                        GL_UNSIGNED_BYTE,       // how we are packing the pixels
-                        surface->pixels);       // the actual image data from an SDL surface
+      gluBuild2DMipmaps(GL_TEXTURE_2D, // it's a 2D texture
+                        num_colors, // the number of RGBA components we will use
+                        surface->w, // width in pixels
+                        surface->h, // height in pixels
+                        image_format, // the bitmap format type as discovered
+                        GL_UNSIGNED_BYTE, // how we are packing the pixels
+                        surface->pixels); // the actual image data from an SDL surface
 
       // Set the texture's stretching properties for minification and
       // magnification.
@@ -217,9 +218,9 @@ void Globe::prepare(SolarSystemGlobals::render_quality rq) {
          // For each pole and in between define and store the indices
          // ( into the above vertex data array ) in correct sequence
          // for later use when rendering.
-         loadPolarBuffer(north_cap_indices, NORTH);
-         loadWaistBuffer();
-         loadPolarBuffer(south_cap_indices, SOUTH);
+         loadPolarIndexBuffer(north_cap_indices, NORTH);
+         loadWaistIndexBuffer();
+         loadPolarIndexBuffer(south_cap_indices, SOUTH);
 
          // Finally make sure one has a texture ( pixel map ) available
          // to paste on the surface which approximates a sphere.
@@ -252,7 +253,7 @@ void Globe::render(void) {
    // for the sake of efficiency.
    glEnable(GL_CULL_FACE);
    glCullFace(GL_BACK);
-   glPolygonMode(GL_FRONT, GL_FILL);
+   // glPolygonMode(GL_FRONT, GL_FILL);
 
    // Make our texture identifier OpenGL's current one.
    glBindTexture(GL_TEXTURE_2D, texture.ID());
@@ -265,7 +266,7 @@ void Globe::render(void) {
 
    // If all goes well you won't see the lines at the edge of the
    // polygons, but you have to define something.
-   glLineWidth(0.5f);
+   glLineWidth(0.1f);
 
    // This announces that the pattern of data storage, per vertex, is
    // 2 texture, 3 normal, and 3 position coordinates in that order. They
@@ -277,36 +278,33 @@ void Globe::render(void) {
    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, north_cap_indices.ID());
    // This is one actual rendering call that all preparations have been aiming at.
    glDrawElements(GL_TRIANGLE_FAN,
-                  verts_per_lat + 1,
+                  verts_per_lat + 1,            // The pole, and one stack's worth of vertices
                   GL_UNSIGNED_INT,
                   BUFFER_OFFSET(ARRAY_START));
 
-   // Draw waist - if there is one to draw that is.
-   if(sp.stacks() > Sphere::MIN_STACKS) {
-      // Make the waist index buffer identifier OpenGL's current one.
-      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, waist_buffer.ID());
+   // Make the waist index buffer identifier OpenGL's current one.
+   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, waist_buffer.ID());
 
-      for(GLuint stack = 1; stack <= sp.stacks() - 2; stack++) {
-         // Herewith the number of bytes into the vertex buffer
-         // to begin this strip for this stack.
-         GLuint strip_index_start = ARRAY_START +
-                                    ((stack - 1) *
-                                    sizeof(GLuint) *
-                                    verts_per_lat *
-                                    2);
+   for(GLuint stack = 1; stack < sp.stacks() - 2; ++stack) {
+      // Herewith the number of bytes into the index buffer
+      // to begin this strip for this stack.
+      GLuint strip_index_start = ARRAY_START +           // Start at the beginning
+                                 sizeof(GLuint) *        // size of base type
+                                 (stack - 1) *           // number of non-polar stacks so far
+                                 verts_per_lat *         // indices per non-polar stack
+                                 2;                      // this stack and the next
 
-         glDrawElements(GL_TRIANGLE_STRIP,
-                        verts_per_lat*2,
-                        GL_UNSIGNED_INT,
-                        BUFFER_OFFSET(strip_index_start));
-         }
+      glDrawElements(GL_TRIANGLE_STRIP,
+                     verts_per_lat * 2,
+                     GL_UNSIGNED_INT,
+                     BUFFER_OFFSET(strip_index_start));
       }
 
    // Draw south polar region
    // Make our southern index buffer identifier OpenGL's current one.
    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, south_cap_indices.ID());
    glDrawElements(GL_TRIANGLE_FAN,
-                  verts_per_lat + 1,
+                  verts_per_lat + 1,            // The pole, and one stack's worth of vertices
                   GL_UNSIGNED_INT,
                   BUFFER_OFFSET(ARRAY_START));
 
@@ -338,15 +336,14 @@ void Globe::loadVertexBuffer(void) {
    // a number of vertices at each stack of latitude. Each vertex has
    // position, normal and texture data ( fortunately those have the same
    // type : float = vec_t )
-   GLsizeiptr size = sizeof(vec_t) *
-                     ELEMENTS_PER_VERTEX *
-                     (2 + verts_per_lat * (sp.stacks() - 2));
+   GLsizeiptr size = sizeof(vec_t) *            // Number of bytes in the base data type
+                     ELEMENTS_PER_VERTEX *      // The number of base data types per vertex
+                     sp.vertices().size();      // How many vertices we have.
 
    // Allocate buffer memory but don't store, yet.
    glBufferData(GL_ARRAY_BUFFER, size, NULL, GL_STATIC_DRAW);
 
-   // Get an access pointer to the buffer area, of correct type,
-   // for the purpose of writing.
+   // Get write access to the buffer area.
    vec_t* buffer_ptr = static_cast<vec_t*>(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
 
    // Check for failure, as we don't want to dereference a NULL later on,
@@ -355,110 +352,60 @@ void Globe::loadVertexBuffer(void) {
       ErrorHandler::record("Globe::loadVertexBuffer() - can't acquire buffer pointer", ErrorHandler::FATAL);
       }
 
-   // Iterator/pointer to the sphere vertex listing.
-   std::vector<Vertex>::const_iterator vt = sp.vertices().begin();
-
-   GLuint vertex_index = 0;
-
-   // Store the vertex position data in the buffer. Do the north pole first.
-   Vertex north_pole = *vt;
-
-   vertex2buffer(*vt, buffer_ptr);
-   buffer_ptr += ELEMENTS_PER_VERTEX;
-   vt++;
-   vertex_index++;
-
-   // Store the vertex position data in the buffer, for non-polar points.
-   for(unsigned int stack = 1; stack <= sp.stacks() - 2; stack++) {
-      // Remember the first vertex at a given latitude.
-      Vertex first_in_stack = *vt;
-
-      for(unsigned int slice = 0; slice < sp.slices(); slice++) {
-         // Transfer the vertex data to the buffer.
-         vertex2buffer(*vt, buffer_ptr);
-         // Update both buffer pointer and vertex listing iterator.
-         buffer_ptr += ELEMENTS_PER_VERTEX;
-         vt++;
-         vertex_index++;
-         }
-
-      // Insert the 'stitch' vertex, by creating a new vertex via simple
-      // alteration of the first for that latitiude. The only vertex
-      // attribute to change is the 'horizontal' texture coordinate, by
-      // setting it from 0.0f to 1.0f
-      std::pair<GLfloat, GLfloat> text = first_in_stack.texture_co_ords();
-      text.first = 1.0f;
-      Vertex last_in_stack = Vertex(first_in_stack.position(),
-                                    first_in_stack.normal(),
-                                    text);
-
-      // Now pop the data for this new extra vertex into the buffer.
-      vertex2buffer(last_in_stack, buffer_ptr);
-      // Update only the buffer pointer not the vertex listing iterator.
+   for(std::vector<Vertex>::const_iterator vt = sp.vertices().begin();
+       vt != sp.vertices().end();
+       ++vt) {
+      // Transfer the vertex data to the buffer.
+      vertex2buffer(*vt, buffer_ptr);
+      // Update both buffer pointer.
       buffer_ptr += ELEMENTS_PER_VERTEX;
-      vertex_index++;
       }
-
-   // Do the south pole last. Being the last point to be processed
-   // we don't update any pointers/iterators.
-
-   Vertex south_pole = *vt;
-
-   vertex2buffer(*vt, buffer_ptr);
 
    // Disconnect the mapping and the buffer from OpenGL.
    glUnmapBuffer(GL_ARRAY_BUFFER);
    glBindBuffer(GL_ARRAY_BUFFER, Buffer_OBJ::NO_ID);
    }
 
-void Globe::loadWaistBuffer(void) {
-   // NB As we are only going to render a GL_TRIANGLE_STRIP at one per
-   // latitude band then the staggering of vertices longitudinally
-   // from one latitude band value to the next isn't relevant for
-   // vertex ordering.
-   if(sp.stacks() > Sphere::MIN_STACKS) {
-      // Get a valid buffer object ( server-side ) identifier.
-      waist_buffer.acquire();
+void Globe::loadWaistIndexBuffer(void) {
+   // Get a valid buffer object ( server-side ) identifier.
+   waist_buffer.acquire();
 
-      // Make our buffer identifier OpenGL's current one.
-      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, waist_buffer.ID());
+   // Make our buffer identifier OpenGL's current one.
+   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, waist_buffer.ID());
 
-      // What size allocation are we after?
-      GLsizeiptr waist_size = sizeof(GLuint) *
-                              (verts_per_lat * 2) *
-                              (sp.stacks() - 3);
+   // What size allocation are we after?
+   GLsizeiptr waist_size = sizeof(GLuint) *           // Size of base data type
+                           verts_per_lat *            // Number of vertices per stack
+                           (sp.stacks() - 3) *       // Number of non-polar stacks less one
+                           2;                         // Two stacks involved per GL_TRIANGLE_STRIP.
 
-      // Allocate buffer memory but don't store, yet.
-      glBufferData(GL_ELEMENT_ARRAY_BUFFER, waist_size, NULL, GL_STATIC_DRAW);
+   // Allocate buffer memory but don't store, yet.
+   glBufferData(GL_ELEMENT_ARRAY_BUFFER, waist_size, NULL, GL_STATIC_DRAW);
 
-      // Get an access pointer to the buffer area, of correct type,
-      // for the purpose of writing.
-      GLuint* waist_ptr = static_cast<GLuint*>(glMapBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_WRITE_ONLY));
+   // Get write access to the buffer area.
+   GLuint* buffer_ptr = static_cast<GLuint*>(glMapBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_WRITE_ONLY));
 
-      // Index of the first non-polar point ( the north pole pole has index 0 )
-      GLuint first_point_index = 1;
-
-      // The indices of points ...... stack by stack ....
-      // listed in sequence suitable for later use within GL_TRIANGLE_STRIP pattern.
-      for(GLuint stack = 1; stack <= sp.stacks() - 3; stack++) {
-         GLuint stack_first_point_index = first_point_index + (stack - 1) * verts_per_lat;
-
-         GLuint stack_first_buffer_index = (stack - 1) * verts_per_lat * 2;
-
-         for(GLuint vert = 0; vert < verts_per_lat; vert++) {
-            waist_ptr[stack_first_buffer_index + vert * 2] = stack_first_point_index + vert;
-
-            waist_ptr[stack_first_buffer_index + vert * 2 + 1] = stack_first_point_index + vert + verts_per_lat;
-            }
+   // The indices of points are obtained by interrogating the sphere object.
+   // Vertices are suitably listed for use within a GL_TRIANGLE_STRIP.
+   for(std::vector<std::vector<GLuint> >::const_iterator stack = sp.stackIndices().begin() + 1;
+       stack <= sp.stackIndices().end() - 3;
+       ++stack) {
+      for(GLuint slice = 0; slice < stack->size(); ++slice) {
+         // Interleave this vertex with ...
+         *buffer_ptr = (*stack)[slice];
+         ++buffer_ptr;
+         // ... the corresponding vertex on the next stack.
+         *buffer_ptr = (*(stack + 1))[slice];
+         ++buffer_ptr;
          }
-
-      // Discard the mapping and unbind the buffer.
-      glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER);
-      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Buffer_OBJ::NO_ID);
       }
+
+   // Discard the mapping and unbind the buffer.
+   glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER);
+   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Buffer_OBJ::NO_ID);
    }
 
-void Globe::loadPolarBuffer(Buffer_OBJ& buff, enum pole p) {
+void Globe::loadPolarIndexBuffer(Buffer_OBJ& buff, enum pole p) {
    // Get a valid buffer object ( server-side ) identifier.
    buff.acquire();
 
@@ -467,19 +414,16 @@ void Globe::loadPolarBuffer(Buffer_OBJ& buff, enum pole p) {
 
    // What size byte allocation are we after for this array of indices? For
    // each point we have sizeof(GLuint) worth. What is the point count ?
-   //       - one for the pole (+1) , plus
-   //       - one for each longitudinal slice [ sp.slices() ], but
-   //       - there is a final point ( 'horizontal' texture coordinate of 1.0f ) at
-   //         the same position as first one ( 'horizontal' texture coordinate of 0.0f ),
-   //         both within the stack just adjacent the pole.
-   GLsizeiptr polar_size = sizeof(GLuint) * (2 + sp.slices());
+   // - one for the pole (+1) , plus
+   // - one for each vertex within the stack just adjacent the pole.
+   GLsizeiptr polar_size = sizeof(GLuint) * (1 + verts_per_lat);
 
    // Allocate buffer memory but don't store, yet.
    glBufferData(GL_ELEMENT_ARRAY_BUFFER, polar_size, NULL, GL_STATIC_DRAW);
 
    // Get an access pointer to the buffer area, of correct type,
    // for the purpose of writing.
-   GLuint* polar_ptr = static_cast<GLuint*>(glMapBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_WRITE_ONLY));
+   GLuint* buffer_ptr = static_cast<GLuint*>(glMapBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_WRITE_ONLY));
 
    // Index of point on sphere which begins a sequence of
    // points for later use within a GL_TRIANGLE_FAN pattern.
@@ -488,14 +432,15 @@ void Globe::loadPolarBuffer(Buffer_OBJ& buff, enum pole p) {
    GLint increment = 1;
    if(p == SOUTH) {
       // The south polar index is however many vertex entries there
-      // are for the entire globe = (sp.stacks() - 2) * verts_per_lat + 2,
-      // minus one. One counts down from that.
-      pole_index = (sp.stacks() - 2) * verts_per_lat + 1;
+      // are for the entire sphere minus one. Count down from that.
+      pole_index = sp.vertices().size() - 1;
       increment = -1;
       }
 
    // First entry in buffer is the polar point's index.
-   polar_ptr[0] = pole_index;
+   *buffer_ptr = pole_index;
+   // Move to next buffer position.
+   ++buffer_ptr;
 
    // The indices of points on sphere at a latitude just one stack nearby
    // the pole, listed in sequence suitable for later use within
@@ -504,15 +449,14 @@ void Globe::loadPolarBuffer(Buffer_OBJ& buff, enum pole p) {
    // the opposite sense to the northern cap.
    // Alas, you have to sit and think on it .... :-)
 
-   for(GLuint i = 0; i <= verts_per_lat; i++) {
+   for(GLuint i = 0; i < verts_per_lat; i++) {
       // Index of buffer position to insert the point's index upon the sphere.
-      // While our loop index 'i' counts up, the index into the indices buffer
+      // While our loop index 'i' counts up, the index
       // counts up or down depending on which pole.
-      polar_ptr[i] = pole_index + increment*i;
+      *buffer_ptr = pole_index + increment*i;
+      // Move to next buffer position.
+      ++buffer_ptr;
       }
-
-   // Note that we had to include an index to the repeated vertex
-   // at the longitudinal 'stitch' line ( meridian of zero longitude ).
 
    // Discard the mapping and unbind ( but not release ) the buffer.
    glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER);
@@ -522,7 +466,7 @@ void Globe::loadPolarBuffer(Buffer_OBJ& buff, enum pole p) {
 void Globe::vertex2buffer(const Vertex& vert, vec_t* buffer) const {
    // Texture co-ordinates, noting an adjustment to line
    // the map up to the Greenwich meridian.
-   buffer[0] = vert.texture_co_ords().first + zlo;
+   buffer[0] = vert.texture_co_ords().first - zlo;
    buffer[1] = vert.texture_co_ords().second;
 
    // Normal data.

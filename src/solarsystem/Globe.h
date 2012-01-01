@@ -1,22 +1,22 @@
 /***************************************************************************
- *   Copyright (C) 2011 by Mike Hewson                                     *
- *   hewsmike@iinet.net.au                                                 *
- *                                                                         *
- *   This file is part of Einstein@Home.                                   *
- *                                                                         *
- *   Einstein@Home is free software: you can redistribute it and/or modify *
- *   it under the terms of the GNU General Public License as published     *
- *   by the Free Software Foundation, version 2 of the License.            *
- *                                                                         *
- *   Einstein@Home is distributed in the hope that it will be useful,      *
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the          *
- *   GNU General Public License for more details.                          *
- *                                                                         *
- *   You should have received a copy of the GNU General Public License     *
- *   along with Einstein@Home. If not, see <http://www.gnu.org/licenses/>. *
- *                                                                         *
- ***************************************************************************/
+* Copyright (C) 2011 by Mike Hewson *
+* hewsmike@iinet.net.au *
+* *
+* This file is part of Einstein@Home. *
+* *
+* Einstein@Home is free software: you can redistribute it and/or modify *
+* it under the terms of the GNU General Public License as published *
+* by the Free Software Foundation, version 2 of the License. *
+* *
+* Einstein@Home is distributed in the hope that it will be useful, *
+* but WITHOUT ANY WARRANTY; without even the implied warranty of *
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the *
+* GNU General Public License for more details. *
+* *
+* You should have received a copy of the GNU General Public License *
+* along with Einstein@Home. If not, see <http://www.gnu.org/licenses/>. *
+* *
+***************************************************************************/
 #ifndef GLOBE_H_
 #define GLOBE_H_
 
@@ -34,16 +34,16 @@
 #include "Texture_OBJ.h"
 
 /**
- * \addtogroup
- * @{
- */
+* \addtogroup
+* @{
+*/
 
 /**
- * \brief A renderable object of spherical shape with texture, to be
- *        instantiated in detail for the Earth, the Sun etc
- *
- * \author Mike Hewson\n
- */
+* \brief A renderable object of spherical shape with texture, to be
+* instantiated in detail for the Earth, the Sun etc
+*
+* \author Mike Hewson\n
+*/
 
 class Globe : public Renderable {
    public:
@@ -52,17 +52,16 @@ class Globe : public Renderable {
        *
        * \param name : the English label of the globe ( Earth, Sun .... )
        * \param image_file_name : the OS path identifying the image file for
-       *                          use as a texture
+       *        use as a texture
        * \param radius : the radius of the globe
        * \param stacks : the number of latitudinal values to use in
-       *                 approximating a spherical surface
+       *        approximating a spherical surface
        * \param slices : the number of longitudinal values to use in
-       *                 approximating a spherical surface
+       *        approximating a spherical surface
        * \param zero_longitude_offset : displacement, expressed as an OpenGL
-       *                                horizontal texture coordinate value,
-       *                                into the pixel map where the zero of
-       *                                'geographical' longitude is deemed to
-       *                                lie ( eg. Greenwich meridian for Earth )
+       *        horizontal texture coordinate value, into the pixel map where
+       *        the zero of 'geographical' longitude is deemed to lie
+       *        ( eg. Greenwich meridian on Earth )
        */
       Globe(std::string name,
             std::string image_file_name,
@@ -98,14 +97,14 @@ class Globe : public Renderable {
       /// The total number of coordinates per OpenGL vertex.
       static const GLuint ELEMENTS_PER_VERTEX;
 
-      /// The number of vertices representing each non-polar latitudinal band.
-      static const GLuint VERTICES_PER_LATITUDE;
-
       /// Offset of the vertex data into the server-side buffer
       static const GLuint ARRAY_START;
 
       /// The number of bytes in the server-side buffer between each vertex
       static const GLsizei ARRAY_STRIDE;
+
+      static const bool STAGGERING;
+      static const bool STITCHING;
 
       /// The globe's name eg. Earth
       std::string nm;
@@ -117,10 +116,6 @@ class Globe : public Renderable {
       /// that indicates the zero of 'geographical' longitude.
       GLfloat zlo;
 
-      /// The number of vertices representing each non-polar latitudinal band,
-      /// accounting for the extra 'stitch' vertex
-      GLuint verts_per_lat;
-
       /// The buffer object for the northern polar cap.
       Buffer_OBJ north_cap_indices;
 
@@ -130,7 +125,7 @@ class Globe : public Renderable {
       /// The buffer object for the southern polar cap.
       Buffer_OBJ south_cap_indices;
 
-      /// The sphere geometric model approximating a sphere.
+      /// The geometric model approximating a sphere.
       Sphere sp;
 
       /// The SDL surface to temporarily hold a pixel map, ultimately
@@ -149,6 +144,9 @@ class Globe : public Renderable {
 
       /// An OpenGL texture object identifier
       Texture_OBJ texture;
+
+      /// The number of vertices per latitude/stack
+      GLuint verts_per_lat;
 
       /// Load the image file into an SDL surface.
       void loadImage(void);
@@ -171,18 +169,18 @@ class Globe : public Renderable {
 
       /// Load an immediate peri-polar region's worth of indices into a
       /// server-side buffer.
-      void loadPolarBuffer(Buffer_OBJ& buff, enum pole p);
+      void loadPolarIndexBuffer(Buffer_OBJ& buff, enum pole p);
 
       /// Load the ( many latitudes worth of ) non-peri-polar regions indices
       /// into a server-side buffer.
-      void loadWaistBuffer(void);
+      void loadWaistIndexBuffer(void);
 
       /// Load a single vertex's data into a server-side buffer
       void vertex2buffer(const Vertex& vert, vec_t* buffer) const;
    };
 
 /**
- * @}
- */
+* @}
+*/
 
 #endif // GLOBE_H_
