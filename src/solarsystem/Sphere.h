@@ -21,12 +21,10 @@
 #ifndef SPHERE_H_
 #define SPHERE_H_
 
-#include <iostream>
-#include <utility>
-#include <string>
 #include <vector>
 
-#include "ErrorHandler.h"
+#include <oglft/OGLFT.h>
+
 #include "SolarSystemGlobals.h"
 #include "Vector3D.h"
 #include "VectorSP.h"
@@ -41,25 +39,93 @@
  * \brief This class creates OpenGL vertex data for a spherical shape.
  *
  * The sphere is approximated polygonally by a mesh of points at
- * specific latitude and longitude. Stacks refers to how many
- * distinct values of latitude ( counting each pole as one ),
- * and slices to how many distinct values of longitude. The
+ * specific latitude and longitude values. Stacks refers to how many
+ * distinct values of latitude ( counting each pole as one ) are desired,
+ * and slices as to how many distinct values of longitude. I recommend an odd
+ * number of stacks so that one will have points on the equator. The
  * radius being the common distance of all vertices from the origin.
+ * Staggering refers to whether/not the longitude values b/w consecutive
+ * latitudes are identical ( non-staggered ) or mid-way ( staggered ).
+ * Stitching refers to potential usage with OpenGL texturing. It is also
+ * recommended that the following call be made prior to subsequent texturing
+ * upon the vertices :
+ *
+ *    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+ *
+ * on account of the behaviour of the texture coordinate values at the prime
+ * meridian.
  *
  * \author Mike Hewson\n
  */
 
 class Sphere {
    public:
-      /// Do we stagger the vertex positions b/w stacks?
-      enum stagger {NO_STAGGER, STAGGERED};
-
-   private:
       /// Minimal sphere parameters.
       static const GLfloat MIN_RADIUS;
       static const GLuint MIN_SLICES;
       static const GLuint MIN_STACKS;
 
+      /**
+       * \brief Constructor
+       *
+       * \param radius : the radius
+       *
+       * \param slices : the number of longitudinal meridians
+       *
+       * \param stacks : the number of latitudinal bands
+       *
+       * \param stagger : whether or not longitude values stagger
+       *
+       * \param stitch : whether or not we create 'stitch' vertices
+       */
+      Sphere(vec_t radius, GLuint slices, GLuint stacks, bool stagger, bool stitch);
+
+      /**
+       * \brief Destructor
+       */
+      ~Sphere();
+
+      /**
+       * \brief Read only access to vertex listing
+       */
+      const std::vector<Vertex>& vertices(void) const;
+
+      /**
+       * \brief Read only access to slice vertices index listing
+       */
+      const std::vector<std::vector<GLuint> >& sliceIndices(void) const;
+
+      /**
+       * \brief Read only access to stack vertices index listing
+       */
+      const std::vector<std::vector<GLuint> >& stackIndices(void) const;
+
+      /**
+       * \brief Obtain the radius
+       */
+      GLfloat radius(void) const;
+
+      /**
+       * \brief Obtain the slice number
+       */
+      GLuint slices(void) const;
+
+      /**
+       * \brief Obtain the stack number
+       */
+      GLuint stacks(void) const;
+
+      /**
+       * \brief Obtain the stagger setting
+       */
+      bool isStaggered(void) const;
+
+      /**
+       * \brief Obtain the stitch setting
+       */
+      bool isStitched(void) const;
+
+   private:
       /// Radius of sphere.
       vec_t rad;
 
@@ -68,54 +134,36 @@ class Sphere {
 
       /// Number of latitudinal values ( counting each pole as one band )
       GLuint num_stacks;
-      
+
       /// Whether we stagger the vertices or not.
-      stagger st;
+      bool stagger_flag;
+
+      /// Whether we insert stitch vertices or not.
+      bool stitch_flag;
 
       /// Listing of vertices.
       std::vector<Vertex> verts;
 
-	public:
-       /**
-       * \brief Constructor
-       *
-       * \param radius : the radius
-       *
-       * \param slices : the number of longitudinal values
-       *
-       * \param stacks : the number of latitudinal bands
-       */
-		Sphere(vec_t radius, GLuint slices, GLuint stacks, Sphere::stagger st);
+      /// Listing of vertex indices by slices.
+      std::vector<std::vector<GLuint> > slice_indices;
 
-		/**
-       * \brief Destructor
-       */
-		~Sphere();
+      /// Listing of vertex indices by stacks.
+      std::vector<std::vector<GLuint> > stack_indices;
 
       /**
-       * \brief Read only access to vertex listing
+       * \brief Vertex creator
        */
-      const std::vector<Vertex>& vertices(void) const;
+      void makeVertices(void);
 
       /**
-       * \brief Read only access to the radius
+       * \brief Stack index creator
        */
-      GLfloat radius(void) const;
-      
+      void makeStackIndices(void);
+
       /**
-       * \brief Read only access to the slice number
+       * \brief Slice index creator
        */
-      GLuint slices(void) const;
-      
-      /**
-       * \brief Read only access to the stack number
-       */
-      GLuint stacks(void) const;
-      
-      /**
-       * \brief Read only access to the stagger setting
-       */
-      bool isStaggered(void) const;
-	};
+      void makeSliceIndices(void);
+   };
 
 #endif // SPHERE_H_
