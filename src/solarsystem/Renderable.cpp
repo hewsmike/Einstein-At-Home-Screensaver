@@ -22,7 +22,8 @@
 
 // Mark initial state as being inactive, and lowest render quality.
 Renderable::Renderable() : activity(Renderable::INACTIVE),
-                           quality(SolarSystemGlobals::RENDER_LOWEST) {
+                           quality(SolarSystemGlobals::RENDER_LOWEST),
+                           myFont(NULL) {
    // Don't call any preparation code from constructor as OpenGL context
    // may not exist or be valid at construction time.
    }
@@ -47,15 +48,15 @@ Renderable::activity_state Renderable::is_activated(void) const {
    }
 
 void Renderable::toggle_activation(void) {
-	is_activated() ? inactivate() : activate();
-	}
+   is_activated() ? inactivate() : activate();
+   }
 
 void Renderable::draw(void) {
    // Only show if it is marked active.
    if(activity == Renderable::ACTIVE) {
       render();
       }
-	}
+   }
 
 SolarSystemGlobals::render_quality Renderable::render_level(void) {
    return quality;
@@ -70,4 +71,12 @@ void Renderable::set_render_level(SolarSystemGlobals::render_quality rq) {
 
    // Then re-activate which will trigger preparation at the new level.
    activate();
+   }
+
+void Renderable::setFont(OGLFT_ft* a_font) {
+   myFont = a_font;
+   }
+
+OGLFT_ft* Renderable::getFont(void) const {
+   return myFont;
    }

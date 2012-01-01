@@ -21,11 +21,12 @@
 #ifndef RENDERABLE_H_
 #define RENDERABLE_H_
 
-#include "SDL_opengl.h"
-
-#include "SolarSystemGlobals.h"
-
 #include <iostream>
+
+#include <oglft/OGLFT.h>
+
+#include "SDL_opengl.h"
+#include "SolarSystemGlobals.h"
 
 using namespace std;
 
@@ -51,18 +52,57 @@ class Renderable {
       // Visibility ie. to be rendered at all?
       enum activity_state {INACTIVE, ACTIVE};
 
-   private:
-		/// Indicates whether object is to be shown at all.
-      activity_state activity;
+      /// Virtual destructor
+      virtual ~Renderable();
 
-      /// Current choice of rendering quality.
-      SolarSystemGlobals::render_quality quality;
+      /**
+       * \brief Invoke display of the object within the scene according to it's
+       *        activation state.
+       */
+      void draw(void);
+
+      /**
+       * \brief Mark object as to be shown
+       */
+      void activate(void);
+
+      /**
+       * \brief Mark object as to NOT be shown
+       */
+      void inactivate(void);
+
+      /**
+       * \brief Retrieves the activation state
+       *
+       * \return The activation state
+       */
+      Renderable::activity_state is_activated() const;
+
+      /**
+       * \brief Inverts the activation state of the object
+       */
+      void toggle_activation(void);
+
+      /**
+       * \brief Retrieves the rendering quality level
+       */
+      SolarSystemGlobals::render_quality render_level(void);
+
+      /**
+       * \brief Sets the rendering quality level
+       */
+      void set_render_level(SolarSystemGlobals::render_quality rq);
+
+      /**
+       * \brief Sets the font
+       */
+      void setFont(OGLFT_ft* a_font);
 
    protected:
       /**
-	    * \brief Constructor
-	    *
-	    * The constructor is protected since this is an abstract class.
+       * \brief Constructor
+       *
+       * The constructor is protected since this is an abstract class.
        */
       Renderable();
 
@@ -78,47 +118,17 @@ class Renderable {
       /// to render the object.
       virtual void render(void) = 0;
 
-   public:
-      /// Virtual destructor
-      virtual ~Renderable();
+      OGLFT_ft* getFont(void) const;
 
-      /**
-       * \brief Invoke display of the object within the scene according to it's
-       *        activation state.
-       */
-		void draw(void);
+   private:
+      /// Indicates whether object is to be shown at all.
+      activity_state activity;
 
-		/**
-       * \brief Mark object as to be shown
-	    */
-		void activate(void);
+      /// Current choice of rendering quality.
+      SolarSystemGlobals::render_quality quality;
 
-      /**
-       * \brief Mark object as to NOT be shown
-	    */
-		void inactivate(void);
-
-      /**
-       * \brief Retrieves the activation state
-	    *
-	    * \return The activation state
-	    */
-      Renderable::activity_state is_activated() const;
-
-      /**
-       * \brief Inverts the activation state of the object
-	    */
-		void toggle_activation(void);
-
-      /**
-       * \brief Retrieves the rendering quality level
-	    */
-		SolarSystemGlobals::render_quality render_level(void);
-
-      /**
-       * \brief Sets the rendering quality level
-	    */
-		void set_render_level(SolarSystemGlobals::render_quality rq);
+      /// The font to use for any rendering.
+      OGLFT_ft* myFont;
    };
 
 /**
