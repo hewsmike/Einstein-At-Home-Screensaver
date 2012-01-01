@@ -37,7 +37,7 @@ BOINCClientAdapter::BOINCClientAdapter(string sharedMemoryIdentifier) {
    }
 
 BOINCClientAdapter::~BOINCClientAdapter() {
-   f(m_xmlIFace) delete m_xmlIFace;
+   if(m_xmlIFace) delete m_xmlIFace;
    }
 
 void BOINCClientAdapter::initialize() {
