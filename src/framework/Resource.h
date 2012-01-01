@@ -74,7 +74,7 @@ class Resource {
        *
        * \return The base pointer to the data contained in this resource
        */
-      const vector<unsigned char> * data() const;
+      const vector<unsigned char>* data() const;
 
    private:
       /// The identifer of this resource
