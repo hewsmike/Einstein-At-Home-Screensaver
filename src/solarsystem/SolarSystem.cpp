@@ -23,7 +23,7 @@
 const int SolarSystem::FAR_LOOK_RATIO(1000);
 const GLdouble SolarSystem::FOV_ANGLE(45.0f);
 const GLdouble SolarSystem::NEAR_CLIP(0.5f);
-const GLdouble SolarSystem::FAR_CLIP(SolarSystemGlobals::CELESTIAL_SPHERE_RADIUS * 10);
+const GLdouble SolarSystem::FAR_CLIP(SolarSystemGlobals::CELESTIAL_SPHERE_RADIUS * 10.0f);
 const int SolarSystem::FAR_LOOK_DISTANCE(SolarSystemGlobals::CELESTIAL_SPHERE_RADIUS*SolarSystem::FAR_LOOK_RATIO);
 
 SolarSystem::SolarSystem(string sharedMemoryAreaIdentifier) :
@@ -31,6 +31,7 @@ SolarSystem::SolarSystem(string sharedMemoryAreaIdentifier) :
    /**
     * Parameters and State info
     */
+   spaceFontResource = NULL;
    }
 
 SolarSystem::~SolarSystem() {
@@ -51,12 +52,70 @@ void SolarSystem::resize(const int width, const int height) {
    glLoadIdentity();
    gluPerspective(FOV_ANGLE, aspect, NEAR_CLIP, FAR_CLIP);
    glMatrixMode(GL_MODELVIEW);
- }
+
+   // Tell the underlying simulation ( for HUD generation ) what
+   // dimensions it can work with
+   sim.resize(static_cast<GLuint>(width), static_cast<GLuint>(height));
+   }
 
 /**
  *  What to do when graphics are "initialized".
  */
-void SolarSystem::initialize(const int width, const int height, const Resource *font, const bool recycle) {
+void SolarSystem::initialize(const int width, const int height, const Resource* font, const bool recycle) {
+   // check whether we initialize the first time or have to recycle (required for windoze)
+	if(!recycle) {
+      // store the font resource pointer
+		if(font) {
+         spaceFontResource = font;
+         }
+      }
+	else {
+   	// seems that windoze also "resets" our OpenGL fonts
+		// let's clean up before reinitializing them
+		if(gridFont) {
+         delete gridFont;
+         }
+      if(constellationFont) {
+         delete constellationFont;
+         }
+      }
+
+	// we might be called to recycle even before initialization
+	if(!spaceFontResource) {
+      // display a warning, this could be unintentionally
+		cerr << "Warning: font resource still unknown! You might want to recycle at a later stage..." << endl;
+      }
+	else {
+      // create font instances using font resource (base address + size)
+		gridFont = new OGLFT_ft(&spaceFontResource->data()->at(0),
+                              spaceFontResource->data()->size(),
+                              13, 78 );
+
+		if(gridFont == 0 || !gridFont->isValid()) {
+         // TODO - better error path
+         std::string msg = "SolarSystem::initialize() - Could not construct grid font face from in memory resource!";
+         ErrorHandler::record(msg, ErrorHandler::FATAL);
+		   }
+      gridFont->setBackgroundColor(0.0f, 0.0f, 0.0f, 0.0f);
+      gridFont->setForegroundColor(1.0f, 0.0f, 1.0f, 0.6f);
+
+      // create font instances using font resource (base address + size)
+		constellationFont = new OGLFT_ft(&spaceFontResource->data()->at(0),
+                                       spaceFontResource->data()->size(),
+                                       13, 78 );
+
+		if(constellationFont == 0 || !constellationFont->isValid()) {
+         // TODO - better error path
+         std::string msg = "SolarSystem::initialize() - Could not construct constellation font face from in memory resource!";
+         ErrorHandler::record(msg, ErrorHandler::FATAL);
+		   }
+      constellationFont->setBackgroundColor(0.0f, 0.0f, 0.0f, 0.0f);
+      constellationFont->setForegroundColor(1.0f, 0.84f, 0.0f, 0.6f);
+      }
+
+   sim.setFont(Simulation::CONSTELLATIONS, constellationFont);
+   sim.setFont(Simulation::GRID, gridFont);
+
    // setup initial dimensions
    resize(width, height);
 
@@ -118,8 +177,31 @@ void SolarSystem::initialize(const int width, const int height, const Resource *
          break;
       }
 
-   // Specify that the scene elements in the Simulation are to rendered.
+   // Specify that the scene elements in the Simulation are to be rendered.
    sim.activate();
+
+   //// Set up lighting.
+   GLfloat mat_specular[] = {1.0, 1.0, 1.0, 1.0};
+   GLfloat mat_shininess[] = {50.0};
+   // GLfloat lmodel_ambient[] = {0.1, 0.1, 0.1, 1.0};
+   // glLightModelfv(GL_LIGHT_MODEL_AMBIENT, lmodel_ambient);
+   glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+   glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
+
+   glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
+   glMaterialfv(GL_BACK, GL_SPECULAR, mat_specular);
+   glMaterialfv(GL_BACK, GL_SHININESS, mat_shininess);
+
+   // LIGHT0 is from the Sun towards the Earth.
+   GLfloat white_light[] = {1.0, 1.0, 1.0, 1.0};
+   // GLfloat ambient[] = {0.0, 0.0, 0.0, 1.0};
+   glLightfv(GL_LIGHT0, GL_AMBIENT, white_light);
+   glLightfv(GL_LIGHT0, GL_DIFFUSE, white_light);
+   glLightfv(GL_LIGHT0, GL_SPECULAR, white_light);
+
+   // LIGHT1 is from our viewpoint towards the Sun.
+   glLightfv(GL_LIGHT1, GL_DIFFUSE, white_light);
+   glLightfv(GL_LIGHT1, GL_SPECULAR, white_light);
 
    glDisable(GL_CLIP_PLANE0);
    glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
@@ -136,7 +218,7 @@ void SolarSystem::render(const double tOD) {
    // Set modelview matrix to unity.
    glLoadIdentity();
 
-   // Evolve the craft's mechanics.
+   // Evolve the simulation.
    sim.step();
 
    // Where are we etc .... in our virtual world?
@@ -155,6 +237,7 @@ void SolarSystem::render(const double tOD) {
              view_up.y(),                        // which way is up?
              view_up.z());
 
+   // Render from the current viewpoint.
    sim.draw();
 
    // Check for and report any errors generated.
@@ -162,12 +245,11 @@ void SolarSystem::render(const double tOD) {
 
    // Switch frames.
    SDL_GL_SwapBuffers();
-}
+   }
 
 void SolarSystem::mouseButtonEvent(const int positionX, const int positionY,
                                    const AbstractGraphicsEngine::MouseButton buttonPressed) {
-
-}
+   }
 
 void SolarSystem::mouseMoveEvent(const int deltaX, const int deltaY,
                                  const AbstractGraphicsEngine::MouseButton buttonPressed) {
@@ -178,8 +260,8 @@ void SolarSystem::mouseMoveEvent(const int deltaX, const int deltaY,
          break;
       default:
          break;
+      }
    }
-}
 
 void SolarSystem::keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey keyPressed) {
    std::string message = "SolarSystem::keyboardPressEvent() - ";
@@ -195,8 +277,6 @@ void SolarSystem::keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey k
          message += "keyboard B : downwards thrust";
          break;
       case KeyC:
-         // Toggle the state of constellation display.
-         // sim.toggle_feature(CelestialSphere::);
          message += "keyboard C : unassigned";
          break;
       case KeyD:
@@ -220,18 +300,17 @@ void SolarSystem::keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey k
          message += "keyboard G : go home";
          break;
       case KeyH:
-         message += "keyboard H : unassigned";
+         // Toggle the HUD display.
+         sim.toggle(Simulation::HUDOVER);
+         message += "keyboard H : toggle HUD";
          break;
       case KeyM:
-         // Toggle the state of axes display.
-         // sim.toggle_axes();
-         message += "keyboard M : toggle axes";
+         message += "keyboard M : unassigned";
          break;
       case KeyN:
          message += "keyboard N : unassigned";
          break;
       case KeyP:
-         // Toggle the state of pulsar display.
          message += "keyboard P : unassigned";
          break;
       case KeyQ:
@@ -275,6 +354,7 @@ void SolarSystem::keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey k
          message += "keyboard Z : reverse thrust";
          break;
       case KeyF1:
+         // Keep this for future 'help' functionality
          message += "keyboard F1 : unassigned";
          break;
       case KeyF2:
@@ -288,9 +368,7 @@ void SolarSystem::keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey k
          message += "keyboard F3 : set render level to MEDIUM";
          break;
       case KeyF4:
-         // Set the overall rendering level to highest.
-         SolarSystemGlobals::set_render_level(SolarSystemGlobals::RENDER_HIGHEST);
-         message += "keyboard F4 : set render level to HIGHEST";
+         message += "keyboard F1 : unassigned";
          break;
       case KeyF5:
          // Toggle the state of constellation display.
@@ -312,7 +390,7 @@ void SolarSystem::keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey k
          sim.toggle(Simulation::GRID);
          message += "keyboard F8 : toggle grid";
          break;
-       case KeySpace:
+      case KeySpace:
          // stop any craft rotation
          sim.moveRequest(SolarSystemGlobals::STOP_ROTATION);
          message += "keyboard Space : null all rotations";
