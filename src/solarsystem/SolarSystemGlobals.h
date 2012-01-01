@@ -25,8 +25,11 @@
 #include <iostream>
 #include <string>
 
+#include <oglft/OGLFT.h>
+
 #include "ErrorHandler.h"
 #include "SDL_opengl.h"
+#include "Vector3D.h"
 
 // SIN and COS take arguments in DEGREES
 #define PI 3.14159265
@@ -38,6 +41,9 @@
  * \addtogroup solarsystem SolarSystem
  * @{
  */
+
+/// Convenience type for OGLFT font specification
+typedef OGLFT::MonochromeTexture OGLFT_ft;
 
 /**
  * \brief %SolarSystem Helper class with global definitions and useful static
@@ -78,10 +84,16 @@ class SolarSystemGlobals {
 
       static const GLuint EARTH_RADIUS;
 
+      static const GLuint SUN_RADIUS;
+
       /// Useful degree measures of arc.
       static const GLfloat FULL_CIRCLE_DEG;
       static const GLfloat HALF_CIRCLE_DEG;
       static const GLfloat QUARTER_CIRCLE_DEG;
+
+      /// Minimum accepted screen/window dimensions
+      static const GLuint MIN_SCREEN_WIDTH;
+      static const GLuint MIN_SCREEN_HEIGHT;
 
    private:
       // The current quality level.

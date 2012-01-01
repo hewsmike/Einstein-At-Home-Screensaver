@@ -24,12 +24,17 @@ const GLuint SolarSystemGlobals::CELESTIAL_SPHERE_RADIUS(10000);
 
 const GLuint SolarSystemGlobals::EARTH_RADIUS(100);
 
+const GLuint SolarSystemGlobals::SUN_RADIUS(800);
+
 // Default rendering quality is the lowest.
 SolarSystemGlobals::render_quality SolarSystemGlobals::qual = SolarSystemGlobals::RENDER_LOWEST;
 
 const GLfloat SolarSystemGlobals::FULL_CIRCLE_DEG(360.0f);
 const GLfloat SolarSystemGlobals::HALF_CIRCLE_DEG(180.0f);
 const GLfloat SolarSystemGlobals::QUARTER_CIRCLE_DEG(90.0f);
+
+const GLuint SolarSystemGlobals::MIN_SCREEN_WIDTH(800);
+const GLuint SolarSystemGlobals::MIN_SCREEN_HEIGHT(600);
 
 SolarSystemGlobals::SolarSystemGlobals() {
    }
