@@ -20,5 +20,5 @@
 
 # Resource specification of: Einstein@Home graphics application
 
-FontSansSerif|LiberationSans-Regular.ttf.res
+FontSansSerif|FreeMono.ttf.res
 AppIconBMP|EaH.bmp.res
