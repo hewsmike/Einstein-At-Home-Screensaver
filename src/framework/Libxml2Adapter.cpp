@@ -121,4 +121,4 @@ string Libxml2Adapter::getSingleNodeContentByXPath(const string xpath) {
 string Libxml2Adapter::getSingleNodeContentByXPath(const string xml, const string url, const string xpath) {
    setXmlDocument(xml, url);
    return(getSingleNodeContentByXPath(xpath));
-}
+   }
