@@ -380,6 +380,18 @@ void WindowManager::eventLoop() {
             case SDLK_F8:
                eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyF8);
                break;
+            case SDLK_F9:
+               eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyF9);
+               break;
+            case SDLK_F10:
+               eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyF10);
+               break;
+            case SDLK_F11:
+               eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyF11);
+               break;
+            case SDLK_F12:
+               eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyF12);
+               break;
             case SDLK_SPACE:
                eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeySpace);
                break;

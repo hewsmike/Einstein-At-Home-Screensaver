@@ -151,6 +151,10 @@ class AbstractGraphicsEngine {
          KeyF6 = 0x2000006,
          KeyF7 = 0x2000007,
          KeyF8 = 0x2000008,
+         KeyF9 = 0x2000009,
+         KeyF10 = 0x200000A,
+         KeyF11 = 0x200000B,
+         KeyF12 = 0x200000C,
          KeyEnter = 0x4000000,
          KeySpace = 0x4000001,
          KeyEscape = 0x8000000
