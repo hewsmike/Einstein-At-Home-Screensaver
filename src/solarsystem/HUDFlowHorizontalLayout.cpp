@@ -59,8 +59,6 @@ void HUDFlowHorizontalLayout::allocateItemBases(void) {
 
    // How many items are contained?
    GLuint num_items = itemCount();
-   std::cout << "HUDFlowHorizontalLayout::allocateItemBases() : num_items = "
-             << num_items << std::endl;
 
    // We only need to bother with this if there are items to render.
    if(num_items > 0) {
@@ -77,31 +75,16 @@ void HUDFlowHorizontalLayout::allocateItemBases(void) {
                               ErrorHandler::FATAL);
          }
 
-      std::cout << "HUDFlowHorizontalLayout::allocateItemBases() : w_space = "
-                << w_space << std::endl;
-
       // What is the number of gaps to distribute whitespace amongst?
       GLuint gap_count = gapCount(num_items);
 
-      std::cout << "HUDFlowHorizontalLayout::allocateItemBases() : gap_count = "
-                << gap_count << std::endl;
-
       // As a float it will likely round/truncate later.
       GLfloat white_space_per_gap = static_cast<GLfloat>(w_space)/gap_count;
-
-      std::cout << "HUDFlowHorizontalLayout::allocateItemBases() : white_space_per_gap = "
-                << white_space_per_gap << std::endl;
 
       // Start horizontal offets at the left edge.
       GLuint newHorz = horzBase();
       // For a horizontal flow, all content is at the same vertical offset.
       GLuint newVert = vertBase();
-
-      std::cout << "HUDFlowHorizontalLayout::allocateItemBases() : horzBase = "
-                << horzBase() << std::endl;
-
-      std::cout << "HUDFlowHorizontalLayout::allocateItemBases() : vertBase = "
-                << vertBase() << std::endl;
 
       switch(getPrimaryJustification()) {
          case START:
@@ -135,11 +118,6 @@ void HUDFlowHorizontalLayout::allocateItemBases(void) {
             // Then contents are placed in the order of their insertion.
             for(GLuint count = 0; count < num_items; ++count) {
                // Place the current content.
-               std::cout << "HUDFlowHorizontalLayout::allocateItemBases() : newHorz = "
-                         << newHorz
-                         << "\tnewVert = "
-                         << newVert
-                         << std::endl;
                getItem(count)->reBase(newHorz, newVert);
                // Shift right to the next insert position by the width of this content.
                newHorz += getItem(count)->minWidth();
