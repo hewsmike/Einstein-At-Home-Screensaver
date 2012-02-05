@@ -39,10 +39,6 @@ const GLuint Globe::ARRAY_START(0);
 // No padding between vertex data entries
 const GLsizei Globe::ARRAY_STRIDE(0);
 
-// Four channels with the alpha, three without.
-const GLuint Globe::NO_ALPHA_CHANNEL(3);
-const GLuint Globe::ALPHA_CHANNEL(NO_ALPHA_CHANNEL + 1);
-
 // Don't ever change these !!
 const bool Globe::STAGGERING(true);
 const bool Globe::STITCHING(true);
@@ -54,12 +50,10 @@ Globe::Globe(std::string name,
              GLuint slices,
              GLfloat zero_longitude_offset) :
                  nm(name),
-                 sp(radius, slices, stacks, STAGGERING, STITCHING),
                  ifn(image_file_name),
                  zlo(zero_longitude_offset),
+                 sp(radius, slices, stacks, STAGGERING, STITCHING),
                  surface(NULL),
-                 image_format(0),
-                 num_colors(0),
                  verts_per_lat(slices + 1) {
    }
 
@@ -67,99 +61,28 @@ Globe::~Globe() {
    release();
    }
 
-void Globe::loadImage(void) {
-   // If we can access the image file, then we need to also check a number of
-   // it's parameters.
-   // TODO - write better error paths for this ??
-   ostringstream os;
-
-   // See if SDL will load the image file into a surface struct ....
-   surface = SDL_LoadBMP(ifn.c_str());
-
-   // Did that work?
-   if(surface != NULL) {
-      // Ok, managed to load something. Record in the log file.
-      os.str("");
-      os << "Globe::loadImage() - successfully loaded "
-         << ifn;
-      ErrorHandler::record(os.str(), ErrorHandler::INFORM);
-
-      // Record the image width and height - mainly for debug purposes
-      os.str("");
-      os << "Globe::loadImage() - width is "
-         << surface->w
-         << " pixels and height is "
-         << surface->h
-         << " pixels";
-      ErrorHandler::record(os.str(), ErrorHandler::INFORM);
-
-      // Get the number of color channels
-      num_colors = surface->format->BytesPerPixel;
-
-      // Record the number of color channels - again mainly for debugging
-      os.str("");
-      os << "Globe::loadImage() - number of color channels is "
-         << num_colors;
-      ErrorHandler::record(os.str(), ErrorHandler::INFORM);
-
-      // Get the pixel storage format, record to log and store for later use.
-      os.str("");
-      os << "Globe::loadImage() - the pixel storage format is ";
-      switch (num_colors) {
-         case ALPHA_CHANNEL:
-            if(surface->format->Rmask == 0x000000ff) {
-               os << "RGBA";
-               image_format = GL_RGBA;
-               }
-            else {
-               os << "BGRA";
-               image_format = GL_BGRA;
-               }
-            break;
-         case NO_ALPHA_CHANNEL:
-            if(surface->format->Rmask == 0x000000ff) {
-               os << "RGB";
-               image_format = GL_RGB;
-               }
-            else {
-               os << "BGR";
-               image_format = GL_BGR;
-               }
-            break;
-         default:
-            os << "not recognised";
-            break;
-         }
-      ErrorHandler::record(os.str(), ErrorHandler::INFORM);
-      }
-   else {
-      // No, the image did not load into a surface struct.
-      ErrorHandler::record("Globe::loadImage() - image file NOT loaded ", ErrorHandler::WARN);
-      }
-   }
-
 void Globe::loadTexture(void) {
    // Get an OpenGL texture object.
    texture.acquire();
 
    // Load the image from file to an SDL_Surface object.
-   loadImage();
+   surface = SolarSystemGlobals::loadImage(ifn, &image_format);
 
    // Did that work?
    if(surface != NULL) {
-      // Yep, so make our texture object OpenGL's current one.
+      // Make our texture object OpenGL's current one.
       glBindTexture(GL_TEXTURE_2D, texture.ID());
 
       // The target for the following specifying calls is GL_TEXTURE_2D. We're
       // gonna let the Graphics Utility Library do the hard work of mipmap
       // production.
-      gluBuild2DMipmaps(GL_TEXTURE_2D, // it's a 2D texture
-                        num_colors, // the number of RGBA components we will use
-                        surface->w, // width in pixels
-                        surface->h, // height in pixels
-                        image_format, // the bitmap format type as discovered
-                        GL_UNSIGNED_BYTE, // how we are packing the pixels
-                        surface->pixels); // the actual image data from an SDL surface
+      gluBuild2DMipmaps(GL_TEXTURE_2D,                   // it's a 2D texture
+                        surface->format->BytesPerPixel,  // the number of RGBA components we will use
+                        surface->w,                      // width in pixels
+                        surface->h,                      // height in pixels
+                        image_format,                    // the bitmap format type as discovered
+                        GL_UNSIGNED_BYTE,                // how we are packing the pixels
+                        surface->pixels);                // the actual image data from an SDL surface
 
       // Set the texture's stretching properties for minification and
       // magnification.
@@ -196,7 +119,7 @@ void Globe::loadTexture(void) {
       // with later rendering OpenGL will simply use the 'default' texture ie.
       // nothing. The only visual result will be to see whatever background
       // color(s) have been assigned ( or not ! ) to the polygon(s) in question.
-      ErrorHandler::record("Globe::Texture() - texture object NOT loaded ", ErrorHandler::WARN);
+      ErrorHandler::record("Globe::loadTexture() - texture object NOT loaded ", ErrorHandler::WARN);
       }
 
    // Delete the SDL_surface once we've loaded the pixels to the texture object.
@@ -204,9 +127,6 @@ void Globe::loadTexture(void) {
    }
 
 void Globe::prepare(SolarSystemGlobals::render_quality rq) {
-   // Get an OpenGL buffer object.
-   buff_obj_points.acquire();
-
    // Preparations may depend upon the requested rendering quality level ?
    switch (rq) {
       case SolarSystemGlobals::RENDER_LOWEST :
@@ -237,6 +157,13 @@ void Globe::release(void) {
    // Normally this is already freed up after an OpenGL texture object has been
    // successfully created from the surface, but it's OK to pass a NULL here.
    SDL_FreeSurface(surface);
+
+   // Free up the various buffer and texture objects on the server side.
+   north_cap_indices.release();
+   waist_buffer.release();
+   south_cap_indices.release();
+   buff_obj_points.release();
+   texture.release();
    }
 
 void Globe::render(void) {
@@ -264,8 +191,8 @@ void Globe::render(void) {
    // The untextured polygonal ( triangles ) color will be opaque and white.
    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
-   // If all goes well you won't see the lines at the edge of the
-   // polygons, but you have to define something.
+   // If all goes well we won't see the lines at the edge of the
+   // polygons, but we have to define something.
    glLineWidth(0.1f);
 
    // This announces that the pattern of data storage, per vertex, is
@@ -357,7 +284,7 @@ void Globe::loadVertexBuffer(void) {
        ++vt) {
       // Transfer the vertex data to the buffer.
       vertex2buffer(*vt, buffer_ptr);
-      // Update both buffer pointer.
+      // Update the buffer pointer.
       buffer_ptr += ELEMENTS_PER_VERTEX;
       }
 

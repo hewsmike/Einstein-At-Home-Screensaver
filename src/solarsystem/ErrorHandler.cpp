@@ -80,7 +80,7 @@ void ErrorHandler::record(std::string msg, message_type mt) {
    // Now what sort of message have we been instructed to emit ?
    switch(mt) {
       case ErrorHandler::INFORM :
-         message += "INFORMATIVE : " + msg;
+         message += "INFO : " + msg;
          std::cout << message << std::endl;
          // But also record error in file,
          // provided the output file stream is available for use.
@@ -104,7 +104,7 @@ void ErrorHandler::record(std::string msg, message_type mt) {
          exit(ErrorHandler::NORMAL);
          break;
       case ErrorHandler::WARN :
-         message += "WARNING : " + msg;
+         message += "WARN : " + msg;
          // This is an error, so goes to cerr.
          std::cerr << msg << std::endl;
          // But also record error in file,
@@ -115,7 +115,7 @@ void ErrorHandler::record(std::string msg, message_type mt) {
             }
          break;
       case ErrorHandler::FATAL :
-         message += "FATAL : " + msg;
+         message += "FATAL EXIT: " + msg;
          // This is an error, so goes to cerr.
          std::cerr << msg << std::endl;
          // But also record error in file,
@@ -124,6 +124,10 @@ void ErrorHandler::record(std::string msg, message_type mt) {
             // Then record to our file.
             output_file << message << std::endl;
             }
+
+         // Probably ought unload any retained OpnGL error messages too ...
+         SolarSystemGlobals::check_OpenGL_Error();
+
          // Then we'll be leaving the program, in mild shame .....
          output_file.close();
          exit(ErrorHandler::ERROR);

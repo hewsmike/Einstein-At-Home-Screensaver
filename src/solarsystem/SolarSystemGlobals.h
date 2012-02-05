@@ -1,5 +1,5 @@
-/**************************************************************************
- *   Copyright (C) 2011 by Mike Hewson                                     *
+/***************************************************************************
+ *   Copyright (C) 2012 by Mike Hewson                                     *
  *   hewsmike@iinet.net.au                                                 *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
@@ -23,11 +23,13 @@
 
 #include <cmath>
 #include <iostream>
+#include <sstream>
 #include <string>
 
 #include <oglft/OGLFT.h>
 
 #include "ErrorHandler.h"
+#include "SDL.h"
 #include "SDL_opengl.h"
 #include "Vector3D.h"
 
@@ -43,7 +45,7 @@
  */
 
 /// Convenience type for OGLFT font specification
-typedef OGLFT::MonochromeTexture OGLFT_ft;
+typedef OGLFT::TranslucentTexture OGLFT_ft;
 
 /**
  * \brief %SolarSystem Helper class with global definitions and useful static
@@ -95,19 +97,6 @@ class SolarSystemGlobals {
       static const GLuint MIN_SCREEN_WIDTH;
       static const GLuint MIN_SCREEN_HEIGHT;
 
-   private:
-      // The current quality level.
-      static SolarSystemGlobals::render_quality qual;
-
-      // gluErrorString(), and others, return 'const GLubyte *' - essentially
-      // devolving to 'const unsigned char *'  - but string expects
-      // 'const char *'. Trouble is that type conversion/cast is problematic, so
-      // one has to traverse an OpenGL 'string' ( fortunately null terminated )
-      // in order to construct a workable C++ std::string version. This
-      // assumes that the typedef 'khronos_uint8_t' won't change in future ....
-      static std::string parseGLstring(const GLubyte* glstring);
-
-   public:
       SolarSystemGlobals();
       ~SolarSystemGlobals();
 
@@ -115,7 +104,28 @@ class SolarSystemGlobals {
 
       static void set_render_level(SolarSystemGlobals::render_quality rq);
 
-      static SolarSystemGlobals::render_quality get_render_level(void);
+      static render_quality get_render_level(void);
+
+      static SDL_Surface* loadImage(std::string filename, GLenum* format);
+
+   private:
+      /// How many color channels if an alpha channel included.
+      static const GLuint ALPHA_CHANNEL;
+
+      /// How many color channels if an alpha channel NOT included.
+      static const GLuint NO_ALPHA_CHANNEL;
+
+      // The current quality level.
+      static SolarSystemGlobals::render_quality qual;
+
+      /**
+       * \brief Transfrom an OpenGL string type to an STL string type.
+       *
+       * \param glstring : the OpenGL string
+       *
+       * \return : an std::string version
+       */
+      static std::string parseGLstring(const GLubyte* glstring);
    };
 
 #endif /*SOLARSYSTEM_GLOBALS_H_*/

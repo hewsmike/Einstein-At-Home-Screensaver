@@ -37,7 +37,13 @@ const GLuint Constellations::BYTE_STRIDE_PER_VERTEX(Constellations::COLORS_PER_V
 
 const GLfloat Constellations::TEXT_RATIO(1000);
 
+// Don't alter this initial state !!
+const Constellations::state Constellations::INITIAL_CYCLE_STATE(ALL_ON);
+
 Constellations::Constellations(vec_t rad) : radius(rad) {
+   // Set initial display cycle state.
+   current_cycle_state = INITIAL_CYCLE_STATE;
+
    // TODO - There's a HUGE 'BEWARE' with this method. The link numbers are used as
    // indices to a vector that stores the star data AS PER THE LISTED ORDER in
    // which they are added to the constellation. Do not exceed bounds, and
@@ -1811,7 +1817,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    taurus.add_star(OrdStar(67.15f, 19.18f, 3.53f, OrdStar::SPEC_K, "Ain"));
    taurus.add_star(OrdStar(51.20f, 9.03f, 3.61f, OrdStar::SPEC_G, ""));
    taurus.add_star(OrdStar(64.94f, 15.63f, 3.65f, OrdStar::SPEC_G, "Hyadum I"));
-   taurus.add_star(OrdStar(65.73f, 9.73f, 3.73f, OrdStar::SPEC_B, ""));
+   taurus.add_star(OrdStar(51.79f, 9.73f, 3.73f, OrdStar::SPEC_B, ""));
    taurus.add_star(OrdStar(65.73f, 17.54f, 3.77f, OrdStar::SPEC_G, "Hyadum II"));
    taurus.add_star(OrdStar(60.79f, 5.99f, 3.91f, OrdStar::SPEC_A, ""));
    taurus.add_star(OrdStar(54.22f, 0.40f, 4.29f, OrdStar::SPEC_F, ""));
@@ -1825,12 +1831,39 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    taurus.add_link(6, 8);
    taurus.add_link(6, 11);
    taurus.add_link(7, 9);
+   taurus.add_link(8, 10);
    cons_list.push_back(taurus);
    tot_stars += taurus.total_stars();
    tot_links += taurus.total_links();
    }
 
 Constellations::~Constellations() {
+   }
+
+void Constellations::cycleActivation(void) {
+   // Mimic five state cycling switch.
+   switch (current_cycle_state) {
+      case ALL_OFF :
+         current_cycle_state = STARS;
+         activate();
+         break;
+      case STARS :
+         current_cycle_state = STARS_N_LINKS;
+         break;
+      case STARS_N_LINKS :
+         current_cycle_state = STARS_N_NAMES;
+         break;
+      case STARS_N_NAMES :
+         current_cycle_state = ALL_ON;
+         break;
+      case ALL_ON :
+         current_cycle_state = ALL_OFF;
+         inactivate();
+         break;
+      default:
+         ErrorHandler::record("GridGlobe::cycleActivation() - bad switch case reached (default)", ErrorHandler::FATAL);
+         break;
+      }
    }
 
 void Constellations::prepare(SolarSystemGlobals::render_quality rq) {
@@ -1875,16 +1908,15 @@ void Constellations::release(void) {
    }
 
 void Constellations::render(void) {
-   // Plot the stars first ie. a color at a point.
-   glEnableClientState(GL_VERTEX_ARRAY);
+   // Provided we should be showing anything at all.
+   if(current_cycle_state != ALL_OFF) {
+      // Plot the stars first ie. a color at a point.
+      glEnableClientState(GL_VERTEX_ARRAY);
 
-   // The GL_ARRAY_BUFFER target will be serviced by one buffer.
-   glBindBuffer(GL_ARRAY_BUFFER, buff_obj_points.ID());
+      // The GL_ARRAY_BUFFER target will be serviced by one buffer.
+      glBindBuffer(GL_ARRAY_BUFFER, buff_obj_points.ID());
 
-   // Provided we show constellations at all.
-   if(true) {
       glEnableClientState(GL_COLOR_ARRAY);
-
 
       // Using interleaved color/position data
       glInterleavedArrays(GL_C3F_V3F, 0, BUFFER_OFFSET(0));
@@ -1896,7 +1928,7 @@ void Constellations::render(void) {
       glDisableClientState(GL_COLOR_ARRAY);
 
       // Provided we show the links
-      if(true) {
+      if((current_cycle_state == STARS_N_LINKS) || (current_cycle_state == ALL_ON)) {
          // The GL_ELEMENT_ARRAY_BUFFER target will be serviced by the other buffer.
          glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buff_obj_indices.ID());
 
@@ -1916,21 +1948,24 @@ void Constellations::render(void) {
       // Disable various capabilities from the OpenGL state machine.
       glDisableClientState(GL_VERTEX_ARRAY);
       glBindBuffer(GL_ARRAY_BUFFER, Buffer_OBJ::NO_ID);
+
+      // Provided we show the names.
+      if((current_cycle_state == STARS_N_NAMES) || (current_cycle_state == ALL_ON)) {
+         // Now print the names at the centroids.
+         glEnable(GL_TEXTURE_2D);
+         glDisable(GL_CULL_FACE);
+
+         // Go through and call every call list.
+         for(std::vector<std::vector<GLuint> >::const_iterator lists = marker_lists.begin();
+             lists != marker_lists.end();
+             ++lists) {
+            // Only call the first, as others are called by it.
+            glCallList((*lists)[0]);
+            }
+
+         glDisable(GL_TEXTURE_2D);
+         }
       }
-
-   // Now print the names at the centroids.
-   glEnable(GL_TEXTURE_2D);
-   glDisable(GL_CULL_FACE);
-
-   // Go through and call every call list.
-   for(std::vector<std::vector<GLuint> >::const_iterator lists = marker_lists.begin();
-       lists != marker_lists.end();
-       ++lists) {
-      // Only call the first, as others are called by it.
-      glCallList((*lists)[0]);
-      }
-
-   glDisable(GL_TEXTURE_2D);
    }
 
 void Constellations::class_color(OrdStar::spectral_type spectral_class, GLfloat* colors) {
@@ -2121,7 +2156,7 @@ void Constellations::createMarkerLists(void) {
    // Work through the constellations one by one.
    for(std::vector<Constellation>::iterator cs = cons_list.begin();
       cs < cons_list.end();
-      cs++ ) {
+      cs++) {
 
       std::vector<GLuint> temp;
 

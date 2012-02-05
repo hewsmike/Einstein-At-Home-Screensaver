@@ -32,22 +32,26 @@ Renderable::~Renderable() {
    }
 
 void Renderable::activate(void) {
-   // Mark as active and prepare resources as we have decided to show it.
-   activity = Renderable::ACTIVE;
+   // Prepare resources as we have decided to show it.
    prepare(quality);
+   // Mark as active.
+   activity = Renderable::ACTIVE;
    }
 
 void Renderable::inactivate(void) {
-   // Mark as inactive and release resources as we have decided not to show it.
-   activity = Renderable::INACTIVE;
+   // Release resources as we have decided not to show it.
    release();
+   // Mark as inactive.
+   activity = Renderable::INACTIVE;
    }
 
 Renderable::activity_state Renderable::is_activated(void) const {
    return activity;
    }
 
-void Renderable::toggle_activation(void) {
+void Renderable::cycleActivation(void) {
+   // In this base class the activity state is simply toggled.
+   // Re-define this in a derived class if you want other behaviours.
    is_activated() ? inactivate() : activate();
    }
 

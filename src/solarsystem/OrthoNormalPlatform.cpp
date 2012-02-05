@@ -24,9 +24,9 @@
 //    'up' , 'look' and 'cross' vectors form a right handed
 //    orthonormal Cartesian set
 
-// The initial stance puts one looking along the negative x-axis with the z-axis
-// being 'up', thus implying the positive y-axis is to the right of view.
-const Vector3D OrthoNormalPlatform::INIT_LOOK(-1.0f, 0.0f, 0.0f);
+// The initial stance puts one looking along the positive x-axis with the z-axis
+// being 'up', thus implying the positive y-axis is to the left of view.
+const Vector3D OrthoNormalPlatform::INIT_LOOK(+1.0f, 0.0f, 0.0f);
 const Vector3D OrthoNormalPlatform::INIT_UP(0.0f, 0.0f, 1.0f);
 
 OrthoNormalPlatform::OrthoNormalPlatform(void) {

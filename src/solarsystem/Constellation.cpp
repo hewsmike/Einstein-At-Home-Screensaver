@@ -77,20 +77,20 @@ bool Constellation::isValidIndex(unsigned int index) const {
    // Assume success.
    bool ret_val = true;
 
-   // The the number of stars in the constellation
+   // The the number of stars in the constellation.
    unsigned int cons_size = star_list.size();
 
    if(cons_size == 0) {
-      // Whoops! No stars yet in the constellation
+      // Whoops! No stars yet in the constellation.
       std::stringstream msg;
       msg << "Constellation::isValidIndex() - no stars in constellation!";
       ErrorHandler::record(msg.str(), ErrorHandler::WARN);
       ret_val = false;
       }
    else {
-      // One or more stars in the constellation
+      // One or more stars in the constellation.
       if(index > cons_size - 1) {
-         // But out of range star index
+         // But out of range star index.
          std::stringstream msg;
          msg << "Constellation::isValidIndex() - star index out of range : ";
          msg << "\tindex = ";
@@ -104,6 +104,9 @@ bool Constellation::isValidIndex(unsigned int index) const {
    }
 
 void Constellation::add_star(OrdStar star) {
+   // By adding a new star then previous centroid evaluation no longer holds.
+   centre_evaluated = false;
+
    static const GLfloat FIRST_QUAD_UPPER(90);
    static const GLfloat FOURTH_QUAD_LOWER(270);
 
@@ -151,15 +154,6 @@ GLuint Constellation::total_links(void) const {
    }
 
 std::pair<GLfloat, GLfloat> Constellation::centre(void) {
-   std::cout << "Constellation " << cons_name
-             << (crosses_first_point_Aries ? " crosses " : " does not cross ")
-             << "the prime meridian" << std::endl;
-
-   std::cout << "\tfirst_quadrant = " << (first_quadrant ? "YES" : "NO")
-             << "\tfourth_quadrant = " << (fourth_quadrant ? "YES" : "NO")
-             << "\tmiddle_quadrant = " << (middle_quadrants ? "YES" : "NO")
-             <<std::endl;
-
    // Lazy evaluated on first request !
    std::pair<GLfloat, GLfloat> ret_val(0.0f, 0.0f);
 

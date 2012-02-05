@@ -45,7 +45,6 @@ extern "C" {
 #endif
 #endif
 
-
 int main(int argc, char **argv) {
    // print version info
    if(argc == 2) {
@@ -78,7 +77,7 @@ int main(int argc, char **argv) {
    WindowManager window;
    ResourceFactory factory;
    // Edit this call for different build sources ie. swap 'Solarsystem' for whatever
-   AbstractGraphicsEngine *graphics = GraphicsEngineFactory::createInstance(
+   AbstractGraphicsEngine* graphics = GraphicsEngineFactory::createInstance(
                                          GraphicsEngineFactory::SolarSystem,
                                          scienceApplication);
    if(!graphics) {
@@ -94,8 +93,8 @@ int main(int argc, char **argv) {
       }
 
 	// create font and icon resource instances
-	const Resource *fontResource = factory.createInstance("FontSansSerif");
-	const Resource *iconResource = factory.createInstance("AppIconBMP");
+	const Resource* fontResource = factory.createInstance("FontSansSerif");
+	const Resource* iconResource = factory.createInstance("AppIconBMP");
 
 	if(fontResource == NULL) {
 		cerr << "Font resource could not be loaded!" << endl;
@@ -123,7 +122,7 @@ int main(int argc, char **argv) {
    // register starsphere as event observer
    window.registerEventObserver(graphics);
 
-	// pepare rendering
+	// prepare rendering
 	graphics->initialize(window.windowWidth(), window.windowHeight(), fontResource);
 	graphics->refreshBOINCInformation();
 

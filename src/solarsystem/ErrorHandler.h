@@ -26,6 +26,9 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <sstream>
+
+#include "SolarSystemGlobals.h"
 
 /**
  * \addtogroup solarsystem Solarsystem
@@ -61,13 +64,13 @@ class ErrorHandler {
       /// Identifiers of file stream readiness for use.
       enum stream_ready {READY, NOT_READY};
 
-      /// Name of file to record messages in.
+      /// Name of log file to record messages in.
       static const std::string LOG_FILE_NAME;
-      
+
       /// Holders for timestamp manipulation.
       static time_t current;
       static struct tm* local;
-      
+
       /**
        * \brief Constructor ( private since this a static class )
        *
@@ -86,10 +89,10 @@ class ErrorHandler {
       /**
        * \brief This method is called once to initialise this error
        * handling and message recording system. At present it simply
-       * truncates the existing log file.
+       * truncates existing log files.
        */
       static void initialise(void);
-      
+
       /**
        * \brief This method is called when an ( error ) message is to
        * be recorded and/or for the program to be exited.

@@ -50,6 +50,9 @@ const GLfloat GridGlobe::TEXT_OTHER_RATIO(0.5f);
 const GLfloat GridGlobe::TEXT_OFFSET(2);
 const GLfloat GridGlobe::TEXT_UNITS_RATIO(0.5f);
 
+// Don't alter this initial state !!
+const GridGlobe::state GridGlobe::INITIAL_CYCLE_STATE(ALL_ON);
+
 GridGlobe::GridGlobe(vec_t rad, GLuint slices,
                      GLuint stacks) :
                      radius(rad),
@@ -58,11 +61,31 @@ GridGlobe::GridGlobe(vec_t rad, GLuint slices,
    // We only have an equatorial slice if an odd number of stacks.
    equator = ((stacks % 2) == 1) ? true : false;
 
-   hour_glyph = 0;
-   degree_glyph = 0;
+   // Set initial display cycle state.
+   current_cycle_state = INITIAL_CYCLE_STATE;
    }
 
 GridGlobe::~GridGlobe() {
+   }
+
+void GridGlobe::cycleActivation(void) {
+   // Mimic three state cycling switch.
+   switch (current_cycle_state) {
+      case ALL_OFF :
+         current_cycle_state = GRID;
+         activate();
+         break;
+      case GRID :
+         current_cycle_state = ALL_ON;
+         break;
+      case ALL_ON :
+         current_cycle_state = ALL_OFF;
+         inactivate();
+         break;
+      default:
+         ErrorHandler::record("GridGlobe::cycleActivation() - bad switch case reached (default)", ErrorHandler::FATAL);
+         break;
+      }
    }
 
 void GridGlobe::prepare(SolarSystemGlobals::render_quality rq) {
@@ -101,83 +124,75 @@ void GridGlobe::release(void) {
    // Release the buffer object's resources.
    buff_obj_points.release();
 
-   for(std::vector<std::vector<GLuint> >::const_iterator lists = marker_lists.begin();
-       lists != marker_lists.end();
-       ++lists) {
-      for(std::vector<GLuint>::const_iterator list = lists->begin();
-          list != lists->end();
-          ++list) {
-         glDeleteLists(*list, 1);
-         }
-      }
-   // This destroys any contained vectors too ...
-   marker_lists.clear();
-
-   glDeleteLists(hour_glyph, 1);
-   glDeleteLists(degree_glyph, 1);
+   clearMarkerLists();
    }
 
 void GridGlobe::render(void) {
-   // Make our vertex buffer identifier OpenGL's current one.
-   glBindBuffer(GL_ARRAY_BUFFER, buff_obj_points.ID());
-   // We will use a vertex array within that buffer.
-   glEnableClientState(GL_VERTEX_ARRAY);
-   // The vertex array pointer points to the start of the buffer.
-   glVertexPointer(COORDS_PER_VERTEX, GL_FLOAT, ARRAY_STRIDE, BUFFER_OFFSET(BYTE_OFFSET));
+   // Provided we should be showing anything at all.
+   if(current_cycle_state != ALL_OFF) {
+      // Make our vertex buffer identifier OpenGL's current one.
+      glBindBuffer(GL_ARRAY_BUFFER, buff_obj_points.ID());
+      // We will use a vertex array within that buffer.
+      glEnableClientState(GL_VERTEX_ARRAY);
+      // The vertex array pointer points to the start of the buffer.
+      glVertexPointer(COORDS_PER_VERTEX, GL_FLOAT, ARRAY_STRIDE, BUFFER_OFFSET(BYTE_OFFSET));
 
-   // Do the grid. Start by setting the line width and colour.
-   glLineWidth(GRID_LINE_WIDTH);
-   glColor3f(GRID_RED, GRID_GREEN, GRID_BLUE);
+      // Do the grid. Start by setting the line width and colour.
+      glLineWidth(GRID_LINE_WIDTH);
+      glColor3f(GRID_RED, GRID_GREEN, GRID_BLUE);
 
-   // Bind the grid index array.
-   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buff_obj_grid_links.ID());
-
-   // Finally we get to render the lines.
-   glDrawElements(GL_LINES, grid_links * VERTICES_PER_LINK, GL_UNSIGNED_INT, BUFFER_OFFSET(ARRAY_START));
-
-   // Do the prime meridian. Start by setting the line width and colour.
-   glLineWidth(PRIME_MERIDIAN_LINE_WIDTH);
-   glColor3f(PRIME_MERIDIAN_RED, PRIME_MERIDIAN_GREEN, PRIME_MERIDIAN_BLUE);
-
-   // Bind the prime meridian index array.
-   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buff_obj_prime_meridian_links.ID());
-
-   // Finally we get to render the lines.
-   glDrawElements(GL_LINES, prime_meridian_links * VERTICES_PER_LINK, GL_UNSIGNED_INT, BUFFER_OFFSET(ARRAY_START));
-
-   // Only draw an equatorial circle if there is one.
-   if(equator) {
-      // Do the celestial equator. Start by setting the line width and colour.
-      glLineWidth(CELESTIAL_EQUATOR_LINE_WIDTH);
-      glColor3f(CELESTIAL_EQUATOR_RED, CELESTIAL_EQUATOR_GREEN, CELESTIAL_EQUATOR_BLUE);
-
-      // Bind the celestial equator index array.
-      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buff_obj_celestial_equator_links.ID());
+      // Bind the grid index array.
+      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buff_obj_grid_links.ID());
 
       // Finally we get to render the lines.
-      glDrawElements(GL_LINES, celestial_equator_links * VERTICES_PER_LINK, GL_UNSIGNED_INT, BUFFER_OFFSET(ARRAY_START));
+      glDrawElements(GL_LINES, grid_links * VERTICES_PER_LINK, GL_UNSIGNED_INT, BUFFER_OFFSET(ARRAY_START));
+
+      // Do the prime meridian. Start by setting the line width and colour.
+      glLineWidth(PRIME_MERIDIAN_LINE_WIDTH);
+      glColor3f(PRIME_MERIDIAN_RED, PRIME_MERIDIAN_GREEN, PRIME_MERIDIAN_BLUE);
+
+      // Bind the prime meridian index array.
+      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buff_obj_prime_meridian_links.ID());
+
+      // Finally we get to render the lines.
+      glDrawElements(GL_LINES, prime_meridian_links * VERTICES_PER_LINK, GL_UNSIGNED_INT, BUFFER_OFFSET(ARRAY_START));
+
+      // Only draw an equatorial circle if there is one.
+      if(equator) {
+         // Do the celestial equator. Start by setting the line width and colour.
+         glLineWidth(CELESTIAL_EQUATOR_LINE_WIDTH);
+         glColor3f(CELESTIAL_EQUATOR_RED, CELESTIAL_EQUATOR_GREEN, CELESTIAL_EQUATOR_BLUE);
+
+         // Bind the celestial equator index array.
+         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buff_obj_celestial_equator_links.ID());
+
+         // Finally we get to render the lines.
+         glDrawElements(GL_LINES, celestial_equator_links * VERTICES_PER_LINK, GL_UNSIGNED_INT, BUFFER_OFFSET(ARRAY_START));
+         }
+
+      // Stop using vertex arrays.
+      glDisableClientState(GL_VERTEX_ARRAY);
+
+      // Unbind the buffers.
+      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Buffer_OBJ::NO_ID);
+      glBindBuffer(GL_ARRAY_BUFFER, Buffer_OBJ::NO_ID);
+
+      // Now display the grid markers, if activation state agrees.
+      if(current_cycle_state == ALL_ON) {
+         glEnable(GL_TEXTURE_2D);
+         glDisable(GL_CULL_FACE);
+
+         // Go through marker_lists and call display lists.
+         for(std::vector<std::vector<GLuint> >::const_iterator lists = marker_lists.begin();
+             lists != marker_lists.end();
+             ++lists) {
+            // Only call the first, as others are called by it.
+            glCallList((*lists)[0]);
+            }
+
+         glDisable(GL_TEXTURE_2D);
+         }
       }
-
-   // Stop using vertex arrays.
-   glDisableClientState(GL_VERTEX_ARRAY);
-
-   // Unbind the buffers.
-   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Buffer_OBJ::NO_ID);
-   glBindBuffer(GL_ARRAY_BUFFER, Buffer_OBJ::NO_ID);
-
-   // Now display the grid markers.
-   glEnable(GL_TEXTURE_2D);
-   glDisable(GL_CULL_FACE);
-
-   // Go through and call every call list.
-   for(std::vector<std::vector<GLuint> >::const_iterator lists = marker_lists.begin();
-       lists != marker_lists.end();
-       ++lists) {
-      // Only call the first, as others are called by it.
-      glCallList((*lists)[0]);
-      }
-
-   glDisable(GL_TEXTURE_2D);
    }
 
 void GridGlobe::loadVertexBuffer(void) {
@@ -389,13 +404,12 @@ void GridGlobe::loadCelestialEquatorIndexBuffer(void) {
    }
 
 void GridGlobe::createMarkerLists(void) {
-   static const char HOUR_UNITS('h');
-   static const char DEGREE_UNITS('o');
+   clearMarkerLists();
+
+   static const string HOUR_UNITS("h");
+   static const string DEGREE_UNITS("o");
 
    OGLFT_ft* myFont = this->getFont();
-
-   // This destroys any contained vectors too ...
-   marker_lists.clear();
 
    GLfloat text_scale_factor = radius/TEXT_RATIO;
 
@@ -403,8 +417,8 @@ void GridGlobe::createMarkerLists(void) {
 
    GLfloat stack_step = SolarSystemGlobals::HALF_CIRCLE_DEG/(stacks - 1);
 
-   hour_glyph = myFont->compile(HOUR_UNITS);
-   degree_glyph = myFont->compile(DEGREE_UNITS);
+   hour_glyph = myFont->compile(HOUR_UNITS.c_str());
+   degree_glyph = myFont->compile(DEGREE_UNITS.c_str());
 
    for(GLuint slice = 0; slice < slices; ++slice) {
       GLint right_asc = slice * slice_step;
@@ -456,15 +470,17 @@ void GridGlobe::createMarkerLists(void) {
             t_scale = text_scale_factor;
             }
          else {
-            // Off both the celestial equator and prime meridian.
+            // Not upon either the celestial equator or the prime meridian.
             t_scale = text_scale_factor * TEXT_OTHER_RATIO;
             }
 
          GLuint transform_ID = glGenLists(1);
+
          glNewList(transform_ID, GL_COMPILE);
             // Isolate the transforms.
             glPushMatrix();
-               // Transforms etc ... in reverse order if "world space" description.
+               // Transforms ... in reverse order if "world space" description.
+               // Or in forward order if thinking in terms of "local coordinates".
 
                // Rotate to desired right ascension.
                // Rotate anti-clockwise, seen looking from +ve z-axis to origin.
@@ -488,40 +504,54 @@ void GridGlobe::createMarkerLists(void) {
 
                // Isolate the transform.
                glPushMatrix();
-                  // Nudge him away from the origin
+                  // Move up and to the right of the origin.
                   glTranslatef(+TEXT_OFFSET, +TEXT_OFFSET, 0);
 
+                  // Render the current right ascension.
                   glCallList(ra_draw_ID);
 
+                  // Find the dimensions of what we just rendered.
                   OGLFT::BBox ra_box = myFont->measure(ra_token.c_str());
 
+                  // How much to advance towards the right.
                   OGLFT::Advance ra_adv = ra_box.advance_;
 
+                  // Shift across and up to 'superscript' position.
                   glTranslatef(ra_adv.dx_, ra_box.y_max_/2, 0);
 
+                  // Resize for 'hour' symbol.
                   glScalef(TEXT_UNITS_RATIO, TEXT_UNITS_RATIO, 1);
 
+                  // Render the 'hour' symbol.
                   glCallList(hour_glyph);
-
                glPopMatrix();
 
-               OGLFT::BBox degree_box = myFont->measure(DEGREE_UNITS);
+               // Find the dimensions of the 'degree' symbol.
+               OGLFT::BBox degree_box = myFont->measure(DEGREE_UNITS.c_str());
 
+               // Find the dimensions of what we are about to render.
                OGLFT::BBox dec_box = myFont->measure(dec_token.c_str());
 
+               // How much will it advance towards the right?
                OGLFT::Advance dec_adv = dec_box.advance_;
 
-               // Nudge him away from the origin
+               // Move down and to the left of the origin, using the above dimensions
+               // as a guide, so tha we have the 'degree' symbol suitably abut the
+               // intersection of the grid lines.
                glTranslatef(-(TEXT_OFFSET + dec_box.x_max_ + degree_box.x_max_),
                             -(TEXT_OFFSET + dec_box.y_max_ + degree_box.y_max_),
                             0);
 
+               // Render the current declination.
                glCallList(dec_draw_ID);
 
+               // Shift across and up to 'superscript' position.
                glTranslatef(dec_adv.dx_, 7 * dec_box.y_max_/8, 0);
 
+               // Resize for 'degree' symbol.
                glScalef(TEXT_UNITS_RATIO, TEXT_UNITS_RATIO, 1);
 
+               // Render the 'degree' symbol.
                glCallList(degree_glyph);
             glPopMatrix();
          glEndList();
@@ -533,4 +563,27 @@ void GridGlobe::createMarkerLists(void) {
          marker_lists.push_back(temp);
          }
       }
+   }
+
+void GridGlobe::clearMarkerLists(void) {
+   // Nothing bad will happen if these display list ID's are
+   // not current, or invalid, or zero.
+   glDeleteLists(hour_glyph, 1);
+   glDeleteLists(degree_glyph, 1);
+
+   // Go through the display lists, and ask OpenGL to delete each of them.
+   for(std::vector<std::vector<GLuint> >::iterator lists = marker_lists.begin();
+       lists != marker_lists.end();
+       ++lists) {
+      for(std::vector<GLuint>::const_iterator list = lists->begin();
+          list != lists->end();
+          ++list) {
+         glDeleteLists(*list, 1);
+         }
+      // Empty this list, to be sure.
+      lists->clear();
+      }
+
+   // This destroys any contained vectors too ...
+   marker_lists.clear();
    }

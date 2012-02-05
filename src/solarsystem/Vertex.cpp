@@ -20,10 +20,19 @@
 
 #include "Vertex.h"
 
+Vertex::Vertex() {
+   }
+
 Vertex::Vertex(const Vector3D& ps, const Vector3D& nm,
                const std::pair<GLfloat, GLfloat>& tc)
                : pos(ps), norm(nm), t_cds(tc) {
   	}
+
+Vertex::Vertex(const Vertex& other) {
+   this->pos = Vector3D(other.position());
+   this->norm = Vector3D(other.normal());
+   this->t_cds = other.texture_co_ords();
+   }
 
 Vertex::~Vertex() {
 	}

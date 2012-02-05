@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2011 by Mike Hewson                                     *
+ *   Copyright (C) 2012 by Mike Hewson                                     *
  *   hewsmike@iinet.net.au                                                 *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
@@ -18,10 +18,10 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef SPIN_PLATFORM_H_
-#define SPIN_PLATFORM_H_
+#ifndef HUD_FLOW_HORIZONTAL_LAYOUT_H_
+#define HUD_FLOW_HORIZONTAL_LAYOUT_H_
 
-#include "OrthoNormalPlatform.h"
+#include "HUDFlowLayout.h"
 
 /**
  * \addtogroup solarsystem Solarsystem
@@ -29,69 +29,43 @@
  */
 
 /**
- * \brief %Solarsystem Cartesian orthonormal vector set
- *
- * This class comprises angular velocity state data, accessors and mutators thereof.
+ * \brief The container type having a horizontal flow layout.
  *
  * \author Mike Hewson\n
  */
 
-class SpinPlatform : public OrthoNormalPlatform {
+class HUDFlowHorizontalLayout : public HUDFlowLayout {
    public:
       /**
        * \brief Constructor
        */
-      SpinPlatform(void);
+      HUDFlowHorizontalLayout(HUDContainer* enclosing);
 
       /**
        * \brief Destructor
        */
-      virtual ~SpinPlatform();
-
-      /**
-       * \brief Pitch, positive angle is up
-       *
-       * \param angle in radians
-       */
-      void pitch(vec_t angle);
-
-       /**
-       * \brief Roll, positive angle is to the right
-       *
-       * \param angle in radians
-       */
-      void roll(vec_t angle);
-
-       /**
-       * \brief Yaw, positive angle is to the right
-       *
-       * \param angle in radians
-       */
-      void yaw(vec_t angle);
+      virtual ~HUDFlowHorizontalLayout();
 
    protected:
       /**
-       * \brief Reset the platform in spin
+       * \brief Determine the miminum dimensions as per the internal
+       *        layout of items within. Enacts HUDContainer interface.
+       *
+       * \return std::pair composed of ( in order )
+       *          - the desired width
+       *          - the desired height
        */
-      virtual void reset(void);
+      virtual std::pair<GLuint, GLuint> reassessMinimumDimensions(void);
 
       /**
-       * \brief Reset the platform in spin
+       * \brief Determine and set the base positions of each item.
+       *        Enacts HUDContainer interface.
        */
-      virtual void step(void);
-
-      // Current pitch rate.
-      vec_t pitch_rate;
-
-      vec_t roll_rate;
-
-      vec_t yaw_rate;
-   private:
-      static const vec_t NULL_RATE;
-	};
+      virtual void allocateItemBases(void);
+   };
 
 /**
  * @}
  */
 
-#endif // SPIN_PLATFORM_H_
+#endif /* HUD_FLOW_HORIZONTAL_LAYOUT_H_ */

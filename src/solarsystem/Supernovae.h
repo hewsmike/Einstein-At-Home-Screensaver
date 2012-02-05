@@ -31,6 +31,17 @@
 #include "Vector3D.h"
 #include "VectorSP.h"
 
+/**
+ * \addtogroup solarsystem Solarsystem
+ * @{
+ */
+
+/**
+ * \brief Container type which holds and renders supernovae for 3D display.
+ *
+ * \author Mike Hewson\n
+ */
+
 class Supernovae : public Renderable {
    private:
       /// The displayed size and color parameters of generic supernovae
@@ -75,5 +86,9 @@ class Supernovae : public Renderable {
        */
       virtual ~Supernovae();
    };
+   
+/**
+ * @}
+ */
 
 #endif /* SUPERNOVAE_H_ */

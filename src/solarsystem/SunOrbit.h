@@ -18,12 +18,13 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef PLATFORM_H_
-#define PLATFORM_H_
+#ifndef SUN_ORBIT_H_
+#define SUN_ORBIT_H_
 
 #include <iostream>
-#include <cmath>
 
+#include "ErrorHandler.h"
+#include "SolarSystemGlobals.h"
 #include "Vector3D.h"
 
 /**
@@ -32,55 +33,49 @@
  */
 
 /**
- * \brief Directional platform state
- *
- * This class comprises the viewpoint state data only.
+ * \brief Models the Sun's orbit around the Earth.
  *
  * \author Mike Hewson\n
- * hewsmike@iinet.net.au
  */
 
-class OrthoPlatform{
+class SunOrbit {
+   public:
+      static const GLfloat ECLIPTIC_ANGLE_DEG;
+
+      static const GLfloat DAYS_PER_YEAR;
+
+      /// The radius of the Sun's orbit.
+      static const GLfloat SUN_ORBIT_RADIUS;
+
+      /// What number of days since Jan 1st is the vernal equinox ?
+      static const int VERNAL_EQUINOX_DAY;
+
+      /**
+       * \brief Destructor
+       */
+      ~SunOrbit();
+
+      /**
+       * \brief Where is the Sun on a given day?
+       *
+       * \param days366 : the integral number of days since January the 1st,
+       *                  ie. range is 0 - 365
+       *
+       * \return position vector from the origin to the centre of the Sun
+       */
+      static Vector3D getPosition(GLfloat days366);
+
    private:
-		static const Vector3D INIT_LOOK;
-		static const Vector3D INIT_UP;
+      // Private constructor as static
+       /**
+       * \brief Constructor
+       */
+      SunOrbit(void);
+   };
 
-      // Three components of the point we are looking towards in space.
-      Vector3D look_dir;
+/**
+ * @}
+ */
 
-		// Three components defining the 'up' view direction.
-      Vector3D up_dir;
+#endif /* SUN_ORBIT_H_*/
 
-   protected:
-      // Mutators.
-		void set_look(const Vector3D& n_look);
-      void set_up(const Vector3D& n_up);
-
-      virtual void reset(void);
-
-	public:
-      OrthoPlatform();
-      virtual ~OrthoPlatform();
-
-      // Accessors.
-      // Cross vector is derived from the other two via lazy evaluation.
-      // NOTE : Accumulated rounding error can be a source of 'platform drift'
-      // with respect to orientation axes. That is, there is no check that
-      // the first two vectors are orthogonal or will remain so ..... TODO what exactly ??
-      Vector3D cross(void) const;
-
-      Vector3D look(void) const;
-      Vector3D up(void) const;
-
-      // Mutators.
-      void pitch_down(vec_t angle);
-      void pitch_up(vec_t angle);
-      void roll_left(vec_t angle);
-      void roll_right(vec_t angle);
-      void yaw_left(vec_t angle);
-      void yaw_right(vec_t angle);
-
-      void show_invariants(void) const;
-	};
-
-#endif // PLATFORM_H_

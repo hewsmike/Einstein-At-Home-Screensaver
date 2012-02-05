@@ -40,5 +40,4 @@ void TranslatablePlatform::set_position(const Vector3D& ps) {
 void TranslatablePlatform::reset(void) {
    // Reset to a choice of initial position ...
    set_position(TranslatablePlatform::INIT_POS);
-
    }

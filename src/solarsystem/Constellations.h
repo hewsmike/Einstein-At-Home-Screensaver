@@ -35,6 +35,17 @@
 #include "VectorSP.h"
 #include "Vector3D.h"
 
+/**
+ * \addtogroup solarsystem Solarsystem
+ * @{
+ */
+
+/**
+ * \brief Container type which holds and renders constellations for 3D display.
+ *
+ * \author Mike Hewson\n
+ */
+
 class Constellations : public Renderable {
    public:
 
@@ -46,7 +57,16 @@ class Constellations : public Renderable {
        */
 		~Constellations();
 
+      /**
+       * \brief Cycles the activation state of the object
+       */
+      virtual void cycleActivation(void);
+
 	private:
+      enum state {ALL_OFF, STARS, STARS_N_LINKS, STARS_N_NAMES, ALL_ON};
+
+      static const state INITIAL_CYCLE_STATE;
+
       static const GLfloat OFFSET;
 		static const GLfloat LINK_WIDTH;
 		static const GLushort LINK_STIPPLE_PATTERN;
@@ -69,6 +89,8 @@ class Constellations : public Renderable {
 
       /// At what radius from the origin do the constellations lie?
       vec_t radius;
+
+      state current_cycle_state;
 
       /// The OpenGL buffer object wrapper for vertex data.
       Buffer_OBJ buff_obj_points;
@@ -103,5 +125,9 @@ class Constellations : public Renderable {
 
       std::vector<std::vector<GLuint> > marker_lists;
    };
+
+/**
+ * @}
+ */
 
 #endif // CONSTELLATIONS_H_

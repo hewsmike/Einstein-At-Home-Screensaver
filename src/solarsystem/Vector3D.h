@@ -26,14 +26,15 @@
 #include <string>
 
 #include "SDL_opengl.h"
-#include "SolarSystemGlobals.h"
+// #include "SolarSystemGlobals.h"
 
 /**
  * \addtogroup solarsystem Solarsystem
  * @{
  */
 
-/// Underlying type for vector representation
+/// Underlying type for vector representation. Don't ever change this!!
+/// Dependencies with OpenGL data representations ...
 typedef GLfloat vec_t;
 
 /**

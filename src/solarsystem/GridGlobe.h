@@ -35,13 +35,34 @@
 #include "VectorSP.h"
 #include "Vertex.h"
 
+/**
+* \addtogroup solarsystem Solarsystem
+* @{
+*/
+
+/**
+* \brief A renderable object of spherical shape with texture, to be
+* instantiated in detail for the Earth, the Sun etc
+*
+* \author Mike Hewson\n
+*/
+
 class GridGlobe : public Renderable {
    public:
 		GridGlobe(vec_t rad, GLuint slices, GLuint stacks);
 
 		virtual ~GridGlobe();
 
+      /**
+       * \brief Cycles the activation state of the object
+       */
+      virtual void cycleActivation(void);
+
    private:
+      enum state {ALL_OFF, GRID, ALL_ON};
+
+      static const state INITIAL_CYCLE_STATE;
+
       /// The displayed size and color parameters of ordinary grid lines
 		static const GLfloat GRID_LINE_WIDTH;
   	   static const GLfloat GRID_RED;
@@ -80,6 +101,8 @@ class GridGlobe : public Renderable {
 
       bool equator;
 
+      state current_cycle_state;
+
       GLuint grid_links;
 
       GLuint prime_meridian_links;
@@ -108,6 +131,15 @@ class GridGlobe : public Renderable {
 
       void createMarkerLists(void);
 
+      /**
+       * \brief Clears the OpenGL display lists for the grid marking symbols.
+       *
+       * Releases OpenGL display list resources associated with the grid markers,
+       * and empties the marker_lists STL container. Used when cycling the display
+       * components and overall resource release with inactivation.
+       */
+      void clearMarkerLists(void);
+
       /// Provide OpenGL code to prepare for rendering.
       void prepare(SolarSystemGlobals::render_quality rq);
 
@@ -123,5 +155,9 @@ class GridGlobe : public Renderable {
 
       std::vector<std::vector<GLuint> > marker_lists;
    };
+
+/**
+* @}
+*/
 
 #endif // GRID_GLOBE_H_

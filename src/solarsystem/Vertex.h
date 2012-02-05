@@ -43,6 +43,12 @@
 class Vertex {
    public:
       /**
+       * \brief Constructor ( no argument )
+       *
+       */
+      Vertex();
+            
+      /**
        * \brief Constructor ( fully qualified )
        *
        * \param ps The position of the vertex
@@ -53,6 +59,12 @@ class Vertex {
        */
       Vertex(const Vector3D& ps, const Vector3D& nm,
              const std::pair<GLfloat, GLfloat>& tc);
+      
+      /**
+       * \brief Constructor ( copy )
+       *
+       */
+      Vertex(const Vertex& other);
 
 		/**
        * \brief Destructor

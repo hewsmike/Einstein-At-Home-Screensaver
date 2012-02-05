@@ -115,8 +115,8 @@ void Craft::step(void) {
    if(state.position().len() < Craft::MIN_EARTH_RANGE) {
       // TODO turn him around to point outwards?
       // Give a little nudge to send it back away from home.
-      state.set_velocity(+Craft::RETURN_SPEED*state.position().unit());
-      std::cout << "Too close to Earth - nudged away" << std::endl;
+      // state.set_velocity(+Craft::RETURN_SPEED*state.position().unit());
+      // std::cout << "Too close to Earth - nudged away" << std::endl;
       }
 
    // TODO - to close to the Sun
@@ -131,7 +131,8 @@ void Craft::forward_thrust(void) {
 void Craft::go_home(void) {
    // Ought place him initially in good position, stationary.
    // TODO looking at Earth ?
-   state.set_position(Vector3D(Craft::START_RADIUS, 0, 3*Craft::START_RADIUS));
+   state.set_position(Vector3D(-100, 0, 0));
+   // RESTORE : state.set_position(Vector3D(0, 0, 3*Craft::START_RADIUS));
    stop();
    }
 

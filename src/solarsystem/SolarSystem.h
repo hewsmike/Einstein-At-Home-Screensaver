@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2011 by Mike Hewson                                     *
+ *   Copyright (C) 2012 by Mike Hewson                                     *
  *   hewsmike@iinet.net.au                                                 *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
@@ -31,6 +31,8 @@
 #include <sstream>
 #include <string>
 #include <util.h>
+
+#include <oglft/OGLFT.h>
 
 #include "AbstractGraphicsEngine.h"
 #include "Craft.h"
@@ -161,6 +163,14 @@ protected:
    /// Current window aspect ration
    float aspect;
 
+   /// Font resource instance
+	const Resource* spaceFontResource;
+
+   /// Font texture instances for in-simulation rendering
+	OGLFT_ft* gridFont;
+   OGLFT_ft* constellationFont;
+   OGLFT_ft* HUDFont;
+
 private:
    static const GLdouble FOV_ANGLE;
 
@@ -170,7 +180,7 @@ private:
 
    static const int FAR_LOOK_DISTANCE;
 
-   /// The objects to be rendered.
+   /// The 3D scene objects to be rendered.
    Simulation sim;
    };
 

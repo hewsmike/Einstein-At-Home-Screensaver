@@ -93,8 +93,8 @@ int main(int argc, char **argv)
     }
 
 	// create font and icon resource instances
-	const Resource *fontResource = factory.createInstance("FontSansSerif");
-	const Resource *iconResource = factory.createInstance("AppIconBMP");
+	const Resource* fontResource = factory.createInstance("FontSansSerif");
+	const Resource* iconResource = factory.createInstance("AppIconBMP");
 
 	if(fontResource == NULL) {
 		cerr << "Font resource could not be loaded!" << endl;

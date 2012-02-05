@@ -34,18 +34,20 @@ Star::Star(starpos_t ra, starpos_t dec, std::string nm) : s_name(nm) {
    // Valid if within the range = [RIGHT_ASCENSION_LOW, RIGHT_ASCENSION_HIGH)
    // Specifically a right ascension of 360 degrees is NOT valid.
    if((ra < RIGHT_ASCENSION_LOW) || (ra >= RIGHT_ASCENSION_HIGH)) {
-      std::string error_msg = "Star::Star() : bad right ascension given : ";
-	   error_msg += "value = ";
-	   error_msg += ra;
-	   ErrorHandler::record(error_msg, ErrorHandler::FATAL);
+      std::stringstream msg;
+      msg << "Star::Star() : bad right ascension given : ";
+	   msg << "value = ";
+	   msg << ra;
+	   ErrorHandler::record(msg.str(), ErrorHandler::FATAL);
       }
 
    // Valid if within the range = [DECLINATION_LOW, DECLINATION_HIGH].
    if((dec < DECLINATION_LOW) || (dec > DECLINATION_HIGH)) {
-      std::string error_msg = "Star::Star() : bad declination given : ";
-      error_msg += "value = ";
-      error_msg += dec;
-      ErrorHandler::record(error_msg, ErrorHandler::FATAL);
+      std::stringstream msg;
+      msg << "Star::Star() : bad declination given : ";
+      msg << "value = ";
+      msg << dec;
+      ErrorHandler::record(msg.str(), ErrorHandler::FATAL);
       }
 
    // Inputs in range, so can now initialise with given arguments.

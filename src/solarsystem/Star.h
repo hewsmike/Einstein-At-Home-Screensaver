@@ -22,6 +22,7 @@
 #define STAR_H_
 
 #include <string>
+#include <sstream>
 
 #include "ErrorHandler.h"
 #include "Vector3D.h"

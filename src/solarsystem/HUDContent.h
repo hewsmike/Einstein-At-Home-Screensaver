@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2011 by Mike Hewson                                     *
+ *   Copyright (C) 2012 by Mike Hewson                                     *
  *   hewsmike@iinet.net.au                                                 *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
@@ -18,80 +18,63 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef SPIN_PLATFORM_H_
-#define SPIN_PLATFORM_H_
+#ifndef HUD_CONTENT_H_
+#define HUD_CONTENT_H_
 
-#include "OrthoNormalPlatform.h"
+#include "HUDContainer.h"
+#include "HUDItem.h"
 
 /**
- * \addtogroup solarsystem Solarsystem
+ * \addtogroup  solarsystem Solarsystem
  * @{
  */
 
 /**
- * \brief %Solarsystem Cartesian orthonormal vector set
- *
- * This class comprises angular velocity state data, accessors and mutators thereof.
+ * \brief Base class for holders of images and text with fixed horizontal
+ *        and vertical margins.
  *
  * \author Mike Hewson\n
  */
 
-class SpinPlatform : public OrthoNormalPlatform {
+class HUDContent : public HUDItem {
    public:
       /**
-       * \brief Constructor
+       * \brief Constructor. Note a derived class must independently set
+       *        the minimum dimensions via HUDItem::setMinimumDimensions()
+       *
+       * \param horizontalMargin : the horizontal pixel margin to be applied
+       *                           either side of the enclosed content
+       * \param verticalMargin : the vertical pixel margin to be applied
        */
-      SpinPlatform(void);
+      HUDContent(GLuint horizontalMargin, GLuint verticalMargin);
 
       /**
        * \brief Destructor
        */
-      virtual ~SpinPlatform();
+      virtual ~HUDContent();
 
       /**
-       * \brief Pitch, positive angle is up
+       * \brief Get the size of the fixed horizontal margin
        *
-       * \param angle in radians
+       * \return the margin
        */
-      void pitch(vec_t angle);
-
-       /**
-       * \brief Roll, positive angle is to the right
-       *
-       * \param angle in radians
-       */
-      void roll(vec_t angle);
-
-       /**
-       * \brief Yaw, positive angle is to the right
-       *
-       * \param angle in radians
-       */
-      void yaw(vec_t angle);
-
-   protected:
-      /**
-       * \brief Reset the platform in spin
-       */
-      virtual void reset(void);
+      GLuint horzMargin(void) const;
 
       /**
-       * \brief Reset the platform in spin
+       * \brief Get the size of the fixed vertical margin
+       *
+       * \return the margin
        */
-      virtual void step(void);
+      GLuint vertMargin(void) const;
 
-      // Current pitch rate.
-      vec_t pitch_rate;
-
-      vec_t roll_rate;
-
-      vec_t yaw_rate;
    private:
-      static const vec_t NULL_RATE;
-	};
+      /// Current margins
+      GLuint hz_marg;
+      GLuint vt_marg;
+   };
 
 /**
  * @}
  */
 
-#endif // SPIN_PLATFORM_H_
+#endif /* HUD_CONTENT_H_ */

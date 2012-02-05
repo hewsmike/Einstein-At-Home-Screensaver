@@ -24,9 +24,19 @@
 #include <iostream>
 
 #include "AcceleratedPlatform.h"
-#include "Earth.h"
 #include "ErrorHandler.h"
 #include "SolarSystemGlobals.h"
+
+/**
+ * \addtogroup solarsystem Solarsystem
+ * @{
+ */
+
+/**
+ * \brief Simulates the kinetic and dynamic behaviours of a spaceship.
+ *
+ * \author Mike Hewson\n
+ */
 
 class Craft {
    public:
@@ -88,5 +98,9 @@ class Craft {
 
       void vector_thrust(Vector3D thrust);
    };
+   
+/**
+ * @}
+ */
 
 #endif // CRAFT_H_

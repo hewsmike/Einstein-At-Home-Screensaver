@@ -79,9 +79,9 @@ class Renderable {
       Renderable::activity_state is_activated() const;
 
       /**
-       * \brief Inverts the activation state of the object
+       * \brief Cycles the activation state of the object
        */
-      void toggle_activation(void);
+      virtual void cycleActivation(void);
 
       /**
        * \brief Retrieves the rendering quality level
@@ -94,9 +94,15 @@ class Renderable {
       void set_render_level(SolarSystemGlobals::render_quality rq);
 
       /**
-       * \brief Sets the font
+       * \brief Sets the font. ABSOLUTE need to set the font BEFORE
+       * activation or you won't see any text!
        */
       void setFont(OGLFT_ft* a_font);
+
+      /**
+       * \brief Gets the font.
+       */
+      OGLFT_ft* getFont(void) const;
 
    protected:
       /**
@@ -117,8 +123,6 @@ class Renderable {
       /// In subclasses this will provide OpenGL code
       /// to render the object.
       virtual void render(void) = 0;
-
-      OGLFT_ft* getFont(void) const;
 
    private:
       /// Indicates whether object is to be shown at all.

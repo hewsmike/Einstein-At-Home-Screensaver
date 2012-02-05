@@ -82,11 +82,10 @@ bool WindowManager::initialize(const int width, const int height, const int fram
 
    // check fullscreen video mode
    m_FullscreenModeAvailable = true;
-   Uint32 bitPerPixel = SDL_VideoModeOK(
-                     m_DesktopWidth,
-                     m_DesktopHeight,
-                     m_DesktopBitsPerPixel,
-                     m_VideoModeFlags | SDL_FULLSCREEN);
+   Uint32 bitPerPixel = SDL_VideoModeOK(m_DesktopWidth,
+                                        m_DesktopHeight,
+                                        m_DesktopBitsPerPixel,
+                                        m_VideoModeFlags | SDL_FULLSCREEN);
 
    if(!bitPerPixel) {
       cerr << "Fullscreen video mode not supported: " << SDL_GetError() << endl;
@@ -95,11 +94,10 @@ bool WindowManager::initialize(const int width, const int height, const int fram
 
    // check initial windowed video mode
    m_WindowedModeAvailable = true;
-   bitPerPixel = SDL_VideoModeOK(
-                     m_WindowedWidth,
-                     m_WindowedHeight,
-                     m_DesktopBitsPerPixel,
-                     m_VideoModeFlags | SDL_RESIZABLE);
+   bitPerPixel = SDL_VideoModeOK(m_WindowedWidth,
+                                 m_WindowedHeight,
+                                 m_DesktopBitsPerPixel,
+                                 m_VideoModeFlags | SDL_RESIZABLE);
 
    if(!bitPerPixel) {
       cerr << "Windowed video mode not supported: " << SDL_GetError() << endl;
@@ -140,11 +138,10 @@ bool WindowManager::initialize(const int width, const int height, const int fram
    m_VideoModeFlags |= SDL_RESIZABLE;
 
    // finally, get surface
-   m_DisplaySurface = SDL_SetVideoMode(
-                     m_CurrentWidth,
-                     m_CurrentHeight,
-                     m_DesktopBitsPerPixel,
-                     m_VideoModeFlags);
+   m_DisplaySurface = SDL_SetVideoMode(m_CurrentWidth,
+                                       m_CurrentHeight,
+                                       m_DesktopBitsPerPixel,
+                                       m_VideoModeFlags);
 
    if (m_DisplaySurface == NULL) {
       cerr << "Could not acquire rendering surface (" << SDL_GetError() << "): will try fallback..." << endl;
@@ -168,11 +165,10 @@ bool WindowManager::initialize(const int width, const int height, const int fram
       // note, requires to extend starsphere's constructor (uses its own BOINCClientAdapter!)
 
       // reset display surface
-      m_DisplaySurface = SDL_SetVideoMode(
-                        m_CurrentWidth,
-                        m_CurrentHeight,
-                        m_DesktopBitsPerPixel,
-                        m_VideoModeFlags);
+      m_DisplaySurface = SDL_SetVideoMode(m_CurrentWidth,
+                                          m_CurrentHeight,
+                                          m_DesktopBitsPerPixel,
+                                          m_VideoModeFlags);
 
       if (m_DisplaySurface == NULL) {
          cerr << "Could not acquire rendering surface (" << SDL_GetError() << "): giving up!" << endl;
@@ -239,8 +235,9 @@ void WindowManager::eventLoop() {
          eventObservers.front()->refreshBOINCInformation();
          }
       else if (m_ScreensaverMode &&
-            (event.type == SDL_MOUSEMOTION || event.type == SDL_MOUSEBUTTONDOWN ||
-            event.type == SDL_KEYDOWN)) {
+              (event.type == SDL_MOUSEMOTION ||
+               event.type == SDL_MOUSEBUTTONDOWN ||
+               event.type == SDL_KEYDOWN)) {
 
          // we're in screensaver mode so exit on user input
          SDL_Quit();
@@ -268,11 +265,10 @@ void WindowManager::eventLoop() {
          m_CurrentHeight = m_WindowedHeight = event.resize.h;
 
          // update video mode
-         m_DisplaySurface = SDL_SetVideoMode(
-                           m_CurrentWidth,
-                           m_CurrentHeight,
-                           m_DesktopBitsPerPixel,
-                           m_VideoModeFlags);
+         m_DisplaySurface = SDL_SetVideoMode(m_CurrentWidth,
+                                             m_CurrentHeight,
+                                             m_DesktopBitsPerPixel,
+                                             m_VideoModeFlags);
 
          // notify our observers (currently exactly one, hence front())
          // (windoze needs to be reinitialized instead of just resized, oh well)
@@ -526,11 +522,10 @@ void WindowManager::toggleFullscreen() {
       }
 
    // reset video mode
-   m_DisplaySurface = SDL_SetVideoMode(
-                     m_CurrentWidth,
-                     m_CurrentHeight,
-                     m_DesktopBitsPerPixel,
-                     m_VideoModeFlags);
+   m_DisplaySurface = SDL_SetVideoMode(m_CurrentWidth,
+                                       m_CurrentHeight,
+                                       m_DesktopBitsPerPixel,
+                                       m_VideoModeFlags);
 
    // notify our observers (currently exactly one, hence front())
    // (windoze needs to be reinitialized instead of just resized, oh well)

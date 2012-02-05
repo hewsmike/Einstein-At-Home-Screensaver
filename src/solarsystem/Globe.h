@@ -34,7 +34,7 @@
 #include "Texture_OBJ.h"
 
 /**
-* \addtogroup
+* \addtogroup solarsystem Solarsystem
 * @{
 */
 
@@ -78,12 +78,6 @@ class Globe : public Renderable {
    private:
       /// Enumeration to select either pole.
       enum pole {SOUTH, NORTH};
-
-      /// How many color channels if an alpha channel included.
-      static const GLuint ALPHA_CHANNEL;
-
-      /// How many color channels if an alpha channel NOT included.
-      static const GLuint NO_ALPHA_CHANNEL;
 
       /// The number of position coordinates per OpenGL vertex.
       static const GLuint POS_COORDS_PER_VERTEX;

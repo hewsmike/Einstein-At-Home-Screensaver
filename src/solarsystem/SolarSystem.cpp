@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2011 by Mike Hewson                                     *
+ *   Copyright (C) 2012 by Mike Hewson                                     *
  *   hewsmike@iinet.net.au                                                 *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
@@ -23,7 +23,7 @@
 const int SolarSystem::FAR_LOOK_RATIO(1000);
 const GLdouble SolarSystem::FOV_ANGLE(45.0f);
 const GLdouble SolarSystem::NEAR_CLIP(0.5f);
-const GLdouble SolarSystem::FAR_CLIP(SolarSystemGlobals::CELESTIAL_SPHERE_RADIUS * 10.0f);
+const GLdouble SolarSystem::FAR_CLIP(SolarSystemGlobals::CELESTIAL_SPHERE_RADIUS * 2.5f);
 const int SolarSystem::FAR_LOOK_DISTANCE(SolarSystemGlobals::CELESTIAL_SPHERE_RADIUS*SolarSystem::FAR_LOOK_RATIO);
 
 SolarSystem::SolarSystem(string sharedMemoryAreaIdentifier) :
@@ -38,7 +38,8 @@ SolarSystem::~SolarSystem() {
 }
 
 /**
- * Window resize/remap
+ * Window resize/remap. This is not directly called from WindowManager
+ * but from initialize().
  */
 void SolarSystem::resize(const int width, const int height) {
    // store current settings
@@ -53,71 +54,100 @@ void SolarSystem::resize(const int width, const int height) {
    gluPerspective(FOV_ANGLE, aspect, NEAR_CLIP, FAR_CLIP);
    glMatrixMode(GL_MODELVIEW);
 
-   // Tell the underlying simulation ( for HUD generation ) what
-   // dimensions it can work with
+   // Tell the underlying simulation that it's window
+   // has been resized, and what it's dimensions are.
    sim.resize(static_cast<GLuint>(width), static_cast<GLuint>(height));
    }
 
 /**
- *  What to do when graphics are "initialized".
+ *  What to do when graphics are "initialized". Due to a Windows quirk
+ *  however this will be called with each resize event ( including the
+ *  initial window creation and fullscreen toggle ) from WindowManager.
+ *  Currently WindowManager always calls this routine with recycle = true,
+ *  and main() calls it with recycle = false ( ie. once only ). Also
+ *  note that the default ( ie. if not explicitly specified upon call )
+ *  value for recycle = false
  */
 void SolarSystem::initialize(const int width, const int height, const Resource* font, const bool recycle) {
-   // check whether we initialize the first time or have to recycle (required for windoze)
-	if(!recycle) {
-      // store the font resource pointer
-		if(font) {
+   // Check whether we initialize the first time or have to recycle (required for windoze)
+   if(recycle == false) {
+      // This is the first call of this routine from main().
+      if(font != NULL) {
+         // Remember the font resource pointer if non NULL
          spaceFontResource = font;
          }
       }
-	else {
-   	// seems that windoze also "resets" our OpenGL fonts
-		// let's clean up before reinitializing them
-		if(gridFont) {
+   else {
+      // This is the recurrent call of this routine from WindowManager.
+      // Seems that windoze also "resets" our OpenGL fonts, so
+      // let's clean up before reinitializing them.
+      if(gridFont != NULL) {
          delete gridFont;
          }
-      if(constellationFont) {
+      if(constellationFont != NULL) {
          delete constellationFont;
+         }
+      if(HUDFont != NULL) {
+         delete HUDFont;
          }
       }
 
-	// we might be called to recycle even before initialization
-	if(!spaceFontResource) {
-      // display a warning, this could be unintentionally
-		cerr << "Warning: font resource still unknown! You might want to recycle at a later stage..." << endl;
+   // We might be called to recycle even before initialization. Why's that ??
+   if(spaceFontResource == NULL) {
+      // So we are here because spaceFontResource was not assigned
+      // to an actual resource instance. Display a warning ???
+      cerr << "Warning: font resource still unknown! You might want to recycle at a later stage..." << endl;
       }
-	else {
-      // create font instances using font resource (base address + size)
-		gridFont = new OGLFT_ft(&spaceFontResource->data()->at(0),
+   else {
+      // create font instance using font resource (base address + size)
+      gridFont = new OGLFT_ft(&spaceFontResource->data()->at(0),
                               spaceFontResource->data()->size(),
                               13, 78 );
 
-		if(gridFont == 0 || !gridFont->isValid()) {
+      // Note short-circuit evaluation relevant in this if clause ie. right side
+      // expression is evaluated only if left side expression is false. Matters
+      // for pointer dereference so don't swap order of expressions here.
+      if(gridFont == NULL || (gridFont->isValid() == false)) {
          // TODO - better error path
          std::string msg = "SolarSystem::initialize() - Could not construct grid font face from in memory resource!";
          ErrorHandler::record(msg, ErrorHandler::FATAL);
-		   }
+         }
       gridFont->setBackgroundColor(0.0f, 0.0f, 0.0f, 0.0f);
-      gridFont->setForegroundColor(1.0f, 0.0f, 1.0f, 0.6f);
+      gridFont->setForegroundColor(1.0f, 1.0f, 1.0f, 0.6f);
 
-      // create font instances using font resource (base address + size)
-		constellationFont = new OGLFT_ft(&spaceFontResource->data()->at(0),
+      // create font instance using font resource (base address + size)
+      constellationFont = new OGLFT_ft(&spaceFontResource->data()->at(0),
                                        spaceFontResource->data()->size(),
                                        13, 78 );
 
-		if(constellationFont == 0 || !constellationFont->isValid()) {
-         // TODO - better error path
+      // Short-circuit .....
+      if(constellationFont == NULL || (constellationFont->isValid() == false)) {
+         // TODO - better error path ?
          std::string msg = "SolarSystem::initialize() - Could not construct constellation font face from in memory resource!";
          ErrorHandler::record(msg, ErrorHandler::FATAL);
-		   }
+         }
       constellationFont->setBackgroundColor(0.0f, 0.0f, 0.0f, 0.0f);
       constellationFont->setForegroundColor(1.0f, 0.84f, 0.0f, 0.6f);
+
+      // create font instance using font resource (base address + size)
+      HUDFont = new OGLFT_ft(&spaceFontResource->data()->at(0),
+                             spaceFontResource->data()->size(),
+                             13, 78 );
+
+      // Short-circuit .....
+      if(HUDFont == NULL || (HUDFont->isValid() == false)) {
+         // TODO - better error path ?
+         std::string msg = "SolarSystem::initialize() - Could not construct HUD font face from in memory resource!";
+         ErrorHandler::record(msg, ErrorHandler::FATAL);
+         }
+      HUDFont->setBackgroundColor(0.0f, 0.0f, 0.0f, 0.0f);
+      HUDFont->setForegroundColor(1.0f, 1.0f, 1.0f, 0.9f);
       }
 
+   // Some Simulation components need to have a font before activation.
    sim.setFont(Simulation::CONSTELLATIONS, constellationFont);
    sim.setFont(Simulation::GRID, gridFont);
-
-   // setup initial dimensions
-   resize(width, height);
+   sim.setFont(Simulation::HUDOVER, HUDFont);
 
    // more font setup and optimizations
    glPixelStorei( GL_UNPACK_ALIGNMENT, 1 );
@@ -177,9 +207,6 @@ void SolarSystem::initialize(const int width, const int height, const Resource* 
          break;
       }
 
-   // Specify that the scene elements in the Simulation are to be rendered.
-   sim.activate();
-
    //// Set up lighting.
    GLfloat mat_specular[] = {1.0, 1.0, 1.0, 1.0};
    GLfloat mat_shininess[] = {50.0};
@@ -205,6 +232,13 @@ void SolarSystem::initialize(const int width, const int height, const Resource* 
 
    glDisable(GL_CLIP_PLANE0);
    glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+
+   sim.activate();
+
+   // Setup dimensions. NB this is currently the only call to
+   // invoke this !!
+   resize(width, height);
+
    SolarSystemGlobals::check_OpenGL_Error();
    }
 
@@ -269,131 +303,131 @@ void SolarSystem::keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey k
       case KeyA:
          // Thrust forwards.
          sim.moveRequest(SolarSystemGlobals::FORWARD);
-         message += "keyboard A : forward thrust";
+         message += "KeyA : forward thrust";
          break;
       case KeyB:
          // Thrust down.
          sim.moveRequest(SolarSystemGlobals::DOWNWARDS);
-         message += "keyboard B : downwards thrust";
+         message += "KeyB : downwards thrust";
          break;
       case KeyC:
-         message += "keyboard C : unassigned";
+         message += "KeyC : unassigned";
          break;
       case KeyD:
          // Pull nose up.
          sim.moveRequest(SolarSystemGlobals::PITCH_UP);
-         message += "keyboard D : nose up";
+         message += "KeyD : nose up";
          break;
       case KeyE:
          // Push nose down.
          sim.moveRequest(SolarSystemGlobals::PITCH_DOWN);
-         message += "keyboard E : nose down";
+         message += "KeyE : nose down";
          break;
       case KeyF:
          // Roll to the right.
          sim.moveRequest(SolarSystemGlobals::ROLL_RIGHT);
-         message += "keyboard F : roll right";
+         message += "KeyF : roll right";
          break;
       case KeyG:
          // Go home.
          sim.moveRequest(SolarSystemGlobals::GO_HOME);
-         message += "keyboard G : go home";
+         message += "KeyG : go home";
          break;
       case KeyH:
          // Toggle the HUD display.
-         sim.toggle(Simulation::HUDOVER);
-         message += "keyboard H : toggle HUD";
+         sim.cycle(Simulation::HUDOVER);
+         message += "KeyH : toggle HUD";
          break;
       case KeyM:
-         message += "keyboard M : unassigned";
+         message += "KeyM : unassigned";
          break;
       case KeyN:
-         message += "keyboard N : unassigned";
+         message += "KeyN : unassigned";
          break;
       case KeyP:
-         message += "keyboard P : unassigned";
+         message += "KeyP : unassigned";
          break;
       case KeyQ:
          // Stop.
          sim.moveRequest(SolarSystemGlobals::STOP_TRANSLATION);
-         message += "keyboard Q : stop";
+         message += "KeyQ : null translation";
          break;
       case KeyR:
          // Thrust to the right.
          sim.moveRequest(SolarSystemGlobals::RIGHTWARDS);
-         message += "keyboard R : right thrust";
+         message += "KeyR : right thrust";
          break;
       case KeyS:
          // Roll to the left.
          sim.moveRequest(SolarSystemGlobals::ROLL_LEFT);
-         message += "keyboard S : roll left";
+         message += "KeyS : roll left";
          break;
       case KeyT:
          // Thrust up.
          sim.moveRequest(SolarSystemGlobals::UPWARDS);
-         message += "keyboard T : upwards thrust";
+         message += "KeyT : upwards thrust";
          break;
       case KeyV:
          // Yaw right.
          sim.moveRequest(SolarSystemGlobals::YAW_RIGHT);
-         message += "keyboard V : yaw right";
+         message += "KeyV : yaw right";
          break;
       case KeyW:
          // Thrust to the left.
          sim.moveRequest(SolarSystemGlobals::LEFTWARDS);
-         message += "keyboard W : left thrust";
+         message += "KeyW : left thrust";
          break;
       case KeyX:
          // Yaw left.
          sim.moveRequest(SolarSystemGlobals::YAW_LEFT);
-         message += "keyboard X : yaw left";
+         message += "KeyX : yaw left";
          break;
       case KeyZ:
          // Reverse thrust.
          sim.moveRequest(SolarSystemGlobals::REVERSE);
-         message += "keyboard Z : reverse thrust";
+         message += "KeyZ : reverse thrust";
          break;
       case KeyF1:
          // Keep this for future 'help' functionality
-         message += "keyboard F1 : unassigned";
+         message += "KeyF1 : unassigned";
          break;
       case KeyF2:
          // Set the overall rendering level to lowest.
          SolarSystemGlobals::set_render_level(SolarSystemGlobals::RENDER_LOWEST);
-         message += "keyboard F2 : set render level to LOWEST";
+         message += "KeyF2 : set render level to LOWEST";
          break;
       case KeyF3:
          // Set the overall rendering level to medium.
          SolarSystemGlobals::set_render_level(SolarSystemGlobals::RENDER_MEDIUM);
-         message += "keyboard F3 : set render level to MEDIUM";
+         message += "KeyF3 : set render level to MEDIUM";
          break;
       case KeyF4:
-         message += "keyboard F1 : unassigned";
+         message += "KeyF1 : unassigned";
          break;
       case KeyF5:
-         // Toggle the state of constellation display.
-         sim.toggle(Simulation::CONSTELLATIONS);
-         message += "keyboard F5 : toggle constellations";
+         // Cycle the state of constellation display.
+         sim.cycle(Simulation::CONSTELLATIONS);
+         message += "KeyF5 : cycle constellations";
          break;
       case KeyF6:
-         // Toggle the state of pulsar display.
-         sim.toggle(Simulation::PULSARS);
-         message += "keyboard F6 : toggle pulsars";
+         // Cycle the state of pulsar display.
+         sim.cycle(Simulation::PULSARS);
+         message += "KeyF6 : cycle pulsars";
          break;
       case KeyF7:
-         // Toggle the state of pulsar display.
-         sim.toggle(Simulation::SUPERNOVAE);
-         message += "keyboard F7 : toggle supernovae";
+         // cycle the state of supernovae display.
+         sim.cycle(Simulation::SUPERNOVAE);
+         message += "KeyF7 : cycle supernovae";
          break;
       case KeyF8:
          // Toggle the state of celestial sphere grid display.
-         sim.toggle(Simulation::GRID);
-         message += "keyboard F8 : toggle grid";
+         sim.cycle(Simulation::GRID);
+         message += "KeyF8 : cycle grid";
          break;
       case KeySpace:
          // stop any craft rotation
          sim.moveRequest(SolarSystemGlobals::STOP_ROTATION);
-         message += "keyboard Space : null all rotations";
+         message += "KeySpace : null rotation";
          break;
       default:
          break;
