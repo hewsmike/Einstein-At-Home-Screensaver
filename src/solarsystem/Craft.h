@@ -26,6 +26,7 @@
 #include "AcceleratedPlatform.h"
 #include "ErrorHandler.h"
 #include "SolarSystemGlobals.h"
+#include "SunOrbit.h"
 
 /**
  * \addtogroup solarsystem Solarsystem
@@ -47,14 +48,17 @@ class Craft {
 
       const AcceleratedPlatform& get_platform() const;
 
-      void step(void);
+      void step(GLfloat dayOfYear);
 
    private:
       /// Global bounds for craft position
       static const vec_t MAX_RANGE;
       static const vec_t MIN_EARTH_RANGE;
+      static const vec_t MIN_SUN_RANGE;
 
       static const vec_t START_RADIUS;
+      static const Vector3D START_POSITION;
+      static const Vector3D START_LOOKING;
 
       /// Top speed of craft in whatever nett direction
       static const vec_t MAX_SPEED;
@@ -65,8 +69,8 @@ class Craft {
       static const vec_t YAW_RATE_INC;
       static const vec_t RATE_FUDGE;
 
-      /// Speed setting post 'bounce' off object
-      static const vec_t RETURN_SPEED;
+      /// Speed setting post 'bounce' off objects
+      static const vec_t REBOUND_SPEED;
 
       /// Speed change steps for the aft-to-forward craft axis
       static const vec_t SPEED_DEC;
@@ -98,7 +102,7 @@ class Craft {
 
       void vector_thrust(Vector3D thrust);
    };
-   
+
 /**
  * @}
  */

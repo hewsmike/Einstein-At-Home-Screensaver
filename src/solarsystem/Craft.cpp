@@ -20,10 +20,15 @@
 
 #include "Craft.h"
 
-const vec_t Craft::MAX_RANGE(SolarSystemGlobals::CELESTIAL_SPHERE_RADIUS * 8);
-const vec_t Craft::MIN_EARTH_RANGE(SolarSystemGlobals::EARTH_RADIUS*(1.2f));
-const vec_t Craft::START_RADIUS(SolarSystemGlobals::EARTH_RADIUS*(2.0f));
-const vec_t Craft::RETURN_SPEED(5.0f);
+const vec_t Craft::MAX_RANGE(SolarSystemGlobals::CELESTIAL_SPHERE_RADIUS * 1.05f);
+const vec_t Craft::MIN_EARTH_RANGE(SolarSystemGlobals::EARTH_RADIUS*1.05f);
+const vec_t Craft::MIN_SUN_RANGE(SolarSystemGlobals::SUN_RADIUS*1.2f);
+
+const vec_t Craft::START_RADIUS(SolarSystemGlobals::EARTH_RADIUS*2.0f);
+const Vector3D Craft::START_POSITION(-3*Craft::START_RADIUS, 0, Craft::START_RADIUS);
+const Vector3D Craft::START_LOOKING(1, 0, 0);
+
+const vec_t Craft::REBOUND_SPEED(3.0f);
 const vec_t Craft::MAX_SPEED(50.0f);
 const vec_t Craft::SPEED_DEC(2.5f);
 const vec_t Craft::SPEED_INC(2.5f);
@@ -99,46 +104,57 @@ void Craft::manouevre(SolarSystemGlobals::movements mov) {
       }
    }
 
-void Craft::step(void) {
+void Craft::step(GLfloat dayOfYear) {
    state.step();
-   // Bounds and collision checking ....
+   // Bounds and collision checking ... this is an Earth centric
+   // simulation so it's always at the origin.
 
-   // Too far away from home.
+   // Too far away from home ?
    if(state.position().len() > Craft::MAX_RANGE) {
       // TODO turn him around to point homewards?
       // Give a little nudge to send it back in the direction of home.
-      state.set_velocity(-Craft::RETURN_SPEED*state.position().unit());
+      state.set_velocity(-Craft::REBOUND_SPEED*state.position().unit());
       std::cout << "Too far away from Earth - nudged back" << std::endl;
       }
 
-   // Too close to home
+   // Too close to home ?
    if(state.position().len() < Craft::MIN_EARTH_RANGE) {
-      // TODO turn him around to point outwards?
+     // TODO turn him around to point outwards?
       // Give a little nudge to send it back away from home.
-      // state.set_velocity(+Craft::RETURN_SPEED*state.position().unit());
-      // std::cout << "Too close to Earth - nudged away" << std::endl;
+      state.set_velocity(+Craft::REBOUND_SPEED*state.position().unit());
+      std::cout << "Too close to Earth - nudged away" << std::endl;
       }
 
-   // TODO - to close to the Sun
+   // Where is the Sun ? That depends upon it's orbital position,
+   // and hence what time of the year it is.
+   Vector3D sun_pos = SunOrbit::getPosition(dayOfYear);
+   // This is the vector FROM the Sun TO the craft.
+   Vector3D sun_relative = state.position() - sun_pos;
+   // The length of that vector is the distance separating Sun and craft.
+   GLfloat sun_dist = sun_relative.len();
+   // Are we too close to the Sun ?
+   if(sun_dist < Craft::MIN_SUN_RANGE) {
+      // Give a little nudge to send it back AWAY from the Sun.
+      state.set_velocity(+Craft::REBOUND_SPEED*sun_relative.unit());
+      std::cout << "Too close to Sun - nudged away" << std::endl;
+      }
+   }
+
+void Craft::go_home(void) {
+   // Initially in good position, stationary and not rotating.
+   state.reset();
+   state.set_position(START_POSITION);
    }
 
 void Craft::forward_thrust(void) {
    // Add to the current velocity vector a fraction of the 'look' vector.
-   // That is : thrust is applied along the aft to fore axis.
+   // That is : thrust is applied along the aft-TO-fore axis.
    vector_thrust(+Craft::SPEED_INC*state.look());
-   }
-
-void Craft::go_home(void) {
-   // Ought place him initially in good position, stationary.
-   // TODO looking at Earth ?
-   state.set_position(Vector3D(-100, 0, 0));
-   // RESTORE : state.set_position(Vector3D(0, 0, 3*Craft::START_RADIUS));
-   stop();
    }
 
 void Craft::reverse_thrust(void) {
    // Subtract from the current velocity vector a fraction of the 'look' vector.
-   // That is : thrust is applied along the fore to aft axis.
+   // That is : thrust is applied along the fore-TO-aft axis.
    vector_thrust(-Craft::SPEED_DEC*state.look());
    }
 
@@ -179,25 +195,25 @@ void Craft::stop(void) {
 
 void Craft::right_thrust() {
    // Add to the current velocity vector a fraction of the 'cross' vector.
-   // That is : thrust is applied along the left to right wing axis.
+   // That is : thrust is applied along the left-TO-right wing axis.
    vector_thrust(+Craft::LATERAL_THRUST_RATE*state.cross());
    }
 
 void Craft::left_thrust() {
    // Add to the current velocity vector a fraction of the 'cross' vector.
-   // That is : thrust is applied along the right to left wing axis.
+   // That is : thrust is applied along the right-TO-left wing axis.
    vector_thrust(-Craft::LATERAL_THRUST_RATE*state.cross());
    }
 
 void Craft::up_thrust() {
    // Add to the current velocity vector a fraction of the 'up' vector.
-   // That is : thrust is applied along the floor to ceiling axis.
+   // That is : thrust is applied along the floor-TO-ceiling axis.
    vector_thrust(+Craft::VERTICAL_THRUST_RATE*state.up());
    }
 
 void Craft::down_thrust() {
    // Subtract from the current velocity vector a fraction of the 'up' vector.
-   // That is : thrust is applied along the ceiling to floor axis.
+   // That is : thrust is applied along the ceiling-TO-floor axis.
    vector_thrust(-Craft::VERTICAL_THRUST_RATE*state.up());
    }
 
