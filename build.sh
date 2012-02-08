@@ -264,7 +264,7 @@ prepare_freetype()
 
     echo "Retrieving Freetype2 (this may take a while)..." | tee -a $LOGFILE
     cd $ROOT/3rdparty || failure
-    wget http://mesh.dl.sourceforge.net/sourceforge/freetype/freetype-2.3.5.tar.bz2 >> $LOGFILE 2>&1 || failure
+    wget http://download.savannah.gnu.org/releases/freetype/freetype-2.3.5.tar.bz2 >> $LOGFILE 2>&1 || failure
     tar -xjf freetype-2.3.5.tar.bz2 >> $LOGFILE 2>&1 || failure
     rm freetype-2.3.5.tar.bz2 >> $LOGFILE 2>&1 || failure
     # substitute old source tree
