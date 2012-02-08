@@ -264,7 +264,7 @@ prepare_freetype()
 
     echo "Retrieving Freetype2 (this may take a while)..." | tee -a $LOGFILE
     cd $ROOT/3rdparty || failure
-    wget http://mesh.dl.sourceforge.net/sourceforge/freetype/freetype-2.3.5.tar.bz2 >> $LOGFILE 2>&1 || failure
+    wget http://download.savannah.gnu.org/releases/freetype/freetype-2.3.5.tar.bz2 >> $LOGFILE 2>&1 || failure
     tar -xjf freetype-2.3.5.tar.bz2 >> $LOGFILE 2>&1 || failure
     rm freetype-2.3.5.tar.bz2 >> $LOGFILE 2>&1 || failure
     # substitute old source tree
@@ -464,7 +464,7 @@ build_boinc()
     chmod +x configure >> $LOGFILE 2>&1 || failure
     cd $ROOT/build/boinc || failure
     if [ "$1" == "$TARGET_MAC" ]; then
-        export CPPFLAGS=-I/sw/include
+        export CPPFLAGS="-I/sw/include -I/opt/local/include $CPPFLAGS"
         $ROOT/3rdparty/boinc/configure --prefix=$ROOT/install --enable-shared=no --enable-static=yes --disable-server --disable-client --with-apple-opengl-framework --enable-install-headers --enable-libraries --disable-manager --disable-fcgi >> $LOGFILE 2>&1 || failure
     elif [ -d "/usr/local/ssl" ]; then
         echo "Using local SSL library..." | tee -a $LOGFILE
