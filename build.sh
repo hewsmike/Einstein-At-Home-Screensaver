@@ -650,53 +650,10 @@ build_boinc_mingw()
 
     prepare_boinc $TAG_GFXAPPS || failure
 
-    echo "Patching BOINC..." | tee -a $LOGFILE
-    # patch: fix BOINC vs. MinGW issues
-    cd $ROOT/3rdparty/boinc/api || failure
-    patch boinc_api.h < $ROOT/patches/boinc.boinc_api.h.mingw.patch >> $LOGFILE 2>&1 || failure                     # patch sent upstream!
     cd $ROOT/3rdparty/boinc/lib || failure
-    patch diagnostics.cpp < $ROOT/patches/boinc.diagnostics.cpp.mingw.patch >> $LOGFILE 2>&1 || failure             # patch sent upstream!
-    patch diagnostics_win.cpp < $ROOT/patches/boinc.diagnostics_win.cpp.mingw.1.patch >> $LOGFILE 2>&1 || failure   # patch sent upstream!
-    patch diagnostics_win.cpp < $ROOT/patches/boinc.diagnostics_win.cpp.mingw.2.patch >> $LOGFILE 2>&1 || failure   # patch sent upstream!
-    patch filesys.cpp < $ROOT/patches/boinc.filesys.cpp.mingw.patch >> $LOGFILE 2>&1 || failure
     echo "Building BOINC (this may take a while)..." | tee -a $LOGFILE
-    cd $ROOT/3rdparty/boinc || failure
-    chmod +x _autosetup >> $LOGFILE 2>&1 || failure
-    ./_autosetup >> $LOGFILE 2>&1 || failure
-    chmod +x configure >> $LOGFILE 2>&1 || failure
-    cd $ROOT/build/boinc || failure
-    # note: configure is still required but we don't use the generated Makefile
-    $ROOT/3rdparty/boinc/configure --host=$TARGET_HOST --build=$BUILD_HOST --prefix=$ROOT/install --includedir=$ROOT/install/include --oldincludedir=$ROOT/install/include --enable-shared=no --enable-static=yes --disable-server --disable-client --enable-install-headers --enable-libraries --disable-manager --disable-fcgi >> $LOGFILE 2>&1 || failure
-    cd $ROOT/build/boinc/api || failure
-    cp $ROOT/3rdparty/boinc/api/Makefile.mingw . >> $LOGFILE 2>&1 || failure
-    # patch: add graphics2 and customize build path (see below)
-    patch Makefile.mingw < $ROOT/patches/boinc.Makefile.mingw.patch >> $LOGFILE 2>&1 || failure
-    export BOINC_SRC=$ROOT/3rdparty/boinc || failure
-    cd $ROOT/build/boinc || failure
-    # required for out-of-tree build
-    cp config.h $ROOT/3rdparty/boinc >> $LOGFILE 2>&1 || failure
-    make -f api/Makefile.mingw >> $LOGFILE 2>&1 || failure
-    cp $ROOT/build/boinc/libboinc.a $ROOT/install/lib >> $LOGFILE 2>&1 || failure
-    mkdir -p $ROOT/install/include/boinc >> $LOGFILE 2>&1 || failure
-    cp $ROOT/build/boinc/config.h $ROOT/install/include/boinc >> $LOGFILE 2>&1 || failure
-    cp $ROOT/build/boinc/version.h $ROOT/install/include/boinc >> $LOGFILE 2>&1 || failure
-    cp $ROOT/3rdparty/boinc/api/boinc_api.h $ROOT/install/include/boinc >> $LOGFILE 2>&1 || failure
-    cp $ROOT/3rdparty/boinc/api/graphics2.h $ROOT/install/include/boinc >> $LOGFILE 2>&1 || failure
-    cp $ROOT/3rdparty/boinc/lib/app_ipc.h $ROOT/install/include/boinc >> $LOGFILE 2>&1 || failure
-    cp $ROOT/3rdparty/boinc/lib/boinc_win.h $ROOT/install/include/boinc >> $LOGFILE 2>&1 || failure
-    cp $ROOT/3rdparty/boinc/lib/common_defs.h $ROOT/install/include/boinc >> $LOGFILE 2>&1 || failure
-    cp $ROOT/3rdparty/boinc/lib/diagnostics.h $ROOT/install/include/boinc >> $LOGFILE 2>&1 || failure
-    cp $ROOT/3rdparty/boinc/lib/diagnostics_win.h $ROOT/install/include/boinc >> $LOGFILE 2>&1 || failure
-    cp $ROOT/3rdparty/boinc/lib/filesys.h $ROOT/install/include/boinc >> $LOGFILE 2>&1 || failure
-    cp $ROOT/3rdparty/boinc/lib/hostinfo.h $ROOT/install/include/boinc >> $LOGFILE 2>&1 || failure
-    cp $ROOT/3rdparty/boinc/lib/proxy_info.h $ROOT/install/include/boinc >> $LOGFILE 2>&1 || failure
-    cp $ROOT/3rdparty/boinc/lib/prefs.h $ROOT/install/include/boinc >> $LOGFILE 2>&1 || failure
-    cp $ROOT/3rdparty/boinc/lib/miofile.h $ROOT/install/include/boinc >> $LOGFILE 2>&1 || failure
-    cp $ROOT/3rdparty/boinc/lib/mfile.h $ROOT/install/include/boinc >> $LOGFILE 2>&1 || failure
-    cp $ROOT/3rdparty/boinc/lib/parse.h $ROOT/install/include/boinc >> $LOGFILE 2>&1 || failure
-    cp $ROOT/3rdparty/boinc/lib/util.h $ROOT/install/include/boinc >> $LOGFILE 2>&1 || failure
-    # invoke MinGW's ranlib as the archive lacks an index
-    ${TARGET_HOST}-ranlib $ROOT/install/lib/libboinc.a
+    BOINC_SRC="$ROOT/3rdparty/boinc" AR="${TARGET_HOST}-ar" make -f Makefile.mingw >> $LOGFILE 2>&1 || failure
+    BOINC_PREFIX="$ROOT/install" RANLIB="${TARGET_HOST}-ranlib" make -f Makefile.mingw install >> $LOGFILE 2>&1 || failure
     echo "Successfully built and installed BOINC!" | tee -a $LOGFILE
 
     store_build_state $BS_BUILD_BOINC_MINGW || failure
