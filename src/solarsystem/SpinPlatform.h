@@ -76,7 +76,7 @@ class SpinPlatform : public OrthoNormalPlatform {
       virtual void reset(void);
 
       /**
-       * \brief Reset the platform in spin
+       * \brief Evolve the platform in spin
        */
       virtual void step(void);
 
