@@ -71,6 +71,7 @@ Simulation::Simulation(void): cs(CONSTELLATIONS_RADIUS),
                               wyp_image(NULL),
                               lsc_image(NULL),
                               welcome_text(NULL),
+                              version_text(NULL),
                               overlay(NULL),
                               north_panel(&overlay),
                               south_panel(&overlay),
@@ -174,7 +175,7 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
    // north_panel.setSecondaryJustification(HUDFlowLayout::END);
    south_panel.setPrimaryJustification(HUDFlowLayout::CENTRE);
    // south_panel.setSecondaryJustification(HUDFlowLayout::END);
-   east_panel.setPrimaryJustification(HUDFlowLayout::CENTRE);
+   east_panel.setPrimaryJustification(HUDFlowLayout::START);
    // east_panel.setSecondaryJustification(HUDFlowLayout::END);
    west_panel.setPrimaryJustification(HUDFlowLayout::END);
    // west_panel.setSecondaryJustification(HUDFlowLayout::CENTRE);
@@ -195,19 +196,29 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
       }
 
    // Put the content into the panel.
-   north_panel.addContent(wyp_image);
+   west_panel.addContent(wyp_image);
+
+   // Put an image into the content.
+   aps_image = new HUDImage("aps_header.bmp", 5, 5);
+   if(aps_image == NULL) {
+      std::string msg = "Simulation::prepare() - failed creation of HUDImage instance on heap";
+      ErrorHandler::record(msg, ErrorHandler::FATAL);
+      }
+
+   // Put the content into the panel.
+   north_panel.addContent(aps_image);
 
    // Put text into the content.
-   welcome_text = new HUDTextLineScroll(40, overlay.getFont(), 15, 15, HUDTextLineScroll::LEFT);
+   welcome_text = new HUDTextLineScroll(60, overlay.getFont(), 15, 15, HUDTextLineScroll::LEFT);
    if(welcome_text == NULL) {
       std::string msg = "Simulation::prepare() - failed creation of HUDTextLineScroll instance on heap";
       ErrorHandler::record(msg, ErrorHandler::FATAL);
       }
 
-   welcome_text->setText("Hi! Welcome to Einstein @ Home!  ");
-
-    // Put the content into the panel.
+   welcome_text->setText("Hi! Welcome to Einstein @ Home! SolarSystem V0.1 ... ");
+   // Put the content into the panel.
    north_panel.addContent(welcome_text);
+
 
    // Put an image into the content.
    lsc_image = new HUDImage("lsclogo.bmp", 5, 5);
@@ -217,7 +228,7 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
       }
 
    // Put the content into the panel.
-   north_panel.addContent(lsc_image);
+   east_panel.addContent(lsc_image);
 
    // Put an image into the content.
    geo_image = new HUDImage("geo_small.bmp", 5, 5);
@@ -229,15 +240,15 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
    // Put the content into the panel.
    south_panel.addContent(geo_image);
 
-   // Put an image into the content.
-   aps_image = new HUDImage("aps_header.bmp", 5, 5);
-   if(aps_image == NULL) {
-      std::string msg = "Simulation::prepare() - failed creation of HUDImage instance on heap";
+   version_text = new HUDTextLineScroll(105, overlay.getFont(), 15, 15, HUDTextLineScroll::LEFT);
+   if(version_text == NULL) {
+      std::string msg = "Simulation::prepare() - failed creation of HUDTextLineScroll instance on heap";
       ErrorHandler::record(msg, ErrorHandler::FATAL);
       }
+   version_text->setText("    https://github.com/hewsmike/Einstein-At-Home-Screensaver/tree/solarsystem");
 
    // Put the content into the panel.
-   south_panel.addContent(aps_image);
+   south_panel.addContent(version_text);
 
    // Put an image into the content.
    ligo_image = new HUDImage("ligo_small.bmp", 5, 5);

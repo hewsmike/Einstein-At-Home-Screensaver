@@ -186,6 +186,7 @@ class Simulation : public Renderable {
       HUDImage* wyp_image;
       HUDImage* lsc_image;
       HUDTextLineScroll* welcome_text;
+      HUDTextLineScroll* version_text;
 
       HUDBorderLayout overlay;
 
