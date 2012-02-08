@@ -102,7 +102,7 @@ void SolarSystem::initialize(const int width, const int height, const Resource* 
       // create font instance using font resource (base address + size)
       gridFont = new OGLFT_ft(&spaceFontResource->data()->at(0),
                               spaceFontResource->data()->size(),
-                              13, 78 );
+                              13, 78);
 
       // Note short-circuit evaluation relevant in this if clause ie. right side
       // expression is evaluated only if left side expression is false. Matters
@@ -118,7 +118,7 @@ void SolarSystem::initialize(const int width, const int height, const Resource* 
       // create font instance using font resource (base address + size)
       constellationFont = new OGLFT_ft(&spaceFontResource->data()->at(0),
                                        spaceFontResource->data()->size(),
-                                       13, 78 );
+                                       13, 78);
 
       // Short-circuit .....
       if(constellationFont == NULL || (constellationFont->isValid() == false)) {
@@ -132,7 +132,7 @@ void SolarSystem::initialize(const int width, const int height, const Resource* 
       // create font instance using font resource (base address + size)
       HUDFont = new OGLFT_ft(&spaceFontResource->data()->at(0),
                              spaceFontResource->data()->size(),
-                             13, 78 );
+                             18, 90);
 
       // Short-circuit .....
       if(HUDFont == NULL || (HUDFont->isValid() == false)) {
@@ -141,7 +141,7 @@ void SolarSystem::initialize(const int width, const int height, const Resource* 
          ErrorHandler::record(msg, ErrorHandler::FATAL);
          }
       HUDFont->setBackgroundColor(0.0f, 0.0f, 0.0f, 0.0f);
-      HUDFont->setForegroundColor(1.0f, 1.0f, 1.0f, 0.9f);
+      HUDFont->setForegroundColor(0.0f, 1.0f, 0.0f, 0.9f);
       }
 
    // Some Simulation components need to have a font before activation.
@@ -301,32 +301,30 @@ void SolarSystem::keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey k
    std::string message = "SolarSystem::keyboardPressEvent() - ";
    switch(keyPressed) {
       case KeyA:
-         // Thrust forwards.
-         sim.moveRequest(SolarSystemGlobals::FORWARD);
-         message += "KeyA : forward thrust";
+         message += "KeyA : unassigned";
          break;
       case KeyB:
-         // Thrust down.
-         sim.moveRequest(SolarSystemGlobals::DOWNWARDS);
-         message += "KeyB : downwards thrust";
+         message += "KeyB : unassigned";
          break;
       case KeyC:
-         message += "KeyC : unassigned";
+         // Reverse thrust.
+         sim.moveRequest(SolarSystemGlobals::REVERSE);
+         message += "KeyC : reverse thrust";
          break;
       case KeyD:
-         // Pull nose up.
-         sim.moveRequest(SolarSystemGlobals::PITCH_UP);
-         message += "KeyD : nose up";
+         // Stop.
+         sim.moveRequest(SolarSystemGlobals::STOP_TRANSLATION);
+         message += "KeyD : null translation";
          break;
       case KeyE:
-         // Push nose down.
-         sim.moveRequest(SolarSystemGlobals::PITCH_DOWN);
-         message += "KeyE : nose down";
+         // Thrust forwards.
+         sim.moveRequest(SolarSystemGlobals::FORWARD);
+         message += "KeyE : forward thrust";
          break;
       case KeyF:
-         // Roll to the right.
-         sim.moveRequest(SolarSystemGlobals::ROLL_RIGHT);
-         message += "KeyF : roll right";
+         // Thrust to the right.
+         sim.moveRequest(SolarSystemGlobals::RIGHTWARDS);
+         message += "KeyF : right thrust";
          break;
       case KeyG:
          // Go home.
@@ -334,9 +332,19 @@ void SolarSystem::keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey k
          message += "KeyG : go home";
          break;
       case KeyH:
-         // Toggle the HUD display.
-         sim.cycle(Simulation::HUDOVER);
-         message += "KeyH : toggle HUD";
+         // Toggle the HUD display. Not yet ... buggy ... :-) :-)
+         // sim.cycle(Simulation::HUDOVER);
+         // message += "KeyH : toggle HUD";
+         break;
+      case KeyK:
+         // Roll to the left.
+         sim.moveRequest(SolarSystemGlobals::ROLL_LEFT);
+         message += "KeyK : roll left";
+         break;
+      case KeyL:
+         // stop any craft rotation
+         sim.moveRequest(SolarSystemGlobals::STOP_ROTATION);
+         message += "KeyL : null rotation";
          break;
       case KeyM:
          message += "KeyM : unassigned";
@@ -344,65 +352,59 @@ void SolarSystem::keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey k
       case KeyN:
          message += "KeyN : unassigned";
          break;
+      case KeyO:
+         // Push nose down.
+         sim.moveRequest(SolarSystemGlobals::PITCH_DOWN);
+         message += "KeyO : pitch down";
+         break;
       case KeyP:
          message += "KeyP : unassigned";
          break;
       case KeyQ:
-         // Stop.
-         sim.moveRequest(SolarSystemGlobals::STOP_TRANSLATION);
-         message += "KeyQ : null translation";
+         message += "KeyQ : unassigned";
          break;
       case KeyR:
-         // Thrust to the right.
-         sim.moveRequest(SolarSystemGlobals::RIGHTWARDS);
-         message += "KeyR : right thrust";
-         break;
-      case KeyS:
-         // Roll to the left.
-         sim.moveRequest(SolarSystemGlobals::ROLL_LEFT);
-         message += "KeyS : roll left";
-         break;
-      case KeyT:
          // Thrust up.
          sim.moveRequest(SolarSystemGlobals::UPWARDS);
-         message += "KeyT : upwards thrust";
+         message += "KeyR : upwards thrust";
          break;
-      case KeyV:
-         // Yaw right.
-         sim.moveRequest(SolarSystemGlobals::YAW_RIGHT);
-         message += "KeyV : yaw right";
-         break;
-      case KeyW:
+      case KeyS:
          // Thrust to the left.
          sim.moveRequest(SolarSystemGlobals::LEFTWARDS);
-         message += "KeyW : left thrust";
+         message += "KeyS : left thrust";
+         break;
+      case KeyT:
+         message += "KeyT : unassigned";
+         break;
+      case KeyV:
+         // Thrust down.
+         sim.moveRequest(SolarSystemGlobals::DOWNWARDS);
+         message += "KeyV : downwards thrust";
+         break;
+      case KeyW:
+         message += "KeyW : unassigned";
          break;
       case KeyX:
-         // Yaw left.
-         sim.moveRequest(SolarSystemGlobals::YAW_LEFT);
-         message += "KeyX : yaw left";
+         message += "KeyX : unassigned";
          break;
       case KeyZ:
-         // Reverse thrust.
-         sim.moveRequest(SolarSystemGlobals::REVERSE);
-         message += "KeyZ : reverse thrust";
+         message += "KeyZ : unassigned";
          break;
       case KeyF1:
-         // Keep this for future 'help' functionality
+         // TODO - future 'help' functionality
          message += "KeyF1 : unassigned";
          break;
       case KeyF2:
-         // Set the overall rendering level to lowest.
-         SolarSystemGlobals::set_render_level(SolarSystemGlobals::RENDER_LOWEST);
-         message += "KeyF2 : set render level to LOWEST";
+         // TODO - cycle the rendering level.
+         // SolarSystemGlobals::set_render_level(SolarSystemGlobals::RENDER_LOWEST);
+         message += "KeyF2 : unassigned";
          break;
       case KeyF3:
-         // Set the overall rendering level to medium.
-         SolarSystemGlobals::set_render_level(SolarSystemGlobals::RENDER_MEDIUM);
-         message += "KeyF3 : set render level to MEDIUM";
+         message += "KeyF3 : unassigned";
          break;
       case KeyF4:
-         message += "KeyF1 : unassigned";
+         // sim.cycle(Simulation::HUDOVER);
+         // message += "KeyF4 : cycle HUD";
          break;
       case KeyF5:
          // Cycle the state of constellation display.
@@ -425,9 +427,65 @@ void SolarSystem::keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey k
          message += "KeyF8 : cycle grid";
          break;
       case KeySpace:
+         // Cease all movement and rotation.
+         sim.moveRequest(SolarSystemGlobals::STOP_TRANSLATION);
+         sim.moveRequest(SolarSystemGlobals::STOP_ROTATION);
+         message += "KeySpace : null all movement and rotation";
+         break;
+      case KeyKP2:
+         // Pull nose up.
+         sim.moveRequest(SolarSystemGlobals::PITCH_UP);
+         message += "KeyKP2 : pitch up";
+         break;
+      case KeyKP4:
+         // Roll to the left.
+         sim.moveRequest(SolarSystemGlobals::ROLL_LEFT);
+         message += "KeyKP4 : roll left";
+         break;
+      case KeyKP5:
          // stop any craft rotation
          sim.moveRequest(SolarSystemGlobals::STOP_ROTATION);
-         message += "KeySpace : null rotation";
+         message += "KeyKP5 : null rotation";
+         break;
+      case KeyKP6:
+         // Roll to the right.
+         sim.moveRequest(SolarSystemGlobals::ROLL_RIGHT);
+         message += "KeyKP6 : roll right";
+         break;
+      case KeyKP8:
+         // Push nose down.
+         sim.moveRequest(SolarSystemGlobals::PITCH_DOWN);
+         message += "KeyKP8 : pitch down";
+         break;
+      case KeyKP0:
+         // Yaw left.
+         sim.moveRequest(SolarSystemGlobals::YAW_LEFT);
+         message += "KeyKP0 : yaw left";
+         break;
+      case KeyKPPeriod:
+         // Yaw right.
+         sim.moveRequest(SolarSystemGlobals::YAW_RIGHT);
+         message += "KeyKPPeriod : yaw right";
+         break;
+      case KeyComma:
+         // Yaw left.
+         sim.moveRequest(SolarSystemGlobals::YAW_LEFT);
+         message += "KeyComma : yaw left";
+         break;
+      case KeyPeriod:
+         // Pull nose up.
+         sim.moveRequest(SolarSystemGlobals::PITCH_UP);
+         message += "KeyPeriod : pitch up";
+         break;
+      case KeyForwardSlash:
+         // Yaw right.
+         sim.moveRequest(SolarSystemGlobals::YAW_RIGHT);
+         message += "KeyForwardSlash : yaw right";
+         break;
+      case KeySemiColon:
+         // Roll to the right.
+         sim.moveRequest(SolarSystemGlobals::ROLL_RIGHT);
+         message += "KeySemiColon : roll right";
          break;
       default:
          break;

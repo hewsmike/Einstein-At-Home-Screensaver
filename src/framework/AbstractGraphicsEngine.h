@@ -157,7 +157,18 @@ class AbstractGraphicsEngine {
          KeyF12 = 0x200000C,
          KeyEnter = 0x4000000,
          KeySpace = 0x4000001,
-         KeyEscape = 0x8000000
+         KeyEscape = 0x8000000,
+         KeyKP2 = 0xA000002,
+         KeyKP4 = 0xA000004,
+         KeyKP5 = 0xA000005,
+         KeyKP6 = 0xA000006,
+         KeyKP8 = 0xA000008,
+         KeyKP0 = 0xA00000A,
+         KeyKPPeriod = 0xA00000B,
+         KeyComma = 0xB00002C,
+         KeyPeriod = 0xB00002E,
+         KeyForwardSlash = 0xB00002F,
+         KeySemiColon = 0xB00003B,
          };
 
       /**

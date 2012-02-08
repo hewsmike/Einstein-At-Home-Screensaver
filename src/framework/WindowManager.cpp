@@ -286,6 +286,18 @@ void WindowManager::eventLoop() {
       else if (event.type == SDL_KEYDOWN) {
          switch (event.key.keysym.sym) {
             // notify our observers (currently exactly one, hence front())
+            case SDLK_COMMA:
+               eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyComma);
+               break;
+            case SDLK_PERIOD:
+               eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyPeriod);
+               break;
+            case SDLK_SLASH:
+               eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyForwardSlash);
+               break;
+            case SDLK_SEMICOLON:
+               eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeySemiColon);
+               break;
             case SDLK_a:
                eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyA);
                break;
@@ -393,6 +405,28 @@ void WindowManager::eventLoop() {
                break;
             case SDLK_RETURN:
                toggleFullscreen();
+               break;
+            case SDLK_KP2:
+               eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyKP2);
+               break;
+            case SDLK_KP4:
+               eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyKP4);
+               break;
+            case SDLK_KP5:
+               eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyKP5);
+               break;
+            case SDLK_KP6:
+               eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyKP6);
+               break;
+            case SDLK_KP8:
+               eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyKP8);
+               break;
+            case SDLK_KP0:
+               eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyKP0);
+               break;
+            case SDLK_KP_PERIOD:
+               eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyKPPeriod);
+               break;
             default:
                break;
             }
