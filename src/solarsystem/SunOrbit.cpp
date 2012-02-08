@@ -22,6 +22,7 @@
 
 const GLfloat SunOrbit::ECLIPTIC_ANGLE_DEG(23.5f);
 const GLfloat SunOrbit::DAYS_PER_YEAR(365.0f);
+const GLfloat SunOrbit::DAYS_PER_ROTATION(27.0f);
 const GLfloat SunOrbit::SUN_ORBIT_RADIUS(5*SolarSystemGlobals::SUN_RADIUS);
 const int SunOrbit::VERNAL_EQUINOX_DAY(79);
 
@@ -51,4 +52,18 @@ Vector3D SunOrbit::getPosition(GLfloat days366) {
    return SUN_ORBIT_RADIUS * Vector3D(COS(theta),
                                       SIN(theta) * COS(ECLIPTIC_ANGLE_DEG),
                                       SIN(theta) * SIN(ECLIPTIC_ANGLE_DEG));
+   }
+
+GLfloat SunOrbit::getRotation(GLfloat days366) {
+   // TODO - be bothered with leap years !!! :-)
+
+   if((days366 < 0) || (days366 >= DAYS_PER_YEAR)) {
+      std::string msg = "SunOrbit:getPosition() - bad days366 parameter passed";
+      ErrorHandler::record(msg, ErrorHandler::FATAL);
+      }
+
+   // How many days are we into this rotation - modulo rotation period ?
+   days366 = days366 - DAYS_PER_ROTATION * static_cast<int>(days366/DAYS_PER_ROTATION);
+
+   return (days366/DAYS_PER_ROTATION)*SolarSystemGlobals::FULL_CIRCLE_DEG;;
    }

@@ -44,6 +44,8 @@ class SunOrbit {
 
       static const GLfloat DAYS_PER_YEAR;
 
+      static const GLfloat DAYS_PER_ROTATION;
+
       /// The radius of the Sun's orbit.
       static const GLfloat SUN_ORBIT_RADIUS;
 
@@ -64,6 +66,16 @@ class SunOrbit {
        * \return position vector from the origin to the centre of the Sun
        */
       static Vector3D getPosition(GLfloat days366);
+
+      /**
+       * \brief What is the rotation of the Sun on a given day?
+       *
+       * \param days366 : the integral number of days since January the 1st,
+       *                  ie. range is 0 - 365
+       *
+       * \return angle of the rotation, modulo 360 degrees
+       */
+      static GLfloat getRotation(GLfloat days366);
 
    private:
       // Private constructor as static
