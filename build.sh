@@ -464,7 +464,7 @@ build_boinc()
     chmod +x configure >> $LOGFILE 2>&1 || failure
     cd $ROOT/build/boinc || failure
     if [ "$1" == "$TARGET_MAC" ]; then
-        export CPPFLAGS=-I/sw/include
+        export CPPFLAGS=-I/sw/include -I/opt/local/include $CPPFLAGS
         $ROOT/3rdparty/boinc/configure --prefix=$ROOT/install --enable-shared=no --enable-static=yes --disable-server --disable-client --with-apple-opengl-framework --enable-install-headers --enable-libraries --disable-manager --disable-fcgi >> $LOGFILE 2>&1 || failure
     elif [ -d "/usr/local/ssl" ]; then
         echo "Using local SSL library..." | tee -a $LOGFILE
