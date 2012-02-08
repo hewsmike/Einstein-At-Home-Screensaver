@@ -27,7 +27,7 @@ const GLuint Simulation::EARTH_SLICES(72);
 const GLfloat Simulation::EARTH_TEXTURE_OFFSET(+0.5f);
 
 const std::string Simulation::SUN_NAME("Sun");
-const std::string Simulation::SUN_IMAGE_FILE("sunmap.bmp");
+const std::string Simulation::SUN_IMAGE_FILE("sunmap2.bmp");
 const GLuint Simulation::SUN_STACKS(37);
 const GLuint Simulation::SUN_SLICES(72);
 const GLfloat Simulation::SUN_TEXTURE_OFFSET(0.0f);
@@ -94,11 +94,13 @@ Vector3D Simulation::getViewUp(void) const {
    }
 
 void Simulation::step(void) {
-   flyboy.step();
+   // Evolve the craft's mechanics with
+   // knowledge of the day within the year.
+   flyboy.step(day366);
    //if(count_down == COUNT_END) {
       // trigger something
       // clock.getTime(&min60, &hour24, &day366);
-      // min60+;
+      min60++;
       if(min60 > 59) {
          min60 = 0;
          hour24++;
@@ -115,6 +117,8 @@ void Simulation::step(void) {
          day366 = 0;
          }
       sun_pos = SunOrbit::getPosition(day366);
+
+      sun_rot_angle = SunOrbit::getRotation(day366);
    //   }
    //else {
      // --count_down;
@@ -194,13 +198,13 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
    north_panel.addContent(wyp_image);
 
    // Put text into the content.
-   welcome_text = new HUDTextLine(40, overlay.getFont(), 15, 15);
+   welcome_text = new HUDTextLineScroll(40, overlay.getFont(), 15, 15, HUDTextLineScroll::LEFT);
    if(welcome_text == NULL) {
-      std::string msg = "Simulation::prepare() - failed creation of HUDTextLine instance on heap";
+      std::string msg = "Simulation::prepare() - failed creation of HUDTextLineScroll instance on heap";
       ErrorHandler::record(msg, ErrorHandler::FATAL);
       }
 
-   welcome_text->setText("Hi! Welcome to Einstein @ Home!");
+   welcome_text->setText("Hi! Welcome to Einstein @ Home!  ");
 
     // Put the content into the panel.
    north_panel.addContent(welcome_text);
@@ -328,6 +332,11 @@ void Simulation::render(void) {
       glTranslatef(sun_pos.x(),
                    sun_pos.y(),
                    sun_pos.z());
+
+      glRotatef(SunOrbit::ECLIPTIC_ANGLE_DEG, 1, 0, 0);
+
+      glRotatef(sun_rot_angle, 0, 0, 1);
+
       sun.draw();
 
       // Turn the light off.
@@ -402,7 +411,8 @@ void Simulation::cycle(Simulation::content ct) {
          sn.cycleActivation();
          break;
       case Simulation::HUDOVER:
-         // We don't cycle the HUD ... yet
+         // TODO : still buggy .....
+         // overlay.cycleActivation();
          break;
       default:
          // Ought not get here !!

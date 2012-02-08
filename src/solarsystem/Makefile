@@ -52,14 +52,14 @@ OBJS = AcceleratedPlatform.o Buffer_OBJ.o Constellation.o Constellations.o Craft
 OBJS += EinsteinRadioAdapter.o EinsteinS5R3Adapter.o ErrorHandler.o Globe.o GridGlobe.o
 OBJS += HUDBorderLayout.o HUDContainer.o HUDContent.o
 OBJS += HUDFlowLayout.o HUDFlowHorizontalLayout.o HUDFlowVerticalLayout.o
-OBJS += HUDImage.o HUDItem.o HUDTextLine.o
+OBJS += HUDImage.o HUDItem.o HUDTextLine.o HUDTextLineScroll.o
 OBJS += InertialPlatform.o OGL_ID.o
 OBJS += OrdStar.o OrthoNormalPlatform.o Pulsar.o Pulsars.o Renderable.o
 OBJS += Simulation.o SolarSystem.o
 OBJS += SolarSystemRadio.o SolarSystemS5R3.o
 OBJS += SolarSystemGlobals.o Sphere.o SpinPlatform.o Star.o SunOrbit.o
 OBJS += Supernova.o Supernovae.o Texture_OBJ.o TranslatablePlatform.o
-OBJS += UTC.o Vector3D.o
+OBJS += TriggerTimer.o UTC.o Vector3D.o
 OBJS += VectorSP.o Vertex.o
 OBJS += $(RESOURCESPEC).o
 RESOURCESPEC = resources
@@ -166,6 +166,9 @@ HUDItem.o: $(DEPS) $(SOLARSYSTEM_SRC)/HUDItem.cpp $(SOLARSYSTEM_SRC)/HUDItem.h
 HUDTextLine.o: $(DEPS) $(SOLARSYSTEM_SRC)/HUDTextLine.cpp $(SOLARSYSTEM_SRC)/HUDTextLine.h
 	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/HUDTextLine.cpp
 
+HUDTextLineScroll.o: $(DEPS) $(SOLARSYSTEM_SRC)/HUDTextLineScroll.cpp $(SOLARSYSTEM_SRC)/HUDTextLineScroll.h
+	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/HUDTextLineScroll.cpp
+
 InertialPlatform.o: $(DEPS) $(SOLARSYSTEM_SRC)/InertialPlatform.cpp $(SOLARSYSTEM_SRC)/InertialPlatform.h
 	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/InertialPlatform.cpp
 
@@ -225,6 +228,9 @@ Texture_OBJ.o: $(DEPS) $(SOLARSYSTEM_SRC)/Texture_OBJ.cpp $(SOLARSYSTEM_SRC)/Tex
 
 TranslatablePlatform.o: $(DEPS) $(SOLARSYSTEM_SRC)/TranslatablePlatform.cpp $(SOLARSYSTEM_SRC)/TranslatablePlatform.h
 	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/TranslatablePlatform.cpp
+
+TriggerTimer.o: $(DEPS) $(SOLARSYSTEM_SRC)/TriggerTimer.cpp $(SOLARSYSTEM_SRC)/TriggerTimer.h
+	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/TriggerTimer.cpp
 
 UTC.o: $(DEPS) $(SOLARSYSTEM_SRC)/UTC.cpp $(SOLARSYSTEM_SRC)/UTC.h
 	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/UTC.cpp

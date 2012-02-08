@@ -38,6 +38,7 @@
 #include "HUDFlowVerticalLayout.h"
 #include "HUDImage.h"
 #include "HUDTextLine.h"
+#include "HUDTextLineScroll.h"
 #include "Pulsars.h"
 #include "Renderable.h"
 #include "SDL.h"
@@ -162,7 +163,7 @@ class Simulation : public Renderable {
       GLfloat earth_hour_angle;
 
       /// Variable Sun factors
-      GLfloat sun_orbit_angle;
+      GLfloat sun_rot_angle;
       Vector3D sun_pos;
 
       /// The renderable scene elements
@@ -184,7 +185,7 @@ class Simulation : public Renderable {
       HUDImage* aps_image;
       HUDImage* wyp_image;
       HUDImage* lsc_image;
-      HUDTextLine* welcome_text;
+      HUDTextLineScroll* welcome_text;
 
       HUDBorderLayout overlay;
 
