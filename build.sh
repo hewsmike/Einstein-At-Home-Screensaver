@@ -229,7 +229,8 @@ prepare_mingw()
     echo "Preparing MinGW build script..." | tee -a $LOGFILE
     cd $ROOT/3rdparty/mingw/xscripts || failure
     # note: svn has no force/overwrite switch. the file might not be updated when patched
-    patch x86-mingw32-build.sh.conf < $ROOT/patches/x86-mingw32-build.sh.conf.patch >> $LOGFILE || failure
+    # patch x86-mingw32-build.sh.conf < $ROOT/patches/x86-mingw32-build.sh.conf.patch >> $LOGFILE || failure
+    cp $ROOT/patches/x86-mingw32-build.sh.conf x86-mingw32-build.sh.conf || failure
     chmod +x x86-mingw32-build.sh >> $LOGFILE || failure
 
     store_build_state $BS_PREPARE_MINGW
