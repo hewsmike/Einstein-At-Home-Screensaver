@@ -409,7 +409,7 @@ build_libxml()
     cd $ROOT/3rdparty/libxml2 || failure
     chmod +x configure >> $LOGFILE 2>&1 || failure
     cd $ROOT/build/libxml2 || failure
-    $ROOT/3rdparty/libxml2/configure --prefix=$ROOT/install --enable-shared=no --enable-static=yes >> $LOGFILE 2>&1 || failure
+    $ROOT/3rdparty/libxml2/configure --prefix=$ROOT/install --enable-shared=no --enable-static=yes --without-python >> $LOGFILE 2>&1 || failure
     make >> $LOGFILE 2>&1 || failure
     make install >> $LOGFILE 2>&1 || failure
     echo "Successfully built and installed libxml2!" | tee -a $LOGFILE
@@ -595,7 +595,7 @@ build_libxml_mingw()
         echo "Cross-compile LIBXML2_CONFIG: $LIBXML2_CONFIG" >> $LOGFILE
     fi
     cd $ROOT/build/libxml2 || failure
-    $ROOT/3rdparty/libxml2/configure --host=$TARGET_HOST --build=$BUILD_HOST --prefix=$PREFIX --enable-shared=no --enable-static=yes >> $LOGFILE 2>&1 || failure
+    $ROOT/3rdparty/libxml2/configure --host=$TARGET_HOST --build=$BUILD_HOST --prefix=$PREFIX --enable-shared=no --enable-static=yes --without-python >> $LOGFILE 2>&1 || failure
     make >> $LOGFILE 2>&1 || failure
     make install >> $LOGFILE 2>&1 || failure
     echo "Successfully built and installed libxml2!" | tee -a $LOGFILE
