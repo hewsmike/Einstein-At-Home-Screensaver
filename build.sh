@@ -318,7 +318,7 @@ prepare_boinc()
     echo "Preparing BOINC..." | tee -a $LOGFILE
     mkdir -p $ROOT/3rdparty/boinc >> $LOGFILE || failure
     mkdir -p $ROOT/build/boinc >> $LOGFILE || failure
- 
+
     cd $ROOT/3rdparty/boinc || failure
     if [ -d .git ]; then
         echo "Updating BOINC (tag: $1)..." | tee -a $LOGFILE
@@ -332,14 +332,14 @@ prepare_boinc()
     else
         # workaround for old git versions
         rm -rf $ROOT/3rdparty/boinc >> $LOGFILE || failure
- 
+
         echo "Retrieving BOINC (tag: $1) (this may take a while)..." | tee -a $LOGFILE
         cd $ROOT/3rdparty || failure
         git clone git://git.aei.uni-hannover.de/shared/einsteinathome/boinc.git boinc >> $LOGFILE 2>&1 || failure
         cd $ROOT/3rdparty/boinc || failure
         git checkout $1 >> $LOGFILE  2>&1 || failure
     fi
- 
+
     return 0
 }
 
@@ -361,7 +361,7 @@ build_sdl()
     if [ "$1" == "$TARGET_MAC" ]; then
         $ROOT/3rdparty/sdl/configure --prefix=$ROOT/install --enable-shared=no --enable-static=yes --enable-screensaver=yes --enable-video-x11=no >> $LOGFILE 2>&1 || failure
     else
-        $ROOT/3rdparty/sdl/configure --prefix=$ROOT/install --enable-shared=no --enable-static=yes --enable-screensaver=yes >> $LOGFILE 2>&1 || failure 
+        $ROOT/3rdparty/sdl/configure --prefix=$ROOT/install --enable-shared=no --enable-static=yes --enable-screensaver=yes >> $LOGFILE 2>&1 || failure
     fi
     make >> $LOGFILE 2>&1 || failure
     make install >> $LOGFILE 2>&1 || failure
@@ -503,11 +503,18 @@ set_mingw()
 {
     # general config
     PREFIX=$ROOT/install
-    TARGET_HOST=i586-pc-mingw32
+    # the following target host spec is Debian specific!
+    # use "i586-pc-mingw32" when building MinGW automatically
+    export TARGET_HOST=i586-mingw32msvc
     BUILD_HOST=i386-linux
     PATH_MINGW="$PREFIX/bin:$PREFIX/$TARGET_HOST/bin:$PATH"
     PATH="$PATH_MINGW"
     export PATH
+
+    export CC=`which ${TARGET_HOST}-gcc`
+    export CXX=`which ${TARGET_HOST}-g++`
+
+    export CPPFLAGS="-D_WIN32_WINDOWS=0x0410 -DMINGW_WIN32 $CPPFLAGS"
 }
 
 
@@ -643,109 +650,71 @@ build_boinc_mingw()
 
     prepare_boinc $TAG_GFXAPPS || failure
 
-    echo "Patching BOINC..." | tee -a $LOGFILE
     cd $ROOT/3rdparty/boinc/lib || failure
-    # patch: fix a couple of BOINC vs. MinGW issues
-    patch boinc_win.h < $ROOT/patches/boinc.boinc_win.h.minggw.patch >> $LOGFILE 2>&1 || failure
-    patch filesys.cpp < $ROOT/patches/boinc.filesys.cpp.mingw.patch >> $LOGFILE 2>&1 || failure
     echo "Building BOINC (this may take a while)..." | tee -a $LOGFILE
-    cd $ROOT/3rdparty/boinc || failure
-    chmod +x _autosetup >> $LOGFILE 2>&1 || failure
-    ./_autosetup >> $LOGFILE 2>&1 || failure
-    chmod +x configure >> $LOGFILE 2>&1 || failure
-    cd $ROOT/build/boinc || failure
-    # note: configure is still required but we don't use the generated Makefile
-    $ROOT/3rdparty/boinc/configure --host=$TARGET_HOST --build=$BUILD_HOST --prefix=$ROOT/install --includedir=$ROOT/install/include --oldincludedir=$ROOT/install/include --enable-shared=no --enable-static=yes --disable-server --disable-client --enable-install-headers --enable-libraries --disable-manager --disable-fcgi >> $LOGFILE 2>&1 || failure
-    cd $ROOT/build/boinc/api || failure
-    cp $ROOT/3rdparty/boinc/api/Makefile.mingw . >> $LOGFILE 2>&1 || failure
-    # patch: add graphics2 and customize build path (see below)
-    patch Makefile.mingw < $ROOT/patches/boinc.Makefile.mingw.patch >> $LOGFILE 2>&1 || failure
-    export BOINC_SRC=$ROOT/3rdparty/boinc || failure
-    cd $ROOT/build/boinc || failure
-    # required for out-of-tree build
-    cp config.h $ROOT/3rdparty/boinc >> $LOGFILE 2>&1 || failure
-    make -f api/Makefile.mingw >> $LOGFILE 2>&1 || failure
-    cp $ROOT/build/boinc/libboinc.a $ROOT/install/lib >> $LOGFILE 2>&1 || failure
-    mkdir -p $ROOT/install/include/boinc >> $LOGFILE 2>&1 || failure
-    cp $ROOT/build/boinc/config.h $ROOT/install/include/boinc >> $LOGFILE 2>&1 || failure
-    cp $ROOT/build/boinc/version.h $ROOT/install/include/boinc >> $LOGFILE 2>&1 || failure
-    cp $ROOT/3rdparty/boinc/api/boinc_api.h $ROOT/install/include/boinc >> $LOGFILE 2>&1 || failure
-    cp $ROOT/3rdparty/boinc/api/graphics2.h $ROOT/install/include/boinc >> $LOGFILE 2>&1 || failure
-    cp $ROOT/3rdparty/boinc/lib/app_ipc.h $ROOT/install/include/boinc >> $LOGFILE 2>&1 || failure
-    cp $ROOT/3rdparty/boinc/lib/boinc_win.h $ROOT/install/include/boinc >> $LOGFILE 2>&1 || failure
-    cp $ROOT/3rdparty/boinc/lib/common_defs.h $ROOT/install/include/boinc >> $LOGFILE 2>&1 || failure
-    cp $ROOT/3rdparty/boinc/lib/diagnostics.h $ROOT/install/include/boinc >> $LOGFILE 2>&1 || failure
-    cp $ROOT/3rdparty/boinc/lib/diagnostics_win.h $ROOT/install/include/boinc >> $LOGFILE 2>&1 || failure
-    cp $ROOT/3rdparty/boinc/lib/filesys.h $ROOT/install/include/boinc >> $LOGFILE 2>&1 || failure
-    cp $ROOT/3rdparty/boinc/lib/hostinfo.h $ROOT/install/include/boinc >> $LOGFILE 2>&1 || failure
-    cp $ROOT/3rdparty/boinc/lib/proxy_info.h $ROOT/install/include/boinc >> $LOGFILE 2>&1 || failure
-    cp $ROOT/3rdparty/boinc/lib/prefs.h $ROOT/install/include/boinc >> $LOGFILE 2>&1 || failure
-    cp $ROOT/3rdparty/boinc/lib/miofile.h $ROOT/install/include/boinc >> $LOGFILE 2>&1 || failure
-    cp $ROOT/3rdparty/boinc/lib/mfile.h $ROOT/install/include/boinc >> $LOGFILE 2>&1 || failure
-    cp $ROOT/3rdparty/boinc/lib/parse.h $ROOT/install/include/boinc >> $LOGFILE 2>&1 || failure
-    cp $ROOT/3rdparty/boinc/lib/util.h $ROOT/install/include/boinc >> $LOGFILE 2>&1 || failure
+    BOINC_SRC="$ROOT/3rdparty/boinc" AR="${TARGET_HOST}-ar" make -f Makefile.mingw >> $LOGFILE 2>&1 || failure
+    BOINC_PREFIX="$ROOT/install" RANLIB="${TARGET_HOST}-ranlib" make -f Makefile.mingw install >> $LOGFILE 2>&1 || failure
     echo "Successfully built and installed BOINC!" | tee -a $LOGFILE
 
     store_build_state $BS_BUILD_BOINC_MINGW || failure
     return 0
 }
 
-
-build_starsphere()
+build_solarsystem()
 {
-    # make sure ORC is always compiled for host platform (it's exexuted during starsphere build!)
-    echo "Preparing Starsphere..." | tee -a $LOGFILE
+    # make sure ORC is always compiled for host platform (it's executed during solarsystem build!)
+    echo "Preparing SolarSystem..." | tee -a $LOGFILE
     mkdir -p $ROOT/build/orc >> $LOGFILE || failure
     mkdir -p $ROOT/build/framework >> $LOGFILE || failure
-    mkdir -p $ROOT/build/starsphere >> $LOGFILE || failure
+    mkdir -p $ROOT/build/solarsystem >> $LOGFILE || failure
     export PATH=$PATH_ORG
 
     prepare_version_header || failure
 
-    echo "Building Starsphere [ORC]..." | tee -a $LOGFILE
+    echo "Building SolarSystem [ORC]..." | tee -a $LOGFILE
     export ORC_SRC=$ROOT/src/orc || failure
     export ORC_INSTALL=$ROOT/install || failure
     cd $ROOT/build/orc || failure
     cp $ROOT/src/orc/Makefile . >> $LOGFILE 2>&1 || failure
     make $2 >> $LOGFILE 2>&1 || failure
     make install >> $LOGFILE 2>&1 || failure
-    echo "Successfully built and installed Starsphere [ORC]!" | tee -a $LOGFILE
+    echo "Successfully built and installed SolarSystem [ORC]!" | tee -a $LOGFILE
 
     # set main include directory
     if [ "$1" == "$TARGET_WIN32" ]; then
-        export PATH=$PATH_MINGW
+export PATH=$PATH_MINGW
     else
-        export PATH=$PATH_ORG
+export PATH=$PATH_ORG
     fi
 
-    echo "Building Starsphere [Framework]..." | tee -a $LOGFILE
+echo "Building SolarSystem [Framework]..." | tee -a $LOGFILE
     export FRAMEWORK_SRC=$ROOT/src/framework || failure
     export FRAMEWORK_INSTALL=$ROOT/install || failure
     cd $ROOT/build/framework || failure
     if [ "$1" == "$TARGET_WIN32" ]; then
-        cp -f $ROOT/src/framework/Makefile.mingw Makefile >> $LOGFILE 2>&1 || failure
+cp -f $ROOT/src/framework/Makefile.mingw Makefile >> $LOGFILE 2>&1 || failure
     else
-        cp -f $ROOT/src/framework/Makefile . >> $LOGFILE 2>&1 || failure
+cp -f $ROOT/src/framework/Makefile . >> $LOGFILE 2>&1 || failure
     fi
-    make $2 >> $LOGFILE 2>&1 || failure
+make $2 >> $LOGFILE 2>&1 || failure
     make install >> $LOGFILE 2>&1 || failure
-    echo "Successfully built and installed Starsphere [Framework]!" | tee -a $LOGFILE
+    echo "Successfully built and installed SolarSystem [Framework]!" | tee -a $LOGFILE
 
-    echo "Building Starsphere [Application]..." | tee -a $LOGFILE
-    export STARSPHERE_SRC=$ROOT/src/starsphere || failure
-    export STARSPHERE_INSTALL=$ROOT/install || failure
-    cd $ROOT/build/starsphere || failure
-    cp $ROOT/src/starsphere/*.res . >> $LOGFILE 2>&1 || failure
+    echo "Building SolarSystem [Application]..." | tee -a $LOGFILE
+    export SOLARSYSTEM_SRC=$ROOT/src/solarsystem || failure
+    export SOLARSYSTEM_INSTALL=$ROOT/install || failure
+    cd $ROOT/build/solarsystem || failure
+    cp $ROOT/src/solarsystem/*.res . >> $LOGFILE 2>&1 || failure
     if [ "$1" == "$TARGET_MAC" ]; then
-        cp -f $ROOT/src/starsphere/Makefile.macos Makefile >> $LOGFILE 2>&1 || failure
+cp -f $ROOT/src/solarsystem/Makefile.macos Makefile >> $LOGFILE 2>&1 || failure
     elif [ "$1" == "$TARGET_WIN32" ]; then
-        cp -f $ROOT/src/starsphere/Makefile.mingw Makefile >> $LOGFILE 2>&1 || failure
+cp -f $ROOT/src/solarsystem/Makefile.mingw Makefile >> $LOGFILE 2>&1 || failure
     else
-        cp -f $ROOT/src/starsphere/Makefile . >> $LOGFILE 2>&1 || failure
+cp -f $ROOT/src/solarsystem/Makefile . >> $LOGFILE 2>&1 || failure
     fi
-    make $2 >> $LOGFILE 2>&1 || failure
+make $2 >> $LOGFILE 2>&1 || failure
     make install >> $LOGFILE 2>&1 || failure
-    echo "Successfully built and installed Starsphere [Application]!" | tee -a $LOGFILE
+    echo "Successfully built and installed SolarSystem [Application]!" | tee -a $LOGFILE
 
     return 0
 }
@@ -759,7 +728,7 @@ build_linux()
     build_libxml || failure
     build_oglft || failure
     build_boinc || failure
-    build_starsphere $1 $2 || failure
+    build_solarsystem $1 $2 || failure
 
     return 0
 }
@@ -772,7 +741,7 @@ build_mac()
     build_libxml || failure
     build_oglft || failure
     build_boinc $1 || failure
-    build_starsphere $1 || failure
+    build_solarsystem $1 || failure
 
     return 0
 }
@@ -790,7 +759,7 @@ build_win32()
     build_libxml_mingw || failure
     build_oglft_mingw || failure
     build_boinc_mingw || failure
-    build_starsphere $TARGET_WIN32 || failure
+    build_solarsystem $TARGET_WIN32 || failure
 
     return 0
 }
@@ -803,11 +772,11 @@ print_usage()
     echo "*************************"
     echo "Usage: `basename $0` <target>"
     echo
-    echo "Available targets:"
-    echo "  --linux"
-    echo "  --mac"
-    echo "  --win32"
-    echo "  --doc"
+echo "Available targets:"
+    echo " --linux"
+    echo " --mac"
+    echo " --win32"
+    echo " --doc"
     echo "*************************"
 
     echo "Wrong usage. Stopping!" >> $LOGFILE
@@ -818,6 +787,9 @@ print_usage()
 
 ### main control ##########################################################
 
+# Delete any prior build log
+rm -f ./build.log
+
 echo "************************************" | tee -a $LOGFILE
 echo "Starting new build!" | tee -a $LOGFILE
 echo "`date`" | tee -a $LOGFILE
@@ -826,7 +798,7 @@ echo "************************************" | tee -a $LOGFILE
 # crude command line parsing :-)
 
 if [ $# -ne 1 ]; then
-  print_usage
+print_usage
   exit 1
 fi
 
@@ -857,10 +829,10 @@ case "$1" in
         distclean || failure
         exit 0
         ;;
-    "--starsphere")
+    "--solarsystem")
         # "hidden" bonus option :-)
         TARGET=$TARGET_LINUX
-        build_starsphere $TARGET "debug" || failure
+        build_solarsystem $TARGET "debug" || failure
         exit 0
         ;;
     *)
@@ -879,7 +851,7 @@ case $TARGET in
         ;;
     $TARGET_MAC)
         if [ -d /Developer/SDKs/MacOSX10.4u.sdk ]; then
-            echo "Preparing Mac OS X 10.4 SDK build environment..." | tee -a $LOGFILE
+echo "Preparing Mac OS X 10.4 SDK build environment..." | tee -a $LOGFILE
             # use 10.4 (Tiger) SDK because of BOINC/10.5 incompatibility (http://boinc.berkeley.edu/doxygen/api/html/QBacktrace_8h.html)
             export LDFLAGS="-isysroot /Developer/SDKs/MacOSX10.4u.sdk -Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk -arch i386 $LDFLAGS"
             export CPPFLAGS="-isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch i386 $CPPFLAGS"
@@ -888,10 +860,10 @@ case $TARGET in
             export SDKROOT="/Developer/SDKs/MacOSX10.4u.sdk"
             export MACOSX_DEPLOYMENT_TARGET=10.4
         else
-            echo "Mac OS X 10.4 SDK required but missing!" | tee -a $LOGFILE
+echo "Mac OS X 10.4 SDK required but missing!" | tee -a $LOGFILE
             failure
         fi
-        check_prerequisites || failure
+check_prerequisites || failure
         prepare_tree || failure
         build_mac $TARGET_MAC || failure
         ;;
