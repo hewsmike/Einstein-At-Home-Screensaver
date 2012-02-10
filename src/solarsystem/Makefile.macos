@@ -67,7 +67,7 @@ CPPFLAGS += -I$(SOLARSYSTEM_SRC) -I$(SOLARSYSTEM_SRC)/../framework
 default: release
 debug: solarsystem
 release: clean solarsystem
-Solarsystem: solarsystem_Einstein_LVC solarsystem_Einstein_ABP
+solarsystem: solarsystem_Einstein_LVC solarsystem_Einstein_ABP
 memcheck: clean debug solarsystem
 callgrind: clean debug solarsystem
 
