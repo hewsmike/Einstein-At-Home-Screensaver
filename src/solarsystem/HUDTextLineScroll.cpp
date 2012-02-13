@@ -88,7 +88,7 @@ void HUDTextLineScroll::render(void) {
                   // Get the last character.
                   std::string last = contents.substr(contents.length() - 1);
                   // Get the remainder.
-                  std::string remainder = contents.substr(0, contents.length() - 2);
+                  std::string remainder = contents.substr(0, contents.length() - 1);
                   // Reverse their order.
                   contents = last + remainder;
                }
