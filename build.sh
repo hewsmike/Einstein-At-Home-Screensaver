@@ -409,7 +409,7 @@ build_libxml()
     cd $ROOT/3rdparty/libxml2 || failure
     chmod +x configure >> $LOGFILE 2>&1 || failure
     cd $ROOT/build/libxml2 || failure
-    $ROOT/3rdparty/libxml2/configure --prefix=$ROOT/install --enable-shared=no --enable-static=yes >> $LOGFILE 2>&1 || failure
+    $ROOT/3rdparty/libxml2/configure --prefix=$ROOT/install --enable-shared=no --enable-static=yes --without-python >> $LOGFILE 2>&1 || failure
     make >> $LOGFILE 2>&1 || failure
     make install >> $LOGFILE 2>&1 || failure
     echo "Successfully built and installed libxml2!" | tee -a $LOGFILE
@@ -602,7 +602,7 @@ build_libxml_mingw()
         echo "Cross-compile LIBXML2_CONFIG: $LIBXML2_CONFIG" >> $LOGFILE
     fi
     cd $ROOT/build/libxml2 || failure
-    $ROOT/3rdparty/libxml2/configure --host=$TARGET_HOST --build=$BUILD_HOST --prefix=$PREFIX --enable-shared=no --enable-static=yes >> $LOGFILE 2>&1 || failure
+    $ROOT/3rdparty/libxml2/configure --host=$TARGET_HOST --build=$BUILD_HOST --prefix=$PREFIX --enable-shared=no --enable-static=yes --without-python >> $LOGFILE 2>&1 || failure
     make >> $LOGFILE 2>&1 || failure
     make install >> $LOGFILE 2>&1 || failure
     echo "Successfully built and installed libxml2!" | tee -a $LOGFILE
@@ -676,7 +676,20 @@ build_solarsystem()
     export ORC_INSTALL=$ROOT/install || failure
     cd $ROOT/build/orc || failure
     cp $ROOT/src/orc/Makefile . >> $LOGFILE 2>&1 || failure
+    if [ "$1" == "$TARGET_WIN32" ]; then
+        # backup MinGW compiler settings
+        CC_MINGW=$CC
+        CXX_MINGW=$CXX
+        # set the native compilers (ORC will be run on host, not on target)
+        export CC=`which gcc`
+        export CXX=`which g++`
+    fi
     make $2 >> $LOGFILE 2>&1 || failure
+    if [ "$1" == "$TARGET_WIN32" ]; then
+        # restore MinGW compiler settings
+        export CC=$CC_MINGW
+        export CXX=$CXX_MINGW
+    fi
     make install >> $LOGFILE 2>&1 || failure
     echo "Successfully built and installed SolarSystem [ORC]!" | tee -a $LOGFILE
 
@@ -749,11 +762,10 @@ build_mac()
 
 build_win32()
 {
-    export CPPFLAGS="-D_WIN32_WINDOWS=0x0410 $CPPFLAGS"
-
-    prepare_mingw || failure
-    build_mingw || failure
+    # no more prepare/build steps for MinGW
+    # we use Debian's MinGW with GCC 4.4 support
     set_mingw || failure
+
     build_sdl_mingw || failure
     build_freetype_mingw || failure
     build_libxml_mingw || failure
