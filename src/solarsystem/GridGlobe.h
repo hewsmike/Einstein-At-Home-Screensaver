@@ -21,19 +21,11 @@
 #ifndef GRID_GLOBE_H_
 #define GRID_GLOBE_H_
 
-#include <cstdlib>
-#include <iostream>
-#include <string>
-
-#include <oglft/OGLFT.h>
-
 #include "Buffer_OBJ.h"
 #include "Renderable.h"
 #include "SolarSystemGlobals.h"
 #include "Sphere.h"
 #include "Vector3D.h"
-#include "VectorSP.h"
-#include "Vertex.h"
 
 /**
 * \addtogroup solarsystem Solarsystem
@@ -49,9 +41,9 @@
 
 class GridGlobe : public Renderable {
    public:
-		GridGlobe(vec_t rad, GLuint slices, GLuint stacks);
+      GridGlobe(vec_t rad, GLuint slices, GLuint stacks);
 
-		virtual ~GridGlobe();
+      virtual ~GridGlobe();
 
       /**
        * \brief Cycles the activation state of the object
@@ -64,10 +56,10 @@ class GridGlobe : public Renderable {
       static const state INITIAL_CYCLE_STATE;
 
       /// The displayed size and color parameters of ordinary grid lines
-		static const GLfloat GRID_LINE_WIDTH;
-  	   static const GLfloat GRID_RED;
-	   static const GLfloat GRID_GREEN;
-	   static const GLfloat GRID_BLUE;
+      static const GLfloat GRID_LINE_WIDTH;
+      static const GLfloat GRID_RED;
+      static const GLfloat GRID_GREEN;
+      static const GLfloat GRID_BLUE;
 
       static const GLfloat PRIME_MERIDIAN_LINE_WIDTH;
       static const GLfloat PRIME_MERIDIAN_RED;
@@ -80,8 +72,8 @@ class GridGlobe : public Renderable {
       static const GLfloat CELESTIAL_EQUATOR_BLUE;
 
       static const GLuint ARRAY_START;
- 	   static const GLsizei ARRAY_STRIDE;
- 	   static const GLuint BYTE_OFFSET;
+      static const GLsizei ARRAY_STRIDE;
+      static const GLuint BYTE_OFFSET;
       static const GLuint COORDS_PER_VERTEX;
       static const GLuint VERTICES_PER_LINK;
 

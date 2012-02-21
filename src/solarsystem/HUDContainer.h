@@ -21,11 +21,9 @@
 #ifndef HUD_CONTAINER_H_
 #define HUD_CONTAINER_H_
 
-#include <iostream>
 #include <map>
 #include <utility>
 
-#include "ErrorHandler.h"
 #include "HUDItem.h"
 
 /**

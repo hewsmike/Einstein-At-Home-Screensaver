@@ -20,6 +20,8 @@
 
 #include "HUDFlowLayout.h"
 
+#include "ErrorHandler.h"
+
 HUDFlowLayout::HUDFlowLayout(HUDContainer* enclosing) :
                HUDContainer(enclosing) {
    primary_just = CENTRE;

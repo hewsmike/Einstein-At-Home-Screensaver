@@ -20,6 +20,11 @@
 
 #include "Craft.h"
 
+#include <iostream>
+
+#include "ErrorHandler.h"
+#include "SunOrbit.h"
+
 const vec_t Craft::MAX_RANGE(SolarSystemGlobals::CELESTIAL_SPHERE_RADIUS * 1.05f);
 const vec_t Craft::MIN_EARTH_RANGE(SolarSystemGlobals::EARTH_RADIUS*1.05f);
 const vec_t Craft::MIN_SUN_RANGE(SolarSystemGlobals::SUN_RADIUS*1.2f);

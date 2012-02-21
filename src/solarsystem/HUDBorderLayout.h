@@ -21,11 +21,6 @@
 #ifndef HUD_BORDER_LAYOUT_H_
 #define HUD_BORDER_LAYOUT_H_
 
-#include <algorithm>
-#include <iostream>
-#include <sstream>
-
-#include "ErrorHandler.h"
 #include "HUDContainer.h"
 
 /**

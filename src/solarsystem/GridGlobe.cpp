@@ -20,6 +20,15 @@
 
 #include "GridGlobe.h"
 
+#include <cstdlib>
+#include <iostream>
+#include <string>
+
+#include <oglft/OGLFT.h>
+
+#include "VectorSP.h"
+#include "Vertex.h"
+
 const GLfloat GridGlobe::GRID_LINE_WIDTH(0.5f);
 const GLfloat GridGlobe::GRID_RED(0.12f);
 const GLfloat GridGlobe::GRID_GREEN(0.17f);

@@ -20,6 +20,10 @@
 
 #include "HUDContainer.h"
 
+#include <iostream>
+
+#include "ErrorHandler.h"
+
 HUDContainer::HUDContainer(HUDContainer* enclosing = NULL) :
               wd(0),
               ht(0) {

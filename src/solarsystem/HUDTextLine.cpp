@@ -20,6 +20,10 @@
 
 #include "HUDTextLine.h"
 
+#include <cmath>
+
+#include "HUDContainer.h"
+
 HUDTextLine::HUDTextLine(GLuint length, OGLFT_ft* font,
                          GLuint horizontalMargin, GLuint verticalMargin) :
                            HUDContent(horizontalMargin, verticalMargin),

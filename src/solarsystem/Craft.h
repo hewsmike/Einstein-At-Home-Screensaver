@@ -21,12 +21,8 @@
 #ifndef CRAFT_H_
 #define CRAFT_H_
 
-#include <iostream>
-
 #include "AcceleratedPlatform.h"
-#include "ErrorHandler.h"
 #include "SolarSystemGlobals.h"
-#include "SunOrbit.h"
 
 /**
  * \addtogroup solarsystem Solarsystem

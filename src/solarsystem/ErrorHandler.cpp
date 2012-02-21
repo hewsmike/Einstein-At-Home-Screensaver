@@ -20,6 +20,14 @@
 
 #include "ErrorHandler.h"
 
+#include <cstdlib>
+#include <ctime>
+#include <fstream>
+#include <iostream>
+#include <sstream>
+
+#include "SolarSystemGlobals.h"
+
 // The error messsage file's name, within local runtime directory.
 const std::string ErrorHandler::LOG_FILE_NAME("solarsystem_stderr.txt");
 
@@ -42,7 +50,7 @@ void ErrorHandler::initialise(void) {
    }
 
 void ErrorHandler::record(std::string msg, message_type mt) {
-   bool output_ready = ErrorHandler::READY;
+   bool output_ready = ErrorHandler::EH_READY;
 
    // The file stream to use.
    std::ofstream output_file;
@@ -61,7 +69,7 @@ void ErrorHandler::record(std::string msg, message_type mt) {
                 << "' for writing !!" << std::endl;
 
       // We can't use this stream.
-      output_ready = ErrorHandler::NOT_READY;
+      output_ready = ErrorHandler::EH_NOT_READY;
       }
 
    // Start with an empty message string to record and output.
@@ -84,7 +92,7 @@ void ErrorHandler::record(std::string msg, message_type mt) {
          std::cout << message << std::endl;
          // But also record error in file,
          // provided the output file stream is available for use.
-         if(output_ready == ErrorHandler::READY) {
+         if(output_ready == ErrorHandler::EH_READY) {
             // Then record to our file.
             output_file << message << std::endl;
             }
@@ -95,13 +103,13 @@ void ErrorHandler::record(std::string msg, message_type mt) {
          std::cout << message << std::endl;
          // But also record error in file,
          // provided the output file stream is available for use.
-         if(output_ready == ErrorHandler::READY) {
+         if(output_ready == ErrorHandler::EH_READY) {
             // Then record to our file.
             output_file << message << std::endl;
             }
          // But we'll be leaving the program.
          output_file.close();
-         exit(ErrorHandler::NORMAL);
+         exit(ErrorHandler::EH_NORMAL);
          break;
       case ErrorHandler::WARN :
          message += "WARN : " + msg;
@@ -109,7 +117,7 @@ void ErrorHandler::record(std::string msg, message_type mt) {
          std::cerr << msg << std::endl;
          // But also record error in file,
          // provided the output file stream is available for use.
-         if(output_ready == ErrorHandler::READY) {
+         if(output_ready == ErrorHandler::EH_READY) {
             // Then record to our file.
             output_file << message << std::endl;
             }
@@ -120,7 +128,7 @@ void ErrorHandler::record(std::string msg, message_type mt) {
          std::cerr << msg << std::endl;
          // But also record error in file,
          // provided the output file stream is available for use.
-         if(output_ready == ErrorHandler::READY) {
+         if(output_ready == ErrorHandler::EH_READY) {
             // Then record to our file.
             output_file << message << std::endl;
             }
@@ -130,7 +138,7 @@ void ErrorHandler::record(std::string msg, message_type mt) {
 
          // Then we'll be leaving the program, in mild shame .....
          output_file.close();
-         exit(ErrorHandler::ERROR);
+         exit(ErrorHandler::EH_ERROR);
          break;
       default:
          // We should NEVER get here, but in case we do ......
@@ -145,13 +153,13 @@ void ErrorHandler::record(std::string msg, message_type mt) {
          std::cerr << message << std::endl;
          // But also record error in file,
          // provided the output file stream is available for use.
-         if(output_ready == ErrorHandler::READY) {
+         if(output_ready == ErrorHandler::EH_READY) {
             // Then record to our file.
             output_file << message << std::endl;
             }
          // This indicates a faulty error handling routine.
          // Deserves to die. In deep shame.
-         exit(ErrorHandler::ERROR);
+         exit(ErrorHandler::EH_ERROR);
          break;
       }
 

@@ -18,17 +18,23 @@
  *                                                                         *
  ***************************************************************************/
 
+#include <algorithm>
+#include <sstream>
+
 #include "Constellation.h"
+
+#include "ErrorHandler.h"
+#include "SolarSystemGlobals.h"
 
 Constellation::Constellation(const std::string nm) : cons_name(nm) {
    crosses_first_point_Aries = false;
    first_quadrant = false;
    fourth_quadrant = false;
    centre_evaluated = false;
-	}
+   }
 
 Constellation::~Constellation(){
-	}
+   }
 
 const std::string& Constellation::name(void) const {
    return cons_name;
@@ -135,7 +141,7 @@ void Constellation::add_star(OrdStar star) {
       }
 
    star_list.push_back(star);
-	}
+   }
 
 const std::vector<OrdStar>& Constellation::stars(void) const {
    return star_list;

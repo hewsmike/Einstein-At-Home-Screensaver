@@ -21,14 +21,7 @@
 #ifndef ERRORHANDLER_H_
 #define ERRORHANDLER_H_
 
-#include <cstdlib>
-#include <ctime>
-#include <fstream>
-#include <iostream>
 #include <string>
-#include <sstream>
-
-#include "SolarSystemGlobals.h"
 
 /**
  * \addtogroup solarsystem Solarsystem
@@ -59,10 +52,10 @@
 class ErrorHandler {
    private:
       /// Identifiers of program exit codes returned to the OS.
-      enum exit_type {NORMAL = 0, ERROR};
+      enum exit_type {EH_NORMAL = 0, EH_ERROR};
 
       /// Identifiers of file stream readiness for use.
-      enum stream_ready {READY, NOT_READY};
+      enum stream_ready {EH_READY, EH_NOT_READY};
 
       /// Name of log file to record messages in.
       static const std::string LOG_FILE_NAME;

@@ -21,8 +21,6 @@
 #ifndef ORTHO_NORMAL_PLATFORM_H_
 #define ORTHO_NORMAL_PLATFORM_H_
 
-#include "ErrorHandler.h"
-#include "SolarSystemGlobals.h"
 #include "Vector3D.h"
 
 /**
@@ -101,17 +99,17 @@ class OrthoNormalPlatform {
 
    private:
       /// Fiducial 'look' vector
-	   static const Vector3D INIT_LOOK;
+      static const Vector3D INIT_LOOK;
 
-	   /// Fiducial 'up' vector
-	   static const Vector3D INIT_UP;
+      /// Fiducial 'up' vector
+      static const Vector3D INIT_UP;
 
       /// The current 'look' vector.
       Vector3D look_dir;
 
-	   /// The current 'up' vector.
+      /// The current 'up' vector.
       Vector3D up_dir;
-	};
+   };
 
 /**
  * @}

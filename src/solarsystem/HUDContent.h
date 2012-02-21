@@ -21,7 +21,6 @@
 #ifndef HUD_CONTENT_H_
 #define HUD_CONTENT_H_
 
-#include "HUDContainer.h"
 #include "HUDItem.h"
 
 /**

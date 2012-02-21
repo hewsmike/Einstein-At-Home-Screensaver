@@ -21,19 +21,12 @@
 #ifndef CONSTELLATIONS_H_
 #define CONSTELLATIONS_H_
 
-#include <iostream>
-#include <sstream>
-#include <string>
 #include <vector>
 
 #include "Buffer_OBJ.h"
 #include "Constellation.h"
-#include "DisplayList.h"
-#include "ErrorHandler.h"
 #include "Renderable.h"
 #include "SolarSystemGlobals.h"
-#include "VectorSP.h"
-#include "Vector3D.h"
 
 /**
  * \addtogroup solarsystem Solarsystem
@@ -49,38 +42,37 @@
 class Constellations : public Renderable {
    public:
 
-
-		Constellations(vec_t rad);
+      Constellations(vec_t rad);
 
       /**
        * \brief Destructor
        */
-		~Constellations();
+      ~Constellations();
 
       /**
        * \brief Cycles the activation state of the object
        */
       virtual void cycleActivation(void);
 
-	private:
+   private:
       enum state {ALL_OFF, STARS, STARS_N_LINKS, STARS_N_NAMES, ALL_ON};
 
       static const state INITIAL_CYCLE_STATE;
 
       static const GLfloat OFFSET;
-		static const GLfloat LINK_WIDTH;
-		static const GLushort LINK_STIPPLE_PATTERN;
-		static const GLint LINK_STIPPLE_FACTOR;
-		static const GLfloat LINK_RGB_RED;
-		static const GLfloat LINK_RGB_GREEN;
-		static const GLfloat LINK_RGB_BLUE;
+      static const GLfloat LINK_WIDTH;
+      static const GLushort LINK_STIPPLE_PATTERN;
+      static const GLint LINK_STIPPLE_FACTOR;
+      static const GLfloat LINK_RGB_RED;
+      static const GLfloat LINK_RGB_GREEN;
+      static const GLfloat LINK_RGB_BLUE;
 
-		static const GLfloat MAG_SIZE;
+      static const GLfloat MAG_SIZE;
 
-		static const GLuint INDICES_PER_LINK;
-		static const GLuint COLORS_PER_VERTEX;
-		static const GLuint COORDS_PER_VERTEX;
-		static const GLuint BYTE_STRIDE_PER_VERTEX;
+      static const GLuint INDICES_PER_LINK;
+      static const GLuint COLORS_PER_VERTEX;
+      static const GLuint COORDS_PER_VERTEX;
+      static const GLuint BYTE_STRIDE_PER_VERTEX;
 
       static const GLfloat TEXT_RATIO;
 

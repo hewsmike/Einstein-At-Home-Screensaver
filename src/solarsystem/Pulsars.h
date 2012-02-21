@@ -21,18 +21,14 @@
 #ifndef PULSARS_H_
 #define PULSARS_H_
 
-#include <exception>
-#include <iostream>
-#include <string>
 #include <vector>
 
 #include "Buffer_OBJ.h"
-#include "ErrorHandler.h"
 #include "Pulsar.h"
 #include "Renderable.h"
 #include "SolarSystemGlobals.h"
 #include "Vector3D.h"
-#include "VectorSP.h"
+
 
 using namespace std;
 
@@ -50,15 +46,15 @@ using namespace std;
 class Pulsars : public Renderable {
    private:
       /// The displayed size and color parameters of generic pulsars
-		static const GLfloat MAG_SIZE;
-  	   static const GLfloat RGB_RED;
-	   static const GLfloat RGB_GREEN;
-	   static const GLfloat RGB_BLUE;
+      static const GLfloat MAG_SIZE;
+      static const GLfloat RGB_RED;
+      static const GLfloat RGB_GREEN;
+      static const GLfloat RGB_BLUE;
 
-		static const GLint ARRAY_START;
- 	   static const GLsizei ARRAY_STRIDE;
- 	   static const GLuint BYTE_OFFSET;
-	   static const GLint COORDS_PER_VERTEX;
+      static const GLint ARRAY_START;
+      static const GLsizei ARRAY_STRIDE;
+      static const GLuint BYTE_OFFSET;
+      static const GLint COORDS_PER_VERTEX;
 
       /// Store pulsar data here
       std::vector<Pulsar> pulsar_list;

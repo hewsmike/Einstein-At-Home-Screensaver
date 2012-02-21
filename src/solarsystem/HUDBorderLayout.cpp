@@ -20,6 +20,12 @@
 
 #include "HUDBorderLayout.h"
 
+#include <algorithm>
+#include <iostream>
+#include <sstream>
+
+#include "ErrorHandler.h"
+
 HUDBorderLayout::HUDBorderLayout(HUDContainer* enclosing) :
                  HUDContainer(enclosing) {
    }

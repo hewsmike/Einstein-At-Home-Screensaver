@@ -17,7 +17,13 @@
 * along with Einstein@Home. If not, see <http://www.gnu.org/licenses/>.    *
 *                                                                          *
 ***************************************************************************/
+
 #include "Globe.h"
+
+#include <iostream>
+#include <sstream>
+#include <vector>
+
 
 // In 3D space there are three position coordinate values per vertex.
 const GLuint Globe::POS_COORDS_PER_VERTEX(3);

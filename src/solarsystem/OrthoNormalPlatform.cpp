@@ -20,6 +20,9 @@
 
 #include "OrthoNormalPlatform.h"
 
+#include "ErrorHandler.h"
+#include "SolarSystemGlobals.h"
+
 // NOTE we want to have these class invariants :
 //    'up' , 'look' and 'cross' vectors form a right handed
 //    orthonormal Cartesian set
@@ -31,7 +34,7 @@ const Vector3D OrthoNormalPlatform::INIT_UP(0.0f, 0.0f, 1.0f);
 
 OrthoNormalPlatform::OrthoNormalPlatform(void) {
    reset();
-	}
+   }
 
 OrthoNormalPlatform::~OrthoNormalPlatform() {
    }
@@ -61,5 +64,5 @@ void OrthoNormalPlatform::reset(void) {
    // This will set 'look' and 'up' as orthogonal according to the
    // definitions of INIT_LOOK and INIT_UP.
    look_dir = INIT_LOOK;
-	up_dir = INIT_UP;
-	}
+   up_dir = INIT_UP;
+   }

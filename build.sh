@@ -506,6 +506,7 @@ set_mingw()
     PREFIX=$ROOT/install
     # the following target host spec is Debian specific!
     # use "i586-pc-mingw32" when building MinGW automatically
+
     export TARGET_HOST=i586-mingw32msvc
     BUILD_HOST=i386-linux
     PATH_MINGW="$PREFIX/bin:$PREFIX/$TARGET_HOST/bin:$PATH"
@@ -696,9 +697,9 @@ build_solarsystem()
 
     # set main include directory
     if [ "$1" == "$TARGET_WIN32" ]; then
-export PATH=$PATH_MINGW
+      export PATH=$PATH_MINGW
     else
-export PATH=$PATH_ORG
+      export PATH=$PATH_ORG
     fi
 
     echo "Building SolarSystem [Framework]..." | tee -a $LOGFILE
@@ -706,11 +707,11 @@ export PATH=$PATH_ORG
     export FRAMEWORK_INSTALL=$ROOT/install || failure
     cd $ROOT/build/framework || failure
     if [ "$1" == "$TARGET_WIN32" ]; then
-cp -f $ROOT/src/framework/Makefile.mingw Makefile >> $LOGFILE 2>&1 || failure
+      cp -f $ROOT/src/framework/Makefile.mingw Makefile >> $LOGFILE 2>&1 || failure
     else
-cp -f $ROOT/src/framework/Makefile . >> $LOGFILE 2>&1 || failure
+      cp -f $ROOT/src/framework/Makefile . >> $LOGFILE 2>&1 || failure
     fi
-make $2 >> $LOGFILE 2>&1 || failure
+    make $2 >> $LOGFILE 2>&1 || failure
     make install >> $LOGFILE 2>&1 || failure
     echo "Successfully built and installed SolarSystem [Framework]!" | tee -a $LOGFILE
 
@@ -864,7 +865,7 @@ case $TARGET in
         ;;
     $TARGET_MAC)
         if [ -d /Developer/SDKs/MacOSX10.4u.sdk ]; then
-echo "Preparing Mac OS X 10.4 SDK build environment..." | tee -a $LOGFILE
+            echo "Preparing Mac OS X 10.4 SDK build environment..." | tee -a $LOGFILE
             # use 10.4 (Tiger) SDK because of BOINC/10.5 incompatibility (http://boinc.berkeley.edu/doxygen/api/html/QBacktrace_8h.html)
             export LDFLAGS="-isysroot /Developer/SDKs/MacOSX10.4u.sdk -Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk -arch i386 $LDFLAGS"
             export CPPFLAGS="-isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch i386 $CPPFLAGS"
@@ -873,10 +874,10 @@ echo "Preparing Mac OS X 10.4 SDK build environment..." | tee -a $LOGFILE
             export SDKROOT="/Developer/SDKs/MacOSX10.4u.sdk"
             export MACOSX_DEPLOYMENT_TARGET=10.4
         else
-echo "Mac OS X 10.4 SDK required but missing!" | tee -a $LOGFILE
+            echo "Mac OS X 10.4 SDK required but missing!" | tee -a $LOGFILE
             failure
         fi
-check_prerequisites || failure
+        check_prerequisites || failure
         prepare_tree || failure
         build_mac $TARGET_MAC || failure
         ;;

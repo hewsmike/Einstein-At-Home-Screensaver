@@ -20,10 +20,7 @@
 #ifndef GLOBE_H_
 #define GLOBE_H_
 
-#include <iostream>
-#include <sstream>
 #include <string>
-#include <vector>
 
 #include "Buffer_OBJ.h"
 #include "Renderable.h"

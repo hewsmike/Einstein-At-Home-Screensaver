@@ -21,15 +21,11 @@
 #ifndef CONSTELLATION_H_
 #define CONSTELLATION_H_
 
-#include <algorithm>
 #include <string>
-#include <sstream>
 #include <utility>
 #include <vector>
 
-#include "ErrorHandler.h"
 #include "OrdStar.h"
-#include "SolarSystemGlobals.h"
 
 /**
  * \addtogroup solarsystem Solarsystem
@@ -50,7 +46,7 @@
  */
 
 class Constellation {
-	public:
+   public:
       /**
        * \brief Constructor
        *
@@ -61,7 +57,7 @@ class Constellation {
       /**
        * \brief Destructor
        */
-		~Constellation();
+      ~Constellation();
 
       /**
        * \brief Add a star to the constellation
@@ -72,7 +68,7 @@ class Constellation {
        *
        * @param star : the star to add
        */
-		void add_star(OrdStar star);
+      void add_star(OrdStar star);
 
       /**
        * \brief Add a link between two stars
@@ -143,10 +139,10 @@ class Constellation {
       std::string cons_name;
 
       /// The stars in this constellation.
-		std::vector<OrdStar> star_list;
+      std::vector<OrdStar> star_list;
 
       /// Which star is connected to which.
-		std::vector< std::pair<unsigned int, unsigned int> > link_list;
+      std::vector< std::pair<unsigned int, unsigned int> > link_list;
    };
 
 #endif // CONSTELLATION_H_

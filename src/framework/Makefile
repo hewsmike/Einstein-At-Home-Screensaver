@@ -38,7 +38,7 @@ OBJS += WindowManager.o Resource.o ResourceFactory.o BOINCClientAdapter.o Libxml
 # TODO: GraphicsEngineFactory obviously depends on the actual implementations (here solarsystem & starsphere)! need to change the structure! what about plugins?
 CPPFLAGS += -I$(FRAMEWORK_SRC)
 CPPFLAGS += -I$(FRAMEWORK_SRC)/../solarsystem
-# CPPFLAGS += -I$(FRAMEWORK_SRC)/../starsphere
+CPPFLAGS += -I$(SOLARSYSTEM_INSTALL)/include/boinc
 
 # primary role based tagets
 default: release

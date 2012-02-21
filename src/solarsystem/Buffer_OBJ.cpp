@@ -20,6 +20,17 @@
 
 #include "Buffer_OBJ.h"
 
+#include "ErrorHandler.h"
+
+#ifdef WIN32_GLEXT_LINKS
+genBuffers_Func Buffer_OBJ::genBuffersLink(NULL);
+deleteBuffers_Func Buffer_OBJ::deleteBuffersLink(NULL);
+bindBuffer_Func Buffer_OBJ::bindBufferLink(NULL);
+bufferData_Func Buffer_OBJ::bufferDataLink(NULL);
+mapBuffer_Func Buffer_OBJ::mapBufferLink(NULL);
+unMapBuffer_Func Buffer_OBJ::unMapBufferLink(NULL);
+#endif
+
 Buffer_OBJ::Buffer_OBJ() {
    }
 
@@ -29,11 +40,9 @@ Buffer_OBJ::~Buffer_OBJ() {
    }
 
 void Buffer_OBJ::acquire(void) {
-   // Ask OpenGL to assign a buffer object.
    glGenBuffers(1, &ident);
    }
 
 void Buffer_OBJ::release(void) {
-   // Ask OpenGL to release the buffer object.
    glDeleteBuffers(1, &ident);
    }

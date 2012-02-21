@@ -24,7 +24,7 @@
 #include <string>
 
 #include "Buffer_OBJ.h"
-#include "DisplayList.h"
+#include "HUDContainer.h"
 #include "HUDContent.h"
 #include "SDL.h"
 #include "Texture_OBJ.h"

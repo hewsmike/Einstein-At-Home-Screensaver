@@ -37,7 +37,7 @@ DEPS = Makefile
 OBJS = AbstractGraphicsEngine.o GraphicsEngineFactory.o WindowManager.o Resource.o ResourceFactory.o BOINCClientAdapter.o Libxml2Adapter.o
 
 # TODO: GraphicsEngineFactory obviously depends on the actual implementations (here starsphere)! need to change the structure! what about plugins?
-CPPFLAGS += -I$(FRAMEWORK_SRC) -I$(FRAMEWORK_SRC)/../starsphere
+CPPFLAGS += -I$(FRAMEWORK_SRC) -I$(FRAMEWORK_SRC)/../starsphere -I$(FRAMEWORK_SRC)/../solarsystem
 
 # primary role based tagets
 default: release
