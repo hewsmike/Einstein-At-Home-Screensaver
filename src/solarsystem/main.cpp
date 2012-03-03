@@ -30,7 +30,9 @@
 
 #include "AbstractGraphicsEngine.h"
 #include "GraphicsEngineFactory.h"
+#include "OpenGLExts.h"
 #include "SolarSystem.h"
+#include "SolarSystemGlobals.h"
 #include "ResourceFactory.h"
 #include "WindowManager.h"
 
@@ -92,6 +94,48 @@ int main(int argc, char **argv) {
       exit(1);
       }
 
+   // Hmmm .... I suppose we ought have an OpenGL context by now.
+   OpenGLExts::acquire();
+
+   // Find out the OpenGL version.
+   GLuint major = 0;
+   GLuint minor = 0;
+   SolarSystemGlobals::getOGLVersion(&major, &minor);
+   std::cout << "OpenGL version = "
+             << major << '.' << minor << std::endl;
+
+   // Find out the OpenGL vendor.
+   const GLubyte* vendor = glGetString(GL_VENDOR);
+   if(vendor != NULL) {
+      std::cout << "OpenGL vendor string = '"
+                << SolarSystemGlobals::convertGLstring(vendor)
+                << "'" << std::endl;
+      }
+   else {
+      std::cout << "I got a null for GL_VENDOR" << std::endl;
+      }
+
+   // Find out the OpenGL renderer.
+   const GLubyte* renderer = glGetString(GL_RENDERER);
+   if(renderer != NULL) {
+      std::cout << "OpenGL renderer string = '"
+                << SolarSystemGlobals::convertGLstring(renderer)
+                << "'" << std::endl;
+      }
+   else {
+      std::cout << "I got a null for GL_RENDERER" << std::endl;
+      }
+
+   // Find out the OpenGL extensions.
+   SolarSystemGlobals::getOGLExtensions();
+
+   if(SolarSystemGlobals::setOGLContextVersion(major, minor) == true){
+      std::cout << "The OpenGL context is adequate" << std::endl;
+      }
+   else {
+      std::cout << "The OpenGL context is inappropriate" << std::endl;
+      }
+
    // create font and icon resource instances
    const Resource* fontResource = factory.createInstance("FontSansSerif");
    const Resource* iconResource = factory.createInstance("AppIconBMP");
@@ -140,22 +184,6 @@ int main(int argc, char **argv) {
          SetMacSSLevel();
 #endif
          }
-      }
-
-   // Find out the OpenGL version
-   const GLubyte* version = glGetString(GL_VERSION);
-   if(version != NULL) {
-      std::cout << "OpenGL version string = '";
-      int i = 0;
-      while(*(version + i) != 0) {
-         char current = *(version + i);
-         std::cout << current;
-         ++i;
-         };
-      std::cout << "'" << std::endl;
-      }
-   else {
-      std::cout << "I got a null ... " << std::endl;
       }
 
    // enter main event loop

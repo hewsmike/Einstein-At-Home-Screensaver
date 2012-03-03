@@ -20,6 +20,8 @@
 
 #include "HUDTextLineScroll.h"
 
+#include "ErrorHandler.h"
+
 HUDTextLineScroll::HUDTextLineScroll(GLuint length, OGLFT_ft* font,
                                      GLuint horizontalMargin, GLuint verticalMargin,
                                      mode direction = NONE) :

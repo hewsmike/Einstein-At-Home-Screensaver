@@ -34,7 +34,7 @@
 
 /**
  * \brief This interface declares public methods to deal with OpenGL
- * buffer objects. It's a wrapper.
+ *        buffer objects. It's a wrapper.
  *
  * \author Mike Hewson\n
  */

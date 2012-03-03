@@ -26,8 +26,13 @@
 
 #include <oglft/OGLFT.h>
 
+#include "ErrorHandler.h"
 #include "VectorSP.h"
 #include "Vertex.h"
+
+//#ifdef WIN32_GLEXT_LINKS
+#include "OpenGLExts.h"
+//#endif
 
 const GLfloat GridGlobe::GRID_LINE_WIDTH(0.5f);
 const GLfloat GridGlobe::GRID_RED(0.12f);
@@ -140,7 +145,15 @@ void GridGlobe::render(void) {
    // Provided we should be showing anything at all.
    if(current_cycle_state != ALL_OFF) {
       // Make our vertex buffer identifier OpenGL's current one.
+
+#ifndef WIN32_GLEXT_LINKS
+      // Non win32 build so call directly.
       glBindBuffer(GL_ARRAY_BUFFER, buff_obj_points.ID());
+#else
+      // Indirection with win32 build.
+      OpenGLExts::ExtGLBindBuffer(GL_ARRAY_BUFFER, buff_obj_points.ID());
+#endif
+
       // We will use a vertex array within that buffer.
       glEnableClientState(GL_VERTEX_ARRAY);
       // The vertex array pointer points to the start of the buffer.
@@ -151,7 +164,13 @@ void GridGlobe::render(void) {
       glColor3f(GRID_RED, GRID_GREEN, GRID_BLUE);
 
       // Bind the grid index array.
+#ifndef WIN32_GLEXT_LINKS
+      // Non win32 build so call directly.
       glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buff_obj_grid_links.ID());
+#else
+      // Indirection with win32 build.
+      OpenGLExts::ExtGLBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buff_obj_grid_links.ID());
+#endif
 
       // Finally we get to render the lines.
       glDrawElements(GL_LINES, grid_links * VERTICES_PER_LINK, GL_UNSIGNED_INT, BUFFER_OFFSET(ARRAY_START));
@@ -161,7 +180,13 @@ void GridGlobe::render(void) {
       glColor3f(PRIME_MERIDIAN_RED, PRIME_MERIDIAN_GREEN, PRIME_MERIDIAN_BLUE);
 
       // Bind the prime meridian index array.
+#ifndef WIN32_GLEXT_LINKS
+      // Non win32 build so call directly.
       glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buff_obj_prime_meridian_links.ID());
+#else
+      // Indirection with win32 build.
+      OpenGLExts::ExtGLBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buff_obj_prime_meridian_links.ID());
+#endif
 
       // Finally we get to render the lines.
       glDrawElements(GL_LINES, prime_meridian_links * VERTICES_PER_LINK, GL_UNSIGNED_INT, BUFFER_OFFSET(ARRAY_START));
@@ -173,7 +198,13 @@ void GridGlobe::render(void) {
          glColor3f(CELESTIAL_EQUATOR_RED, CELESTIAL_EQUATOR_GREEN, CELESTIAL_EQUATOR_BLUE);
 
          // Bind the celestial equator index array.
+#ifndef WIN32_GLEXT_LINKS
+         // Non win32 build so call directly.
          glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buff_obj_celestial_equator_links.ID());
+#else
+         // Indirection with win32 build.
+         OpenGLExts::ExtGLBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buff_obj_celestial_equator_links.ID());
+#endif
 
          // Finally we get to render the lines.
          glDrawElements(GL_LINES, celestial_equator_links * VERTICES_PER_LINK, GL_UNSIGNED_INT, BUFFER_OFFSET(ARRAY_START));
@@ -183,8 +214,13 @@ void GridGlobe::render(void) {
       glDisableClientState(GL_VERTEX_ARRAY);
 
       // Unbind the buffers.
+#ifndef WIN32_GLEXT_LINKS
+      // Non win32 build so call directly.
       glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Buffer_OBJ::NO_ID);
-      glBindBuffer(GL_ARRAY_BUFFER, Buffer_OBJ::NO_ID);
+#else
+      // Indirection with win32 build.
+      OpenGLExts::ExtGLBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Buffer_OBJ::NO_ID);
+#endif
 
       // Now display the grid markers, if activation state agrees.
       if(current_cycle_state == ALL_ON) {
@@ -209,16 +245,34 @@ void GridGlobe::loadVertexBuffer(void) {
    buff_obj_points.acquire();
 
    // Make our buffer identifier OpenGL's current one.
+#ifndef WIN32_GLEXT_LINKS
+   // Non win32 build so call directly.
    glBindBuffer(GL_ARRAY_BUFFER, buff_obj_points.ID());
+#else
+   // Indirection with win32 build.
+   OpenGLExts::ExtGLBindBuffer(GL_ARRAY_BUFFER, buff_obj_points.ID());
+#endif
 
    // What size allocation are we after?
    GLsizeiptr size = sizeof(vec_t) * COORDS_PER_VERTEX * sp->vertices().size();
 
    // Allocate buffer memory but don't store, yet.
+#ifndef WIN32_GLEXT_LINKS
+   // Non win32 build so call directly.
    glBufferData(GL_ARRAY_BUFFER, size, NULL, GL_STATIC_DRAW);
+#else
+   // Indirection with win32 build.
+   OpenGLExts::ExtGLBufferData(GL_ARRAY_BUFFER, size, NULL, GL_STATIC_DRAW);
+#endif
 
    // Get write access to the buffer area.
+#ifndef WIN32_GLEXT_LINKS
+   // Non win32 build so call directly.
    vec_t* buffer_ptr = static_cast<vec_t*>(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
+#else
+   // Indirection with win32 build.
+   vec_t* buffer_ptr = static_cast<vec_t*>(OpenGLExts::ExtGLMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
+#endif
 
    // Check for failure, as we don't want to dereference a NULL later on,
    // ... MAKE IT A FATAL ERROR.
@@ -239,8 +293,21 @@ void GridGlobe::loadVertexBuffer(void) {
       }
 
    // Disconnect the mapping and the buffer from OpenGL.
+#ifndef WIN32_GLEXT_LINKS
+   // Non win32 build so call directly.
    glUnmapBuffer(GL_ARRAY_BUFFER);
+#else
+   // Indirection with win32 build.
+   OpenGLExts::ExtGLUnmapBuffer(GL_ARRAY_BUFFER);
+#endif
+
+#ifndef WIN32_GLEXT_LINKS
+   // Non win32 build so call directly.
    glBindBuffer(GL_ARRAY_BUFFER, Buffer_OBJ::NO_ID);
+#else
+   // Indirection with win32 build.
+   OpenGLExts::ExtGLBindBuffer(GL_ARRAY_BUFFER, Buffer_OBJ::NO_ID);
+#endif
    }
 
 void GridGlobe::loadGridIndexBuffer(void) {
@@ -248,7 +315,13 @@ void GridGlobe::loadGridIndexBuffer(void) {
    buff_obj_grid_links.acquire();
 
    // Make our buffer identifier OpenGL's current one.
+#ifndef WIN32_GLEXT_LINKS
+   // Non win32 build so call directly.
    glBindBuffer(GL_ARRAY_BUFFER, buff_obj_grid_links.ID());
+#else
+   // Indirection with win32 build.
+   OpenGLExts::ExtGLBindBuffer(GL_ARRAY_BUFFER, buff_obj_grid_links.ID());
+#endif
 
    // The number of line links contained in slices.
    GLuint slice_links = (slices - 1) *    // Number of slices excluding the prime meridian
@@ -266,10 +339,22 @@ void GridGlobe::loadGridIndexBuffer(void) {
    GLsizeiptr size = sizeof(GLuint) * grid_links * VERTICES_PER_LINK;
 
    // Allocate buffer memory but don't store, yet.
+#ifndef WIN32_GLEXT_LINKS
+   // Non win32 build so call directly.
    glBufferData(GL_ARRAY_BUFFER, size, NULL, GL_STATIC_DRAW);
+#else
+   // Indirection with win32 build.
+   OpenGLExts::ExtGLBufferData(GL_ARRAY_BUFFER, size, NULL, GL_STATIC_DRAW);
+#endif
 
    // Get write access to the buffer area.
+#ifndef WIN32_GLEXT_LINKS
+   // Non win32 build so call directly.
    GLuint* buffer_ptr = static_cast<GLuint*>(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
+#else
+   // Indirection with win32 build.
+   GLuint* buffer_ptr = static_cast<GLuint*>(OpenGLExts::ExtGLMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
+#endif
 
    // Check for failure, as we don't want to dereference a NULL later on,
    // ... MAKE IT A FATAL ERROR.
@@ -316,8 +401,21 @@ void GridGlobe::loadGridIndexBuffer(void) {
       }
 
    // Disconnect the mapping and the buffer from OpenGL.
+#ifndef WIN32_GLEXT_LINKS
+   // Non win32 build so call directly.
    glUnmapBuffer(GL_ARRAY_BUFFER);
+#else
+   // Indirection with win32 build.
+   OpenGLExts::ExtGLUnmapBuffer(GL_ARRAY_BUFFER);
+#endif
+
+#ifndef WIN32_GLEXT_LINKS
+   // Non win32 build so call directly.
    glBindBuffer(GL_ARRAY_BUFFER, Buffer_OBJ::NO_ID);
+#else
+   // Indirection with win32 build.
+   OpenGLExts::ExtGLBindBuffer(GL_ARRAY_BUFFER, Buffer_OBJ::NO_ID);
+#endif
    }
 
 void GridGlobe::loadPrimeMeridianIndexBuffer(void) {
@@ -325,7 +423,13 @@ void GridGlobe::loadPrimeMeridianIndexBuffer(void) {
    buff_obj_prime_meridian_links.acquire();
 
    // Make our buffer identifier OpenGL's current one.
+#ifndef WIN32_GLEXT_LINKS
+   // Non win32 build so call directly.
    glBindBuffer(GL_ARRAY_BUFFER, buff_obj_prime_meridian_links.ID());
+#else
+   // Indirection with win32 build.
+   OpenGLExts::ExtGLBindBuffer(GL_ARRAY_BUFFER, buff_obj_prime_meridian_links.ID());
+#endif
 
    prime_meridian_links = sp->stacks() - 1;
 
@@ -333,10 +437,22 @@ void GridGlobe::loadPrimeMeridianIndexBuffer(void) {
    GLsizeiptr size = sizeof(GLuint) * prime_meridian_links * VERTICES_PER_LINK;
 
    // Allocate buffer memory but don't store, yet.
+#ifndef WIN32_GLEXT_LINKS
+   // Non win32 build so call directly.
    glBufferData(GL_ARRAY_BUFFER, size, NULL, GL_STATIC_DRAW);
+#else
+   // Indirection with win32 build.
+   OpenGLExts::ExtGLBufferData(GL_ARRAY_BUFFER, size, NULL, GL_STATIC_DRAW);
+#endif
 
    // Get write access to the buffer area.
+#ifndef WIN32_GLEXT_LINKS
+   // Non win32 build so call directly.
    GLuint* buffer_ptr = static_cast<GLuint*>(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
+#else
+   // Indirection with win32 build.
+   GLuint* buffer_ptr = static_cast<GLuint*>(OpenGLExts::ExtGLMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
+#endif
 
    // Check for failure, as we don't want to dereference a NULL later on,
    // ... MAKE IT A FATAL ERROR.
@@ -358,8 +474,21 @@ void GridGlobe::loadPrimeMeridianIndexBuffer(void) {
       }
 
    // Disconnect the mapping and the buffer from OpenGL.
+#ifndef WIN32_GLEXT_LINKS
+   // Non win32 build so call directly.
    glUnmapBuffer(GL_ARRAY_BUFFER);
+#else
+   // Indirection with win32 build.
+   OpenGLExts::ExtGLUnmapBuffer(GL_ARRAY_BUFFER);
+#endif
+
+#ifndef WIN32_GLEXT_LINKS
+   // Non win32 build so call directly.
    glBindBuffer(GL_ARRAY_BUFFER, Buffer_OBJ::NO_ID);
+#else
+   // Indirection with win32 build.
+   OpenGLExts::ExtGLBindBuffer(GL_ARRAY_BUFFER, Buffer_OBJ::NO_ID);
+#endif
    }
 
 void GridGlobe::loadCelestialEquatorIndexBuffer(void) {
@@ -375,16 +504,34 @@ void GridGlobe::loadCelestialEquatorIndexBuffer(void) {
       buff_obj_celestial_equator_links.acquire();
 
       // Make our buffer identifier OpenGL's current one.
+#ifndef WIN32_GLEXT_LINKS
+      // Non win32 build so call directly.
       glBindBuffer(GL_ARRAY_BUFFER, buff_obj_celestial_equator_links.ID());
+#else
+      // Indirection with win32 build.
+      OpenGLExts::ExtGLBindBuffer(GL_ARRAY_BUFFER, buff_obj_celestial_equator_links.ID());
+#endif
 
       // What size allocation are we after?
       GLsizeiptr size = sizeof(GLuint) * celestial_equator_links * VERTICES_PER_LINK;
 
       // Allocate buffer memory but don't store, yet.
+#ifndef WIN32_GLEXT_LINKS
+      // Non win32 build so call directly.
       glBufferData(GL_ARRAY_BUFFER, size, NULL, GL_STATIC_DRAW);
+#else
+      // Indirection with win32 build.
+      OpenGLExts::ExtGLBufferData(GL_ARRAY_BUFFER, size, NULL, GL_STATIC_DRAW);
+#endif
 
       // Get write access to the buffer area.
+#ifndef WIN32_GLEXT_LINKS
+      // Non win32 build so call directly.
       GLuint* buffer_ptr = static_cast<GLuint*>(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
+#else
+      // Indirection with win32 build.
+      GLuint* buffer_ptr = static_cast<GLuint*>(OpenGLExts::ExtGLMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
+#endif
 
       // Check for failure, as we don't want to dereference a NULL later on,
       // ... MAKE IT A FATAL ERROR.
@@ -407,8 +554,21 @@ void GridGlobe::loadCelestialEquatorIndexBuffer(void) {
          }
 
       // Disconnect the mapping and the buffer from OpenGL.
+#ifndef WIN32_GLEXT_LINKS
+      // Non win32 build so call directly.
       glUnmapBuffer(GL_ARRAY_BUFFER);
+#else
+      // Indirection with win32 build.
+      OpenGLExts::ExtGLUnmapBuffer(GL_ARRAY_BUFFER);
+#endif
+
+#ifndef WIN32_GLEXT_LINKS
+      // Non win32 build so call directly.
       glBindBuffer(GL_ARRAY_BUFFER, Buffer_OBJ::NO_ID);
+#else
+      // Indirection with win32 build.
+      OpenGLExts::ExtGLBindBuffer(GL_ARRAY_BUFFER, Buffer_OBJ::NO_ID);
+#endif
       }
    }
 

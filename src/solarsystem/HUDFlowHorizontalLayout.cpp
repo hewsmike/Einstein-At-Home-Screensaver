@@ -20,6 +20,8 @@
 
 #include "HUDFlowHorizontalLayout.h"
 
+#include "ErrorHandler.h"
+
 HUDFlowHorizontalLayout::HUDFlowHorizontalLayout(HUDContainer* enclosing) :
                          HUDFlowLayout(enclosing) {
    }

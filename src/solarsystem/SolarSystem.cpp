@@ -20,6 +20,10 @@
 
 #include "SolarSystem.h"
 
+//#ifdef WIN32_GLEXT_LINKS
+#include "OpenGLExts.h"
+//#endif
+
 const int SolarSystem::FAR_LOOK_RATIO(1000);
 const GLdouble SolarSystem::FOV_ANGLE(45.0f);
 const GLdouble SolarSystem::NEAR_CLIP(0.5f);
@@ -69,6 +73,8 @@ void SolarSystem::resize(const int width, const int height) {
  *  value for recycle = false
  */
 void SolarSystem::initialize(const int width, const int height, const Resource* font, const bool recycle) {
+   OpenGLExts::acquire();
+
    // Check whether we initialize the first time or have to recycle (required for windoze)
    if(recycle == false) {
       // This is the first call of this routine from main().
@@ -114,12 +120,10 @@ void SolarSystem::initialize(const int width, const int height, const Resource* 
          }
       gridFont->setBackgroundColor(0.0f, 0.0f, 0.0f, 0.0f);
       gridFont->setForegroundColor(1.0f, 1.0f, 1.0f, 0.6f);
-
       // create font instance using font resource (base address + size)
       constellationFont = new OGLFT_ft(&spaceFontResource->data()->at(0),
                                        spaceFontResource->data()->size(),
                                        13, 78);
-
       // Short-circuit .....
       if(constellationFont == NULL || (constellationFont->isValid() == false)) {
          // TODO - better error path ?
@@ -143,12 +147,10 @@ void SolarSystem::initialize(const int width, const int height, const Resource* 
       HUDFont->setBackgroundColor(0.0f, 0.0f, 0.0f, 0.0f);
       HUDFont->setForegroundColor(0.0f, 1.0f, 0.0f, 0.9f);
       }
-
    // Some Simulation components need to have a font before activation.
    sim.setFont(Simulation::CONSTELLATIONS, constellationFont);
    sim.setFont(Simulation::GRID, gridFont);
    sim.setFont(Simulation::HUDOVER, HUDFont);
-
    // more font setup and optimizations
    glPixelStorei( GL_UNPACK_ALIGNMENT, 1 );
 #if defined( GL_RASTER_POSITION_UNCLIPPED_IBM )
@@ -232,7 +234,6 @@ void SolarSystem::initialize(const int width, const int height, const Resource* 
 
    glDisable(GL_CLIP_PLANE0);
    glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-
    sim.activate();
 
    // Setup dimensions. NB this is currently the only call to

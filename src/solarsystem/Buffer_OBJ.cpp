@@ -22,14 +22,10 @@
 
 #include "ErrorHandler.h"
 
-#ifdef WIN32_GLEXT_LINKS
-genBuffers_Func Buffer_OBJ::genBuffersLink(NULL);
-deleteBuffers_Func Buffer_OBJ::deleteBuffersLink(NULL);
-bindBuffer_Func Buffer_OBJ::bindBufferLink(NULL);
-bufferData_Func Buffer_OBJ::bufferDataLink(NULL);
-mapBuffer_Func Buffer_OBJ::mapBufferLink(NULL);
-unMapBuffer_Func Buffer_OBJ::unMapBufferLink(NULL);
-#endif
+//#ifdef WIN32_GLEXT_LINKS
+#include "OpenGLExts.h"
+#include <iostream>
+///#endif
 
 Buffer_OBJ::Buffer_OBJ() {
    }
@@ -40,9 +36,21 @@ Buffer_OBJ::~Buffer_OBJ() {
    }
 
 void Buffer_OBJ::acquire(void) {
+#ifndef WIN32_GLEXT_LINKS
+   // Non win32 build so call directly.
    glGenBuffers(1, &ident);
+#else
+   // Indirection with win32 build.
+   OpenGLExts::ExtGLGenBuffers(1, &ident);
+#endif
    }
 
 void Buffer_OBJ::release(void) {
+#ifndef WIN32_GLEXT_LINKS
+   // Non win32 build so call directly.
    glDeleteBuffers(1, &ident);
+#else
+   // Indirection with win32 build.
+   OpenGLExts::ExtGLDeleteBuffers(1, &ident);
+#endif
    }

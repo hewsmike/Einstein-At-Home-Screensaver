@@ -164,10 +164,10 @@ protected:
    float aspect;
 
    /// Font resource instance
-	const Resource* spaceFontResource;
+   const Resource* spaceFontResource;
 
    /// Font texture instances for in-simulation rendering
-	OGLFT_ft* gridFont;
+   OGLFT_ft* gridFont;
    OGLFT_ft* constellationFont;
    OGLFT_ft* HUDFont;
 

@@ -24,6 +24,11 @@
 #include <sstream>
 #include <vector>
 
+#include "ErrorHandler.h"
+
+//#ifdef WIN32_GLEXT_LINKS
+#include "OpenGLExts.h"
+//#endif
 
 // In 3D space there are three position coordinate values per vertex.
 const GLuint Globe::POS_COORDS_PER_VERTEX(3);
@@ -192,7 +197,13 @@ void Globe::render(void) {
    glBindTexture(GL_TEXTURE_2D, texture.ID());
 
    // Make our vertex buffer identifier OpenGL's current one.
+#ifndef WIN32_GLEXT_LINKS
+   // Non win32 build so call directly.
    glBindBuffer(GL_ARRAY_BUFFER, buff_obj_points.ID());
+#else
+   // Indirection with win32 build.
+   OpenGLExts::ExtGLBindBuffer(GL_ARRAY_BUFFER, buff_obj_points.ID());
+#endif
 
    // The untextured polygonal ( triangles ) color will be opaque and white.
    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
@@ -208,7 +219,14 @@ void Globe::render(void) {
 
    // Draw north polar region
    // Make our northern index buffer identifier OpenGL's current one.
+#ifndef WIN32_GLEXT_LINKS
+   // Non win32 build so call directly.
    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, north_cap_indices.ID());
+#else
+   // Indirection with win32 build.
+   OpenGLExts::ExtGLBindBuffer(GL_ELEMENT_ARRAY_BUFFER, north_cap_indices.ID());
+#endif
+
    // This is one actual rendering call that all preparations have been aiming at.
    glDrawElements(GL_TRIANGLE_FAN,
                   verts_per_lat + 1,            // The pole, and one stack's worth of vertices
@@ -216,7 +234,13 @@ void Globe::render(void) {
                   BUFFER_OFFSET(ARRAY_START));
 
    // Make the waist index buffer identifier OpenGL's current one.
+#ifndef WIN32_GLEXT_LINKS
+   // Non win32 build so call directly.
    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, waist_buffer.ID());
+#else
+   // Indirection with win32 build.
+   OpenGLExts::ExtGLBindBuffer(GL_ELEMENT_ARRAY_BUFFER, waist_buffer.ID());
+#endif
 
    for(GLuint stack = 1; stack < sp.stacks() - 2; ++stack) {
       // Herewith the number of bytes into the index buffer
@@ -235,15 +259,35 @@ void Globe::render(void) {
 
    // Draw south polar region
    // Make our southern index buffer identifier OpenGL's current one.
+#ifndef WIN32_GLEXT_LINKS
+   // Non win32 build so call directly.
    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, south_cap_indices.ID());
+#else
+   // Indirection with win32 build.
+   OpenGLExts::ExtGLBindBuffer(GL_ELEMENT_ARRAY_BUFFER, south_cap_indices.ID());
+#endif
+
    glDrawElements(GL_TRIANGLE_FAN,
                   verts_per_lat + 1,            // The pole, and one stack's worth of vertices
                   GL_UNSIGNED_INT,
                   BUFFER_OFFSET(ARRAY_START));
 
    // Unbind the buffers and the texture.
+#ifndef WIN32_GLEXT_LINKS
+   // Non win32 build so call directly.
    glBindBuffer(GL_ARRAY_BUFFER, Buffer_OBJ::NO_ID);
+#else
+   // Indirection with win32 build.
+   OpenGLExts::ExtGLBindBuffer(GL_ARRAY_BUFFER, Buffer_OBJ::NO_ID);
+#endif
+
+#ifndef WIN32_GLEXT_LINKS
+   // Non win32 build so call directly.
    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Buffer_OBJ::NO_ID);
+#else
+   // Indirection with win32 build.
+   OpenGLExts::ExtGLBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Buffer_OBJ::NO_ID);
+#endif
    glBindTexture(GL_TEXTURE_2D, Texture_OBJ::NO_ID);
 
    // Disable polygon face culling.
@@ -263,7 +307,13 @@ void Globe::loadVertexBuffer(void) {
    buff_obj_points.acquire();
 
    // Make our buffer identifier OpenGL's current one.
+#ifndef WIN32_GLEXT_LINKS
+   // Non win32 build so call directly.
    glBindBuffer(GL_ARRAY_BUFFER, buff_obj_points.ID());
+#else
+   // Indirection with win32 build.
+   OpenGLExts::ExtGLBindBuffer(GL_ARRAY_BUFFER, buff_obj_points.ID());
+#endif
 
    // What size allocation are we after? There are two pole vertices, and
    // a number of vertices at each stack of latitude. Each vertex has
@@ -274,10 +324,22 @@ void Globe::loadVertexBuffer(void) {
                      sp.vertices().size();      // How many vertices we have.
 
    // Allocate buffer memory but don't store, yet.
+#ifndef WIN32_GLEXT_LINKS
+   // Non win32 build so call directly.
    glBufferData(GL_ARRAY_BUFFER, size, NULL, GL_STATIC_DRAW);
+#else
+   // Indirection with win32 build.
+   OpenGLExts::ExtGLBufferData(GL_ARRAY_BUFFER, size, NULL, GL_STATIC_DRAW);
+#endif
 
    // Get write access to the buffer area.
+#ifndef WIN32_GLEXT_LINKS
+   // Non win32 build so call directly.
    vec_t* buffer_ptr = static_cast<vec_t*>(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
+#else
+   // Indirection with win32 build.
+   vec_t* buffer_ptr = static_cast<vec_t*>(OpenGLExts::ExtGLMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
+#endif
 
    // Check for failure, as we don't want to dereference a NULL later on,
    // ... MAKE IT A FATAL ERROR.
@@ -295,8 +357,21 @@ void Globe::loadVertexBuffer(void) {
       }
 
    // Disconnect the mapping and the buffer from OpenGL.
+#ifndef WIN32_GLEXT_LINKS
+   // Non win32 build so call directly.
    glUnmapBuffer(GL_ARRAY_BUFFER);
+#else
+   // Indirection with win32 build.
+   OpenGLExts::ExtGLUnmapBuffer(GL_ARRAY_BUFFER);
+#endif
+
+#ifndef WIN32_GLEXT_LINKS
+   // Non win32 build so call directly.
    glBindBuffer(GL_ARRAY_BUFFER, Buffer_OBJ::NO_ID);
+#else
+   // Indirection with win32 build.
+   OpenGLExts::ExtGLBindBuffer(GL_ARRAY_BUFFER, Buffer_OBJ::NO_ID);
+#endif
    }
 
 void Globe::loadWaistIndexBuffer(void) {
@@ -304,7 +379,13 @@ void Globe::loadWaistIndexBuffer(void) {
    waist_buffer.acquire();
 
    // Make our buffer identifier OpenGL's current one.
+#ifndef WIN32_GLEXT_LINKS
+   // Non win32 build so call directly.
    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, waist_buffer.ID());
+#else
+   // Indirection with win32 build.
+   OpenGLExts::ExtGLBindBuffer(GL_ELEMENT_ARRAY_BUFFER, waist_buffer.ID());
+#endif
 
    // What size allocation are we after?
    GLsizeiptr waist_size = sizeof(GLuint) *           // Size of base data type
@@ -313,10 +394,22 @@ void Globe::loadWaistIndexBuffer(void) {
                            2;                         // Two stacks involved per GL_TRIANGLE_STRIP.
 
    // Allocate buffer memory but don't store, yet.
+#ifndef WIN32_GLEXT_LINKS
+   // Non win32 build so call directly.
    glBufferData(GL_ELEMENT_ARRAY_BUFFER, waist_size, NULL, GL_STATIC_DRAW);
+#else
+   // Indirection with win32 build.
+   OpenGLExts::ExtGLBufferData(GL_ELEMENT_ARRAY_BUFFER, waist_size, NULL, GL_STATIC_DRAW);
+#endif
 
    // Get write access to the buffer area.
+#ifndef WIN32_GLEXT_LINKS
+   // Non win32 build so call directly.
    GLuint* buffer_ptr = static_cast<GLuint*>(glMapBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_WRITE_ONLY));
+#else
+   // Indirection with win32 build.
+   GLuint* buffer_ptr = static_cast<GLuint*>(OpenGLExts::ExtGLMapBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_WRITE_ONLY));
+#endif
 
    // The indices of points are obtained by interrogating the sphere object.
    // Vertices are suitably listed for use within a GL_TRIANGLE_STRIP.
@@ -334,8 +427,21 @@ void Globe::loadWaistIndexBuffer(void) {
       }
 
    // Discard the mapping and unbind the buffer.
+#ifndef WIN32_GLEXT_LINKS
+   // Non win32 build so call directly.
    glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER);
+#else
+   // Indirection with win32 build.
+   OpenGLExts::ExtGLUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER);
+#endif
+
+#ifndef WIN32_GLEXT_LINKS
+   // Non win32 build so call directly.
    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Buffer_OBJ::NO_ID);
+#else
+   // Indirection with win32 build.
+   OpenGLExts::ExtGLBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Buffer_OBJ::NO_ID);
+#endif
    }
 
 void Globe::loadPolarIndexBuffer(Buffer_OBJ& buff, enum pole p) {
@@ -343,7 +449,13 @@ void Globe::loadPolarIndexBuffer(Buffer_OBJ& buff, enum pole p) {
    buff.acquire();
 
    // Make our buffer identifier OpenGL's current one for indices.
+#ifndef WIN32_GLEXT_LINKS
+   // Non win32 build so call directly.
    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buff.ID());
+#else
+   // Indirection with win32 build.
+   OpenGLExts::ExtGLBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buff.ID());
+#endif
 
    // What size byte allocation are we after for this array of indices? For
    // each point we have sizeof(GLuint) worth. What is the point count ?
@@ -352,11 +464,23 @@ void Globe::loadPolarIndexBuffer(Buffer_OBJ& buff, enum pole p) {
    GLsizeiptr polar_size = sizeof(GLuint) * (1 + verts_per_lat);
 
    // Allocate buffer memory but don't store, yet.
+#ifndef WIN32_GLEXT_LINKS
+   // Non win32 build so call directly.
    glBufferData(GL_ELEMENT_ARRAY_BUFFER, polar_size, NULL, GL_STATIC_DRAW);
+#else
+   // Indirection with win32 build.
+   OpenGLExts::ExtGLBufferData(GL_ELEMENT_ARRAY_BUFFER, polar_size, NULL, GL_STATIC_DRAW);
+#endif
 
    // Get an access pointer to the buffer area, of correct type,
    // for the purpose of writing.
+#ifndef WIN32_GLEXT_LINKS
+   // Non win32 build so call directly.
    GLuint* buffer_ptr = static_cast<GLuint*>(glMapBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_WRITE_ONLY));
+#else
+   // Indirection with win32 build.
+   GLuint* buffer_ptr = static_cast<GLuint*>(OpenGLExts::ExtGLMapBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_WRITE_ONLY));
+#endif
 
    // Index of point on sphere which begins a sequence of
    // points for later use within a GL_TRIANGLE_FAN pattern.
@@ -392,8 +516,21 @@ void Globe::loadPolarIndexBuffer(Buffer_OBJ& buff, enum pole p) {
       }
 
    // Discard the mapping and unbind ( but not release ) the buffer.
+#ifndef WIN32_GLEXT_LINKS
+   // Non win32 build so call directly.
    glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER);
+#else
+   // Indirection with win32 build.
+   OpenGLExts::ExtGLUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER);
+#endif
+
+#ifndef WIN32_GLEXT_LINKS
+   // Non win32 build so call directly.
    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Buffer_OBJ::NO_ID);
+#else
+   // Indirection with win32 build.
+   OpenGLExts::ExtGLBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Buffer_OBJ::NO_ID);
+#endif
    }
 
 void Globe::vertex2buffer(const Vertex& vert, vec_t* buffer) const {

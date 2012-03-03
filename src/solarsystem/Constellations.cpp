@@ -28,6 +28,10 @@
 #include "VectorSP.h"
 #include "Vector3D.h"
 
+//#ifdef WIN32_GLEXT_LINKS
+#include "OpenGLExts.h"
+//#endif
+
 const GLfloat Constellations::OFFSET(-20.0f);
 const GLfloat Constellations::LINK_WIDTH(1.0f);
 const GLushort Constellations::LINK_STIPPLE_PATTERN(0x8888);
@@ -1922,7 +1926,13 @@ void Constellations::render(void) {
       glEnableClientState(GL_VERTEX_ARRAY);
 
       // The GL_ARRAY_BUFFER target will be serviced by one buffer.
+#ifndef WIN32_GLEXT_LINKS
+      // Non win32 build so call directly.
       glBindBuffer(GL_ARRAY_BUFFER, buff_obj_points.ID());
+#else
+      // Indirection with win32 build.
+      OpenGLExts::ExtGLBindBuffer(GL_ARRAY_BUFFER, buff_obj_points.ID());
+#endif
 
       glEnableClientState(GL_COLOR_ARRAY);
 
@@ -1938,8 +1948,13 @@ void Constellations::render(void) {
       // Provided we show the links
       if((current_cycle_state == STARS_N_LINKS) || (current_cycle_state == ALL_ON)) {
          // The GL_ELEMENT_ARRAY_BUFFER target will be serviced by the other buffer.
+#ifndef WIN32_GLEXT_LINKS
+         // Non win32 build so call directly.
          glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buff_obj_indices.ID());
-
+#else
+         // Indirection with win32 build.
+         OpenGLExts::ExtGLBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buff_obj_indices.ID());
+#endif
          // OK, set up the vertex array within.
          glVertexPointer(COORDS_PER_VERTEX,
                          GL_FLOAT,
@@ -1950,12 +1965,24 @@ void Constellations::render(void) {
          glLineWidth(LINK_WIDTH);
          glLineStipple(LINK_STIPPLE_FACTOR, LINK_STIPPLE_PATTERN);
          glDrawElements(GL_LINES, tot_links*INDICES_PER_LINK, GL_UNSIGNED_INT, BUFFER_OFFSET(0));
+#ifndef WIN32_GLEXT_LINKS
+         // Non win32 build so call directly.
          glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Buffer_OBJ::NO_ID);
+#else
+         // Indirection with win32 build.
+         OpenGLExts::ExtGLBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Buffer_OBJ::NO_ID);
+#endif
          }
 
       // Disable various capabilities from the OpenGL state machine.
       glDisableClientState(GL_VERTEX_ARRAY);
+#ifndef WIN32_GLEXT_LINKS
+      // Non win32 build so call directly.
       glBindBuffer(GL_ARRAY_BUFFER, Buffer_OBJ::NO_ID);
+#else
+      // Indirection with win32 build.
+      OpenGLExts::ExtGLBindBuffer(GL_ARRAY_BUFFER, Buffer_OBJ::NO_ID);
+#endif
 
       // Provided we show the names.
       if((current_cycle_state == STARS_N_NAMES) || (current_cycle_state == ALL_ON)) {
@@ -2034,16 +2061,38 @@ void Constellations::loadVertexBuffer(void) {
    // listing of colors and positions for all stars to be rendered.
 
    // Bind the buffer for vertex array use.
+#ifndef WIN32_GLEXT_LINKS
+   // Non win32 build so call directly.
    glBindBuffer(GL_ARRAY_BUFFER, buff_obj_points.ID());
+#else
+   // Indirection with win32 build.
+   OpenGLExts::ExtGLBindBuffer(GL_ARRAY_BUFFER, buff_obj_points.ID());
+#endif
 
    // Total buffer size is the storage for color/vertex
    // interleaved data.
    GLsizeiptr vert_size = sizeof(vec_t) * BYTE_STRIDE_PER_VERTEX * tot_stars;
-
    // Allocate but don't store, yet.
+#ifndef WIN32_GLEXT_LINKS
+   // Non win32 build so call directly.
    glBufferData(GL_ARRAY_BUFFER, vert_size, NULL, GL_STATIC_DRAW);
+#else
+   // Indirection with win32 build.
+   OpenGLExts::ExtGLBufferData(GL_ARRAY_BUFFER, vert_size, NULL, GL_STATIC_DRAW);
+#endif
    // Need a pointer into the color/vertex interleaved area.
+#ifndef WIN32_GLEXT_LINKS
+   // Non win32 build so call directly.
    vec_t* buffer_vert_ptr = static_cast<vec_t*>(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
+#else
+   // Indirection with win32 build.
+   // TODO - try GL_READ_WRITE ???
+   vec_t* buffer_vert_ptr = static_cast<vec_t*>(OpenGLExts::ExtGLMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
+#endif
+
+   if(buffer_vert_ptr == NULL) {
+      std::cout << "Constellations::loadVertexBuffer() : null pointer return from glMapBuffer()!" << std::endl;
+      }
 
    // Work through the constellations one by one.
    for(std::vector<Constellation>::const_iterator cs = cons_list.begin();
@@ -2062,20 +2111,31 @@ void Constellations::loadVertexBuffer(void) {
 
          // This is the current star with spherical polar co-ordinates.
          VectorSP c_star = VectorSP(st->right_ascension(), st->declination(), radius);
-
          // But Cartesian co-ordinates will be stored in the buffer.
-         *(buffer_vert_ptr) = c_star.x();
-         buffer_vert_ptr++;
-         *(buffer_vert_ptr) = c_star.y();
-         buffer_vert_ptr++;
-         *(buffer_vert_ptr) = c_star.z();
-         buffer_vert_ptr++;
+         *buffer_vert_ptr = c_star.x();
+         ++buffer_vert_ptr;
+         *buffer_vert_ptr = c_star.y();
+         ++buffer_vert_ptr;
+         *buffer_vert_ptr = c_star.z();
+         ++buffer_vert_ptr;
          }
       }
-
    // Disconnect the mapping and the buffers from OpenGL.
+#ifndef WIN32_GLEXT_LINKS
+   // Non win32 build so call directly.
    glUnmapBuffer(GL_ARRAY_BUFFER);
+#else
+   // Indirection with win32 build.
+   OpenGLExts::ExtGLUnmapBuffer(GL_ARRAY_BUFFER);
+#endif
+
+#ifndef WIN32_GLEXT_LINKS
+   // Non win32 build so call directly.
    glBindBuffer(GL_ARRAY_BUFFER, Buffer_OBJ::NO_ID);
+#else
+   // Indirection with win32 build.
+   OpenGLExts::ExtGLBindBuffer(GL_ARRAY_BUFFER, Buffer_OBJ::NO_ID);
+#endif
    }
 
 void Constellations::loadIndexBuffer(void) {
@@ -2085,14 +2145,34 @@ void Constellations::loadIndexBuffer(void) {
    /// represented as a line in the render() routine.
 
    /// Bind the buffer for index array use.
+#ifndef WIN32_GLEXT_LINKS
+   // Non win32 build so call directly.
    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buff_obj_indices.ID());
+#else
+   // Indirection with win32 build.
+   OpenGLExts::ExtGLBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buff_obj_indices.ID());
+#endif
+
    /// Total buffer size is the storage for index data.
    GLsizeiptr index_size = sizeof(unsigned int) * INDICES_PER_LINK * tot_links;
 
    /// Allocate but don't store, yet.
+#ifndef WIN32_GLEXT_LINKS
+   // Non win32 build so call directly.
    glBufferData(GL_ELEMENT_ARRAY_BUFFER, index_size, NULL, GL_STATIC_DRAW);
+#else
+   // Indirection with win32 build.
+   OpenGLExts::ExtGLBufferData(GL_ELEMENT_ARRAY_BUFFER, index_size, NULL, GL_STATIC_DRAW);
+#endif
+
    /// Need a pointer into the index area.
+#ifndef WIN32_GLEXT_LINKS
+   // Non win32 build so call directly.
    unsigned int* buffer_index_ptr = static_cast<unsigned int*>(glMapBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_WRITE_ONLY));
+#else
+   // Indirection with win32 build.
+   unsigned int* buffer_index_ptr = static_cast<unsigned int*>(OpenGLExts::ExtGLMapBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_WRITE_ONLY));
+#endif
 
    /// Need to keep track of the indices with respect to the entire
    /// set of constellations.
@@ -2149,8 +2229,21 @@ void Constellations::loadIndexBuffer(void) {
       }
 
    // Disconnect the mapping and the buffers from OpenGL.
+#ifndef WIN32_GLEXT_LINKS
+   // Non win32 build so call directly.
    glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER);
+#else
+   // Indirection with win32 build.
+   OpenGLExts::ExtGLUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER);
+#endif
+
+#ifndef WIN32_GLEXT_LINKS
+   // Non win32 build so call directly.
    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Buffer_OBJ::NO_ID);
+#else
+   // Indirection with win32 build.
+   OpenGLExts::ExtGLBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Buffer_OBJ::NO_ID);
+#endif
    }
 
 void Constellations::createMarkerLists(void) {

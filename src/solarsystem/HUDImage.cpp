@@ -20,6 +20,12 @@
 
 #include "HUDImage.h"
 
+#include "ErrorHandler.h"
+
+//#ifdef WIN32_GLEXT_LINKS
+#include "OpenGLExts.h"
+//#endif
+
 // In 3D space there are three position coordinate values per vertex.
 const GLuint HUDImage::POS_COORDS_PER_VERTEX(3);
 
@@ -109,7 +115,13 @@ void HUDImage::render(void) {
    glBindTexture(GL_TEXTURE_2D, texture.ID());
 
    // Make our vertex buffer identifier OpenGL's current one.
+#ifndef WIN32_GLEXT_LINKS
+   // Non win32 build so call directly.
    glBindBuffer(GL_ARRAY_BUFFER, buff_obj_points.ID());
+#else
+   // Indirection with win32 build.
+   OpenGLExts::ExtGLBindBuffer(GL_ARRAY_BUFFER, buff_obj_points.ID());
+#endif
 
    // The untextured polygonal ( triangles ) color will be opaque and white.
    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
@@ -133,7 +145,13 @@ void HUDImage::render(void) {
    glPopMatrix();
 
    // Unbind the buffers and the texture.
+#ifndef WIN32_GLEXT_LINKS
+   // Non win32 build so call directly.
    glBindBuffer(GL_ARRAY_BUFFER, Buffer_OBJ::NO_ID);
+#else
+   // Indirection with win32 build.
+   OpenGLExts::ExtGLBindBuffer(GL_ARRAY_BUFFER, Buffer_OBJ::NO_ID);
+#endif
    glBindTexture(GL_TEXTURE_2D, Texture_OBJ::NO_ID);
 
    // Disable the texture and vertex arrays.
@@ -244,7 +262,13 @@ void HUDImage::loadVertexBuffer(void) {
    buff_obj_points.acquire();
 
    // Make our buffer identifier OpenGL's current one.
+#ifndef WIN32_GLEXT_LINKS
+   // Non win32 build so call directly.
    glBindBuffer(GL_ARRAY_BUFFER, buff_obj_points.ID());
+#else
+   // Indirection with win32 build.
+   OpenGLExts::ExtGLBindBuffer(GL_ARRAY_BUFFER, buff_obj_points.ID());
+#endif
 
    // What size allocation are we after? There are four vertices,
    // one for each corner of a quadrilateral. Each vertex has
@@ -255,10 +279,22 @@ void HUDImage::loadVertexBuffer(void) {
                      verts.size();              // How many vertices we have.
 
    // Allocate buffer memory but don't store, yet.
+#ifndef WIN32_GLEXT_LINKS
+   // Non win32 build so call directly.
    glBufferData(GL_ARRAY_BUFFER, size, NULL, GL_STATIC_DRAW);
+#else
+   // Indirection with win32 build.
+   OpenGLExts::ExtGLBufferData(GL_ARRAY_BUFFER, size, NULL, GL_STATIC_DRAW);
+#endif
 
    // Get write access to the buffer area.
+#ifndef WIN32_GLEXT_LINKS
+   // Non win32 build so call directly.
    vec_t* buffer_ptr = static_cast<vec_t*>(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
+#else
+   // Indirection with win32 build.
+   vec_t* buffer_ptr = static_cast<vec_t*>(OpenGLExts::ExtGLMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
+#endif
 
    // Check for failure, as we don't want to dereference a NULL later on,
    // ... MAKE IT A FATAL ERROR.
@@ -277,8 +313,21 @@ void HUDImage::loadVertexBuffer(void) {
       }
 
    // Disconnect the mapping and the buffer from OpenGL.
+#ifndef WIN32_GLEXT_LINKS
+   // Non win32 build so call directly.
    glUnmapBuffer(GL_ARRAY_BUFFER);
+#else
+   // Indirection with win32 build.
+   OpenGLExts::ExtGLUnmapBuffer(GL_ARRAY_BUFFER);
+#endif
+
+#ifndef WIN32_GLEXT_LINKS
+   // Non win32 build so call directly.
    glBindBuffer(GL_ARRAY_BUFFER, Buffer_OBJ::NO_ID);
+#else
+   // Indirection with win32 build.
+   OpenGLExts::ExtGLBindBuffer(GL_ARRAY_BUFFER, Buffer_OBJ::NO_ID);
+#endif
    }
 
 void HUDImage::vertex2buffer(const Vertex& vert, vec_t* buffer) const {
