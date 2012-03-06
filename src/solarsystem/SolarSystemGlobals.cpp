@@ -183,15 +183,21 @@ void SolarSystemGlobals::getOGLVersion(GLuint* major, GLuint* minor) {
    std::cout << "Major version = " << ver_strings.at(0) << std::endl;
    std::cout << "Minor version = " << ver_strings.at(1) << std::endl;
 
-   int major_candidate = atoi(ver_strings.at(0).c_str());
-   if(major_candidate == 0) {
+   int major_candidate = 0;
+   std::stringstream convert1(ver_strings[0]);
+   convert1 >> major_candidate;
+
+   if(convert1.goodbit != 0) {
       std::string msg = "SolarSystemGlobals::getOGLVersion() : couldn't interpret major version string";
       ErrorHandler::record(msg, ErrorHandler::FATAL);
       }
    *major = major_candidate;
 
-   int minor_candidate = atoi(ver_strings.at(1).c_str());
-   if(minor_candidate == 0) {
+   int minor_candidate = 0;
+   std::stringstream convert2(ver_strings[1]);
+   convert2 >> minor_candidate;
+
+   if(convert2.goodbit != 0) {
       std::string msg = "SolarSystemGlobals::getOGLVersion() : couldn't interpret minor version string";
       ErrorHandler::record(msg, ErrorHandler::FATAL);
       }
@@ -225,14 +231,14 @@ bool SolarSystemGlobals::setOGLContextVersion(GLuint major, GLuint minor) {
             // V3.1 is special in that we can use it, but only
             // if ARB_compatibility is defined.
             if(isOGLExtensionAvailable("GL_ARB_COMPATIBILITY")) {
-               ret_val = true;
+               // Yes, but how do we actually take advantage of this ??
+               // ret_val = true;
                }
             }
          else {
             // Ok, we are above 3.1 so want to invoke the
             // compatibility profile mechanism.
-
-            //glGetStringGL_ARB_compatibility
+            // Again the question is how ......
             }
          }
       }
@@ -314,7 +320,6 @@ void SolarSystemGlobals::tokeniseString(const std::string str,
          size_t token_len = delimiter_pos - string_pos;
          std::string token = str.substr(string_pos, token_len);
          store.push_back(token);
-         std::cout << "Token = '" << token << "'" << std::endl;
          }
       // Move along to the position just after last delimiter found.
       string_pos = delimiter_pos + 1;

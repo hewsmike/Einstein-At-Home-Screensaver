@@ -133,7 +133,10 @@ int main(int argc, char **argv) {
       std::cout << "The OpenGL context is adequate" << std::endl;
       }
    else {
-      std::cout << "The OpenGL context is inappropriate" << std::endl;
+      std::cout << "The OpenGL context is inappropriate for Windows" << std::endl;
+#ifdef WIN32_GLEXT_LINKS
+      exit(1);
+#endif
       }
 
    // create font and icon resource instances

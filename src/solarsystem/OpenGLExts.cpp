@@ -88,7 +88,7 @@ void OpenGLExts::acquire(void) {
    if(GetStringi_ptr == NULL) {
       std::string msg = "OpenGLExts::acquire() : null pointer obtained for glGetStringi!";
       std::cout << msg << std::endl;
-      ErrorHandler::record(msg, ErrorHandler::FATAL);
+      ErrorHandler::record(msg, ErrorHandler::WARN);
       }
    }
 
