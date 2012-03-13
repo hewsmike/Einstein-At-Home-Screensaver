@@ -2086,7 +2086,6 @@ void Constellations::loadVertexBuffer(void) {
    vec_t* buffer_vert_ptr = static_cast<vec_t*>(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
 #else
    // Indirection with win32 build.
-   // TODO - try GL_READ_WRITE ???
    vec_t* buffer_vert_ptr = static_cast<vec_t*>(OpenGLExts::ExtGLMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
 #endif
 

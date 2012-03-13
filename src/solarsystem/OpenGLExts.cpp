@@ -34,6 +34,11 @@ glGenBuffers_fptr OpenGLExts::GenBuffers_ptr(NULL);
 glMapBuffer_fptr OpenGLExts::MapBuffer_ptr(NULL);
 glUnmapBuffer_fptr OpenGLExts::UnmapBuffer_ptr(NULL);
 glGetStringi_fptr OpenGLExts::GetStringi_ptr(NULL);
+wglCreateContextAttribsARB_fptr OpenGLExts::wCreateContextAttribsARB_ptr(NULL);
+wglGetCurrentContext_fptr OpenGLExts::wGetCurrentContext_ptr(NULL);
+wglGetCurrentDC_fptr OpenGLExts::wGetCurrentDC_ptr(NULL);
+wglDeleteContext_fptr OpenGLExts::wDeleteContext_ptr(NULL);
+wglMakeCurrent_fptr OpenGLExts::wMakeCurrent_ptr(NULL);
 
 OpenGLExts::OpenGLExts() {
    }
@@ -44,49 +49,84 @@ OpenGLExts::~OpenGLExts() {
 void OpenGLExts::acquire(void) {
    BindBuffer_ptr = reinterpret_cast<glBindBuffer_fptr>(SDL_GL_GetProcAddress("glBindBuffer"));
    if(BindBuffer_ptr == NULL) {
-      std::string msg = "OpenGLExts::acquire() : null pointer obtained for glBindBuffer!";
+      std::string msg = "OpenGLExts::acquire() : null pointer obtained for glBindBuffer !";
       std::cout << msg << std::endl;
       ErrorHandler::record(msg, ErrorHandler::FATAL);
       }
 
    BufferData_ptr = reinterpret_cast<glBufferData_fptr>(SDL_GL_GetProcAddress("glBufferData"));
    if(BufferData_ptr == NULL) {
-      std::string msg = "OpenGLExts::acquire() : null pointer obtained for glBufferData!";
+      std::string msg = "OpenGLExts::acquire() : null pointer obtained for glBufferData !";
       std::cout << msg << std::endl;
       ErrorHandler::record(msg, ErrorHandler::FATAL);
       }
 
    DeleteBuffers_ptr = reinterpret_cast<glDeleteBuffers_fptr>(SDL_GL_GetProcAddress("glDeleteBuffers"));
    if(DeleteBuffers_ptr == NULL) {
-      std::string msg = "OpenGLExts::acquire() : null pointer obtained for glDeleteBuffers!";
+      std::string msg = "OpenGLExts::acquire() : null pointer obtained for glDeleteBuffers !";
       std::cout << msg << std::endl;
       ErrorHandler::record(msg, ErrorHandler::FATAL);
       }
 
    GenBuffers_ptr = reinterpret_cast<glGenBuffers_fptr>(SDL_GL_GetProcAddress("glGenBuffers"));
    if(GenBuffers_ptr == NULL) {
-      std::string msg = "OpenGLExts::acquire() : null pointer obtained!";
+      std::string msg = "OpenGLExts::acquire() : null pointer obtained for glGenBuffers !";
       std::cout << msg << std::endl;
       ErrorHandler::record(msg, ErrorHandler::FATAL);
       }
 
    MapBuffer_ptr = reinterpret_cast<glMapBuffer_fptr>(SDL_GL_GetProcAddress("glMapBuffer"));
    if(MapBuffer_ptr == NULL) {
-      std::string msg = "OpenGLExts::acquire() : null pointer obtained for glMapBuffer!";
+      std::string msg = "OpenGLExts::acquire() : null pointer obtained for glMapBuffer !";
       std::cout << msg << std::endl;
       ErrorHandler::record(msg, ErrorHandler::FATAL);
       }
 
    UnmapBuffer_ptr = reinterpret_cast<glUnmapBuffer_fptr>(SDL_GL_GetProcAddress("glUnmapBuffer"));
    if(UnmapBuffer_ptr == NULL) {
-      std::string msg = "OpenGLExts::acquire() : null pointer obtained for glUnmapBuffer!";
+      std::string msg = "OpenGLExts::acquire() : null pointer obtained for glUnmapBuffer !";
       std::cout << msg << std::endl;
       ErrorHandler::record(msg, ErrorHandler::FATAL);
       }
 
    GetStringi_ptr = reinterpret_cast<glGetStringi_fptr>(SDL_GL_GetProcAddress("glGetStringi"));
    if(GetStringi_ptr == NULL) {
-      std::string msg = "OpenGLExts::acquire() : null pointer obtained for glGetStringi!";
+      std::string msg = "OpenGLExts::acquire() : null pointer obtained for glGetStringi !";
+      std::cout << msg << std::endl;
+      ErrorHandler::record(msg, ErrorHandler::WARN);
+      }
+      
+   wCreateContextAttribsARB_ptr = reinterpret_cast<wglCreateContextAttribsARB_fptr>(SDL_GL_GetProcAddress("wglCreateContextAttribsARB"));
+      if(wCreateContextAttribsARB_ptr == NULL) {
+      std::string msg = "OpenGLExts::acquire() : null pointer obtained for wglCreateContextAttribsARB !";
+      std::cout << msg << std::endl;
+      ErrorHandler::record(msg, ErrorHandler::WARN);
+      }
+      
+   wGetCurrentContext_ptr = reinterpret_cast<wglGetCurrentContext_fptr>(SDL_GL_GetProcAddress("wglGetCurrentContext"));
+      if(wGetCurrentContext_ptr == NULL) {
+      std::string msg = "OpenGLExts::acquire() : null pointer obtained for wglGetCurrentContext !";
+      std::cout << msg << std::endl;
+      ErrorHandler::record(msg, ErrorHandler::WARN);
+      }
+      
+   wGetCurrentDC_ptr = reinterpret_cast<wglGetCurrentDC_fptr>(SDL_GL_GetProcAddress("wglGetCurrentDC"));
+      if(wGetCurrentDC_ptr == NULL) {
+      std::string msg = "OpenGLExts::acquire() : null pointer obtained for wglGetCurrentDC !";
+      std::cout << msg << std::endl;
+      ErrorHandler::record(msg, ErrorHandler::WARN);
+      }
+      
+   wDeleteContext_ptr = reinterpret_cast<wglDeleteContext_fptr>(SDL_GL_GetProcAddress("wglDeleteContext"));
+      if(wDeleteContext_ptr == NULL) {
+      std::string msg = "OpenGLExts::acquire() : null pointer obtained for wglDeleteContext !";
+      std::cout << msg << std::endl;
+      ErrorHandler::record(msg, ErrorHandler::WARN);
+      }
+      
+   wMakeCurrent_ptr = reinterpret_cast<wglMakeCurrent_fptr>(SDL_GL_GetProcAddress("wglMakeCurrent"));
+      if(wMakeCurrent_ptr == NULL) {
+      std::string msg = "OpenGLExts::acquire() : null pointer obtained for wglMakeCurrent !";
       std::cout << msg << std::endl;
       ErrorHandler::record(msg, ErrorHandler::WARN);
       }
@@ -118,4 +158,24 @@ GLboolean OpenGLExts::ExtGLUnmapBuffer(GLenum target) {
 
 const GLubyte* OpenGLExts::ExtGLGetStringi(GLenum name, GLuint index) {
    return (*GetStringi_ptr)(name, index);
+   }
+   
+HGLRC OpenGLExts::ExtWGLCreateContextAttribsARB(HDC hDC, HGLRC hShareContext, const int* attribList) {
+   return (*wCreateContextAttribsARB_ptr)(hDC, hShareContext, attribList);
+   }
+   
+HGLRC OpenGLExts::ExtWGLGetCurrentContext(void) {
+   return (*wGetCurrentContext_ptr)();
+   }
+
+HDC OpenGLExts::ExtWGLGetCurrentDC(void) {
+   return (*wGetCurrentDC_ptr)();
+   }
+   
+BOOL OpenGLExts::ExtWGLDeleteContext(HGLRC hglrc) {
+   return (*wDeleteContext_ptr)(hglrc);
+   }
+   
+BOOL OpenGLExts::ExtWGLMakeCurrent(HDC hdc, HGLRC hglrc) {
+   return (*wMakeCurrent_ptr)(hdc, hglrc);
    }

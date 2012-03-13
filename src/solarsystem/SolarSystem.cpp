@@ -75,6 +75,30 @@ void SolarSystem::resize(const int width, const int height) {
 void SolarSystem::initialize(const int width, const int height, const Resource* font, const bool recycle) {
    OpenGLExts::acquire();
 
+   // Find out the OpenGL version.
+   GLuint major = 0;
+   GLuint minor = 0;
+   SolarSystemGlobals::getOGLVersion(&major, &minor);
+   std::cout << "SolarSystem::initialize() : OpenGL version = "
+             << major << '.' << minor << std::endl;
+
+   // Find out the OpenGL extensions.
+   SolarSystemGlobals::getOGLExtensions();
+
+   if(SolarSystemGlobals::setOGLContextVersion(major, minor) == true){
+      std::cout << "SolarSystem::initialize() : The OpenGL context is adequate" << std::endl;
+      }
+   else {
+      std::cout << "SolarSystem::initialize() : The OpenGL context is inappropriate for Windows" << std::endl;
+#ifdef WIN32_GLEXT_LINKS
+      exit(1);
+#endif
+      }
+
+   SolarSystemGlobals::getOGLVersion(&major, &minor);
+   std::cout << "SolarSystem::initialize() : OpenGL version after compatibility = "
+             << major << '.' << minor << std::endl;
+
    // Check whether we initialize the first time or have to recycle (required for windoze)
    if(recycle == false) {
       // This is the first call of this routine from main().

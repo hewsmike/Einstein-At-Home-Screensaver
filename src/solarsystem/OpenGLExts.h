@@ -36,8 +36,14 @@ typedef void (APIENTRY *glGenBuffers_fptr)(GLsizei, GLuint*);
 typedef void* (APIENTRY *glMapBuffer_fptr)(GLenum, GLenum);
 typedef GLboolean (APIENTRY *glUnmapBuffer_fptr)(GLenum);
 typedef const GLubyte* (APIENTRY *glGetStringi_fptr)(GLenum, GLuint);
+typedef HGLRC (APIENTRY *wglCreateContextAttribsARB_fptr)(HDC, HGLRC, const int*);
+typedef HGLRC (APIENTRY *wglGetCurrentContext_fptr)(void);
+typedef HDC (APIENTRY *wglGetCurrentDC_fptr)(void);
+typedef BOOL (APIENTRY *wglDeleteContext_fptr)(HGLRC);
+typedef BOOL (APIENTRY *wglMakeCurrent_fptr)(HDC, HGLRC);
 
-// typedef HGLRC (APIENTRY *CreateContextAttribsARB)(HDC, HGLRC, const int*);
+#define WGL_CONTEXT_MAJOR_VERSION_ARB 0x2091
+#define WGL_CONTEXT_MINOR_VERSION_ARB 0x2092
 
 /**
  * \addtogroup solarsystem Solarsystem
@@ -78,6 +84,16 @@ class OpenGLExts {
 
       static const GLubyte* ExtGLGetStringi(GLenum name, GLuint index);
 
+      static HGLRC ExtWGLCreateContextAttribsARB(HDC hDC, HGLRC hShareContext, const int* attribList);
+
+      static HGLRC ExtWGLGetCurrentContext(void);
+
+      static HDC ExtWGLGetCurrentDC(void);
+
+      static BOOL ExtWGLDeleteContext(HGLRC hglrc);
+
+      static BOOL ExtWGLMakeCurrent(HDC hDC, HGLRC hglrc);
+
       /**
        * \brief Obtains all the OpenGL extension function
        *        pointers, one for each within the above enumeration.
@@ -100,6 +116,11 @@ class OpenGLExts {
       static glMapBuffer_fptr MapBuffer_ptr;
       static glUnmapBuffer_fptr UnmapBuffer_ptr;
       static glGetStringi_fptr GetStringi_ptr;
+      static wglCreateContextAttribsARB_fptr wCreateContextAttribsARB_ptr;
+      static wglGetCurrentContext_fptr wGetCurrentContext_ptr;
+      static wglGetCurrentDC_fptr wGetCurrentDC_ptr;
+      static wglDeleteContext_fptr wDeleteContext_ptr;
+      static wglMakeCurrent_fptr wMakeCurrent_ptr;
    };
 
 /**

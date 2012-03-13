@@ -83,13 +83,13 @@ int main(int argc, char **argv) {
                                          GraphicsEngineFactory::SolarSystem,
                                          scienceApplication);
    if(!graphics) {
-      cerr << "Requested graphics engine could not be found/instantiated!" << endl;
+      cerr << "SolarSystem::main() : Requested graphics engine could not be found/instantiated!" << endl;
       exit(1);
       }
 
    // initialize window manager
    if(!window.initialize()) {
-      cerr << "Window manager could not be initialized!" << endl;
+      cerr << "SolarSystem::main() : Window manager could not be initialized!" << endl;
       delete graphics;
       exit(1);
       }
@@ -101,56 +101,60 @@ int main(int argc, char **argv) {
    GLuint major = 0;
    GLuint minor = 0;
    SolarSystemGlobals::getOGLVersion(&major, &minor);
-   std::cout << "OpenGL version = "
+   std::cout << "SolarSystem::main() : OpenGL version = "
              << major << '.' << minor << std::endl;
 
    // Find out the OpenGL vendor.
    const GLubyte* vendor = glGetString(GL_VENDOR);
    if(vendor != NULL) {
-      std::cout << "OpenGL vendor string = '"
+      std::cout << "SolarSystem::main() : OpenGL vendor string = '"
                 << SolarSystemGlobals::convertGLstring(vendor)
                 << "'" << std::endl;
       }
    else {
-      std::cout << "I got a null for GL_VENDOR" << std::endl;
+      std::cout << "SolarSystem::main() : I got a null for GL_VENDOR" << std::endl;
       }
 
    // Find out the OpenGL renderer.
    const GLubyte* renderer = glGetString(GL_RENDERER);
    if(renderer != NULL) {
-      std::cout << "OpenGL renderer string = '"
+      std::cout << "SolarSystem::main() : OpenGL renderer string = '"
                 << SolarSystemGlobals::convertGLstring(renderer)
                 << "'" << std::endl;
       }
    else {
-      std::cout << "I got a null for GL_RENDERER" << std::endl;
+      std::cout << "SolarSystem::main() : I got a null for GL_RENDERER" << std::endl;
       }
 
    // Find out the OpenGL extensions.
    SolarSystemGlobals::getOGLExtensions();
 
    if(SolarSystemGlobals::setOGLContextVersion(major, minor) == true){
-      std::cout << "The OpenGL context is adequate" << std::endl;
+      std::cout << "SolarSystem::main() : The OpenGL context is adequate" << std::endl;
       }
    else {
-      std::cout << "The OpenGL context is inappropriate for Windows" << std::endl;
+      std::cout << "SolarSystem::main() : The OpenGL context is inappropriate for Windows" << std::endl;
 #ifdef WIN32_GLEXT_LINKS
       exit(1);
 #endif
       }
+
+   SolarSystemGlobals::getOGLVersion(&major, &minor);
+   std::cout << "SolarSystem::main() : OpenGL version after compatibility = "
+             << major << '.' << minor << std::endl;
 
    // create font and icon resource instances
    const Resource* fontResource = factory.createInstance("FontSansSerif");
    const Resource* iconResource = factory.createInstance("AppIconBMP");
 
    if(fontResource == NULL) {
-      cerr << "Font resource could not be loaded!" << endl;
+      cerr << "SolarSystem::main() : Font resource could not be loaded!" << endl;
       delete graphics;
       exit(1);
       }
 
    if(fontResource->data()->size() <= 0) {
-      cerr << "Font resource could not be loaded!" << endl;
+      cerr << "SolarSystem::main() : Font resource could not be loaded!" << endl;
       delete graphics;
       delete fontResource;
       exit(1);
@@ -161,7 +165,7 @@ int main(int argc, char **argv) {
       delete iconResource;
       }
    else {
-      cerr << "Icon resource could not be loaded! Continuing anyway..." << endl;
+      cerr << "SolarSystem::main() : Icon resource could not be loaded! Continuing anyway..." << endl;
       }
 
    window.setWindowCaption("Einstein@Home");

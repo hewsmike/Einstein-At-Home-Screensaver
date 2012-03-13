@@ -87,8 +87,8 @@ void SolarSystemGlobals::check_OpenGL_Error() {
 std::string SolarSystemGlobals::convertGLstring(const GLubyte* glstring) {
    // gluErrorString(), and others, return 'const GLubyte *' - essentially
    // devolving to 'const unsigned char *'  - but string expects
-   // 'const char *'. Trouble is that type conversion/cast is problematic, so
-   // one has to traverse an OpenGL 'string' ( fortunately null terminated )
+   // 'const char *'. Trouble is that direct type conversion/cast is problematic,
+   // so one has to traverse an OpenGL 'string' ( fortunately null terminated )
    // in order to construct a workable C++ STL string version. This
    // assumes that the typedef 'khronos_uint8_t' won't change in future ...
 
@@ -239,6 +239,47 @@ bool SolarSystemGlobals::setOGLContextVersion(GLuint major, GLuint minor) {
             // Ok, we are above 3.1 so want to invoke the
             // compatibility profile mechanism.
             // Again the question is how ......
+
+            // Check that OpenGL version is 3.2+ : well, we're here now
+
+            // Check that all required wgl extension functions are available : it would have failed earlier otherwise
+
+            // Check that an OpenGL context has been acquired : doh
+
+            // Obtain the current device context ( HDC )
+            HDC hDC = OpenGLExts::ExtWGLGetCurrentDC();
+            std::cout << "Device context (HDC) = " << hDC << std::endl;
+
+            // Obtain the current OpenGL rendering context ( HGLRC )
+            HGLRC hglrc = OpenGLExts::ExtWGLGetCurrentContext();
+            std::cout << "Current OpenGL rendering context (HGLRC) = " << hglrc << std::endl;
+
+            // Create/initialise an array of attributes
+            int attribList[] = {WGL_CONTEXT_MAJOR_VERSION_ARB, 1,
+                                WGL_CONTEXT_MINOR_VERSION_ARB, 5,
+                                0, 0};
+
+            // Create a new OpenGL rendering context from the current one
+            HGLRC hglrc_new = OpenGLExts::ExtWGLCreateContextAttribsARB(hDC, NULL, attribList);
+            std::cout << "New OpenGL rendering context (HGLRC) = " << hglrc_new << std::endl;
+
+            // Make the newly created OpenGL rendering context the current one
+            BOOL make_success = OpenGLExts::ExtWGLMakeCurrent(hDC, hglrc_new);
+            if(make_success) {
+               std::cout << "New OpenGL rendering context (HGLRC) has been made current" << std::endl;
+               // Delete the previous OpenGL rendering context
+               BOOL delete_success = OpenGLExts::ExtWGLDeleteContext(hglrc);
+               if(delete_success) {
+                  std::cout << "Old OpenGL rendering context (HGLRC) has been deleted" << std::endl;
+                  ret_val = true;
+                  }
+               else {
+                  std::cout << "Failed to delete old OpenGL rendering context (HGLRC)" << std::endl;
+                  }
+               }
+            else {
+               std::cout << "Failed to make new OpenGL rendering context (HGLRC) current" << std::endl;
+               }
             }
          }
       }
