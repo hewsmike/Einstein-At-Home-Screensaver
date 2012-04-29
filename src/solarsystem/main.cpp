@@ -1,6 +1,9 @@
 /***************************************************************************
- *   Copyright (C) 2011 by Mike Hewson                                     *
- *   hewsmike@iinet.net.au                                                 *
+ *   Copyright (C) 2008 by Oliver Bock                                     *
+ *   oliver.bock[AT]aei.mpg.de                                             *
+ *                                                                         *
+ *   As amended 2012 by Mike Hewson                                        *
+ *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
  *                                                                         *
@@ -20,6 +23,7 @@
 
 #include <cstdlib>
 #include <iostream>
+#include <sstream>
 #include <string>
 
 #include <diagnostics.h>
@@ -30,7 +34,6 @@
 
 #include "AbstractGraphicsEngine.h"
 #include "GraphicsEngineFactory.h"
-#include "OpenGLExts.h"
 #include "SolarSystem.h"
 #include "SolarSystemGlobals.h"
 #include "ResourceFactory.h"
@@ -83,99 +86,93 @@ int main(int argc, char **argv) {
                                          GraphicsEngineFactory::SolarSystem,
                                          scienceApplication);
    if(!graphics) {
-      cerr << "SolarSystem::main() : Requested graphics engine could not be found/instantiated!" << endl;
-      exit(1);
+   	ErrorHandler::record("SolarSystem::main() : Requested graphics engine could not be found/instantiated!", ErrorHandler::FATAL);
       }
 
    // initialize window manager
-   if(!window.initialize()) {
-      cerr << "SolarSystem::main() : Window manager could not be initialized!" << endl;
+   if(window.initialize() != true) {
       delete graphics;
-      exit(1);
+      ErrorHandler::record("SolarSystem::main() : Window manager could not be initialized!", ErrorHandler::FATAL);
       }
-
-   // Hmmm .... I suppose we ought have an OpenGL context by now.
-   OpenGLExts::acquire();
 
    // Find out the OpenGL version.
    GLuint major = 0;
    GLuint minor = 0;
    SolarSystemGlobals::getOGLVersion(&major, &minor);
-   std::cout << "SolarSystem::main() : OpenGL version = "
-             << major << '.' << minor << std::endl;
+   std::stringstream msg1;
+   msg1 << "SolarSystem::main() : OpenGL version = "
+		  << major << '.' << minor;
+   ErrorHandler::record(msg1.str(), ErrorHandler::INFORM);
 
    // Find out the OpenGL vendor.
    const GLubyte* vendor = glGetString(GL_VENDOR);
    if(vendor != NULL) {
-      std::cout << "SolarSystem::main() : OpenGL vendor string = '"
-                << SolarSystemGlobals::convertGLstring(vendor)
-                << "'" << std::endl;
+   	std::stringstream msg2;
+   	msg2 << "SolarSystem::main() : OpenGL vendor string = "
+   		  << "'"
+   		  << SolarSystemGlobals::convertGLstring(vendor)
+			  << "'";
+      ErrorHandler::record(msg2.str(), ErrorHandler::INFORM);
       }
    else {
-      std::cout << "SolarSystem::main() : I got a null for GL_VENDOR" << std::endl;
+   	ErrorHandler::record("SolarSystem::main() : I got a null for GL_VENDOR", ErrorHandler::WARN);
       }
 
    // Find out the OpenGL renderer.
    const GLubyte* renderer = glGetString(GL_RENDERER);
    if(renderer != NULL) {
-      std::cout << "SolarSystem::main() : OpenGL renderer string = '"
-                << SolarSystemGlobals::convertGLstring(renderer)
-                << "'" << std::endl;
+   	std::cout << "Check-1" << std::endl;
+      std::stringstream msg3;
+      msg3 << "SolarSystem::main() : OpenGL renderer string = "
+      	  << "'"
+      	  << SolarSystemGlobals::convertGLstring(renderer)
+			  << "'";
+      ErrorHandler::record(msg3.str(), ErrorHandler::INFORM);
+      std::cout << "Check0" << std::endl;
       }
    else {
-      std::cout << "SolarSystem::main() : I got a null for GL_RENDERER" << std::endl;
+   	ErrorHandler::record("SolarSystem::main() : I got a null for GL_RENDERER", ErrorHandler::WARN);
       }
-
-   // Find out the OpenGL extensions.
-   SolarSystemGlobals::getOGLExtensions();
-
-   if(SolarSystemGlobals::setOGLContextVersion(major, minor) == true){
-      std::cout << "SolarSystem::main() : The OpenGL context is adequate" << std::endl;
-      }
-   else {
-      std::cout << "SolarSystem::main() : The OpenGL context is inappropriate for Windows" << std::endl;
-#ifdef WIN32_GLEXT_LINKS
-      exit(1);
-#endif
-      }
-
-   SolarSystemGlobals::getOGLVersion(&major, &minor);
-   std::cout << "SolarSystem::main() : OpenGL version after compatibility = "
-             << major << '.' << minor << std::endl;
 
    // create font and icon resource instances
+   std::cout << "Check1" << std::endl;
    const Resource* fontResource = factory.createInstance("FontSansSerif");
+   std::cout << "Check2" << std::endl;
    const Resource* iconResource = factory.createInstance("AppIconBMP");
+   std::cout << "Check3" << std::endl;
 
    if(fontResource == NULL) {
-      cerr << "SolarSystem::main() : Font resource could not be loaded!" << endl;
       delete graphics;
-      exit(1);
+      ErrorHandler::record("SolarSystem::main() : Font resource is NULL!", ErrorHandler::FATAL);
       }
 
+   std::cout << "Check4" << std::endl;
    if(fontResource->data()->size() <= 0) {
-      cerr << "SolarSystem::main() : Font resource could not be loaded!" << endl;
       delete graphics;
       delete fontResource;
-      exit(1);
+      ErrorHandler::record("SolarSystem::main() : Font resource could not be loaded!", ErrorHandler::FATAL);
       }
 
+   std::cout << "Check5" << std::endl;
    if(iconResource != NULL && iconResource->data()->size() > 0) {
       window.setWindowIcon(&iconResource->data()->at(0), iconResource->data()->size());
       delete iconResource;
       }
    else {
-      cerr << "SolarSystem::main() : Icon resource could not be loaded! Continuing anyway..." << endl;
+   	ErrorHandler::record("SolarSystem::main() : Icon resource could not be loaded! Continuing anyway...", ErrorHandler::WARN);
       }
 
-   window.setWindowCaption("Einstein@Home");
-
+   std::cout << "Check6" << std::endl;
    // register starsphere as event observer
    window.registerEventObserver(graphics);
+   std::cout << "Check7" << std::endl;
 
-   // prepare rendering
+   // Prepare for rendering by initialising chosen engine and get up to date BOINC information.
    graphics->initialize(window.windowWidth(), window.windowHeight(), fontResource);
+   std::cout << "Check8" << std::endl;
    graphics->refreshBOINCInformation();
+   std::cout << "Check9" << std::endl;
+   // window.setWindowCaption("Einstein@Home");
 
    // check optional command line parameters
    if(argc == 2) {
@@ -193,9 +190,10 @@ int main(int argc, char **argv) {
          }
       }
 
+   std::cout << "Check10" << std::endl;
    // enter main event loop
    window.eventLoop();
-
+   std::cout << "Check11" << std::endl;
    // clean up end exit
    window.unregisterEventObserver(graphics);
    delete graphics;

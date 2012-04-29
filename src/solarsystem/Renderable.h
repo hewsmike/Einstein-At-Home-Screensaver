@@ -21,11 +21,12 @@
 #ifndef RENDERABLE_H_
 #define RENDERABLE_H_
 
+#include "framework.h"
+
 #include <iostream>
 
 #include <oglft/OGLFT.h>
 
-#include "SDL_opengl.h"
 #include "SolarSystemGlobals.h"
 
 using namespace std;

@@ -21,6 +21,8 @@
 #ifndef SIMULATION_H_
 #define SIMULATION_H_
 
+#include "framework.h"
+
 #include <iostream>
 #include <map>
 #include <string>
@@ -41,8 +43,6 @@
 #include "HUDTextLineScroll.h"
 #include "Pulsars.h"
 #include "Renderable.h"
-#include "SDL.h"
-#include "SDL_opengl.h"
 #include "SolarSystemGlobals.h"
 #include "Sphere.h"
 #include "SunOrbit.h"

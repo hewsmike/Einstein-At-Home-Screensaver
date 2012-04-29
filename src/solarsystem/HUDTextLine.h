@@ -21,6 +21,8 @@
 #ifndef HUD_TEXT_LINE_H_
 #define HUD_TEXT_LINE_H_
 
+#include "framework.h"
+
 #include <string>
 
 #include <oglft/OGLFT.h>

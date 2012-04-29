@@ -21,9 +21,10 @@
 #ifndef VERTEX_H_
 #define VERTEX_H_
 
+#include "framework.h"
+
 #include <utility>
 
-#include "SDL_opengl.h"
 #include "Vector3D.h"
 
 /**
@@ -47,7 +48,7 @@ class Vertex {
        *
        */
       Vertex();
-            
+
       /**
        * \brief Constructor ( fully qualified )
        *
@@ -59,14 +60,14 @@ class Vertex {
        */
       Vertex(const Vector3D& ps, const Vector3D& nm,
              const std::pair<GLfloat, GLfloat>& tc);
-      
+
       /**
        * \brief Constructor ( copy )
        *
        */
       Vertex(const Vertex& other);
 
-		/**
+      /**
        * \brief Destructor
        */
       ~Vertex();
@@ -85,7 +86,7 @@ class Vertex {
        * \brief Obtains texture coordinates of the vertex
        */
       const std::pair<GLfloat, GLfloat>& texture_co_ords(void) const;
-      
+
    private:
       /// Position in 3D space.
       Vector3D pos;
@@ -95,8 +96,8 @@ class Vertex {
 
       /// Coordinate value pair for 2D texturing.
       std::pair<GLfloat, GLfloat> t_cds;
-	};
-	
+   };
+
 /**
  * @}
  */

@@ -21,13 +21,13 @@
 #ifndef SOLARSYSTEM_H_
 #define SOLARSYSTEM_H_
 
+#include "framework.h"
+
 #include <cmath>
 #include <cstdio>
 #include <ctime>
 #include <iostream>
 #include <iomanip>
-#include <SDL.h>
-#include <SDL_opengl.h>
 #include <sstream>
 #include <string>
 #include <util.h>
@@ -36,7 +36,6 @@
 
 #include "AbstractGraphicsEngine.h"
 #include "Craft.h"
-#include "ErrorHandler.h"
 #include "SolarSystemGlobals.h"
 #include "Simulation.h"
 

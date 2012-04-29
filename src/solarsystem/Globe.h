@@ -20,12 +20,12 @@
 #ifndef GLOBE_H_
 #define GLOBE_H_
 
+#include "framework.h"
+
 #include <string>
 
 #include "Buffer_OBJ.h"
 #include "Renderable.h"
-#include "SDL.h"
-#include "SDL_opengl.h"
 #include "Sphere.h"
 #include "SolarSystemGlobals.h"
 #include "Texture_OBJ.h"
@@ -119,16 +119,6 @@ class Globe : public Renderable {
       /// The geometric model approximating a sphere.
       Sphere sp;
 
-      /// The SDL surface to temporarily hold a pixel map, ultimately
-      /// for texture use.
-      SDL_Surface* surface;
-
-      /// The OpenGL image format type enumerator.
-      GLenum image_format;
-
-      /// The number of color channels in the pixel map
-      GLuint num_colors;
-
       /// An OpenGL buffer object ( in server-side memory ) holding
       /// the vertex associated data for an entire sphere approximation.
       Buffer_OBJ buff_obj_points;
@@ -139,11 +129,8 @@ class Globe : public Renderable {
       /// The number of vertices per latitude/stack
       GLuint verts_per_lat;
 
-      /// Load the image file into an SDL surface.
-      void loadImage(void);
-
-      /// Load an SDL surface pixel map into a server-side texture buffer,
-      /// with mipmap generation.
+      /// Load a pixel map into a server-side texture
+		/// buffer, with mipmap generation.
       void loadTexture(void);
 
       /// Provide OpenGL code to prepare for rendering.

@@ -21,12 +21,13 @@
 #ifndef HUD_IMAGE_H_
 #define HUD_IMAGE_H_
 
+#include "framework.h"
+
 #include <string>
 
 #include "Buffer_OBJ.h"
 #include "HUDContainer.h"
 #include "HUDContent.h"
-#include "SDL.h"
 #include "Texture_OBJ.h"
 #include "Vector3D.h"
 #include "Vertex.h"
@@ -124,9 +125,10 @@ class HUDImage : public HUDContent {
       /// the vertex associated data for a quad.
       Buffer_OBJ buff_obj_points;
 
+		/// Filename to load image from.
       std::string image_file_name;
-      GLenum image_format;
-
+      
+      /// Dimensions of loaded image.
       GLuint image_width;
       GLuint image_height;
    };

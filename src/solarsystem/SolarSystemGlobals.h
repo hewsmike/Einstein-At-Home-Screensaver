@@ -21,13 +21,12 @@
 #ifndef SOLARSYSTEM_GLOBALS_H_
 #define SOLARSYSTEM_GLOBALS_H_
 
+#include "framework.h"
+
 #include <string>
 #include <vector>
 
 #include <oglft/OGLFT.h>
-
-#include "SDL.h"
-#include "SDL_opengl.h"
 
 // SIN and COS take arguments in DEGREES
 // TODO - Make these static constants.
@@ -47,13 +46,14 @@ typedef OGLFT::TranslucentTexture OGLFT_ft;
 
 /**
  * \brief %SolarSystem Helper class with global definitions and useful static
- *        functions that one doesn't want to put elsewhere. Didn't want to call
+ *        functions that I didn't put elsewhere. Didn't want to call
  *        it 'general miscellaneous', but of course may refactor in future. :-)
  */
 
 class SolarSystemGlobals {
    public:
       // Hmmmm .... why did I put these here ?? :-)
+      /// TODO - correct this ..... ???
       enum movements {GO_HOME,
                       STOP_TRANSLATION,
                       STOP_ROTATION,
@@ -94,11 +94,6 @@ class SolarSystemGlobals {
       ~SolarSystemGlobals();
 
       /**
-       * \brief Check the current OpenGL context for error
-       */
-      static void check_OpenGL_Error(void);
-
-      /**
        * \brief Set the current render level setting.
        *
        * \param : the desired render level setting
@@ -113,17 +108,6 @@ class SolarSystemGlobals {
       static render_quality get_render_level(void);
 
       /**
-       * \brief Create an SDL surface by loading a given image file.
-       *
-       * \param filename : the name of the image file
-       *
-       * \param format : pointer to return the discovered image format
-       *
-       * \return : an SDL surface
-       */
-      static SDL_Surface* loadImage(std::string filename, GLenum* format);
-
-      /**
        * \brief Transform an OpenGL string type to an STL string type.
        *
        * \param glstring : the OpenGL string
@@ -134,47 +118,12 @@ class SolarSystemGlobals {
 
       /**
        * \brief Obtain the major and minor version number of the
-       *        current OpenGL context. Any failure here is assumed
-       *        fatal, as much depends upon this knowledge.
+       *        current OpenGL context.
        *
        * \param major : pointer to place the major version number
        * \param minor : pointer to place the minor version number
        */
       static void getOGLVersion(GLuint* major, GLuint* minor);
-
-      /**
-       * \brief Examine the current context's given OGL version
-       *        and either accept or reject it as suitable. In
-       *        the case of v3.1+ then also attempt to set
-       *        compatibility mode.
-       *
-       * \return true : if version acceptable
-       *         false : if version not acceptable
-       */
-      static bool setOGLContextVersion(GLuint major, GLuint minor);
-
-      /**
-       * \brief Recover a list of OpenGL extensions as reported
-       *        by the current context.
-       *
-       * \param major : the major version number
-       * \param minor : the minor version number
-       *
-       * \return true : if version acceptable
-       *         false : if version not acceptable
-       */
-      static void getOGLExtensions(void);
-
-      /**
-       * \brief Discover if a given OGL extension is supported
-       *        by the current context.
-       *
-       * \param extension_name : the exact name of the extension
-       *
-       * \return true : if the extension is present
-       *         false : if the extension is not present
-       */
-      static bool isOGLExtensionAvailable(std::string extension_name);
 
       /**
        * \brief Tokenise a given string using a given delimiter character
@@ -187,11 +136,6 @@ class SolarSystemGlobals {
       static void tokeniseString(const std::string str, const char delimiter, std::vector<std::string>& store);
 
    private:
-      /// Mark if OpenGL extension list has been obtained.
-      static bool ogl_extension_strings_obtained;
-
-      static std::vector<std::string> extension_strings;
-
       /// If needed, what is the preferred OpenGL compatibility mode?
       static const GLuint PREFERRED_OGL_COMPATIBILITY_MODE_MAJOR;
       static const GLuint PREFERRED_OGL_COMPATIBILITY_MODE_MINOR;

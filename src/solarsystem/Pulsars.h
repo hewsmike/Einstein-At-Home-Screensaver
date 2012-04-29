@@ -29,7 +29,6 @@
 #include "SolarSystemGlobals.h"
 #include "Vector3D.h"
 
-
 using namespace std;
 
 /**
@@ -85,7 +84,7 @@ class Pulsars : public Renderable {
        * \brief Destructor, virtual
        */
       virtual ~Pulsars();
-};
+	};
 
 /**
  * @}

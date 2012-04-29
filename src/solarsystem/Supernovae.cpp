@@ -20,10 +20,6 @@
 
 #include "Supernovae.h"
 
-#ifdef WIN32_GLEXT_LINKS
-#include "OpenGLExts.h"
-#endif
-
 const GLfloat Supernovae::MAG_SIZE(2.0f);
 const GLfloat Supernovae::RGB_RED(0.40f);
 const GLfloat Supernovae::RGB_GREEN(0.35f);
@@ -281,36 +277,17 @@ void Supernovae::prepare(SolarSystemGlobals::render_quality rq) {
       case SolarSystemGlobals::RENDER_MEDIUM :
       case SolarSystemGlobals::RENDER_HIGHEST : {
          // Make our buffer identifier OpenGL's current one.
-
-#ifndef WIN32_GLEXT_LINKS
-         // Non win32 build so call directly.
          glBindBuffer(GL_ARRAY_BUFFER, buff_obj_points.ID());
-#else
-         // Indirection with win32 build.
-         OpenGLExts::ExtGLBindBuffer(GL_ARRAY_BUFFER, buff_obj_points.ID());
-#endif
 
          // What size allocation are we after?
          GLsizeiptr size = sizeof(vec_t) * COORDS_PER_VERTEX * supernova_list.size();
 
          // Allocate buffer memory but don't store, yet.
-#ifndef WIN32_GLEXT_LINKS
-         // Non win32 build so call directly.
          glBufferData(GL_ARRAY_BUFFER, size, NULL, GL_STATIC_DRAW);
-#else
-         // Indirection with win32 build.
-         OpenGLExts::ExtGLBufferData(GL_ARRAY_BUFFER, size, NULL, GL_STATIC_DRAW);
-#endif
 
          // Get an access pointer to the buffer area, of correct type,
          // for the purpose of writing.
-#ifndef WIN32_GLEXT_LINKS
-         // Non win32 build so call directly.
          vec_t* buffer_ptr = static_cast<vec_t*>(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
-#else
-         // Indirection with win32 build.
-         vec_t* buffer_ptr = static_cast<vec_t*>(OpenGLExts::ExtGLMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
-#endif
 
          // Check for failure, as we don't want to dereference a NULL later on,
          // ... MAKE IT A FATAL ERROR.
@@ -336,21 +313,8 @@ void Supernovae::prepare(SolarSystemGlobals::render_quality rq) {
             }
 
          // Disconnect the mapping and the buffer from OpenGL.
-#ifndef WIN32_GLEXT_LINKS
-         // Non win32 build so call directly.
          glUnmapBuffer(GL_ARRAY_BUFFER);
-#else
-         // Indirection with win32 build.
-         OpenGLExts::ExtGLUnmapBuffer(GL_ARRAY_BUFFER);
-#endif
-
-#ifndef WIN32_GLEXT_LINKS
-         // Non win32 build so call directly.
          glBindBuffer(GL_ARRAY_BUFFER, Buffer_OBJ::NO_ID);
-#else
-         // Indirection with win32 build.
-         OpenGLExts::ExtGLBindBuffer(GL_ARRAY_BUFFER, Buffer_OBJ::NO_ID);
-#endif
          break;
          }
       default :
@@ -373,13 +337,7 @@ void Supernovae::render(void) {
 
 
    // Make our buffer identifier OpenGL's current one.
-#ifndef WIN32_GLEXT_LINKS
-   // Non win32 build so call directly.
    glBindBuffer(GL_ARRAY_BUFFER, buff_obj_points.ID());
-#else
-   // Indirection with win32 build.
-   OpenGLExts::ExtGLBindBuffer(GL_ARRAY_BUFFER, buff_obj_points.ID());
-#endif
 
    // We will use a vertex array within that buffer.
    glEnableClientState(GL_VERTEX_ARRAY);
@@ -393,11 +351,5 @@ void Supernovae::render(void) {
    // Stop using vertex arrays.
    glDisableClientState(GL_VERTEX_ARRAY);
 
-#ifndef WIN32_GLEXT_LINKS
-   // Non win32 build so call directly.
    glBindBuffer(GL_ARRAY_BUFFER, Buffer_OBJ::NO_ID);
-#else
-   // Indirection with win32 build.
-   OpenGLExts::ExtGLBindBuffer(GL_ARRAY_BUFFER, Buffer_OBJ::NO_ID);
-#endif
    }

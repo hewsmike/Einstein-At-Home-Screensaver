@@ -22,10 +22,6 @@
 
 #include "ErrorHandler.h"
 
-//#ifdef WIN32_GLEXT_LINKS
-#include "OpenGLExts.h"
-//#endif
-
 // In 3D space there are three position coordinate values per vertex.
 const GLuint HUDImage::POS_COORDS_PER_VERTEX(3);
 
@@ -115,13 +111,7 @@ void HUDImage::render(void) {
    glBindTexture(GL_TEXTURE_2D, texture.ID());
 
    // Make our vertex buffer identifier OpenGL's current one.
-#ifndef WIN32_GLEXT_LINKS
-   // Non win32 build so call directly.
    glBindBuffer(GL_ARRAY_BUFFER, buff_obj_points.ID());
-#else
-   // Indirection with win32 build.
-   OpenGLExts::ExtGLBindBuffer(GL_ARRAY_BUFFER, buff_obj_points.ID());
-#endif
 
    // The untextured polygonal ( triangles ) color will be opaque and white.
    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
@@ -145,13 +135,7 @@ void HUDImage::render(void) {
    glPopMatrix();
 
    // Unbind the buffers and the texture.
-#ifndef WIN32_GLEXT_LINKS
-   // Non win32 build so call directly.
    glBindBuffer(GL_ARRAY_BUFFER, Buffer_OBJ::NO_ID);
-#else
-   // Indirection with win32 build.
-   OpenGLExts::ExtGLBindBuffer(GL_ARRAY_BUFFER, Buffer_OBJ::NO_ID);
-#endif
    glBindTexture(GL_TEXTURE_2D, Texture_OBJ::NO_ID);
 
    // Disable the texture and vertex arrays.
@@ -163,64 +147,66 @@ void HUDImage::loadTexture() {
    // Get an OpenGL texture object.
    texture.acquire();
 
-   // Load the image from file to an SDL_Surface object.
-   SDL_Surface* surface = SolarSystemGlobals::loadImage(image_file_name, &image_format);
-
-   // Did that work?
-   if(surface != NULL) {
+   GLFWimage image_info;
+   
+   // I think '0' here for the last parameter means 'no flags to be set' ...
+   int read_success = glfwReadImage(image_file_name.c_str(), &image_info, 0);
+   
+   if(read_success == GL_FALSE) {
+      ErrorHandler::record("HUDImage::loadTexture() - image not loaded from file", ErrorHandler::WARN);
+		}
+   else {
       // Remember the image dimensions.
-      image_width = surface->w;
-      image_height = surface->h;
+      image_width = image_info.Width;
+      image_height = image_info.Height;
 
       // Make our texture object OpenGL's current one.
       glBindTexture(GL_TEXTURE_2D, texture.ID());
-
+      
       // The target for the following specifying calls is GL_TEXTURE_2D.
-      glTexImage2D(GL_TEXTURE_2D,                   // it's a 2D texture
-                   NO_MIPMAP,                       // level zero ie. not a mipmap
-                   surface->format->BytesPerPixel,  // the number of RGBA components we will use
-                   surface->w,                      // width in pixels
-                   surface->h,                      // height in pixels
-                   NO_BORDER,                       // don't want a border
-                   image_format,                    // the bitmap format type as discovered
-                   GL_UNSIGNED_BYTE,                // how we are packing the pixels
-                   surface->pixels);                // the actual image data from an SDL surface
+      // I think '0' here for the last parameter means 'no flags to be set' ...
+      // and in particular we won't be wanting mipmaps.
+	   int transfer_success = glfwLoadTextureImage2D(&image_info, 0);
+	   
+	   if(transfer_success == GL_TRUE) {
+			// So now the texture memory has been successfully loaded
+			// we can throw away the ( general ) memory image.
+			glfwFreeImage(&image_info);
+			
+	      // Set the texture's stretching properties
+			// for minification and magnification.
+	      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-      // Set the texture's stretching properties for minification and
-      // magnification.
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	      // Do we repeat the map in either direction? No.
+	      // 'S' is the 'horizontal' texture coordinate direction.
+	      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+	      // 'T' is the 'vertical' texture coordinate direction.
+	      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
 
-      // Do we repeat the map in either direction? No.
-      // 'S' is the 'horizontal' texture coordinate direction.
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-      // 'T' is the 'vertical' texture coordinate direction.
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+	      // How it maps when texels and fragments/pixels areas
+			// don't match when we do minification and magnification.
+	      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
-      // How it maps when texels and fragments/pixels areas don't match
-      // when we do minification and magnification.
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	      // You want to paste the image on, with no
+			// show-through of what's beneath.
+	      glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 
-      // You want to paste the image on, with no show-through of what's beneath.
-      glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+	      // Bless the texture as most important.
+	      glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_PRIORITY, 1.0f);
 
-      // Bless the texture as most important.
-      glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_PRIORITY, 1.0f);
-
-      // Unbind the texture from the state machine - but don't delete it!
-      glBindTexture(GL_TEXTURE_2D, Texture_OBJ::NO_ID);
-      }
-   else {
-      // Nope, the loading into a texture object failed. This is not fatal, as
-      // with later rendering OpenGL will simply use the 'default' texture ie.
-      // nothing. The only visual result will be to see whatever background
-      // color(s) have been assigned ( or not ! ) to the polygon(s) in question.
-      ErrorHandler::record("HUDImage::loadTexture() - texture object NOT loaded ", ErrorHandler::WARN);
-      }
-
-   // Discard the SDL_surface once we've loaded the pixels to the texture object.
-   SDL_FreeSurface(surface);
+	      // Unbind the texture from the state machine - but don't delete it!
+	      glBindTexture(GL_TEXTURE_2D, Texture_OBJ::NO_ID);
+	      }
+	   else {
+	      // Nope, the loading into a texture object failed. This is not fatal, as
+	      // with later rendering OpenGL will simply use the 'default' texture ie.
+	      // nothing. The only visual result will be to see whatever background
+	      // color(s) have been assigned ( or not ! ) to the polygon(s) in question.
+	      ErrorHandler::record("HUDImage::loadTexture() - texture object NOT loaded ", ErrorHandler::WARN);
+	      }
+		}
    }
 
 void HUDImage::createVertexData(void) {
@@ -262,13 +248,7 @@ void HUDImage::loadVertexBuffer(void) {
    buff_obj_points.acquire();
 
    // Make our buffer identifier OpenGL's current one.
-#ifndef WIN32_GLEXT_LINKS
-   // Non win32 build so call directly.
    glBindBuffer(GL_ARRAY_BUFFER, buff_obj_points.ID());
-#else
-   // Indirection with win32 build.
-   OpenGLExts::ExtGLBindBuffer(GL_ARRAY_BUFFER, buff_obj_points.ID());
-#endif
 
    // What size allocation are we after? There are four vertices,
    // one for each corner of a quadrilateral. Each vertex has
@@ -279,22 +259,10 @@ void HUDImage::loadVertexBuffer(void) {
                      verts.size();              // How many vertices we have.
 
    // Allocate buffer memory but don't store, yet.
-#ifndef WIN32_GLEXT_LINKS
-   // Non win32 build so call directly.
    glBufferData(GL_ARRAY_BUFFER, size, NULL, GL_STATIC_DRAW);
-#else
-   // Indirection with win32 build.
-   OpenGLExts::ExtGLBufferData(GL_ARRAY_BUFFER, size, NULL, GL_STATIC_DRAW);
-#endif
 
    // Get write access to the buffer area.
-#ifndef WIN32_GLEXT_LINKS
-   // Non win32 build so call directly.
    vec_t* buffer_ptr = static_cast<vec_t*>(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
-#else
-   // Indirection with win32 build.
-   vec_t* buffer_ptr = static_cast<vec_t*>(OpenGLExts::ExtGLMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
-#endif
 
    // Check for failure, as we don't want to dereference a NULL later on,
    // ... MAKE IT A FATAL ERROR.
@@ -313,21 +281,8 @@ void HUDImage::loadVertexBuffer(void) {
       }
 
    // Disconnect the mapping and the buffer from OpenGL.
-#ifndef WIN32_GLEXT_LINKS
-   // Non win32 build so call directly.
    glUnmapBuffer(GL_ARRAY_BUFFER);
-#else
-   // Indirection with win32 build.
-   OpenGLExts::ExtGLUnmapBuffer(GL_ARRAY_BUFFER);
-#endif
-
-#ifndef WIN32_GLEXT_LINKS
-   // Non win32 build so call directly.
    glBindBuffer(GL_ARRAY_BUFFER, Buffer_OBJ::NO_ID);
-#else
-   // Indirection with win32 build.
-   OpenGLExts::ExtGLBindBuffer(GL_ARRAY_BUFFER, Buffer_OBJ::NO_ID);
-#endif
    }
 
 void HUDImage::vertex2buffer(const Vertex& vert, vec_t* buffer) const {

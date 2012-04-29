@@ -21,12 +21,11 @@
 #ifndef VECTOR3D_H_
 #define VECTOR3D_H_
 
+#include "framework.h"
+
 #include <cmath>
 #include <iostream>
 #include <string>
-
-#include "SDL_opengl.h"
-// #include "SolarSystemGlobals.h"
 
 /**
  * \addtogroup solarsystem Solarsystem
@@ -76,7 +75,7 @@ class Vector3D {
        */
       Vector3D(const Vector3D& ov);
 
-		/**
+      /**
        * \brief Destructor
        */
       virtual ~Vector3D();
@@ -167,7 +166,7 @@ class Vector3D {
       static const GLfloat NULL_X;
       static const GLfloat NULL_Y;
       static const GLfloat NULL_Z;
-	};
+   };
 
 /// Non member operators. Probably simpler to do than static methods ....
 

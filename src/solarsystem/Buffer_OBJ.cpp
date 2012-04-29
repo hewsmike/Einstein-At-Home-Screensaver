@@ -22,11 +22,6 @@
 
 #include "ErrorHandler.h"
 
-//#ifdef WIN32_GLEXT_LINKS
-#include "OpenGLExts.h"
-#include <iostream>
-///#endif
-
 Buffer_OBJ::Buffer_OBJ() {
    }
 
@@ -36,21 +31,9 @@ Buffer_OBJ::~Buffer_OBJ() {
    }
 
 void Buffer_OBJ::acquire(void) {
-#ifndef WIN32_GLEXT_LINKS
-   // Non win32 build so call directly.
    glGenBuffers(1, &ident);
-#else
-   // Indirection with win32 build.
-   OpenGLExts::ExtGLGenBuffers(1, &ident);
-#endif
    }
 
 void Buffer_OBJ::release(void) {
-#ifndef WIN32_GLEXT_LINKS
-   // Non win32 build so call directly.
    glDeleteBuffers(1, &ident);
-#else
-   // Indirection with win32 build.
-   OpenGLExts::ExtGLDeleteBuffers(1, &ident);
-#endif
    }

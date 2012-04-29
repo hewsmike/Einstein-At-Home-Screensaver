@@ -21,7 +21,7 @@
 #ifndef OGL_ID_H_
 #define OGL_ID_H_
 
-#include "SDL_opengl.h"
+#include "framework.h"
 
 /**
  * \addtogroup solarsystem Solarsystem

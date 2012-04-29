@@ -26,40 +26,38 @@ SOLARSYSTEM_INSTALL?=$(PWD)
 CXX ?= g++
 
 # variables
-LIBS += -Wl,-Bstatic -lframework -loglft -L$(SOLARSYSTEM_INSTALL)/lib
+LIBS += -Wl,-Bstatic -lframework -loglft -lglfw -L$(SOLARSYSTEM_INSTALL)/lib
 LIBS += $(shell $(SOLARSYSTEM_INSTALL)/bin/freetype-config --libs)
 LIBS += $(shell $(SOLARSYSTEM_INSTALL)/bin/xml2-config --libs)
 LIBS += -lboinc_api -lboinc
 LIBS += -lstdc++
 LIBS += -L/usr/lib
-LIBS += -Wl,-Bdynamic $(shell $(SOLARSYSTEM_INSTALL)/bin/sdl-config --static-libs)
+LIBS += -Wl,-Bdynamic
 LIBS += -lGL -lGLU
 LIBS += -lpthread -lm -lc
 
 LDFLAGS += -static-libgcc
 
 CPPFLAGS += -I$(SOLARSYSTEM_INSTALL)/include
-CPPFLAGS += $(shell $(SOLARSYSTEM_INSTALL)/bin/sdl-config --cflags)
 CPPFLAGS += $(shell $(SOLARSYSTEM_INSTALL)/bin/freetype-config --cflags)
 CPPFLAGS += $(shell $(SOLARSYSTEM_INSTALL)/bin/xml2-config --cflags)
 CPPFLAGS += -I$(SOLARSYSTEM_INSTALL)/include/boinc -I/usr/include
-CPPFLAGS += -I$(SOLARSYSTEM_INSTALL)/include/SDL
 CPPFLAGS += -I$(FRAMEWORK_SRC) -I$(SOLARSYSTEM_SRC)/../framework
 CPPFLAGS += -DGL_GLEXT_PROTOTYPES
 
 DEPS = Makefile
 OBJS = AcceleratedPlatform.o Buffer_OBJ.o Constellation.o Constellations.o Craft.o
-OBJS += EinsteinRadioAdapter.o EinsteinS5R3Adapter.o ErrorHandler.o Globe.o GridGlobe.o
+OBJS += EinsteinRadioAdapter.o EinsteinS5R3Adapter.o Globe.o GridGlobe.o
 OBJS += HUDBorderLayout.o HUDContainer.o HUDContent.o
 OBJS += HUDFlowLayout.o HUDFlowHorizontalLayout.o HUDFlowVerticalLayout.o
 OBJS += HUDImage.o HUDItem.o HUDTextLine.o HUDTextLineScroll.o
-OBJS += InertialPlatform.o OGL_ID.o OpenGLExts.o
+OBJS += InertialPlatform.o OGL_ID.o
 OBJS += OrdStar.o OrthoNormalPlatform.o Pulsar.o Pulsars.o Renderable.o
 OBJS += Simulation.o SolarSystem.o
 OBJS += SolarSystemRadio.o SolarSystemS5R3.o
 OBJS += SolarSystemGlobals.o Sphere.o SpinPlatform.o Star.o SunOrbit.o
 OBJS += Supernova.o Supernovae.o Texture_OBJ.o TranslatablePlatform.o
-OBJS += TriggerTimer.o UTC.o Vector3D.o
+OBJS += UTC.o Vector3D.o
 OBJS += VectorSP.o Vertex.o
 OBJS += $(RESOURCESPEC).o
 RESOURCESPEC = resources
@@ -130,9 +128,6 @@ EinsteinS5R3Adapter.o: $(DEPS) $(SOLARSYSTEM_SRC)/EinsteinS5R3Adapter.cpp $(SOLA
 EinsteinRadioAdapter.o: $(SOLARSYSTEM_SRC)/EinsteinRadioAdapter.cpp $(SOLARSYSTEM_SRC)/EinsteinRadioAdapter.h
 	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/EinsteinRadioAdapter.cpp
 
-ErrorHandler.o: $(DEPS) $(SOLARSYSTEM_SRC)/ErrorHandler.cpp $(SOLARSYSTEM_SRC)/ErrorHandler.h
-	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/ErrorHandler.cpp
-
 Globe.o: $(DEPS) $(SOLARSYSTEM_SRC)/Globe.cpp $(SOLARSYSTEM_SRC)/Globe.h
 	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/Globe.cpp
 
@@ -174,9 +169,6 @@ InertialPlatform.o: $(DEPS) $(SOLARSYSTEM_SRC)/InertialPlatform.cpp $(SOLARSYSTE
 
 OGL_ID.o: $(DEPS) $(SOLARSYSTEM_SRC)/OGL_ID.cpp $(SOLARSYSTEM_SRC)/OGL_ID.h
 	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/OGL_ID.cpp
-
-OpenGLExts.o: $(DEPS) $(SOLARSYSTEM_SRC)/OpenGLExts.cpp $(SOLARSYSTEM_SRC)/OpenGLExts.h
-	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/OpenGLExts.cpp
 
 OrdStar.o: $(DEPS) $(SOLARSYSTEM_SRC)/OrdStar.cpp $(SOLARSYSTEM_SRC)/OrdStar.h
 	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/OrdStar.cpp
@@ -231,9 +223,6 @@ Texture_OBJ.o: $(DEPS) $(SOLARSYSTEM_SRC)/Texture_OBJ.cpp $(SOLARSYSTEM_SRC)/Tex
 
 TranslatablePlatform.o: $(DEPS) $(SOLARSYSTEM_SRC)/TranslatablePlatform.cpp $(SOLARSYSTEM_SRC)/TranslatablePlatform.h
 	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/TranslatablePlatform.cpp
-
-TriggerTimer.o: $(DEPS) $(SOLARSYSTEM_SRC)/TriggerTimer.cpp $(SOLARSYSTEM_SRC)/TriggerTimer.h
-	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/TriggerTimer.cpp
 
 UTC.o: $(DEPS) $(SOLARSYSTEM_SRC)/UTC.cpp $(SOLARSYSTEM_SRC)/UTC.h
 	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/UTC.cpp
