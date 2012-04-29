@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2008 by Oliver Bock                                     *
- *   oliver.bock[AT]aei.mpg.de                                             *
+ *   Copyright (C) 2012 by Mike Hewson                                     *
+ *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
  *                                                                         *
@@ -18,19 +18,29 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "Resource.h"
+#ifndef FRAMEWORK_H_
+#define FRAMEWORK_H_
 
-Resource::Resource(const string identifier, const vector<unsigned char>& data) : m_Data(data) {
-   m_Identifier = identifier;
-   }
+/**
+ * \addtogroup framework Framework
+ * @{
+ */
 
-Resource::~Resource() {
-   }
+/**
+ * \brief Enforce the order of inclusions. BTW glew includes gl/glu ...
+ *
+ * \author Mike Hewson\n
+ */
 
-string Resource::identifier() const {
-   return m_Identifier;
-   }
+#include <GL/glew.h>
+#include <GL/glfw.h>
 
-const vector<unsigned char>* Resource::data() const {
-   return &m_Data;
-   }
+#ifdef WIN_OGL_WORKAROUND
+#include <GL/wglew.h>
+#endif
+
+/**
+ * @}
+ */
+
+#endif /*FRAMEWORK_H_*/

@@ -22,10 +22,10 @@
 #define GRAPHICSENGINEFACTORY_H_
 
 #include "AbstractGraphicsEngine.h"
-#include "SolarSystemS5R3.h"
-#include "SolarSystemRadio.h"
-// #include "StarsphereS5R3.h"
-// #include "StarsphereRadio.h"
+#include "../solarsystem/SolarSystemS5R3.h"
+#include "../solarsystem/SolarSystemRadio.h"
+//#include "../starsphere/StarsphereS5R3.h"
+//#include "../starsphere/StarsphereRadio.h"
 
 /**
  * \addtogroup framework Framework
@@ -33,7 +33,8 @@
  */
 
 /**
- * \brief Factory to create graphics engines
+ * \brief Factory to create graphics engines. Note the instances are
+ *        new'ed here, but must be delete'd elsewhere.
  *
  * \author Oliver Bock\n
  * Max-Planck-Institute for Gravitational Physics\n
@@ -60,7 +61,7 @@ class GraphicsEngineFactory {
       /**
        * \brief Instantiates a new graphics engine
        *
-       * Use this method to create a new grahics engine instance. However, please make
+       * Use this method to create a new graphics engine instance. However, please make
        * that you use only sensible combinations of \c engine and \c application (you
        * should know them).
        *

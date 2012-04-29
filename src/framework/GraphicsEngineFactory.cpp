@@ -29,6 +29,8 @@ GraphicsEngineFactory::GraphicsEngineFactory() {
 AbstractGraphicsEngine* GraphicsEngineFactory::createInstance(
                      GraphicsEngineFactory::Engines engine,
                      GraphicsEngineFactory::Applications application) {
+	// First switch upon engine type, then variants.
+	// A NULL return indicates failure to instantiate.
    switch(engine) {
       case SolarSystem :
          switch(application) {
@@ -42,18 +44,18 @@ AbstractGraphicsEngine* GraphicsEngineFactory::createInstance(
                return NULL;
             }
          break;
-      //case Starsphere:
-         //switch(application) {
-            //case EinsteinS5R3 :
-               //return new StarsphereS5R3();
-               //break;
-            //case EinsteinRadio :
-               //return new StarsphereRadio();
-               //break;
-            //default:
-               //return NULL;
-            //}
-         //break;
+//      case Starsphere:
+//      	switch(application) {
+//         	case EinsteinS5R3 :
+//            	return new StarsphereS5R3();
+//               break;
+//            case EinsteinRadio :
+//               return new StarsphereRadio();
+//               break;
+//            default:
+//               return NULL;
+//            }
+//         break;
       default:
          return NULL;
       }

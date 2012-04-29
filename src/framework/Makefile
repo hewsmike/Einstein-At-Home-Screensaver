@@ -26,14 +26,15 @@ FRAMEWORK_INSTALL?=$(PWD)
 CXX?=g++
 
 # variables
-CPPFLAGS += $(shell $(FRAMEWORK_INSTALL)/bin/sdl-config --cflags)
 CPPFLAGS += $(shell $(FRAMEWORK_INSTALL)/bin/freetype-config --cflags)
 CPPFLAGS += $(shell $(FRAMEWORK_INSTALL)/bin/xml2-config --cflags)
 CPPFLAGS += -I$(FRAMEWORK_INSTALL)/include/boinc -I/usr/include
 
+# Note the mention of 'glew.o' here.
 DEPS = Makefile
-OBJS = AbstractGraphicsEngine.o GraphicsEngineFactory.o
+OBJS = AbstractGraphicsEngine.o ErrorHandler.o GraphicsEngineFactory.o glew.o
 OBJS += WindowManager.o Resource.o ResourceFactory.o BOINCClientAdapter.o Libxml2Adapter.o
+OBJS += TriggerTimer.o Events.o
 
 # TODO: GraphicsEngineFactory obviously depends on the actual implementations (here solarsystem & starsphere)! need to change the structure! what about plugins?
 CPPFLAGS += -I$(FRAMEWORK_SRC)
@@ -52,11 +53,20 @@ debug: CPPFLAGS += -pg -ggdb3 -O0 -Wall -Wno-switch-enum
 release: CPPFLAGS += -DNDEBUG -ggdb3 -O3 -Wall -Wno-switch-enum
 
 # file based targets
-libframework.a: $(OBJS)
+libframework.a: $(OBJS) $(FRAMEWORK_SRC)/framework.h
 	ar rcs libframework.a $(OBJS)
 
 AbstractGraphicsEngine.o: $(DEPS) $(FRAMEWORK_SRC)/AbstractGraphicsEngine.cpp $(FRAMEWORK_SRC)/AbstractGraphicsEngine.h
 	$(CXX) -g ${CPPFLAGS} -c $(FRAMEWORK_SRC)/AbstractGraphicsEngine.cpp
+
+ErrorHandler.o: $(DEPS) $(FRAMEWORK_SRC)/ErrorHandler.cpp $(FRAMEWORK_SRC)/ErrorHandler.h
+	$(CXX) -g $(CPPFLAGS) -c $(FRAMEWORK_SRC)/ErrorHandler.cpp
+
+Events.o: $(DEPS) $(FRAMEWORK_SRC)/Events.cpp $(FRAMEWORK_SRC)/Events.h
+	$(CXX) -g ${CPPFLAGS} -c $(FRAMEWORK_SRC)/Events.cpp
+
+glew.o: $(DEPS) $(FRAMEWORK_SRC)/glew.c $(FRAMEWORK_INSTALL)/include/GL/glew.h
+	$(CXX) -g -DGLEW_STATIC ${CPPFLAGS} -c $(FRAMEWORK_SRC)/glew.c
 
 GraphicsEngineFactory.o: $(DEPS) $(FRAMEWORK_SRC)/GraphicsEngineFactory.cpp $(FRAMEWORK_SRC)/GraphicsEngineFactory.h
 	$(CXX) -g ${CPPFLAGS} -c $(FRAMEWORK_SRC)/GraphicsEngineFactory.cpp
@@ -73,8 +83,12 @@ ResourceFactory.o: $(DEPS) $(FRAMEWORK_SRC)/ResourceFactory.cpp $(FRAMEWORK_SRC)
 Resource.o: $(DEPS) $(FRAMEWORK_SRC)/Resource.cpp $(FRAMEWORK_SRC)/Resource.h
 	$(CXX) -g ${CPPFLAGS} -c $(FRAMEWORK_SRC)/Resource.cpp
 
+TriggerTimer.o: $(DEPS) $(FRAMEWORK_SRC)/TriggerTimer.cpp $(FRAMEWORK_SRC)/TriggerTimer.h
+	$(CXX) -g ${CPPFLAGS} -c $(FRAMEWORK_SRC)/TriggerTimer.cpp
+
 Libxml2Adapter.o: $(DEPS) $(FRAMEWORK_SRC)/Libxml2Adapter.cpp $(FRAMEWORK_SRC)/Libxml2Adapter.h $(FRAMEWORK_SRC)/XMLProcessorInterface.h
 	$(CXX) -g ${CPPFLAGS} -c $(FRAMEWORK_SRC)/Libxml2Adapter.cpp
+
 # tools
 install:
 	cp libframework.a $(ORC_INSTALL)/lib
