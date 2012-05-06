@@ -35,7 +35,7 @@ SunOrbit::~SunOrbit() {
 Vector3D SunOrbit::getPosition(GLfloat days366) {
    // TODO - be bothered with leap years !!! :-)
 
-   if((days366 < 0) || (days366 >= DAYS_PER_YEAR)) {
+   if((days366 < 0) || (days366 > DAYS_PER_YEAR)) {
       std::string msg = "SunOrbit:getPosition() - bad days366 parameter passed";
       ErrorHandler::record(msg, ErrorHandler::FATAL);
       }

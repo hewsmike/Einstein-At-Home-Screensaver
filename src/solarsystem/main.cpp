@@ -121,39 +121,32 @@ int main(int argc, char **argv) {
    // Find out the OpenGL renderer.
    const GLubyte* renderer = glGetString(GL_RENDERER);
    if(renderer != NULL) {
-   	std::cout << "Check-1" << std::endl;
-      std::stringstream msg3;
+   	std::stringstream msg3;
       msg3 << "SolarSystem::main() : OpenGL renderer string = "
       	  << "'"
       	  << SolarSystemGlobals::convertGLstring(renderer)
 			  << "'";
       ErrorHandler::record(msg3.str(), ErrorHandler::INFORM);
-      std::cout << "Check0" << std::endl;
       }
    else {
    	ErrorHandler::record("SolarSystem::main() : I got a null for GL_RENDERER", ErrorHandler::WARN);
       }
 
    // create font and icon resource instances
-   std::cout << "Check1" << std::endl;
    const Resource* fontResource = factory.createInstance("FontSansSerif");
-   std::cout << "Check2" << std::endl;
    const Resource* iconResource = factory.createInstance("AppIconBMP");
-   std::cout << "Check3" << std::endl;
 
    if(fontResource == NULL) {
       delete graphics;
       ErrorHandler::record("SolarSystem::main() : Font resource is NULL!", ErrorHandler::FATAL);
       }
 
-   std::cout << "Check4" << std::endl;
    if(fontResource->data()->size() <= 0) {
       delete graphics;
       delete fontResource;
       ErrorHandler::record("SolarSystem::main() : Font resource could not be loaded!", ErrorHandler::FATAL);
       }
 
-   std::cout << "Check5" << std::endl;
    if(iconResource != NULL && iconResource->data()->size() > 0) {
       window.setWindowIcon(&iconResource->data()->at(0), iconResource->data()->size());
       delete iconResource;
@@ -162,17 +155,14 @@ int main(int argc, char **argv) {
    	ErrorHandler::record("SolarSystem::main() : Icon resource could not be loaded! Continuing anyway...", ErrorHandler::WARN);
       }
 
-   std::cout << "Check6" << std::endl;
    // register starsphere as event observer
    window.registerEventObserver(graphics);
-   std::cout << "Check7" << std::endl;
 
    // Prepare for rendering by initialising chosen engine and get up to date BOINC information.
    graphics->initialize(window.windowWidth(), window.windowHeight(), fontResource);
-   std::cout << "Check8" << std::endl;
    graphics->refreshBOINCInformation();
-   std::cout << "Check9" << std::endl;
-   // window.setWindowCaption("Einstein@Home");
+
+   window.setWindowCaption("Einstein@Home");
 
    // check optional command line parameters
    if(argc == 2) {
@@ -190,10 +180,9 @@ int main(int argc, char **argv) {
          }
       }
 
-   std::cout << "Check10" << std::endl;
    // enter main event loop
    window.eventLoop();
-   std::cout << "Check11" << std::endl;
+
    // clean up end exit
    window.unregisterEventObserver(graphics);
    delete graphics;

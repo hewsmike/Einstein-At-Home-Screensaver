@@ -79,9 +79,9 @@ void Events::init(GLuint render_interval) {
 
 	// Non GLFW callbacks. See note below.
 
-//	// Set the BOINC callback timing.
-//	boinc_timer = new TriggerTimer(BOINC_CALLBACK_INTERVAL, boincUpdate);
-//	ErrorHandler::record("Events::Instance() : create BOINC update timer and set callback", ErrorHandler::INFORM);
+	// Set the BOINC callback timing.
+	boinc_timer = new TriggerTimer(BOINC_CALLBACK_INTERVAL, boincUpdate);
+	ErrorHandler::record("Events::Instance() : create BOINC update timer and set callback", ErrorHandler::INFORM);
 
 	// Set the render callback timing, but adhere to minimum.
 	if(render_interval < RENDER_CALLBACK_INTERVAL_MIN){
@@ -231,14 +231,7 @@ void GLFWCALL Events::mouseButton(int button, int action) {
    }
 
 void GLFWCALL Events::mouseMotion(int x, int y) {
-	std::stringstream msg;
-	msg << "Events::mouseMotion() : x_rel = "
-		 << x
-		 << " \ty_rel = "
-		 << y;
-	ErrorHandler::record(msg.str(), ErrorHandler::INFORM);
-
-   Event ev;
+	Event ev;
    ev.m_motion.type = Events::MouseMotionEventType;
    ev.m_motion.xrel = x;
    ev.m_motion.yrel = y;

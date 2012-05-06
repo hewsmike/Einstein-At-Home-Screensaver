@@ -30,7 +30,7 @@ TriggerTimer::TriggerTimer(double interval, void (*cbFunc)(void)) {
 	// this ought be immediately disclosed as a fatal.
 	/// TODO - make this so
 	if(cbFunc == NULL) {
-      ErrorHandler::record("TriggerTimer::TriggerTimer() : NULL passed for timer callback", ErrorHandler::WARN);
+      ErrorHandler::record("TriggerTimer::TriggerTimer() : NULL passed for timer callback", ErrorHandler::FATAL);
       }
 
 	// Remember the callback routine to be invoked.

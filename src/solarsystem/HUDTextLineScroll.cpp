@@ -27,7 +27,7 @@ HUDTextLineScroll::HUDTextLineScroll(GLuint length, OGLFT_ft* font,
                                      mode direction = NONE) :
                                         HUDTextLine(length, font, horizontalMargin, verticalMargin),
                                         dir(direction) {
-	trig = new TriggerTimer(300.0f, NULL);
+	// trig = new TriggerTimer(300.0f, NULL);
    isTriggered = false;
    }
 
