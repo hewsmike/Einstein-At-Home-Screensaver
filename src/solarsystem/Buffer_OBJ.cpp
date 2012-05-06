@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2011 by Mike Hewson                                     *
- *   hewsmike@iinet.net.au                                                 *
+ *   Copyright (C) 2012 by Mike Hewson                                     *
+ *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
  *                                                                         *
@@ -37,3 +37,26 @@ void Buffer_OBJ::acquire(void) {
 void Buffer_OBJ::release(void) {
    glDeleteBuffers(1, &ident);
    }
+
+void Buffer_OBJ::loadBuffer(GLenum  target, GLenum  usage, GLsizeiptr size, const GLvoid* data) {
+	// This implementation avoids both the poor performance
+	// and poor error reporting ( found in actual practice )
+	// of glMapBuffer().
+
+	// If we have no identifier allocation then get one.
+	if(this->ID() == OGL_ID::NO_ID) {
+		this->acquire();
+		}
+
+	// Bind the buffer ( type ) to our identifier.
+	glBindBuffer(target, this->ID());
+   
+	// Allocate space.
+	glBufferData(target, size, NULL, usage);
+   
+	// Then transfer.
+	glBufferSubData(target, 0, size, data);
+
+	// Unbind the buffer.
+	glBindBuffer(target, Buffer_OBJ::NO_ID);
+	}

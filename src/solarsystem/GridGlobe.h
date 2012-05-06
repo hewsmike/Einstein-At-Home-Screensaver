@@ -85,6 +85,12 @@ class GridGlobe : public Renderable {
       static const GLfloat TEXT_OFFSET;
       static const GLfloat TEXT_UNITS_RATIO;
 
+      struct Vert {
+      	vec_t x_pos;
+         vec_t y_pos;
+         vec_t z_pos;
+         };
+
       Sphere* sp;
 
       vec_t radius;

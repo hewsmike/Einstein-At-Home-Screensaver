@@ -41,7 +41,11 @@
 
 class Constellations : public Renderable {
    public:
-
+		/**
+	     * \brief Constructor
+	     *
+	     * \param rad - the radius at which to draw
+	     */
       Constellations(vec_t rad);
 
       /**
@@ -76,12 +80,27 @@ class Constellations : public Renderable {
 
       static const GLfloat TEXT_RATIO;
 
+      /// Inner class for buffer population use.
+      struct colors {
+      	GLfloat red;
+         GLfloat green;
+         GLfloat blue;
+         };
+
+      struct Vert {
+      	struct colors col;
+      	vec_t x_pos;
+      	vec_t y_pos;
+      	vec_t z_pos;
+      	};
+
       /// Store constellation star data here
       std::vector<Constellation> cons_list;
 
-      /// At what radius from the origin do the constellations lie?
+      /// The radius from the origin at which the constellations will be drawn.
       vec_t radius;
 
+      /// The present drawing state.
       state current_cycle_state;
 
       /// The OpenGL buffer object wrapper for vertex data.
@@ -101,20 +120,36 @@ class Constellations : public Renderable {
 
       /// This is set during object construction, by summing the number
       /// of stars within each constellation.
-      GLuint tot_stars;
+      unsigned long int tot_stars;
 
       /// This is set during object construction, by summing the number
       /// of links within each constellation.
-      GLuint tot_links;
+      unsigned long int tot_links;
 
+      /**
+       * \brief Load a server buffer with vertex information.
+       */
       void loadVertexBuffer(void);
 
+      /**
+       * \brief Load a server buffer with index information.
+       */
       void loadIndexBuffer(void);
 
+      /**
+       * \brief Populate a master listing of display list for constellation name rendering.
+       */
       void createMarkerLists(void);
 
-      static void class_color(OrdStar::spectral_type spectral_class, GLfloat* colors);
+      /**
+       * \brief Convert a star's spectral class to an RGB color trio.
+       *
+       * \param spectral_class - the spectral type of the star
+       * \param vt - pointer to a Vert structure where the RGB values will be placed
+       */
+      static void class_color(OrdStar::spectral_type spectral_class, Vert* vt);
 
+      /// The master list of display lists used when rendering the constellation names.
       std::vector<std::vector<GLuint> > marker_lists;
    };
 

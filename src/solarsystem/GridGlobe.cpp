@@ -211,47 +211,30 @@ void GridGlobe::loadVertexBuffer(void) {
    // Get an OpenGL buffer object.
    buff_obj_points.acquire();
 
-   // Make our buffer identifier OpenGL's current one.
-   glBindBuffer(GL_ARRAY_BUFFER, buff_obj_points.ID());
-
    // What size allocation are we after?
-   GLsizeiptr size = sizeof(vec_t) * COORDS_PER_VERTEX * sp->vertices().size();
+   GLsizeiptr buffer_size = sizeof(Vert) * sp->vertices().size();
 
-   // Allocate buffer memory but don't store, yet.
-   glBufferData(GL_ARRAY_BUFFER, size, NULL, GL_STATIC_DRAW);
-
-   // Get write access to the buffer area.
-   vec_t* buffer_ptr = static_cast<vec_t*>(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
-
-   // Check for failure, as we don't want to dereference a NULL later on,
-   // ... MAKE IT A FATAL ERROR.
-   if(buffer_ptr == NULL) {
-      ErrorHandler::record("GridGlobe::loadVertexBuffer() - can't acquire buffer pointer", ErrorHandler::FATAL);
-      }
+   Vert* buffer_base_ptr = new Vert[sp->vertices().size()];
+   Vert* buffer_ptr = buffer_base_ptr;
 
    // Store the vertex position data in the buffer.
    for(std::vector<Vertex>::const_iterator vt = sp->vertices().begin();
       vt < sp->vertices().end();
       ++vt) {
-      *buffer_ptr = vt->position().x();
-      ++buffer_ptr;
-      *buffer_ptr = vt->position().y();
-      ++buffer_ptr;
-      *buffer_ptr = vt->position().z();
+      buffer_ptr->x_pos = vt->position().x();
+      buffer_ptr->y_pos = vt->position().y();
+      buffer_ptr->z_pos = vt->position().z();
       ++buffer_ptr;
       }
 
-   // Disconnect the mapping and the buffer from OpenGL.
-   glUnmapBuffer(GL_ARRAY_BUFFER);
-   glBindBuffer(GL_ARRAY_BUFFER, Buffer_OBJ::NO_ID);
+   buff_obj_points.loadBuffer(GL_ARRAY_BUFFER, GL_STATIC_DRAW, buffer_size, buffer_base_ptr);
+
+   delete[] buffer_base_ptr;
    }
 
 void GridGlobe::loadGridIndexBuffer(void) {
    // Get an OpenGL buffer object.
    buff_obj_grid_links.acquire();
-
-   // Make our buffer identifier OpenGL's current one.
-   glBindBuffer(GL_ARRAY_BUFFER, buff_obj_grid_links.ID());
 
    // The number of line links contained in slices.
    GLuint slice_links = (slices - 1) *    // Number of slices excluding the prime meridian
@@ -266,19 +249,10 @@ void GridGlobe::loadGridIndexBuffer(void) {
    grid_links = slice_links + stack_links;
 
    // What size allocation are we after?
-   GLsizeiptr size = sizeof(GLuint) * grid_links * VERTICES_PER_LINK;
+   GLsizeiptr buffer_size = sizeof(GLuint) * grid_links * VERTICES_PER_LINK;
 
-   // Allocate buffer memory but don't store, yet.
-   glBufferData(GL_ARRAY_BUFFER, size, NULL, GL_STATIC_DRAW);
-
-   // Get write access to the buffer area.
-   GLuint* buffer_ptr = static_cast<GLuint*>(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
-
-   // Check for failure, as we don't want to dereference a NULL later on,
-   // ... MAKE IT A FATAL ERROR.
-   if(buffer_ptr == NULL) {
-      ErrorHandler::record("GridGlobe::loadGridIndexBuffer() - can't acquire buffer pointer", ErrorHandler::FATAL);
-      }
+   GLuint* buffer_base_ptr = new GLuint[grid_links * VERTICES_PER_LINK];
+   GLuint* buffer_ptr = buffer_base_ptr;
 
    // Do rings of latitude/declination first. Don't need a ring at either pole! Exempt
    // any equatorial slice, if present.
@@ -318,34 +292,21 @@ void GridGlobe::loadGridIndexBuffer(void) {
          }
       }
 
-   // Disconnect the mapping and the buffer from OpenGL.
-   glUnmapBuffer(GL_ARRAY_BUFFER);
-   glBindBuffer(GL_ARRAY_BUFFER, Buffer_OBJ::NO_ID);
+   buff_obj_grid_links.loadBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW, buffer_size, buffer_base_ptr);
+
+   delete[] buffer_base_ptr;
    }
 
 void GridGlobe::loadPrimeMeridianIndexBuffer(void) {
    // Get an OpenGL buffer object.
    buff_obj_prime_meridian_links.acquire();
 
-   // Make our buffer identifier OpenGL's current one.
-   glBindBuffer(GL_ARRAY_BUFFER, buff_obj_prime_meridian_links.ID());
-
    prime_meridian_links = sp->stacks() - 1;
 
    // What size allocation are we after?
-   GLsizeiptr size = sizeof(GLuint) * prime_meridian_links * VERTICES_PER_LINK;
-
-   // Allocate buffer memory but don't store, yet.
-   glBufferData(GL_ARRAY_BUFFER, size, NULL, GL_STATIC_DRAW);
-
-   // Get write access to the buffer area.
-   GLuint* buffer_ptr = static_cast<GLuint*>(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
-
-   // Check for failure, as we don't want to dereference a NULL later on,
-   // ... MAKE IT A FATAL ERROR.
-   if(buffer_ptr == NULL) {
-      ErrorHandler::record("GridGlobe::loadPrimeMeridianIndexBuffer() - can't acquire buffer pointer", ErrorHandler::FATAL);
-      }
+   GLsizeiptr buffer_size = sizeof(GLuint) * prime_meridian_links * VERTICES_PER_LINK;
+   GLuint* buffer_base_ptr = new GLuint[prime_meridian_links * VERTICES_PER_LINK];
+   GLuint* buffer_ptr = buffer_base_ptr;
 
    // Now do the prime meridian.
    std::vector<std::vector<GLuint> >::const_iterator prime_slice = sp->sliceIndices().begin();
@@ -360,9 +321,9 @@ void GridGlobe::loadPrimeMeridianIndexBuffer(void) {
       ++buffer_ptr;
       }
 
-   // Disconnect the mapping and the buffer from OpenGL.
-   glUnmapBuffer(GL_ARRAY_BUFFER);
-   glBindBuffer(GL_ARRAY_BUFFER, Buffer_OBJ::NO_ID);
+   buff_obj_prime_meridian_links.loadBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW, buffer_size, buffer_base_ptr);
+
+   delete[] buffer_base_ptr;
    }
 
 void GridGlobe::loadCelestialEquatorIndexBuffer(void) {
@@ -377,23 +338,10 @@ void GridGlobe::loadCelestialEquatorIndexBuffer(void) {
       // Get an OpenGL buffer object.
       buff_obj_celestial_equator_links.acquire();
 
-      // Make our buffer identifier OpenGL's current one.
-      glBindBuffer(GL_ARRAY_BUFFER, buff_obj_celestial_equator_links.ID());
-
       // What size allocation are we after?
-      GLsizeiptr size = sizeof(GLuint) * celestial_equator_links * VERTICES_PER_LINK;
-
-      // Allocate buffer memory but don't store, yet.
-      glBufferData(GL_ARRAY_BUFFER, size, NULL, GL_STATIC_DRAW);
-
-      // Get write access to the buffer area.
-      GLuint* buffer_ptr = static_cast<GLuint*>(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
-
-      // Check for failure, as we don't want to dereference a NULL later on,
-      // ... MAKE IT A FATAL ERROR.
-      if(buffer_ptr == NULL) {
-         ErrorHandler::record("GridGlobe::loadCelestialEquatorIndexBuffer() - can't acquire buffer pointer", ErrorHandler::FATAL);
-         }
+      GLsizeiptr buffer_size = sizeof(GLuint) * celestial_equator_links * VERTICES_PER_LINK;
+      GLuint* buffer_base_ptr = new GLuint[celestial_equator_links * VERTICES_PER_LINK];
+      GLuint* buffer_ptr = buffer_base_ptr;
 
       // Find the stack index listing for the equator.
       std::vector<std::vector<GLuint> >::const_iterator equator_stack = sp->stackIndices().begin() + (sp->stacks() - 1)/2;
@@ -409,9 +357,9 @@ void GridGlobe::loadCelestialEquatorIndexBuffer(void) {
          ++buffer_ptr;
          }
 
-      // Disconnect the mapping and the buffer from OpenGL.
-      glUnmapBuffer(GL_ARRAY_BUFFER);
-      glBindBuffer(GL_ARRAY_BUFFER, Buffer_OBJ::NO_ID);
+      buff_obj_celestial_equator_links.loadBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW, buffer_size, buffer_base_ptr);
+
+      delete[] buffer_base_ptr;
       }
    }
 

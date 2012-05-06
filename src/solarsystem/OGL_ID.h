@@ -66,7 +66,9 @@ class OGL_ID {
       virtual void release(void) = 0;
 
       /**
-       * \brief Get the OpenGL resource identifier.
+       * \brief Obtain the OpenGL resource identifier.
+       *
+       * \return the identifier.
        */
       GLuint ID(void) const;
 
