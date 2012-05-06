@@ -203,10 +203,12 @@ class WindowManager {
        */
       int matchVideoMode(GLFWvidmode test_case);
 
+#ifdef WIN_OGL_WORKAROUND
       /**
        * \brief For Windows builds only, set correct OpenGL version context.
        */
       bool setOGLContext(void);
+#endif
 
       /// Local BOINC adapter instance to read project preferences
       BOINCClientAdapter *m_BoincAdapter;

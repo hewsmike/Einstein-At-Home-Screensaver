@@ -30,8 +30,8 @@
 #include "Events.h"
 #include "SolarSystemGlobals.h"
 
-int WindowManager::OPEN_GL_VERSION_MINIMUM_MAJOR(2);
-int WindowManager::OPEN_GL_VERSION_MINIMUM_MINOR(1);
+int WindowManager::OPEN_GL_VERSION_MINIMUM_MAJOR(1);
+int WindowManager::OPEN_GL_VERSION_MINIMUM_MINOR(5);
 int WindowManager::DEPTH_BUFFER_GRAIN(24);
 int WindowManager::DEPTH_BUFFER_GRAIN_FALLBACK(16);
 int WindowManager::NO_STENCIL(0);
@@ -739,6 +739,7 @@ int WindowManager::matchVideoMode(GLFWvidmode test_case) {
    return retval;
    }
 
+#ifdef WIN_OGL_WORKAROUND
 bool WindowManager::setOGLContext(void) {
 	// Assume failure.
 	bool ret_val = false;
@@ -747,6 +748,12 @@ bool WindowManager::setOGLContext(void) {
 	GLuint major = 0;
 	GLuint minor = 0;
 	SolarSystemGlobals::getOGLVersion(&major, &minor);
+	std::stringstream msg;
+	msg << "WindowManager::setOGLContext() : OpenGL v"
+	  	 << OPEN_GL_VERSION_MINIMUM_MAJOR
+	    << "."
+		 << OPEN_GL_VERSION_MINIMUM_MINOR;
+	ErrorHandler::record(msg.str(), ErrorHandler::INFORM);
 
 	// With v3.2+ then ...
 	if((major > 3) ||
@@ -763,8 +770,8 @@ bool WindowManager::setOGLContext(void) {
 			if(WGLEW_ARB_create_context_profile) {
 				ErrorHandler::record("WindowManager::setOGLContext() : WGL_ARB_create_context_profile supported", ErrorHandler::INFORM);
 				// Initialise attribute array for wgl.
-				int attribList[] = {WGL_CONTEXT_MAJOR_VERSION_ARB, 1,
-										  WGL_CONTEXT_MINOR_VERSION_ARB, 5,
+				int attribList[] = {WGL_CONTEXT_MAJOR_VERSION_ARB, OPEN_GL_VERSION_MINIMUM_MAJOR,
+										  WGL_CONTEXT_MINOR_VERSION_ARB, OPEN_GL_VERSION_MINIMUM_MINOR,
 										  0, 0};
 
 				// Create new context from current.
@@ -789,43 +796,27 @@ bool WindowManager::setOGLContext(void) {
 				}
 			else {
 				ErrorHandler::record("WindowManager::setOGLContext() : WGL_ARB_create_context_profile NOT supported", ErrorHandler::WARN);
-				ErrorHandler::record("WindowManager::setOGLContext() : try using wglCreateContext", ErrorHandler::INFORM);
-				// Initialise attribute array for wgl.
-				// int attribList[] = {WGL_CONTEXT_MAJOR_VERSION_ARB, 2,
-										 // WGL_CONTEXT_MINOR_VERSION_ARB, 1,
-										 // 0, 0};
-
-				// Create new context from current.
-				// HGLRC new_context = wglCreateContext(hdc, hglrc, attribList);
-
-				// Make this new context the current one.
-				// wglMakeCurrent(hdc, new_context);
-
-				// Delete the old context.
-				// wglDeleteContext(hglrc);
-
-				// Re-initialise GLEW.
-				if(glewInit() != GLEW_OK) {
-					ErrorHandler::record("WindowManager::setOGLContext() : Window system could not be initalized - GLEW init fail", ErrorHandler::WARN);
-				   }
-				else {
-					// Finally!!
-					ret_val = true;
-					}
 				}
 			}
 		}
 	else {
-		// OK, so we're less than v3.2, are we at least v1.4 ?
-		if((major = 1) && (minor >= 4)) {
+		// OK, so we're less than v3.2, are we at least the minumum ?
+		if((major = OPEN_GL_VERSION_MINIMUM_MAJOR) && (minor >= OPEN_GL_VERSION_MINIMUM_MINOR)) {
 			// Fine as is, no further effort required.
 			ErrorHandler::record("WindowManager::setOGLContext() : satisfactory OpenGL version as is", ErrorHandler::INFORM);
 			ret_val = true;
 			}
 		else {
-			ErrorHandler::record("WindowManager::setOGLContext() : OpenGL pre v1.4 version", ErrorHandler::WARN);
+			std::stringstream msg;
+			msg << "WindowManager::setOGLContext() : OpenGL pre v"
+			  	 << OPEN_GL_VERSION_MINIMUM_MAJOR
+			    << "."
+				 << OPEN_GL_VERSION_MINIMUM_MINOR
+				 << " version";
+			ErrorHandler::record(msg.str(), ErrorHandler::WARN);
 			}
 		}
 
 	return ret_val;
 	}
+#endif
