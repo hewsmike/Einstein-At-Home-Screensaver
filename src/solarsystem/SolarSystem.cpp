@@ -245,6 +245,8 @@ void SolarSystem::initialize(const int width, const int height, const Resource* 
  * Rendering routine:  this is what does the drawing:
  */
 void SolarSystem::render(const double tOD) {
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+
    // Clear the canvas plus set z ordering to the far-clip plane.
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

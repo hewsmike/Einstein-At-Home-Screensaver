@@ -21,13 +21,13 @@
 #include "Simulation.h"
 
 const std::string Simulation::EARTH_NAME("Earth");
-const std::string Simulation::EARTH_IMAGE_FILE("earthmap.bmp");
+const std::string Simulation::EARTH_IMAGE_FILE("earthmap.tga");
 const GLuint Simulation::EARTH_STACKS(37);
 const GLuint Simulation::EARTH_SLICES(72);
 const GLfloat Simulation::EARTH_TEXTURE_OFFSET(+0.5f);
 
 const std::string Simulation::SUN_NAME("Sun");
-const std::string Simulation::SUN_IMAGE_FILE("sunmap2.bmp");
+const std::string Simulation::SUN_IMAGE_FILE("sunmap.tga");
 const GLuint Simulation::SUN_STACKS(37);
 const GLuint Simulation::SUN_SLICES(72);
 const GLfloat Simulation::SUN_TEXTURE_OFFSET(0.0f);
@@ -49,7 +49,10 @@ const GLint Simulation::HUD_BOTTOM_CLIP(0);
 const GLint Simulation::HUD_NEAR_CLIP(-1);
 const GLint Simulation::HUD_FAR_CLIP(+1);
 
-Simulation::Simulation(void): cs(CONSTELLATIONS_RADIUS),
+Simulation::Simulation(void): day366(0),
+										earth_hour_angle(0),
+										sun_rot_angle(0),
+										cs(CONSTELLATIONS_RADIUS),
                               ps(PULSARS_RADIUS),
                               sn(SUPERNOVAE_RADIUS),
                               gg(GRID_RADIUS, GRID_SLICES, GRID_STACKS),
@@ -113,9 +116,9 @@ void Simulation::step(void) {
       // reset the counter
       count_down = COUNT_START;
 
-      day366 += 0.05;
+      day366 += 0.05f;
       if(day366 >= SunOrbit::DAYS_PER_YEAR) {
-         day366 = 0;
+         day366 = 0.0f;
          }
       sun_pos = SunOrbit::getPosition(day366);
 
@@ -189,7 +192,7 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
    // Create content for the panels.
 
    // Put an image into the content.
-   wyp_image = new HUDImage("wyplogo.bmp", 5, 5);
+   wyp_image = new HUDImage("wyplogo.tga", 5, 5);
    if(wyp_image == NULL) {
       std::string msg = "Simulation::prepare() - failed creation of HUDImage instance on heap";
       ErrorHandler::record(msg, ErrorHandler::FATAL);
@@ -199,7 +202,7 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
    west_panel.addContent(wyp_image);
 
    // Put an image into the content.
-   aps_image = new HUDImage("aps_header.bmp", 5, 5);
+   aps_image = new HUDImage("aps_header.tga", 5, 5);
    if(aps_image == NULL) {
       std::string msg = "Simulation::prepare() - failed creation of HUDImage instance on heap";
       ErrorHandler::record(msg, ErrorHandler::FATAL);
@@ -221,7 +224,7 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
 
 
    // Put an image into the content.
-   lsc_image = new HUDImage("lsclogo.bmp", 5, 5);
+   lsc_image = new HUDImage("lsclogo.tga", 5, 5);
    if(lsc_image == NULL) {
       std::string msg = "Simulation::prepare() - failed creation of HUDImage instance on heap";
       ErrorHandler::record(msg, ErrorHandler::FATAL);
@@ -231,7 +234,7 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
    east_panel.addContent(lsc_image);
 
    // Put an image into the content.
-   geo_image = new HUDImage("geo_small.bmp", 5, 5);
+   geo_image = new HUDImage("geo_small.tga", 5, 5);
    if(geo_image == NULL) {
       std::string msg = "Simulation::prepare() - failed creation of HUDImage instance on heap";
       ErrorHandler::record(msg, ErrorHandler::FATAL);
@@ -251,7 +254,7 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
    south_panel.addContent(version_text);
 
    // Put an image into the content.
-   ligo_image = new HUDImage("ligo_small.bmp", 5, 5);
+   ligo_image = new HUDImage("ligo_small.tga", 5, 5);
    if(ligo_image == NULL) {
       std::string msg = "Simulation::prepare() - failed creation of HUDImage instance on heap";
       ErrorHandler::record(msg, ErrorHandler::FATAL);
