@@ -1,4 +1,4 @@
-Keyboard Functional Bindings ( * indicates currently implemented : as of 26/11/2011 ) :
+Keyboard Functional Bindings ( * indicates currently implemented : as of 16/05/2012 ) :
 
 ESC* : Exit the program
 
@@ -10,43 +10,49 @@ F3  : Medium level
 
 F4  : High level rendering
 
-F5* : Toggle constellations display
+F5* : Cycle constellations display
 
-F6* : Toggle pulsars display
+F6* : Cycle pulsars display
 
-F7* : Toggle supernovae display
+F7* : Cycle supernovae display
 
-F8* : Toggle celestial sphere right ascension and declination grid
+F8* : Cycle celestial sphere right ascension and declination grid
+
+F9* : Cycle Earth's latitude and longitude grid
 
 Consider the screen view as looking out to the front of the spacecraft
 
-Q*  : Stop craft movement
+SPACEBAR*  : Stop all craft movements ( translations and rotations )
 
-A*  : Forward craft thrust ( translation of centre of mass )
+E*  : Forward craft thrust ( translation of centre of mass )
 
-Z*  : Reverse craft thrust ( translation of centre of mass )
+C*  : Reverse craft thrust ( translation of centre of mass )
 
-W*  : Leftwards craft thrust ( translation of centre of mass )
+S*  : Leftwards craft thrust ( translation of centre of mass )
 
 R*  : Rightwards craft thrust ( translation of centre of mass )
 
-T*  : Upwards craft thrust ( translation of centre of mass )
+R*  : Upwards craft thrust ( translation of centre of mass )
 
-B*  : Downwards craft thrust ( translation of centre of mass )
+V*  : Downwards craft thrust ( translation of centre of mass )
 
-E*  : Upwards pitch of craft ( rotation about centre of mass )
+D*  : Stop all craft translations
 
-D*  : Downwards pitch of craft ( rotation about centre of mass )
+. OR NumPad2*  : Upwards pitch of craft ( rotation about centre of mass )
 
-X*  : Leftwards yaw of craft  ( rotation about centre of mass )
+O OR NumPad8*  : Downwards pitch of craft ( rotation about centre of mass )
 
-V*  : Rightwards yaw of craft  ( rotation about centre of mass )
+, OR NumPad1*  : Leftwards yaw of craft  ( rotation about centre of mass )
 
-S*  : Leftwards roll of craft  ( rotation about centre of mass )
+/ OR NumPad3*  : Rightwards yaw of craft  ( rotation about centre of mass )
 
-F*  : Rightwards roll of craft  ( rotation about centre of mass )
+K OR NumPad4*  : Leftwards roll of craft  ( rotation about centre of mass )
+
+; OR NumPad6*  : Rightwards roll of craft  ( rotation about centre of mass )
+
+L*  : Stop all craft rotations 
 
 G*  : go home to initial craft position
 
 NB Current controller model is 'inertial', that is : it will happen in a certain way until you stop it.
-   If in doubt hit Q and get your bearings. You will bounce off the Earth and get punted back if you go too far way.
+   If in doubt hit SPACEBAR and get your bearings. You will bounce off the Earth/Sun and get punted back if you go too far way.

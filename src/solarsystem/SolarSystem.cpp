@@ -461,11 +461,21 @@ void SolarSystem::keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey k
          sim.moveRequest(Craft::STOP_ROTATION);
          message += "KeySpace : null all movement and rotation";
          break;
+      case KeyKP1:
+      	// Yaw left.
+         sim.moveRequest(Craft::YAW_LEFT);
+         message += "KeyKP0 : yaw left";
+         break;
       case KeyKP2:
          // Pull nose up.
          sim.moveRequest(Craft::PITCH_UP);
          message += "KeyKP2 : pitch up";
          break;
+      case KeyKP3:
+      	// Yaw right.
+      	sim.moveRequest(Craft::YAW_RIGHT);
+      	message += "KeyKPPeriod : yaw right";
+      	break;
       case KeyKP4:
          // Roll to the left.
          sim.moveRequest(Craft::ROLL_LEFT);
@@ -485,16 +495,6 @@ void SolarSystem::keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey k
          // Push nose down.
          sim.moveRequest(Craft::PITCH_DOWN);
          message += "KeyKP8 : pitch down";
-         break;
-      case KeyKP0:
-         // Yaw left.
-         sim.moveRequest(Craft::YAW_LEFT);
-         message += "KeyKP0 : yaw left";
-         break;
-      case KeyKPPeriod:
-         // Yaw right.
-         sim.moveRequest(Craft::YAW_RIGHT);
-         message += "KeyKPPeriod : yaw right";
          break;
       case KeyComma:
          // Yaw left.

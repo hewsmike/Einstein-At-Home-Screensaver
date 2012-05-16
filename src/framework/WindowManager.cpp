@@ -364,19 +364,23 @@ void WindowManager::eventLoop(void) {
             // Process printable character input.
             else if((current_event.type == Events::CharInputEventType) &&
                     (current_event.c_input.pressed == true)) {
-					// Note : we account for upper and lower case characters from the same key.
+					// Note : we account for shifted characters from the same key.
                switch(current_event.c_input.char_code) {
                   // notify our observers (currently exactly one, hence front())
                   case ',':
+                  case '<':
                      eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyComma);
                      break;
                   case '.':
+                  case '>':
                      eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyPeriod);
                      break;
                   case '/':
+                  case '?':
                      eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyForwardSlash);
                      break;
                   case ';':
+                  case ':':
                      eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeySemiColon);
                      break;
                   case 'a':
@@ -415,6 +419,14 @@ void WindowManager::eventLoop(void) {
                   case 'I':
                      eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyI);
                      break;
+                  case 'j':
+                  case 'J':
+                  	eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyJ);
+                     break;
+                  case 'k':
+                  case 'K':
+                     eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyK);
+                     break;
                   case 'l':
                   case 'L':
                      eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyL);
@@ -451,6 +463,10 @@ void WindowManager::eventLoop(void) {
                   case 'T':
                      eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyT);
                      break;
+                  case 'u':
+                  case 'U':
+                     eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyU);
+                     break;
                   case 'v':
                   case 'V':
                      eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyV);
@@ -462,6 +478,10 @@ void WindowManager::eventLoop(void) {
                   case 'x':
                   case 'X':
                      eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyX);
+                     break;
+                  case 'y':
+                  case 'Y':
+                     eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyY);
                      break;
                   case 'z':
                   case 'Z':
@@ -519,8 +539,14 @@ void WindowManager::eventLoop(void) {
                   case GLFW_KEY_ENTER:
                      toggleFullscreen();
                      break;
+                  case GLFW_KEY_KP_1:
+                     eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyKP1);
+                     break;
                   case GLFW_KEY_KP_2:
                      eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyKP2);
+                     break;
+                  case GLFW_KEY_KP_3:
+                     eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyKP3);
                      break;
                   case GLFW_KEY_KP_4:
                      eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyKP4);
