@@ -99,6 +99,8 @@ Simulation::Simulation(void): autopilotActive(false),
                                   SUN_STACKS,
                                   SUN_SLICES,
                                   SUN_TEXTURE_OFFSET),
+                              aei_image(NULL),
+                              boinc_image(NULL),
                               geo_image(NULL),
                               ligo_image(NULL),
                               aps_image(NULL),
@@ -236,7 +238,7 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
    // Create content for the panels.
 
    // Put an image into the content.
-   wyp_image = new HUDImage("wyplogo.tga", 5, 5);
+   wyp_image = new HUDImage("wyp.tga", 5, 5);
    if(wyp_image == NULL) {
       std::string msg = "Simulation::prepare() - failed creation of HUDImage instance on heap";
       ErrorHandler::record(msg, ErrorHandler::FATAL);
@@ -246,7 +248,17 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
    west_panel.addContent(wyp_image);
 
    // Put an image into the content.
-   aps_image = new HUDImage("aps_header.tga", 5, 5);
+   boinc_image = new HUDImage("boinc.tga", 5, 5);
+      if(boinc_image == NULL) {
+      	std::string msg = "Simulation::prepare() - failed creation of HUDImage instance on heap";
+         ErrorHandler::record(msg, ErrorHandler::FATAL);
+         }
+
+   // Put the content into the panel.
+   west_panel.addContent(boinc_image);
+
+   // Put an image into the content.
+   aps_image = new HUDImage("aps.tga", 5, 5);
    if(aps_image == NULL) {
       std::string msg = "Simulation::prepare() - failed creation of HUDImage instance on heap";
       ErrorHandler::record(msg, ErrorHandler::FATAL);
@@ -266,9 +278,18 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
    // Put the content into the panel.
    north_panel.addContent(welcome_text);
 
+   // Put an image into the content.
+   aei_image = new HUDImage("aei.tga", 5, 5);
+   if(aei_image == NULL) {
+      std::string msg = "Simulation::prepare() - failed creation of HUDImage instance on heap";
+       ErrorHandler::record(msg, ErrorHandler::FATAL);
+      }
+
+   // Put the content into the panel.
+   east_panel.addContent(aei_image);
 
    // Put an image into the content.
-   lsc_image = new HUDImage("lsclogo.tga", 5, 5);
+   lsc_image = new HUDImage("lsc.tga", 5, 5);
    if(lsc_image == NULL) {
       std::string msg = "Simulation::prepare() - failed creation of HUDImage instance on heap";
       ErrorHandler::record(msg, ErrorHandler::FATAL);
@@ -278,7 +299,7 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
    east_panel.addContent(lsc_image);
 
    // Put an image into the content.
-   geo_image = new HUDImage("geo_small.tga", 5, 5);
+   geo_image = new HUDImage("geo.tga", 5, 5);
    if(geo_image == NULL) {
       std::string msg = "Simulation::prepare() - failed creation of HUDImage instance on heap";
       ErrorHandler::record(msg, ErrorHandler::FATAL);
@@ -298,7 +319,7 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
    south_panel.addContent(version_text);
 
    // Put an image into the content.
-   ligo_image = new HUDImage("ligo_small.tga", 5, 5);
+   ligo_image = new HUDImage("ligo.tga", 5, 5);
    if(ligo_image == NULL) {
       std::string msg = "Simulation::prepare() - failed creation of HUDImage instance on heap";
       ErrorHandler::record(msg, ErrorHandler::FATAL);

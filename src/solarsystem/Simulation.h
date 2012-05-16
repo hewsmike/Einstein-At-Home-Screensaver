@@ -211,6 +211,8 @@ class Simulation : public Renderable {
 
       std::map<content, OGLFT_ft*> fonts;
 
+      HUDImage* aei_image;
+      HUDImage* boinc_image;
       HUDImage* geo_image;
       HUDImage* ligo_image;
       HUDImage* aps_image;

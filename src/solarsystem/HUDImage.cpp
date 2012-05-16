@@ -202,8 +202,7 @@ void HUDImage::loadTexture() {
 	   else {
 	      // Nope, the loading into a texture object failed. This is not fatal, as
 	      // with later rendering OpenGL will simply use the 'default' texture ie.
-	      // nothing. The only visual result will be to see whatever background
-	      // color(s) have been assigned ( or not ! ) to the polygon(s) in question.
+	      // nothing. The only visual result will be to see whatever is in the background.
 	      ErrorHandler::record("HUDImage::loadTexture() - texture object NOT loaded ", ErrorHandler::WARN);
 	      }
 		}
