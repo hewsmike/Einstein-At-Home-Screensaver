@@ -21,13 +21,13 @@
 #include "Simulation.h"
 
 const std::string Simulation::EARTH_NAME("Earth");
-const std::string Simulation::EARTH_IMAGE_FILE("earthmap.tga");
+const std::string Simulation::EARTH_IMAGE_RESOURCE("EarthTGA");
 const GLuint Simulation::EARTH_STACKS(37);
 const GLuint Simulation::EARTH_SLICES(72);
 const GLfloat Simulation::EARTH_TEXTURE_OFFSET(+0.5f);
 
 const std::string Simulation::SUN_NAME("Sun");
-const std::string Simulation::SUN_IMAGE_FILE("sunmap.tga");
+const std::string Simulation::SUN_IMAGE_RESOURCE("SunTGA");
 const GLuint Simulation::SUN_STACKS(37);
 const GLuint Simulation::SUN_SLICES(72);
 const GLfloat Simulation::SUN_TEXTURE_OFFSET(0.0f);
@@ -40,30 +40,61 @@ const unsigned int Simulation::COUNT_END(0);
 const GLuint Simulation::CONSTELLATIONS_RADIUS(SolarSystemGlobals::CELESTIAL_SPHERE_RADIUS);
 const GLuint Simulation::PULSARS_RADIUS(SolarSystemGlobals::CELESTIAL_SPHERE_RADIUS - 25);
 const GLuint Simulation::SUPERNOVAE_RADIUS(SolarSystemGlobals::CELESTIAL_SPHERE_RADIUS - 50);
-const GLuint Simulation::GRID_RADIUS(SolarSystemGlobals::CELESTIAL_SPHERE_RADIUS + 50);
-const GLuint Simulation::GRID_STACKS(19);
-const GLuint Simulation::GRID_SLICES(24);
+
+const GLuint Simulation::SKYGRID_RADIUS(SolarSystemGlobals::CELESTIAL_SPHERE_RADIUS + 50);
+const GLuint Simulation::SKYGRID_STACKS(19);
+const GLuint Simulation::SKYGRID_SLICES(24);
+const GLfloat Simulation::SKYGRID_MAIN_WIDTH(0.5f);
+const GLfloat Simulation::SKYGRID_MAIN_RED(0.12f);
+const GLfloat Simulation::SKYGRID_MAIN_GREEN(0.17f);
+const GLfloat Simulation::SKYGRID_MAIN_BLUE(0.12f);
+const GLfloat Simulation::SKYGRID_CELESTIAL_EQUATOR_WIDTH(1.0f);
+const GLfloat Simulation::SKYGRID_CELESTIAL_EQUATOR_RED(0.24f);
+const GLfloat Simulation::SKYGRID_CELESTIAL_EQUATOR_GREEN(0.34f);
+const GLfloat Simulation::SKYGRID_CELESTIAL_EQUATOR_BLUE(0.24f);
+const GLfloat Simulation::SKYGRID_PRIME_MERIDIAN_WIDTH(1.0f);
+const GLfloat Simulation::SKYGRID_PRIME_MERIDIAN_RED(0.36f);
+const GLfloat Simulation::SKYGRID_PRIME_MERIDIAN_GREEN(0.51f);
+const GLfloat Simulation::SKYGRID_PRIME_MERIDIAN_BLUE(0.36f);
+
+const GLuint Simulation::EARTHGRID_RADIUS(SolarSystemGlobals::EARTH_RADIUS + 2);
+const GLuint Simulation::EARTHGRID_STACKS(19);
+const GLuint Simulation::EARTHGRID_SLICES(24);
+const GLfloat Simulation::EARTHGRID_MAIN_WIDTH(0.5f);
+const GLfloat Simulation::EARTHGRID_MAIN_RED(0.95f);
+const GLfloat Simulation::EARTHGRID_MAIN_GREEN(0.74f);
+const GLfloat Simulation::EARTHGRID_MAIN_BLUE(0.00f);
+const GLfloat Simulation::EARTHGRID_CELESTIAL_EQUATOR_WIDTH(1.0f);
+const GLfloat Simulation::EARTHGRID_CELESTIAL_EQUATOR_RED(0.77f);
+const GLfloat Simulation::EARTHGRID_CELESTIAL_EQUATOR_GREEN(0.00f);
+const GLfloat Simulation::EARTHGRID_CELESTIAL_EQUATOR_BLUE(0.28f);
+const GLfloat Simulation::EARTHGRID_PRIME_MERIDIAN_WIDTH(1.0f);
+const GLfloat Simulation::EARTHGRID_PRIME_MERIDIAN_RED(1.00f);
+const GLfloat Simulation::EARTHGRID_PRIME_MERIDIAN_GREEN(0.20f);
+const GLfloat Simulation::EARTHGRID_PRIME_MERIDIAN_BLUE(0.80f);
 
 const GLint Simulation::HUD_LEFT_CLIP(0);
 const GLint Simulation::HUD_BOTTOM_CLIP(0);
 const GLint Simulation::HUD_NEAR_CLIP(-1);
 const GLint Simulation::HUD_FAR_CLIP(+1);
 
-Simulation::Simulation(void): day366(0),
+Simulation::Simulation(void): autopilotActive(false),
+										day366(0),
 										earth_hour_angle(0),
 										sun_rot_angle(0),
 										cs(CONSTELLATIONS_RADIUS),
                               ps(PULSARS_RADIUS),
                               sn(SUPERNOVAE_RADIUS),
-                              gg(GRID_RADIUS, GRID_SLICES, GRID_STACKS),
+                              c_sphere(SKYGRID_RADIUS, SKYGRID_SLICES, SKYGRID_STACKS, GridGlobe::INSIDE),
                               earth(EARTH_NAME,
-                                    EARTH_IMAGE_FILE,
+                                    EARTH_IMAGE_RESOURCE,
                                     SolarSystemGlobals::EARTH_RADIUS,
                                     EARTH_STACKS,
                                     EARTH_SLICES,
                                     EARTH_TEXTURE_OFFSET),
+                              e_sphere(EARTHGRID_RADIUS, EARTHGRID_SLICES, EARTHGRID_STACKS, GridGlobe::OUTSIDE),
                               sun(SUN_NAME,
-                                  SUN_IMAGE_FILE,
+                                  SUN_IMAGE_RESOURCE,
                                   SolarSystemGlobals::SUN_RADIUS,
                                   SUN_STACKS,
                                   SUN_SLICES,
@@ -80,21 +111,15 @@ Simulation::Simulation(void): day366(0),
                               south_panel(&overlay),
                               east_panel(&overlay),
                               west_panel(&overlay) {
+   c_sphere.setLine(GridGlobe::MAIN, SKYGRID_MAIN_WIDTH, SKYGRID_MAIN_RED, SKYGRID_MAIN_GREEN, SKYGRID_MAIN_BLUE);
+   c_sphere.setLine(GridGlobe::EQUATOR, SKYGRID_CELESTIAL_EQUATOR_WIDTH, SKYGRID_CELESTIAL_EQUATOR_RED, SKYGRID_CELESTIAL_EQUATOR_GREEN, SKYGRID_CELESTIAL_EQUATOR_BLUE);
+   c_sphere.setLine(GridGlobe::PRIME_MERIDIAN, SKYGRID_PRIME_MERIDIAN_WIDTH, SKYGRID_PRIME_MERIDIAN_RED, SKYGRID_PRIME_MERIDIAN_GREEN, SKYGRID_PRIME_MERIDIAN_BLUE);
+   e_sphere.setLine(GridGlobe::MAIN, EARTHGRID_MAIN_WIDTH, EARTHGRID_MAIN_RED, EARTHGRID_MAIN_GREEN, EARTHGRID_MAIN_BLUE);
+   e_sphere.setLine(GridGlobe::EQUATOR, EARTHGRID_CELESTIAL_EQUATOR_WIDTH, EARTHGRID_CELESTIAL_EQUATOR_RED, EARTHGRID_CELESTIAL_EQUATOR_GREEN, EARTHGRID_CELESTIAL_EQUATOR_BLUE);
+   e_sphere.setLine(GridGlobe::PRIME_MERIDIAN, EARTHGRID_PRIME_MERIDIAN_WIDTH, EARTHGRID_PRIME_MERIDIAN_RED, EARTHGRID_PRIME_MERIDIAN_GREEN, EARTHGRID_PRIME_MERIDIAN_BLUE);
    }
 
 Simulation::~Simulation() {
-   }
-
-Vector3D Simulation::getViewPosition(void) const {
-   return flyboy.get_platform().position();
-   }
-
-Vector3D Simulation::getViewDirection(void) const {
-   return flyboy.get_platform().look();
-   }
-
-Vector3D Simulation::getViewUp(void) const {
-   return flyboy.get_platform().up();
    }
 
 void Simulation::step(void) {
@@ -129,8 +154,10 @@ void Simulation::step(void) {
    //   }
    }
 
-void Simulation::moveRequest(SolarSystemGlobals::movements mv) {
-   flyboy.manouevre(mv);
+void Simulation::moveRequest(Craft::movements mv) {
+	if(!autopilotActive) {
+		flyboy.manouevre(mv);
+		}
    }
 
 void Simulation::resize(GLuint width, GLuint height) {
@@ -149,6 +176,21 @@ void Simulation::setFont(content element, OGLFT_ft* font) {
    fonts[element] = font;
    }
 
+CameraState Simulation::viewPoint(void) const {
+	CameraState ret_val;
+	if(autopilotActive) {
+		// The autopilot is flying the craft.
+
+		ret_val = flyboy.getViewState();
+		}
+	else {
+		// The user is flying the craft.
+		ret_val = flyboy.getViewState();
+		}
+
+	return ret_val;
+	}
+
 void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
    // TODO - write cases per render_quality ... presently ignored
    // at this level.
@@ -159,9 +201,11 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
    cs.activate();
    ps.activate();
    sn.activate();
-   gg.setFont(fonts[GRID]);
-   gg.activate();
+   c_sphere.setFont(fonts[SKY_GRID]);
+   c_sphere.activate();
    earth.activate();
+   e_sphere.setFont(fonts[EARTH_GRID]);
+   e_sphere.activate();
    sun.activate();
    overlay.setFont(fonts[HUDOVER]);
 
@@ -174,13 +218,13 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
    west_panel.emptyContainer();
 
    // Set panel justifications.
-   north_panel.setPrimaryJustification(HUDFlowLayout::CENTRE);
+   north_panel.setPrimaryJustification(HUDFlowLayout::START);
    // north_panel.setSecondaryJustification(HUDFlowLayout::END);
    south_panel.setPrimaryJustification(HUDFlowLayout::CENTRE);
    // south_panel.setSecondaryJustification(HUDFlowLayout::END);
-   east_panel.setPrimaryJustification(HUDFlowLayout::START);
+   east_panel.setPrimaryJustification(HUDFlowLayout::CENTRE);
    // east_panel.setSecondaryJustification(HUDFlowLayout::END);
-   west_panel.setPrimaryJustification(HUDFlowLayout::END);
+   west_panel.setPrimaryJustification(HUDFlowLayout::CENTRE);
    // west_panel.setSecondaryJustification(HUDFlowLayout::CENTRE);
 
    // Put the panels into the layout.
@@ -218,7 +262,7 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
       ErrorHandler::record(msg, ErrorHandler::FATAL);
       }
 
-   welcome_text->setText("Hi! Welcome to Einstein @ Home! SolarSystem V0.1 ... ");
+   welcome_text->setText("Hi! Welcome to Einstein @ Home! SolarSystem V0.2 ... ");
    // Put the content into the panel.
    north_panel.addContent(welcome_text);
 
@@ -270,8 +314,9 @@ void Simulation::release(void) {
    cs.inactivate();
    ps.inactivate();
    sn.inactivate();
-   gg.inactivate();
+   c_sphere.inactivate();
    earth.inactivate();
+   e_sphere.inactivate();
    sun.inactivate();
 
    // Must inactivate the layout first !!
@@ -298,11 +343,18 @@ void Simulation::release(void) {
    }
 
 void Simulation::render(void) {
+	if(autopilotActive) {
+		flyboy.setViewState(autopilot);
+		}
+	else {
+		autopilot = flyboy.getViewState();
+		}
+
    // Invoke the draw method for each scene element.
    cs.draw();
    ps.draw();
    sn.draw();
-   gg.draw();
+   c_sphere.draw();
 
    // For calculational efficiency/simplicity lights are of directional type
    // ie. shining from 'infinity' in the given direction.
@@ -324,6 +376,7 @@ void Simulation::render(void) {
       // Render the Earth, suitably transformed.
       glRotatef(earth_hour_angle, 0, 0, 1);
       earth.draw();
+      e_sphere.draw();
 
       // Turn the light off.
       // glDisable(GL_LIGHT0);
@@ -412,11 +465,14 @@ void Simulation::cycle(Simulation::content ct) {
       case Simulation::EARTH:
          // We don't cycle the Earth ... yet
          break;
+      case Simulation::EARTH_GRID:
+         e_sphere.cycleActivation();
+         break;
       case Simulation::SUN:
          // We don't cycle the Sun ... yet
          break;
-      case Simulation::GRID:
-         gg.cycleActivation();
+      case Simulation::SKY_GRID:
+         c_sphere.cycleActivation();
          break;
       case Simulation::PULSARS:
          ps.cycleActivation();
@@ -428,6 +484,15 @@ void Simulation::cycle(Simulation::content ct) {
          // TODO : still buggy .....
          // overlay.cycleActivation();
          break;
+      case Simulation::AUTOPILOT:
+      	autopilotActive = !autopilotActive;
+      	if(!autopilotActive) {
+      		// When returning to use control ...
+      		flyboy.manouevre(Craft::STOP_ROTATION);
+      		flyboy.manouevre(Craft::STOP_TRANSLATION);
+      		flyboy.setViewState(autopilot);
+				}
+      	break;
       default:
          // Ought not get here !!
          std::string msg = "Simulation::cycle() - bad switch case reached (default)";

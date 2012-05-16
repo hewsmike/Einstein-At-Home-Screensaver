@@ -80,7 +80,7 @@ class HUDTextLineScroll : public HUDTextLine {
        */
       void toggleDirection(void);
 
-//      void trigger_callback(void);
+      void trigger_callback(void);
 
    protected:
       /// This routine satisfies the Renderable interface.

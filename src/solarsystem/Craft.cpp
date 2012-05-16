@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2011 by Mike Hewson                                     *
- *   hewsmike@iinet.net.au                                                 *
+ *   Copyright (C) 2012 by Mike Hewson                                     *
+ *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
  *                                                                         *
@@ -56,51 +56,51 @@ const AcceleratedPlatform& Craft::get_platform() const {
    return state;
    }
 
-void Craft::manouevre(SolarSystemGlobals::movements mov) {
+void Craft::manouevre(Craft::movements mov) {
    switch(mov) {
-      case SolarSystemGlobals::GO_HOME :
+      case Craft::GO_HOME :
          go_home();
          break;
-      case SolarSystemGlobals::STOP_TRANSLATION :
+      case Craft::STOP_TRANSLATION :
          stop();
          break;
-      case SolarSystemGlobals::STOP_ROTATION :
+      case Craft::STOP_ROTATION :
          null_rotation();
          break;
-      case SolarSystemGlobals::FORWARD :
+      case Craft::FORWARD :
          forward_thrust();
          break;
-      case SolarSystemGlobals::REVERSE :
+      case Craft::REVERSE :
          reverse_thrust();
          break;
-      case SolarSystemGlobals::UPWARDS :
+      case Craft::UPWARDS :
          up_thrust();
          break;
-      case SolarSystemGlobals::DOWNWARDS :
+      case Craft::DOWNWARDS :
          down_thrust();
          break;
-      case SolarSystemGlobals::LEFTWARDS :
+      case Craft::LEFTWARDS :
          left_thrust();
          break;
-      case SolarSystemGlobals::RIGHTWARDS :
+      case Craft::RIGHTWARDS :
          right_thrust();
          break;
-      case SolarSystemGlobals::PITCH_UP :
+      case Craft::PITCH_UP :
          nose_up();
          break;
-      case SolarSystemGlobals::PITCH_DOWN :
+      case Craft::PITCH_DOWN :
          nose_down();
          break;
-      case SolarSystemGlobals::ROLL_LEFT :
+      case Craft::ROLL_LEFT :
          roll_left();
          break;
-      case SolarSystemGlobals::ROLL_RIGHT :
+      case Craft::ROLL_RIGHT :
          roll_right();
          break;
-      case SolarSystemGlobals::YAW_LEFT :
+      case Craft::YAW_LEFT :
          yaw_left();
          break;
-      case SolarSystemGlobals::YAW_RIGHT :
+      case Craft::YAW_RIGHT :
          yaw_right();
          break;
       default :
@@ -144,6 +144,14 @@ void Craft::step(GLfloat dayOfYear) {
       std::cout << "Too close to Sun - nudged away" << std::endl;
       }
    }
+
+CameraState Craft::getViewState(void) const {
+	return state.getViewState();
+	}
+
+void Craft::setViewState(CameraState cam) {
+	state.setViewState(cam);
+	}
 
 void Craft::go_home(void) {
    // Initially in good position, stationary and not rotating.

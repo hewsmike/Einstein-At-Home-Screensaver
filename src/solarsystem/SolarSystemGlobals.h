@@ -52,24 +52,6 @@ typedef OGLFT::TranslucentTexture OGLFT_ft;
 
 class SolarSystemGlobals {
    public:
-      // Hmmmm .... why did I put these here ?? :-)
-      /// TODO - correct this ..... ???
-      enum movements {GO_HOME,
-                      STOP_TRANSLATION,
-                      STOP_ROTATION,
-                      FORWARD,
-                      REVERSE,
-                      UPWARDS,
-                      DOWNWARDS,
-                      LEFTWARDS,
-                      RIGHTWARDS,
-                      PITCH_UP,
-                      PITCH_DOWN,
-                      ROLL_LEFT,
-                      ROLL_RIGHT,
-                      YAW_LEFT,
-                      YAW_RIGHT };
-
       // Levels of rendering quality.
       enum render_quality {RENDER_LOWEST, RENDER_MEDIUM, RENDER_HIGHEST};
 

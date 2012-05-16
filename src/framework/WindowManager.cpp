@@ -49,7 +49,7 @@ WindowManager::~WindowManager() {
 
 bool WindowManager::initialize(const int width, const int height, const int frameRate) {
    if(glfwInit() == GL_FALSE) {
-      ErrorHandler::record("WindowManager::initialize() : Window system could not be initalized - GLFW init fail", ErrorHandler::WARN);
+      ErrorHandler::record("WindowManager::initialize() : Window system could not be initalized - GLFW init fail", ErrorHandler::FATAL);
       return false;
       }
    else {
@@ -106,6 +106,7 @@ bool WindowManager::initialize(const int width, const int height, const int fram
    // TODO - write case(s) for close matches
    if(matchVideoMode(fullscreen) == WindowManager::MATCH_EXACT) {
       m_FullscreenModeAvailable = true;
+      ErrorHandler::record("WindowManager::initialize() : Fullscreen video mode is supported", ErrorHandler::INFORM);
       }
    else {
       ErrorHandler::record("WindowManager::initialize() : Fullscreen video mode not supported", ErrorHandler::WARN);
@@ -120,18 +121,19 @@ bool WindowManager::initialize(const int width, const int height, const int fram
    windowed.BlueBits = current_desktop_mode.BlueBits;
 
    // check initial windowed video mode
-   m_WindowedModeAvailable = false;
-   // TODO - write case(s) for close matches
-   if(matchVideoMode(windowed) == WindowManager::MATCH_EXACT) {
-      m_WindowedModeAvailable = true;
-      }
-   else {
-      ErrorHandler::record("WindowManager::initialize() : Windowed video mode not supported", ErrorHandler::WARN);
-      }
+   /// TODO Until the glfwGetVideoModes routine properly enumerates then make this succeed regardless.
+   m_WindowedModeAvailable = true;
+   /// TODO - write case(s) for close matches
+//   if(matchVideoMode(windowed) == WindowManager::MATCH_EXACT) {
+//      m_WindowedModeAvailable = true;
+//      ErrorHandler::record("WindowManager::initialize() : Windowed video mode is supported", ErrorHandler::INFORM);
+//      }
+//   else {
+//      ErrorHandler::record("WindowManager::initialize() : Windowed video mode not supported", ErrorHandler::WARN);
+//      }
 
    // Both checks failed
-   // if(!m_FullscreenModeAvailable || !m_WindowedModeAvailable) {
-   if(false) {
+   if(!m_FullscreenModeAvailable && !m_WindowedModeAvailable) {
       ErrorHandler::record("WindowManager::initialize() : No suitable video mode available", ErrorHandler::WARN);
       return false;
       }
@@ -187,7 +189,11 @@ bool WindowManager::initialize(const int width, const int height, const int fram
 		  << " bit depth buffer";
 	ErrorHandler::record(msg1.str(), ErrorHandler::INFORM);
 
+	// Give GLEW the best chance of finding
+	// functionality with experimental drivers.
 	glewExperimental = GL_TRUE;
+	
+	// Now initialise GLEW.
    if(glewInit() != GLEW_OK) {
       ErrorHandler::record("WindowManager::initialize() : Window system could not be initalized - GLEW init fail", ErrorHandler::WARN);
       return false;
@@ -202,7 +208,7 @@ bool WindowManager::initialize(const int width, const int height, const int fram
 #ifdef WIN_OGL_WORKAROUND
    if(setOGLContext() == true) {
    	// Good to go.
-   	ErrorHandler::record("WindowManager::initialize() : acquired correct OpenGL backward compatible version", ErrorHandler::INFORM);
+   	ErrorHandler::record("WindowManager::initialize() : acquired adequate OpenGL backward compatible version", ErrorHandler::INFORM);
    	// Find out the OpenGL version.
    	GLuint major = 0;
    	GLuint minor = 0;
@@ -217,6 +223,24 @@ bool WindowManager::initialize(const int width, const int height, const int fram
    	return false;
 		}
 #endif
+
+	// Final test to see if the driver is "truthful".
+	// If OPEN_GL_VERSION_MINIMUM_MAJOR or OPEN_GL_VERSION_MINIMUM_MINOR
+	// altered need to change the test variable here.
+	if(GLEW_VERSION_1_5) {
+		// Fine as is.
+		ErrorHandler::record("WindowManager::initialize() : satisfactory OpenGL v1.5+", ErrorHandler::INFORM);
+		}
+	else {
+		// Whoops, some components at the minimum level not actually supported.
+		std::stringstream msg;
+		msg << "WindowManager::initialize() : Driver claims v"
+		  	 << OPEN_GL_VERSION_MINIMUM_MAJOR
+		    << "."
+			 << OPEN_GL_VERSION_MINIMUM_MINOR
+			 << " minimum interface, but some components missing ....";
+		ErrorHandler::record(msg.str(), ErrorHandler::WARN);
+		}
 
    // This being the first call to this routine will have the effect
    // of establishing the event queue/callbacks, plus set the
@@ -584,17 +608,20 @@ void WindowManager::setWindowIcon(const unsigned char *data, const int size) con
    }
 
 void WindowManager::toggleFullscreen(void) {
+	// Assume failure.
 	bool canTransition = false;
 	GLenum desiredMode;
+	int desiredWidth;
+	int desiredHeight;
 	
-	if(isFullScreenMode == true) {
+	if(isFullScreenMode) {
 		// Want a transition to windowed mode.
-		if(m_WindowedModeAvailable == true) {
+		if(m_WindowedModeAvailable) {
          canTransition = true;
          
          // Set dimensions for whatever was the previous windowed mode.
-	      m_CurrentWidth = m_WindowedWidth;
-   	   m_CurrentHeight = m_WindowedHeight;
+         desiredWidth = m_WindowedWidth;
+	      desiredHeight = m_WindowedHeight;
 
         	// show cursor in fullscreen mode
       	glfwEnable(GLFW_MOUSE_CURSOR);
@@ -607,12 +634,12 @@ void WindowManager::toggleFullscreen(void) {
 		}
 	else {
 		// Want a transition to fullscreen mode.
-		if(m_FullscreenModeAvailable == true) {
+		if(m_FullscreenModeAvailable) {
 		   canTransition = true;
 		   
 		   // Set dimensions of fullscreen as those of user's desktop.
-      	m_CurrentWidth = m_DesktopWidth;
-      	m_CurrentHeight = m_DesktopHeight;
+		   desiredWidth = m_DesktopWidth;
+      	desiredHeight = m_DesktopHeight;
 
       	// hide cursor
       	glfwDisable(GLFW_MOUSE_CURSOR);
@@ -624,10 +651,10 @@ void WindowManager::toggleFullscreen(void) {
 			}
 		}
 
-	if(canTransition == true) {
-      // reset video mode, noting that we retain the original discovered user's color depths.
-      /// TODO - manage variants on depth buffer size.
-  		int window_open = glfwOpenWindow(m_CurrentWidth, m_CurrentHeight,
+	if(canTransition) {
+      // Reset video mode, noting that we retain the original discovered user's
+		// color depths, and previous best depth buffer granularity.
+		int window_open = glfwOpenWindow(desiredWidth, desiredHeight,
                                     	current_desktop_mode.RedBits,
                                     	current_desktop_mode.GreenBits,
                                     	current_desktop_mode.BlueBits,
@@ -636,16 +663,19 @@ void WindowManager::toggleFullscreen(void) {
                                     	NO_STENCIL,
                                     	desiredMode);
 
-		// Did that request work?
+  		// Did that request work?
    	if(window_open == GL_FALSE) {
 			// It would be pretty screwy if we got here, so fail out.
          ErrorHandler::record("WindowManager::toggleFullscreen() : Could not acquire rendering surface", ErrorHandler::FATAL);
       	}
       else {
-      	// Need to re-initialise GLEW after we acquire a context to apply it to.
-      	// TODO - Keep glewExperimental=TRUE in mind ....
-   		if(glewInit() != GLEW_OK) {
-      		ErrorHandler::record("WindowManager::initialize() : Window system could not be initalized - GLEW init fail", ErrorHandler::WARN);
+         // Give GLEW the best chance of finding
+			// functionality with experimental drivers.
+			glewExperimental = GL_TRUE;
+
+			// Need to re-initialise GLEW after we acquire a context to apply it to.
+      	if(glewInit() != GLEW_OK) {
+      		ErrorHandler::record("WindowManager::initialize() : Window system could not be initalized - GLEW init fail", ErrorHandler::FATAL);
       		return;
       		}
    		else {
@@ -656,7 +686,9 @@ void WindowManager::toggleFullscreen(void) {
 			}
 
 		// All is good, so toggle state flag.
-		isFullScreenMode = isFullScreenMode;
+		isFullScreenMode = !isFullScreenMode;
+		m_CurrentWidth = desiredWidth;
+		m_CurrentHeight = desiredHeight;
 			
    	// notify our observers (currently exactly one, hence front())
    	// (windoze needs to be reinitialized instead of just resized, oh well)
@@ -677,8 +709,8 @@ void WindowManager::setScreensaverMode(const bool enabled) {
    }
 
 void WindowManager::getVideoModes(void) {
-   // Yes, 100 is rather silly, but will definitely retrieve
-	// all modes, and is compacted to a smaller list anyway.
+   // Yes, 100 is rather silly, but will likely retrieve all
+	// modes of interest, and is compacted to a smaller list anyway.
    static int VIDEO_MODES_BUFFER_SIZE = 100;
    GLFWvidmode vidmodes[VIDEO_MODES_BUFFER_SIZE];
 
@@ -711,12 +743,12 @@ void WindowManager::getVideoModes(void) {
 
 int WindowManager::matchVideoMode(GLFWvidmode test_case) {
    // Assume failure.
-   int retval = WindowManager::MATCH_NONE;
+   int ret_val = WindowManager::MATCH_NONE;
 
 	// What is the total color depth in bits ?
    int desired_color_depth = test_case.RedBits + test_case.GreenBits + test_case.BlueBits;
 
-   /// TODO - create code for nearest match case(s)
+   /// TODO - create code for nearest match case(s) ???
 
 	// Search thru all the known video modes.
    for(std::vector<GLFWvidmode>::const_iterator vm = video_modes.begin();
@@ -730,13 +762,13 @@ int WindowManager::matchVideoMode(GLFWvidmode test_case) {
          if((test_case.Width == vm->Width) &&
             (test_case.Height == vm->Height)){
             // All parameters match so exit with flag to indicate success.
-            retval = WindowManager::MATCH_EXACT;
+            ret_val = WindowManager::MATCH_EXACT;
             break;
             }
          }
       }
 
-   return retval;
+   return ret_val;
    }
 
 #ifdef WIN_OGL_WORKAROUND
@@ -750,14 +782,14 @@ bool WindowManager::setOGLContext(void) {
 	SolarSystemGlobals::getOGLVersion(&major, &minor);
 	std::stringstream msg;
 	msg << "WindowManager::setOGLContext() : OpenGL v"
-	  	 << OPEN_GL_VERSION_MINIMUM_MAJOR
+	  	 << major
 	    << "."
-		 << OPEN_GL_VERSION_MINIMUM_MINOR;
+		 << minor;
 	ErrorHandler::record(msg.str(), ErrorHandler::INFORM);
 
 	// With v3.2+ then ...
 	if((major > 3) ||
-		((major = 3) && (minor >= 2))) {
+		((major == 3) && (minor >= 2))) {
 		ErrorHandler::record("WindowManager::setOGLContext() : OpenGL v3.2+ version", ErrorHandler::INFORM);
 		// ... try to establish a backwards compatible context.
 		if(glewIsSupported("GL_ARB_compatibility")) {
@@ -777,36 +809,47 @@ bool WindowManager::setOGLContext(void) {
 				// Create new context from current.
 				HGLRC new_context = wglCreateContextAttribsARB(hdc, hglrc, attribList);
 
-				// Make this new context the current one.
-				wglMakeCurrent(hdc, new_context);
+				// Did that work?
+				if(new_context != NULL) {
+					// Make this new context the current one.
+					wglMakeCurrent(hdc, new_context);
 
-				// Delete the old context.
-				wglDeleteContext(hglrc);
+					// Delete the old context.
+					wglDeleteContext(hglrc);
 
-				// Re-initialise GLEW.
-				glewExperimental = GL_TRUE;
-				if(glewInit() != GLEW_OK) {
-					ErrorHandler::record("WindowManager::setOGLContext() : Window system could not be initalized - GLEW init fail", ErrorHandler::WARN);
-				   }
+               // Give GLEW the best chance of finding
+					// functionality with experimental drivers.
+					glewExperimental = GL_TRUE;
+
+					// Re-initialise GLEW.
+     				if(glewInit() != GLEW_OK) {
+						ErrorHandler::record("WindowManager::setOGLContext() : Window system could not be initalized - GLEW init fail", ErrorHandler::WARN);
+						}
+					else {
+						// Finally!!
+						ErrorHandler::record("WindowManager::setOGLContext() : Window system could be initalized - GLEW init success", ErrorHandler::INFORM);
+						ret_val = true;
+						}
+					}
 				else {
-					// Finally!!
-					ErrorHandler::record("WindowManager::setOGLContext() : Window system could be initalized - GLEW init success", ErrorHandler::INFORM);
-					ret_val = true;
+					// Tried, but couldn't get a context.
+					ErrorHandler::record("WindowManager::setOGLContext() : Failed to created backward compatible context", ErrorHandler::WARN);
 					}
 				}
 			else {
+				// No, backward context creation facility not available.
 				ErrorHandler::record("WindowManager::setOGLContext() : WGL_ARB_create_context_profile NOT supported", ErrorHandler::WARN);
 				}
 			}
 		}
 	else {
 		// OK, so we're less than v3.2, are we at least the minumum ?
-		if((major = OPEN_GL_VERSION_MINIMUM_MAJOR) && (minor >= OPEN_GL_VERSION_MINIMUM_MINOR)) {
-			// Fine as is, no further effort required.
-			ErrorHandler::record("WindowManager::setOGLContext() : satisfactory OpenGL version as is", ErrorHandler::INFORM);
-			ret_val = true;
+		if((major > OPEN_GL_VERSION_MINIMUM_MAJOR) ||
+			((major == OPEN_GL_VERSION_MINIMUM_MAJOR) && (minor >= OPEN_GL_VERSION_MINIMUM_MINOR))) {
+    		ret_val = true;
 			}
 		else {
+			// No, the declared OpenGL version is less than desired.
 			std::stringstream msg;
 			msg << "WindowManager::setOGLContext() : OpenGL pre v"
 			  	 << OPEN_GL_VERSION_MINIMUM_MAJOR

@@ -1,22 +1,22 @@
 /***************************************************************************
-* Copyright (C) 2011 by Mike Hewson                                        *
-* hewsmike@iinet.net.au                                                    *
-*                                                                          *
-* This file is part of Einstein@Home.                                      *
-*                                                                          *
-* Einstein@Home is free software: you can redistribute it and/or modify    *
-* it under the terms of the GNU General Public License as published        *
-* by the Free Software Foundation, version 2 of the License.               *
-*                                                                          *
-* Einstein@Home is distributed in the hope that it will be useful,         *
-* but WITHOUT ANY WARRANTY; without even the implied warranty of           *
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the             *
-* GNU General Public License for more details.                             *
-*                                                                          *
-* You should have received a copy of the GNU General Public License        *
-* along with Einstein@Home. If not, see <http://www.gnu.org/licenses/>.    *
-*                                                                          *
-***************************************************************************/
+ *   Copyright (C) 2012 by Mike Hewson                                     *
+ *   hewsmike[AT]iinet.net.au                                              *
+ *                                                                         *
+ *   This file is part of Einstein@Home.                                   *
+ *                                                                         *
+ *   Einstein@Home is free software: you can redistribute it and/or modify *
+ *   it under the terms of the GNU General Public License as published     *
+ *   by the Free Software Foundation, version 2 of the License.            *
+ *                                                                         *
+ *   Einstein@Home is distributed in the hope that it will be useful,      *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the          *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with Einstein@Home. If not, see <http://www.gnu.org/licenses/>. *
+ *                                                                         *
+ ***************************************************************************/
 
 #include "Globe.h"
 
@@ -51,13 +51,13 @@ const bool Globe::STAGGERING(true);
 const bool Globe::STITCHING(true);
 
 Globe::Globe(std::string name,
-             std::string image_file_name,
+             std::string image_resource_name,
              GLfloat radius,
              GLuint stacks,
              GLuint slices,
              GLfloat zero_longitude_offset) :
                  nm(name),
-                 ifn(image_file_name),
+                 irn(image_resource_name),
                  zlo(zero_longitude_offset),
                  sp(radius, slices, stacks, STAGGERING, STITCHING),
                  verts_per_lat(slices + 1) {
@@ -74,9 +74,21 @@ void Globe::loadTexture(void) {
    // Make our texture object OpenGL's current one.
    glBindTexture(GL_TEXTURE_2D, texture.ID());
    
+   ResourceFactory factory;
+   // Create texture resource instance.
+   const Resource* textureResource = factory.createInstance(irn.c_str());
+
    // We're gonna let the GLFW do the hard work of mipmap production.
    // This implicitly operates on the GL_TEXTURE_2D target.
-   int load_success = glfwLoadTexture2D(ifn.c_str(), GLFW_BUILD_MIPMAPS_BIT);
+   int load_success = GL_FALSE;
+   if(textureResource != GL_FALSE) {
+		load_success = glfwLoadMemoryTexture2D(&(textureResource->data()->front()),
+															 textureResource->data()->size(),
+															 GLFW_BUILD_MIPMAPS_BIT);
+		}
+	else {
+      ErrorHandler::record("Globe::loadTexture() - texture resource not available", ErrorHandler::WARN);
+		}
 
    // Did that work?
    if(load_success == GL_TRUE) {
@@ -112,7 +124,7 @@ void Globe::loadTexture(void) {
       // with later rendering OpenGL will simply use the 'default' texture ie.
       // nothing. The only visual result will be to see whatever background
       // color(s) have been assigned ( or not ! ) to the polygon(s) in question.
-      ErrorHandler::record("Globe::loadTexture() - texture object NOT loaded ", ErrorHandler::WARN);
+      ErrorHandler::record("Globe::loadTexture() - texture object not loaded ", ErrorHandler::WARN);
       }
       
    // Unbind the texture from the state machine - but don't delete it!
@@ -149,9 +161,9 @@ void Globe::prepare(SolarSystemGlobals::render_quality rq) {
 void Globe::release(void) {
    // Free up the various buffer and texture objects on the server side.
    north_cap_indices.release();
-   waist_buffer.release();
+   waist_indices.release();
    south_cap_indices.release();
-   buff_obj_points.release();
+   vertex_buffer.release();
    texture.release();
    }
 
@@ -175,7 +187,7 @@ void Globe::render(void) {
    glBindTexture(GL_TEXTURE_2D, texture.ID());
 
    // Make our vertex buffer identifier OpenGL's current one.
-   glBindBuffer(GL_ARRAY_BUFFER, buff_obj_points.ID());
+   glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer.ID());
 
    // The untextured polygonal ( triangles ) color will be opaque and white.
    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
@@ -200,7 +212,7 @@ void Globe::render(void) {
                   BUFFER_OFFSET(ARRAY_START));
 
    // Make the waist index buffer identifier OpenGL's current one.
-   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, waist_buffer.ID());
+   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, waist_indices.ID());
 
    for(GLuint stack = 1; stack < sp.stacks() - 2; ++stack) {
       // Herewith the number of bytes into the index buffer
@@ -246,30 +258,14 @@ void Globe::render(void) {
 
 void Globe::loadVertexBuffer(void) {
    // Get an OpenGL buffer object.
-   buff_obj_points.acquire();
-
-   // Make our buffer identifier OpenGL's current one.
-   glBindBuffer(GL_ARRAY_BUFFER, buff_obj_points.ID());
+   vertex_buffer.acquire();
 
    // What size allocation are we after? There are two pole vertices, and
-   // a number of vertices at each stack of latitude. Each vertex has
-   // position, normal and texture data ( fortunately those have the same
-   // type : float = vec_t )
-   GLsizeiptr size = sizeof(vec_t) *            // Number of bytes in the base data type
-                     ELEMENTS_PER_VERTEX *      // The number of base data types per vertex
-                     sp.vertices().size();      // How many vertices we have.
+   // a number of vertices at each stack of latitude.
+   GLsizeiptr buffer_size = sizeof(Vert) * sp.vertices().size();
 
-   // Allocate buffer memory but don't store, yet.
-   glBufferData(GL_ARRAY_BUFFER, size, NULL, GL_STATIC_DRAW);
-
-   // Get write access to the buffer area.
-   vec_t* buffer_ptr = static_cast<vec_t*>(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
-
-   // Check for failure, as we don't want to dereference a NULL later on,
-   // ... MAKE IT A FATAL ERROR.
-   if(buffer_ptr == NULL) {
-      ErrorHandler::record("Globe::loadVertexBuffer() - can't acquire buffer pointer", ErrorHandler::FATAL);
-      }
+   Vert* buffer_base_ptr = new Vert[sp.vertices().size()];
+   Vert* buffer_ptr = buffer_base_ptr;
 
    for(std::vector<Vertex>::const_iterator vt = sp.vertices().begin();
        vt != sp.vertices().end();
@@ -277,32 +273,25 @@ void Globe::loadVertexBuffer(void) {
       // Transfer the vertex data to the buffer.
       vertex2buffer(*vt, buffer_ptr);
       // Update the buffer pointer.
-      buffer_ptr += ELEMENTS_PER_VERTEX;
+      ++buffer_ptr;
       }
 
-   // Disconnect the mapping and the buffer from OpenGL.
-   glUnmapBuffer(GL_ARRAY_BUFFER);
-   glBindBuffer(GL_ARRAY_BUFFER, Buffer_OBJ::NO_ID);
+   vertex_buffer.loadBuffer(GL_ARRAY_BUFFER, GL_STATIC_DRAW, buffer_size, buffer_base_ptr);
+   delete[] buffer_base_ptr;
    }
 
 void Globe::loadWaistIndexBuffer(void) {
    // Get a valid buffer object ( server-side ) identifier.
-   waist_buffer.acquire();
-
-   // Make our buffer identifier OpenGL's current one.
-   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, waist_buffer.ID());
+   waist_indices.acquire();
 
    // What size allocation are we after?
    GLsizeiptr waist_size = sizeof(GLuint) *           // Size of base data type
                            verts_per_lat *            // Number of vertices per stack
-                           (sp.stacks() - 3) *       // Number of non-polar stacks less one
+                           (sp.stacks() - 3) *        // Number of non-polar stacks less one
                            2;                         // Two stacks involved per GL_TRIANGLE_STRIP.
 
-   // Allocate buffer memory but don't store, yet.
-   glBufferData(GL_ELEMENT_ARRAY_BUFFER, waist_size, NULL, GL_STATIC_DRAW);
-
-   // Get write access to the buffer area.
-   GLuint* buffer_ptr = static_cast<GLuint*>(glMapBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_WRITE_ONLY));
+   GLuint* buffer_base_ptr = new GLuint[verts_per_lat * (sp.stacks() - 3) * 2];
+   GLuint* buffer_ptr = buffer_base_ptr;
 
    // The indices of points are obtained by interrogating the sphere object.
    // Vertices are suitably listed for use within a GL_TRIANGLE_STRIP.
@@ -319,17 +308,13 @@ void Globe::loadWaistIndexBuffer(void) {
          }
       }
 
-   // Discard the mapping and unbind the buffer.
-   glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER);
-   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Buffer_OBJ::NO_ID);
+   waist_indices.loadBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW, waist_size, buffer_base_ptr);
+   delete[] buffer_base_ptr;
    }
 
-void Globe::loadPolarIndexBuffer(Buffer_OBJ& buff, enum pole p) {
+void Globe::loadPolarIndexBuffer(Buffer_OBJ& polar_buffer, enum pole p) {
    // Get a valid buffer object ( server-side ) identifier.
-   buff.acquire();
-
-   // Make our buffer identifier OpenGL's current one for indices.
-   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buff.ID());
+   polar_buffer.acquire();
 
    // What size byte allocation are we after for this array of indices? For
    // each point we have sizeof(GLuint) worth. What is the point count ?
@@ -337,12 +322,8 @@ void Globe::loadPolarIndexBuffer(Buffer_OBJ& buff, enum pole p) {
    // - one for each vertex within the stack just adjacent the pole.
    GLsizeiptr polar_size = sizeof(GLuint) * (1 + verts_per_lat);
 
-   // Allocate buffer memory but don't store, yet.
-   glBufferData(GL_ELEMENT_ARRAY_BUFFER, polar_size, NULL, GL_STATIC_DRAW);
-
-   // Get an access pointer to the buffer area, of correct type,
-   // for the purpose of writing.
-   GLuint* buffer_ptr = static_cast<GLuint*>(glMapBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_WRITE_ONLY));
+   GLuint* buffer_base_ptr = new GLuint[1 + verts_per_lat];
+   GLuint* buffer_ptr = buffer_base_ptr;
 
    // Index of point on sphere which begins a sequence of
    // points for later use within a GL_TRIANGLE_FAN pattern.
@@ -377,24 +358,23 @@ void Globe::loadPolarIndexBuffer(Buffer_OBJ& buff, enum pole p) {
       ++buffer_ptr;
       }
 
-   // Discard the mapping and unbind ( but not release ) the buffer.
-   glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER);
-   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Buffer_OBJ::NO_ID);
+   polar_buffer.loadBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW, polar_size, buffer_base_ptr);
+   delete[] buffer_base_ptr;
    }
 
-void Globe::vertex2buffer(const Vertex& vert, vec_t* buffer) const {
+void Globe::vertex2buffer(const Vertex& vert, Vert* buffer) const {
    // Texture co-ordinates, noting an adjustment to line
    // the map up to the Greenwich meridian.
-   buffer[0] = vert.texture_co_ords().first - zlo;
-   buffer[1] = vert.texture_co_ords().second;
+   buffer->text.s = vert.texture_co_ords().first - zlo;
+   buffer->text.t = vert.texture_co_ords().second;
 
    // Normal data.
-   buffer[2] = vert.normal().x();
-   buffer[3] = vert.normal().y();
-   buffer[4] = vert.normal().z();
+   buffer->norm.x = vert.normal().x();
+   buffer->norm.y = vert.normal().y();
+   buffer->norm.z = vert.normal().z();
 
    // Position data.
-   buffer[5] = vert.position().x();
-   buffer[6] = vert.position().y();
-   buffer[7] = vert.position().z();
+   buffer->pos.x = vert.position().x();
+   buffer->pos.y = vert.position().y();
+   buffer->pos.z = vert.position().z();
    }

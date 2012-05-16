@@ -46,17 +46,17 @@ CPPFLAGS += -I$(FRAMEWORK_SRC) -I$(SOLARSYSTEM_SRC)/../framework
 CPPFLAGS += -DGL_GLEXT_PROTOTYPES
 
 DEPS = Makefile
-OBJS = AcceleratedPlatform.o Buffer_OBJ.o Constellation.o Constellations.o Craft.o
+OBJS = AcceleratedPlatform.o Buffer_OBJ.o CameraState.o Constellation.o Constellations.o Craft.o
 OBJS += EinsteinRadioAdapter.o EinsteinS5R3Adapter.o Globe.o GridGlobe.o
 OBJS += HUDBorderLayout.o HUDContainer.o HUDContent.o
 OBJS += HUDFlowLayout.o HUDFlowHorizontalLayout.o HUDFlowVerticalLayout.o
 OBJS += HUDImage.o HUDItem.o HUDTextLine.o HUDTextLineScroll.o
 OBJS += InertialPlatform.o OGL_ID.o
-OBJS += OrdStar.o OrthoNormalPlatform.o Pulsar.o Pulsars.o Renderable.o
-OBJS += Simulation.o SolarSystem.o
+OBJS += OrdStar.o OrthoNormalPlatform.o Path.o Pulsar.o Pulsars.o Renderable.o
+OBJS += Shape.o Simulation.o SolarSystem.o
 OBJS += SolarSystemRadio.o SolarSystemS5R3.o
 OBJS += SolarSystemGlobals.o Sphere.o SpinPlatform.o Star.o SunOrbit.o
-OBJS += Supernova.o Supernovae.o Texture_OBJ.o TranslatablePlatform.o
+OBJS += Supernova.o Supernovae.o Texture_OBJ.o TranslatablePlatform.o Traverse.o
 OBJS += UTC.o Vector3D.o
 OBJS += VectorSP.o Vertex.o
 OBJS += $(RESOURCESPEC).o
@@ -106,6 +106,9 @@ Axes.o: $(DEPS) $(SOLARSYSTEM_SRC)/Axes.cpp $(SOLARSYSTEM_SRC)/Axes.h
 
 Buffer_OBJ.o: $(DEPS) $(SOLARSYSTEM_SRC)/Buffer_OBJ.cpp $(SOLARSYSTEM_SRC)/Buffer_OBJ.h
 	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/Buffer_OBJ.cpp
+	
+CameraState.o: $(DEPS) $(SOLARSYSTEM_SRC)/CameraState.cpp $(SOLARSYSTEM_SRC)/CameraState.h
+	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/CameraState.cpp
 
 Constellation.o: $(DEPS) $(SOLARSYSTEM_SRC)/Constellation.cpp $(SOLARSYSTEM_SRC)/Constellation.h
 	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/Constellation.cpp
@@ -175,6 +178,9 @@ OrdStar.o: $(DEPS) $(SOLARSYSTEM_SRC)/OrdStar.cpp $(SOLARSYSTEM_SRC)/OrdStar.h
 
 OrthoNormalPlatform.o: $(DEPS) $(SOLARSYSTEM_SRC)/OrthoNormalPlatform.cpp $(SOLARSYSTEM_SRC)/OrthoNormalPlatform.h
 	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/OrthoNormalPlatform.cpp
+	
+Path.o: $(DEPS) $(SOLARSYSTEM_SRC)/Path.cpp $(SOLARSYSTEM_SRC)/Path.h
+	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/Path.cpp	
 
 Pulsar.o: $(DEPS) $(SOLARSYSTEM_SRC)/Pulsar.cpp $(SOLARSYSTEM_SRC)/Pulsar.h
 	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/Pulsar.cpp
@@ -184,6 +190,9 @@ Pulsars.o: $(DEPS) $(SOLARSYSTEM_SRC)/Pulsars.cpp $(SOLARSYSTEM_SRC)/Pulsars.h
 
 Renderable.o: $(DEPS) $(SOLARSYSTEM_SRC)/Renderable.cpp $(SOLARSYSTEM_SRC)/Renderable.h
 	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/Renderable.cpp
+	
+Shape.o: $(DEPS) $(SOLARSYSTEM_SRC)/Shape.cpp $(SOLARSYSTEM_SRC)/Shape.h
+	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/Shape.cpp	
 
 Simulation.o: $(DEPS) $(SOLARSYSTEM_SRC)/Simulation.cpp $(SOLARSYSTEM_SRC)/Simulation.h
 	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/Simulation.cpp
@@ -223,6 +232,9 @@ Texture_OBJ.o: $(DEPS) $(SOLARSYSTEM_SRC)/Texture_OBJ.cpp $(SOLARSYSTEM_SRC)/Tex
 
 TranslatablePlatform.o: $(DEPS) $(SOLARSYSTEM_SRC)/TranslatablePlatform.cpp $(SOLARSYSTEM_SRC)/TranslatablePlatform.h
 	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/TranslatablePlatform.cpp
+	
+Traverse.o: $(DEPS) $(SOLARSYSTEM_SRC)/Traverse.cpp $(SOLARSYSTEM_SRC)/Traverse.h
+	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/Traverse.cpp	
 
 UTC.o: $(DEPS) $(SOLARSYSTEM_SRC)/UTC.cpp $(SOLARSYSTEM_SRC)/UTC.h
 	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/UTC.cpp

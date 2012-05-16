@@ -18,22 +18,34 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "DisplayList.h"
+#include "CameraState.h"
 
-DisplayList::DisplayList() {
+#include "ErrorHandler.h"
+
+CameraState::CameraState(const Vector3D& position,
+								 const Vector3D& focus,
+								 const Vector3D& orientation) :
+									where(position),
+									look_at(focus),
+									up_dir(orientation) {
    }
 
-DisplayList::~DisplayList() {
-   // Must call this here in this derived class.
-   release();
+CameraState::CameraState() : where(),
+									  look_at(),
+									  up_dir() {
    }
 
-void DisplayList::acquire(void) {
-   // Ask OpenGL to assign a display list.
-   ident = glGenLists(1);
-   }
+CameraState::~CameraState() {
+	}
 
-void DisplayList::release(void) {
-   // Ask OpenGL to release the display list.
-   glDeleteLists(ident, 1);
-   }
+const Vector3D& CameraState::position(void) const {
+	return this->where;
+	}
+
+const Vector3D& CameraState::focus(void) const {
+	return this->look_at;
+	}
+
+const Vector3D& CameraState::orientation(void) const {
+	return this->up_dir;
+	}

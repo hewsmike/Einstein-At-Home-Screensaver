@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2011 by Mike Hewson                                     *
- *   hewsmike@iinet.net.au                                                 *
+ *   Copyright (C) 2012 by Mike Hewson                                     *
+ *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
  *                                                                         *
@@ -48,6 +48,18 @@ void AcceleratedPlatform::set_roll_rate(vec_t rate) {
 void AcceleratedPlatform::set_yaw_rate(vec_t rate) {
    SpinPlatform::yaw_rate = rate;
    }
+
+CameraState AcceleratedPlatform::getViewState(void) const {
+	return CameraState(this->position(),
+						    this->look(),
+						    this->up());
+	}
+
+void AcceleratedPlatform::setViewState(const CameraState& cam) {
+	this->set_position(cam.position());
+	this->set_look(cam.focus());
+	this->set_up(cam.orientation());
+	}
 
 vec_t AcceleratedPlatform::get_pitch_rate(void) {
    return SpinPlatform::pitch_rate;

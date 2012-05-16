@@ -45,7 +45,7 @@ const GLint HUDImage::NO_BORDER(0);
 HUDImage::HUDImage(std::string fileName,
                    GLuint horizontalMargin,
                    GLuint verticalMargin) :
-                     HUDContent(horizontalMargin, verticalMargin),
+                   	HUDContent(horizontalMargin, verticalMargin),
                      image_file_name(fileName),
                      image_width(0),
                      image_height(0) {

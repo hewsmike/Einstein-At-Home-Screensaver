@@ -29,6 +29,7 @@
 
 #include <oglft/OGLFT.h>
 
+#include "CameraState.h"
 #include "Constellations.h"
 #include "Craft.h"
 #include "ErrorHandler.h"
@@ -70,7 +71,7 @@
 class Simulation : public Renderable {
    public:
       /// Enumerants for the scene elements
-      enum content {AXES, CONSTELLATIONS, EARTH, SUN, GRID, PULSARS, SUPERNOVAE, HUDOVER};
+      enum content {AXES, CONSTELLATIONS, EARTH, EARTH_GRID, SUN, SKY_GRID, PULSARS, SUPERNOVAE, HUDOVER, AUTOPILOT};
 
       /**
        * \brief Constructor
@@ -82,19 +83,15 @@ class Simulation : public Renderable {
        */
       ~Simulation();
 
-      Vector3D getViewPosition(void) const;
-
-      Vector3D getViewDirection(void) const;
-
-      Vector3D getViewUp(void) const;
-
       void step(void);
 
-      void moveRequest(SolarSystemGlobals::movements mv);
+      void moveRequest(Craft::movements mv);
 
       void resize(GLuint width, GLuint height);
 
       void setFont(content element, OGLFT_ft* font);
+
+      CameraState viewPoint(void) const;
 
       // This is not the Renderable base class function,
       // it is additional to that interface and allows
@@ -115,13 +112,13 @@ class Simulation : public Renderable {
 
    private:
       static const std::string EARTH_NAME;
-      static const std::string EARTH_IMAGE_FILE;
+      static const std::string EARTH_IMAGE_RESOURCE;
       static const GLuint EARTH_STACKS;
       static const GLuint EARTH_SLICES;
       static const GLfloat EARTH_TEXTURE_OFFSET;
 
       static const std::string SUN_NAME;
-      static const std::string SUN_IMAGE_FILE;
+      static const std::string SUN_IMAGE_RESOURCE;
       static const GLuint SUN_STACKS;
       static const GLuint SUN_SLICES;
       static const GLfloat SUN_TEXTURE_OFFSET;
@@ -135,9 +132,38 @@ class Simulation : public Renderable {
       static const GLuint CONSTELLATIONS_RADIUS;
       static const GLuint PULSARS_RADIUS;
       static const GLuint SUPERNOVAE_RADIUS;
-      static const GLuint GRID_RADIUS;
-      static const GLuint GRID_STACKS;
-      static const GLuint GRID_SLICES;
+
+      static const GLuint SKYGRID_RADIUS;
+      static const GLuint SKYGRID_STACKS;
+      static const GLuint SKYGRID_SLICES;
+      static const GLfloat SKYGRID_MAIN_WIDTH;
+      static const GLfloat SKYGRID_MAIN_RED;
+      static const GLfloat SKYGRID_MAIN_GREEN;
+      static const GLfloat SKYGRID_MAIN_BLUE;
+      static const GLfloat SKYGRID_CELESTIAL_EQUATOR_WIDTH;
+      static const GLfloat SKYGRID_CELESTIAL_EQUATOR_RED;
+      static const GLfloat SKYGRID_CELESTIAL_EQUATOR_GREEN;
+      static const GLfloat SKYGRID_CELESTIAL_EQUATOR_BLUE;
+      static const GLfloat SKYGRID_PRIME_MERIDIAN_WIDTH;
+      static const GLfloat SKYGRID_PRIME_MERIDIAN_RED;
+      static const GLfloat SKYGRID_PRIME_MERIDIAN_GREEN;
+      static const GLfloat SKYGRID_PRIME_MERIDIAN_BLUE;
+
+      static const GLuint EARTHGRID_RADIUS;
+      static const GLuint EARTHGRID_STACKS;
+      static const GLuint EARTHGRID_SLICES;
+      static const GLfloat EARTHGRID_MAIN_WIDTH;
+      static const GLfloat EARTHGRID_MAIN_RED;
+      static const GLfloat EARTHGRID_MAIN_GREEN;
+      static const GLfloat EARTHGRID_MAIN_BLUE;
+      static const GLfloat EARTHGRID_CELESTIAL_EQUATOR_WIDTH;
+      static const GLfloat EARTHGRID_CELESTIAL_EQUATOR_RED;
+      static const GLfloat EARTHGRID_CELESTIAL_EQUATOR_GREEN;
+      static const GLfloat EARTHGRID_CELESTIAL_EQUATOR_BLUE;
+      static const GLfloat EARTHGRID_PRIME_MERIDIAN_WIDTH;
+      static const GLfloat EARTHGRID_PRIME_MERIDIAN_RED;
+      static const GLfloat EARTHGRID_PRIME_MERIDIAN_GREEN;
+      static const GLfloat EARTHGRID_PRIME_MERIDIAN_BLUE;
 
       /// HUD orthographic clip bounds.
       static const GLint HUD_LEFT_CLIP;
@@ -157,6 +183,8 @@ class Simulation : public Renderable {
 
       int hour24;
 
+      bool autopilotActive;
+
       GLfloat day366;
 
       /// Variable Earth factors.
@@ -170,11 +198,14 @@ class Simulation : public Renderable {
       Constellations cs;
       Pulsars ps;
       Supernovae sn;
-      GridGlobe gg;
+      GridGlobe c_sphere;
       Globe earth;
+      GridGlobe e_sphere;
       Globe sun;
 
       Craft flyboy;
+
+      CameraState autopilot;
 
       UTC clock;
 

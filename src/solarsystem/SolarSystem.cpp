@@ -85,8 +85,11 @@ void SolarSystem::initialize(const int width, const int height, const Resource* 
       // This is the recurrent call of this routine from WindowManager.
       // Seems that windoze also "resets" our OpenGL fonts, so
       // let's clean up before reinitializing them.
-      if(gridFont != NULL) {
-         delete gridFont;
+      if(skygridFont != NULL) {
+         delete skygridFont;
+         }
+      if(earthgridFont != NULL) {
+         delete earthgridFont;
          }
       if(constellationFont != NULL) {
          delete constellationFont;
@@ -104,20 +107,34 @@ void SolarSystem::initialize(const int width, const int height, const Resource* 
       }
    else {
       // create font instance using font resource (base address + size)
-      gridFont = new OGLFT_ft(&spaceFontResource->data()->at(0),
+      skygridFont = new OGLFT_ft(&spaceFontResource->data()->at(0),
                               spaceFontResource->data()->size(),
                               13, 78);
 
       // Note short-circuit evaluation relevant in this if clause ie. right side
       // expression is evaluated only if left side expression is false. Matters
       // for pointer dereference so don't swap order of expressions here.
-      if(gridFont == NULL || (gridFont->isValid() == false)) {
+      if(skygridFont == NULL || (skygridFont->isValid() == false)) {
          // TODO - better error path
-         std::string msg = "SolarSystem::initialize() - Could not construct grid font face from in memory resource!";
+         std::string msg = "SolarSystem::initialize() - Could not construct sky grid font face from in memory resource!";
          ErrorHandler::record(msg, ErrorHandler::FATAL);
          }
-      gridFont->setBackgroundColor(0.0f, 0.0f, 0.0f, 0.0f);
-      gridFont->setForegroundColor(1.0f, 1.0f, 1.0f, 0.6f);
+      skygridFont->setBackgroundColor(0.0f, 0.0f, 0.0f, 0.0f);
+      skygridFont->setForegroundColor(1.0f, 1.0f, 1.0f, 0.6f);
+
+      // create font instance using font resource (base address + size)
+      earthgridFont = new OGLFT_ft(&spaceFontResource->data()->at(0),
+                                   spaceFontResource->data()->size(),
+                                   13, 78);
+
+      if(earthgridFont == NULL || (earthgridFont->isValid() == false)) {
+         // TODO - better error path
+         std::string msg = "SolarSystem::initialize() - Could not construct earth grid font face from in memory resource!";
+         ErrorHandler::record(msg, ErrorHandler::FATAL);
+         }
+      earthgridFont->setBackgroundColor(0.0f, 0.0f, 0.0f, 0.0f);
+      earthgridFont->setForegroundColor(1.0f, 1.0f, 1.0f, 0.6f);
+
       // create font instance using font resource (base address + size)
       constellationFont = new OGLFT_ft(&spaceFontResource->data()->at(0),
                                        spaceFontResource->data()->size(),
@@ -145,10 +162,13 @@ void SolarSystem::initialize(const int width, const int height, const Resource* 
       HUDFont->setBackgroundColor(0.0f, 0.0f, 0.0f, 0.0f);
       HUDFont->setForegroundColor(0.0f, 1.0f, 0.0f, 0.9f);
       }
+
    // Some Simulation components need to have a font before activation.
    sim.setFont(Simulation::CONSTELLATIONS, constellationFont);
-   sim.setFont(Simulation::GRID, gridFont);
+   sim.setFont(Simulation::SKY_GRID, skygridFont);
+   sim.setFont(Simulation::EARTH_GRID, earthgridFont);
    sim.setFont(Simulation::HUDOVER, HUDFont);
+
    // more font setup and optimizations
    glPixelStorei( GL_UNPACK_ALIGNMENT, 1 );
 #if defined( GL_RASTER_POSITION_UNCLIPPED_IBM )
@@ -257,20 +277,18 @@ void SolarSystem::render(const double tOD) {
    sim.step();
 
    // Where are we etc .... in our virtual world?
-   Vector3D view_position = sim.getViewPosition();
-   Vector3D view_direction = sim.getViewDirection();
-   Vector3D view_up = sim.getViewUp();
+   CameraState cam = sim.viewPoint();
 
    // Set up the camera position and orientation.
-   gluLookAt(view_position.x(),
-             view_position.y(),                  // eyes position
-             view_position.z(),
-             SolarSystem::FAR_LOOK_DISTANCE*view_direction.x(),
-             SolarSystem::FAR_LOOK_DISTANCE*view_direction.y(),    // looking towards here
-             SolarSystem::FAR_LOOK_DISTANCE*view_direction.z(),
-             view_up.x(),
-             view_up.y(),                        // which way is up?
-             view_up.z());
+   gluLookAt(cam.position().x(),
+				 cam.position().y(),							// eyes position
+             cam.position().z(),
+             SolarSystem::FAR_LOOK_DISTANCE*cam.focus().x(),
+             SolarSystem::FAR_LOOK_DISTANCE*cam.focus().y(),    // looking towards here
+             SolarSystem::FAR_LOOK_DISTANCE*cam.focus().z(),
+             cam.orientation().x(),
+             cam.orientation().y(),                        // which way is up?
+             cam.orientation().z());
 
    // Render from the current viewpoint.
    sim.draw();
@@ -309,27 +327,27 @@ void SolarSystem::keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey k
          break;
       case KeyC:
          // Reverse thrust.
-         sim.moveRequest(SolarSystemGlobals::REVERSE);
+         sim.moveRequest(Craft::REVERSE);
          message += "KeyC : reverse thrust";
          break;
       case KeyD:
          // Stop.
-         sim.moveRequest(SolarSystemGlobals::STOP_TRANSLATION);
+         sim.moveRequest(Craft::STOP_TRANSLATION);
          message += "KeyD : null translation";
          break;
       case KeyE:
          // Thrust forwards.
-         sim.moveRequest(SolarSystemGlobals::FORWARD);
+         sim.moveRequest(Craft::FORWARD);
          message += "KeyE : forward thrust";
          break;
       case KeyF:
          // Thrust to the right.
-         sim.moveRequest(SolarSystemGlobals::RIGHTWARDS);
+         sim.moveRequest(Craft::RIGHTWARDS);
          message += "KeyF : right thrust";
          break;
       case KeyG:
          // Go home.
-         sim.moveRequest(SolarSystemGlobals::GO_HOME);
+         sim.moveRequest(Craft::GO_HOME);
          message += "KeyG : go home";
          break;
       case KeyH:
@@ -339,12 +357,12 @@ void SolarSystem::keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey k
          break;
       case KeyK:
          // Roll to the left.
-         sim.moveRequest(SolarSystemGlobals::ROLL_LEFT);
+         sim.moveRequest(Craft::ROLL_LEFT);
          message += "KeyK : roll left";
          break;
       case KeyL:
          // stop any craft rotation
-         sim.moveRequest(SolarSystemGlobals::STOP_ROTATION);
+         sim.moveRequest(Craft::STOP_ROTATION);
          message += "KeyL : null rotation";
          break;
       case KeyM:
@@ -355,7 +373,7 @@ void SolarSystem::keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey k
          break;
       case KeyO:
          // Push nose down.
-         sim.moveRequest(SolarSystemGlobals::PITCH_DOWN);
+         sim.moveRequest(Craft::PITCH_DOWN);
          message += "KeyO : pitch down";
          break;
       case KeyP:
@@ -366,12 +384,12 @@ void SolarSystem::keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey k
          break;
       case KeyR:
          // Thrust up.
-         sim.moveRequest(SolarSystemGlobals::UPWARDS);
+         sim.moveRequest(Craft::UPWARDS);
          message += "KeyR : upwards thrust";
          break;
       case KeyS:
          // Thrust to the left.
-         sim.moveRequest(SolarSystemGlobals::LEFTWARDS);
+         sim.moveRequest(Craft::LEFTWARDS);
          message += "KeyS : left thrust";
          break;
       case KeyT:
@@ -379,7 +397,7 @@ void SolarSystem::keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey k
          break;
       case KeyV:
          // Thrust down.
-         sim.moveRequest(SolarSystemGlobals::DOWNWARDS);
+         sim.moveRequest(Craft::DOWNWARDS);
          message += "KeyV : downwards thrust";
          break;
       case KeyW:
@@ -424,68 +442,78 @@ void SolarSystem::keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey k
          break;
       case KeyF8:
          // Toggle the state of celestial sphere grid display.
-         sim.cycle(Simulation::GRID);
-         message += "KeyF8 : cycle grid";
+         sim.cycle(Simulation::SKY_GRID);
+         message += "KeyF8 : cycle sky grid";
+         break;
+      case KeyF9:
+         // Toggle the state of earth grid display.
+         sim.cycle(Simulation::EARTH_GRID);
+         message += "KeyF9 : cycle earth grid";
+         break;
+      case KeyF12:
+         // Toggle the state of the autopilot
+         // sim.cycle(Simulation::AUTOPILOT);
+         // message += "KeyF12 : cycle autopilot";
          break;
       case KeySpace:
          // Cease all movement and rotation.
-         sim.moveRequest(SolarSystemGlobals::STOP_TRANSLATION);
-         sim.moveRequest(SolarSystemGlobals::STOP_ROTATION);
+         sim.moveRequest(Craft::STOP_TRANSLATION);
+         sim.moveRequest(Craft::STOP_ROTATION);
          message += "KeySpace : null all movement and rotation";
          break;
       case KeyKP2:
          // Pull nose up.
-         sim.moveRequest(SolarSystemGlobals::PITCH_UP);
+         sim.moveRequest(Craft::PITCH_UP);
          message += "KeyKP2 : pitch up";
          break;
       case KeyKP4:
          // Roll to the left.
-         sim.moveRequest(SolarSystemGlobals::ROLL_LEFT);
+         sim.moveRequest(Craft::ROLL_LEFT);
          message += "KeyKP4 : roll left";
          break;
       case KeyKP5:
          // stop any craft rotation
-         sim.moveRequest(SolarSystemGlobals::STOP_ROTATION);
+         sim.moveRequest(Craft::STOP_ROTATION);
          message += "KeyKP5 : null rotation";
          break;
       case KeyKP6:
          // Roll to the right.
-         sim.moveRequest(SolarSystemGlobals::ROLL_RIGHT);
+         sim.moveRequest(Craft::ROLL_RIGHT);
          message += "KeyKP6 : roll right";
          break;
       case KeyKP8:
          // Push nose down.
-         sim.moveRequest(SolarSystemGlobals::PITCH_DOWN);
+         sim.moveRequest(Craft::PITCH_DOWN);
          message += "KeyKP8 : pitch down";
          break;
       case KeyKP0:
          // Yaw left.
-         sim.moveRequest(SolarSystemGlobals::YAW_LEFT);
+         sim.moveRequest(Craft::YAW_LEFT);
          message += "KeyKP0 : yaw left";
          break;
       case KeyKPPeriod:
          // Yaw right.
-         sim.moveRequest(SolarSystemGlobals::YAW_RIGHT);
+         sim.moveRequest(Craft::YAW_RIGHT);
          message += "KeyKPPeriod : yaw right";
          break;
       case KeyComma:
          // Yaw left.
-         sim.moveRequest(SolarSystemGlobals::YAW_LEFT);
+         sim.moveRequest(Craft::YAW_LEFT);
          message += "KeyComma : yaw left";
          break;
       case KeyPeriod:
          // Pull nose up.
-         sim.moveRequest(SolarSystemGlobals::PITCH_UP);
+         sim.moveRequest(Craft::PITCH_UP);
          message += "KeyPeriod : pitch up";
          break;
       case KeyForwardSlash:
          // Yaw right.
-         sim.moveRequest(SolarSystemGlobals::YAW_RIGHT);
+         sim.moveRequest(Craft::YAW_RIGHT);
          message += "KeyForwardSlash : yaw right";
          break;
       case KeySemiColon:
          // Roll to the right.
-         sim.moveRequest(SolarSystemGlobals::ROLL_RIGHT);
+         sim.moveRequest(Craft::ROLL_RIGHT);
          message += "KeySemiColon : roll right";
          break;
       default:

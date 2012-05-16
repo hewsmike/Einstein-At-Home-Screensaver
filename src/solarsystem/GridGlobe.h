@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2011 by Mike Hewson                                     *
- *   hewsmike@iinet.net.au                                                 *
+ *   Copyright (C) 2012 by Mike Hewson                                     *
+ *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
  *                                                                         *
@@ -41,7 +41,11 @@
 
 class GridGlobe : public Renderable {
    public:
-      GridGlobe(vec_t rad, GLuint slices, GLuint stacks);
+      enum lineType {MAIN, EQUATOR, PRIME_MERIDIAN};
+
+      enum textFacing{INSIDE, OUTSIDE};
+
+      GridGlobe(vec_t rad, GLuint slices, GLuint stacks, GridGlobe::textFacing tf);
 
       virtual ~GridGlobe();
 
@@ -50,26 +54,16 @@ class GridGlobe : public Renderable {
        */
       virtual void cycleActivation(void);
 
+      void setLine(lineType type,
+                   GLfloat width,
+                   GLfloat red,
+                   GLfloat green,
+                   GLfloat blue);
+
    private:
       enum state {ALL_OFF, GRID, ALL_ON};
 
       static const state INITIAL_CYCLE_STATE;
-
-      /// The displayed size and color parameters of ordinary grid lines
-      static const GLfloat GRID_LINE_WIDTH;
-      static const GLfloat GRID_RED;
-      static const GLfloat GRID_GREEN;
-      static const GLfloat GRID_BLUE;
-
-      static const GLfloat PRIME_MERIDIAN_LINE_WIDTH;
-      static const GLfloat PRIME_MERIDIAN_RED;
-      static const GLfloat PRIME_MERIDIAN_GREEN;
-      static const GLfloat PRIME_MERIDIAN_BLUE;
-
-      static const GLfloat CELESTIAL_EQUATOR_LINE_WIDTH;
-      static const GLfloat CELESTIAL_EQUATOR_RED;
-      static const GLfloat CELESTIAL_EQUATOR_GREEN;
-      static const GLfloat CELESTIAL_EQUATOR_BLUE;
 
       static const GLuint ARRAY_START;
       static const GLsizei ARRAY_STRIDE;
@@ -91,13 +85,26 @@ class GridGlobe : public Renderable {
          vec_t z_pos;
          };
 
+      struct Line {
+         GLfloat width;
+         GLfloat red;
+         GLfloat green;
+         GLfloat blue;
+         };
+
+      Line main;
+      Line equator;
+      Line prime_meridian;
+
       Sphere* sp;
 
       vec_t radius;
       GLuint slices;
       GLuint stacks;
 
-      bool equator;
+      bool hasEquator;
+
+      bool textInside;
 
       state current_cycle_state;
 

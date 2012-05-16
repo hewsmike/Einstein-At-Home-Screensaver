@@ -33,6 +33,7 @@
 #include "../erp_git_version.h"
 
 #include "AbstractGraphicsEngine.h"
+#include "Events.h"
 #include "GraphicsEngineFactory.h"
 #include "SolarSystem.h"
 #include "SolarSystemGlobals.h"
@@ -82,9 +83,8 @@ int main(int argc, char **argv) {
    WindowManager window;
    ResourceFactory factory;
    // Edit this call for different build sources ie. swap 'Solarsystem' for whatever
-   AbstractGraphicsEngine* graphics = GraphicsEngineFactory::createInstance(
-                                         GraphicsEngineFactory::SolarSystem,
-                                         scienceApplication);
+   AbstractGraphicsEngine* graphics = GraphicsEngineFactory::createInstance(GraphicsEngineFactory::SolarSystem,
+																									 scienceApplication);
    if(!graphics) {
    	ErrorHandler::record("SolarSystem::main() : Requested graphics engine could not be found/instantiated!", ErrorHandler::FATAL);
       }
@@ -180,7 +180,8 @@ int main(int argc, char **argv) {
          }
       }
 
-   // enter main event loop
+   // enter main event loop, but first flush any events.
+   Events::Instance(0)->flush();
    window.eventLoop();
 
    // clean up end exit

@@ -69,7 +69,7 @@ class TriggerTimer {
       /// The interval in seconds between triggers.
       double trigger_interval;
 
-		/// Who do you call ?
+		/// Who you gonna call .... :-)
       void (*callback)(void);
    };
 

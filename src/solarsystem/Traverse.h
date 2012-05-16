@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2012 by Mike Hewson                                     *
+*   Copyright (C) 2012 by Mike Hewson                                     *
  *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
@@ -18,22 +18,54 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "DisplayList.h"
+#ifndef TRAVERSE_H_
+#define TRAVERSE_H_
 
-DisplayList::DisplayList() {
-   }
+#include <deque>
 
-DisplayList::~DisplayList() {
-   // Must call this here in this derived class.
-   release();
-   }
+#include "CameraState.h"
+#include "Path.h"
 
-void DisplayList::acquire(void) {
-   // Ask OpenGL to assign a display list.
-   ident = glGenLists(1);
-   }
+/**
+ * \addtogroup solarsystem Solarsystem
+ * @{
+ */
 
-void DisplayList::release(void) {
-   // Ask OpenGL to release the display list.
-   glDeleteLists(ident, 1);
-   }
+/**
+ * \brief A sequence of camera states linked by paths.
+ *
+ * \author Mike Hewson\n
+ */
+
+class Traverse {
+   public:
+		/**
+	    * \brief Constructor, ensures a minimum of two way points
+	    *
+	    * \param first : the initial point ( camera state ) in the traverse
+	    * \param second : the second point ( camera state ) in the traverse
+	    */
+		Traverse(const CameraState& first, const CameraState& second);
+
+		/**
+		 * \brief Destructor
+		 */
+		~Traverse();
+
+		void addWayPoint(const CameraState& cam);
+
+		bool getSegment(Path& pt, unsigned int seq) const;
+
+		unsigned int numberOfSegments(void) const;
+
+		unsigned int numberOfWayPoints(void) const;
+
+	private:
+		std::deque<CameraState> cam_states;
+	};
+
+/**
+ * @}
+ */
+
+#endif // TRAVERSE_H_

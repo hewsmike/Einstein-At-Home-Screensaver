@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2011 by Mike Hewson                                     *
- *   hewsmike@iinet.net.au                                                 *
+ *   Copyright (C) 2012 by Mike Hewson                                     *
+ *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
  *                                                                         *
@@ -22,6 +22,7 @@
 #define CRAFT_H_
 
 #include "AcceleratedPlatform.h"
+#include "CameraState.h"
 #include "SolarSystemGlobals.h"
 
 /**
@@ -30,21 +31,41 @@
  */
 
 /**
- * \brief Simulates the kinetic and dynamic behaviours of a spaceship.
+ * \brief Simulates the kinetic/dynamic behaviours of a spaceship.
  *
  * \author Mike Hewson\n
  */
 
 class Craft {
    public:
+		enum movements {GO_HOME,
+	                   STOP_TRANSLATION,
+	                   STOP_ROTATION,
+	                   FORWARD,
+	                   REVERSE,
+	                   UPWARDS,
+	                   DOWNWARDS,
+	                   LEFTWARDS,
+	                   RIGHTWARDS,
+	                   PITCH_UP,
+	                   PITCH_DOWN,
+	                   ROLL_LEFT,
+	                   ROLL_RIGHT,
+	                   YAW_LEFT,
+	                   YAW_RIGHT };
+
       Craft();
       ~Craft();
 
-      void manouevre(SolarSystemGlobals::movements mov);
+      void manouevre(Craft::movements mov);
 
       const AcceleratedPlatform& get_platform() const;
 
       void step(GLfloat dayOfYear);
+
+      CameraState getViewState(void) const;
+
+      void setViewState(CameraState cam);
 
    private:
       /// Global bounds for craft position

@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2011 by Mike Hewson                                     *
- *   hewsmike@iinet.net.au                                                 *
+ *   Copyright (C) 2012 by Mike Hewson                                     *
+ *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
  *                                                                         *
@@ -38,7 +38,7 @@
  * A constellation is a named grouping of stars with an additional pattern of lines
  * like 'join the dots' to hint at the appearance of something indicated by the
  * constellations name. I recommend that all star additions are made to a given
- * constellation prior to linkages being defined for them : as when a link is added
+ * constellation prior to linkages being defined for any of them : as when a link is added
  * bounds checking occurs on the contents of the star store AT THE TIME THE LINK IS
  * ADDED. This is to prevent references to not-yet ( or ever ) entered stars.
  *
@@ -111,7 +111,7 @@ class Constellation {
 
       /**
        * \brief Retrieve the coordinates as a right-ascension/declination pair
-       *        of the centroid of the given points.
+       *        of the centroid of the stars in this constellation.
        */
       std::pair<GLfloat, GLfloat> centre(void);
 

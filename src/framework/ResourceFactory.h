@@ -37,7 +37,7 @@ using namespace std;
 /**
  * \brief This factory instantiates %Resource objects using a given identifier
  *
- * During contruction of the factory object itself it loads all available resources into
+ * During construction of the factory object itself it loads all available resources into
  * an internal cache. The user can subsequently request a copy of this resource by specifying
  * it using the resource's identifier.
  *

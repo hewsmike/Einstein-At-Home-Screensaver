@@ -76,7 +76,7 @@ class GraphicsEngineFactory {
       static AbstractGraphicsEngine* createInstance(Engines engine, Applications application);
 
    private:
-      /// Contructor (private since this a purely static factory)
+      /// Constructor (private since this a purely static factory)
       GraphicsEngineFactory();
    };
 

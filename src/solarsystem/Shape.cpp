@@ -18,22 +18,37 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "DisplayList.h"
+#include "Shape.h"
 
-DisplayList::DisplayList() {
+#include "ErrorHandler.h"
+
+Shape::Shape(void) : begin(), end() {
+	}
+
+Shape::Shape(Vector3D start, Vector3D finish) : begin(start), end(finish) {
    }
 
-DisplayList::~DisplayList() {
-   // Must call this here in this derived class.
-   release();
-   }
+Shape::~Shape() {
+	}
 
-void DisplayList::acquire(void) {
-   // Ask OpenGL to assign a display list.
-   ident = glGenLists(1);
-   }
+void Shape::setStart(Vector3D start) {
+	begin = start;
+	}
 
-void DisplayList::release(void) {
-   // Ask OpenGL to release the display list.
-   glDeleteLists(ident, 1);
-   }
+void Shape::setFinish(Vector3D finish) {
+	end = finish;
+	}
+
+Vector3D Shape::value(float rho) const {
+	// Bounds check/clamp on rho
+	if(rho < 0.0f) {
+		rho = 0.0f;
+		}
+
+	if(rho > 1.0f) {
+		rho = 1.0f;
+		}
+
+	// Simple linear interpolation.
+	return begin + (end - begin)*rho;
+	}

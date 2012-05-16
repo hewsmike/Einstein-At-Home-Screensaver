@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2011 by Mike Hewson                                     *
- *   hewsmike@iinet.net.au                                                 *
+ *   Copyright (C) 2012 by Mike Hewson                                     *
+ *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
  *                                                                         *
@@ -32,21 +32,6 @@
 #include "VectorSP.h"
 #include "Vertex.h"
 
-const GLfloat GridGlobe::GRID_LINE_WIDTH(0.5f);
-const GLfloat GridGlobe::GRID_RED(0.12f);
-const GLfloat GridGlobe::GRID_GREEN(0.17f);
-const GLfloat GridGlobe::GRID_BLUE(0.12f);
-
-const GLfloat GridGlobe::PRIME_MERIDIAN_LINE_WIDTH(1.0f);
-const GLfloat GridGlobe::PRIME_MERIDIAN_RED(0.36f);
-const GLfloat GridGlobe::PRIME_MERIDIAN_GREEN(0.51f);
-const GLfloat GridGlobe::PRIME_MERIDIAN_BLUE(0.36f);
-
-const GLfloat GridGlobe::CELESTIAL_EQUATOR_LINE_WIDTH(1.0f);
-const GLfloat GridGlobe::CELESTIAL_EQUATOR_RED(0.24f);
-const GLfloat GridGlobe::CELESTIAL_EQUATOR_GREEN(0.34f);
-const GLfloat GridGlobe::CELESTIAL_EQUATOR_BLUE(0.24f);
-
 const GLuint GridGlobe::ARRAY_START(0);
 const GLsizei GridGlobe::ARRAY_STRIDE(0);
 const GLuint GridGlobe::BYTE_OFFSET(0);
@@ -65,13 +50,14 @@ const GLfloat GridGlobe::TEXT_UNITS_RATIO(0.5f);
 // Don't alter this initial state !!
 const GridGlobe::state GridGlobe::INITIAL_CYCLE_STATE(ALL_ON);
 
-GridGlobe::GridGlobe(vec_t rad, GLuint slices,
-                     GLuint stacks) :
+GridGlobe::GridGlobe(vec_t rad, GLuint slices, GLuint stacks, GridGlobe::textFacing tf) :
                      radius(rad),
                      slices(slices),
                      stacks(stacks) {
    // We only have an equatorial slice if an odd number of stacks.
-   equator = ((stacks % 2) == 1) ? true : false;
+   hasEquator = ((stacks % 2) == 1) ? true : false;
+
+   textInside = (tf == INSIDE) ? true : false;
 
    // Set initial display cycle state.
    current_cycle_state = INITIAL_CYCLE_STATE;
@@ -100,6 +86,36 @@ void GridGlobe::cycleActivation(void) {
       }
    }
 
+void GridGlobe::setLine(lineType type,
+                        GLfloat width,
+                        GLfloat red,
+                        GLfloat green,
+                        GLfloat blue) {
+   switch(type) {
+      case MAIN:
+         main.width = width;
+         main.red = red;
+         main.green = green;
+         main.blue = blue;
+         break;
+      case EQUATOR:
+         equator.width = width;
+         equator.red = red;
+         equator.green = green;
+         equator.blue = blue;
+         break;
+      case PRIME_MERIDIAN:
+         prime_meridian.width = width;
+         prime_meridian.red = red;
+         prime_meridian.green = green;
+         prime_meridian.blue = blue;
+         break;
+      default:
+         ErrorHandler::record("GridGlobe::setLine() - bad switch case reached (default)", ErrorHandler::INFORM);
+         break;
+      }
+   }
+
 void GridGlobe::prepare(SolarSystemGlobals::render_quality rq) {
    // Make a sphere on the heap.
    sp = new Sphere(radius, slices, stacks, STAGGERING, STITCHING);
@@ -115,7 +131,7 @@ void GridGlobe::prepare(SolarSystemGlobals::render_quality rq) {
          loadGridIndexBuffer();
          loadPrimeMeridianIndexBuffer();
          // Only prepare an equatorial circle if there is one.
-         if(equator) {
+         if(hasEquator) {
             loadCelestialEquatorIndexBuffer();
             }
          createMarkerLists();
@@ -151,8 +167,8 @@ void GridGlobe::render(void) {
       glVertexPointer(COORDS_PER_VERTEX, GL_FLOAT, ARRAY_STRIDE, BUFFER_OFFSET(BYTE_OFFSET));
 
       // Do the grid. Start by setting the line width and colour.
-      glLineWidth(GRID_LINE_WIDTH);
-      glColor3f(GRID_RED, GRID_GREEN, GRID_BLUE);
+      glLineWidth(main.width);
+      glColor3f(main.red, main.green, main.blue);
 
       // Bind the grid index array.
       glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buff_obj_grid_links.ID());
@@ -161,8 +177,8 @@ void GridGlobe::render(void) {
       glDrawElements(GL_LINES, grid_links * VERTICES_PER_LINK, GL_UNSIGNED_INT, BUFFER_OFFSET(ARRAY_START));
 
       // Do the prime meridian. Start by setting the line width and colour.
-      glLineWidth(PRIME_MERIDIAN_LINE_WIDTH);
-      glColor3f(PRIME_MERIDIAN_RED, PRIME_MERIDIAN_GREEN, PRIME_MERIDIAN_BLUE);
+      glLineWidth(prime_meridian.width);
+      glColor3f(prime_meridian.red, prime_meridian.green, prime_meridian.blue);
 
       // Bind the prime meridian index array.
       glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buff_obj_prime_meridian_links.ID());
@@ -171,10 +187,10 @@ void GridGlobe::render(void) {
       glDrawElements(GL_LINES, prime_meridian_links * VERTICES_PER_LINK, GL_UNSIGNED_INT, BUFFER_OFFSET(ARRAY_START));
 
       // Only draw an equatorial circle if there is one.
-      if(equator) {
+      if(hasEquator) {
          // Do the celestial equator. Start by setting the line width and colour.
-         glLineWidth(CELESTIAL_EQUATOR_LINE_WIDTH);
-         glColor3f(CELESTIAL_EQUATOR_RED, CELESTIAL_EQUATOR_GREEN, CELESTIAL_EQUATOR_BLUE);
+         glLineWidth(equator.width);
+         glColor3f(equator.red, equator.green, equator.blue);
 
          // Bind the celestial equator index array.
          glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buff_obj_celestial_equator_links.ID());
@@ -263,7 +279,7 @@ void GridGlobe::loadGridIndexBuffer(void) {
        ++stack) {
       for(GLuint slice = 0; slice < sp->slices(); ++slice) {
          // If we have an equator and we have reached it ...
-         if(equator && (stack_count == equator_stack_count)) {
+         if(hasEquator && (stack_count == equator_stack_count)) {
             // ... then skip it.
             continue;
             }
@@ -331,7 +347,7 @@ void GridGlobe::loadCelestialEquatorIndexBuffer(void) {
    celestial_equator_links = 0;
 
    // There is an equator to draw ?
-   if(equator) {
+   if(hasEquator) {
       // Yes, so it will have as many links as there are slices.
       celestial_equator_links = sp->slices();
 
@@ -425,7 +441,7 @@ void GridGlobe::createMarkerLists(void) {
          // Text scaling.
          GLfloat t_scale;
 
-         if((equator && (stack == (stacks - 1)/2)) || (slice == 0)) {
+         if((hasEquator && (stack == (stacks - 1)/2)) || (slice == 0)) {
             // On the celestial equator (if present) or the prime meridian.
             t_scale = text_scale_factor;
             }
@@ -453,11 +469,23 @@ void GridGlobe::createMarkerLists(void) {
                // Shift out to grid radius nearby the First Point of Aries.
                glTranslatef(radius, 0, 0);
 
-               // Rotate 90 degrees clockwise, seen looking from +ve y-axis to origin.
-               glRotatef(-90, 0, 1, 0);
+               if(textInside) {
+               	// Rotate 90 degrees clockwise, seen looking from +ve y-axis to origin.
+               	glRotatef(-90, 0, 1, 0);
+						}
+               else {
+               	// Rotate 90 degrees anti-clockwise, seen looking from +ve y-axis to origin.
+               	glRotatef(+90, 0, 1, 0);
+               	}
 
-               // Rotate 90 degrees clockwise, seen looking from +ve z-axis to origin.
-               glRotatef(-90, 0, 0, 1);
+               if(textInside) {
+               	// Rotate 90 degrees clockwise, seen looking from +ve z-axis to origin.
+               	glRotatef(-90, 0, 0, 1);
+						}
+               else {
+               	// Rotate 90 degrees anti-clockwise, seen looking from +ve z-axis to origin.
+               	glRotatef(+90, 0, 0, 1);
+               	}
 
                // When lying on the x-y plane, expand the text.
                glScalef(t_scale, t_scale, 1);
@@ -527,7 +555,7 @@ void GridGlobe::createMarkerLists(void) {
 
 void GridGlobe::clearMarkerLists(void) {
    // Nothing bad will happen if these display list ID's are
-   // not current, or invalid, or zero.
+   // not current, or invalid, or zero. That is, delete regardless.
    glDeleteLists(hour_glyph, 1);
    glDeleteLists(degree_glyph, 1);
 

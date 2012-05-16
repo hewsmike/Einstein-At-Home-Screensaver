@@ -1,22 +1,22 @@
 /***************************************************************************
-* Copyright (C) 2011 by Mike Hewson *
-* hewsmike@iinet.net.au *
-* *
-* This file is part of Einstein@Home. *
-* *
-* Einstein@Home is free software: you can redistribute it and/or modify *
-* it under the terms of the GNU General Public License as published *
-* by the Free Software Foundation, version 2 of the License. *
-* *
-* Einstein@Home is distributed in the hope that it will be useful, *
-* but WITHOUT ANY WARRANTY; without even the implied warranty of *
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the *
-* GNU General Public License for more details. *
-* *
-* You should have received a copy of the GNU General Public License *
-* along with Einstein@Home. If not, see <http://www.gnu.org/licenses/>. *
-* *
-***************************************************************************/
+ *   Copyright (C) 2012 by Mike Hewson                                     *
+ *   hewsmike[AT]iinet.net.au                                              *
+ *                                                                         *
+ *   This file is part of Einstein@Home.                                   *
+ *                                                                         *
+ *   Einstein@Home is free software: you can redistribute it and/or modify *
+ *   it under the terms of the GNU General Public License as published     *
+ *   by the Free Software Foundation, version 2 of the License.            *
+ *                                                                         *
+ *   Einstein@Home is distributed in the hope that it will be useful,      *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the          *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with Einstein@Home. If not, see <http://www.gnu.org/licenses/>. *
+ *                                                                         *
+ ***************************************************************************/
 #ifndef GLOBE_H_
 #define GLOBE_H_
 
@@ -26,6 +26,7 @@
 
 #include "Buffer_OBJ.h"
 #include "Renderable.h"
+#include "ResourceFactory.h"
 #include "Sphere.h"
 #include "SolarSystemGlobals.h"
 #include "Texture_OBJ.h"
@@ -61,7 +62,7 @@ class Globe : public Renderable {
        *        ( eg. Greenwich meridian on Earth )
        */
       Globe(std::string name,
-            std::string image_file_name,
+            std::string image_resource_name,
             GLfloat radius,
             GLuint stacks,
             GLuint slices,
@@ -97,11 +98,34 @@ class Globe : public Renderable {
       static const bool STAGGERING;
       static const bool STITCHING;
 
+      struct Text {
+         vec_t s;
+         vec_t t;
+         };
+
+      struct Norm {
+         vec_t x;
+         vec_t y;
+         vec_t z;
+         };
+
+      struct Position {
+         vec_t x;
+         vec_t y;
+         vec_t z;
+         };
+
+      struct Vert {
+         Text text;
+         Norm norm;
+         Position pos;
+         };
+
       /// The globe's name eg. Earth
       std::string nm;
 
-      /// The filename of the image to use as a texture upon the globe.
-      std::string ifn;
+      /// The resource name of the image to use as a texture upon the globe.
+      std::string irn;
 
       /// The horizontal texture coordinate offset - into the pixel map -
       /// that indicates the zero of 'geographical' longitude.
@@ -111,7 +135,7 @@ class Globe : public Renderable {
       Buffer_OBJ north_cap_indices;
 
       /// The buffer object for waist rendering.
-      Buffer_OBJ waist_buffer;
+      Buffer_OBJ waist_indices;
 
       /// The buffer object for the southern polar cap.
       Buffer_OBJ south_cap_indices;
@@ -121,7 +145,7 @@ class Globe : public Renderable {
 
       /// An OpenGL buffer object ( in server-side memory ) holding
       /// the vertex associated data for an entire sphere approximation.
-      Buffer_OBJ buff_obj_points;
+      Buffer_OBJ vertex_buffer;
 
       /// An OpenGL texture object identifier
       Texture_OBJ texture;
@@ -154,7 +178,7 @@ class Globe : public Renderable {
       void loadWaistIndexBuffer(void);
 
       /// Load a single vertex's data into a server-side buffer
-      void vertex2buffer(const Vertex& vert, vec_t* buffer) const;
+      void vertex2buffer(const Vertex& vert, Vert* buffer) const;
    };
 
 /**

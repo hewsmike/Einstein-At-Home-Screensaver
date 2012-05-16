@@ -56,39 +56,32 @@ Events* Events::Instance(GLuint render_interval) {
 void Events::init(GLuint render_interval) {
 	// Empty the event queue.
 	event_queue.clear();
-	ErrorHandler::record("Events::Instance() : cleared event queue", ErrorHandler::INFORM);
 
 	// Set GLFW global event behaviours.
 
 	// Ensure keys are non-sticky.
 	glfwDisable(GLFW_STICKY_KEYS);
-	ErrorHandler::record("Events::Instance() : disabled sticky keys", ErrorHandler::INFORM);
 
 	// Ensure keys do not repeat if held down.
 	glfwDisable(GLFW_KEY_REPEAT);
-	ErrorHandler::record("Events::Instance() : disabled key repeat", ErrorHandler::INFORM);
 
 	// Ensure system key-strokes remain active.
 	glfwEnable(GLFW_SYSTEM_KEYS);
-	ErrorHandler::record("Events::Instance() : enabled system keys", ErrorHandler::INFORM);
 
 	// Ensure mouse buttons are non-sticky.
 	// Actually, I didn't know you could have sticky ones ... :-)
 	glfwDisable(GLFW_STICKY_MOUSE_BUTTONS);
-	ErrorHandler::record("Events::Instance() : disabled sticky mouse buttons", ErrorHandler::INFORM);
 
 	// Non GLFW callbacks. See note below.
 
 	// Set the BOINC callback timing.
 	boinc_timer = new TriggerTimer(BOINC_CALLBACK_INTERVAL, boincUpdate);
-	ErrorHandler::record("Events::Instance() : create BOINC update timer and set callback", ErrorHandler::INFORM);
 
 	// Set the render callback timing, but adhere to minimum.
 	if(render_interval < RENDER_CALLBACK_INTERVAL_MIN){
 		render_interval = RENDER_CALLBACK_INTERVAL_MIN;
 		}
 	render_timer = new TriggerTimer(render_interval, render);
-	ErrorHandler::record("Events::Instance() : create rendering timer and set callback", ErrorHandler::INFORM);
 
 	// Those GLFW callbacks below herewith defined are to 'ordinary' functions ie. not
 	// part of any C++ class definition - not even static. The reason is that GLFW is
@@ -99,35 +92,27 @@ void Events::init(GLuint render_interval) {
 
 	// Set the keypress callback.
 	glfwSetKeyCallback(keyPress);
-	ErrorHandler::record("Events::Instance() : set keypress callback", ErrorHandler::INFORM);
 
 	// Set the character input callback.
 	glfwSetCharCallback(charInput);
-	ErrorHandler::record("Events::Instance() : set character input callback", ErrorHandler::INFORM);
 
 	// Set the mouse button callback.
 	glfwSetMouseButtonCallback(mouseButton);
-	ErrorHandler::record("Events::Instance() : set mouse button callback", ErrorHandler::INFORM);
 
 	// Set the mouse movement callback.
 	glfwSetMousePosCallback(mouseMotion);
-	ErrorHandler::record("Events::Instance() : set mouse motion callback", ErrorHandler::INFORM);
 
 	// Set the mouse wheel callback.
 	glfwSetMouseWheelCallback(mouseWheel);
-	ErrorHandler::record("Events::Instance() : set mouse wheel callback", ErrorHandler::INFORM);
 
 	// Set the window resize callback.
 	glfwSetWindowSizeCallback(resize);
-	ErrorHandler::record("Events::Instance() : set window resize callback", ErrorHandler::INFORM);
 
 	// Set the window quit callback.
 	glfwSetWindowCloseCallback(quit);
-	ErrorHandler::record("Events::Instance() : set window close callback", ErrorHandler::INFORM);
 
 	// Finally GLFW will poll devices for events with every buffer swap.
 	glfwEnable(GLFW_AUTO_POLL_EVENTS);
-	ErrorHandler::record("Events::Instance() : enabled auto-polling", ErrorHandler::INFORM);
 	}
 
 bool Events::next(Event* ev) {
@@ -158,6 +143,11 @@ void Events::tick(void) {
    glfwPollEvents();
 	}
 
+void Events::flush(void) {
+	// Just toss 'em without ceremony.
+	event_queue.clear();
+	}
+
 void Events::boincUpdate(void) {
 	Event ev;
    ev.b_update.type = BOINCUpdateEventType;
@@ -173,14 +163,7 @@ void Events::render(void) {
    }
 
 void GLFWCALL Events::charInput(int character, int action) {
-	std::stringstream msg;
-	msg << "Events::charInput() : character_code = "
-		 << character
-		 << " \taction = "
-		 << action;
-	ErrorHandler::record(msg.str(), ErrorHandler::INFORM);
-
-   Event ev;
+	Event ev;
    ev.c_input.type = Events::CharInputEventType;
    ev.c_input.char_code = character;
 
@@ -195,14 +178,7 @@ void GLFWCALL Events::charInput(int character, int action) {
    }
 
 void GLFWCALL Events::keyPress(int key, int action) {
-	std::stringstream msg;
-	msg << "Events::keyPress() : key_code = "
-		 << key
-		 << " \taction = "
-		 << action;
-	ErrorHandler::record(msg.str(), ErrorHandler::INFORM);
-
-   Event ev;
+	Event ev;
    ev.k_press.type = Events::KeyPressEventType;
    ev.k_press.key_code = key;
 
@@ -252,14 +228,7 @@ void GLFWCALL Events::mouseWheel(int pos) {
    }
 
 void GLFWCALL Events::resize(int width, int height) {
-	std::stringstream msg;
-	msg << "Events::resize() : width = "
-		 << width
-		 << " \theight = "
-		 << height;
-	ErrorHandler::record(msg.str(), ErrorHandler::INFORM);
-
-   Event ev;
+	Event ev;
    ev.resize.type = Events::ResizeEventType;
    ev.resize.width = width;
    ev.resize.height = height;
@@ -268,11 +237,7 @@ void GLFWCALL Events::resize(int width, int height) {
    }
 
 int GLFWCALL Events::quit(void) {
-	std::stringstream msg;
-	msg << "Events::quit() : ";
-	ErrorHandler::record(msg.str(), ErrorHandler::INFORM);
-
-   Event ev;
+	Event ev;
    ev.quit.type = Events::QuitEventType;
 
    event_queue.push_back(ev);

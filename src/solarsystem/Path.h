@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2012 by Mike Hewson                                     *
+*   Copyright (C) 2012 by Mike Hewson                                     *
  *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
@@ -18,10 +18,11 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef DISPLAY_LIST_H_
-#define DISPLAY_LIST_H_
+#ifndef PATH_H_
+#define PATH_H_
 
-#include "OGL_ID.h"
+#include "Shape.h"
+#include "Vector3D.h"
 
 /**
  * \addtogroup solarsystem Solarsystem
@@ -29,37 +30,65 @@
  */
 
 /**
- * \brief This interface declares public methods to deal with OpenGL
- * display lists. It's a wrapper.
+ * \brief A path in 3D space.
  *
  * \author Mike Hewson\n
  */
 
-class DisplayList : public OGL_ID {
+class Path {
    public:
-      /**
-       * \brief Constructor
-       */
-      DisplayList(void);
+		enum evolve_type {CLAMPED, CYCLIC};
 
-      /**
-       * \brief Destructor
-       */
-      virtual ~DisplayList();
+		enum param_type {POSITION, FOCUS, ORIENTATION};
 
-      /**
-       * \brief Obtains the display list resources.
-       */
-      virtual void acquire(void);
+		Path(void);
 
-      /**
-       * \brief Releases the display list resources.
-       */
-      virtual void release(void);
-   };
+		/**
+	    * \brief Constructor
+	    *
+	    * \param start : the position at the begining
+	    * \param finish : the position at the end
+	    * \param first_look : the focus at the begining
+	    * \param last_look : the focus at the end
+	    * \param first_up : the orientation at the begining
+	    * \param first_look : the orientation at the end
+	    * \param type : one of the curve type enumerants
+	    */
+		Path(const Shape& pos, const Shape& view, const Shape& orient, evolve_type e_type);
+
+		/**
+		 * \brief Destructor
+		 */
+		~Path();
+
+		/*
+		 * \brief Obtain the vector parameterised by the given lambda.
+		 *
+		 * \param lambda : a value indicating the desired point.
+		 * \param pt : one of the parameter type enumerants
+		 *
+		 * \return The vector of said parameter type at the given lambda
+		 */
+		Vector3D value(float lambda, param_type pt) const;
+
+		/*
+		 * \brief Set the curve for a given parameter type.
+		 *
+		 * \param curve : a shape indicating the desired variance.
+		 * \param pt : one of the parameter type enumerants
+		 */
+		void set(const Shape& curve, param_type pt);
+
+	private:
+		Shape where;
+		Shape look_at;
+		Shape up_dir;
+
+		evolve_type et;
+	};
 
 /**
  * @}
  */
 
-#endif /*DISPLAY_LIST_H_*/
+#endif // PATH_H_

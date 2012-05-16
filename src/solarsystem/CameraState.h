@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2012 by Mike Hewson                                     *
+*   Copyright (C) 2012 by Mike Hewson                                     *
  *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
@@ -18,22 +18,54 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "DisplayList.h"
+#ifndef CAMERA_STATE_H_
+#define CAMERA_STATE_H_
 
-DisplayList::DisplayList() {
-   }
+#include "Vector3D.h"
 
-DisplayList::~DisplayList() {
-   // Must call this here in this derived class.
-   release();
-   }
+/**
+ * \addtogroup solarsystem Solarsystem
+ * @{
+ */
 
-void DisplayList::acquire(void) {
-   // Ask OpenGL to assign a display list.
-   ident = glGenLists(1);
-   }
+/**
+ * \brief View state information
+ *
+ * \author Mike Hewson\n
+ */
 
-void DisplayList::release(void) {
-   // Ask OpenGL to release the display list.
-   glDeleteLists(ident, 1);
-   }
+class CameraState {
+   public:
+		/**
+	    * \brief Constructor
+	    *
+	    * \param pos : the position of the camera
+	    * \param focus : the point the camera is looking at
+	    * \param orient : the up direction for the view
+	    */
+		CameraState(const Vector3D& position, const Vector3D& focus, const Vector3D& orientation);
+
+		CameraState();
+
+		/**
+		 * \brief Destructor
+		 */
+		~CameraState();
+
+		const Vector3D& position(void) const;
+
+		const Vector3D& focus(void) const;
+
+		const Vector3D& orientation(void) const;
+
+   private:
+		Vector3D where;
+		Vector3D look_at;
+		Vector3D up_dir;
+   };
+
+/**
+ * @}
+ */
+
+#endif // CAMERA_STATE_H_

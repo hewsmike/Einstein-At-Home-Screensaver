@@ -27,7 +27,7 @@ HUDTextLineScroll::HUDTextLineScroll(GLuint length, OGLFT_ft* font,
                                      mode direction = NONE) :
                                         HUDTextLine(length, font, horizontalMargin, verticalMargin),
                                         dir(direction) {
-	// trig = new TriggerTimer(300.0f, NULL);
+	//trig = new TriggerTimer(300.0f, &HUDTextLineScroll::trigger_callback);
    isTriggered = false;
    }
 
@@ -60,57 +60,57 @@ void HUDTextLineScroll::toggleDirection(void) {
       }
    }
 
-//void HUDTextLineScroll::trigger_callback(void) {
-//	isTriggered = true;
-//	}
+void HUDTextLineScroll::trigger_callback(void) {
+   isTriggered = true;
+   }
 
 void HUDTextLineScroll::render(void) {
    static const GLuint MIN_STRING_SIZE = 2;
 
    // Has the timer triggered ?
-//   if(isTriggered == true) {
-//      // Yes, get the line's text content.
-//      std::string contents = getText();
-//      // It must have at least two characters
-//      if(contents.size() >= MIN_STRING_SIZE) {
-//         // Depending upon the scroll direction .....
-//         switch(dir) {
-//            case NONE:
-//               // Do nothing.
-//               break;
-//            case LEFT:
-//               // Rotate text to the left.
-//               {
-//                  // Get the first character.
-//                  std::string first = contents.substr(0, 1);
-//                  // Get the remainder.
-//                  std::string remainder = contents.substr(1);
-//                  // Reverse their order.
-//                  contents = remainder + first;
-//               }
-//               break;
-//            case RIGHT:
-//               // Rotate text to the right.
-//               {
-//                  // Get the last character.
-//                  std::string last = contents.substr(contents.length() - 1);
-//                  // Get the remainder.
-//                  std::string remainder = contents.substr(0, contents.length() - 1);
-//                  // Reverse their order.
-//                  contents = last + remainder;
-//               }
-//               break;
-//            default:
-//               // Ought not get here !!
-//               std::string msg = "HUDTextLineScroll::render() - bad switch case reached (default)";
-//               ErrorHandler::record(msg, ErrorHandler::FATAL);
-//               break;
-//            }
-//         // Set the (new) text contents.
-//         setText(contents);
-//         }
-//      isTriggered = false;
-//      }
+   if(isTriggered == true) {
+      // Yes, get the line's text content.
+      std::string contents = getText();
+      // It must have at least two characters
+      if(contents.size() >= MIN_STRING_SIZE) {
+         // Depending upon the scroll direction .....
+         switch(dir) {
+            case NONE:
+               // Do nothing.
+               break;
+            case LEFT:
+               // Rotate text to the left.
+               {
+                  // Get the first character.
+                  std::string first = contents.substr(0, 1);
+                  // Get the remainder.
+                  std::string remainder = contents.substr(1);
+                  // Reverse their order.
+                  contents = remainder + first;
+               }
+               break;
+            case RIGHT:
+               // Rotate text to the right.
+               {
+                  // Get the last character.
+                  std::string last = contents.substr(contents.length() - 1);
+                  // Get the remainder.
+                  std::string remainder = contents.substr(0, contents.length() - 1);
+                  // Reverse their order.
+                  contents = last + remainder;
+               }
+               break;
+            default:
+               // Ought not get here !!
+               std::string msg = "HUDTextLineScroll::render() - bad switch case reached (default)";
+               ErrorHandler::record(msg, ErrorHandler::FATAL);
+               break;
+            }
+         // Set the (new) text contents.
+         setText(contents);
+         }
+      isTriggered = false;
+      }
 
    // Then render this (altered) line as per base class.
    HUDTextLine::render();

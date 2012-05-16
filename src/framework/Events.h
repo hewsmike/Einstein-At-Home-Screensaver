@@ -156,6 +156,11 @@ class Events {
        */
 		static void tick(void);
 
+		/**
+		 * \brief Discard all events currently in the queue.
+		 */
+		static void flush(void);
+
    private:
       /// Prevent direct construction, copying and assignment.
 		Events();

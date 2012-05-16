@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2011 by Mike Hewson                                     *
- *   hewsmike@iinet.net.au                                                 *
+ *   Copyright (C) 2012 by Mike Hewson                                     *
+ *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
  *                                                                         *
@@ -21,6 +21,7 @@
 #ifndef ACCELERATED_PLATFORM_H_
 #define ACCELERATED_PLATFORM_H_
 
+#include "CameraState.h"
 #include "InertialPlatform.h"
 #include "SpinPlatform.h"
 
@@ -67,6 +68,10 @@ class AcceleratedPlatform : public InertialPlatform, public SpinPlatform {
       void set_roll_rate(vec_t rate);
 
       void set_yaw_rate(vec_t rate);
+
+      CameraState getViewState(void) const;
+
+      void setViewState(const CameraState& cam);
 
       vec_t get_pitch_rate(void);
 

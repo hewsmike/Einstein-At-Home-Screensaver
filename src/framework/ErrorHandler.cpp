@@ -97,6 +97,7 @@ void ErrorHandler::record(std::string msg, message_type mt) {
       case ErrorHandler::WARN :
 			message += "WARN : " + msg;
          std::cerr << msg << std::endl;
+         std::cout << msg << std::endl;
          if(output_ready == ErrorHandler::EH_READY) {
             output_file << message << std::endl;
             }
@@ -104,6 +105,7 @@ void ErrorHandler::record(std::string msg, message_type mt) {
       case ErrorHandler::FATAL :
          message += "FATAL EXIT: " + msg;
          std::cerr << msg << std::endl;
+         std::cout << msg << std::endl;
          if(output_ready == ErrorHandler::EH_READY) {
             output_file << message << std::endl;
             }
@@ -126,6 +128,7 @@ void ErrorHandler::record(std::string msg, message_type mt) {
          message += "'\n";
          // This is an error, so goes to cerr.
          std::cerr << message << std::endl;
+         std::cout << message << std::endl;
          // But also record error in file,
          // provided the output file stream is available for use.
          if(output_ready == ErrorHandler::EH_READY) {
