@@ -46,18 +46,16 @@ BS_PREREQUISITES=1
 BS_PREPARE_TREE=2
 BS_BUILD_GLEW=3
 BS_BUILD_GLFW=4
-BS_BUILD_OGLPLUS=5
 BS_BUILD_FREETYPE=5
 BS_BUILD_LIBXML=6
 BS_BUILD_OGLFT=7
 BS_BUILD_BOINC=8
 BS_BUILD_GLEW_MINGW=9
 BS_BUILD_GLFW_MINGW=10
-BS_BUILD_OGLPLUS_MINGW=11
-BS_BUILD_FREETYPE_MINGW=12
-BS_BUILD_LIBXML_MINGW=13
-BS_BUILD_OGLFT_MINGW=14
-BS_BUILD_BOINC_MINGW=15
+BS_BUILD_FREETYPE_MINGW=11
+BS_BUILD_LIBXML_MINGW=12
+BS_BUILD_OGLFT_MINGW=13
+BS_BUILD_BOINC_MINGW=14
 
 ### functions (tools) #############################################################
 
@@ -229,24 +227,6 @@ prepare_glfw() {
    return 0
    }
 
-prepare_oglplus() {
-   echo "Preparing OGLPLUS..." | tee -a $LOGFILE
-   mkdir -p $ROOT/3rdparty/oglplus >> $LOGFILE || failure
-   mkdir -p $ROOT/build/oglplus >> $LOGFILE || failure
-
-   echo "Retrieving OGLPLUS (this may take a while)..." | tee -a $LOGFILE
-   cd $ROOT/3rdparty || failure
-
-   wget http://sourceforge.net/projects/oglplus/files/oglplus-0.12.1.tar.gz >> $LOGFILE 2>&1 || failure
-   tar -xf oglplus-0.12.1.tar.gz >> $LOGFILE 2>&1 || failure
-   rm oglplus-0.12.1.tar.gz >> $LOGFILE 2>&1 || failure
-   # substitute old source tree
-   rm -rf oglplus >> $LOGFILE 2>&1 || failure
-   mv oglplus-0.12.1 oglplus >> $LOGFILE 2>&1 || failure
-   
-   return 0
-   }
-
 prepare_freetype() {
    echo "Preparing Freetype2..." | tee -a $LOGFILE
    mkdir -p $ROOT/build/freetype2 >> $LOGFILE || failure
@@ -373,26 +353,6 @@ build_glfw() {
 
    store_build_state $BS_BUILD_GLFW || failure
    return 0
-   }
-
-build_oglplus() {
-   if [ $BUILDSTATE -ge $BS_BUILD_OGLPLUS ]; then
-      return 0
-   fi
-
-   prepare_oglplus || failure
-
-   echo "Building OGLPlus (this may take a while)..." | tee -a $LOGFILE
-
-   cd $ROOT/build/oglplus || failure
-
-   $ROOT/3rdparty/oglplus/configure --prefix=../install --include-dir=../install/include/GL --no-docs --no-examples --build-and-install >> $LOGFILE 2>&1 || failure
-
-   echo "Successfully built and installed OGLPlus!" | tee -a $LOGFILE
-
-   # store_build_state $BS_BUILD_OGLPLUS || failure
-
-   return 1
    }
 
 build_freetype() {
@@ -561,25 +521,6 @@ build_glfw_mingw() {
    echo "Successfully built and installed GLFW!" | tee -a $LOGFILE
 
    store_build_state $BS_BUILD_GLFW_MINGW || failure
-   return 0
-   }
-
-build_oglplus_mingw() {
-   if [ $BUILDSTATE -ge $BS_BUILD_OGLPLUS_MINGW ]; then
-      return 0
-   fi
-
-   prepare_glfw || failure
-
-   echo "Building GLFW (this may take a while)..." | tee -a $LOGFILE
-   #cd $ROOT/3rdparty/glfw || failure
-
-   #export PREFIX=$ROOT/install
-
-   ## make x11-install >> $LOGFILE 2>&1 || failure
-   #echo "Successfully built and installed GLFW!" | tee -a $LOGFILE
-
-   store_build_state $BS_BUILD_OGLPLUS_MINGW || failure
    return 0
    }
 
@@ -761,7 +702,6 @@ build_linux() {
    echo "Important for an official build: let CC and CXX point to gcc/g++ 4.6+ !"
    build_glew || failure
    build_glfw || failure
-   # build_oglplus || failure
    build_freetype || failure
    build_libxml || failure
    build_oglft || failure
