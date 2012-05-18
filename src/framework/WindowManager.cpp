@@ -261,10 +261,11 @@ void WindowManager::eventLoop(void) {
          // Keep our special timers ticking over.
          Events::Instance(0)->tick();
 
-         // Remember whether we have performed a render callback or
-         // a BOINC callback for this queue inspection.
+         // Remember whether we have performed a render callback,
+         // a BOINC callback or resize for this queue inspection.
          bool boinc_update_invoked = false;
          bool render_invoked = false;
+         bool resize_invoked = false;
 
          // Keep extracting any events from the queue, until it is empty.
          // Events are gathered 'behind the scenes' from input devices .....
@@ -317,7 +318,8 @@ void WindowManager::eventLoop(void) {
                                                          AbstractGraphicsEngine::MouseButtonRight);
                   }
 
-            else if(current_event.type == Events::ResizeEventType) {
+            else if((current_event.type == Events::ResizeEventType) &&
+                    (resize_invoked == false)) {
                m_CurrentWidth = m_WindowedWidth = current_event.resize.width;
                m_CurrentHeight = m_WindowedHeight = current_event.resize.height;
 
@@ -336,7 +338,7 @@ void WindowManager::eventLoop(void) {
                else {
                	// Need to re-initialise GLEW after we acquire a context to apply it to.
    					if(glewInit() != GLEW_OK) {
-      					ErrorHandler::record("WindowManager::initialize() : Window system could not be initalized - GLEW init fail", ErrorHandler::WARN);
+      					ErrorHandler::record("WindowManager::initialize() : Window system could not be initalized - GLEW init fail", ErrorHandler::FATAL);
       					return;
       					}
    					else {
@@ -350,16 +352,18 @@ void WindowManager::eventLoop(void) {
                // (windoze needs to be reinitialized instead of just resized, oh well)
                /// \todo Can we determine the host OS? On X11 a resize() is sufficient!
                eventObservers.front()->initialize(m_CurrentWidth, m_CurrentHeight, 0, true);
+               resize_invoked = true;
                }
 
-               else if((current_event.type == Events::QuitEventType) ||
-                      ((current_event.type == Events::KeyPressEventType) &&
-                       (current_event.k_press.pressed == true) &&
-                       (current_event.k_press.key_code == GLFW_KEY_ESC))) {
-               // Close window, terminate GLFW and leave this window manager.
-               glfwTerminate();
-               return;
-               }
+            // Normal exit pathway.
+            else if((current_event.type == Events::QuitEventType) ||
+                    ((current_event.type == Events::KeyPressEventType) &&
+                     (current_event.k_press.pressed == true) &&
+                     (current_event.k_press.key_code == GLFW_KEY_ESC))) {
+            // Close window, terminate GLFW and leave this window manager.
+            glfwTerminate();
+            return;
+            }
 
             // Process printable character input.
             else if((current_event.type == Events::CharInputEventType) &&
