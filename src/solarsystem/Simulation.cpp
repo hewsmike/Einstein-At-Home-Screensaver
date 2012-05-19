@@ -235,37 +235,11 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
    overlay.setPanel(HUDBorderLayout::EAST, &east_panel);
    overlay.setPanel(HUDBorderLayout::WEST, &west_panel);
 
-   // Create content for the panels.
-
-   // Put an image into the content.
-   wyp_image = new HUDImage("wyp.tga", 5, 5);
-   if(wyp_image == NULL) {
-      std::string msg = "Simulation::prepare() - failed creation of HUDImage instance on heap";
-      ErrorHandler::record(msg, ErrorHandler::FATAL);
-      }
-
-   // Put the content into the panel.
-   west_panel.addContent(wyp_image);
-
-   // Put an image into the content.
-   boinc_image = new HUDImage("boinc.tga", 5, 5);
-      if(boinc_image == NULL) {
-      	std::string msg = "Simulation::prepare() - failed creation of HUDImage instance on heap";
-         ErrorHandler::record(msg, ErrorHandler::FATAL);
-         }
-
-   // Put the content into the panel.
-   west_panel.addContent(boinc_image);
-
-   // Put an image into the content.
-   aps_image = new HUDImage("aps.tga", 5, 5);
-   if(aps_image == NULL) {
-      std::string msg = "Simulation::prepare() - failed creation of HUDImage instance on heap";
-      ErrorHandler::record(msg, ErrorHandler::FATAL);
-      }
-
-   // Put the content into the panel.
-   north_panel.addContent(aps_image);
+   // Create content and include into panels.
+   LoadImageToPanel(boinc_image, &west_panel, "boincTGA", 5, 5);
+   LoadImageToPanel(wyp_image, &north_panel, "wypTGA", 5, 5);
+   LoadImageToPanel(aps_image, &north_panel, "apsTGA", 5, 5);
+   LoadImageToPanel(ligo_image, &north_panel, "ligoTGA", 5, 5);
 
    // Put text into the content.
    welcome_text = new HUDTextLineScroll(60, overlay.getFont(), 15, 15, HUDTextLineScroll::LEFT);
@@ -274,39 +248,8 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
       ErrorHandler::record(msg, ErrorHandler::FATAL);
       }
 
-   welcome_text->setText("Hi! Welcome to Einstein @ Home! SolarSystem V0.2 ... ");
-   // Put the content into the panel.
-   north_panel.addContent(welcome_text);
-
-   // Put an image into the content.
-   aei_image = new HUDImage("aei.tga", 5, 5);
-   if(aei_image == NULL) {
-      std::string msg = "Simulation::prepare() - failed creation of HUDImage instance on heap";
-       ErrorHandler::record(msg, ErrorHandler::FATAL);
-      }
-
-   // Put the content into the panel.
-   east_panel.addContent(aei_image);
-
-   // Put an image into the content.
-   lsc_image = new HUDImage("lsc.tga", 5, 5);
-   if(lsc_image == NULL) {
-      std::string msg = "Simulation::prepare() - failed creation of HUDImage instance on heap";
-      ErrorHandler::record(msg, ErrorHandler::FATAL);
-      }
-
-   // Put the content into the panel.
-   east_panel.addContent(lsc_image);
-
-   // Put an image into the content.
-   geo_image = new HUDImage("geo.tga", 5, 5);
-   if(geo_image == NULL) {
-      std::string msg = "Simulation::prepare() - failed creation of HUDImage instance on heap";
-      ErrorHandler::record(msg, ErrorHandler::FATAL);
-      }
-
-   // Put the content into the panel.
-   south_panel.addContent(geo_image);
+   LoadImageToPanel(aei_image, &east_panel, "aeiTGA", 5, 5);
+   LoadImageToPanel(geo_image, &south_panel, "geoTGA", 5, 5);
 
    version_text = new HUDTextLineScroll(105, overlay.getFont(), 15, 15, HUDTextLineScroll::RIGHT);
    if(version_text == NULL) {
@@ -317,16 +260,6 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
 
    // Put the content into the panel.
    south_panel.addContent(version_text);
-
-   // Put an image into the content.
-   ligo_image = new HUDImage("ligo.tga", 5, 5);
-   if(ligo_image == NULL) {
-      std::string msg = "Simulation::prepare() - failed creation of HUDImage instance on heap";
-      ErrorHandler::record(msg, ErrorHandler::FATAL);
-      }
-
-   // Put the content into the panel.
-   south_panel.addContent(ligo_image);
 
    overlay.activate();
    }
@@ -508,7 +441,7 @@ void Simulation::cycle(Simulation::content ct) {
       case Simulation::AUTOPILOT:
       	autopilotActive = !autopilotActive;
       	if(!autopilotActive) {
-      		// When returning to use control ...
+      		// When returning to user control ...
       		flyboy.manouevre(Craft::STOP_ROTATION);
       		flyboy.manouevre(Craft::STOP_TRANSLATION);
       		flyboy.setViewState(autopilot);
@@ -521,3 +454,17 @@ void Simulation::cycle(Simulation::content ct) {
          break;
       }
    }
+
+void Simulation::LoadImageToPanel(HUDImage* hip, HUDFlowLayout* hfl, std::string resource_name,
+											 GLuint margin_x, GLuint margin_y) {
+	// Put an image into the content.
+	hip = new HUDImage(resource_name, margin_x, margin_y);
+	if(hip == NULL) {
+	  std::string msg = "Simulation::LoadImageToPanel() - failed creation of HUDImage instance on heap : ";
+	  msg += resource_name;
+	  ErrorHandler::record(msg, ErrorHandler::FATAL);
+	  }
+
+	// Put the content into the panel.
+	hfl->addContent(hip);
+	}

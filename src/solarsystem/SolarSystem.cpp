@@ -20,7 +20,7 @@
 
 #include "SolarSystem.h"
 
-#include "ErrorHandler. h"
+#include "ErrorHandler.h"
 
 const int SolarSystem::FAR_LOOK_RATIO(1000);
 const GLdouble SolarSystem::FOV_ANGLE(45.0f);

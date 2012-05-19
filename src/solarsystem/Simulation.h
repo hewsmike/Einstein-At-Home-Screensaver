@@ -227,7 +227,10 @@ class Simulation : public Renderable {
       HUDFlowHorizontalLayout south_panel;
       HUDFlowVerticalLayout east_panel;
       HUDFlowVerticalLayout west_panel;
-   };
+
+      void LoadImageToPanel(HUDImage* hip, HUDFlowLayout* hfl,
+      							 std::string resource_name, GLuint margin_x, GLuint margin_y);
+	};
 
 /**
  * @}
