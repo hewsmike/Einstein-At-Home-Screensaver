@@ -20,7 +20,7 @@
 
 #include "SolarSystem.h"
 
-#include "ErrorHandler.h"
+#include "ErrorHandler. h"
 
 const int SolarSystem::FAR_LOOK_RATIO(1000);
 const GLdouble SolarSystem::FOV_ANGLE(45.0f);
@@ -317,210 +317,135 @@ void SolarSystem::mouseMoveEvent(const int deltaX, const int deltaY,
    }
 
 void SolarSystem::keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey keyPressed) {
-   std::string message = "SolarSystem::keyboardPressEvent() - ";
    switch(keyPressed) {
       case KeyA:
-         message += "KeyA : unassigned";
          break;
       case KeyB:
-         message += "KeyB : unassigned";
          break;
       case KeyC:
-         // Reverse thrust.
          sim.moveRequest(Craft::REVERSE);
-         message += "KeyC : reverse thrust";
          break;
       case KeyD:
-         // Stop.
          sim.moveRequest(Craft::STOP_TRANSLATION);
-         message += "KeyD : null translation";
          break;
       case KeyE:
-         // Thrust forwards.
          sim.moveRequest(Craft::FORWARD);
-         message += "KeyE : forward thrust";
          break;
       case KeyF:
-         // Thrust to the right.
          sim.moveRequest(Craft::RIGHTWARDS);
-         message += "KeyF : right thrust";
          break;
       case KeyG:
-         // Go home.
          sim.moveRequest(Craft::GO_HOME);
-         message += "KeyG : go home";
          break;
       case KeyH:
-         // Toggle the HUD display. Not yet ... buggy ... :-) :-)
-         // sim.cycle(Simulation::HUDOVER);
-         // message += "KeyH : toggle HUD";
          break;
       case KeyK:
-         // Roll to the left.
          sim.moveRequest(Craft::ROLL_LEFT);
-         message += "KeyK : roll left";
          break;
       case KeyL:
-         // stop any craft rotation
          sim.moveRequest(Craft::STOP_ROTATION);
-         message += "KeyL : null rotation";
          break;
       case KeyM:
-         message += "KeyM : unassigned";
          break;
       case KeyN:
-         message += "KeyN : unassigned";
          break;
       case KeyO:
-         // Push nose down.
          sim.moveRequest(Craft::PITCH_DOWN);
-         message += "KeyO : pitch down";
          break;
       case KeyP:
-         message += "KeyP : unassigned";
          break;
       case KeyQ:
-         message += "KeyQ : unassigned";
          break;
       case KeyR:
-         // Thrust up.
          sim.moveRequest(Craft::UPWARDS);
-         message += "KeyR : upwards thrust";
          break;
       case KeyS:
-         // Thrust to the left.
          sim.moveRequest(Craft::LEFTWARDS);
-         message += "KeyS : left thrust";
          break;
       case KeyT:
-         message += "KeyT : unassigned";
          break;
       case KeyV:
-         // Thrust down.
          sim.moveRequest(Craft::DOWNWARDS);
-         message += "KeyV : downwards thrust";
          break;
       case KeyW:
-         message += "KeyW : unassigned";
          break;
       case KeyX:
-         message += "KeyX : unassigned";
          break;
       case KeyZ:
-         message += "KeyZ : unassigned";
          break;
       case KeyF1:
          // TODO - future 'help' functionality
-         message += "KeyF1 : unassigned";
          break;
       case KeyF2:
          // TODO - cycle the rendering level.
          // SolarSystemGlobals::set_render_level(SolarSystemGlobals::RENDER_LOWEST);
-         message += "KeyF2 : unassigned";
          break;
       case KeyF3:
-         message += "KeyF3 : unassigned";
          break;
       case KeyF4:
+      	// TODO - cycle the HUD
          // sim.cycle(Simulation::HUDOVER);
-         // message += "KeyF4 : cycle HUD";
          break;
       case KeyF5:
-         // Cycle the state of constellation display.
          sim.cycle(Simulation::CONSTELLATIONS);
-         message += "KeyF5 : cycle constellations";
          break;
       case KeyF6:
-         // Cycle the state of pulsar display.
          sim.cycle(Simulation::PULSARS);
-         message += "KeyF6 : cycle pulsars";
          break;
       case KeyF7:
-         // cycle the state of supernovae display.
          sim.cycle(Simulation::SUPERNOVAE);
-         message += "KeyF7 : cycle supernovae";
          break;
       case KeyF8:
-         // Toggle the state of celestial sphere grid display.
          sim.cycle(Simulation::SKY_GRID);
-         message += "KeyF8 : cycle sky grid";
          break;
       case KeyF9:
-         // Toggle the state of earth grid display.
          sim.cycle(Simulation::EARTH_GRID);
-         message += "KeyF9 : cycle earth grid";
          break;
       case KeyF12:
-         // Toggle the state of the autopilot
+         // TODO - Toggle the state of the autopilot
          // sim.cycle(Simulation::AUTOPILOT);
-         // message += "KeyF12 : cycle autopilot";
          break;
       case KeySpace:
-         // Cease all movement and rotation.
          sim.moveRequest(Craft::STOP_TRANSLATION);
          sim.moveRequest(Craft::STOP_ROTATION);
-         message += "KeySpace : null all movement and rotation";
          break;
       case KeyKP1:
-      	// Yaw left.
-         sim.moveRequest(Craft::YAW_LEFT);
-         message += "KeyKP0 : yaw left";
+      	sim.moveRequest(Craft::YAW_LEFT);
          break;
       case KeyKP2:
-         // Pull nose up.
          sim.moveRequest(Craft::PITCH_UP);
-         message += "KeyKP2 : pitch up";
          break;
       case KeyKP3:
-      	// Yaw right.
       	sim.moveRequest(Craft::YAW_RIGHT);
-      	message += "KeyKPPeriod : yaw right";
       	break;
       case KeyKP4:
-         // Roll to the left.
          sim.moveRequest(Craft::ROLL_LEFT);
-         message += "KeyKP4 : roll left";
          break;
       case KeyKP5:
-         // stop any craft rotation
          sim.moveRequest(Craft::STOP_ROTATION);
-         message += "KeyKP5 : null rotation";
          break;
       case KeyKP6:
-         // Roll to the right.
          sim.moveRequest(Craft::ROLL_RIGHT);
-         message += "KeyKP6 : roll right";
          break;
       case KeyKP8:
-         // Push nose down.
          sim.moveRequest(Craft::PITCH_DOWN);
-         message += "KeyKP8 : pitch down";
          break;
       case KeyComma:
-         // Yaw left.
          sim.moveRequest(Craft::YAW_LEFT);
-         message += "KeyComma : yaw left";
          break;
       case KeyPeriod:
-         // Pull nose up.
          sim.moveRequest(Craft::PITCH_UP);
-         message += "KeyPeriod : pitch up";
          break;
       case KeyForwardSlash:
-         // Yaw right.
          sim.moveRequest(Craft::YAW_RIGHT);
-         message += "KeyForwardSlash : yaw right";
          break;
       case KeySemiColon:
-         // Roll to the right.
          sim.moveRequest(Craft::ROLL_RIGHT);
-         message += "KeySemiColon : roll right";
          break;
       default:
          break;
       }
-   ErrorHandler::record(message, ErrorHandler::INFORM);
-   }
+	}
 
 void SolarSystem::refreshLocalBOINCInformation() {
    }
