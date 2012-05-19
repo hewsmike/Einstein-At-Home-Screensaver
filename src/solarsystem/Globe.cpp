@@ -327,14 +327,16 @@ void Globe::loadPolarIndexBuffer(Buffer_OBJ& polar_buffer, enum pole p) {
 
    // Index of point on sphere which begins a sequence of
    // points for later use within a GL_TRIANGLE_FAN pattern.
-   // Default starting index is zero for the north pole, and then counting up.
+   // Default starting index is zero for the north pole,.
    GLuint pole_index = 0;
-   GLint increment = 1;
+   GLuint peri_polar_index = pole_index + 1;
+   GLuint delta = 1;
    if(p == SOUTH) {
       // The south polar index is however many vertex entries there
-      // are for the entire sphere minus one. Count down from that.
+      // are for the entire sphere minus one.
       pole_index = sp.vertices().size() - 1;
-      increment = -1;
+      peri_polar_index = pole_index - 1;
+      delta = -1;
       }
 
    // First entry in buffer is the polar point's index.
@@ -347,16 +349,14 @@ void Globe::loadPolarIndexBuffer(Buffer_OBJ& polar_buffer, enum pole p) {
    // GL_TRIANGLE_FAN pattern. The way this 'winds around' makes the convex side
    // the 'outside' for OpenGL purposes, and the southern cap is necessarily of
    // the opposite sense to the northern cap.
-   // Alas, you have to sit and think on it .... :-)
 
-   for(GLuint i = 0; i < verts_per_lat; i++) {
-      // Index of buffer position to insert the point's index upon the sphere.
-      // While our loop index 'i' counts up, the index
-      // counts up or down depending on which pole.
-      *buffer_ptr = pole_index + increment*i;
+   for(GLuint i = 0; i < verts_per_lat - 1; i++) {
+      *buffer_ptr = peri_polar_index + delta*i;
       // Move to next buffer position.
       ++buffer_ptr;
       }
+
+   *buffer_ptr = peri_polar_index;
 
    polar_buffer.loadBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW, polar_size, buffer_base_ptr);
    delete[] buffer_base_ptr;
