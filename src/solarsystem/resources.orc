@@ -24,8 +24,10 @@ FontSansSerif|FreeMono.ttf.res
 AppIconBMP|EaH.bmp.res
 EarthTGA|earthmap.tga.res
 SunTGA|sunmap.tga.res
+
+aeiTGA|aei.tga.res
+apsTGA|aps.tga.res
+boincTGA|boinc.tga.res
 geoTGA|geo.tga.res
 ligoTGA|ligo.tga.res
-apsTGA|aps.tga.res
 wypTGA|wyp.tga.res
-lscTGA|lsc.tga.res
