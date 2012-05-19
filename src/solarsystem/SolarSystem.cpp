@@ -318,10 +318,6 @@ void SolarSystem::mouseMoveEvent(const int deltaX, const int deltaY,
 
 void SolarSystem::keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey keyPressed) {
    switch(keyPressed) {
-      case KeyA:
-         break;
-      case KeyB:
-         break;
       case KeyC:
          sim.moveRequest(Craft::REVERSE);
          break;
@@ -337,24 +333,14 @@ void SolarSystem::keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey k
       case KeyG:
          sim.moveRequest(Craft::GO_HOME);
          break;
-      case KeyH:
-         break;
       case KeyK:
          sim.moveRequest(Craft::ROLL_LEFT);
          break;
       case KeyL:
          sim.moveRequest(Craft::STOP_ROTATION);
          break;
-      case KeyM:
-         break;
-      case KeyN:
-         break;
       case KeyO:
          sim.moveRequest(Craft::PITCH_DOWN);
-         break;
-      case KeyP:
-         break;
-      case KeyQ:
          break;
       case KeyR:
          sim.moveRequest(Craft::UPWARDS);
@@ -362,16 +348,8 @@ void SolarSystem::keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey k
       case KeyS:
          sim.moveRequest(Craft::LEFTWARDS);
          break;
-      case KeyT:
-         break;
       case KeyV:
          sim.moveRequest(Craft::DOWNWARDS);
-         break;
-      case KeyW:
-         break;
-      case KeyX:
-         break;
-      case KeyZ:
          break;
       case KeyF1:
          // TODO - future 'help' functionality
@@ -379,8 +357,6 @@ void SolarSystem::keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey k
       case KeyF2:
          // TODO - cycle the rendering level.
          // SolarSystemGlobals::set_render_level(SolarSystemGlobals::RENDER_LOWEST);
-         break;
-      case KeyF3:
          break;
       case KeyF4:
       	// TODO - cycle the HUD
