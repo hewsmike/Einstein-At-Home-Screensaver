@@ -100,13 +100,12 @@ Simulation::Simulation(void): autopilotActive(false),
                                   SUN_SLICES,
                                   SUN_TEXTURE_OFFSET),
                               aei_image(NULL),
+                              aps_image(NULL),
                               boinc_image(NULL),
                               geo_image(NULL),
                               ligo_image(NULL),
-                              aps_image(NULL),
+                              opencl_image(NULL),
                               wyp_image(NULL),
-                              lsc_image(NULL),
-                              welcome_text(NULL),
                               version_text(NULL),
                               overlay(NULL),
                               north_panel(&overlay),
@@ -220,7 +219,7 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
    west_panel.emptyContainer();
 
    // Set panel justifications.
-   north_panel.setPrimaryJustification(HUDFlowLayout::START);
+   north_panel.setPrimaryJustification(HUDFlowLayout::CENTRE);
    // north_panel.setSecondaryJustification(HUDFlowLayout::END);
    south_panel.setPrimaryJustification(HUDFlowLayout::CENTRE);
    // south_panel.setSecondaryJustification(HUDFlowLayout::END);
@@ -241,13 +240,6 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
    LoadImageToPanel(aps_image, &north_panel, "apsTGA", 5, 5);
    LoadImageToPanel(ligo_image, &north_panel, "ligoTGA", 5, 5);
 
-   // Put text into the content.
-   welcome_text = new HUDTextLineScroll(60, overlay.getFont(), 15, 15, HUDTextLineScroll::LEFT);
-   if(welcome_text == NULL) {
-      std::string msg = "Simulation::prepare() - failed creation of HUDTextLineScroll instance on heap";
-      ErrorHandler::record(msg, ErrorHandler::FATAL);
-      }
-
    LoadImageToPanel(aei_image, &east_panel, "aeiTGA", 5, 5);
    LoadImageToPanel(geo_image, &south_panel, "geoTGA", 5, 5);
 
@@ -260,6 +252,8 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
 
    // Put the content into the panel.
    south_panel.addContent(version_text);
+
+   LoadImageToPanel(opencl_image, &south_panel, "openclTGA", 5, 5);
 
    overlay.activate();
    }
@@ -276,6 +270,12 @@ void Simulation::release(void) {
    // Must inactivate the layout first !!
    overlay.inactivate();
 
+   if(aei_image != NULL) {
+      delete aei_image;
+      }
+   if(aps_image != NULL) {
+      delete aps_image;
+      }
    if(geo_image != NULL) {
       delete geo_image;
       }
@@ -287,12 +287,6 @@ void Simulation::release(void) {
       }
    if(wyp_image != NULL) {
       delete wyp_image;
-      }
-   if(lsc_image != NULL) {
-      delete lsc_image;
-      }
-   if(welcome_text != NULL) {
-      delete welcome_text;
       }
    }
 

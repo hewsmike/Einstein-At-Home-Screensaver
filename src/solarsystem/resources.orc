@@ -30,4 +30,5 @@ apsTGA|aps.tga.res
 boincTGA|boinc.tga.res
 geoTGA|geo.tga.res
 ligoTGA|ligo.tga.res
+openclTGA|opencl.tga.res
 wypTGA|wyp.tga.res

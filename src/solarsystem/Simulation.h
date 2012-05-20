@@ -212,13 +212,12 @@ class Simulation : public Renderable {
       std::map<content, OGLFT_ft*> fonts;
 
       HUDImage* aei_image;
+      HUDImage* aps_image;
       HUDImage* boinc_image;
       HUDImage* geo_image;
       HUDImage* ligo_image;
-      HUDImage* aps_image;
+      HUDImage* opencl_image;
       HUDImage* wyp_image;
-      HUDImage* lsc_image;
-      HUDTextLineScroll* welcome_text;
       HUDTextLineScroll* version_text;
 
       HUDBorderLayout overlay;
