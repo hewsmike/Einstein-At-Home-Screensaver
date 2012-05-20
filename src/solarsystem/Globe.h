@@ -62,7 +62,7 @@ class Globe : public Renderable {
        *        ( eg. Greenwich meridian on Earth )
        */
       Globe(std::string name,
-            std::string image_resource_name,
+            std::string resource_name,
             GLfloat radius,
             GLuint stacks,
             GLuint slices,
@@ -125,7 +125,7 @@ class Globe : public Renderable {
       std::string nm;
 
       /// The resource name of the image to use as a texture upon the globe.
-      std::string irn;
+      std::string image_resource_name;
 
       /// The horizontal texture coordinate offset - into the pixel map -
       /// that indicates the zero of 'geographical' longitude.

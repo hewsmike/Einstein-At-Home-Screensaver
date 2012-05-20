@@ -51,13 +51,13 @@ const bool Globe::STAGGERING(true);
 const bool Globe::STITCHING(true);
 
 Globe::Globe(std::string name,
-             std::string image_resource_name,
+             std::string resource_name,
              GLfloat radius,
              GLuint stacks,
              GLuint slices,
              GLfloat zero_longitude_offset) :
                  nm(name),
-                 irn(image_resource_name),
+                 image_resource_name(resource_name),
                  zlo(zero_longitude_offset),
                  sp(radius, slices, stacks, STAGGERING, STITCHING),
                  verts_per_lat(slices + 1) {
@@ -76,19 +76,22 @@ void Globe::loadTexture(void) {
    
    ResourceFactory factory;
    // Create texture resource instance.
-   const Resource* textureResource = factory.createInstance(irn.c_str());
+   const Resource* textureResource = factory.createInstance(image_resource_name.c_str());
 
    // We're gonna let the GLFW do the hard work of mipmap production.
    // This implicitly operates on the GL_TEXTURE_2D target.
    int load_success = GL_FALSE;
-   if(textureResource != GL_FALSE) {
+   if(textureResource != NULL) {
 		load_success = glfwLoadMemoryTexture2D(&(textureResource->data()->front()),
 															 textureResource->data()->size(),
 															 GLFW_BUILD_MIPMAPS_BIT);
 		}
 	else {
-      ErrorHandler::record("Globe::loadTexture() - texture resource not available", ErrorHandler::WARN);
-		}
+		std::stringstream msg;
+		msg << "Globe::loadTexture() - texture resource NOT available : ";
+		msg << image_resource_name;
+		ErrorHandler::record(msg.str(), ErrorHandler::WARN);
+      }
 
    // Did that work?
    if(load_success == GL_TRUE) {
@@ -124,7 +127,7 @@ void Globe::loadTexture(void) {
       // with later rendering OpenGL will simply use the 'default' texture ie.
       // nothing. The only visual result will be to see whatever background
       // color(s) have been assigned ( or not ! ) to the polygon(s) in question.
-      ErrorHandler::record("Globe::loadTexture() - texture object not loaded ", ErrorHandler::WARN);
+      ErrorHandler::record("Globe::loadTexture() - texture object NOT loaded ", ErrorHandler::WARN);
       }
       
    // Unbind the texture from the state machine - but don't delete it!

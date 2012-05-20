@@ -54,7 +54,7 @@ class HUDImage : public HUDContent {
        * \param verticalMargin : the vertical pixel margin to be applied
        *                         above and below the enclosed content
        */
-      HUDImage(std::string fileName, GLuint horizontalMargin,
+      HUDImage(std::string resourceName, GLuint horizontalMargin,
                GLuint verticalMargin);
 
       /**
@@ -126,7 +126,7 @@ class HUDImage : public HUDContent {
       Buffer_OBJ buff_obj_points;
 
 		/// Filename to load image from.
-      std::string image_file_name;
+      std::string image_resource_name;
       
       /// Dimensions of loaded image.
       GLuint image_width;
