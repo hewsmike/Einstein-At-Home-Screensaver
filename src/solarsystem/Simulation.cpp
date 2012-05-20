@@ -276,14 +276,17 @@ void Simulation::release(void) {
    if(aps_image != NULL) {
       delete aps_image;
       }
+   if(aps_image != NULL) {
+      delete aps_image;
+      }
    if(geo_image != NULL) {
       delete geo_image;
       }
    if(ligo_image != NULL) {
       delete ligo_image;
       }
-   if(aps_image != NULL) {
-      delete aps_image;
+   if(opencl_image != NULL) {
+      delete opencl_image;
       }
    if(wyp_image != NULL) {
       delete wyp_image;
