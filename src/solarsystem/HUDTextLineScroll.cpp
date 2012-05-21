@@ -24,12 +24,10 @@
 
 HUDTextLineScroll::HUDTextLineScroll(GLuint length, OGLFT_ft* font,
                                      GLuint horizontalMargin, GLuint verticalMargin,
-                                     mode direction = NONE) :
+                                     mode direction = NONE, GLuint scroll_interval = 10) :
                                         HUDTextLine(length, font, horizontalMargin, verticalMargin),
-                                        dir(direction) {
-	//trig = new TriggerTimer(300.0f, &HUDTextLineScroll::trigger_callback);
-   isTriggered = false;
-   }
+                                        dir(direction), interval(scroll_interval), frame_count(0) {
+	}
 
 HUDTextLineScroll::~HUDTextLineScroll() {
    }
@@ -60,15 +58,13 @@ void HUDTextLineScroll::toggleDirection(void) {
       }
    }
 
-void HUDTextLineScroll::trigger_callback(void) {
-   isTriggered = true;
-   }
-
 void HUDTextLineScroll::render(void) {
    static const GLuint MIN_STRING_SIZE = 2;
 
+   ++frame_count;
+
    // Has the timer triggered ?
-   if(isTriggered == true) {
+   if((frame_count % interval) == 0) {
       // Yes, get the line's text content.
       std::string contents = getText();
       // It must have at least two characters
@@ -109,7 +105,6 @@ void HUDTextLineScroll::render(void) {
          // Set the (new) text contents.
          setText(contents);
          }
-      isTriggered = false;
       }
 
    // Then render this (altered) line as per base class.

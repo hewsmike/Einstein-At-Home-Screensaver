@@ -243,7 +243,7 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
    LoadImageToPanel(aei_image, &east_panel, "aeiTGA", 5, 5);
    LoadImageToPanel(geo_image, &south_panel, "geoTGA", 5, 5);
 
-   version_text = new HUDTextLineScroll(105, overlay.getFont(), 15, 15, HUDTextLineScroll::RIGHT);
+   version_text = new HUDTextLineScroll(105, overlay.getFont(), 15, 15, HUDTextLineScroll::LEFT, 10);
    if(version_text == NULL) {
       std::string msg = "Simulation::prepare() - failed creation of HUDTextLineScroll instance on heap";
       ErrorHandler::record(msg, ErrorHandler::FATAL);

@@ -51,10 +51,11 @@ class HUDTextLineScroll : public HUDTextLine {
        * \param verticalMargin : the vertical pixel margin to be applied
        *                         above and below the enclosed content
        * \param direction : the direction in which to scroll the text
+       * \param scroll_interval : the number of frames between transitions
        */
       HUDTextLineScroll(GLuint length, OGLFT_ft* font,
                         GLuint horizontalMargin, GLuint verticalMargin,
-                        mode direction);
+                        mode direction, GLuint scroll_interval);
 
       /**
        * \brief Destructor
@@ -80,8 +81,6 @@ class HUDTextLineScroll : public HUDTextLine {
        */
       void toggleDirection(void);
 
-      void trigger_callback(void);
-
    protected:
       /// This routine satisfies the Renderable interface.
 
@@ -91,9 +90,9 @@ class HUDTextLineScroll : public HUDTextLine {
    private:
       mode dir;
 
-      TriggerTimer* trig;
+      GLuint interval;
 
-      bool isTriggered;
+      GLuint frame_count;
    };
 
 /**
