@@ -39,9 +39,8 @@ HUDTextLine::~HUDTextLine() {
    }
 
 void HUDTextLine::setText(const std::string text) {
-   // Overwrite any previous content, but truncate any input to
-   // within correct size.
-   txt.assign(text.substr(0, len));
+   // Overwrite any previous content.
+   txt.assign(text);
 
    // Call base class to set minima for the given text content.
    this->setMinimumDimensions(width() + 2*horzMargin(),
@@ -103,5 +102,5 @@ void HUDTextLine::release(void) {
    }
 
 void HUDTextLine::render(void) {
-   lineFont->draw(horzBase(), vertBase(), txt.c_str());
+   lineFont->draw(horzBase(), vertBase(), txt.substr(0, len).c_str());
    }

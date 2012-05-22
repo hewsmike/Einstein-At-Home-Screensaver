@@ -28,6 +28,7 @@
 #include <oglft/OGLFT.h>
 
 #include "HUDContent.h"
+#include "SolarSystemGlobals.h"
 
 /**
  * \addtogroup solarsystem Solarsystem
@@ -50,7 +51,7 @@ class HUDTextLine : public HUDContent {
       /**
        * \brief Constructor
        *
-       * \param length : the maximum length in characters of the text line
+       * \param length : the maximum length in characters to be displayed
        * \param font : pointer to an OGLFT font instance
        * \param horizontalMargin : the horizontal pixel margin to be applied
        *                           either side of the enclosed content
@@ -96,7 +97,7 @@ class HUDTextLine : public HUDContent {
 
       /**
        * \brief Get the height in pixels of the text line, as determined
-       *        by the font choice and current contents.
+       *        by the font choice, ascenders and descenders.
        *
        * \return the height
        */
