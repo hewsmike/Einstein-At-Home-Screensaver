@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2011 by Mike Hewson                                     *
- *   hewsmike@iinet.net.au                                                 *
+ *   Copyright (C) 2012 by Mike Hewson                                     *
+ *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
  *                                                                         *
@@ -17,7 +17,6 @@
  *   along with Einstein@Home. If not, see <http://www.gnu.org/licenses/>. *
  *                                                                         *
  ***************************************************************************/
-
 #ifndef PULSAR_H_
 #define PULSAR_H_
 
@@ -41,12 +40,11 @@
 
 class Pulsar : public Star {
    public:
-      /// Identifiers of pulsar catalog source.
+      /// Identifiers of pulsar catalogue source.
       enum pulsar_source {DUNNO,          // Don't know.
                           ATNF,           // Australia Telescope National Facility.
                           PALFA,          // Pulsar ALFA.
-                          PALFA_EAH,      // Pulsar ALFA with E@H confirmation.
-                          PALFA_EAH_NEW,  // Pulsar ALFA with E@H co-disovery.
+                          FERMILAT,       // The GR detector on the Fermi satellite.
                           DMB};           // Deep Multi-Beam ( Parkes ).
 
       /**
@@ -58,21 +56,21 @@ class Pulsar : public Star {
        *
        * \param nm - the name of the pulsar
        *
-       * \param sc - the catalog source or 'discoverer' of the pulsar
+       * \param sc - the catalog/source of the pulsar
        */
       Pulsar(starpos_t ra, starpos_t dec, std::string nm, pulsar_source sc);
 
       /**
        * \brief Destructor
        */
-      ~Pulsar();
+      virtual ~Pulsar();
 
       /**
-       * \brief Obtain the 'discoverer'
+       * \brief Obtain the catalogue
        *
        * \return The catalog source
        */
-      pulsar_source get_source(void) const;
+      pulsar_source getSource(void) const;
 
    private:
       /// The catalog from which information was derived.

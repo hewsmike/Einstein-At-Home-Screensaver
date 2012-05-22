@@ -51,7 +51,7 @@ class Supernova : public Star {
       /**
        * \brief Destructor
        */
-      ~Supernova();
+      virtual ~Supernova();
    };
 
 /**

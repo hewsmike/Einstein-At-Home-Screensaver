@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2011 by Mike Hewson                                     *
- *   hewsmike@iinet.net.au                                                 *
+ *   Copyright (C) 2012 by Mike Hewson                                     *
+ *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
  *                                                                         *
@@ -31,6 +31,6 @@ Pulsar::Pulsar(starpos_t ra, starpos_t dec, std::string nm, pulsar_source sc) :
 Pulsar::~Pulsar() {
    }
 
-Pulsar::pulsar_source Pulsar::get_source(void) const {
+Pulsar::pulsar_source Pulsar::getSource(void) const {
    return source;
    }

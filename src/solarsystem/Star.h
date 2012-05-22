@@ -67,7 +67,7 @@ class Star {
       /**
        * \brief Destructor
        */
-      ~Star();
+      virtual ~Star();
 
       /**
        * \brief Obtain the right ascension value
