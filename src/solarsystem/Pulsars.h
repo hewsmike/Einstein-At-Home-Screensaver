@@ -43,6 +43,18 @@ using namespace std;
  */
 
 class Pulsars : public Renderable {
+   public:
+      /**
+       * \brief Constructor
+       * \param rad The radius from the origin where the pulsars map to.
+       */
+      Pulsars(vec_t rad);
+
+      /**
+       * \brief Destructor, virtual
+       */
+      virtual ~Pulsars();
+
    private:
       /// The displayed size and color parameters of generic pulsars
       static const GLfloat MAG_SIZE;
@@ -54,6 +66,12 @@ class Pulsars : public Renderable {
       static const GLsizei ARRAY_STRIDE;
       static const GLuint BYTE_OFFSET;
       static const GLint COORDS_PER_VERTEX;
+
+      struct Position {
+         vec_t x;
+         vec_t y;
+         vec_t z;
+         };
 
       /// Store pulsar data here
       std::vector<Pulsar> pulsar_list;
@@ -72,19 +90,7 @@ class Pulsars : public Renderable {
 
       /// Provide OpenGL code to render the object.
       void render(void);
-
-   public:
-      /**
-       * \brief Constructor
-       * \param rad The radius from the origin where the pulsars map to.
-       */
-      Pulsars(vec_t rad);
-
-      /**
-       * \brief Destructor, virtual
-       */
-      virtual ~Pulsars();
-	};
+   };
 
 /**
  * @}

@@ -43,6 +43,19 @@
  */
 
 class Supernovae : public Renderable {
+   public:
+      /**
+       * \brief Constructor
+       *
+       * \param rad The radius from the origin where the supernovae map to.
+       */
+      Supernovae(vec_t rad);
+
+      /**
+       * \brief Destructor, virtual
+       */
+      virtual ~Supernovae();
+
    private:
       /// The displayed size and color parameters of generic supernovae
 		static const GLfloat MAG_SIZE;
@@ -54,6 +67,12 @@ class Supernovae : public Renderable {
  	   static const GLsizei ARRAY_STRIDE;
  	   static const GLvoid* BYTE_OFFSET;
 	   static const GLint COORDS_PER_VERTEX;
+
+	   struct Position {
+	            vec_t x;
+	            vec_t y;
+	            vec_t z;
+	            };
 
 	   /// Store Supernova data here
       std::vector<Supernova> supernova_list;
@@ -72,19 +91,6 @@ class Supernovae : public Renderable {
 
       /// Provide OpenGL code to render the object.
       void render(void);
-
-   public:
-      /**
-       * \brief Constructor
-       *
-       * \param rad The radius from the origin where the supernovae map to.
-       */
-	   Supernovae(vec_t rad);
-
-      /**
-       * \brief Destructor, virtual
-       */
-      virtual ~Supernovae();
    };
    
 /**

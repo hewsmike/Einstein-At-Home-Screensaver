@@ -276,27 +276,15 @@ void Supernovae::prepare(SolarSystemGlobals::render_quality rq) {
       case SolarSystemGlobals::RENDER_LOWEST :
       case SolarSystemGlobals::RENDER_MEDIUM :
       case SolarSystemGlobals::RENDER_HIGHEST : {
-         // Make our buffer identifier OpenGL's current one.
-         glBindBuffer(GL_ARRAY_BUFFER, buff_obj_points.ID());
+         // What size allocation are we after? The size of a
+         // supernova's worth times how many supernovae.
+         GLsizeiptr buffer_size = sizeof(Position) * supernova_list.size();
 
-         // What size allocation are we after?
-         GLsizeiptr size = sizeof(vec_t) * COORDS_PER_VERTEX * supernova_list.size();
+         Position* buffer_base_ptr = new Position[supernova_list.size()];
+         Position* buffer_ptr = buffer_base_ptr;
 
-         // Allocate buffer memory but don't store, yet.
-         glBufferData(GL_ARRAY_BUFFER, size, NULL, GL_STATIC_DRAW);
-
-         // Get an access pointer to the buffer area, of correct type,
-         // for the purpose of writing.
-         vec_t* buffer_ptr = static_cast<vec_t*>(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
-
-         // Check for failure, as we don't want to dereference a NULL later on,
-         // ... MAKE IT A FATAL ERROR.
-         if(buffer_ptr == NULL) {
-            ErrorHandler::record("Supernovae::prepare() - can't acquire buffer pointer", ErrorHandler::FATAL);
-            }
-
-         // Traverse the listing of supernovae positions and store such vertices
-         // in the buffer.
+         // Traverse the listing of supernovae positions and
+         // store such vertices in the buffer.
          for(std::vector<Supernova>::const_iterator sn = supernova_list.begin();
              sn < supernova_list.end();
              sn++ ) {
@@ -304,17 +292,12 @@ void Supernovae::prepare(SolarSystemGlobals::render_quality rq) {
             VectorSP super = VectorSP(sn->right_ascension(), sn->declination(), s_rad);
 
             // But store in Cartesian co-ordinate representation..
-            *(buffer_ptr) = super.x();
-            buffer_ptr++;
-            *(buffer_ptr) = super.y();
-            buffer_ptr++;
-            *(buffer_ptr) = super.z();
+            *(buffer_ptr) = {super.x(), super.y(), super.z()};
             buffer_ptr++;
             }
 
-         // Disconnect the mapping and the buffer from OpenGL.
-         glUnmapBuffer(GL_ARRAY_BUFFER);
-         glBindBuffer(GL_ARRAY_BUFFER, Buffer_OBJ::NO_ID);
+         buff_obj_points.loadBuffer(GL_ARRAY_BUFFER, GL_STATIC_DRAW, buffer_size, buffer_base_ptr);
+         delete[] buffer_base_ptr;
          break;
          }
       default :
@@ -334,7 +317,6 @@ void Supernovae::render(void) {
    // Set the point size and colour for rendering supernovae.
    glPointSize(MAG_SIZE);
    glColor3f(RGB_RED, RGB_GREEN, RGB_BLUE);
-
 
    // Make our buffer identifier OpenGL's current one.
    glBindBuffer(GL_ARRAY_BUFFER, buff_obj_points.ID());

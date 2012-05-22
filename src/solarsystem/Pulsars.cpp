@@ -1802,10 +1802,6 @@ Pulsars::Pulsars(vec_t rad) : p_rad(rad) {
    pulsar_list.push_back(Pulsar(299.33082f, 28.52885f, "J1957+2831", Pulsar::ATNF));
    pulsar_list.push_back(Pulsar(299.69208f, 28.76739f, "J1958+2846", Pulsar::ATNF));
    pulsar_list.push_back(Pulsar(299.90321f, 20.80420f, "J1959+2048", Pulsar::ATNF));
-
-   //// First E@H pulsar from PALFA data using ABP WU's !!
-   pulsar_list.push_back(Pulsar(300.11805f, 27.40278f, "J2007+2722", Pulsar::PALFA_EAH_NEW));
-
    pulsar_list.push_back(Pulsar(300.51844f, 32.28842f, "J2002+3217", Pulsar::ATNF));
    pulsar_list.push_back(Pulsar(300.68346f, 40.84831f, "J2002+4050", Pulsar::ATNF));
    pulsar_list.push_back(Pulsar(300.69904f, 16.62131f, "J2002+1637", Pulsar::ATNF));
@@ -1937,51 +1933,33 @@ Pulsars::~Pulsars() {
 void Pulsars::prepare(SolarSystemGlobals::render_quality rq) {
    // Get an OpenGL buffer object.
    buff_obj_points.acquire();
-   /// Preparations depend upon the requested rendering quality level.
+   /// Preparations may depend upon the requested rendering quality level.
    switch (rq) {
       case SolarSystemGlobals::RENDER_LOWEST :
       case SolarSystemGlobals::RENDER_MEDIUM :
       case SolarSystemGlobals::RENDER_HIGHEST : {
-         // Make our buffer identifier OpenGL's current one.
-         glBindBuffer(GL_ARRAY_BUFFER, buff_obj_points.ID());
+         // What size allocation are we after? The size of a
+         // pulsar's worth times how many pulsars.
+         GLsizeiptr buffer_size = sizeof(Position) * pulsar_list.size();
 
-         // What size allocation are we after?
-         GLsizeiptr size = sizeof(vec_t) * COORDS_PER_VERTEX * pulsar_list.size();
+         Position* buffer_base_ptr = new Position[pulsar_list.size()];
+         Position* buffer_ptr = buffer_base_ptr;
 
-         // Allocate buffer memory but don't store, yet.
-         glBufferData(GL_ARRAY_BUFFER, size, NULL, GL_STATIC_DRAW);
-
-         // Get an access pointer to the buffer area, of correct type,
-         // for the purpose of writing.
-         vec_t* buffer_ptr = static_cast<vec_t*>(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
-
-         // Check for failure, as we don't want to dereference a NULL later on,
-         // ... MAKE IT A FATAL ERROR.
-         if(buffer_ptr == NULL) {
-            ErrorHandler::record("Pulsars::prepare() - can't acquire buffer pointer", ErrorHandler::FATAL);
-            }
-
-         // Traverse the listing of pulsar positions and store such vertices
-         // in the buffer.
+         // Traverse the listing of pulsar positions and
+         // store such vertices in the buffer.
          for(std::vector<Pulsar>::const_iterator ps = pulsar_list.begin();
              ps < pulsar_list.end();
              ++ps) {
-            // Take each supernova in spherical polar co-ordinate representation.
+            // Take each pulsar in spherical polar co-ordinate representation.
             VectorSP pulse = VectorSP(ps->right_ascension(), ps->declination(), p_rad);
 
             // But store in Cartesian co-ordinate representation..
-            *(buffer_ptr) = pulse.x();
-            buffer_ptr++;
-            *(buffer_ptr) = pulse.y();
-            buffer_ptr++;
-            *(buffer_ptr) = pulse.z();
+            *(buffer_ptr) = {pulse.x(), pulse.y(), pulse.z()};
             buffer_ptr++;
             }
 
-         // Disconnect the mapping and the buffer from OpenGL.
-         glUnmapBuffer(GL_ARRAY_BUFFER);
-
-         glBindBuffer(GL_ARRAY_BUFFER, Buffer_OBJ::NO_ID);
+         buff_obj_points.loadBuffer(GL_ARRAY_BUFFER, GL_STATIC_DRAW, buffer_size, buffer_base_ptr);
+         delete[] buffer_base_ptr;
          break;
          }
       default :
@@ -2008,7 +1986,7 @@ void Pulsars::render(void) {
    // We will use a vertex array within that buffer.
    glEnableClientState(GL_VERTEX_ARRAY);
 
-   // The vertex array pointer points to the start of the buffer.
+   // The vertex array pointer indicates the start of the buffer.
    glVertexPointer(COORDS_PER_VERTEX, GL_FLOAT, ARRAY_STRIDE, BUFFER_OFFSET(BYTE_OFFSET));
 
    // Finally we get to render the points.
@@ -2017,5 +1995,6 @@ void Pulsars::render(void) {
    // Stop using vertex arrays.
    glDisableClientState(GL_VERTEX_ARRAY);
 
+   // Unbind the texture from the state machine - but don't delete it!
    glBindBuffer(GL_ARRAY_BUFFER, Buffer_OBJ::NO_ID);
    }
