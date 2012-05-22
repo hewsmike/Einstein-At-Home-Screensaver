@@ -79,6 +79,8 @@ const GLint Simulation::HUD_NEAR_CLIP(-1);
 const GLint Simulation::HUD_FAR_CLIP(+1);
 
 Simulation::Simulation(void): autopilotActive(false),
+										min60(0),
+										hour24(0),
 										day366(0),
 										earth_hour_angle(0),
 										sun_rot_angle(0),
@@ -124,35 +126,28 @@ Simulation::~Simulation() {
    }
 
 void Simulation::step(void) {
+	/// TODO - demo code only, needs proper ephemeris model.
    // Evolve the craft's mechanics with
    // knowledge of the day within the year.
    flyboy.step(day366);
-   //if(count_down == COUNT_END) {
-      // trigger something
-      // clock.getTime(&min60, &hour24, &day366);
-      min60++;
-      if(min60 > 59) {
-         min60 = 0;
-         hour24++;
-         if(hour24 > 23) {
-            hour24 = 0;
-            }
-         }
-      earth_hour_angle = (hour24 + min60/60.0f)* 15.0f;
-      // reset the counter
-      count_down = COUNT_START;
 
-      day366 += 0.05f;
-      if(day366 >= SunOrbit::DAYS_PER_YEAR) {
-         day366 = 0.0f;
+   ++min60;
+   if(min60 > 59) {
+      min60 = 0;
+      ++hour24;
+      if(hour24 > 23) {
+         hour24 = 0;
          }
-      sun_pos = SunOrbit::getPosition(day366);
+      }
+   earth_hour_angle = (hour24 + min60/60.0f)* 15.0f;
 
-      sun_rot_angle = SunOrbit::getRotation(day366);
-   //   }
-   //else {
-     // --count_down;
-   //   }
+   day366 += 0.05f;
+   if(day366 >= SunOrbit::DAYS_PER_YEAR) {
+      day366 = 0.0f;
+      }
+   sun_pos = SunOrbit::getPosition(day366);
+
+   sun_rot_angle = SunOrbit::getRotation(day366);
    }
 
 void Simulation::moveRequest(Craft::movements mv) {
@@ -235,15 +230,15 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
    overlay.setPanel(HUDBorderLayout::WEST, &west_panel);
 
    // Create content and include into panels.
-   LoadImageToPanel(boinc_image, &west_panel, "boincTGA", 5, 5);
+   LoadImageToPanel(geo_image, &north_panel, "geoTGA", 5, 5);
    LoadImageToPanel(wyp_image, &north_panel, "wypTGA", 5, 5);
+   LoadImageToPanel(boinc_image, &north_panel, "boincTGA", 5, 5);
    LoadImageToPanel(aps_image, &north_panel, "apsTGA", 5, 5);
    LoadImageToPanel(ligo_image, &north_panel, "ligoTGA", 5, 5);
+   LoadImageToPanel(aei_image, &north_panel, "aeiTGA", 5, 5);
+   LoadImageToPanel(opencl_image, &north_panel, "openclTGA", 5, 5);
 
-   LoadImageToPanel(aei_image, &east_panel, "aeiTGA", 5, 5);
-   LoadImageToPanel(geo_image, &south_panel, "geoTGA", 5, 5);
-
-   version_text = new HUDTextLineScroll(105, overlay.getFont(), 15, 15, HUDTextLineScroll::LEFT, 10);
+   version_text = new HUDTextLineScroll(105, overlay.getFont(), 35, 10, HUDTextLineScroll::LEFT, 10);
    if(version_text == NULL) {
       std::string msg = "Simulation::prepare() - failed creation of HUDTextLineScroll instance on heap";
       ErrorHandler::record(msg, ErrorHandler::FATAL);
@@ -252,8 +247,6 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
 
    // Put the content into the panel.
    south_panel.addContent(version_text);
-
-   LoadImageToPanel(opencl_image, &south_panel, "openclTGA", 5, 5);
 
    overlay.activate();
    }

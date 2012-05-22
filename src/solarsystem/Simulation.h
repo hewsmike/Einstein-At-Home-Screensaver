@@ -81,7 +81,7 @@ class Simulation : public Renderable {
       /**
        * \brief Destructor
        */
-      ~Simulation();
+      virtual ~Simulation();
 
       void step(void);
 
@@ -178,12 +178,12 @@ class Simulation : public Renderable {
       /// Ephemeris refresh interval counter.
       unsigned int count_down;
 
+      bool autopilotActive;
+
       /// Last UTC query
       int min60;
 
       int hour24;
-
-      bool autopilotActive;
 
       GLfloat day366;
 
