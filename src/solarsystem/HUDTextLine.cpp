@@ -64,7 +64,7 @@ GLuint HUDTextLine::maxLength(void) const {
 GLuint HUDTextLine::width(void) const {
    // Lazy evaluate.
    // Ask OGLFT what the pixel bounds are for the current text.
-   OGLFT::BBox currentBox = lineFont->measure(txt.c_str());
+   OGLFT::BBox currentBox = lineFont->measure(txt.substr(0, len).c_str());
    // Round up the advance in horizontal direction to nearest integer.
    return ceil(currentBox.advance_.dx_);
    }
@@ -72,7 +72,7 @@ GLuint HUDTextLine::width(void) const {
 GLuint HUDTextLine::height(void) const {
    // Lazy evaluate.
    // Round up the height to nearest integer.
-   return ceil(lineFont->height());
+   return ceil(lineFont->height()*2);
    }
 
 void HUDTextLine::prepare(SolarSystemGlobals::render_quality rq) {
@@ -102,5 +102,5 @@ void HUDTextLine::release(void) {
    }
 
 void HUDTextLine::render(void) {
-   lineFont->draw(horzBase(), vertBase(), txt.substr(0, len).c_str());
+   lineFont->draw(horzBase(), vertBase() + this->height()/4, txt.substr(0, len).c_str());
    }

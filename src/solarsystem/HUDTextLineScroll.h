@@ -44,7 +44,7 @@ class HUDTextLineScroll : public HUDTextLine {
       /**
        * \brief Constructor
        *
-       * \param length : the maximum length in characters of the text line
+       * \param length : the maximum length of displayed characters
        * \param font : pointer to an OGLFT font instance
        * \param horizontalMargin : the horizontal pixel margin to be applied
        *                           either side of the enclosed content
