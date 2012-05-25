@@ -52,7 +52,7 @@ OBJS += HUDBorderLayout.o HUDContainer.o HUDContent.o
 OBJS += HUDFlowLayout.o HUDFlowHorizontalLayout.o HUDFlowVerticalLayout.o
 OBJS += HUDImage.o HUDItem.o HUDTextLine.o HUDTextLineScroll.o
 OBJS += InertialPlatform.o OGL_ID.o
-OBJS += OrdStar.o OrthoNormalPlatform.o Path.o Pulsar.o Pulsars.o Renderable.o
+OBJS += OrdStar.o OrthoNormalPlatform.o Path.o Pulsar.o Renderable.o
 OBJS += Shape.o Simulation.o SolarSystem.o
 OBJS += SolarSystemRadio.o SolarSystemS5R3.o
 OBJS += SolarSystemGlobals.o Sphere.o SpinPlatform.o Star.o SunOrbit.o
@@ -184,9 +184,6 @@ Path.o: $(DEPS) $(SOLARSYSTEM_SRC)/Path.cpp $(SOLARSYSTEM_SRC)/Path.h
 
 Pulsar.o: $(DEPS) $(SOLARSYSTEM_SRC)/Pulsar.cpp $(SOLARSYSTEM_SRC)/Pulsar.h
 	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/Pulsar.cpp
-
-Pulsars.o: $(DEPS) $(SOLARSYSTEM_SRC)/Pulsars.cpp $(SOLARSYSTEM_SRC)/Pulsars.h
-	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/Pulsars.cpp
 
 Renderable.o: $(DEPS) $(SOLARSYSTEM_SRC)/Renderable.cpp $(SOLARSYSTEM_SRC)/Renderable.h
 	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/Renderable.cpp

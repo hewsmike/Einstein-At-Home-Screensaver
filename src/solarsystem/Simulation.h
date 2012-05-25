@@ -42,10 +42,11 @@
 #include "HUDImage.h"
 #include "HUDTextLine.h"
 #include "HUDTextLineScroll.h"
-#include "Pulsars.h"
+#include "Pulsar.h"
 #include "Renderable.h"
 #include "SolarSystemGlobals.h"
 #include "Sphere.h"
+#include "Stars.h"
 #include "SunOrbit.h"
 #include "Supernovae.h"
 #include "UTC.h"
@@ -130,8 +131,15 @@ class Simulation : public Renderable {
       static const unsigned int COUNT_END;
 
       static const GLuint CONSTELLATIONS_RADIUS;
+
       static const GLuint PULSARS_RADIUS;
+      static const GLfloat PULSARS_MAG_SIZE;
+      static const GLfloat PULSARS_RGB_RED;
+      static const GLfloat PULSARS_RGB_GREEN;
+      static const GLfloat PULSARS_RGB_BLUE;
+
       static const GLuint SUPERNOVAE_RADIUS;
+
 
       static const GLuint SKYGRID_RADIUS;
       static const GLuint SKYGRID_STACKS;
@@ -171,6 +179,8 @@ class Simulation : public Renderable {
       static const GLint HUD_NEAR_CLIP;
       static const GLint HUD_FAR_CLIP;
 
+      void loadPulsars(void);
+
       /// The current screen/window dimensions
       GLuint screen_width;
       GLuint screen_height;
@@ -196,7 +206,7 @@ class Simulation : public Renderable {
 
       /// The renderable scene elements
       Constellations cs;
-      Pulsars ps;
+      Stars<Pulsar> ps;
       Supernovae sn;
       GridGlobe c_sphere;
       Globe earth;
