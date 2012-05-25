@@ -48,7 +48,7 @@
 #include "Sphere.h"
 #include "Stars.h"
 #include "SunOrbit.h"
-#include "Supernovae.h"
+#include "Supernova.h"
 #include "UTC.h"
 #include "Vector3D.h"
 #include "VectorSP.h"
@@ -139,6 +139,10 @@ class Simulation : public Renderable {
       static const GLfloat PULSARS_RGB_BLUE;
 
       static const GLuint SUPERNOVAE_RADIUS;
+      static const GLfloat SUPERNOVAE_MAG_SIZE;
+      static const GLfloat SUPERNOVAE_RGB_RED;
+      static const GLfloat SUPERNOVAE_RGB_GREEN;
+      static const GLfloat SUPERNOVAE_RGB_BLUE;
 
 
       static const GLuint SKYGRID_RADIUS;
@@ -181,6 +185,8 @@ class Simulation : public Renderable {
 
       void loadPulsars(void);
 
+      void loadSupernovae(void);
+
       /// The current screen/window dimensions
       GLuint screen_width;
       GLuint screen_height;
@@ -207,7 +213,7 @@ class Simulation : public Renderable {
       /// The renderable scene elements
       Constellations cs;
       Stars<Pulsar> ps;
-      Supernovae sn;
+      Stars<Supernova> sn;
       GridGlobe c_sphere;
       Globe earth;
       GridGlobe e_sphere;
