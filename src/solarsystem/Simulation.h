@@ -217,6 +217,7 @@ class Simulation : public Renderable {
       HUDImage* geo_image;
       HUDImage* ligo_image;
       HUDImage* opencl_image;
+      HUDImage* virgo_image;
       HUDImage* wyp_image;
       HUDTextLineScroll* version_text;
 
