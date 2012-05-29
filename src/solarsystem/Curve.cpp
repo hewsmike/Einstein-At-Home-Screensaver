@@ -1,5 +1,5 @@
 /***************************************************************************
-*   Copyright (C) 2012 by Mike Hewson                                     *
+ *   Copyright (C) 2012 by Mike Hewson                                     *
  *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
@@ -17,59 +17,19 @@
  *   along with Einstein@Home. If not, see <http://www.gnu.org/licenses/>. *
  *                                                                         *
  ***************************************************************************/
- 
-#ifndef SHAPE_H_
-#define SHAPE_H_
 
-#include "Vector3D.h"
- 
-/**
- * \addtogroup solarsystem Solarsystem
- * @{
- */
+#include "Curve.h"
 
-/**
- * \brief Gives position information along a path.
- *
- * \author Mike Hewson\n
- */
+#include "ErrorHandler.h"
 
-class Shape {
-   public:
-		/**
-	    * \brief Constructor
-	    *
-	    * \param start : the point at the begining
-	    *
-	    * \param finish : the point at the end
-	    */
-		Shape(Vector3D start, Vector3D finish);
+Curve::Curve(const Vector3D& start, const Vector3D& finish) :
+             begin(start), end(finish) {
+   }
 
-		Shape(void);
+Curve::~Curve() {
+	}
 
-		/**
-		 * \brief Destructor
-		 */
-		~Shape();
-
-		/*
-		 * \brief The vector to the point parameterised by the given rho. In this
-		 * 		 base class a simple straight line is emulated.
-		 *
-		 * \param rho : a value b/w zero and one indicating the desired point.
-		 */
-		virtual Vector3D value(float rho) const;
-
-		void setStart(Vector3D start);
-		void setFinish(Vector3D finish);
-   
-   private:
-		Vector3D begin;
-		Vector3D end;
-   };
-
-/**
- * @}
- */
-
-#endif // SHAPE_H_
+Vector3D Curve::value(float rho) const {
+	// Simple linear interpolation.
+	return begin + (end - begin)*rho;
+	}
