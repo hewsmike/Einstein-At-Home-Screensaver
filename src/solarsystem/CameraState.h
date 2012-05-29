@@ -45,12 +45,20 @@ class CameraState {
 	    */
 		CameraState(const Vector3D& position, const Vector3D& focus, const Vector3D& orientation);
 
-		CameraState();
+		CameraState(const CameraState& other);
+
+		CameraState operator=(const CameraState& other);
 
 		/**
 		 * \brief Destructor
 		 */
 		~CameraState();
+
+		void setPosition(const Vector3D& position);
+
+		void setFocus(const Vector3D& focus);
+
+		void setOrientation(const Vector3D& orientation);
 
 		const Vector3D& position(void) const;
 

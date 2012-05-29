@@ -18,41 +18,44 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "Shape.h"
 #include "Traverse.h"
 
+#include "Curve.h"
 #include "ErrorHandler.h"
 
-Traverse::Traverse(const CameraState& first, const CameraState& second) {
-	this->addWayPoint(first);
-	this->addWayPoint(second);
+Traverse::Traverse(const CameraState& first,
+                   const CameraState& second) {
+	addWayPoint(first);
+	addWayPoint(second);
+
+	current_path = 0;
    }
 
 Traverse::~Traverse() {
 	}
 
 void Traverse::addWayPoint(const CameraState& cam) {
-	cam_states.push_back(cam);
+   cam_states.push_back(cam);
+   }
+
+Path Traverse::getFirstPath(void) {
+	current_path = 0;
+
+   return makePath();
+   }
+
+Path Traverse::getNextPath(void) {
+   return makePath();
 	}
 
-bool Traverse::getSegment(Path& pt, unsigned int seq) const {
-	// Assume failure.
-	bool ret_val = false;
+Path Traverse::makePath() {
+	unsigned int first_index = current_path;
+	unsigned int second_index = (current_path + 1) % cam_states.size();
 
-	if(seq < this->numberOfSegments()) {
-		pt.set(Shape(cam_states.at(seq).position(), cam_states.at(seq + 1).position()), Path::POSITION);
-		pt.set(Shape(cam_states.at(seq).focus(), cam_states.at(seq + 1).focus()), Path::FOCUS);
-		pt.set(Shape(cam_states.at(seq).orientation(), cam_states.at(seq + 1).orientation()), Path::ORIENTATION);
-		ret_val = true;
-		}
+	Curve pos(cam_states.at(first_index).position(), cam_states.at(second_index).position());
+   Curve focus(cam_states.at(first_index).focus(), cam_states.at(second_index).focus());
+   Curve orient(cam_states.at(first_index).orientation(), cam_states.at(second_index).orientation());
 
-	return ret_val;
-	}
-
-unsigned int Traverse::numberOfSegments(void) const {
-	return this->numberOfWayPoints() - 1;
-	}
-
-unsigned int Traverse::numberOfWayPoints(void) const {
-	return cam_states.size();
-	}
+   current_path = (current_path + 1) % cam_states.size();
+   return Path(pos, focus, orient);
+   }

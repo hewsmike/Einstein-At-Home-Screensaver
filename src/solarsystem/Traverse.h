@@ -32,17 +32,18 @@
  */
 
 /**
- * \brief A sequence of camera states linked by paths.
+ * \brief A list of camera states ( here called waypoints ) linked by paths.
  *
  * \author Mike Hewson\n
  */
 
 class Traverse {
    public:
-		/**
+      /**
 	    * \brief Constructor, ensures a minimum of two way points
 	    *
 	    * \param first : the initial point ( camera state ) in the traverse
+	    *
 	    * \param second : the second point ( camera state ) in the traverse
 	    */
 		Traverse(const CameraState& first, const CameraState& second);
@@ -52,16 +53,35 @@ class Traverse {
 		 */
 		~Traverse();
 
+		/**
+		 * \brief Add a waypoint onto the tail of the list.
+		 *
+		 * \param cam : the camera state to add
+		 */
 		void addWayPoint(const CameraState& cam);
 
-		bool getSegment(Path& pt, unsigned int seq) const;
+      /**
+       * \brief Obtain the initial path in the list.
+       *
+       * \return the first Path in the list
+       */
+		Path getFirstPath(void);
 
-		unsigned int numberOfSegments(void) const;
-
-		unsigned int numberOfWayPoints(void) const;
+		/**
+		 * \brief Obtain the next path from the traverse. This
+		 *        occurs modulo the number of waypoints ie.
+		 *        in a cyclic fashion.
+		 *
+		 * \return the next Path in the list
+		 */
+		Path getNextPath(void);
 
 	private:
 		std::deque<CameraState> cam_states;
+
+		unsigned int current_path;
+
+		Path makePath();
 	};
 
 /**

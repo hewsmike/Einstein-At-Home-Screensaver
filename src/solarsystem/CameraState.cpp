@@ -30,12 +30,29 @@ CameraState::CameraState(const Vector3D& position,
 									up_dir(orientation) {
    }
 
-CameraState::CameraState() : where(),
-									  look_at(),
-									  up_dir() {
-   }
+CameraState::CameraState(const CameraState& other){
+	this->where = other.where;
+	this->look_at = other.look_at;
+	this->up_dir = other.up_dir;
+	}
+
+CameraState CameraState::operator=(const CameraState& other) {
+	return CameraState(this->where, this->look_at, this->up_dir);
+	}
 
 CameraState::~CameraState() {
+	}
+
+void CameraState::setPosition(const Vector3D& position) {
+	where = position;
+	}
+
+void CameraState::setFocus(const Vector3D& focus) {
+	look_at = focus;
+	}
+
+void CameraState::setOrientation(const Vector3D& orientation) {
+	up_dir = orientation;
 	}
 
 const Vector3D& CameraState::position(void) const {

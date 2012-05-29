@@ -21,8 +21,8 @@
 #ifndef PATH_H_
 #define PATH_H_
 
-#include "Shape.h"
-#include "Vector3D.h"
+#include "CameraState.h"
+#include "Curve.h"
 
 /**
  * \addtogroup solarsystem Solarsystem
@@ -30,31 +30,24 @@
  */
 
 /**
- * \brief A path in 3D space.
+ * \brief A path in 3D space with a camera state retrievable
+ *        for any position along it.
  *
  * \author Mike Hewson\n
  */
 
 class Path {
    public:
-		enum evolve_type {CLAMPED, CYCLIC};
-
-		enum param_type {POSITION, FOCUS, ORIENTATION};
-
-		Path(void);
-
 		/**
 	    * \brief Constructor
 	    *
-	    * \param start : the position at the begining
-	    * \param finish : the position at the end
-	    * \param first_look : the focus at the begining
-	    * \param last_look : the focus at the end
-	    * \param first_up : the orientation at the begining
-	    * \param first_look : the orientation at the end
-	    * \param type : one of the curve type enumerants
+	    * \param pos : the curve for determining camera position
+	    *
+	    * \param view : the curve for determining camera focus point
+	    *
+	    * \param orient : the curve for determining camera orientation
 	    */
-		Path(const Shape& pos, const Shape& view, const Shape& orient, evolve_type e_type);
+		Path(const Curve& pos, const Curve& focus, const Curve& orient);
 
 		/**
 		 * \brief Destructor
@@ -62,29 +55,22 @@ class Path {
 		~Path();
 
 		/*
-		 * \brief Obtain the vector parameterised by the given lambda.
+		 * \brief Obtain the camera state parameterised by the given lambda.
 		 *
-		 * \param lambda : a value indicating the desired point.
-		 * \param pt : one of the parameter type enumerants
+		 * \param lambda : a value indicating the desired point. This is
+		 *             clamped to the real number interval [0.0, 1.0],
+		 *             meaning that if given values less than 0.0 that leads
+		 *             to an evaluation at 0.0, likewise for given values
+		 *             greater than 1.0 will evaluate at 1.0 ....
 		 *
-		 * \return The vector of said parameter type at the given lambda
+		 * \return The camera state at the given lambda
 		 */
-		Vector3D value(float lambda, param_type pt) const;
-
-		/*
-		 * \brief Set the curve for a given parameter type.
-		 *
-		 * \param curve : a shape indicating the desired variance.
-		 * \param pt : one of the parameter type enumerants
-		 */
-		void set(const Shape& curve, param_type pt);
+		CameraState value(float lambda) const;
 
 	private:
-		Shape where;
-		Shape look_at;
-		Shape up_dir;
-
-		evolve_type et;
+		Curve where;
+		Curve look_at;
+		Curve up_dir;
 	};
 
 /**
