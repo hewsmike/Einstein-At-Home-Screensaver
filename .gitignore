@@ -18,3 +18,5 @@ erp_git_version.h
 .buildstate
 .lastbuild
 build.log
+@LOGFILE
+.gitignore~
