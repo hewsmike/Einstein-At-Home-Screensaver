@@ -28,34 +28,45 @@ Traverse::Traverse(const CameraState& first,
 	addWayPoint(first);
 	addWayPoint(second);
 
-	current_path = 0;
+	current_path_index = 0;
+	current_path = NULL;
    }
 
 Traverse::~Traverse() {
+	if(current_path != NULL) {
+		delete current_path;
+		}
 	}
 
 void Traverse::addWayPoint(const CameraState& cam) {
    cam_states.push_back(cam);
    }
 
-Path Traverse::getFirstPath(void) {
-	current_path = 0;
+const Path& Traverse::getFirstPath(void) {
+	current_path_index = 0;
 
    return makePath();
    }
 
-Path Traverse::getNextPath(void) {
+const Path& Traverse::getNextPath(void) {
    return makePath();
 	}
 
-Path Traverse::makePath() {
-	unsigned int first_index = current_path;
-	unsigned int second_index = (current_path + 1) % cam_states.size();
+const Path& Traverse::makePath() {
+	if(current_path != NULL) {
+		delete current_path;
+		}
+
+	unsigned int first_index = current_path_index;
+	unsigned int second_index = (current_path_index + 1) % cam_states.size();
 
 	Curve pos(cam_states.at(first_index).position(), cam_states.at(second_index).position());
    Curve focus(cam_states.at(first_index).focus(), cam_states.at(second_index).focus());
    Curve orient(cam_states.at(first_index).orientation(), cam_states.at(second_index).orientation());
 
-   current_path = (current_path + 1) % cam_states.size();
-   return Path(pos, focus, orient);
+   current_path_index = (current_path_index + 1) % cam_states.size();
+
+   current_path = new Path(pos, focus, orient);
+
+   return *current_path;
    }

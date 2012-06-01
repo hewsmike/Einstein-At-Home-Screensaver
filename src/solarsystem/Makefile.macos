@@ -30,14 +30,12 @@ LIBS += -lframework -loglft -L$(SOLARSYSTEM_INSTALL)/lib
 LIBS += $(shell $(SOLARSYSTEM_INSTALL)/bin/freetype-config --libs)
 LIBS += $(shell $(SOLARSYSTEM_INSTALL)/bin/xml2-config --libs)
 LIBS += -lboinc_graphics2 -lboinc_api -lboinc -L$(SOLARSYSTEM_INSTALL)/lib
-LIBS += $(shell $(SOLARSYSTEM_INSTALL)/bin/sdl-config --static-libs)
 LIBS += -lstdc++
 LIBS += -lpthread -lm -lc
 
 LDFLAGS += -static-libgcc
 
 CPPFLAGS += -I$(SOLARSYSTEM_INSTALL)/include
-CPPFLAGS += $(shell $(SOLARSYSTEM_INSTALL)/bin/sdl-config --cflags)
 CPPFLAGS += $(shell $(SOLARSYSTEM_INSTALL)/bin/freetype-config --cflags)
 CPPFLAGS += $(shell $(SOLARSYSTEM_INSTALL)/bin/xml2-config --cflags)
 CPPFLAGS += -I$(SOLARSYSTEM_INSTALL)/include/boinc -I/usr/include

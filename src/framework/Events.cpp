@@ -37,10 +37,12 @@ std::auto_ptr<Events> Events::p_instance;
 Events::Events(void) {
 	}
 
-Events::Events(const Events&) {
+Events::Events(const Events& other) {
 	}
 
-Events& Events::operator=(const Events&) {
+Events& Events::operator=(const Events& other) {
+	// Skip self assignment check as no allocation.
+	return *this;
 	}
 	
 Events* Events::Instance(GLuint render_interval) {

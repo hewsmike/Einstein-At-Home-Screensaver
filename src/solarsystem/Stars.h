@@ -144,7 +144,8 @@ template<class T> class Stars : public Renderable {
                   VectorSP star = VectorSP(stc.right_ascension(), stc.declination(), star_rad);
 
                   // But store in Cartesian co-ordinate representation..
-                  *(buffer_ptr) = {star.x(), star.y(), star.z()};
+                  Position latest = {star.x(), star.y(), star.z()};
+                  *(buffer_ptr) = latest;
                   buffer_ptr++;
                   }
 

@@ -65,7 +65,7 @@ class Traverse {
        *
        * \return the first Path in the list
        */
-		Path getFirstPath(void);
+		const Path& getFirstPath(void);
 
 		/**
 		 * \brief Obtain the next path from the traverse. This
@@ -74,14 +74,16 @@ class Traverse {
 		 *
 		 * \return the next Path in the list
 		 */
-		Path getNextPath(void);
+		const Path& getNextPath(void);
 
 	private:
 		std::deque<CameraState> cam_states;
 
-		unsigned int current_path;
+		unsigned int current_path_index;
 
-		Path makePath();
+		Path* current_path;
+
+		const Path& makePath(void);
 	};
 
 /**

@@ -26,10 +26,17 @@ Curve::Curve(const Vector3D& start, const Vector3D& finish) :
              begin(start), end(finish) {
    }
 
+Curve::Curve(void) : begin(), end() {
+   }
+
 Curve::~Curve() {
 	}
 
 Vector3D Curve::value(float rho) const {
 	// Simple linear interpolation.
 	return begin + (end - begin)*rho;
+	}
+
+float Curve::length(void) const {
+	return (end - begin).len();
 	}

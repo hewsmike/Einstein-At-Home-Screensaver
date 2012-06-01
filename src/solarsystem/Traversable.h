@@ -17,11 +17,10 @@
  *   along with Einstein@Home. If not, see <http://www.gnu.org/licenses/>. *
  *                                                                         *
  ***************************************************************************/
+#ifndef TRAVERSABLE_H_
+#define TRAVERSABLE_H_
 
-#ifndef CAMERA_STATE_H_
-#define CAMERA_STATE_H_
-
-#include "Vector3D.h"
+#include "CameraState.h"
 
 /**
  * \addtogroup solarsystem Solarsystem
@@ -29,53 +28,28 @@
  */
 
 /**
- * \brief View state information
- *
+ * \brief This interface declares all mandatory public methods to be provided by
+
  * \author Mike Hewson\n
  */
 
-class CameraState {
+class Traversable {
    public:
-      CameraState(void);
-
 		/**
-	    * \brief Constructor
-	    *
-	    * \param pos : the position of the camera
-	    * \param focus : the point the camera is looking at
-	    * \param orient : the up direction for the view
-	    */
-		CameraState(const Vector3D& position, const Vector3D& focus, const Vector3D& orientation);
-
-		CameraState(const CameraState& other);
-
-		CameraState& operator=(const CameraState& other);
-
-		/**
-		 * \brief Destructor
+		 * \brief Constructor
 		 */
-		~CameraState();
+	   Traversable(void);
 
-		void setPosition(const Vector3D& position);
+      /// Virtual destructor
+      virtual ~Traversable();
 
-		void setFocus(const Vector3D& focus);
+      virtual unsigned int numberOfWayPoints(void) const = 0;
 
-		void setOrientation(const Vector3D& orientation);
-
-		const Vector3D& position(void) const;
-
-		const Vector3D& focus(void) const;
-
-		const Vector3D& orientation(void) const;
-
-   private:
-		Vector3D where;
-		Vector3D look_at;
-		Vector3D up_dir;
+      virtual CameraState getView(unsigned int sequence) const = 0;
    };
 
 /**
  * @}
  */
 
-#endif // CAMERA_STATE_H_
+#endif /*TRAVERSABLE_H_*/

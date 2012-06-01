@@ -49,6 +49,8 @@ class Curve {
 	    */
 		Curve(const Vector3D& start, const Vector3D& finish);
 
+		Curve(void);
+
 		/**
 		 * \brief Destructor
 		 */
@@ -67,6 +69,8 @@ class Curve {
 		 * \return a vector indicating the point referred to by the given rho.
 		 */
 		virtual Vector3D value(float rho) const;
+
+		virtual float length(void) const;
 
    private:
 		Vector3D begin;

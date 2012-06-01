@@ -22,22 +22,51 @@
 
 #include "ErrorHandler.h"
 
+const float Path::LAMBDA_LOWER_BOUND(0.0f);
+const float Path::LAMBDA_UPPER_BOUND(1.0f);
+
 Path::Path(const Curve& pos, const Curve& view, const Curve& orient) :
 			  where(pos),
 			  look_at(view),
 			  up_dir(orient) {
    }
 
+Path::Path(void) : where(), look_at(), up_dir() {
+   }
+
 Path::~Path() {
 	}
 
+float Path::curveLength(Path::component comp) const {
+	float ret_val = 0.0f;
+
+	switch (comp) {
+		case Path::POSITION :
+			ret_val = where.length();
+			break;
+		case Path::FOCUS :
+			ret_val = look_at.length();
+			break;
+		case Path::ORIENTATION:
+			ret_val = up_dir.length();
+			break;
+		default :
+			// Ought not get here !!
+			std::string msg = "Path::curveLength() - bad switch case reached (default)";
+			ErrorHandler::record(msg, ErrorHandler::FATAL);
+			break;
+		}
+
+	return ret_val;
+	}
+
 CameraState Path::value(float lambda) const {
-   // Clamp lambda to [0.0, 1.0]
-	if(lambda < 0.0f) {
-	   lambda = 0.0f;
+   // Clamp lambda
+	if(lambda < LAMBDA_LOWER_BOUND) {
+	   lambda = LAMBDA_LOWER_BOUND;
 	   }
-	if(lambda > 1.0f) {
-		lambda = 1.0f;
+	if(lambda > LAMBDA_UPPER_BOUND) {
+		lambda = LAMBDA_UPPER_BOUND;
 		}
 
 	return CameraState(where.value(lambda), look_at.value(lambda), up_dir.value(lambda));

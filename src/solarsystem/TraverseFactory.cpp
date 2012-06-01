@@ -18,64 +18,24 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef CAMERA_STATE_H_
-#define CAMERA_STATE_H_
+#include "TraverseFactory.h"
 
-#include "Vector3D.h"
+#include "Curve.h"
+#include "ErrorHandler.h"
 
-/**
- * \addtogroup solarsystem Solarsystem
- * @{
- */
+TraverseFactory::TraverseFactory(void) {
+	}
 
-/**
- * \brief View state information
- *
- * \author Mike Hewson\n
- */
+TraverseFactory::~TraverseFactory() {
+	}
 
-class CameraState {
-   public:
-      CameraState(void);
+Traverse* TraverseFactory::getInstance(const Traversable& trav, const CameraState& cam) {
+	// Kick off traverse with the given camera state and the first from our given Traversable object.
+	Traverse* trav_pt = new Traverse(cam, trav.getView(0));
 
-		/**
-	    * \brief Constructor
-	    *
-	    * \param pos : the position of the camera
-	    * \param focus : the point the camera is looking at
-	    * \param orient : the up direction for the view
-	    */
-		CameraState(const Vector3D& position, const Vector3D& focus, const Vector3D& orientation);
+	for(int way_point = 1; way_point < trav.numberOfWayPoints(); ++way_point) {
+		trav_pt->addWayPoint(trav.getView(way_point));
+		}
 
-		CameraState(const CameraState& other);
-
-		CameraState& operator=(const CameraState& other);
-
-		/**
-		 * \brief Destructor
-		 */
-		~CameraState();
-
-		void setPosition(const Vector3D& position);
-
-		void setFocus(const Vector3D& focus);
-
-		void setOrientation(const Vector3D& orientation);
-
-		const Vector3D& position(void) const;
-
-		const Vector3D& focus(void) const;
-
-		const Vector3D& orientation(void) const;
-
-   private:
-		Vector3D where;
-		Vector3D look_at;
-		Vector3D up_dir;
-   };
-
-/**
- * @}
- */
-
-#endif // CAMERA_STATE_H_
+	return trav_pt;
+	}

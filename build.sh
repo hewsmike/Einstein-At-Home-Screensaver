@@ -368,7 +368,7 @@ build_freetype() {
    ./autogen.sh >> $LOGFILE 2>&1 || failure
    chmod +x configure >> $LOGFILE 2>&1 || failure
    cd $ROOT/build/freetype2 || failure
-   # note: freetype (or sdl?) probably doesn't need *no* configure when static -> ansi build, see readme!
+   # note: freetype probably doesn't need *no* configure when static -> ansi build, see readme!
    $ROOT/3rdparty/freetype2/configure --prefix=$ROOT/install --enable-shared=no --enable-static=yes >> $LOGFILE 2>&1 || failure
    make >> $LOGFILE 2>&1 || failure
    make install >> $LOGFILE 2>&1 || failure
@@ -546,7 +546,7 @@ build_freetype_mingw() {
       echo "Cross-compile FT_CONFIG: $FT_CONFIG" >> $LOGFILE
    fi
    cd $ROOT/build/freetype2 || failure
-   # note: freetype (or sdl?) probably doesn't need *no* configure when static -> ansi build, see readme!
+   # note: freetype probably doesn't need *no* configure when static -> ansi build, see readme!
    $ROOT/3rdparty/freetype2/configure --host=$TARGET_HOST --build=$BUILD_HOST --prefix=$PREFIX --enable-shared=no --enable-static=yes >> $LOGFILE 2>&1 || failure
    make >> $LOGFILE 2>&1 || failure
    make install >> $LOGFILE 2>&1 || failure

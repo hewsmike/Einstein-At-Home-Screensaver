@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2011 by Mike Hewson                                     *
- *   hewsmike@iinet.net.au                                                 *
+ *   Copyright (C) 2012 by Mike Hewson                                     *
+ *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
  *                                                                         *
@@ -28,8 +28,6 @@
 #include <oglft/OGLFT.h>
 
 #include "SolarSystemGlobals.h"
-
-using namespace std;
 
 /**
  * \addtogroup solarsystem Solarsystem

@@ -277,7 +277,7 @@ void SolarSystem::render(const double tOD) {
    sim.step();
 
    // Where are we etc .... in our virtual world?
-   CameraState cam = sim.viewPoint();
+   const CameraState& cam = sim.viewPoint();
 
    // Set up the camera position and orientation.
    gluLookAt(cam.position().x(),
@@ -379,7 +379,7 @@ void SolarSystem::keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey k
          break;
       case KeyF12:
          // TODO - Toggle the state of the autopilot
-         // sim.cycle(Simulation::AUTOPILOT);
+         sim.cycle(Simulation::AUTOPILOT);
          break;
       case KeySpace:
          sim.moveRequest(Craft::STOP_TRANSLATION);

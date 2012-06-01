@@ -38,6 +38,11 @@
 
 class Path {
    public:
+		enum component {POSITION, FOCUS, ORIENTATION};
+
+      static const float LAMBDA_LOWER_BOUND;
+      static const float LAMBDA_UPPER_BOUND;
+
 		/**
 	    * \brief Constructor
 	    *
@@ -48,6 +53,8 @@ class Path {
 	    * \param orient : the curve for determining camera orientation
 	    */
 		Path(const Curve& pos, const Curve& focus, const Curve& orient);
+
+		Path(void);
 
 		/**
 		 * \brief Destructor
@@ -66,6 +73,8 @@ class Path {
 		 * \return The camera state at the given lambda
 		 */
 		CameraState value(float lambda) const;
+
+		float curveLength(Path::component comp) const;
 
 	private:
 		Curve where;

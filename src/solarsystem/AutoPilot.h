@@ -18,16 +18,70 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "Pulsar.h"
+#ifndef AUTOPILOT_H_
+#define AUTOPILOT_H_
 
-Pulsar::Pulsar(starpos_t ra, starpos_t dec, std::string nm, pulsar_source sc) :
-               Star(ra, dec, nm),
-               source(sc) {
-   }
+#include "CameraState.h"
+#include "Path.h"
+#include "Traverse.h"
+#include "TraverseFactory.h"
 
-Pulsar::~Pulsar() {
-   }
+/**
+ * \addtogroup solarsystem Solarsystem
+ * @{
+ */
 
-Pulsar::pulsar_source Pulsar::getSource(void) const {
-   return source;
-   }
+/**
+ * \brief This interface declares public methods to deal with OpenGL
+ *        buffer objects. It's a wrapper.
+ *
+ * \author Mike Hewson\n
+ */
+
+class AutoPilot {
+   public :
+      /**
+      * \brief Constructor
+      */
+      AutoPilot(void);
+
+      /**
+       * \brief Destructor
+       */
+      ~AutoPilot();
+
+      void activate(const Traversable& trav, const CameraState& cam);
+
+      void inactivate(void);
+
+      bool isActive(void) const;
+
+      const CameraState& getViewState(void);
+
+   private:
+      static const float LENGTH_PER_FRAME;
+      static const float LEAST_PATH_LENGTH;
+      static const unsigned int PAUSE_FRAME_COUNT;
+
+      bool active_flag;
+
+      CameraState view;
+
+      TraverseFactory factory;
+
+      Traverse* current_traverse;
+
+      Path current_path;
+
+      float lambda;
+
+      float current_delta_lambda;
+
+      void set_delta_lambda(void);
+   };
+
+/**
+ * @}
+ */
+
+#endif /*AUTOPILOT_H_*/

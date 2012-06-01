@@ -163,9 +163,9 @@ class Events {
 
    private:
       /// Prevent direct construction, copying and assignment.
-		Events();
-		Events(const Events&);
-		Events& operator=(const Events&);
+		Events(void);
+		Events(const Events& other);
+		Events& operator=(const Events& other);
 
 		/// Pointer to any single instance.
 		static std::auto_ptr<Events> p_instance;

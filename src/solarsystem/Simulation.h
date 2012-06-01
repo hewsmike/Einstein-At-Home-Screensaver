@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2012 by Mike Hewson                                     *
- *   hewsmike@iinet.net.au                                                 *
+ *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
  *                                                                         *
@@ -29,6 +29,7 @@
 
 #include <oglft/OGLFT.h>
 
+#include "AutoPilot.h"
 #include "CameraState.h"
 #include "Constellations.h"
 #include "Craft.h"
@@ -43,6 +44,7 @@
 #include "HUDTextLine.h"
 #include "HUDTextLineScroll.h"
 #include "Pulsar.h"
+#include "PulsarEAH.h"
 #include "Renderable.h"
 #include "SolarSystemGlobals.h"
 #include "Sphere.h"
@@ -92,7 +94,7 @@ class Simulation : public Renderable {
 
       void setFont(content element, OGLFT_ft* font);
 
-      CameraState viewPoint(void) const;
+      const CameraState& viewPoint(void);
 
       // This is not the Renderable base class function,
       // it is additional to that interface and allows
@@ -185,6 +187,8 @@ class Simulation : public Renderable {
 
       void loadPulsars(void);
 
+      void loadPulsarsEAH(void);
+
       void loadSupernovae(void);
 
       /// The current screen/window dimensions
@@ -194,7 +198,7 @@ class Simulation : public Renderable {
       /// Ephemeris refresh interval counter.
       unsigned int count_down;
 
-      bool autopilotActive;
+      AutoPilot pilot;
 
       /// Last UTC query
       int min60;
@@ -213,6 +217,7 @@ class Simulation : public Renderable {
       /// The renderable scene elements
       Constellations cs;
       Stars<Pulsar> ps;
+      Stars<PulsarEAH> ps_EAH;
       Stars<Supernova> sn;
       GridGlobe c_sphere;
       Globe earth;
@@ -221,7 +226,7 @@ class Simulation : public Renderable {
 
       Craft flyboy;
 
-      CameraState autopilot;
+      CameraState autopilot_view;
 
       UTC clock;
 

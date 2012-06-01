@@ -73,7 +73,9 @@ class Vector3D {
        *
        * \param ov the other vector
        */
-      Vector3D(const Vector3D& ov);
+      Vector3D(const Vector3D& other);
+
+      Vector3D& operator=(const Vector3D& other);
 
       /**
        * \brief Destructor

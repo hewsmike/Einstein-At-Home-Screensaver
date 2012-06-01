@@ -32,6 +32,7 @@ const vec_t Craft::MIN_SUN_RANGE(SolarSystemGlobals::SUN_RADIUS*1.2f);
 const vec_t Craft::START_RADIUS(SolarSystemGlobals::EARTH_RADIUS*2.0f);
 const Vector3D Craft::START_POSITION(-3*Craft::START_RADIUS, 0, Craft::START_RADIUS);
 const Vector3D Craft::START_LOOKING(1, 0, 0);
+const Vector3D Craft::START_UP(0, 0, 1);
 
 const vec_t Craft::REBOUND_SPEED(3.0f);
 const vec_t Craft::MAX_SPEED(50.0f);
@@ -149,7 +150,7 @@ CameraState Craft::getViewState(void) const {
 	return state.getViewState();
 	}
 
-void Craft::setViewState(CameraState cam) {
+void Craft::setViewState(const CameraState& cam) {
 	state.setViewState(cam);
 	}
 

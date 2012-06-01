@@ -98,7 +98,7 @@ std::pair<GLuint, GLuint> HUDBorderLayout::reassessMinimumDimensions(void) {
    GLuint west_height = 0;
    getPanelMinimumDimensions(&west_width, &west_height, WEST);
 
-   GLuint layoutMinWidth = max(max(north_width, south_width),
+   GLuint layoutMinWidth = std::max(std::max(north_width, south_width),
                                east_width + west_width);
 
    // Minimum overall height is the sum of :
@@ -109,7 +109,7 @@ std::pair<GLuint, GLuint> HUDBorderLayout::reassessMinimumDimensions(void) {
    //          - the minimum of the west
 
    GLuint layoutMinHeight = north_height + south_height +
-                            max(east_height, west_height);
+                            std::max(east_height, west_height);
 
    return std::pair<GLuint, GLuint>(layoutMinWidth, layoutMinHeight);
    }
@@ -175,7 +175,7 @@ void HUDBorderLayout::allocateItemBases(void) {
       bool north_happy = north->requestResize(newNorthWidth, newNorthHeight);
       // This should not have failed, but ...
       if(!north_happy) {
-         stringstream msg;
+         std::stringstream msg;
          msg << "HUDBorderLayout::reassessPanels() - north resizing failed with "
              << "newNorthWidth = " << newNorthWidth << " and newNorthHeight = " << newNorthHeight;
          ErrorHandler::record(msg.str().c_str(), ErrorHandler::FATAL);
@@ -195,7 +195,7 @@ void HUDBorderLayout::allocateItemBases(void) {
       bool south_happy = south->requestResize(newSouthWidth, newSouthHeight);
       // This should not have failed, but ...
       if(!south_happy) {
-         stringstream msg;
+         std::stringstream msg;
          msg << "HUDBorderLayout::reassessPanels() - south resizing failed with "
              << "newSouthWidth = " << newSouthWidth << " and newSouthHeight = " << newSouthHeight;
          ErrorHandler::record(msg.str().c_str(), ErrorHandler::FATAL);
@@ -219,7 +219,7 @@ void HUDBorderLayout::allocateItemBases(void) {
       bool east_happy = east->requestResize(newEastWidth, newEastHeight);
       // This should not have failed, but ...
       if(!east_happy) {
-         stringstream msg;
+         std::stringstream msg;
          msg << "HUDBorderLayout::reassessPanels() - east resizing failed with "
              << "newEastWidth = " << newEastWidth << " and newEastHeight = " << newEastHeight;
          ErrorHandler::record(msg.str().c_str(), ErrorHandler::FATAL);
@@ -239,7 +239,7 @@ void HUDBorderLayout::allocateItemBases(void) {
       bool west_happy = west->requestResize(newWestWidth, newWestHeight);
       // This should not have failed, but ...
       if(!west_happy) {
-         stringstream msg;
+         std::stringstream msg;
          msg << "HUDBorderLayout::reassessPanels() - west resizing failed with "
              << "newWestWidth = " << newWestWidth << " and newWestHeight = " << newWestHeight;
          ErrorHandler::record(msg.str().c_str(), ErrorHandler::FATAL);

@@ -382,8 +382,8 @@ void GridGlobe::loadCelestialEquatorIndexBuffer(void) {
 void GridGlobe::createMarkerLists(void) {
    clearMarkerLists();
 
-   static const string HOUR_UNITS("h");
-   static const string DEGREE_UNITS("o");
+   static const std::string HOUR_UNITS("h");
+   static const std::string DEGREE_UNITS("o");
 
    OGLFT_ft* myFont = this->getFont();
 

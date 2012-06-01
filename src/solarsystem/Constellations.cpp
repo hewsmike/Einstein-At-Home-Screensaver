@@ -23,6 +23,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <utility>
 
 #include "ErrorHandler.h"
 #include "VectorSP.h"
@@ -44,6 +45,9 @@ const GLuint Constellations::COORDS_PER_VERTEX(3);
 const GLuint Constellations::BYTE_STRIDE_PER_VERTEX(Constellations::COLORS_PER_VERTEX + Constellations::COORDS_PER_VERTEX);
 
 const GLfloat Constellations::TEXT_RATIO(1000);
+
+const float Constellations::VIEW_OFFSET(3000);
+const Vector3D Constellations::VIEW_UP(0, 0, 1);
 
 // Don't alter this initial state !!
 const Constellations::state Constellations::INITIAL_CYCLE_STATE(ALL_ON);
@@ -1851,6 +1855,28 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
 
 Constellations::~Constellations() {
    }
+
+unsigned int Constellations::numberOfWayPoints(void) const {
+	return cons_list.size();
+	}
+
+CameraState Constellations::getView(unsigned int sequence) const {
+	/// TODO Terrible things will happen here if there are no constellations !!
+
+	if(sequence > (cons_list.size() - 1)) {
+		sequence = cons_list.size() - 1;
+		}
+
+	Constellation current_con = cons_list.at(sequence);
+
+	std::pair<float, float> cons_centroid = current_con.centre();
+
+	VectorSP centroid = VectorSP(cons_centroid.first, cons_centroid.second, radius);
+
+	Vector3D viewpoint = centroid - centroid.unit() * VIEW_OFFSET;
+
+	return CameraState(viewpoint, centroid, VIEW_UP);
+	}
 
 void Constellations::cycleActivation(void) {
    // Mimic five state cycling switch.

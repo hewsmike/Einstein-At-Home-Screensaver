@@ -88,8 +88,7 @@ const GLint Simulation::HUD_BOTTOM_CLIP(0);
 const GLint Simulation::HUD_NEAR_CLIP(-1);
 const GLint Simulation::HUD_FAR_CLIP(+1);
 
-Simulation::Simulation(void): autopilotActive(false),
-										min60(0),
+Simulation::Simulation(void): min60(0),
 										hour24(0),
 										day366(0),
 										earth_hour_angle(0),
@@ -111,6 +110,7 @@ Simulation::Simulation(void): autopilotActive(false),
                                   SUN_STACKS,
                                   SUN_SLICES,
                                   SUN_TEXTURE_OFFSET),
+                              autopilot_view(Craft::START_POSITION, Craft::START_LOOKING, Craft::START_UP),
                               aei_image(NULL),
                               aps_image(NULL),
                               boinc_image(NULL),
@@ -164,7 +164,7 @@ void Simulation::step(void) {
    }
 
 void Simulation::moveRequest(Craft::movements mv) {
-	if(!autopilotActive) {
+	if(!pilot.isActive()) {
 		flyboy.manouevre(mv);
 		}
    }
@@ -185,19 +185,15 @@ void Simulation::setFont(content element, OGLFT_ft* font) {
    fonts[element] = font;
    }
 
-CameraState Simulation::viewPoint(void) const {
-	CameraState ret_val;
-	if(autopilotActive) {
+const CameraState& Simulation::viewPoint(void) {
+	if(pilot.isActive()) {
 		// The autopilot is flying the craft.
-
-		ret_val = flyboy.getViewState();
+		return pilot.getViewState();
 		}
 	else {
 		// The user is flying the craft.
-		ret_val = flyboy.getViewState();
+		return flyboy.getViewState();
 		}
-
-	return ret_val;
 	}
 
 void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
@@ -309,14 +305,7 @@ void Simulation::release(void) {
    }
 
 void Simulation::render(void) {
-	if(autopilotActive) {
-		flyboy.setViewState(autopilot);
-		}
-	else {
-		autopilot = flyboy.getViewState();
-		}
-
-   // Invoke the draw method for each scene element.
+	// Invoke the draw method for each scene element.
    cs.draw();
    ps.draw();
    sn.draw();
@@ -2302,6 +2291,10 @@ void Simulation::loadPulsars(void) {
    ps.add(Pulsar(358.51968f, 61.92966f, "J2354+6155", Pulsar::ATNF));
 	}
 
+void Simulation::loadPulsarsEAH(void) {
+
+	}
+
 void Simulation::loadSupernovae(void) {
 	sn.add(Supernova( 266.433333f , -29.00000f ));
 	sn.add(Supernova( 266.562500f , -28.63333f ));
@@ -2568,13 +2561,18 @@ void Simulation::cycle(Simulation::content ct) {
          // overlay.cycleActivation();
          break;
       case Simulation::AUTOPILOT:
-      	autopilotActive = !autopilotActive;
-      	if(!autopilotActive) {
+      	if(pilot.isActive() == true) {
       		// When returning to user control ...
       		flyboy.manouevre(Craft::STOP_ROTATION);
       		flyboy.manouevre(Craft::STOP_TRANSLATION);
-      		flyboy.setViewState(autopilot);
-				}
+      		pilot.inactivate();
+      		flyboy.setViewState(pilot.getViewState());
+  			   }
+      	else {
+      		// When enabling autopilot ....
+      	   /// TODO Choice between Traversable objects ....
+      	   pilot.activate(cs, flyboy.getViewState());
+      		}
       	break;
       default:
          // Ought not get here !!

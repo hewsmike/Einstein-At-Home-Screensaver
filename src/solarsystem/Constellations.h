@@ -27,6 +27,7 @@
 #include "Constellation.h"
 #include "Renderable.h"
 #include "SolarSystemGlobals.h"
+#include "Traversable.h"
 
 /**
  * \addtogroup solarsystem Solarsystem
@@ -39,7 +40,7 @@
  * \author Mike Hewson\n
  */
 
-class Constellations : public Renderable {
+class Constellations : public Renderable, public Traversable {
    public:
 		/**
 	     * \brief Constructor
@@ -52,6 +53,10 @@ class Constellations : public Renderable {
        * \brief Destructor
        */
       ~Constellations();
+
+      virtual unsigned int numberOfWayPoints(void) const;
+
+      virtual CameraState getView(unsigned int sequence) const;
 
       /**
        * \brief Cycles the activation state of the object
@@ -79,6 +84,9 @@ class Constellations : public Renderable {
       static const GLuint BYTE_STRIDE_PER_VERTEX;
 
       static const GLfloat TEXT_RATIO;
+
+      static const float VIEW_OFFSET;
+      static const Vector3D VIEW_UP;
 
       /// Inner class for buffer population use.
       struct colors {

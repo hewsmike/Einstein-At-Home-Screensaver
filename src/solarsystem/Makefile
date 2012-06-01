@@ -46,17 +46,18 @@ CPPFLAGS += -I$(FRAMEWORK_SRC) -I$(SOLARSYSTEM_SRC)/../framework
 CPPFLAGS += -DGL_GLEXT_PROTOTYPES
 
 DEPS = Makefile
-OBJS = AcceleratedPlatform.o Buffer_OBJ.o CameraState.o Constellation.o Constellations.o Craft.o
+OBJS = AcceleratedPlatform.o AutoPilot.o Buffer_OBJ.o CameraState.o Constellation.o
+OBJS += Constellations.o Craft.o Curve.o
 OBJS += EinsteinRadioAdapter.o EinsteinS5R3Adapter.o Globe.o GridGlobe.o
 OBJS += HUDBorderLayout.o HUDContainer.o HUDContent.o
 OBJS += HUDFlowLayout.o HUDFlowHorizontalLayout.o HUDFlowVerticalLayout.o
 OBJS += HUDImage.o HUDItem.o HUDTextLine.o HUDTextLineScroll.o
 OBJS += InertialPlatform.o OGL_ID.o
-OBJS += OrdStar.o OrthoNormalPlatform.o Path.o Pulsar.o Renderable.o
-OBJS += Shape.o Simulation.o SolarSystem.o
+OBJS += OrdStar.o OrthoNormalPlatform.o Path.o Pulsar.o PulsarEAH.o Renderable.o
+OBJS += Simulation.o SolarSystem.o
 OBJS += SolarSystemRadio.o SolarSystemS5R3.o
 OBJS += SolarSystemGlobals.o Sphere.o SpinPlatform.o Star.o SunOrbit.o
-OBJS += Supernova.o Supernovae.o Texture_OBJ.o TranslatablePlatform.o Traverse.o
+OBJS += Supernova.o Texture_OBJ.o TranslatablePlatform.o Traverse.o TraverseFactory.o Traversable.o
 OBJS += UTC.o Vector3D.o
 OBJS += VectorSP.o Vertex.o
 OBJS += $(RESOURCESPEC).o
@@ -75,8 +76,8 @@ memcheck: clean debug solarsystem
 callgrind: clean debug solarsystem
 
 # target specific options
-debug: CPPFLAGS += -pg -ggdb3 -O0 -Wall -Wno-switch-enum
-release: CPPFLAGS += -DNDEBUG -ggdb3 -O3 -Wall -Wno-switch-enum
+debug: CPPFLAGS += -pg -ggdb3 -O0 -Wall -Wno-switch-enum -std=c++0x
+release: CPPFLAGS += -DNDEBUG -ggdb3 -O3 -Wall -Wno-switch-enum -std=c++0x
 solarsystem_Einstein_LVC: CPPFLAGS += -D SCIENCE_APP=EinsteinS5R3
 solarsystem_Einstein_ABP: CPPFLAGS += -D SCIENCE_APP=EinsteinRadio
 memcheck: CPPFLAGS += $(DEBUGFLAGSCPP) -D DEBUG_VALGRIND
@@ -100,6 +101,9 @@ SolarSystemS5R3.o: $(DEPS) $(SOLARSYSTEM_SRC)/SolarSystemS5R3.cpp $(SOLARSYSTEM_
 
 AcceleratedPlatform.o: $(DEPS) $(SOLARSYSTEM_SRC)/AcceleratedPlatform.cpp $(SOLARSYSTEM_SRC)/AcceleratedPlatform.h
 	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/AcceleratedPlatform.cpp
+	
+AutoPilot.o: $(DEPS) $(SOLARSYSTEM_SRC)/AutoPilot.cpp $(SOLARSYSTEM_SRC)/AutoPilot.h
+	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/AutoPilot.cpp	
 
 Axes.o: $(DEPS) $(SOLARSYSTEM_SRC)/Axes.cpp $(SOLARSYSTEM_SRC)/Axes.h
 	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/Axes.cpp
@@ -118,6 +122,9 @@ Constellations.o: $(DEPS) $(SOLARSYSTEM_SRC)/Constellations.cpp $(SOLARSYSTEM_SR
 
 Craft.o: $(DEPS) $(SOLARSYSTEM_SRC)/Craft.cpp $(SOLARSYSTEM_SRC)/Craft.h
 	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/Craft.cpp
+
+Curve.o: $(DEPS) $(SOLARSYSTEM_SRC)/Curve.cpp $(SOLARSYSTEM_SRC)/Curve.h
+	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/Curve.cpp	
 
 DisplayList.o: $(DEPS) $(SOLARSYSTEM_SRC)/DisplayList.cpp $(SOLARSYSTEM_SRC)/DisplayList.h
 	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/DisplayList.cpp
@@ -185,12 +192,12 @@ Path.o: $(DEPS) $(SOLARSYSTEM_SRC)/Path.cpp $(SOLARSYSTEM_SRC)/Path.h
 Pulsar.o: $(DEPS) $(SOLARSYSTEM_SRC)/Pulsar.cpp $(SOLARSYSTEM_SRC)/Pulsar.h
 	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/Pulsar.cpp
 
+PulsarEAH.o: $(DEPS) $(SOLARSYSTEM_SRC)/PulsarEAH.cpp $(SOLARSYSTEM_SRC)/PulsarEAH.h
+	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/PulsarEAH.cpp
+
 Renderable.o: $(DEPS) $(SOLARSYSTEM_SRC)/Renderable.cpp $(SOLARSYSTEM_SRC)/Renderable.h
 	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/Renderable.cpp
 	
-Shape.o: $(DEPS) $(SOLARSYSTEM_SRC)/Shape.cpp $(SOLARSYSTEM_SRC)/Shape.h
-	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/Shape.cpp	
-
 Simulation.o: $(DEPS) $(SOLARSYSTEM_SRC)/Simulation.cpp $(SOLARSYSTEM_SRC)/Simulation.h
 	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/Simulation.cpp
 
@@ -221,9 +228,6 @@ SunOrbit.o: $(DEPS) $(SOLARSYSTEM_SRC)/SunOrbit.cpp $(SOLARSYSTEM_SRC)/SunOrbit.
 Supernova.o: $(DEPS) $(SOLARSYSTEM_SRC)/Supernova.cpp $(SOLARSYSTEM_SRC)/Supernova.h
 	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/Supernova.cpp
 
-Supernovae.o: $(DEPS) $(SOLARSYSTEM_SRC)/Supernovae.cpp $(SOLARSYSTEM_SRC)/Supernovae.h
-	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/Supernovae.cpp
-
 Texture_OBJ.o: $(DEPS) $(SOLARSYSTEM_SRC)/Texture_OBJ.cpp $(SOLARSYSTEM_SRC)/Texture_OBJ.h
 	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/Texture_OBJ.cpp
 
@@ -232,6 +236,12 @@ TranslatablePlatform.o: $(DEPS) $(SOLARSYSTEM_SRC)/TranslatablePlatform.cpp $(SO
 	
 Traverse.o: $(DEPS) $(SOLARSYSTEM_SRC)/Traverse.cpp $(SOLARSYSTEM_SRC)/Traverse.h
 	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/Traverse.cpp	
+	
+TraverseFactory.o: $(DEPS) $(SOLARSYSTEM_SRC)/TraverseFactory.cpp $(SOLARSYSTEM_SRC)/TraverseFactory.h
+	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/TraverseFactory.cpp	
+	
+Traversable.o: $(DEPS) $(SOLARSYSTEM_SRC)/Traversable.cpp $(SOLARSYSTEM_SRC)/Traversable.h
+	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/Traversable.cpp		
 
 UTC.o: $(DEPS) $(SOLARSYSTEM_SRC)/UTC.cpp $(SOLARSYSTEM_SRC)/UTC.h
 	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/UTC.cpp
