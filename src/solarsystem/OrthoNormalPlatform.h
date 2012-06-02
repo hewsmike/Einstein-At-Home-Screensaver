@@ -31,10 +31,6 @@
 /**
  * \brief %Solarsystem Cartesian orthonormal vector set
  *
- * This class comprises angular state data, accessors and mutators thereof.
- * Strictly speaking : as a rotation is an acceleration, then this is a
- * non-inertial platform.
- *
  * TODO Include testing and if necessary adjustment to maintain mutual
  * orthogonality of the three axes ?
  *

@@ -56,7 +56,7 @@ class Constellations : public Renderable, public Traversable {
 
       virtual unsigned int numberOfWayPoints(void) const;
 
-      virtual CameraState getView(unsigned int sequence) const;
+      virtual LookOut getView(unsigned int sequence) const;
 
       /**
        * \brief Cycles the activation state of the object

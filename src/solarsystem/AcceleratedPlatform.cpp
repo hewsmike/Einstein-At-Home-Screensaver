@@ -51,8 +51,8 @@ void AcceleratedPlatform::set_yaw_rate(vec_t rate) {
 
 CameraState AcceleratedPlatform::getViewState(void) const {
 	return CameraState(this->position(),
-						    this->look(),
-						    this->up());
+							 this->look(),
+							 this->up());
 	}
 
 void AcceleratedPlatform::setViewState(const CameraState& cam) {

@@ -52,7 +52,7 @@ OBJS += EinsteinRadioAdapter.o EinsteinS5R3Adapter.o Globe.o GridGlobe.o
 OBJS += HUDBorderLayout.o HUDContainer.o HUDContent.o
 OBJS += HUDFlowLayout.o HUDFlowHorizontalLayout.o HUDFlowVerticalLayout.o
 OBJS += HUDImage.o HUDItem.o HUDTextLine.o HUDTextLineScroll.o
-OBJS += InertialPlatform.o OGL_ID.o
+OBJS += InertialPlatform.o LookOut.o OGL_ID.o
 OBJS += OrdStar.o OrthoNormalPlatform.o Path.o Pulsar.o PulsarEAH.o Renderable.o
 OBJS += Simulation.o SolarSystem.o
 OBJS += SolarSystemRadio.o SolarSystemS5R3.o
@@ -176,6 +176,9 @@ HUDTextLineScroll.o: $(DEPS) $(SOLARSYSTEM_SRC)/HUDTextLineScroll.cpp $(SOLARSYS
 
 InertialPlatform.o: $(DEPS) $(SOLARSYSTEM_SRC)/InertialPlatform.cpp $(SOLARSYSTEM_SRC)/InertialPlatform.h
 	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/InertialPlatform.cpp
+
+LookOut.o: $(DEPS) $(SOLARSYSTEM_SRC)/LookOut.cpp $(SOLARSYSTEM_SRC)/LookOut.h
+	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/LookOut.cpp
 
 OGL_ID.o: $(DEPS) $(SOLARSYSTEM_SRC)/OGL_ID.cpp $(SOLARSYSTEM_SRC)/OGL_ID.h
 	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/OGL_ID.cpp

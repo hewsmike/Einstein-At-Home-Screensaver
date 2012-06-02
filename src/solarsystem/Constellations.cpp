@@ -1860,7 +1860,7 @@ unsigned int Constellations::numberOfWayPoints(void) const {
 	return cons_list.size();
 	}
 
-CameraState Constellations::getView(unsigned int sequence) const {
+LookOut Constellations::getView(unsigned int sequence) const {
 	/// TODO Terrible things will happen here if there are no constellations !!
 
 	if(sequence > (cons_list.size() - 1)) {
@@ -1875,7 +1875,7 @@ CameraState Constellations::getView(unsigned int sequence) const {
 
 	Vector3D viewpoint = centroid - centroid.unit() * VIEW_OFFSET;
 
-	return CameraState(viewpoint, centroid, VIEW_UP);
+	return LookOut(viewpoint, centroid, VIEW_UP, current_con.name());
 	}
 
 void Constellations::cycleActivation(void) {

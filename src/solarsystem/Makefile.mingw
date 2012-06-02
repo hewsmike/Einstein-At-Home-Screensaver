@@ -59,7 +59,7 @@ OBJS += OrdStar.o OrthoNormalPlatform.o Path.o Pulsar.o PulsarEAH.o Renderable.o
 OBJS += Simulation.o SolarSystem.o
 OBJS += SolarSystemRadio.o SolarSystemS5R3.o
 OBJS += SolarSystemGlobals.o Sphere.o SpinPlatform.o Star.o SunOrbit.o
-OBJS += Supernova.o Texture_OBJ.o TranslatablePlatform.o Traverse.o TraverseFactory.o Traversable.o
+OBJS += Supernova.o Texture_OBJ.o TranslatablePlatform.o Traverse.o Traversable.o
 OBJS += UTC.o Vector3D.o
 OBJS += VectorSP.o Vertex.o
 OBJS += $(RESOURCESPEC).o
@@ -238,9 +238,6 @@ TranslatablePlatform.o: $(DEPS) $(SOLARSYSTEM_SRC)/TranslatablePlatform.cpp $(SO
    
 Traverse.o: $(DEPS) $(SOLARSYSTEM_SRC)/Traverse.cpp $(SOLARSYSTEM_SRC)/Traverse.h
 	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/Traverse.cpp 
-   
-TraverseFactory.o: $(DEPS) $(SOLARSYSTEM_SRC)/TraverseFactory.cpp $(SOLARSYSTEM_SRC)/TraverseFactory.h
-	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/TraverseFactory.cpp   
    
 Traversable.o: $(DEPS) $(SOLARSYSTEM_SRC)/Traversable.cpp $(SOLARSYSTEM_SRC)/Traversable.h
 	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/Traversable.cpp    

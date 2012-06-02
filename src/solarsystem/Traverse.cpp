@@ -35,7 +35,7 @@ void Traverse::clear() {
 	current_path_index = 0;
 	}
 
-void Traverse::addWayPoint(const CameraState& cam) {
+void Traverse::addWayPoint(const LookOut& cam) {
    cam_states.push_back(cam);
    }
 

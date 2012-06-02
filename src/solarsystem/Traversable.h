@@ -20,7 +20,7 @@
 #ifndef TRAVERSABLE_H_
 #define TRAVERSABLE_H_
 
-#include "CameraState.h"
+#include "LookOut.h"
 
 /**
  * \addtogroup solarsystem Solarsystem
@@ -28,7 +28,7 @@
  */
 
 /**
- * \brief This interface declares all mandatory public methods to be provided by
+ * \brief This interface ....
 
  * \author Mike Hewson\n
  */
@@ -45,7 +45,7 @@ class Traversable {
 
       virtual unsigned int numberOfWayPoints(void) const = 0;
 
-      virtual CameraState getView(unsigned int sequence) const = 0;
+      virtual LookOut getView(unsigned int sequence) const = 0;
    };
 
 /**

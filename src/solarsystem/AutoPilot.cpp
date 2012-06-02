@@ -126,12 +126,12 @@ void AutoPilot::set_delta_lambda(void) {
    }
 
 void AutoPilot::getTraverse(const Traversable& trav, const CameraState& cam) {
+	LookOut first(cam.position(), cam.focus(), cam.orientation(), "");
 	// Kick off traverse with the given camera state.
-	current_traverse.addWayPoint(cam);
+	current_traverse.addWayPoint(first);
 
 	// The remainder from our given Traversable object.
 	for(int way_point = 1; way_point <= trav.numberOfWayPoints(); ++way_point) {
 		current_traverse.addWayPoint(trav.getView(way_point));
 		}
 	}
-

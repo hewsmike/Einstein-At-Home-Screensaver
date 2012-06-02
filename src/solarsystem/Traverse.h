@@ -23,7 +23,7 @@
 
 #include <deque>
 
-#include "CameraState.h"
+#include "LookOut.h"
 #include "Path.h"
 
 /**
@@ -56,7 +56,7 @@ class Traverse {
 		 *
 		 * \param cam : the camera state to add
 		 */
-		void addWayPoint(const CameraState& cam);
+		void addWayPoint(const LookOut& cam);
 
 		unsigned int numWayPoints(void) const;
 
@@ -77,11 +77,11 @@ class Traverse {
 		Path getNextPath(void);
 
 	private:
-		std::deque<CameraState> cam_states;
+		std::deque<LookOut> cam_states;
 
 		unsigned int current_path_index;
 
-		Path makePath(void);
+		Path makePath();
 	};
 
 /**
