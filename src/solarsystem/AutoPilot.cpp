@@ -30,28 +30,21 @@ const float AutoPilot::LEAST_PATH_LENGTH(0.00001f);
 const unsigned int AutoPilot::PAUSE_FRAME_COUNT(100);
 
 AutoPilot::AutoPilot(void) {
-   current_traverse = NULL;
    lambda = Path::LAMBDA_LOWER_BOUND;
    current_delta_lambda = 0.0f;
    active_flag = false;
    }
 
 AutoPilot::~AutoPilot() {
-   if(current_traverse != NULL) {
-      delete current_traverse;
-      }
    }
 
 void AutoPilot::activate(const Traversable& trav, const CameraState& cam) {
 	ErrorHandler::record("AutoPilot::activate() : ", ErrorHandler::INFORM);
 	view = cam;
-   current_traverse = factory.getInstance(trav, view);
 
-   if(current_traverse == NULL) {
-      ErrorHandler::record("AutoPilot::activate() : NULL Traverse", ErrorHandler::FATAL);
-      }
+	getTraverse(trav, view);
 
-   current_path = current_traverse->getFirstPath();
+   current_path = current_traverse.getFirstPath();
 
    set_delta_lambda();
 
@@ -63,9 +56,7 @@ void AutoPilot::inactivate(void) {
 	// Save most recent view state.
 	view = current_path.value(lambda);
 
-	if(current_traverse != NULL) {
-      delete current_traverse;
-      }
+	current_traverse.clear();
 
    active_flag = false;
    }
@@ -74,7 +65,7 @@ bool AutoPilot::isActive(void) const {
    return active_flag;
    }
 
-const CameraState& AutoPilot::getViewState(void) {
+CameraState AutoPilot::getViewState(void) {
 	static GLuint count_down = PAUSE_FRAME_COUNT;
 	static bool pause_flag = false;
 
@@ -95,7 +86,7 @@ const CameraState& AutoPilot::getViewState(void) {
 
 		// End of pause interval ?
 		if(count_down == 0) {
-			current_path = current_traverse->getNextPath();
+			current_path = current_traverse.getNextPath();
 			set_delta_lambda();
 			pause_flag = false;
 			}
@@ -133,3 +124,14 @@ void AutoPilot::set_delta_lambda(void) {
    	current_delta_lambda = Path::LAMBDA_UPPER_BOUND;
       }
    }
+
+void AutoPilot::getTraverse(const Traversable& trav, const CameraState& cam) {
+	// Kick off traverse with the given camera state.
+	current_traverse.addWayPoint(cam);
+
+	// The remainder from our given Traversable object.
+	for(int way_point = 1; way_point <= trav.numberOfWayPoints(); ++way_point) {
+		current_traverse.addWayPoint(trav.getView(way_point));
+		}
+	}
+

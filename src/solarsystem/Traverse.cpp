@@ -23,50 +23,54 @@
 #include "Curve.h"
 #include "ErrorHandler.h"
 
-Traverse::Traverse(const CameraState& first,
-                   const CameraState& second) {
-	addWayPoint(first);
-	addWayPoint(second);
-
+Traverse::Traverse(void) {
 	current_path_index = 0;
-	current_path = NULL;
-   }
+	}
 
 Traverse::~Traverse() {
-	if(current_path != NULL) {
-		delete current_path;
-		}
+	}
+
+void Traverse::clear() {
+	cam_states.clear();
+	current_path_index = 0;
 	}
 
 void Traverse::addWayPoint(const CameraState& cam) {
    cam_states.push_back(cam);
    }
 
-const Path& Traverse::getFirstPath(void) {
-	current_path_index = 0;
-
-   return makePath();
-   }
-
-const Path& Traverse::getNextPath(void) {
-   return makePath();
+unsigned int Traverse::numWayPoints(void) const {
+	return cam_states.size();
 	}
 
-const Path& Traverse::makePath() {
-	if(current_path != NULL) {
-		delete current_path;
+Path Traverse::getFirstPath(void) {
+	Path ret_val;
+
+	if(numWayPoints() > 1) {
+		current_path_index = 0;
+		ret_val = makePath();
 		}
 
-	unsigned int first_index = current_path_index;
-	unsigned int second_index = (current_path_index + 1) % cam_states.size();
+	return ret_val;
+   }
 
-	Curve pos(cam_states.at(first_index).position(), cam_states.at(second_index).position());
-   Curve focus(cam_states.at(first_index).focus(), cam_states.at(second_index).focus());
-   Curve orient(cam_states.at(first_index).orientation(), cam_states.at(second_index).orientation());
+Path Traverse::getNextPath(void) {
+	Path ret_val;
 
-   current_path_index = (current_path_index + 1) % cam_states.size();
+	if(numWayPoints() > 1) {
+		current_path_index = (current_path_index + 1) % cam_states.size();
+		ret_val = makePath();
+		}
 
-   current_path = new Path(pos, focus, orient);
+   return ret_val;
+	}
 
-   return *current_path;
+Path Traverse::makePath() {
+	unsigned int next_path_index = (current_path_index + 1) % cam_states.size();
+
+	Curve pos(cam_states.at(current_path_index).position(), cam_states.at(next_path_index).position());
+   Curve focus(cam_states.at(current_path_index).focus(), cam_states.at(next_path_index).focus());
+   Curve orient(cam_states.at(current_path_index).orientation(), cam_states.at(next_path_index).orientation());
+
+   return Path(pos, focus, orient);
    }

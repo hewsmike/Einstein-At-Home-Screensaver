@@ -75,8 +75,6 @@ class Vector3D {
        */
       Vector3D(const Vector3D& other);
 
-      Vector3D& operator=(const Vector3D& other);
-
       /**
        * \brief Destructor
        */

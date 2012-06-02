@@ -23,8 +23,8 @@
 
 #include "CameraState.h"
 #include "Path.h"
+#include "Traversable.h"
 #include "Traverse.h"
-#include "TraverseFactory.h"
 
 /**
  * \addtogroup solarsystem Solarsystem
@@ -56,7 +56,7 @@ class AutoPilot {
 
       bool isActive(void) const;
 
-      const CameraState& getViewState(void);
+      CameraState getViewState(void);
 
    private:
       static const float LENGTH_PER_FRAME;
@@ -67,9 +67,7 @@ class AutoPilot {
 
       CameraState view;
 
-      TraverseFactory factory;
-
-      Traverse* current_traverse;
+      Traverse current_traverse;
 
       Path current_path;
 
@@ -78,6 +76,8 @@ class AutoPilot {
       float current_delta_lambda;
 
       void set_delta_lambda(void);
+
+      void getTraverse(const Traversable& trav, const CameraState& cam);
    };
 
 /**

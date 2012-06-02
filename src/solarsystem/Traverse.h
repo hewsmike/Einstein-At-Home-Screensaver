@@ -40,18 +40,16 @@
 class Traverse {
    public:
       /**
-	    * \brief Constructor, ensures a minimum of two way points
-	    *
-	    * \param first : the initial point ( camera state ) in the traverse
-	    *
-	    * \param second : the second point ( camera state ) in the traverse
+	    * \brief Constructor
 	    */
-		Traverse(const CameraState& first, const CameraState& second);
+		Traverse(void);
 
 		/**
 		 * \brief Destructor
 		 */
 		~Traverse();
+
+		void clear(void);
 
 		/**
 		 * \brief Add a waypoint onto the tail of the list.
@@ -60,12 +58,14 @@ class Traverse {
 		 */
 		void addWayPoint(const CameraState& cam);
 
+		unsigned int numWayPoints(void) const;
+
       /**
        * \brief Obtain the initial path in the list.
        *
        * \return the first Path in the list
        */
-		const Path& getFirstPath(void);
+		Path getFirstPath(void);
 
 		/**
 		 * \brief Obtain the next path from the traverse. This
@@ -74,16 +74,14 @@ class Traverse {
 		 *
 		 * \return the next Path in the list
 		 */
-		const Path& getNextPath(void);
+		Path getNextPath(void);
 
 	private:
 		std::deque<CameraState> cam_states;
 
 		unsigned int current_path_index;
 
-		Path* current_path;
-
-		const Path& makePath(void);
+		Path makePath(void);
 	};
 
 /**

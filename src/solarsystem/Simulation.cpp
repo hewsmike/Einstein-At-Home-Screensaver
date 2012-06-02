@@ -2565,11 +2565,13 @@ void Simulation::cycle(Simulation::content ct) {
       		// When returning to user control ...
       		flyboy.manouevre(Craft::STOP_ROTATION);
       		flyboy.manouevre(Craft::STOP_TRANSLATION);
-      		pilot.inactivate();
       		flyboy.setViewState(pilot.getViewState());
+      		pilot.inactivate();
   			   }
       	else {
       		// When enabling autopilot ....
+      		flyboy.manouevre(Craft::STOP_ROTATION);
+      		flyboy.manouevre(Craft::STOP_TRANSLATION);
       	   /// TODO Choice between Traversable objects ....
       	   pilot.activate(cs, flyboy.getViewState());
       		}

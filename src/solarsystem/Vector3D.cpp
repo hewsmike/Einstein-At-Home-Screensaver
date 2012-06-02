@@ -42,16 +42,6 @@ Vector3D::Vector3D(const Vector3D& other) : x_comp(other.x()),
                                          z_comp(other.z()) {
    }
 
-Vector3D& Vector3D::operator=(const Vector3D& other) {
-	if(this != &other) {
-		this->x_comp = other.x();
-		this->y_comp = other.y();
-		this->z_comp = other.z();
-		}
-
-	return *this;
-	}
-
 Vector3D::~Vector3D() {
    }
 
