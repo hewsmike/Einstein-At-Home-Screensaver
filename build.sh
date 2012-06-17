@@ -31,7 +31,6 @@ TAG_GFXAPPS="current_gfx_apps"
 
 GLEW_VERSION=1.7.0
 GLFW_VERSION=2.7.5
-OGLPLUS_VERSION=0.12.1
 FREETYPE_VERSION=2.3.5
 LIBXML_VERSION=2.6.32
 
@@ -336,6 +335,26 @@ build_glew() {
    return 0
    }
 
+build_glew_mac() {
+   if [ $BUILDSTATE -ge $BS_BUILD_GLEW ]; then
+      return 0
+   fi
+      
+   prepare_glew || failure
+      
+   echo "Building GLEW (this may take a while)..." | tee -a $LOGFILE
+      
+   cd $ROOT/3rdparty/glew
+   GLEW_DEST="$ROOT/install" make install >> $LOGFILE 2>&1 || failure
+   # don't use shared GLEW libraries   
+   rm -f $ROOT/install/lib/libGLEW*.dylib
+   
+   echo "Successfully built and installed GLEW!" | tee -a $LOGFILE
+      
+   store_build_state $BS_BUILD_GLEW || failure
+   return 0
+   }
+   
 build_glfw() {
    if [ $BUILDSTATE -ge $BS_BUILD_GLFW ]; then
       return 0
@@ -349,11 +368,32 @@ build_glfw() {
    export PREFIX=$ROOT/install
 
    make x11-install >> $LOGFILE 2>&1 || failure
+   
    echo "Successfully built and installed GLFW!" | tee -a $LOGFILE
 
    store_build_state $BS_BUILD_GLFW || failure
    return 0
    }
+   
+build_glfw_mac() {
+   if [ $BUILDSTATE -ge $BS_BUILD_GLFW ]; then
+      return 0
+   fi
+   
+   prepare_glfw || failure
+   
+   echo "Building GLFW (this may take a while)..." | tee -a $LOGFILE
+   cd $ROOT/3rdparty/glfw || failure
+   
+   export PREFIX=$ROOT/install
+   
+   make cocoa-install >> $LOGFILE 2>&1 || failure
+   
+   echo "Successfully built and installed GLFW!" | tee -a $LOGFILE
+
+   store_build_state $BS_BUILD_GLFW || failure
+   return 0
+   }   
 
 build_freetype() {
    if [ $BUILDSTATE -ge $BS_BUILD_FREETYPE ]; then
@@ -713,7 +753,8 @@ build_linux() {
    }
 
 build_mac() {
-   build_glfw $1 || failure
+   build_glew_mac || failure
+   build_glfw_mac $1 || failure
    build_freetype || failure
    build_libxml || failure
    build_oglft || failure
@@ -749,6 +790,7 @@ print_usage() {
    echo "Available targets:"
    echo " --linux"
    echo " --mac"
+   echo " --mac-sdk (build with Mac OS 10.4 x86 SDK)"
    echo " --win32"
    echo " --doc"
    echo "*************************"
@@ -788,6 +830,13 @@ case "$1" in
       echo "Building mac (Intel) version:" | tee -a $LOGFILE
       check_build_state || failure
       ;;
+   "--mac-sdk")
+		TARGET=$TARGET_MAC
+		SDK="yes"
+		check_last_build "$1" || failure
+		echo "Building mac (Intel) version:" | tee -a $LOGFILE
+		check_build_state || failure
+		;;
    "--win32")
       TARGET=$TARGET_WIN32
       check_last_build "$1" || failure
@@ -823,7 +872,9 @@ case $TARGET in
       build_linux || failure
       ;;
    $TARGET_MAC)
-      if [ -d /Developer/SDKs/MacOSX10.4u.sdk ]; then
+      if [ ".$SDK" = "." ] ; then
+			:
+		elif [ -d /Developer/SDKs/MacOSX10.4u.sdk ]; then
          echo "Preparing Mac OS X 10.4 SDK build environment..." | tee -a $LOGFILE
          # use 10.4 (Tiger) SDK because of BOINC/10.5 incompatibility (http://boinc.berkeley.edu/doxygen/api/html/QBacktrace_8h.html)
          export LDFLAGS="-isysroot /Developer/SDKs/MacOSX10.4u.sdk -Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk -arch i386 $LDFLAGS"
