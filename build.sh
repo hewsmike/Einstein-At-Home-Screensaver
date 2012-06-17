@@ -141,7 +141,7 @@ check_prerequisites() {
    echo "Checking prerequisites..." | tee -a $LOGFILE
 
    # required toolchain
-   TOOLS="automake autoconf m4 cmake wget svn cvs tar patch gcc g++ ld libtool ar lex yacc pkg-config hg"
+   TOOLS="ar automake autoconf cmake cvs g++ gcc hg ld lex libtool m4 patch pkg-config svn tar wget yacc"
 
    for tool in $TOOLS; do
       if ! ( type $tool >/dev/null 2>&1 ); then
@@ -650,7 +650,7 @@ build_solarsystem() {
       export CC=`which gcc`
       export CXX=`which g++`
    fi
-   make $2 >> $LOGFILE 2>&1 || failure
+   make >> $LOGFILE 2>&1 || failure
    if [ "$1" == "$TARGET_WIN32" ]; then
       # restore MinGW compiler settings
       export CC=$CC_MINGW
@@ -680,6 +680,7 @@ build_solarsystem() {
    echo "Successfully built and installed SolarSystem [Framework]!" | tee -a $LOGFILE
 
    echo "Building SolarSystem [Application]..." | tee -a $LOGFILE
+   export PROJECT_ROOT=$ROOT || failure
    export SOLARSYSTEM_SRC=$ROOT/src/solarsystem || failure
    export SOLARSYSTEM_INSTALL=$ROOT/install || failure
    cd $ROOT/build/solarsystem || failure
@@ -804,7 +805,7 @@ case "$1" in
    "--solarsystem")
       # "hidden" bonus option :-)
       TARGET=$TARGET_LINUX
-      build_solarsystem $TARGET "debug" || failure
+      build_solarsystem $TARGET "memcheck" || failure
       exit 0
       ;;
    *)

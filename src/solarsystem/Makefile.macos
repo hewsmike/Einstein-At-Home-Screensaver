@@ -42,17 +42,18 @@ CPPFLAGS += -I$(SOLARSYSTEM_INSTALL)/include/boinc -I/usr/include
 CPPFLAGS += $(CXXFLAGS)
 
 DEPS = Makefile
-OBJS = AcceleratedPlatform.o Buffer_OBJ.o CameraState.o Constellation.o Constellations.o Craft.o
+OBJS = AcceleratedPlatform.o AutoPilot.o Buffer_OBJ.o CameraState.o Constellation.o
+OBJS += Constellations.o Craft.o Curve.o
 OBJS += EinsteinRadioAdapter.o EinsteinS5R3Adapter.o Globe.o GridGlobe.o
 OBJS += HUDBorderLayout.o HUDContainer.o HUDContent.o
 OBJS += HUDFlowLayout.o HUDFlowHorizontalLayout.o HUDFlowVerticalLayout.o
 OBJS += HUDImage.o HUDItem.o HUDTextLine.o HUDTextLineScroll.o
-OBJS += InertialPlatform.o OGL_ID.o
-OBJS += OrdStar.o OrthoNormalPlatform.o Path.o Pulsar.o Pulsars.o Renderable.o
-OBJS += Shape.o Simulation.o SolarSystem.o
+OBJS += InertialPlatform.o LookOut.o OGL_ID.o
+OBJS += OrdStar.o OrthoNormalPlatform.o Path.o Pulsar.o PulsarEAH.o Renderable.o
+OBJS += Simulation.o SolarSystem.o
 OBJS += SolarSystemRadio.o SolarSystemS5R3.o
 OBJS += SolarSystemGlobals.o Sphere.o SpinPlatform.o Star.o SunOrbit.o
-OBJS += Supernova.o Supernovae.o Texture_OBJ.o TranslatablePlatform.o Traverse.o
+OBJS += Supernova.o Texture_OBJ.o TranslatablePlatform.o Traverse.o Traversable.o
 OBJS += UTC.o Vector3D.o
 OBJS += VectorSP.o Vertex.o
 OBJS += $(RESOURCESPEC).o
@@ -164,6 +165,9 @@ HUDTextLineScroll.o: $(DEPS) $(SOLARSYSTEM_SRC)/HUDTextLineScroll.cpp $(SOLARSYS
 
 InertialPlatform.o: $(DEPS) $(SOLARSYSTEM_SRC)/InertialPlatform.cpp $(SOLARSYSTEM_SRC)/InertialPlatform.h
 	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/InertialPlatform.cpp
+	
+LookOut.o: $(DEPS) $(SOLARSYSTEM_SRC)/LookOut.cpp $(SOLARSYSTEM_SRC)/LookOut.h
+   $(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/LookOut.cpp	
 
 OGL_ID.o: $(DEPS) $(SOLARSYSTEM_SRC)/OGL_ID.cpp $(SOLARSYSTEM_SRC)/OGL_ID.h
 	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/OGL_ID.cpp
@@ -230,6 +234,9 @@ TranslatablePlatform.o: $(DEPS) $(SOLARSYSTEM_SRC)/TranslatablePlatform.cpp $(SO
 	
 Traverse.o: $(DEPS) $(SOLARSYSTEM_SRC)/Traverse.cpp $(SOLARSYSTEM_SRC)/Traverse.h
 	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/Traverse.cpp	
+	
+Traversable.o: $(DEPS) $(SOLARSYSTEM_SRC)/Traversable.cpp $(SOLARSYSTEM_SRC)/Traversable.h
+   $(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/Traversable.cpp    
 
 UTC.o: $(DEPS) $(SOLARSYSTEM_SRC)/UTC.cpp $(SOLARSYSTEM_SRC)/UTC.h
 	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/UTC.cpp

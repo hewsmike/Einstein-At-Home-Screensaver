@@ -18,71 +18,24 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "Traverse.h"
-
-#include <string>
+#include "TraverseFactory.h"
 
 #include "Curve.h"
 #include "ErrorHandler.h"
 
-Traverse::Traverse(void) {
-	current_path_index = 0;
+TraverseFactory::TraverseFactory(void) {
 	}
 
-Traverse::~Traverse() {
+TraverseFactory::~TraverseFactory() {
 	}
 
-void Traverse::clear() {
-	cam_states.clear();
-	current_path_index = 0;
-	}
+Traverse* TraverseFactory::getInstance(const Traversable& trav, const CameraState& cam) {
+	// Kick off traverse with the given camera state and the first from our given Traversable object.
+	Traverse* trav_pt = new Traverse(cam, trav.getView(0));
 
-void Traverse::addWayPoint(const LookOut& cam) {
-   cam_states.push_back(cam);
-   }
-
-unsigned int Traverse::numWayPoints(void) const {
-	return cam_states.size();
-	}
-
-Path Traverse::getFirstPath(void) {
-	Path ret_val;
-
-	if(numWayPoints() > 1) {
-		current_path_index = 0;
-		ret_val = makePath();
+	for(int way_point = 1; way_point < trav.numberOfWayPoints(); ++way_point) {
+		trav_pt->addWayPoint(trav.getView(way_point));
 		}
 
-	return ret_val;
-   }
-
-Path Traverse::getNextPath(void) {
-	Path ret_val;
-
-	if(numWayPoints() > 1) {
-		current_path_index = (current_path_index + 1) % cam_states.size();
-		ret_val = makePath();
-		}
-
-   return ret_val;
+	return trav_pt;
 	}
-
-Path Traverse::makePath() {
-	unsigned int next_path_index = (current_path_index + 1) % cam_states.size();
-
-	Curve pos(cam_states.at(current_path_index).position(), cam_states.at(next_path_index).position());
-   Curve focus(cam_states.at(current_path_index).focus(), cam_states.at(next_path_index).focus());
-   Curve orient(cam_states.at(current_path_index).orientation(), cam_states.at(next_path_index).orientation());
-
-   Path ret_val(pos, focus, orient);
-
-   const std::vector<std::string>& start_msg = cam_states.at(current_path_index).getDescription();
-
-   ret_val.setStartMessage(start_msg);
-
-   const std::vector<std::string>& finish_msg = cam_states.at(next_path_index).getDescription();
-
-   ret_val.setFinishMessage(finish_msg);
-
-   return ret_val;
-   }

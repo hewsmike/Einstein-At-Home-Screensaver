@@ -21,6 +21,9 @@
 #ifndef PATH_H_
 #define PATH_H_
 
+#include <string>
+#include <vector>
+
 #include "CameraState.h"
 #include "Curve.h"
 
@@ -76,10 +79,19 @@ class Path {
 
 		float curveLength(Path::component comp) const;
 
+		void setStartMessage(const std::vector<std::string>& message);
+		void setFinishMessage(const std::vector<std::string>& message);
+
+		const std::vector<std::string>& getStartMessage(void) const;
+		const std::vector<std::string>& getFinishMessage(void) const;
+
 	private:
 		Curve where;
 		Curve look_at;
 		Curve up_dir;
+
+		std::vector<std::string> start_msg;
+		std::vector<std::string> finish_msg;
 	};
 
 /**

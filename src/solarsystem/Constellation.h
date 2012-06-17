@@ -115,6 +115,10 @@ class Constellation {
        */
       std::pair<GLfloat, GLfloat> centre(void);
 
+      void addToDescription(const std::string& description);
+
+      const std::vector<std::string>& getDescription(void) const;
+
    private:
       bool first_quadrant;
       bool fourth_quadrant;
@@ -137,6 +141,8 @@ class Constellation {
       bool isValidIndex(unsigned int) const;
 
       std::string cons_name;
+
+      std::vector<std::string> desc;
 
       /// The stars in this constellation.
       std::vector<OrdStar> star_list;

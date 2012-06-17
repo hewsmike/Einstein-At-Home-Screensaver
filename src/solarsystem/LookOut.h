@@ -22,6 +22,7 @@
 #define LOOK_OUT_H_
 
 #include <string>
+#include <vector>
 
 #include "CameraState.h"
 
@@ -41,20 +42,19 @@ class LookOut : public CameraState {
       /**
 	    * \brief Constructor
 	    */
-		LookOut(const Vector3D& position, const Vector3D& focus,
-				  const Vector3D& orientation, const std::string& description);
+		LookOut(const Vector3D& position, const Vector3D& focus, const Vector3D& orientation);
 
 		/**
 		 * \brief Destructor
 		 */
 		~LookOut();
 
-		std::string getDescription(void) const;
+		const std::vector<std::string>& getDescription(void) const;
 
-		void setDescription(const std::string& description);
+		void addToDescription(const std::string& description);
 
 	private:
-		std::string desc;
+		std::vector<std::string> desc;
 	};
 
 /**

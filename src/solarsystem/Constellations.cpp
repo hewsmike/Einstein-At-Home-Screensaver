@@ -25,6 +25,7 @@
 #include <string>
 #include <utility>
 
+#include "Craft.h"
 #include "ErrorHandler.h"
 #include "VectorSP.h"
 #include "Vector3D.h"
@@ -63,8 +64,10 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    // indices to a vector that stores the star data AS PER THE LISTED ORDER in
    // which they are added to the constellation. Do not exceed bounds, and
    // always enter a link AFTER the addition of the stars which it connects.
+   // Actually I'm not happy generally as there's a dependency in ordering here.
 
    Constellation andromeda("Andromeda");
+   andromeda.addToDescription("The princess chained to a rock");
    andromeda.add_star(OrdStar(2.01f, 29.09f, 2.07f, OrdStar::SPEC_B, "Alpheratz"));
    andromeda.add_star(OrdStar(17.26f, 35.62f, 2.07f, OrdStar::SPEC_M, "Mirach"));
    andromeda.add_star(OrdStar(30.76f, 42.33f, 2.10f, OrdStar::SPEC_B, "Almach"));
@@ -102,6 +105,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += andromeda.total_links();
 
    Constellation antlia("Antlia");
+   antlia.addToDescription("The air pump");
    antlia.add_star(OrdStar(142.25f, -35.95f, 4.51f, OrdStar::SPEC_K, ""));
    antlia.add_star(OrdStar(156.75f, -31.07f, 4.28f, OrdStar::SPEC_K, ""));
    antlia.add_star(OrdStar(164.01f, -37.14f, 4.60f, OrdStar::SPEC_K, ""));
@@ -112,6 +116,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += antlia.total_links();
 
    Constellation apus("Apus");
+   apus.addToDescription("The bird of paradise");
    apus.add_star(OrdStar(221.76f, -79.03f, 3.83f, OrdStar::SPEC_K, ""));
    apus.add_star(OrdStar(248.26f, -78.88f, 3.86f, OrdStar::SPEC_K, ""));
    apus.add_star(OrdStar(250.75f, -77.50f, 4.23f, OrdStar::SPEC_K, ""));
@@ -124,6 +129,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += apus.total_links();
 
    Constellation aquarius("Aquarius");
+   aquarius.addToDescription("The water bearer");
    aquarius.add_star(OrdStar(322.76f, -5.56f, 2.90f, OrdStar::SPEC_G, "Sadalsuud"));
    aquarius.add_star(OrdStar(331.50f, -0.32f, 2.95f, OrdStar::SPEC_G, "Sadalmelik"));
    aquarius.add_star(OrdStar(343.75f, -15.81f, 3.27f, OrdStar::SPEC_A, "Skat"));
@@ -162,6 +168,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += aquarius.total_links();
 
    Constellation aquila("Aquila");
+   aquila.addToDescription("The eagle");
    aquila.add_star(OrdStar(297.51f, +8.87f, 0.76f, OrdStar::SPEC_A, "Altair"));
    aquila.add_star(OrdStar(296.50f, +10.62f, 2.72f, OrdStar::SPEC_K, "Tarazed"));
    aquila.add_star(OrdStar(286.26f, +13.87f, 2.99f, OrdStar::SPEC_A, "Deneb"));
@@ -188,6 +195,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += aquila.total_links();
 
    Constellation ara("Ara");
+   ara.addToDescription("The altar");
    ara.add_star(OrdStar(261.25f, -54.53f, 2.84f, OrdStar::SPEC_K, ""));
    ara.add_star(OrdStar(263.00f, -49.88f, 2.84f, OrdStar::SPEC_B, "Choo"));
    ara.add_star(OrdStar(254.75f, -55.98f, 3.12f, OrdStar::SPEC_K, ""));
@@ -209,6 +217,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += ara.total_links();
 
    Constellation aries("Aries");
+   aries.addToDescription("The ram");
    aries.add_star(OrdStar(31.75f, +23.47f, 2.01f, OrdStar::SPEC_K, "Hamal"));
    aries.add_star(OrdStar(28.51f, +20.81f, 2.64f, OrdStar::SPEC_A, "Sheratan"));
    aries.add_star(OrdStar(42.27f, +27.26f, 3.61f, OrdStar::SPEC_B, "Bharani"));
@@ -223,6 +232,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += aries.total_links();
 
    Constellation auriga("Auriga");
+   auriga.addToDescription("The charioteer");
    auriga.add_star(OrdStar(79.25f, 45.99f, 0.08f, OrdStar::SPEC_G, "Capella"));
    auriga.add_star(OrdStar(89.87f, 44.95f, 1.90f, OrdStar::SPEC_A, "Menkalinan"));
    auriga.add_star(OrdStar(89.94f, 37.21f, 2.65f, OrdStar::SPEC_A, "Mahasim"));
@@ -248,6 +258,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += auriga.total_links();
 
    Constellation bootes("Bootes");
+   bootes.addToDescription("The herdsman");
    bootes.add_star(OrdStar(213.94f, 19.18f, -0.05f, OrdStar::SPEC_K, "Arcturus"));
    bootes.add_star(OrdStar(221.25f, 27.08f, 2.35f, OrdStar::SPEC_A, "Izar"));
    bootes.add_star(OrdStar(208.67f, 18.40f, 2.68f, OrdStar::SPEC_G, "Muphrid"));
@@ -278,6 +289,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += bootes.total_links();
 
    Constellation caelum("Caelum");
+   caelum.addToDescription("The chisel");
    caelum.add_star(OrdStar(70.01f, -41.87f, 4.44f, OrdStar::SPEC_F, ""));
    caelum.add_star(OrdStar(76.09f, -35.48f, 4.55f, OrdStar::SPEC_K, ""));
    caelum.add_star(OrdStar(70.50f, -37.14f, 5.04f, OrdStar::SPEC_F, ""));
@@ -290,6 +302,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += caelum.total_links();
 
    Constellation camelopardalis("Camelopardalis");
+   camelopardalis.addToDescription("The camel");
    camelopardalis.add_star(OrdStar(75.87f, 60.44f, 4.03f, OrdStar::SPEC_G, ""));
    camelopardalis.add_star(OrdStar(52.25f, 59.93f, 4.21f, OrdStar::SPEC_B, ""));
    camelopardalis.add_star(OrdStar(73.50f, 66.34f, 4.26f, OrdStar::SPEC_B, ""));
@@ -310,6 +323,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += camelopardalis.total_links();
 
    Constellation cancer("Cancer");
+   cancer.addToDescription("The crab");
    cancer.add_star(OrdStar(124.12f, 9.18f, 3.53f, OrdStar::SPEC_K, "Al Tarf"));
    cancer.add_star(OrdStar(131.18f, 18.15f, 3.94f, OrdStar::SPEC_K, "Asellus Australis"));
    cancer.add_star(OrdStar(131.67f, 28.76f, 4.03f, OrdStar::SPEC_G, ""));
@@ -324,6 +338,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += cancer.total_links();
 
    Constellation canes_venatici("Canes Venatici");
+   canes_venatici.addToDescription("The hunting dogs");
    canes_venatici.add_star(OrdStar(194.00f, 38.32f, 2.89f, OrdStar::SPEC_A, "Cor Caroli"));
    canes_venatici.add_star(OrdStar(188.44f, 41.36f, 4.24f, OrdStar::SPEC_G, "Chara"));
    canes_venatici.add_link(0, 1);
@@ -332,6 +347,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += canes_venatici.total_links();
 
    Constellation canis_major("Canis Major");
+   canis_major.addToDescription("The greater dog");
    canis_major.add_star(OrdStar(101.25f, -16.71f, 1.46f, OrdStar::SPEC_A, "Sirius"));
    canis_major.add_star(OrdStar(104.51f, -28.97f, 1.50f, OrdStar::SPEC_B, "Adhara"));
    canis_major.add_star(OrdStar(107.00f, -26.39f, 1.83f, OrdStar::SPEC_F, "Wezen"));
@@ -350,6 +366,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += canis_major.total_links();
 
    Constellation canis_minor("Canis Minor");
+   canis_minor.addToDescription("The lesser dog");
    canis_minor.add_star(OrdStar(114.76f, 5.23f, 0.34f, OrdStar::SPEC_F, "Procyon"));
    canis_minor.add_star(OrdStar(111.75f, 8.29f, 2.89f, OrdStar::SPEC_B, "Gomeisa"));
    canis_minor.add_link(0, 1);
@@ -358,6 +375,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += canis_minor.total_links();
 
    Constellation capricornus("Capricornus");
+   capricornus.addToDescription("The sea goat");
    capricornus.add_star(OrdStar(326.75f, -16.13f, 2.85f, OrdStar::SPEC_A, "Deneb"));
    capricornus.add_star(OrdStar(305.25f, -14.78f, 3.05f, OrdStar::SPEC_A, "Dabih"));
    capricornus.add_star(OrdStar(304.50f, -12.54f, 3.58f, OrdStar::SPEC_G, "Algedi Secunda"));
@@ -381,10 +399,14 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += capricornus.total_links();
 
    Constellation carina("Carina");
+   carina.addToDescription("The keel");
    carina.add_star(OrdStar(95.77f, -52.68f, -0.72f, OrdStar::SPEC_F, "Canopus"));
    carina.add_star(OrdStar(138.25f, -69.72f, 1.67f, OrdStar::SPEC_A, "Miaplacidus"));
+
    carina.add_star(OrdStar(125.51f, -59.52f, 1.86f, OrdStar::SPEC_K, "Avior"));
+
    carina.add_star(OrdStar(139.25f, -59.28f, 2.21f, OrdStar::SPEC_A, "Aspidiske"));
+
    carina.add_star(OrdStar(160.52f, -64.40f, 2.74f, OrdStar::SPEC_B, ""));
    carina.add_star(OrdStar(146.75f, -65.07f, 2.92f, OrdStar::SPEC_A, ""));
    carina.add_star(OrdStar(153.26f, -70.04f, 3.29f, OrdStar::SPEC_B, ""));
@@ -404,6 +426,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += carina.total_links();
 
    Constellation cassiopeia("Cassiopeia");
+   cassiopeia.addToDescription("The lady tied to a chair");
    cassiopeia.add_star(OrdStar(14.01f, 60.72f, 2.15f, OrdStar::SPEC_B, "Tsih"));
    cassiopeia.add_star(OrdStar(10.01f, 56.54f, 2.24f, OrdStar::SPEC_K, "Schedar"));
    cassiopeia.add_star(OrdStar(2.25f, 59.15f, 2.28f, OrdStar::SPEC_F, "Caph"));
@@ -422,6 +445,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += cassiopeia.total_links();
 
    Constellation centaurus("Centaurus");
+   centaurus.addToDescription("The centaur");
    centaurus.add_star(OrdStar(219.91f, -60.83f, -0.01f, OrdStar::SPEC_G, "Rigil Kentaurus"));
    centaurus.add_star(OrdStar(210.96f, -60.36f, 0.61f, OrdStar::SPEC_B, "Hadar"));
    centaurus.add_star(OrdStar(211.67f, -36.37f, 2.06f, OrdStar::SPEC_K, "Menkent"));
@@ -464,6 +488,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += centaurus.total_links();
 
    Constellation cepheus("Cepheus");
+   cepheus.addToDescription("The husband of Cassiopeia and father of Andromeda");
    cepheus.add_star(OrdStar(319.62f, 62.59f, 2.45f, OrdStar::SPEC_A, "Alderamin"));
    cepheus.add_star(OrdStar(354.83f, 77.63f, 3.21f, OrdStar::SPEC_K, "Arrai"));
    cepheus.add_star(OrdStar(322.17f, 70.56f, 3.23f, OrdStar::SPEC_B, "Alfirk"));
@@ -490,6 +515,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += cepheus.total_links();
 
    Constellation cetus("Cetus");
+   cetus.addToDescription("The whale");
    cetus.add_star(OrdStar(10.88f, -17.98f, 2.04f, OrdStar::SPEC_K, "Deneb Kaitos"));
    cetus.add_star(OrdStar(45.56f, 4.09f, 2.54f, OrdStar::SPEC_M, "Menkar"));
    cetus.add_star(OrdStar(34.83f, -2.98, 3.04f, OrdStar::SPEC_M, "Mira Ceti"));
@@ -524,6 +550,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += cetus.total_links();
 
    Constellation chamaeleon("Chamaeleon");
+   chamaeleon.addToDescription("The chamaeleon");
    chamaeleon.add_star(OrdStar(124.62f, -76.92f, 4.05f, OrdStar::SPEC_F, ""));
    chamaeleon.add_star(OrdStar(158.87f, -78.61f, 4.11f, OrdStar::SPEC_M, ""));
    chamaeleon.add_star(OrdStar(184.58f, -79.31f, 4.24f, OrdStar::SPEC_B, ""));
@@ -539,6 +566,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += chamaeleon.total_links();
 
    Constellation circinus("Circinus");
+   circinus.addToDescription("The draftsman's compass");
    circinus.add_star(OrdStar(220.62f, -64.98f, 3.18f, OrdStar::SPEC_F, ""));
    circinus.add_star(OrdStar(229.37f, -58.80f, 4.07f, OrdStar::SPEC_A, ""));
    circinus.add_star(OrdStar(230.83f, -59.32f, 4.48f, OrdStar::SPEC_B, ""));
@@ -549,6 +577,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += circinus.total_links();
 
    Constellation columba("Columba");
+   columba.addToDescription("The dove");
    columba.add_star(OrdStar(84.92f, -34.08f, 2.65f, OrdStar::SPEC_B, "Phact"));
    columba.add_star(OrdStar(87.75f, -35.77f, 3.12f, OrdStar::SPEC_K, "Wezn"));
    columba.add_star(OrdStar(95.50f, -33.43f, 3.85f, OrdStar::SPEC_G, ""));
@@ -565,6 +594,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += columba.total_links();
 
    Constellation coma_berenices("Coma Berenices");
+   coma_berenices.addToDescription("Berenice's hair");
    coma_berenices.add_star(OrdStar(197.76f, 27.88f, 4.23f, OrdStar::SPEC_G, ""));
    coma_berenices.add_star(OrdStar(197.46f, 17.53f, 4.32f, OrdStar::SPEC_F, "Diadem"));
    coma_berenices.add_star(OrdStar(186.52f, 28.27f, 4.35f, OrdStar::SPEC_K, ""));
@@ -575,6 +605,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += coma_berenices.total_links();
 
    Constellation corona_australis("Corona Australis");
+   corona_australis.addToDescription("The southern crown");
    corona_australis.add_star(OrdStar(287.50f, -39.34f, 4.10f, OrdStar::SPEC_K, ""));
    corona_australis.add_star(OrdStar(287.37f, -37.90f, 4.11f, OrdStar::SPEC_A, "Alphekka Meridiana"));
    corona_australis.add_star(OrdStar(286.62f, -37.06f, 4.23f, OrdStar::SPEC_F, ""));
@@ -593,6 +624,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += corona_australis.total_links();
 
    Constellation corona_borealis("Corona Borealis");
+   corona_borealis.addToDescription("The northern crown");
    corona_borealis.add_star(OrdStar(233.67f, 26.71f, 2.22f, OrdStar::SPEC_A, "Alphecca"));
    corona_borealis.add_star(OrdStar(231.95f, 29.11f, 3.66f, OrdStar::SPEC_F, "Nusakan"));
    corona_borealis.add_star(OrdStar(235.69f, 26.30f, 3.81f, OrdStar::SPEC_A, ""));
@@ -611,6 +643,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += corona_borealis.total_links();
 
    Constellation corvus("Corvus");
+   corvus.addToDescription("The crow");
    corvus.add_star(OrdStar(183.95f, -17.54f, 2.58f, OrdStar::SPEC_B, "Gienah Corvi"));
    corvus.add_star(OrdStar(188.60f, -23.39f, 2.65f, OrdStar::SPEC_G, "Kraz"));
    corvus.add_star(OrdStar(187.47f, -16.52f, 2.94f, OrdStar::SPEC_B, "Algorab"));
@@ -626,6 +659,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += corvus.total_links();
 
    Constellation crater("Crater");
+   crater.addToDescription("The cup");
    crater.add_star(OrdStar(169.83f, -14.78f, 3.56f, OrdStar::SPEC_K, "Labrum"));
    crater.add_star(OrdStar(171.22f, -17.68f, 4.06f, OrdStar::SPEC_A, ""));
    crater.add_star(OrdStar(164.94f, -18.30f, 4.08f, OrdStar::SPEC_K, "Alkes"));
@@ -647,6 +681,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += crater.total_links();
 
    Constellation crux("Crux");
+   crux.addToDescription("The southern cross");
    crux.add_star(OrdStar(191.94f, -59.68f, 1.25f, OrdStar::SPEC_B, "Mimosa"));
    crux.add_star(OrdStar(186.65f, -63.10f, 1.4f, OrdStar::SPEC_B, "Acrux"));
    crux.add_star(OrdStar(187.80f, -57.11f, 1.59f, OrdStar::SPEC_M, "Gacrux"));
@@ -659,6 +694,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += crux.total_links();
 
    Constellation cygnus("Cygnus");
+   cygnus.addToDescription("The swan");
    cygnus.add_star(OrdStar(310.35f, 45.28f, 1.25f, OrdStar::SPEC_A, "Deneb Cygni"));
    cygnus.add_star(OrdStar(305.55f, 40.26f, 2.23f, OrdStar::SPEC_F, "Sadr"));
    cygnus.add_star(OrdStar(311.55f, 33.97f, 2.48f, OrdStar::SPEC_K, "Gienah"));
@@ -687,6 +723,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += cygnus.total_links();
 
    Constellation delphinus("Delphinus");
+   delphinus.addToDescription("The dolphin");
    delphinus.add_star(OrdStar(309.37f, 14.59f, 3.64f, OrdStar::SPEC_F, "Rotanev"));
    delphinus.add_star(OrdStar(309.90f, 15.91f, 3.77f, OrdStar::SPEC_B, "Sualocin"));
    delphinus.add_star(OrdStar(308.30f, 11.30f, 4.03f, OrdStar::SPEC_B, "Deneb Dulfim"));
@@ -702,6 +739,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += delphinus.total_links();
 
    Constellation dorado("Dorado");
+   dorado.addToDescription("The golden fish");
    dorado.add_star(OrdStar(68.50f, -55.05f, 3.30f, OrdStar::SPEC_A, ""));
    dorado.add_star(OrdStar(83.40f, -62.49f, 3.76f, OrdStar::SPEC_F, ""));
    dorado.add_star(OrdStar(64.00f, -51.49f, 4.26f, OrdStar::SPEC_F, ""));
@@ -720,6 +758,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += dorado.total_links();
 
    Constellation draco("Draco");
+   draco.addToDescription("The dragon");
    draco.add_star(OrdStar(269.15f, 51.49f, 2.24f, OrdStar::SPEC_K, "Eltanin"));
    draco.add_star(OrdStar(246.00f, 61.51f, 2.73f, OrdStar::SPEC_G, ""));
    draco.add_star(OrdStar(262.60f, 52.30f, 2.79f, OrdStar::SPEC_G, "Rastaban"));
@@ -755,6 +794,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += draco.total_links();
 
    Constellation equuleus("Equuleus");
+   equuleus.addToDescription("The pony");
    equuleus.add_star(OrdStar(318.95f, 5.25f, 3.92f, OrdStar::SPEC_G, "Kitalpha"));
    equuleus.add_star(OrdStar(318.62f, 10.00f, 4.47f, OrdStar::SPEC_F, "Pherasauval"));
    equuleus.add_star(OrdStar(317.58f, 10.13f, 4.70f, OrdStar::SPEC_F, ""));
@@ -767,6 +807,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += equuleus.total_links();
 
    Constellation eradanus("Eradanus");
+   eradanus.addToDescription("The river");
    eradanus.add_star(OrdStar(24.42f, -57.24f, 0.45f, OrdStar::SPEC_B, "Achernar"));
    eradanus.add_star(OrdStar(76.96f, -5.09f, 2.78f, OrdStar::SPEC_A, "Cursa"));
    eradanus.add_star(OrdStar(44.56f, -40.31f, 2.88f, OrdStar::SPEC_A, "Acamar"));
@@ -819,6 +860,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += eradanus.total_links();
 
    Constellation fornax("Fornax");
+   fornax.addToDescription("The furnace");
    fornax.add_star(OrdStar(48.02f, -28.99f, 3.80f, OrdStar::SPEC_F, "Dalim"));
    fornax.add_star(OrdStar(42.27f, -32.41f, 4.45f, OrdStar::SPEC_G, ""));
    fornax.add_star(OrdStar(31.13f, -29.29f, 4.68f, OrdStar::SPEC_B, ""));
@@ -829,6 +871,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += fornax.total_links();
 
    Constellation gemini("Gemini");
+   gemini.addToDescription("The twins");
    gemini.add_star(OrdStar(116.33f, 28.03f, 1.16f, OrdStar::SPEC_K, "Pollux"));
    gemini.add_star(OrdStar(113.65f, 31.89f, 1.58f, OrdStar::SPEC_A, "Castor"));
    gemini.add_star(OrdStar(99.42f, 16.40f, 1.93f, OrdStar::SPEC_A, "Alhena"));
@@ -867,6 +910,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += gemini.total_links();
 
    Constellation grus("Grus");
+   grus.addToDescription("The crane");
    grus.add_star(OrdStar(332.05f, -46.96f, 1.73f, OrdStar::SPEC_B, "Alnair"));
    grus.add_star(OrdStar(340.66f, -46.88f, 2.07f, OrdStar::SPEC_M, "Gruid"));
    grus.add_star(OrdStar(328.47f, -37.37f, 3.00f, OrdStar::SPEC_B, "Al Dhanab"));
@@ -888,6 +932,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += grus.total_links();
 
    Constellation hercules("Hercules");
+   hercules.addToDescription("The demigod son of Zeus");
    hercules.add_star(OrdStar(247.55f, 21.49f, 2.78f, OrdStar::SPEC_G, "Kornephoros"));
    hercules.add_star(OrdStar(250.32f, 31.60f, 2.81f, OrdStar::SPEC_F, "Rutilicus"));
    hercules.add_star(OrdStar(258.75f, 24.84f, 3.12f, OrdStar::SPEC_A, "Sarin"));
@@ -936,6 +981,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += hercules.total_links();
 
    Constellation horologium("Horologium");
+   horologium.addToDescription("The pendulum clock");
    horologium.add_star(OrdStar(63.50f, -42.29f, 3.85f, OrdStar::SPEC_K, ""));
    horologium.add_star(OrdStar(44.69f, -64.07f, 4.98f, OrdStar::SPEC_A, ""));
    horologium.add_star(OrdStar(45.90f, -59.74f, 5.12f, OrdStar::SPEC_F, ""));
@@ -952,6 +998,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += horologium.total_links();
 
    Constellation hydra("Hydra");
+   hydra.addToDescription("The water snake");
    hydra.add_star(OrdStar(141.90f, -8.66f, 1.99f, OrdStar::SPEC_K, "Alphard"));
    hydra.add_star(OrdStar(199.73f, -23.17f, 2.99f, OrdStar::SPEC_G, ""));
    hydra.add_star(OrdStar(133.85f, 5.95f, 3.11f, OrdStar::SPEC_G, ""));
@@ -996,6 +1043,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += hydra.total_links();
 
    Constellation hydrus("Hydrus");
+   hydrus.addToDescription("The lesser water snake");
    hydrus.add_star(OrdStar(6.41f, -77.26f, 2.82f, OrdStar::SPEC_G, ""));
    hydrus.add_star(OrdStar(29.69f, -61.57f, 2.86f, OrdStar::SPEC_F, ""));
    hydrus.add_star(OrdStar(56.81f, -74.24f, 3.26f, OrdStar::SPEC_M, "Foo Pih"));
@@ -1022,6 +1070,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += hydrus.total_links();
 
    Constellation indus("Indus");
+   indus.addToDescription("The native American");
    indus.add_star(OrdStar(309.39f, -47.29f, 3.11f, OrdStar::SPEC_K, ""));
    indus.add_star(OrdStar(313.70f, -58.45f, 3.67f, OrdStar::SPEC_K, ""));
    indus.add_star(OrdStar(319.96f, -53.45f, 4.39f, OrdStar::SPEC_A, ""));
@@ -1044,6 +1093,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += indus.total_links();
 
    Constellation lacerta("Lacerta");
+   lacerta.addToDescription("The lizard");
    lacerta.add_star(OrdStar(337.75f, 50.27f, 3.76f, OrdStar::SPEC_A, ""));
    lacerta.add_star(OrdStar(334.00f, 37.73f, 4.14f, OrdStar::SPEC_K, ""));
    lacerta.add_star(OrdStar(337.25f, 47.70f, 4.34f, OrdStar::SPEC_M, ""));
@@ -1068,6 +1118,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += lacerta.total_links();
 
    Constellation leo("Leo");
+   leo.addToDescription("The lion");
    leo.add_star(OrdStar(152.00f, 11.97f, 1.36f, OrdStar::SPEC_B, "Regulus"));
    leo.add_star(OrdStar(154.75f, 19.83f, 2.01f, OrdStar::SPEC_K, "Algieba"));
    leo.add_star(OrdStar(177.26f, 14.57f, 2.14f, OrdStar::SPEC_A, "Denebola"));
@@ -1102,6 +1153,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += leo.total_links();
 
    Constellation leo_minor("Leo Minor");
+   leo_minor.addToDescription("The lesser lion");
    leo_minor.add_star(OrdStar(163.32f, 34.22f, 3.79f, OrdStar::SPEC_K, "Praecipua"));
    leo_minor.add_star(OrdStar(156.98f, 36.70f, 4.20f, OrdStar::SPEC_G, ""));
    leo_minor.add_star(OrdStar(151.85f, 35.25f, 4.49f, OrdStar::SPEC_A, ""));
@@ -1117,6 +1169,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += leo_minor.total_links();
 
    Constellation lepus("Lepus");
+   lepus.addToDescription("The hare");
    lepus.add_star(OrdStar(83.25f, -17.82f, 2.58f, OrdStar::SPEC_F, "Arneb"));
    lepus.add_star(OrdStar(82.00f, -20.75f, 2.81f, OrdStar::SPEC_G, "Nihal"));
    lepus.add_star(OrdStar(76.25f, -22.37f, 3.19f, OrdStar::SPEC_K, ""));
@@ -1145,6 +1198,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += lepus.total_links();
 
    Constellation libra("Libra");
+   libra.addToDescription("The balance");
    libra.add_star(OrdStar(229.25f, -9.38f, 2.61f, OrdStar::SPEC_B, "Zubeneschamali"));
    libra.add_star(OrdStar(222.75f, -16.05f, 2.75f, OrdStar::SPEC_A, "Zubenelgenubi"));
    libra.add_star(OrdStar(226.00f, -25.28f, 3.25f, OrdStar::SPEC_M, "Brachium"));
@@ -1162,6 +1216,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += libra.total_links();
 
    Constellation lupus("Lupus");
+   lupus.addToDescription("The wolf");
    lupus.add_star(OrdStar(220.50f, -47.38f, 2.30f, OrdStar::SPEC_B, ""));
    lupus.add_star(OrdStar(224.50f, -43.13f, 2.68f, OrdStar::SPEC_B, ""));
    lupus.add_star(OrdStar(233.75f, -41.17f, 2.80f, OrdStar::SPEC_B, ""));
@@ -1186,6 +1241,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += lupus.total_links();
 
    Constellation lynx("Lynx");
+   lynx.addToDescription("The lynx");
    lynx.add_star(OrdStar(140.25f, 34.38f, 3.14f, OrdStar::SPEC_K, "Elvashak"));
    lynx.add_star(OrdStar(139.75f, 36.80f, 3.82f, OrdStar::SPEC_A, ""));
    lynx.add_star(OrdStar(135.25f, 41.78f, 3.96f, OrdStar::SPEC_F, ""));
@@ -1206,6 +1262,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += lynx.total_links();
 
    Constellation lyra("Lyra");
+   lyra.addToDescription("The harp");
    lyra.add_star(OrdStar(279.25f, 38.78f, 0.03f, OrdStar::SPEC_A, "Vega"));
    lyra.add_star(OrdStar(284.75f, 32.68f, 3.25f, OrdStar::SPEC_B, "Sulafat"));
    lyra.add_star(OrdStar(282.50f, 33.37f, 3.52f, OrdStar::SPEC_A, "Shelik"));
@@ -1224,6 +1281,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += lyra.total_links();
 
    Constellation mensa("Mensa");
+   mensa.addToDescription("The table mountain");
    mensa.add_star(OrdStar(92.50f, -74.75f, 5.08f, OrdStar::SPEC_G, ""));
    mensa.add_star(OrdStar(83.00f, -76.35f, 5.18f, OrdStar::SPEC_K, ""));
    mensa.add_star(OrdStar(75.75f, -71.32f, 5.30f, OrdStar::SPEC_G, ""));
@@ -1247,6 +1305,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += mensa.total_links();
 
    Constellation microscopium("Microscopium");
+   microscopium.addToDescription("The microscope");
    microscopium.add_star(OrdStar(315.25f, -32.25f, 4.67f, OrdStar::SPEC_G, ""));
    microscopium.add_star(OrdStar(319.50f, -32.17f, 4.71f, OrdStar::SPEC_A, ""));
    microscopium.add_star(OrdStar(320.25f, -40.82f, 4.80f, OrdStar::SPEC_A, ""));
@@ -1272,6 +1331,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += microscopium.total_links();
 
    Constellation monoceros("Monoceros");
+   monoceros.addToDescription("The unicorn");
    monoceros.add_star(OrdStar(115.25f, -9.55f, 3.94f, OrdStar::SPEC_K, ""));
    monoceros.add_star(OrdStar(93.75f, -6.28f, 3.99f, OrdStar::SPEC_K, ""));
    monoceros.add_star(OrdStar(108.00f, -0.50f, 4.15f, OrdStar::SPEC_A, ""));
@@ -1295,6 +1355,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += monoceros.total_links();
 
    Constellation musca("Musca");
+   musca.addToDescription("The fly");
    musca.add_star(OrdStar(189.25f, -69.13f, 2.69f, OrdStar::SPEC_B, ""));
    musca.add_star(OrdStar(191.50f, -68.10f, 3.04f, OrdStar::SPEC_B, ""));
    musca.add_star(OrdStar(195.75f, -71.55f, 3.61f, OrdStar::SPEC_K, ""));
@@ -1312,6 +1373,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += musca.total_links();
 
    Constellation norma("Norma");
+   norma.addToDescription("The carpenter's level");
    norma.add_star(OrdStar(245.00f, -50.15f, 4.01f, OrdStar::SPEC_G, ""));
    norma.add_star(OrdStar(246.75f, -47.55f, 4.46f, OrdStar::SPEC_B, ""));
    norma.add_star(OrdStar(240.80f, -49.23f, 4.65f, OrdStar::SPEC_G, ""));
@@ -1325,6 +1387,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += norma.total_links();
 
    Constellation octans("Octans");
+   octans.addToDescription("The octant");
    octans.add_star(OrdStar(325.25f, -77.38f, 3.73f, OrdStar::SPEC_K, ""));
    octans.add_star(OrdStar(341.50f, -81.38f, 4.13f, OrdStar::SPEC_A, ""));
    octans.add_star(OrdStar(216.75f, -83.67f, 4.31f, OrdStar::SPEC_K, ""));
@@ -1336,6 +1399,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += octans.total_links();
 
    Constellation ophiuchus("Ophiuchus");
+   ophiuchus.addToDescription("The serpent bearer");
    ophiuchus.add_star(OrdStar(263.75f, 12.57f, 2.08f, OrdStar::SPEC_A, "Rasalhague"));
    ophiuchus.add_star(OrdStar(257.50f, -15.73f, 2.43f, OrdStar::SPEC_A, "Sabik"));
    ophiuchus.add_star(OrdStar(249.25f, -10.57f, 2.54f, OrdStar::SPEC_O, "Han"));
@@ -1368,6 +1432,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += ophiuchus.total_links();
 
    Constellation orion("Orion");
+   orion.addToDescription("The hunter");
    orion.add_star(OrdStar(78.75f, -8.00f, 0.18f, OrdStar::SPEC_B, "Rigel"));
    orion.add_star(OrdStar(88.80f, 7.41f, 0.58f, OrdStar::SPEC_M, "Betelgeuze"));
    orion.add_star(OrdStar(81.28f, 6.35f, 1.64f, OrdStar::SPEC_B, "Bellatrix"));
@@ -1419,6 +1484,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += orion.total_links();
 
    Constellation pavo("Pavo");
+   pavo.addToDescription("The peacock");
    pavo.add_star(OrdStar(306.50f, -56.73f, 1.94f, OrdStar::SPEC_B, "Peacock"));
    pavo.add_star(OrdStar(311.25f, -66.20f, 3.42f, OrdStar::SPEC_A, ""));
    pavo.add_star(OrdStar(302.25f, -66.18f, 3.55f, OrdStar::SPEC_G, ""));
@@ -1447,6 +1513,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += pavo.total_links();
 
    Constellation pegasus("Pegasus");
+   pegasus.addToDescription("The winged horse");
    pegasus.add_star(OrdStar(326.00f, 9.88f, 2.38f, OrdStar::SPEC_K, "Enif"));
    pegasus.add_star(OrdStar(346.00f, 28.08f, 2.44f, OrdStar::SPEC_M, "Scheat"));
    pegasus.add_star(OrdStar(346.25f, 15.20f, 2.49f, OrdStar::SPEC_B, "Markab"));
@@ -1480,6 +1547,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += pegasus.total_links();
 
    Constellation perseus("Perseus");
+   perseus.addToDescription("The slayer of Medusa");
    perseus.add_star(OrdStar(51.00f, 49.85f, 1.79f, OrdStar::SPEC_F, "Mirfak"));
    perseus.add_star(OrdStar(47.00f, 40.95f, 2.09f, OrdStar::SPEC_B, "Algol"));
    perseus.add_star(OrdStar(58.50f, 31.88f, 2.84f, OrdStar::SPEC_B, "Menkhib"));
@@ -1523,6 +1591,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += perseus.total_links();
 
    Constellation phoenix("Phoenix");
+   phoenix.addToDescription("The firebird");
    phoenix.add_star(OrdStar(6.50f, -42.30f, 2.40f, OrdStar::SPEC_K, "Ankaa"));
    phoenix.add_star(OrdStar(16.50f, -46.72f, 3.32f, OrdStar::SPEC_G, ""));
    phoenix.add_star(OrdStar(22.00f, -43.32f, 3.41f, OrdStar::SPEC_K, ""));
@@ -1541,6 +1610,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += phoenix.total_links();
 
    Constellation pictor("Pictor");
+   pictor.addToDescription("The easel");
    pictor.add_star(OrdStar(102.00f, -61.95f, 3.24f, OrdStar::SPEC_A, ""));
    pictor.add_star(OrdStar(86.75f, -51.06f, 3.85f, OrdStar::SPEC_A, ""));
    pictor.add_star(OrdStar(87.50f, -56.17f, 4.50f, OrdStar::SPEC_K, ""));
@@ -1551,6 +1621,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += pictor.total_links();
 
    Constellation pisces("Pisces");
+   pisces.addToDescription("The fish");
    pisces.add_star(OrdStar(22.75f, 15.35f, 3.62f, OrdStar::SPEC_G, "Alpherg"));
    pisces.add_star(OrdStar(349.25f, 3.28f, 3.70f, OrdStar::SPEC_G, "Simmah"));
    pisces.add_star(OrdStar(30.55f, 2.76f, 3.82f, OrdStar::SPEC_A, "Alrescha"));
@@ -1585,6 +1656,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += pisces.total_links();
 
    Constellation piscis_austrinus("Piscis Austrinus");
+   piscis_austrinus.addToDescription("The southern fish");
    piscis_austrinus.add_star(OrdStar(344.50f, -29.62f, 1.17f, OrdStar::SPEC_A, "Fomalhaut"));
    piscis_austrinus.add_star(OrdStar(340.25f, -27.05f, 4.18f, OrdStar::SPEC_B, ""));
    piscis_austrinus.add_star(OrdStar(344.00f, -32.53f, 4.20f, OrdStar::SPEC_G, ""));
@@ -1607,6 +1679,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += piscis_austrinus.total_links();
 
    Constellation puppis("Puppis");
+   puppis.addToDescription("The poop deck");
    puppis.add_star(OrdStar(121.00f, -40.00f, 2.21f, OrdStar::SPEC_O, "Naos"));
    puppis.add_star(OrdStar(109.25f, -37.10f, 2.71f, OrdStar::SPEC_K, ""));
    puppis.add_star(OrdStar(122.00f, -24.30f, 2.83f, OrdStar::SPEC_F, "Tureis"));
@@ -1630,6 +1703,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += puppis.total_links();
 
    Constellation pyxis("Pyxis");
+   pyxis.addToDescription("The mariner's compass");
    pyxis.add_star(OrdStar(131.00f, -33.18f, 3.68f, OrdStar::SPEC_B, "Al Sumut"));
    pyxis.add_star(OrdStar(130.00f, -35.30f, 3.97f, OrdStar::SPEC_G, ""));
    pyxis.add_star(OrdStar(132.75f, -27.72f, 4.02f, OrdStar::SPEC_K, ""));
@@ -1644,6 +1718,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += pyxis.total_links();
 
    Constellation reticulum("Reticulum");
+   reticulum.addToDescription("The eyepiece graticule");
    reticulum.add_star(OrdStar(63.50f, -62.46f, 3.33f, OrdStar::SPEC_G, ""));
    reticulum.add_star(OrdStar(56.00f, -64.80f, 3.84f, OrdStar::SPEC_K, ""));
    reticulum.add_star(OrdStar(64.00f, -59.30f, 4.40f, OrdStar::SPEC_K, ""));
@@ -1657,6 +1732,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += reticulum.total_links();
 
    Constellation sagitta("Sagitta");
+   sagitta.addToDescription("The arrow");
    sagitta.add_star(OrdStar(299.69f, 19.49f, 3.51f, OrdStar::SPEC_K, ""));
    sagitta.add_star(OrdStar(296.85f, 18.53f, 3.68f, OrdStar::SPEC_M, ""));
    sagitta.add_star(OrdStar(295.02f, 18.08f, 4.39f, OrdStar::SPEC_G, "Sham"));
@@ -1669,6 +1745,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += sagitta.total_links();
 
    Constellation sagittarius("Sagittarius");
+   sagittarius.addToDescription("The archer");
    sagittarius.add_star(OrdStar(276.04f, -34.57f, 1.79f, OrdStar::SPEC_B, "Kaus Australis"));
    sagittarius.add_star(OrdStar(283.82f, -26.30f, 2.05f, OrdStar::SPEC_B, "Nunki"));
    sagittarius.add_star(OrdStar(285.65f, -29.88f, 2.60f, OrdStar::SPEC_A, "Ascella"));
@@ -1705,6 +1782,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += sagittarius.total_links();
 
    Constellation scorpius("Scorpius");
+   scorpius.addToDescription("The scorpion");
    scorpius.add_star(OrdStar(247.35f, -26.43f, 1.06f, OrdStar::SPEC_M, "Antares"));
    scorpius.add_star(OrdStar(263.40f, -37.10f, 1.62f, OrdStar::SPEC_B, "Shaula"));
    scorpius.add_star(OrdStar(264.32f, -43.00f, 1.86f, OrdStar::SPEC_F, "Sargas"));
@@ -1743,6 +1821,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += scorpius.total_links();
 
    Constellation sculptor("Sculptor");
+   sculptor.addToDescription("The sculptor");
    sculptor.add_star(OrdStar(14.89f, -29.36f, 4.30f, OrdStar::SPEC_B, ""));
    sculptor.add_star(OrdStar(353.24f, -37.81f, 4.38f, OrdStar::SPEC_K, ""));
    sculptor.add_star(OrdStar(349.70f, -32.53f, 4.41f, OrdStar::SPEC_K, ""));
@@ -1757,6 +1836,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += sculptor.total_links();
 
    Constellation scutum("Scutum");
+   scutum.addToDescription("The shield");
    scutum.add_star(OrdStar(278.80f, -8.24f, 3.85f, OrdStar::SPEC_K, ""));
    scutum.add_star(OrdStar(281.79f, -4.75f, 4.22f, OrdStar::SPEC_G, ""));
    scutum.add_star(OrdStar(277.30f, -14.57f, 4.67f, OrdStar::SPEC_A, ""));
@@ -1770,6 +1850,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += scutum.total_links();
 
    Constellation serpens_caput("Serpens Caput");
+   serpens_caput.addToDescription("The serpent's head");
    serpens_caput.add_star(OrdStar(236.07f, 6.43f, 2.63f, OrdStar::SPEC_K, "Unukalhai"));
    serpens_caput.add_star(OrdStar(237.40f, -3.43f, 3.54f, OrdStar::SPEC_A, "Tianru"));
    serpens_caput.add_star(OrdStar(236.55f, 15.42f, 3.65f, OrdStar::SPEC_A, "Chow"));
@@ -1795,6 +1876,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += serpens_caput.total_links();
 
    Constellation serpens_cauda("Serpens Cauda");
+   serpens_cauda.addToDescription("The serpent's tail");
    serpens_cauda.add_star(OrdStar(264.40f, -15.40f, 3.54f, OrdStar::SPEC_F, "Nanhai"));
    serpens_cauda.add_star(OrdStar(265.57f, -12.88f, 4.24f, OrdStar::SPEC_A, ""));
    serpens_cauda.add_star(OrdStar(275.33f, -2.90f, 1.84f, OrdStar::SPEC_K, "Donghai"));
@@ -1812,6 +1894,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += serpens_cauda.total_links();
 
    Constellation sextans("Sextans");
+   sextans.addToDescription("The sextant");
    sextans.add_star(OrdStar(151.98f, -0.37f, 4.48f, OrdStar::SPEC_A, ""));
    sextans.add_star(OrdStar(148.15f, -8.11f, 5.07f, OrdStar::SPEC_A, ""));
    sextans.add_star(OrdStar(157.58f, -0.64f, 5.08f, OrdStar::SPEC_B, ""));
@@ -1824,6 +1907,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_links += sextans.total_links();
 
    Constellation taurus("Taurus");
+   taurus.addToDescription("The bull");
    taurus.add_star(OrdStar(68.97f, 16.51f, 0.87f, OrdStar::SPEC_K, "Aldebaran"));
    taurus.add_star(OrdStar(81.56f, 28.60f, 1.65f, OrdStar::SPEC_B, "Elnath"));
    taurus.add_star(OrdStar(84.41f, 21.14f, 2.97f, OrdStar::SPEC_B, "Tien Kwan"));
@@ -1851,6 +1935,250 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    tot_stars += taurus.total_stars();
    tot_links += taurus.total_links();
 
+   Constellation telescopium("Telescopium");
+   telescopium.addToDescription("The telescope");
+   telescopium.add_star(OrdStar(276.75f, -45.97f, 3.49f, OrdStar::SPEC_B, ""));
+   telescopium.add_star(OrdStar(277.20f, -49.07f, 4.10f, OrdStar::SPEC_G, ""));
+   telescopium.add_star(OrdStar(272.80f, -45.95f, 4.52f, OrdStar::SPEC_G, ""));
+   telescopium.add_star(OrdStar(284.61f, -52.947f, 4.85f, OrdStar::SPEC_A, ""));
+   telescopium.add_star(OrdStar(301.85f, -52.88f, 4.93f, OrdStar::SPEC_M, ""));
+   telescopium.add_star(OrdStar(290.71f, -54.42f, 5.03f, OrdStar::SPEC_A, ""));
+   telescopium.add_star(OrdStar(286.58f, -52.34f, 5.17f, OrdStar::SPEC_F, ""));
+   telescopium.add_star(OrdStar(283.16f, -52.11f, 5.18f, OrdStar::SPEC_G, ""));
+   telescopium.add_star(OrdStar(297.00f, -56.361f, 5.33f, OrdStar::SPEC_A, ""));
+   telescopium.add_link(0, 2);
+   telescopium.add_link(0, 7);
+   telescopium.add_link(1, 2);
+   telescopium.add_link(1, 3);
+   telescopium.add_link(3, 5);
+   telescopium.add_link(4, 6);
+   telescopium.add_link(4, 8);
+   telescopium.add_link(5, 8);
+   telescopium.add_link(6, 7);
+   cons_list.push_back(telescopium);
+   tot_stars += telescopium.total_stars();
+   tot_links += telescopium.total_links();
+
+   Constellation triangulum("Triangulum");
+   triangulum.addToDescription("The triangle");
+   triangulum.add_star(OrdStar(32.39f, 34.99f, 3.00f, OrdStar::SPEC_A, "Deltotum"));
+   triangulum.add_star(OrdStar(28.27f, 29.58f, 3.42f, OrdStar::SPEC_F, "Mothallah"));
+   triangulum.add_star(OrdStar(34.33f, 33.85f, 4.03f, OrdStar::SPEC_A, ""));
+   triangulum.add_star(OrdStar(34.26f, 34.22f, 4.84f, OrdStar::SPEC_G, ""));
+   triangulum.add_link(0, 1);
+   triangulum.add_link(0, 3);
+   triangulum.add_link(1, 2);
+   triangulum.add_link(2, 2);
+   cons_list.push_back(triangulum);
+   tot_stars += triangulum.total_stars();
+   tot_links += triangulum.total_links();
+
+   Constellation triangulum_australae("Triangulum Australae");
+   triangulum_australae.addToDescription("The southern triangle");
+   triangulum_australae.add_star(OrdStar(252.17f, -69.03f, 1.91f, OrdStar::SPEC_K, "Atria"));
+   triangulum_australae.add_star(OrdStar(238.79f, -63.43f, 2.83f, OrdStar::SPEC_F, ""));
+   triangulum_australae.add_star(OrdStar(229.73f, -68.68f, 2.87f, OrdStar::SPEC_A, ""));
+   triangulum_australae.add_link(0, 1);
+   triangulum_australae.add_link(0, 2);
+   triangulum_australae.add_link(1, 2);
+   cons_list.push_back(triangulum_australae);
+   tot_stars += triangulum_australae.total_stars();
+   tot_links += triangulum_australae.total_links();
+
+   Constellation tucana("Tucana");
+   tucana.addToDescription("The tucan");
+   tucana.add_star(OrdStar(334.63f, -60.26f, 2.87f, OrdStar::SPEC_K, ""));
+   tucana.add_star(OrdStar(349.35f, -58.24f, 3.99f, OrdStar::SPEC_F, ""));
+   tucana.add_star(OrdStar(5.01f, -64.88f, 4.23f, OrdStar::SPEC_F, ""));
+   tucana.add_star(OrdStar(7.89f, -62.96f, 4.36f, OrdStar::SPEC_B, ""));
+   tucana.add_star(OrdStar(359.98f, -65.58f, 4.49f, OrdStar::SPEC_B, ""));
+   tucana.add_star(OrdStar(336.83f, -64.97f, 4.51f, OrdStar::SPEC_B, ""));
+   tucana.add_link(0, 1);
+   tucana.add_link(0, 5);
+   tucana.add_link(1, 3);
+   tucana.add_link(2, 3);
+   tucana.add_link(2, 4);
+   tucana.add_link(4, 5);
+   cons_list.push_back(tucana);
+   tot_stars += tucana.total_stars();
+   tot_links += tucana.total_links();
+
+   Constellation ursa_major("Ursa Major");
+   ursa_major.addToDescription("The greater bear");
+   ursa_major.add_star(OrdStar(193.51f, 55.96f, 1.76f, OrdStar::SPEC_A, "Alioth"));
+   ursa_major.add_star(OrdStar(165.93f, 61.75f, 1.81f, OrdStar::SPEC_F, "Dubhe"));
+   ursa_major.add_star(OrdStar(206.89f, 49.31f, 1.85f, OrdStar::SPEC_B, "Alkaid"));
+   ursa_major.add_star(OrdStar(200.98f, 54.93f, 2.23f, OrdStar::SPEC_A, "Mizar"));
+   ursa_major.add_star(OrdStar(165.46f, 56.38f, 2.34f, OrdStar::SPEC_A, "Merak"));
+   ursa_major.add_star(OrdStar(178.46f, 53.69f, 2.41f, OrdStar::SPEC_A, "Phecda"));
+   ursa_major.add_star(OrdStar(167.42f, 44.50f, 3.00f, OrdStar::SPEC_K, "Ta Tsun"));
+   ursa_major.add_star(OrdStar(155.58f, 41.50f, 3.06f, OrdStar::SPEC_M, "Tania Australis"));
+   ursa_major.add_star(OrdStar(134.80f, 48.04f, 3.12f, OrdStar::SPEC_A, "Talitha Borealis"));
+   ursa_major.add_star(OrdStar(143.22f, 51.68f, 3.17f, OrdStar::SPEC_F, "Al Haud"));
+   ursa_major.add_star(OrdStar(183.86f, 57.03f, 3.32f, OrdStar::SPEC_A, "Megrez"));
+   ursa_major.add_star(OrdStar(127.57f, 60.72f, 3.35f, OrdStar::SPEC_G, "Muscida"));
+   ursa_major.add_star(OrdStar(154.28f, 42.91f, 3.45f, OrdStar::SPEC_A, "Tania Borealis"));
+   ursa_major.add_star(OrdStar(169.62f, 33.09f, 3.49f, OrdStar::SPEC_K, "Alula Borealis"));
+   ursa_major.add_star(OrdStar(135.91f, 47.16f, 3.57f, OrdStar::SPEC_A, "Talitha Australis"));
+   ursa_major.add_star(OrdStar(142.88f, 63.06f, 3.65f, OrdStar::SPEC_F, ""));
+   ursa_major.add_star(OrdStar(176.51f, 47.78f, 3.69f, OrdStar::SPEC_K, "Alkafzah"));
+   ursa_major.add_star(OrdStar(147.75f, 59.04f, 3.78f, OrdStar::SPEC_F, ""));
+   ursa_major.add_star(OrdStar(169.55f, 31.53f, 3.79f, OrdStar::SPEC_G, ""));
+   ursa_major.add_link(0, 3);
+   ursa_major.add_link(0, 10);
+   ursa_major.add_link(1, 4);
+   ursa_major.add_link(1, 10);
+   ursa_major.add_link(1, 15);
+   ursa_major.add_link(2, 3);
+   ursa_major.add_link(4, 5);
+   ursa_major.add_link(4, 17);
+   ursa_major.add_link(5, 10);
+   ursa_major.add_link(5, 16);
+   ursa_major.add_link(6, 7);
+   ursa_major.add_link(6, 16);
+   ursa_major.add_link(7, 12);
+   ursa_major.add_link(8, 14);
+   ursa_major.add_link(9, 14);
+   ursa_major.add_link(9, 17);
+   ursa_major.add_link(11, 15);
+   ursa_major.add_link(11, 17);
+   ursa_major.add_link(13, 16);
+   ursa_major.add_link(13, 18);
+   ursa_major.add_link(15, 17);
+   cons_list.push_back(ursa_major);
+   tot_stars += ursa_major.total_stars();
+   tot_links += ursa_major.total_links();
+
+   Constellation ursa_minor("Ursa Minor");
+   ursa_minor.addToDescription("The lesser bear");
+   ursa_minor.add_star(OrdStar(37.95f, 89.26f, 1.97f, OrdStar::SPEC_F, "Polaris"));
+   ursa_minor.add_star(OrdStar(222.68f, 74.15f, 2.07f, OrdStar::SPEC_K, "Kochab"));
+   ursa_minor.add_star(OrdStar(230.18f, 71.83f, 3.00f, OrdStar::SPEC_A, "Pherkad"));
+   ursa_minor.add_star(OrdStar(251.49f, 82.04f, 4.21f, OrdStar::SPEC_G, "Urodelus"));
+   ursa_minor.add_star(OrdStar(236.02f, 77.79f, 4.29f, OrdStar::SPEC_A, "Ahfa al Farkadain"));
+   ursa_minor.add_star(OrdStar(263.05f, 86.59f, 4.35f, OrdStar::SPEC_A, "Yildun"));
+   ursa_minor.add_star(OrdStar(244.38f, 75.75f, 4.95f, OrdStar::SPEC_F, "Anwar al Farkadian"));
+   ursa_minor.add_link(0, 5);
+   ursa_minor.add_link(1, 2);
+   ursa_minor.add_link(1, 4);
+   ursa_minor.add_link(2, 6);
+   ursa_minor.add_link(3, 4);
+   ursa_minor.add_link(3, 5);
+   ursa_minor.add_link(4, 6);
+   cons_list.push_back(ursa_minor);
+   tot_stars += ursa_minor.total_stars();
+   tot_links += ursa_minor.total_links();
+
+   Constellation vela("Vela");
+   vela.addToDescription("The sails");
+   vela.add_star(OrdStar(122.38f, -47.34f, 1.75f, OrdStar::SPEC_O, "Regor"));
+   vela.add_star(OrdStar(131.18f, -54.71f, 1.93f, OrdStar::SPEC_A, "Koo She"));
+   vela.add_star(OrdStar(137.00f, -43.10f, 2.23f, OrdStar::SPEC_K, "Suhail"));
+   vela.add_star(OrdStar(140.53f, -55.01f, 2.47f, OrdStar::SPEC_B, "Markab"));
+   vela.add_star(OrdStar(161.69f, -49.42f, 2.69f, OrdStar::SPEC_G, "Peregrini"));
+   vela.add_star(OrdStar(149.22f, -54.57f, 3.52f, OrdStar::SPEC_B, "Tseen Ke"));
+   vela.add_star(OrdStar(142.68f, -40.47f, 3.60f, OrdStar::SPEC_F, ""));
+   vela.add_star(OrdStar(153.68f, 42.12f, 3.85f, OrdStar::SPEC_A, ""));
+   // Actually part of Puppis : the Poop Deck.
+   vela.add_star(OrdStar(121.00f, -40.00f, 2.21f, OrdStar::SPEC_O, "Naos"));
+   // Actually part of Carina : the Keel.
+   vela.add_star(OrdStar(139.25f, -59.28f, 2.21f, OrdStar::SPEC_A, "Aspidiske"));
+   vela.add_link(0, 1);
+   vela.add_link(0, 2);
+   vela.add_link(0, 8);
+   vela.add_link(1, 3);
+   vela.add_link(1, 9);
+   vela.add_link(2, 6);
+   vela.add_link(3, 5);
+   vela.add_link(4, 5);
+   vela.add_link(4, 7);
+   vela.add_link(6, 7);
+   cons_list.push_back(vela);
+   tot_stars += vela.total_stars();
+   tot_links += vela.total_links();
+
+   Constellation virgo("Virgo");
+   virgo.addToDescription("The maiden");
+   virgo.add_star(OrdStar(201.3f, -11.16f, 0.98f, OrdStar::SPEC_B, "Spica"));
+   virgo.add_star(OrdStar(190.42f, -1.45f, 2.74f, OrdStar::SPEC_F, "Porrima"));
+   virgo.add_star(OrdStar(195.55f, 10.96f, 2.85f, OrdStar::SPEC_G, "Vindemiatrix"));
+   virgo.add_star(OrdStar(203.68f, -0.56f, 3.38f, OrdStar::SPEC_A, "Heze"));
+   virgo.add_star(OrdStar(193.90f, 3.40f, 3.39f, OrdStar::SPEC_M, "Auva"));
+   virgo.add_star(OrdStar(177.67f, 1.77f, 3.59f, OrdStar::SPEC_F, "Zavijava"));
+   virgo.add_star(OrdStar(221.56f, 1.89f, 3.73f, OrdStar::SPEC_A, ""));
+   virgo.add_star(OrdStar(220.77f, -5.66f, 3.87f, OrdStar::SPEC_F, "Rijl al Awwa"));
+   virgo.add_star(OrdStar(184.98f, -0.67f, 3.89f, OrdStar::SPEC_A, "Zaniah"));
+   virgo.add_star(OrdStar(176.47f, 6.53f, 4.04f, OrdStar::SPEC_M, ""));
+   virgo.add_star(OrdStar(214.00f, -5.99f, 4.07f, OrdStar::SPEC_F, "Syrma"));
+   virgo.add_star(OrdStar(181.30f, 8.73f, 4.12f, OrdStar::SPEC_G, ""));
+   virgo.add_star(OrdStar(210.41f, 1.54f, 4.23f, OrdStar::SPEC_A, ""));
+   virgo.add_star(OrdStar(197.49f, -5.54f, 4.38f, OrdStar::SPEC_A, ""));
+   virgo.add_link(0, 13);
+   virgo.add_link(1, 3);
+   virgo.add_link(1, 4);
+   virgo.add_link(1, 8);
+   virgo.add_link(1, 13);
+   virgo.add_link(2, 4);
+   virgo.add_link(3, 10);
+   virgo.add_link(3, 12);
+   virgo.add_link(5, 8);
+   virgo.add_link(5, 9);
+   virgo.add_link(6, 12);
+   virgo.add_link(7, 10);
+   virgo.add_link(8, 11);
+   virgo.add_link(9, 11);
+   cons_list.push_back(virgo);
+   tot_stars += virgo.total_stars();
+   tot_links += virgo.total_links();
+
+   Constellation volans("Volans");
+   volans.addToDescription("The flying fish");
+   volans.add_star(OrdStar(126.43f, -66.14f, 3.77f, OrdStar::SPEC_K, ""));
+   volans.add_star(OrdStar(107.19f, -70.50f, 3.78f, OrdStar::SPEC_G, ""));
+   volans.add_star(OrdStar(109.21f, -67.96f, 3.97f, OrdStar::SPEC_F, ""));
+   volans.add_star(OrdStar(135.61f, -66.40f, 4.00f, OrdStar::SPEC_A, ""));
+   volans.add_star(OrdStar(121.98f, -68.62f, 4.35f, OrdStar::SPEC_B, ""));
+   volans.add_link(0, 3);
+   volans.add_link(0, 4);
+   volans.add_link(1, 2);
+   volans.add_link(1, 4);
+   volans.add_link(2, 4);
+   volans.add_link(3, 4);
+   cons_list.push_back(volans);
+   tot_stars += volans.total_stars();
+   tot_links += volans.total_links();
+
+   Constellation vulpecula("Vulpecula");
+   vulpecula.addToDescription("The little fox");
+   vulpecula.add_star(OrdStar(292.18f, 24.67f, 4.44f, OrdStar::SPEC_M, "Anser"));
+   vulpecula.add_star(OrdStar(313.03f, 27.81f, 4.50f, OrdStar::SPEC_K, ""));
+   vulpecula.add_star(OrdStar(121.98f, 27.10f, 4.56f, OrdStar::SPEC_G, ""));
+   vulpecula.add_star(OrdStar(298.37f, 24.08f, 4.57f, OrdStar::SPEC_B, ""));
+   vulpecula.add_star(OrdStar(300.28f, 27.75f, 4.66f, OrdStar::SPEC_A, ""));
+   vulpecula.add_star(OrdStar(303.82f, 25.59f, 4.79f, OrdStar::SPEC_B, ""));
+   vulpecula.add_star(OrdStar(309.63f, 21.20f, 4.81f, OrdStar::SPEC_A, ""));
+   vulpecula.add_star(OrdStar(297.77f, 22.61f, 4.90f, OrdStar::SPEC_B, ""));
+   vulpecula.add_star(OrdStar(311.22f, 25.27f, 4.92f, OrdStar::SPEC_K, ""));
+   vulpecula.add_star(OrdStar(309.63f, 24.12f, 5.06f, OrdStar::SPEC_B, ""));
+   vulpecula.add_star(OrdStar(301.72f, 23.61f, 5.08f, OrdStar::SPEC_B, ""));
+   vulpecula.add_star(OrdStar(314.57f, 22.36f, 5.30f, OrdStar::SPEC_K, ""));
+   // Actually part of Sagitta : the arrow.
+   vulpecula.add_star(OrdStar(299.69f, 19.49f, 3.51f, OrdStar::SPEC_K, ""));
+   vulpecula.add_link(0, 3);
+   vulpecula.add_link(1, 5);
+   vulpecula.add_link(1, 10);
+   vulpecula.add_link(2, 8);
+   vulpecula.add_link(3, 4);
+   vulpecula.add_link(3, 7);
+   vulpecula.add_link(4, 10);
+   vulpecula.add_link(5, 9);
+   vulpecula.add_link(6, 9);
+   vulpecula.add_link(7, 12);
+   vulpecula.add_link(8, 9);
+   vulpecula.add_link(9, 11);
+   cons_list.push_back(vulpecula);
+   tot_stars += vulpecula.total_stars();
+   tot_links += vulpecula.total_links();
    }
 
 Constellations::~Constellations() {
@@ -1861,21 +2189,38 @@ unsigned int Constellations::numberOfWayPoints(void) const {
 	}
 
 LookOut Constellations::getView(unsigned int sequence) const {
-	/// TODO Terrible things will happen here if there are no constellations !!
+	// Default view - in absence of any constellations - the
+   // simulation's initial view.
+   LookOut ret_val(Craft::START_POSITION, Craft::START_LOOKING, Craft::START_UP);
 
-	if(sequence > (cons_list.size() - 1)) {
-		sequence = cons_list.size() - 1;
-		}
+   // Assuming there is at least one constellation.
+   if(cons_list.size() > 0) {
+      if(sequence > (cons_list.size() - 1)) {
+         sequence = cons_list.size() - 1;
+         }
 
-	Constellation current_con = cons_list.at(sequence);
+      Constellation current_con = cons_list.at(sequence);
 
-	std::pair<float, float> cons_centroid = current_con.centre();
+      std::pair<float, float> cons_centroid = current_con.centre();
 
-	VectorSP centroid = VectorSP(cons_centroid.first, cons_centroid.second, radius);
+      VectorSP centroid = VectorSP(cons_centroid.first, cons_centroid.second, radius);
 
-	Vector3D viewpoint = centroid - centroid.unit() * VIEW_OFFSET;
+      Vector3D viewpoint = centroid - centroid.unit() * VIEW_OFFSET;
 
-	return LookOut(viewpoint, centroid, VIEW_UP, current_con.name());
+      ret_val.setPosition(viewpoint);
+      ret_val.setFocus(centroid);
+      ret_val.setOrientation(VIEW_UP);
+
+      ret_val.addToDescription(current_con.name());
+
+      const std::vector<std::string>& current_description = current_con.getDescription();
+
+      for(unsigned int index = 0; index < current_description.size(); ++index) {
+         ret_val.addToDescription(current_description[index]);
+         }
+      }
+
+	return ret_val;
 	}
 
 void Constellations::cycleActivation(void) {

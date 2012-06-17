@@ -17,21 +17,39 @@
  *   along with Einstein@Home. If not, see <http://www.gnu.org/licenses/>. *
  *                                                                         *
  ***************************************************************************/
+#ifndef TRAVERSE_FACTORY_H_
+#define TRAVERSE_FACTORY_H_
 
-#include "LookOut.h"
+#include "CameraState.h"
+#include "Traverse.h"
+#include "Traversable.h"
 
-LookOut::LookOut(const Vector3D& position, const Vector3D& focus,
-		  	  	     const Vector3D& orientation) :
-		  	  	     CameraState(position, focus, orientation) {
-	}
+/**
+ * \addtogroup solarsystem Solarsystem
+ * @{
+ */
 
-LookOut::~LookOut() {
-	}
+/**
+ * \brief
 
-const std::vector<std::string>& LookOut::getDescription(void) const {
-   return desc;
-   }
+ * \author Mike Hewson\n
+ */
 
-void LookOut::addToDescription(const std::string& description) {
-	desc.push_back(description);
-	}
+class TraverseFactory {
+   public:
+		/**
+		 * \brief Constructor
+		 */
+	   TraverseFactory(void);
+
+      /// Virtual destructor
+      virtual ~TraverseFactory();
+
+      Traverse* getInstance(const Traversable& trav, const CameraState& cam);
+   };
+
+/**
+ * @}
+ */
+
+#endif /*TRAVERSE_FACTORY_H_*/

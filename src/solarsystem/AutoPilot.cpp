@@ -27,7 +27,10 @@
 
 const float AutoPilot::LENGTH_PER_FRAME(10.0f);
 const float AutoPilot::LEAST_PATH_LENGTH(0.00001f);
-const unsigned int AutoPilot::PAUSE_FRAME_COUNT(100);
+const unsigned int AutoPilot::PAUSE_FRAME_COUNT(250);
+
+const float AutoPilot::PATH_EARLY_BOUNDARY(0.1f);
+const float AutoPilot::PATH_LATE_BOUNDARY(0.9f);
 
 AutoPilot::AutoPilot(void) {
    lambda = Path::LAMBDA_LOWER_BOUND;
@@ -49,6 +52,10 @@ void AutoPilot::activate(const Traversable& trav, const CameraState& cam) {
    set_delta_lambda();
 
    active_flag = true;
+
+   path_stage_flag = EARLY;
+
+   description_change_flag = false;
    }
 
 void AutoPilot::inactivate(void) {
@@ -92,10 +99,44 @@ CameraState AutoPilot::getViewState(void) {
 			}
 		}
 
+	description_change_flag = false;
+
+	if(lambda > PATH_LATE_BOUNDARY) {
+		if(path_stage_flag == MIDDLE) {
+			path_stage_flag = LATE;
+			description_change_flag = true;
+			current_description = current_path.getFinishMessage();
+			}
+		}
+	else {
+		if (lambda < PATH_EARLY_BOUNDARY) {
+			if(path_stage_flag == LATE) {
+				path_stage_flag = EARLY;
+				description_change_flag = true;
+				current_description = current_path.getStartMessage();
+				}
+			}
+		else {
+			if(path_stage_flag == EARLY) {
+				path_stage_flag = MIDDLE;
+				description_change_flag = true;
+				current_description.clear();
+				}
+			}
+		}
+
 	view = current_path.value(lambda);
 
 	return view;
    }
+
+const std::vector<std::string>& AutoPilot::getDescription(void) const {
+	return current_description;
+	}
+
+bool AutoPilot::hasDescriptionChanged(void) const {
+	return description_change_flag;
+	}
 
 void AutoPilot::set_delta_lambda(void) {
 	// Note that a delta lambda of zero implies no movement !!
@@ -126,12 +167,12 @@ void AutoPilot::set_delta_lambda(void) {
    }
 
 void AutoPilot::getTraverse(const Traversable& trav, const CameraState& cam) {
-	LookOut first(cam.position(), cam.focus(), cam.orientation(), "");
+	LookOut first(cam.position(), cam.focus(), cam.orientation());
 	// Kick off traverse with the given camera state.
 	current_traverse.addWayPoint(first);
 
 	// The remainder from our given Traversable object.
-	for(int way_point = 1; way_point <= trav.numberOfWayPoints(); ++way_point) {
+	for(unsigned int way_point = 0; way_point < trav.numberOfWayPoints(); ++way_point) {
 		current_traverse.addWayPoint(trav.getView(way_point));
 		}
 	}

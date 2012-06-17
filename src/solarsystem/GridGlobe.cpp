@@ -54,6 +54,7 @@ GridGlobe::GridGlobe(vec_t rad, GLuint slices, GLuint stacks, GridGlobe::textFac
                      radius(rad),
                      slices(slices),
                      stacks(stacks) {
+	sp = NULL;
    // We only have an equatorial slice if an odd number of stacks.
    hasEquator = ((stacks % 2) == 1) ? true : false;
 
@@ -61,6 +62,16 @@ GridGlobe::GridGlobe(vec_t rad, GLuint slices, GLuint stacks, GridGlobe::textFac
 
    // Set initial display cycle state.
    current_cycle_state = INITIAL_CYCLE_STATE;
+
+   grid_links = 0;
+
+   prime_meridian_links = 0;
+
+   celestial_equator_links = 0;
+
+   hour_glyph = 0;
+
+   degree_glyph = 0;
    }
 
 GridGlobe::~GridGlobe() {

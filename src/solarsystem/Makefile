@@ -18,17 +18,26 @@
 #                                                                         #
 ###########################################################################
 
+# product name
+PRODUCT = SolarSystem
+PRODUCT_LOWER := $(shell echo $(PRODUCT) | tr A-Z a-z)
+
+# product variants
+GRAV = S5R3
+RADIO = Radio
+# GAMMA = Gamma  - for later on! :-)
+
 # path settings
-SOLARSYSTEM_SRC?=$(PWD)
-SOLARSYSTEM_INSTALL?=$(PWD)
+PRODUCT_SRC = $(PROJECT_ROOT)/src/$(PRODUCT_LOWER)
+PRODUCT_INSTALL = $(PROJECT_ROOT)/install
 
 # config values
 CXX ?= g++
 
 # variables
-LIBS += -Wl,-Bstatic -lframework -loglft -lglfw -L$(SOLARSYSTEM_INSTALL)/lib
-LIBS += $(shell $(SOLARSYSTEM_INSTALL)/bin/freetype-config --libs)
-LIBS += $(shell $(SOLARSYSTEM_INSTALL)/bin/xml2-config --libs)
+LIBS += -Wl,-Bstatic -lframework -loglft -lglfw -L$(PRODUCT_INSTALL)/lib
+LIBS += $(shell $(PRODUCT_INSTALL)/bin/freetype-config --libs)
+LIBS += $(shell $(PRODUCT_INSTALL)/bin/xml2-config --libs)
 LIBS += -lboinc_api -lboinc
 LIBS += -lstdc++
 LIBS += -L/usr/lib
@@ -38,15 +47,17 @@ LIBS += -lpthread -lm -lc
 
 LDFLAGS += -static-libgcc
 
-CPPFLAGS += -I$(SOLARSYSTEM_INSTALL)/include
-CPPFLAGS += $(shell $(SOLARSYSTEM_INSTALL)/bin/freetype-config --cflags)
-CPPFLAGS += $(shell $(SOLARSYSTEM_INSTALL)/bin/xml2-config --cflags)
-CPPFLAGS += -I$(SOLARSYSTEM_INSTALL)/include/boinc -I/usr/include
-CPPFLAGS += -I$(FRAMEWORK_SRC) -I$(SOLARSYSTEM_SRC)/../framework
+CPPFLAGS += -I$(PRODUCT_INSTALL)/include
+CPPFLAGS += $(shell $(PRODUCT_INSTALL)/bin/freetype-config --cflags)
+CPPFLAGS += $(shell $(PRODUCT_INSTALL)/bin/xml2-config --cflags)
+CPPFLAGS += -I$(PRODUCT_INSTALL)/include/boinc -I/usr/include
+CPPFLAGS += -I$(FRAMEWORK_SRC) -I$(PRODUCT_SRC)/../framework
 CPPFLAGS += -DGL_GLEXT_PROTOTYPES
 
 DEPS = Makefile
-OBJS = AcceleratedPlatform.o AutoPilot.o Buffer_OBJ.o CameraState.o Constellation.o
+OBJS = $(PRODUCT).o $(PRODUCT)$(GRAV).o $(PRODUCT)$(RADIO).o
+
+OBJS += AcceleratedPlatform.o AutoPilot.o Buffer_OBJ.o CameraState.o Constellation.o
 OBJS += Constellations.o Craft.o Curve.o
 OBJS += EinsteinRadioAdapter.o EinsteinS5R3Adapter.o Globe.o GridGlobe.o
 OBJS += HUDBorderLayout.o HUDContainer.o HUDContent.o
@@ -54,210 +65,211 @@ OBJS += HUDFlowLayout.o HUDFlowHorizontalLayout.o HUDFlowVerticalLayout.o
 OBJS += HUDImage.o HUDItem.o HUDTextLine.o HUDTextLineScroll.o
 OBJS += InertialPlatform.o LookOut.o OGL_ID.o
 OBJS += OrdStar.o OrthoNormalPlatform.o Path.o Pulsar.o PulsarEAH.o Renderable.o
-OBJS += Simulation.o SolarSystem.o
-OBJS += SolarSystemRadio.o SolarSystemS5R3.o
+OBJS += Simulation.o
 OBJS += SolarSystemGlobals.o Sphere.o SpinPlatform.o Star.o SunOrbit.o
 OBJS += Supernova.o Texture_OBJ.o TranslatablePlatform.o Traverse.o Traversable.o
 OBJS += UTC.o Vector3D.o
 OBJS += VectorSP.o Vertex.o
+
 OBJS += $(RESOURCESPEC).o
 RESOURCESPEC = resources
 
-# TODO: GraphicsEngineFactory obviously depends on the actual implementations (here solarsystem)! need to change the structure! what about plugins?
-CPPFLAGS += -I$(SOLARSYSTEM_SRC) -I$(SOLARSYSTEM_SRC)/../framework
+# TODO: GraphicsEngineFactory obviously depends on the actual implementations! need to change the structure! what about plugins?
+CPPFLAGS += -I$(PRODUCT_SRC) -I$(PRODUCT_SRC)/../framework
 
 # primary role based targets
 # Both GW and ABP versions will be built by default !!
 default: release
-debug: solarsystem
-release: clean solarsystem
-solarsystem: solarsystem_Einstein_LVC
-memcheck: clean debug solarsystem
-callgrind: clean debug solarsystem
+debug: $(PRODUCT_LOWER)
+release: clean $(PRODUCT_LOWER)
+$(PRODUCT_LOWER): $(PRODUCT_LOWER)_Einstein_$(GRAV) $(PRODUCT_LOWER)_Einstein_$(RADIO)
+memcheck: clean debug $(PRODUCT_LOWER)
+callgrind: clean debug $(PRODUCT_LOWER)
 
 # target specific options
 debug: CPPFLAGS += -pg -ggdb3 -O0 -Wall -Wno-switch-enum -std=c++0x
 release: CPPFLAGS += -DNDEBUG -ggdb3 -O3 -Wall -Wno-switch-enum -std=c++0x
-solarsystem_Einstein_LVC: CPPFLAGS += -D SCIENCE_APP=EinsteinS5R3
-solarsystem_Einstein_ABP: CPPFLAGS += -D SCIENCE_APP=EinsteinRadio
+$(PRODUCT_LOWER)_Einstein_$(GRAV): CPPFLAGS += -D SCIENCE_APP=Einstein$(GRAV)
+$(PRODUCT_LOWER)_Einstein_$(RADIO): CPPFLAGS += -D SCIENCE_APP=Einstein$(RADIO)
 memcheck: CPPFLAGS += $(DEBUGFLAGSCPP) -D DEBUG_VALGRIND
 callgrind: CPPFLAGS += $(DEBUGFLAGSCPP) -D DEBUG_VALGRIND
 
 # file based targets
-solarsystem_Einstein_LVC: $(DEPS) $(SOLARSYSTEM_SRC)/main.cpp $(OBJS)
-	$(CXX) -g $(CPPFLAGS) $(LDFLAGS) $(SOLARSYSTEM_SRC)/main.cpp -o "graphics_app=einstein_RUNLABEL_VERSION_graphics_i686-pc-linux-gnu" $(OBJS) $(LIBS)
+$(PRODUCT_LOWER)_Einstein_$(GRAV): $(DEPS) $(PRODUCT_SRC)/main.cpp $(OBJS)
+	$(CXX) -g $(CPPFLAGS) $(LDFLAGS) $(PRODUCT_SRC)/main.cpp -o "graphics_app=einstein_RUNLABEL_VERSION_graphics_i686-pc-linux-gnu" $(OBJS) $(LIBS)
 
-solarsystem_Einstein_ABP: $(DEPS) $(SOLARSYSTEM_SRC)/main.cpp $(OBJS)
-	$(CXX) -g $(CPPFLAGS) $(LDFLAGS) $(SOLARSYSTEM_SRC)/main.cpp -o "graphics_app=einsteinbinary_RUNLABEL_VERSION_graphics_i686-pc-linux-gnu" $(OBJS) $(LIBS)
+$(PRODUCT_LOWER)_Einstein_$(RADIO): $(DEPS) $(PRODUCT_SRC)/main.cpp $(OBJS)
+	$(CXX) -g $(CPPFLAGS) $(LDFLAGS) $(PRODUCT_SRC)/main.cpp -o "graphics_app=einsteinbinary_RUNLABEL_VERSION_graphics_i686-pc-linux-gnu" $(OBJS) $(LIBS)
 
-SolarSystem.o: $(DEPS) $(SOLARSYSTEM_SRC)/SolarSystem.cpp $(SOLARSYSTEM_SRC)/SolarSystem.h
-	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/SolarSystem.cpp
+$(PRODUCT).o: $(DEPS) $(PRODUCT_SRC)/$(PRODUCT).cpp $(PRODUCT_SRC)/$(PRODUCT).h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/$(PRODUCT).cpp
 
-SolarSystemRadio.o: $(DEPS) $(SOLARSYSTEM_SRC)/SolarSystemRadio.cpp $(SOLARSYSTEM_SRC)/SolarSystemRadio.h
-	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/SolarSystemRadio.cpp
+$(PRODUCT)$(GRAV).o: $(DEPS) $(PRODUCT_SRC)/$(PRODUCT)$(GRAV).cpp $(PRODUCT_SRC)/$(PRODUCT)$(GRAV).h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/$(PRODUCT)$(GRAV).cpp
 
-SolarSystemS5R3.o: $(DEPS) $(SOLARSYSTEM_SRC)/SolarSystemS5R3.cpp $(SOLARSYSTEM_SRC)/SolarSystemS5R3.h
-	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/SolarSystemS5R3.cpp
-
-AcceleratedPlatform.o: $(DEPS) $(SOLARSYSTEM_SRC)/AcceleratedPlatform.cpp $(SOLARSYSTEM_SRC)/AcceleratedPlatform.h
-	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/AcceleratedPlatform.cpp
+$(PRODUCT)$(RADIO).o: $(DEPS) $(PRODUCT_SRC)/$(PRODUCT)$(RADIO).cpp $(PRODUCT_SRC)/$(PRODUCT)$(RADIO).h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/$(PRODUCT)$(RADIO).cpp
 	
-AutoPilot.o: $(DEPS) $(SOLARSYSTEM_SRC)/AutoPilot.cpp $(SOLARSYSTEM_SRC)/AutoPilot.h
-	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/AutoPilot.cpp	
 
-Axes.o: $(DEPS) $(SOLARSYSTEM_SRC)/Axes.cpp $(SOLARSYSTEM_SRC)/Axes.h
-	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/Axes.cpp
-
-Buffer_OBJ.o: $(DEPS) $(SOLARSYSTEM_SRC)/Buffer_OBJ.cpp $(SOLARSYSTEM_SRC)/Buffer_OBJ.h
-	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/Buffer_OBJ.cpp
+AcceleratedPlatform.o: $(DEPS) $(PRODUCT_SRC)/AcceleratedPlatform.cpp $(PRODUCT_SRC)/AcceleratedPlatform.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/AcceleratedPlatform.cpp
 	
-CameraState.o: $(DEPS) $(SOLARSYSTEM_SRC)/CameraState.cpp $(SOLARSYSTEM_SRC)/CameraState.h
-	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/CameraState.cpp
+AutoPilot.o: $(DEPS) $(PRODUCT_SRC)/AutoPilot.cpp $(PRODUCT_SRC)/AutoPilot.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/AutoPilot.cpp	
 
-Constellation.o: $(DEPS) $(SOLARSYSTEM_SRC)/Constellation.cpp $(SOLARSYSTEM_SRC)/Constellation.h
-	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/Constellation.cpp
+Axes.o: $(DEPS) $(PRODUCT_SRC)/Axes.cpp $(PRODUCT_SRC)/Axes.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/Axes.cpp
 
-Constellations.o: $(DEPS) $(SOLARSYSTEM_SRC)/Constellations.cpp $(SOLARSYSTEM_SRC)/Constellations.h
-	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/Constellations.cpp
-
-Craft.o: $(DEPS) $(SOLARSYSTEM_SRC)/Craft.cpp $(SOLARSYSTEM_SRC)/Craft.h
-	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/Craft.cpp
-
-Curve.o: $(DEPS) $(SOLARSYSTEM_SRC)/Curve.cpp $(SOLARSYSTEM_SRC)/Curve.h
-	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/Curve.cpp	
-
-DisplayList.o: $(DEPS) $(SOLARSYSTEM_SRC)/DisplayList.cpp $(SOLARSYSTEM_SRC)/DisplayList.h
-	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/DisplayList.cpp
-
-Ecliptic.o: $(DEPS) $(SOLARSYSTEM_SRC)/Ecliptic.cpp $(SOLARSYSTEM_SRC)/Ecliptic.h
-	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/Ecliptic.cpp
-
-EinsteinS5R3Adapter.o: $(DEPS) $(SOLARSYSTEM_SRC)/EinsteinS5R3Adapter.cpp $(SOLARSYSTEM_SRC)/EinsteinS5R3Adapter.h
-	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/EinsteinS5R3Adapter.cpp
-
-EinsteinRadioAdapter.o: $(SOLARSYSTEM_SRC)/EinsteinRadioAdapter.cpp $(SOLARSYSTEM_SRC)/EinsteinRadioAdapter.h
-	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/EinsteinRadioAdapter.cpp
-
-Globe.o: $(DEPS) $(SOLARSYSTEM_SRC)/Globe.cpp $(SOLARSYSTEM_SRC)/Globe.h
-	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/Globe.cpp
-
-GridGlobe.o: $(DEPS) $(SOLARSYSTEM_SRC)/GridGlobe.cpp $(SOLARSYSTEM_SRC)/GridGlobe.h
-	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/GridGlobe.cpp
-
-HUDBorderLayout.o: $(DEPS) $(SOLARSYSTEM_SRC)/HUDBorderLayout.cpp $(SOLARSYSTEM_SRC)/HUDBorderLayout.h
-	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/HUDBorderLayout.cpp
-
-HUDContainer.o: $(DEPS) $(SOLARSYSTEM_SRC)/HUDContainer.cpp $(SOLARSYSTEM_SRC)/HUDContainer.h
-	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/HUDContainer.cpp
-
-HUDContent.o: $(DEPS) $(SOLARSYSTEM_SRC)/HUDContent.cpp $(SOLARSYSTEM_SRC)/HUDContent.h
-	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/HUDContent.cpp
-
-HUDFlowLayout.o: $(DEPS) $(SOLARSYSTEM_SRC)/HUDFlowLayout.cpp $(SOLARSYSTEM_SRC)/HUDFlowLayout.h
-	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/HUDFlowLayout.cpp
-
-HUDFlowHorizontalLayout.o: $(DEPS) $(SOLARSYSTEM_SRC)/HUDFlowHorizontalLayout.cpp $(SOLARSYSTEM_SRC)/HUDFlowHorizontalLayout.h
-	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/HUDFlowHorizontalLayout.cpp
-
-HUDFlowVerticalLayout.o: $(DEPS) $(SOLARSYSTEM_SRC)/HUDFlowVerticalLayout.cpp $(SOLARSYSTEM_SRC)/HUDFlowVerticalLayout.h
-	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/HUDFlowVerticalLayout.cpp
-
-HUDImage.o: $(DEPS) $(SOLARSYSTEM_SRC)/HUDImage.cpp $(SOLARSYSTEM_SRC)/HUDImage.h
-	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/HUDImage.cpp
-
-HUDItem.o: $(DEPS) $(SOLARSYSTEM_SRC)/HUDItem.cpp $(SOLARSYSTEM_SRC)/HUDItem.h
-	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/HUDItem.cpp
-
-HUDTextLine.o: $(DEPS) $(SOLARSYSTEM_SRC)/HUDTextLine.cpp $(SOLARSYSTEM_SRC)/HUDTextLine.h
-	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/HUDTextLine.cpp
-
-HUDTextLineScroll.o: $(DEPS) $(SOLARSYSTEM_SRC)/HUDTextLineScroll.cpp $(SOLARSYSTEM_SRC)/HUDTextLineScroll.h
-	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/HUDTextLineScroll.cpp
-
-InertialPlatform.o: $(DEPS) $(SOLARSYSTEM_SRC)/InertialPlatform.cpp $(SOLARSYSTEM_SRC)/InertialPlatform.h
-	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/InertialPlatform.cpp
-
-LookOut.o: $(DEPS) $(SOLARSYSTEM_SRC)/LookOut.cpp $(SOLARSYSTEM_SRC)/LookOut.h
-	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/LookOut.cpp
-
-OGL_ID.o: $(DEPS) $(SOLARSYSTEM_SRC)/OGL_ID.cpp $(SOLARSYSTEM_SRC)/OGL_ID.h
-	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/OGL_ID.cpp
-
-OrdStar.o: $(DEPS) $(SOLARSYSTEM_SRC)/OrdStar.cpp $(SOLARSYSTEM_SRC)/OrdStar.h
-	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/OrdStar.cpp
-
-OrthoNormalPlatform.o: $(DEPS) $(SOLARSYSTEM_SRC)/OrthoNormalPlatform.cpp $(SOLARSYSTEM_SRC)/OrthoNormalPlatform.h
-	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/OrthoNormalPlatform.cpp
+Buffer_OBJ.o: $(DEPS) $(PRODUCT_SRC)/Buffer_OBJ.cpp $(PRODUCT_SRC)/Buffer_OBJ.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/Buffer_OBJ.cpp
 	
-Path.o: $(DEPS) $(SOLARSYSTEM_SRC)/Path.cpp $(SOLARSYSTEM_SRC)/Path.h
-	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/Path.cpp	
+CameraState.o: $(DEPS) $(PRODUCT_SRC)/CameraState.cpp $(PRODUCT_SRC)/CameraState.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/CameraState.cpp
 
-Pulsar.o: $(DEPS) $(SOLARSYSTEM_SRC)/Pulsar.cpp $(SOLARSYSTEM_SRC)/Pulsar.h
-	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/Pulsar.cpp
+Constellation.o: $(DEPS) $(PRODUCT_SRC)/Constellation.cpp $(PRODUCT_SRC)/Constellation.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/Constellation.cpp
 
-PulsarEAH.o: $(DEPS) $(SOLARSYSTEM_SRC)/PulsarEAH.cpp $(SOLARSYSTEM_SRC)/PulsarEAH.h
-	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/PulsarEAH.cpp
+Constellations.o: $(DEPS) $(PRODUCT_SRC)/Constellations.cpp $(PRODUCT_SRC)/Constellations.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/Constellations.cpp
 
-Renderable.o: $(DEPS) $(SOLARSYSTEM_SRC)/Renderable.cpp $(SOLARSYSTEM_SRC)/Renderable.h
-	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/Renderable.cpp
+Craft.o: $(DEPS) $(PRODUCT_SRC)/Craft.cpp $(PRODUCT_SRC)/Craft.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/Craft.cpp
+
+Curve.o: $(DEPS) $(PRODUCT_SRC)/Curve.cpp $(PRODUCT_SRC)/Curve.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/Curve.cpp	
+
+DisplayList.o: $(DEPS) $(PRODUCT_SRC)/DisplayList.cpp $(PRODUCT_SRC)/DisplayList.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/DisplayList.cpp
+
+Ecliptic.o: $(DEPS) $(PRODUCT_SRC)/Ecliptic.cpp $(PRODUCT_SRC)/Ecliptic.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/Ecliptic.cpp
+
+EinsteinS5R3Adapter.o: $(DEPS) $(PRODUCT_SRC)/EinsteinS5R3Adapter.cpp $(PRODUCT_SRC)/EinsteinS5R3Adapter.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/EinsteinS5R3Adapter.cpp
+
+EinsteinRadioAdapter.o: $(PRODUCT_SRC)/EinsteinRadioAdapter.cpp $(PRODUCT_SRC)/EinsteinRadioAdapter.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/EinsteinRadioAdapter.cpp
+
+Globe.o: $(DEPS) $(PRODUCT_SRC)/Globe.cpp $(PRODUCT_SRC)/Globe.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/Globe.cpp
+
+GridGlobe.o: $(DEPS) $(PRODUCT_SRC)/GridGlobe.cpp $(PRODUCT_SRC)/GridGlobe.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/GridGlobe.cpp
+
+HUDBorderLayout.o: $(DEPS) $(PRODUCT_SRC)/HUDBorderLayout.cpp $(PRODUCT_SRC)/HUDBorderLayout.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/HUDBorderLayout.cpp
+
+HUDContainer.o: $(DEPS) $(PRODUCT_SRC)/HUDContainer.cpp $(PRODUCT_SRC)/HUDContainer.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/HUDContainer.cpp
+
+HUDContent.o: $(DEPS) $(PRODUCT_SRC)/HUDContent.cpp $(PRODUCT_SRC)/HUDContent.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/HUDContent.cpp
+
+HUDFlowLayout.o: $(DEPS) $(PRODUCT_SRC)/HUDFlowLayout.cpp $(PRODUCT_SRC)/HUDFlowLayout.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/HUDFlowLayout.cpp
+
+HUDFlowHorizontalLayout.o: $(DEPS) $(PRODUCT_SRC)/HUDFlowHorizontalLayout.cpp $(PRODUCT_SRC)/HUDFlowHorizontalLayout.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/HUDFlowHorizontalLayout.cpp
+
+HUDFlowVerticalLayout.o: $(DEPS) $(PRODUCT_SRC)/HUDFlowVerticalLayout.cpp $(PRODUCT_SRC)/HUDFlowVerticalLayout.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/HUDFlowVerticalLayout.cpp
+
+HUDImage.o: $(DEPS) $(PRODUCT_SRC)/HUDImage.cpp $(PRODUCT_SRC)/HUDImage.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/HUDImage.cpp
+
+HUDItem.o: $(DEPS) $(PRODUCT_SRC)/HUDItem.cpp $(PRODUCT_SRC)/HUDItem.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/HUDItem.cpp
+
+HUDTextLine.o: $(DEPS) $(PRODUCT_SRC)/HUDTextLine.cpp $(PRODUCT_SRC)/HUDTextLine.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/HUDTextLine.cpp
+
+HUDTextLineScroll.o: $(DEPS) $(PRODUCT_SRC)/HUDTextLineScroll.cpp $(PRODUCT_SRC)/HUDTextLineScroll.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/HUDTextLineScroll.cpp
+
+InertialPlatform.o: $(DEPS) $(PRODUCT_SRC)/InertialPlatform.cpp $(PRODUCT_SRC)/InertialPlatform.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/InertialPlatform.cpp
+
+LookOut.o: $(DEPS) $(PRODUCT_SRC)/LookOut.cpp $(PRODUCT_SRC)/LookOut.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/LookOut.cpp
+
+OGL_ID.o: $(DEPS) $(PRODUCT_SRC)/OGL_ID.cpp $(PRODUCT_SRC)/OGL_ID.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/OGL_ID.cpp
+
+OrdStar.o: $(DEPS) $(PRODUCT_SRC)/OrdStar.cpp $(PRODUCT_SRC)/OrdStar.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/OrdStar.cpp
+
+OrthoNormalPlatform.o: $(DEPS) $(PRODUCT_SRC)/OrthoNormalPlatform.cpp $(PRODUCT_SRC)/OrthoNormalPlatform.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/OrthoNormalPlatform.cpp
 	
-Simulation.o: $(DEPS) $(SOLARSYSTEM_SRC)/Simulation.cpp $(SOLARSYSTEM_SRC)/Simulation.h
-	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/Simulation.cpp
+Path.o: $(DEPS) $(PRODUCT_SRC)/Path.cpp $(PRODUCT_SRC)/Path.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/Path.cpp	
 
-SolarSystemGlobals.o: $(DEPS) $(SOLARSYSTEM_SRC)/SolarSystemGlobals.cpp $(SOLARSYSTEM_SRC)/SolarSystemGlobals.h
-	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/SolarSystemGlobals.cpp
+Pulsar.o: $(DEPS) $(PRODUCT_SRC)/Pulsar.cpp $(PRODUCT_SRC)/Pulsar.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/Pulsar.cpp
 
-Sphere.o: $(DEPS) $(SOLARSYSTEM_SRC)/Sphere.cpp $(SOLARSYSTEM_SRC)/Sphere.h
-	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/Sphere.cpp
+PulsarEAH.o: $(DEPS) $(PRODUCT_SRC)/PulsarEAH.cpp $(PRODUCT_SRC)/PulsarEAH.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/PulsarEAH.cpp
 
-SphericalCoordSystem.o: $(DEPS) $(SOLARSYSTEM_SRC)/SphericalCoordSystem.cpp $(SOLARSYSTEM_SRC)/SphericalCoordSystem.h
-	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/SphericalCoordSystem.cpp
-
-SphericalCoordSystemAngles.o: $(DEPS) $(SOLARSYSTEM_SRC)/SphericalCoordSystemAngles.cpp $(SOLARSYSTEM_SRC)/SphericalCoordSystemAngles.h
-	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/SphericalCoordSystemAngles.cpp
-
-SphericalCoordSystemLabels.o: $(DEPS) $(SOLARSYSTEM_SRC)/SphericalCoordSystemLabels.cpp $(SOLARSYSTEM_SRC)/SphericalCoordSystemLabels.h
-	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/SphericalCoordSystemLabels.cpp
-
-SpinPlatform.o: $(DEPS) $(SOLARSYSTEM_SRC)/SpinPlatform.cpp $(SOLARSYSTEM_SRC)/SpinPlatform.h
-	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/SpinPlatform.cpp
-
-Star.o: $(DEPS) $(SOLARSYSTEM_SRC)/Star.cpp $(SOLARSYSTEM_SRC)/Star.h
-	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/Star.cpp
-
-SunOrbit.o: $(DEPS) $(SOLARSYSTEM_SRC)/SunOrbit.cpp $(SOLARSYSTEM_SRC)/SunOrbit.h
-	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/SunOrbit.cpp
-
-Supernova.o: $(DEPS) $(SOLARSYSTEM_SRC)/Supernova.cpp $(SOLARSYSTEM_SRC)/Supernova.h
-	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/Supernova.cpp
-
-Texture_OBJ.o: $(DEPS) $(SOLARSYSTEM_SRC)/Texture_OBJ.cpp $(SOLARSYSTEM_SRC)/Texture_OBJ.h
-	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/Texture_OBJ.cpp
-
-TranslatablePlatform.o: $(DEPS) $(SOLARSYSTEM_SRC)/TranslatablePlatform.cpp $(SOLARSYSTEM_SRC)/TranslatablePlatform.h
-	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/TranslatablePlatform.cpp
+Renderable.o: $(DEPS) $(PRODUCT_SRC)/Renderable.cpp $(PRODUCT_SRC)/Renderable.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/Renderable.cpp
 	
-Traverse.o: $(DEPS) $(SOLARSYSTEM_SRC)/Traverse.cpp $(SOLARSYSTEM_SRC)/Traverse.h
-	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/Traverse.cpp	
+Simulation.o: $(DEPS) $(PRODUCT_SRC)/Simulation.cpp $(PRODUCT_SRC)/Simulation.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/Simulation.cpp
+
+SolarSystemGlobals.o: $(DEPS) $(PRODUCT_SRC)/SolarSystemGlobals.cpp $(PRODUCT_SRC)/SolarSystemGlobals.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/SolarSystemGlobals.cpp
+
+Sphere.o: $(DEPS) $(PRODUCT_SRC)/Sphere.cpp $(PRODUCT_SRC)/Sphere.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/Sphere.cpp
+
+SphericalCoordSystem.o: $(DEPS) $(PRODUCT_SRC)/SphericalCoordSystem.cpp $(PRODUCT_SRC)/SphericalCoordSystem.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/SphericalCoordSystem.cpp
+
+SphericalCoordSystemAngles.o: $(DEPS) $(PRODUCT_SRC)/SphericalCoordSystemAngles.cpp $(PRODUCT_SRC)/SphericalCoordSystemAngles.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/SphericalCoordSystemAngles.cpp
+
+SphericalCoordSystemLabels.o: $(DEPS) $(PRODUCT_SRC)/SphericalCoordSystemLabels.cpp $(PRODUCT_SRC)/SphericalCoordSystemLabels.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/SphericalCoordSystemLabels.cpp
+
+SpinPlatform.o: $(DEPS) $(PRODUCT_SRC)/SpinPlatform.cpp $(PRODUCT_SRC)/SpinPlatform.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/SpinPlatform.cpp
+
+Star.o: $(DEPS) $(PRODUCT_SRC)/Star.cpp $(PRODUCT_SRC)/Star.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/Star.cpp
+
+SunOrbit.o: $(DEPS) $(PRODUCT_SRC)/SunOrbit.cpp $(PRODUCT_SRC)/SunOrbit.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/SunOrbit.cpp
+
+Supernova.o: $(DEPS) $(PRODUCT_SRC)/Supernova.cpp $(PRODUCT_SRC)/Supernova.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/Supernova.cpp
+
+Texture_OBJ.o: $(DEPS) $(PRODUCT_SRC)/Texture_OBJ.cpp $(PRODUCT_SRC)/Texture_OBJ.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/Texture_OBJ.cpp
+
+TranslatablePlatform.o: $(DEPS) $(PRODUCT_SRC)/TranslatablePlatform.cpp $(PRODUCT_SRC)/TranslatablePlatform.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/TranslatablePlatform.cpp
 	
-Traversable.o: $(DEPS) $(SOLARSYSTEM_SRC)/Traversable.cpp $(SOLARSYSTEM_SRC)/Traversable.h
-	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/Traversable.cpp		
+Traverse.o: $(DEPS) $(PRODUCT_SRC)/Traverse.cpp $(PRODUCT_SRC)/Traverse.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/Traverse.cpp	
+	
+Traversable.o: $(DEPS) $(PRODUCT_SRC)/Traversable.cpp $(PRODUCT_SRC)/Traversable.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/Traversable.cpp		
 
-UTC.o: $(DEPS) $(SOLARSYSTEM_SRC)/UTC.cpp $(SOLARSYSTEM_SRC)/UTC.h
-	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/UTC.cpp
+UTC.o: $(DEPS) $(PRODUCT_SRC)/UTC.cpp $(PRODUCT_SRC)/UTC.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/UTC.cpp
 
-Vector3D.o: $(DEPS) $(SOLARSYSTEM_SRC)/Vector3D.cpp $(SOLARSYSTEM_SRC)/Vector3D.h
-	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/Vector3D.cpp
+Vector3D.o: $(DEPS) $(PRODUCT_SRC)/Vector3D.cpp $(PRODUCT_SRC)/Vector3D.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/Vector3D.cpp
 
-VectorSP.o: $(DEPS) $(SOLARSYSTEM_SRC)/VectorSP.cpp $(SOLARSYSTEM_SRC)/VectorSP.h
-	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/VectorSP.cpp
+VectorSP.o: $(DEPS) $(PRODUCT_SRC)/VectorSP.cpp $(PRODUCT_SRC)/VectorSP.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/VectorSP.cpp
 
-Vertex.o: $(DEPS) $(SOLARSYSTEM_SRC)/Vertex.cpp $(SOLARSYSTEM_SRC)/Vertex.h
-	$(CXX) -g $(CPPFLAGS) -c $(SOLARSYSTEM_SRC)/Vertex.cpp
+Vertex.o: $(DEPS) $(PRODUCT_SRC)/Vertex.cpp $(PRODUCT_SRC)/Vertex.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/Vertex.cpp
 
 # resource compiler
-$(RESOURCESPEC).o: $(SOLARSYSTEM_SRC)/$(RESOURCESPEC).orc
-	$(SOLARSYSTEM_INSTALL)/bin/orc $(SOLARSYSTEM_SRC)/$(RESOURCESPEC).orc $(RESOURCESPEC).cpp
+$(RESOURCESPEC).o: $(PRODUCT_SRC)/$(RESOURCESPEC).orc
+	$(PRODUCT_INSTALL)/bin/orc $(PRODUCT_SRC)/$(RESOURCESPEC).orc $(RESOURCESPEC).cpp
 	$(CXX) -g $(CPPFLAGS) -c $(RESOURCESPEC).cpp -o $(RESOURCESPEC).o
 
 # tools
@@ -268,8 +280,8 @@ callgrind:
 	valgrind --tool=callgrind --track-fds=yes --time-stamp=yes $(PWD)/graphics_app=einstein_RUNLABEL_VERSION_graphics_i686-pc-linux-gnu
 
 install:
-	mkdir -p $(SOLARSYSTEM_INSTALL)/../dist
-	cp graphics_app* $(SOLARSYSTEM_INSTALL)/../dist
+	mkdir -p $(PRODUCT_INSTALL)/../dist
+	cp graphics_app* $(PRODUCT_INSTALL)/../dist
 
 clean:
 	rm -f $(RESOURCESPEC).cpp $(OBJS) graphics_app*

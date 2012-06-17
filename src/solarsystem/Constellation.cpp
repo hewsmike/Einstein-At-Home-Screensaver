@@ -30,6 +30,7 @@ Constellation::Constellation(const std::string nm) : cons_name(nm) {
    crosses_first_point_Aries = false;
    first_quadrant = false;
    fourth_quadrant = false;
+   middle_quadrants = false;
    centre_evaluated = false;
    }
 
@@ -203,3 +204,11 @@ std::pair<GLfloat, GLfloat> Constellation::centre(void) {
    ret_val.second = dec_centre;
    return ret_val;
    }
+
+void Constellation::addToDescription(const std::string& description) {
+	desc.push_back(description);
+	}
+
+const std::vector<std::string>& Constellation::getDescription(void) const {
+	return desc;
+	}

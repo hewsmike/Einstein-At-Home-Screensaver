@@ -60,6 +60,18 @@ float Path::curveLength(Path::component comp) const {
 	return ret_val;
 	}
 
+void Path::setStartMessage(const std::vector<std::string>& message) {
+	for(unsigned int index = 0; index < message.size(); ++index) {
+		start_msg.push_back(message[index]);
+		}
+	}
+
+void Path::setFinishMessage(const std::vector<std::string>& message) {
+	for(unsigned int index = 0; index < message.size(); ++index) {
+		finish_msg.push_back(message[index]);
+		}
+	}
+
 CameraState Path::value(float lambda) const {
    // Clamp lambda
 	if(lambda < LAMBDA_LOWER_BOUND) {
@@ -70,4 +82,12 @@ CameraState Path::value(float lambda) const {
 		}
 
 	return CameraState(where.value(lambda), look_at.value(lambda), up_dir.value(lambda));
+	}
+
+const std::vector<std::string>& Path::getStartMessage(void) const {
+	return start_msg;
+	}
+
+const std::vector<std::string>& Path::getFinishMessage(void) const {
+	return finish_msg;
 	}

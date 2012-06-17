@@ -21,6 +21,8 @@
 #ifndef AUTOPILOT_H_
 #define AUTOPILOT_H_
 
+#include <vector>
+
 #include "CameraState.h"
 #include "Path.h"
 #include "Traversable.h"
@@ -58,7 +60,16 @@ class AutoPilot {
 
       CameraState getViewState(void);
 
+      const std::vector<std::string>& getDescription(void) const;
+
+      bool hasDescriptionChanged(void) const;
+
    private:
+      enum path_stage {EARLY, MIDDLE, LATE};
+
+      static const float PATH_EARLY_BOUNDARY;
+      static const float PATH_LATE_BOUNDARY;
+
       static const float LENGTH_PER_FRAME;
       static const float LEAST_PATH_LENGTH;
       static const unsigned int PAUSE_FRAME_COUNT;
@@ -74,6 +85,12 @@ class AutoPilot {
       float lambda;
 
       float current_delta_lambda;
+
+      std::vector<std::string> current_description;
+
+      path_stage path_stage_flag;
+
+      bool description_change_flag;
 
       void set_delta_lambda(void);
 

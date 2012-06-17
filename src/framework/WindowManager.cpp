@@ -155,7 +155,7 @@ bool WindowManager::initialize(const int width, const int height, const int fram
                                     current_desktop_mode.RedBits,			// Alpha range same as individual colors
                                     best_depth_buffer_grain,
                                     NO_STENCIL,
-                                    GLFW_WINDOW);
+                                    GLFW_FULLSCREEN);
 
 	// If that didn't work, then maybe it was the depth buffer,
 	// and try again with a lesser spec.
@@ -168,7 +168,7 @@ bool WindowManager::initialize(const int width, const int height, const int fram
       	                              current_desktop_mode.RedBits,    // Alpha range same as individual colors
          	                           best_depth_buffer_grain,
             	                        NO_STENCIL,
-               	                     GLFW_WINDOW);
+               	                     GLFW_FULLSCREEN);
 
 		// Did that work?
       if(window_open == GL_FALSE) {
