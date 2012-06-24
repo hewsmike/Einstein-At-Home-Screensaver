@@ -177,8 +177,8 @@ class WindowManager {
       enum match {MATCH_NONE, MATCH_CLOSE, MATCH_EXACT};
       
       /// Minimum OpenGL version requirements.
-      static int OPEN_GL_VERSION_MINIMUM_MAJOR;
-      static int OPEN_GL_VERSION_MINIMUM_MINOR;
+      static unsigned int OPEN_GL_VERSION_MINIMUM_MAJOR;
+      static unsigned int OPEN_GL_VERSION_MINIMUM_MINOR;
       
       /// Choices for depth buffer resolution.
       static int DEPTH_BUFFER_GRAIN;

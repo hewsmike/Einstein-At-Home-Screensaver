@@ -30,8 +30,8 @@
 #include "Events.h"
 #include "SolarSystemGlobals.h"
 
-int WindowManager::OPEN_GL_VERSION_MINIMUM_MAJOR(1);
-int WindowManager::OPEN_GL_VERSION_MINIMUM_MINOR(5);
+unsigned int WindowManager::OPEN_GL_VERSION_MINIMUM_MAJOR(1);
+unsigned int WindowManager::OPEN_GL_VERSION_MINIMUM_MINOR(5);
 int WindowManager::DEPTH_BUFFER_GRAIN(24);
 int WindowManager::DEPTH_BUFFER_GRAIN_FALLBACK(16);
 int WindowManager::NO_STENCIL(0);
@@ -142,10 +142,9 @@ bool WindowManager::initialize(const int width, const int height, const int fram
    glfwOpenWindowHint(GLFW_OPENGL_VERSION_MAJOR, OPEN_GL_VERSION_MINIMUM_MAJOR);
    glfwOpenWindowHint(GLFW_OPENGL_VERSION_MINOR, OPEN_GL_VERSION_MINIMUM_MINOR);
 
-   // We always start in windowed mode as starting
-	// in fullscreen fails with high CPU load.
-   m_CurrentWidth = m_WindowedWidth;
-   m_CurrentHeight = m_WindowedHeight;
+   // Start in fullscreen mode at whatever is the user's current settings for their desktop.
+   m_CurrentWidth = m_DesktopWidth;
+   m_CurrentHeight = m_DesktopHeight;
    isFullScreenMode = false;
 
    int window_open = glfwOpenWindow(m_CurrentWidth, m_CurrentHeight,
@@ -155,7 +154,7 @@ bool WindowManager::initialize(const int width, const int height, const int fram
                                     current_desktop_mode.RedBits,			// Alpha range same as individual colors
                                     best_depth_buffer_grain,
                                     NO_STENCIL,
-                                    GLFW_FULLSCREEN);
+                                    GLFW_WINDOW);
 
 	// If that didn't work, then maybe it was the depth buffer,
 	// and try again with a lesser spec.
@@ -168,7 +167,7 @@ bool WindowManager::initialize(const int width, const int height, const int fram
       	                              current_desktop_mode.RedBits,    // Alpha range same as individual colors
          	                           best_depth_buffer_grain,
             	                        NO_STENCIL,
-               	                     GLFW_FULLSCREEN);
+               	                     GLFW_WINDOW);
 
 		// Did that work?
       if(window_open == GL_FALSE) {
