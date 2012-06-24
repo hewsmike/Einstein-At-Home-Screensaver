@@ -38,8 +38,7 @@
 #include "GridGlobe.h"
 #include "HUDBorderLayout.h"
 #include "HUDContent.h"
-#include "HUDFlowHorizontalLayout.h"
-#include "HUDFlowVerticalLayout.h"
+#include "HUDFlowLayout.h"
 #include "HUDImage.h"
 #include "HUDTextLine.h"
 #include "HUDTextLineScroll.h"
@@ -244,10 +243,10 @@ class Simulation : public Renderable {
 
       HUDBorderLayout overlay;
 
-      HUDFlowHorizontalLayout north_panel;
-      HUDFlowHorizontalLayout south_panel;
-      HUDFlowVerticalLayout east_panel;
-      HUDFlowVerticalLayout west_panel;
+      HUDFlowLayout north_panel;
+      HUDFlowLayout south_panel;
+      HUDFlowLayout east_panel;
+      HUDFlowLayout west_panel;
 
       void LoadImageToPanel(HUDImage* hip, HUDFlowLayout* hfl,
       							 std::string resource_name, GLuint margin_x, GLuint margin_y);

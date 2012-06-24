@@ -121,10 +121,10 @@ Simulation::Simulation(void): min60(0),
                               wyp_image(NULL),
                               version_text(NULL),
                               overlay(NULL),
-                              north_panel(&overlay),
-                              south_panel(&overlay),
-                              east_panel(&overlay),
-                              west_panel(&overlay) {
+                              north_panel(&overlay, HUDFlowLayout::HORIZONTAL),
+                              south_panel(&overlay, HUDFlowLayout::HORIZONTAL),
+                              east_panel(&overlay, HUDFlowLayout::VERTICAL),
+                              west_panel(&overlay, HUDFlowLayout::VERTICAL) {
    c_sphere.setLine(GridGlobe::MAIN, SKYGRID_MAIN_WIDTH, SKYGRID_MAIN_RED, SKYGRID_MAIN_GREEN, SKYGRID_MAIN_BLUE);
    c_sphere.setLine(GridGlobe::EQUATOR, SKYGRID_CELESTIAL_EQUATOR_WIDTH, SKYGRID_CELESTIAL_EQUATOR_RED, SKYGRID_CELESTIAL_EQUATOR_GREEN, SKYGRID_CELESTIAL_EQUATOR_BLUE);
    c_sphere.setLine(GridGlobe::PRIME_MERIDIAN, SKYGRID_PRIME_MERIDIAN_WIDTH, SKYGRID_PRIME_MERIDIAN_RED, SKYGRID_PRIME_MERIDIAN_GREEN, SKYGRID_PRIME_MERIDIAN_BLUE);
@@ -237,20 +237,20 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
    west_panel.emptyContainer();
 
    // Set panel justifications.
-   north_panel.setPrimaryJustification(HUDFlowLayout::CENTRE);
-   // north_panel.setSecondaryJustification(HUDFlowLayout::END);
-   south_panel.setPrimaryJustification(HUDFlowLayout::CENTRE);
-   // south_panel.setSecondaryJustification(HUDFlowLayout::END);
+   north_panel.setPrimaryJustification(HUDFlowLayout::SPAN);
+   north_panel.setSecondaryJustification(HUDFlowLayout::MIDDLE);
+   south_panel.setPrimaryJustification(HUDFlowLayout::START_AND_END);
+   south_panel.setSecondaryJustification(HUDFlowLayout::MIDDLE);
    east_panel.setPrimaryJustification(HUDFlowLayout::CENTRE);
-   // east_panel.setSecondaryJustification(HUDFlowLayout::END);
+   east_panel.setSecondaryJustification(HUDFlowLayout::MIDDLE);
    west_panel.setPrimaryJustification(HUDFlowLayout::CENTRE);
-   // west_panel.setSecondaryJustification(HUDFlowLayout::CENTRE);
+   west_panel.setSecondaryJustification(HUDFlowLayout::MIDDLE);
 
    // Put the panels into the layout.
-//   overlay.setPanel(HUDBorderLayout::NORTH, &north_panel);
-//   overlay.setPanel(HUDBorderLayout::SOUTH, &south_panel);
-//   overlay.setPanel(HUDBorderLayout::EAST, &east_panel);
-//   overlay.setPanel(HUDBorderLayout::WEST, &west_panel);
+	overlay.setPanel(HUDBorderLayout::NORTH, &north_panel);
+	overlay.setPanel(HUDBorderLayout::SOUTH, &south_panel);
+	overlay.setPanel(HUDBorderLayout::EAST, &east_panel);
+	overlay.setPanel(HUDBorderLayout::WEST, &west_panel);
 
    // Create content and include into panels.
    LoadImageToPanel(wyp_image, &north_panel, "wypTGA", 5, 5);
@@ -271,7 +271,7 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
 
    LoadImageToPanel(ligo_image, &south_panel, "ligoTGA", 5, 5);
    LoadImageToPanel(geo_image, &south_panel, "geoTGA", 5, 5);
-   // LoadImageToPanel(virgo_image, &south_panel, "virgoTGA", 5, 5);
+   LoadImageToPanel(virgo_image, &south_panel, "virgoTGA", 5, 5);
 
    overlay.activate();
    }

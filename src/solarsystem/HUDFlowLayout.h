@@ -37,13 +37,16 @@
 
 class HUDFlowLayout : public HUDContainer {
    public:
-      // NB - only first three cases coded for currently !!!
-      enum Justification {START, CENTRE, END, START_AND_END, SPAN};
+      enum primaryJustification {START, CENTRE, END, START_AND_END, SPAN};
+
+      enum secondaryJustification {PROXIMAL, MIDDLE, DISTAL};
+
+      enum Axis {HORIZONTAL, VERTICAL};
 
       /**
        * \brief Constructor
        */
-      HUDFlowLayout(HUDContainer* enclosing);
+      HUDFlowLayout(HUDContainer* enclosing, Axis axis);
 
       /**
        * \brief Destructor
@@ -62,43 +65,60 @@ class HUDFlowLayout : public HUDContainer {
        *
        * \param just : the desired justification
        */
-      void setPrimaryJustification(Justification just);
+      void setPrimaryJustification(primaryJustification just);
 
       /**
        * \brief Set the justification along the secondary flow axis.
        *
        * \param just : the desired justification
        */
-      void setSecondaryJustification(Justification just);
+      void setSecondaryJustification(secondaryJustification just);
 
       /**
        * \brief Get the justification of the primary flow axis.
        *
        * \return the desired justification
        */
-      HUDFlowLayout::Justification getPrimaryJustification(void) const;
+      HUDFlowLayout::primaryJustification getPrimaryJustification(void) const;
 
       /**
        * \brief Get the justification of the secondary flow axis.
        *
        * \return the desired justification
        */
-      HUDFlowLayout::Justification getSecondaryJustification(void) const;
+      HUDFlowLayout::secondaryJustification getSecondaryJustification(void) const;
 
    protected:
       /**
-       * \brief Determine how many whitespace gaps as per the
-       *        justification setting.
+       * \brief Determine the miminum dimensions as per the internal
+       *        layout of items within. Enacts HUDContainer interface.
        *
-       * \param the number of items in the layout.
-       *
-       * \return the gap count.
+       * \return std::pair composed of ( in order )
+       *          - the desired width
+       *          - the desired height
        */
-      GLuint gapCount(GLuint numItems) const;
+      virtual std::pair<GLuint, GLuint> reassessMinimumDimensions(void);
+
+      /**
+       * \brief Determine and set the base positions of each item.
+       *        Enacts HUDContainer interface.
+       */
+      virtual void allocateItemBases(void);
 
    private:
-      Justification primary_just;
-      Justification secondary_just;
+      /* brief Determine how many of, and how wide, whitespace gaps as
+       *       per the justification setting.
+       */
+      void setGaps(void);
+
+      GLuint gap_count;
+      GLuint total_white_space;
+      GLuint start_offset;
+      GLuint item_gap;
+
+      Axis ax;
+      primaryJustification primary_just;
+      secondaryJustification secondary_just;
    };
 
 /**
