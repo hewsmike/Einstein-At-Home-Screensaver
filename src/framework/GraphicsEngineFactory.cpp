@@ -40,6 +40,9 @@ AbstractGraphicsEngine* GraphicsEngineFactory::createInstance(
             case EinsteinRadio :
                return new SolarSystemRadio();
                break;
+            case EinsteinGamma :
+               return new SolarSystemGamma();
+               break;
             default:
                return NULL;
             }

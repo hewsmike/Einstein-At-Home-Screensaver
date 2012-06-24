@@ -1,0 +1,453 @@
+###########################################################################
+#   Copyright (C) 2012 by Mike Hewson                                     #
+#   hewsmike[AT]iinet.net.au                                              #
+#                                                                         #
+#   This file is part of Einstein@Home.                                   #
+#                                                                         #
+#   Einstein@Home is free software: you can redistribute it and/or modify #
+#   it under the terms of the GNU General Public License as published     #
+#   by the Free Software Foundation, version 2 of the License.            #
+#                                                                         #
+#   Einstein@Home is distributed in the hope that it will be useful,      #
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of        #
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the          #
+#   GNU General Public License for more details.                          #
+#                                                                         #
+#   You should have received a copy of the GNU General Public License     #
+#   along with Einstein@Home. If not, see <http://www.gnu.org/licenses/>. #
+#                                                                         #
+###########################################################################
+# Please invoke this makefile with the following command template 
+# ( where < and > in this explanation delimit the text to be inserted
+# and ' does appear on the command line to encase argument values ) :
+#
+# make TARGET SYSTEM='?' PRODUCT='?'	
+# 
+# where :
+#
+# TARGET is <debug> or <release> or <install> or <clean>	( all SYSTEM choices )
+#			is <valgrind> or <callgrind>							( if SYSTEM='linux' )
+#
+# SYSTEM value is <linux> or <win32> or <mac>				( not required if 
+#																			  TARGET is <install>
+#																						or <clean> )
+#
+# PRODUCT value is <Starsphere> or <SolarSystem>			( not required if 
+#																			  TARGET is <install>
+#																						or <clean> )
+#
+# NB The following variables are assumed to have been ( appropriately )
+# set ( or not ) in the environment :
+#
+# CPPFLAGS
+# CXX
+# CXXFLAGS
+# DEBUGFLAGSCPP
+# FRAMEWORK_SRC
+# LDFLAGS
+# PROJECT_ROOT
+#
+#
+###########################################################################
+# Overall settings.
+# Product name in lowercase.
+PRODUCT_LOWER := $(shell echo $(PRODUCT) | tr A-Z a-z)
+
+# Path settings.
+PRODUCT_SRC := $(PROJECT_ROOT)/src/$(PRODUCT_LOWER)
+PRODUCT_INSTALL := $(PROJECT_ROOT)/install
+
+# Product variants.
+GRAV := S5R3
+RADIO := Radio
+GAMMA := Gamma
+
+# Target variants.
+TARGET_APPEND=
+ifeq ".$(SYSTEM)" ".linux"
+	TARGET_APPEND := "i686-pc-linux-gnu"
+endif
+ifeq ".$(SYSTEM)" ".win32"
+	TARGET_APPEND := "windows_intelx86.exe"
+endif
+ifeq ".$(SYSTEM)" ".mac"
+	TARGET_APPEND := "i686-apple-darwin"
+endif
+
+TARGET_XTRA_DEPS=
+ifeq ".$(SYSTEM)" ".mac"
+	TARGET_XTRA_DEPS := "$(PRODUCT_SRC)/EaHMacIcon.h"
+endif
+
+# Config values.
+CXX ?= g++
+
+###########################################################################
+# Compiler variables.
+
+# Generic.
+CPPFLAGS += -I$(PRODUCT_INSTALL)/include
+CPPFLAGS += $(shell $(PRODUCT_INSTALL)/bin/freetype-config --cflags)
+CPPFLAGS += $(shell $(PRODUCT_INSTALL)/bin/xml2-config --cflags)
+CPPFLAGS += -I$(PRODUCT_INSTALL)/include/boinc
+CPPFLAGS += -I$(FRAMEWORK_SRC) -I$(PRODUCT_SRC) -I$(PRODUCT_SRC)/../framework
+
+# Target specific.
+ifeq ".$(SYSTEM)" ".linux"
+ 	CPPFLAGS += -I/usr/include
+	CPPFLAGS += -DGL_GLEXT_PROTOTYPES
+endif
+ifeq ".$(SYSTEM)" ".win32"
+	CPPFLAGS += -DGL_GLEXT_PROTOTYPES
+	CPPFLAGS += -D_WIN32_WINDOWS=0x0410
+	CPPFLAGS += -DWIN32_GLEXT_LINKS
+	CPPFLAGS += -DGLEW_STATIC
+endif
+ifeq ".$(SYSTEM)" ".mac"
+	CPPFLAGS += -I/usr/include
+	CPPFLAGS += $(CXXFLAGS)
+endif
+
+###########################################################################
+# Library variables. Note carefully the ordering with respect
+# to '-Wl, -Bstatic' and '-Wl, -Bdynamic' 
+
+# Target specific.
+ifeq ".$(SYSTEM)" ".linux"
+	LIBS += -Wl,-Bstatic
+	LIBS += -lframework -loglft -lglfw -L$(PRODUCT_INSTALL)/lib
+	LIBS += $(shell $(PRODUCT_INSTALL)/bin/freetype-config --libs)
+	LIBS += $(shell $(PRODUCT_INSTALL)/bin/xml2-config --libs)
+	LIBS += -lboinc_api -lboinc
+	LIBS += -lstdc++
+	LIBS += -L/usr/lib
+	LIBS += -Wl,-Bdynamic
+	LIBS += -lGL -lGLU
+	LIBS += -lpthread -lm -lc
+endif
+
+ifeq ".$(SYSTEM)" ".win32"
+	LIBS += -Wl,-Bstatic
+	LIBS += -lframework -loglft -lglfw -L$(SOLARSYSTEM_INSTALL)/lib
+	LIBS += $(shell $(SOLARSYSTEM_INSTALL)/bin/freetype-config --libs)
+	LIBS += $(shell $(SOLARSYSTEM_INSTALL)/bin/xml2-config --libs)
+	LIBS += -lws2_32 # required by libxml2
+	LIBS += -lboinc_graphics2 -lboinc_api -lboinc
+	LIBS += -Wl,-Bdynamic
+	LIBS += -lopengl32 -lglu32
+endif
+
+ifeq ".$(SYSTEM)" ".mac"
+	LIBS += -lframework -loglft -L$(SOLARSYSTEM_INSTALL)/lib
+	LIBS += $(shell $(SOLARSYSTEM_INSTALL)/bin/freetype-config --libs)
+	LIBS += $(shell $(SOLARSYSTEM_INSTALL)/bin/xml2-config --libs)
+	LIBS += -lboinc_graphics2 -lboinc_api -lboinc -L$(SOLARSYSTEM_INSTALL)/lib
+	LIBS += -lglfw -lGLEW -framework AGL -framework OpenGL
+	LIBS += -lstdc++
+	LIBS += -lpthread -lm -lc
+endif
+
+###########################################################################
+# Loader variables.
+# Generic.
+LDFLAGS += -static-libgcc
+
+# Target specific.
+
+###########################################################################
+# Dependencies.
+# Generic.
+DEPS = Makefile
+OBJS = $(PRODUCT).o $(PRODUCT)$(GRAV).o $(PRODUCT)$(RADIO).o $(PRODUCT)$(GAMMA).o
+OBJS += $(RESOURCESPEC).o
+RESOURCESPEC = resources
+
+# Target specific.
+ifeq ".$(SYSTEM)" ".win32"
+	OBJS += $(RESOURCESPEC)_mingw.o
+endif
+ifeq ".$(SYSTEM)" ".mac"
+	OBJS += SetMacSSLevel.o
+endif
+
+# Product specific.
+# include $(PRODUCT_SRC)/depends.d
+OBJS += AcceleratedPlatform.o AutoPilot.o Buffer_OBJ.o CameraState.o Constellation.o
+OBJS += Constellations.o Craft.o Curve.o
+OBJS += EinsteinRadioAdapter.o EinsteinS5R3Adapter.o Globe.o GridGlobe.o
+OBJS += HUDBorderLayout.o HUDContainer.o HUDContent.o
+OBJS += HUDFlowLayout.o
+OBJS += HUDImage.o HUDItem.o HUDTextLine.o HUDTextLineScroll.o
+OBJS += InertialPlatform.o LookOut.o OGL_ID.o
+OBJS += OrdStar.o OrthoNormalPlatform.o Path.o Pulsar.o PulsarEAH.o Renderable.o
+OBJS += Simulation.o
+OBJS += SolarSystemGlobals.o Sphere.o SpinPlatform.o Star.o SunOrbit.o
+OBJS += Supernova.o Texture_OBJ.o TranslatablePlatform.o Traverse.o Traversable.o
+OBJS += UTC.o Vector3D.o
+OBJS += VectorSP.o Vertex.o
+
+# Rule for object builds from sources
+
+#%.o : $(DEPS) $(PRODUCT_SRC)/%.cpp $(PRODUCT_SRC)/%.h
+#	$(CXX) -g $(CPPFLAGS) -c $<
+
+###########################################################################
+# Role based targets.
+# All product variants will be built by default !!
+# Generic.
+default: release
+debug: $(PRODUCT_LOWER)
+release: clean $(PRODUCT_LOWER)
+$(PRODUCT_LOWER): $(PRODUCT_LOWER)_Einstein_$(GRAV) $(PRODUCT_LOWER)_Einstein_$(RADIO) $(PRODUCT_LOWER)_Einstein_$(GAMMA)
+
+# Target specific.
+ifeq ".$(SYSTEM)" ".linux"
+memcheck: clean debug $(PRODUCT_LOWER)
+callgrind: clean debug $(PRODUCT_LOWER)
+endif
+
+###########################################################################
+# Generic options.
+debug: CPPFLAGS += -pg -O0 -Wall -Wno-switch-enum
+release: CPPFLAGS += -DNDEBUG -O3 -Wall -Wno-switch-enum
+$(PRODUCT_LOWER)_Einstein_$(GRAV): CPPFLAGS += -D SCIENCE_APP=Einstein$(GRAV)
+$(PRODUCT_LOWER)_Einstein_$(RADIO): CPPFLAGS += -D SCIENCE_APP=Einstein$(RADIO)
+$(PRODUCT_LOWER)_Einstein_$(GAMMA): CPPFLAGS += -D SCIENCE_APP=Einstein$(GAMMA)
+
+# Target specific options.
+ifeq ".$(SYSTEM)" ".linux"
+
+debug: CPPFLAGS += -ggdb3
+release : CPPFLAGS += -ggdb3
+memcheck: CPPFLAGS += $(DEBUGFLAGSCPP) -D DEBUG_VALGRIND
+callgrind: CPPFLAGS += $(DEBUGFLAGSCPP) -D DEBUG_VALGRIND
+
+endif
+ifeq ".$(SYSTEM)" ".win32"
+
+debug: CPPFLAGS += -gstabs3
+release: CPPFLAGS += -gstabs3
+
+endif
+ifeq ".$(SYSTEM)" ".mac"
+
+debug: CPPFLAGS += -ggdb3
+release: CPPFLAGS += -ggdb3
+
+endif
+
+###########################################################################
+# File based targets.
+# Required product executables.
+$(PRODUCT_LOWER)_Einstein_$(GRAV): $(DEPS) $(PRODUCT_SRC)/main.cpp $(TARGET_XTRA_DEPS) $(OBJS)
+	$(CXX) -g $(CPPFLAGS) $(LDFLAGS) $(PRODUCT_SRC)/main.cpp -o "graphics_app=einstein_RUNLABEL_VERSION_graphics_$(TARGET_APPEND)" $(OBJS) $(LIBS)
+
+$(PRODUCT_LOWER)_Einstein_$(RADIO): $(DEPS) $(PRODUCT_SRC)/main.cpp $(TARGET_XTRA_DEPS) $(OBJS)
+	$(CXX) -g $(CPPFLAGS) $(LDFLAGS) $(PRODUCT_SRC)/main.cpp -o "graphics_app=einsteinbinary_RUNLABEL_VERSION_graphics_$(TARGET_APPEND)" $(OBJS) $(LIBS)
+
+$(PRODUCT_LOWER)_Einstein_$(GAMMA): $(DEPS) $(PRODUCT_SRC)/main.cpp $(TARGET_XTRA_DEPS) $(OBJS)
+	$(CXX) -g $(CPPFLAGS) $(LDFLAGS) $(PRODUCT_SRC)/main.cpp -o "graphics_app=einsteingamma_RUNLABEL_VERSION_graphics_$(TARGET_APPEND)" $(OBJS) $(LIBS)
+
+###########################################################################
+# Generic variant modules, the ( AbstractGraphicsEngine derived ) base
+# and then further variant subclasses.
+
+$(PRODUCT).o: $(DEPS) $(PRODUCT_SRC)/$(PRODUCT).cpp $(PRODUCT_SRC)/$(PRODUCT).h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/$(PRODUCT).cpp
+
+$(PRODUCT)$(GRAV).o: $(DEPS) $(PRODUCT_SRC)/$(PRODUCT)$(GRAV).cpp $(PRODUCT_SRC)/$(PRODUCT)$(GRAV).h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/$(PRODUCT)$(GRAV).cpp
+
+$(PRODUCT)$(RADIO).o: $(DEPS) $(PRODUCT_SRC)/$(PRODUCT)$(RADIO).cpp $(PRODUCT_SRC)/$(PRODUCT)$(RADIO).h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/$(PRODUCT)$(RADIO).cpp
+
+$(PRODUCT)$(GAMMA).o: $(DEPS) $(PRODUCT_SRC)/$(PRODUCT)$(GAMMA).cpp $(PRODUCT_SRC)/$(PRODUCT)$(GAMMA).h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/$(PRODUCT)$(GAMMA).cpp	
+
+# Product specific modules.  
+AcceleratedPlatform.o: $(DEPS) $(PRODUCT_SRC)/AcceleratedPlatform.cpp $(PRODUCT_SRC)/AcceleratedPlatform.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/AcceleratedPlatform.cpp
+
+AutoPilot.o: $(DEPS) $(PRODUCT_SRC)/AutoPilot.cpp $(PRODUCT_SRC)/AutoPilot.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/AutoPilot.cpp	
+
+Axes.o: $(DEPS) $(PRODUCT_SRC)/Axes.cpp $(PRODUCT_SRC)/Axes.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/Axes.cpp
+
+Buffer_OBJ.o: $(DEPS) $(PRODUCT_SRC)/Buffer_OBJ.cpp $(PRODUCT_SRC)/Buffer_OBJ.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/Buffer_OBJ.cpp
+
+CameraState.o: $(DEPS) $(PRODUCT_SRC)/CameraState.cpp $(PRODUCT_SRC)/CameraState.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/CameraState.cpp
+
+Constellation.o: $(DEPS) $(PRODUCT_SRC)/Constellation.cpp $(PRODUCT_SRC)/Constellation.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/Constellation.cpp
+
+Constellations.o: $(DEPS) $(PRODUCT_SRC)/Constellations.cpp $(PRODUCT_SRC)/Constellations.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/Constellations.cpp
+
+Craft.o: $(DEPS) $(PRODUCT_SRC)/Craft.cpp $(PRODUCT_SRC)/Craft.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/Craft.cpp
+
+Curve.o: $(DEPS) $(PRODUCT_SRC)/Curve.cpp $(PRODUCT_SRC)/Curve.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/Curve.cpp	
+
+DisplayList.o: $(DEPS) $(PRODUCT_SRC)/DisplayList.cpp $(PRODUCT_SRC)/DisplayList.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/DisplayList.cpp
+
+Ecliptic.o: $(DEPS) $(PRODUCT_SRC)/Ecliptic.cpp $(PRODUCT_SRC)/Ecliptic.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/Ecliptic.cpp
+
+EinsteinS5R3Adapter.o: $(DEPS) $(PRODUCT_SRC)/EinsteinS5R3Adapter.cpp $(PRODUCT_SRC)/EinsteinS5R3Adapter.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/EinsteinS5R3Adapter.cpp
+
+EinsteinRadioAdapter.o: $(PRODUCT_SRC)/EinsteinRadioAdapter.cpp $(PRODUCT_SRC)/EinsteinRadioAdapter.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/EinsteinRadioAdapter.cpp
+
+Globe.o: $(DEPS) $(PRODUCT_SRC)/Globe.cpp $(PRODUCT_SRC)/Globe.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/Globe.cpp
+
+GridGlobe.o: $(DEPS) $(PRODUCT_SRC)/GridGlobe.cpp $(PRODUCT_SRC)/GridGlobe.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/GridGlobe.cpp
+
+HUDBorderLayout.o: $(DEPS) $(PRODUCT_SRC)/HUDBorderLayout.cpp $(PRODUCT_SRC)/HUDBorderLayout.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/HUDBorderLayout.cpp
+
+HUDContainer.o: $(DEPS) $(PRODUCT_SRC)/HUDContainer.cpp $(PRODUCT_SRC)/HUDContainer.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/HUDContainer.cpp
+
+HUDContent.o: $(DEPS) $(PRODUCT_SRC)/HUDContent.cpp $(PRODUCT_SRC)/HUDContent.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/HUDContent.cpp
+
+HUDFlowLayout.o: $(DEPS) $(PRODUCT_SRC)/HUDFlowLayout.cpp $(PRODUCT_SRC)/HUDFlowLayout.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/HUDFlowLayout.cpp
+
+HUDImage.o: $(DEPS) $(PRODUCT_SRC)/HUDImage.cpp $(PRODUCT_SRC)/HUDImage.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/HUDImage.cpp
+
+HUDItem.o: $(DEPS) $(PRODUCT_SRC)/HUDItem.cpp $(PRODUCT_SRC)/HUDItem.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/HUDItem.cpp
+
+HUDTextLine.o: $(DEPS) $(PRODUCT_SRC)/HUDTextLine.cpp $(PRODUCT_SRC)/HUDTextLine.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/HUDTextLine.cpp
+
+HUDTextLineScroll.o: $(DEPS) $(PRODUCT_SRC)/HUDTextLineScroll.cpp $(PRODUCT_SRC)/HUDTextLineScroll.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/HUDTextLineScroll.cpp
+
+InertialPlatform.o: $(DEPS) $(PRODUCT_SRC)/InertialPlatform.cpp $(PRODUCT_SRC)/InertialPlatform.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/InertialPlatform.cpp
+
+LookOut.o: $(DEPS) $(PRODUCT_SRC)/LookOut.cpp $(PRODUCT_SRC)/LookOut.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/LookOut.cpp
+
+OGL_ID.o: $(DEPS) $(PRODUCT_SRC)/OGL_ID.cpp $(PRODUCT_SRC)/OGL_ID.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/OGL_ID.cpp
+
+OrdStar.o: $(DEPS) $(PRODUCT_SRC)/OrdStar.cpp $(PRODUCT_SRC)/OrdStar.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/OrdStar.cpp
+
+OrthoNormalPlatform.o: $(DEPS) $(PRODUCT_SRC)/OrthoNormalPlatform.cpp $(PRODUCT_SRC)/OrthoNormalPlatform.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/OrthoNormalPlatform.cpp
+
+Path.o: $(DEPS) $(PRODUCT_SRC)/Path.cpp $(PRODUCT_SRC)/Path.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/Path.cpp	
+
+Pulsar.o: $(DEPS) $(PRODUCT_SRC)/Pulsar.cpp $(PRODUCT_SRC)/Pulsar.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/Pulsar.cpp
+
+PulsarEAH.o: $(DEPS) $(PRODUCT_SRC)/PulsarEAH.cpp $(PRODUCT_SRC)/PulsarEAH.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/PulsarEAH.cpp
+
+Renderable.o: $(DEPS) $(PRODUCT_SRC)/Renderable.cpp $(PRODUCT_SRC)/Renderable.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/Renderable.cpp
+
+Simulation.o: $(DEPS) $(PRODUCT_SRC)/Simulation.cpp $(PRODUCT_SRC)/Simulation.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/Simulation.cpp
+
+SolarSystemGlobals.o: $(DEPS) $(PRODUCT_SRC)/SolarSystemGlobals.cpp $(PRODUCT_SRC)/SolarSystemGlobals.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/SolarSystemGlobals.cpp
+
+Sphere.o: $(DEPS) $(PRODUCT_SRC)/Sphere.cpp $(PRODUCT_SRC)/Sphere.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/Sphere.cpp
+
+SphericalCoordSystem.o: $(DEPS) $(PRODUCT_SRC)/SphericalCoordSystem.cpp $(PRODUCT_SRC)/SphericalCoordSystem.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/SphericalCoordSystem.cpp
+
+SphericalCoordSystemAngles.o: $(DEPS) $(PRODUCT_SRC)/SphericalCoordSystemAngles.cpp $(PRODUCT_SRC)/SphericalCoordSystemAngles.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/SphericalCoordSystemAngles.cpp
+
+SphericalCoordSystemLabels.o: $(DEPS) $(PRODUCT_SRC)/SphericalCoordSystemLabels.cpp $(PRODUCT_SRC)/SphericalCoordSystemLabels.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/SphericalCoordSystemLabels.cpp
+
+SpinPlatform.o: $(DEPS) $(PRODUCT_SRC)/SpinPlatform.cpp $(PRODUCT_SRC)/SpinPlatform.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/SpinPlatform.cpp
+
+Star.o: $(DEPS) $(PRODUCT_SRC)/Star.cpp $(PRODUCT_SRC)/Star.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/Star.cpp
+
+SunOrbit.o: $(DEPS) $(PRODUCT_SRC)/SunOrbit.cpp $(PRODUCT_SRC)/SunOrbit.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/SunOrbit.cpp
+
+Supernova.o: $(DEPS) $(PRODUCT_SRC)/Supernova.cpp $(PRODUCT_SRC)/Supernova.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/Supernova.cpp
+
+Texture_OBJ.o: $(DEPS) $(PRODUCT_SRC)/Texture_OBJ.cpp $(PRODUCT_SRC)/Texture_OBJ.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/Texture_OBJ.cpp
+
+TranslatablePlatform.o: $(DEPS) $(PRODUCT_SRC)/TranslatablePlatform.cpp $(PRODUCT_SRC)/TranslatablePlatform.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/TranslatablePlatform.cpp
+
+Traverse.o: $(DEPS) $(PRODUCT_SRC)/Traverse.cpp $(PRODUCT_SRC)/Traverse.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/Traverse.cpp	
+
+Traversable.o: $(DEPS) $(PRODUCT_SRC)/Traversable.cpp $(PRODUCT_SRC)/Traversable.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/Traversable.cpp		
+
+UTC.o: $(DEPS) $(PRODUCT_SRC)/UTC.cpp $(PRODUCT_SRC)/UTC.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/UTC.cpp
+
+Vector3D.o: $(DEPS) $(PRODUCT_SRC)/Vector3D.cpp $(PRODUCT_SRC)/Vector3D.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/Vector3D.cpp
+
+VectorSP.o: $(DEPS) $(PRODUCT_SRC)/VectorSP.cpp $(PRODUCT_SRC)/VectorSP.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/VectorSP.cpp
+
+Vertex.o: $(DEPS) $(PRODUCT_SRC)/Vertex.cpp $(PRODUCT_SRC)/Vertex.h
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/Vertex.cpp
+
+# Target specific modules.
+SetMacSSLevel.o: $(DEPS) $(PRODUCT_SRC)/SetMacSSLevel.m
+	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/SetMacSSLevel.m
+
+###########################################################################
+# Resource compiler.
+# Generic.
+$(RESOURCESPEC).o: $(PRODUCT_SRC)/$(RESOURCESPEC).orc
+	$(PRODUCT_INSTALL)/bin/orc $(PRODUCT_SRC)/$(RESOURCESPEC).orc $(RESOURCESPEC).cpp
+	$(CXX) -g $(CPPFLAGS) -c $(RESOURCESPEC).cpp -o $(RESOURCESPEC).o
+
+# Target specific.
+ifeq ".$(SYSTEM)" ".win32"
+$(RESOURCESPEC)_mingw.o: $(PRODUCT_SRC)/$(RESOURCESPEC).rc
+	cp $(PRODUCT_SRC)/*.ico .
+	/usr/bin/i586-mingw32msvc-windres -O coff -o $(RESOURCESPEC)_mingw.o $(PRODUCT_SRC)/$(RESOURCESPEC).rc
+endif
+
+###########################################################################
+# Target specific tools.
+ifeq ".$(SYSTEM)" ".linux"
+memcheck:
+	valgrind --tool=memcheck --track-fds=yes --time-stamp=yes --log-file=$(PWD)/memcheck.out.%p --leak-check=full $(PWD)/graphics_app=einstein_RUNLABEL_VERSION_graphics_i686-pc-linux-gnu
+callgrind:
+	valgrind --tool=callgrind --track-fds=yes --time-stamp=yes $(PWD)/graphics_app=einstein_RUNLABEL_VERSION_graphics_i686-pc-linux-gnu
+endif
+
+###########################################################################
+# Non-file based role targets.
+# Generic.
+install:
+	mkdir -p $(PRODUCT_INSTALL)/../dist
+	cp graphics_app* $(PRODUCT_INSTALL)/../dist
+
+clean:
+	rm -f $(RESOURCESPEC).cpp $(OBJS) graphics_app*

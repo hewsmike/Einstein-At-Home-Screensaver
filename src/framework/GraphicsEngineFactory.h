@@ -24,6 +24,7 @@
 #include "AbstractGraphicsEngine.h"
 #include "../solarsystem/SolarSystemS5R3.h"
 #include "../solarsystem/SolarSystemRadio.h"
+#include "../solarsystem/SolarSystemGamma.h"
 //#include "../starsphere/StarsphereS5R3.h"
 //#include "../starsphere/StarsphereRadio.h"
 
@@ -54,8 +55,9 @@ class GraphicsEngineFactory {
 
       /// Identifiers of supported science applications
       enum Applications {
-         EinsteinS5R3 = 53,
-         EinsteinRadio = 42
+         EinsteinS5R3 = 41,
+         EinsteinRadio = 42,
+         EinsteinGamma = 43
          };
 
       /**
