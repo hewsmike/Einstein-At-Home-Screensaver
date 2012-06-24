@@ -58,10 +58,14 @@ BS_BUILD_BOINC_MINGW=14
 
 ### functions (tools) #############################################################
 
+log() {
+	echo $1 | tee -a $LOGFILE
+	}
+
 failure() {
-   echo "************************************" | tee -a $LOGFILE
-   echo "Error detected! Stopping build!" | tee -a $LOGFILE
-   echo "`date`" | tee -a $LOGFILE
+   log "++++++++++++++++++++++++++++++++++++"
+   log "Error detected! Stopping build!"
+   log "`date`"
 
    if [ -f "$LOGFILE" ]; then
       echo "------------------------------------"
@@ -71,7 +75,7 @@ failure() {
       tail -n 14 $LOGFILE | head -n 10
    fi
 
-   echo "************************************" | tee -a $LOGFILE
+   log "++++++++++++++++++++++++++++++++++++"
 
    exit 1
    }
@@ -79,7 +83,7 @@ failure() {
 distclean() {
    cd $ROOT || failure
 
-   echo "Purging build system..." | tee -a $LOGFILE
+   log "Purging build system..."
 
    rm -rf 3rdparty || failure
    rm -rf build || failure
@@ -92,13 +96,13 @@ distclean() {
    }
 
 check_last_build() {
-   echo "Checking previous build target..." | tee -a $LOGFILE
+   log "Checking previous build target..."
 
    LASTBUILD=`cat .lastbuild 2>/dev/null`
 
    if [[ ( -f .lastbuild ) && ( "$LASTBUILD" != "$1" ) ]]; then
       cd $ROOT || failure
-      echo "Build target changed! Purging build and install trees..." | tee -a $LOGFILE
+      log "Build target changed! Purging build and install trees..."
       rm -rf build >> $LOGFILE || failure
       rm -rf install >> $LOGFILE || failure
       prepare_tree || failure
@@ -110,11 +114,11 @@ check_last_build() {
    }
 
 check_build_state() {
-   echo "Checking for previous build checkpoints..." | tee -a $LOGFILE
+   log "Checking for previous build checkpoints..."
 
    if [ ! -f .buildstate ]; then
       cd $ROOT || failure
-      echo "No previous build checkpoints found! Starting from scratch..." | tee -a $LOGFILE
+      log "No previous build checkpoints found! Starting from scratch..."
    else
       BUILDSTATE=`cat $ROOT/.buildstate 2>/dev/null`
       echo "Recovering previous build..."
@@ -124,7 +128,7 @@ check_build_state() {
    }
 
 store_build_state() {
-   echo "Saving build checkpoint..." | tee -a $LOGFILE
+   log "Saving build checkpoint..."
    echo "$1" > $ROOT/.buildstate || failure
 
    return 0
@@ -137,14 +141,14 @@ check_prerequisites() {
       return 0
    fi
 
-   echo "Checking prerequisites..." | tee -a $LOGFILE
+   log "Checking prerequisites..."
 
    # required toolchain
    TOOLS="ar automake autoconf cmake cvs g++ gcc hg ld lex libtool m4 patch pkg-config svn tar wget yacc"
 
    for tool in $TOOLS; do
       if ! ( type $tool >/dev/null 2>&1 ); then
-         echo "Missing \"$tool\" which is a required tool!" | tee -a $LOGFILE
+         log "Missing \"$tool\" which is a required tool!"
          return 1
       fi
    done
@@ -157,7 +161,7 @@ prepare_tree() {
       return 0
    fi
 
-   echo "Preparing tree..." | tee -a $LOGFILE
+   log "Preparing tree..."
    mkdir -p 3rdparty >> $LOGFILE || failure
    mkdir -p install/bin >> $LOGFILE || failure
    mkdir -p install/include >> $LOGFILE || failure
@@ -173,7 +177,7 @@ prepare_version_header() {
 
    cd $ROOT || failure
 
-   echo "Retrieving git version information..." | tee -a $LOGFILE
+   log "Retrieving git version information..."
 
    if [ -d .git ]; then
       GIT_LOG=`git log -n1 --pretty="format:%H"` || failure
@@ -195,7 +199,7 @@ prepare_version_header() {
    }
 
 prepare_glew() {
-   echo "Preparing GLEW..." | tee -a $LOGFILE
+   log "Preparing GLEW..."
    mkdir -p $ROOT/3rdparty/glew >> $LOGFILE || failure
    
    cd $ROOT/3rdparty || failure
@@ -210,11 +214,11 @@ prepare_glew() {
    }
 
 prepare_glfw() {
-   echo "Preparing GLFW..." | tee -a $LOGFILE
+   log "Preparing GLFW..."
    mkdir -p $ROOT/3rdparty/glfw >> $LOGFILE || failure
    mkdir -p $ROOT/build/glfw >> $LOGFILE || failure
 
-   echo "Retrieving GLFW (this may take a while)..." | tee -a $LOGFILE
+   log "Retrieving GLFW (this may take a while)..."
    cd $ROOT/3rdparty || failure
    wget http://sourceforge.net/projects/glfw/files/glfw/2.7.5/glfw-2.7.5.tar.bz2 >> $LOGFILE 2>&1 || failure
    tar -xjf glfw-2.7.5.tar.bz2 >> $LOGFILE 2>&1 || failure
@@ -227,10 +231,10 @@ prepare_glfw() {
    }
 
 prepare_freetype() {
-   echo "Preparing Freetype2..." | tee -a $LOGFILE
+   log "Preparing Freetype2..."
    mkdir -p $ROOT/build/freetype2 >> $LOGFILE || failure
 
-   echo "Retrieving Freetype2 (this may take a while)..." | tee -a $LOGFILE
+   log "Retrieving Freetype2 (this may take a while)..."
    cd $ROOT/3rdparty || failure
    wget http://download.savannah.gnu.org/releases/freetype/freetype-2.3.5.tar.bz2 >> $LOGFILE 2>&1 || failure
    tar -xjf freetype-2.3.5.tar.bz2 >> $LOGFILE 2>&1 || failure
@@ -243,10 +247,10 @@ prepare_freetype() {
    }
 
 prepare_libxml() {
-   echo "Preparing libxml2..." | tee -a $LOGFILE
+   log "Preparing libxml2..."
    mkdir -p $ROOT/build/libxml2 >> $LOGFILE || failure
 
-   echo "Retrieving libxml2 (this may take a while)..." | tee -a $LOGFILE
+   log "Retrieving libxml2 (this may take a while)..."
    cd $ROOT/3rdparty || failure
    rm -f libxml2-sources-2.6.32.tar.gz >> $LOGFILE 2>&1 || failure
    wget --passive-ftp ftp://xmlsoft.org/libxml2/old/libxml2-sources-2.6.32.tar.gz >> $LOGFILE 2>&1 || failure
@@ -260,30 +264,30 @@ prepare_libxml() {
    }
 
 prepare_oglft() {
-   echo "Preparing OGLFT..." | tee -a $LOGFILE
+   log "Preparing OGLFT..."
    mkdir -p $ROOT/3rdparty/oglft >> $LOGFILE || failure
    mkdir -p $ROOT/build/oglft >> $LOGFILE || failure
 
    cd $ROOT/3rdparty/oglft || failure
    if [ -d .svn ]; then
-      echo "Updating OGLFT..." | tee -a $LOGFILE
+      log "Updating OGLFT..."
       # make sure local changes (patches) are reverted, hence also updated
       svn revert -R . >> $LOGFILE  2>&1 || failure
       svn update >> $LOGFILE  2>&1 || failure
    else
-      echo "Retrieving OGLFT (this may take a while)..." | tee -a $LOGFILE
+      log "Retrieving OGLFT (this may take a while)..."
       svn checkout http://oglft.svn.sourceforge.net/svnroot/oglft/trunk . >> $LOGFILE 2>&1 || failure
    fi
    }
 
 prepare_boinc() {
-   echo "Preparing BOINC..." | tee -a $LOGFILE
+   log "Preparing BOINC..."
    mkdir -p $ROOT/3rdparty/boinc >> $LOGFILE || failure
    mkdir -p $ROOT/build/boinc >> $LOGFILE || failure
 
    cd $ROOT/3rdparty/boinc || failure
    if [ -d .git ]; then
-      echo "Updating BOINC (tag: $1)..." | tee -a $LOGFILE
+      log "Updating BOINC (tag: $1)..."
       # make sure local changes (patches) are reverted to ensure fast-forward merge
       git checkout -f $1 >> $LOGFILE  2>&1 || failure
       # update tag info
@@ -295,7 +299,7 @@ prepare_boinc() {
       # workaround for old git versions
       rm -rf $ROOT/3rdparty/boinc >> $LOGFILE || failure
 
-      echo "Retrieving BOINC (tag: $1) (this may take a while)..." | tee -a $LOGFILE
+      log "Retrieving BOINC (tag: $1) (this may take a while)..."
       cd $ROOT/3rdparty || failure
       git clone git://git.aei.uni-hannover.de/shared/einsteinathome/boinc.git boinc >> $LOGFILE 2>&1 || failure
       cd $ROOT/3rdparty/boinc || failure
@@ -312,7 +316,7 @@ build_glew() {
 
    prepare_glew || failure
 
-   echo "Building GLEW (this may take a while)..." | tee -a $LOGFILE
+   log "Building GLEW (this may take a while)..."
    
    # Not actually building a distinct GLEW library here.
    # Incorporate GLEW via an object file ( glew.o ) to later
@@ -329,7 +333,7 @@ build_glew() {
    cd $ROOT/3rdparty/glew/src || failure
    cp -f glew.c $ROOT/src/framework  || failure
 
-   echo "Successfully built and installed GLEW!" | tee -a $LOGFILE
+   log "Successfully built and installed GLEW!"
 
    store_build_state $BS_BUILD_GLEW || failure
    return 0
@@ -342,14 +346,14 @@ build_glew_mac() {
       
    prepare_glew || failure
       
-   echo "Building GLEW (this may take a while)..." | tee -a $LOGFILE
+   log "Building GLEW (this may take a while)..."
       
    cd $ROOT/3rdparty/glew
    GLEW_DEST="$ROOT/install" make install >> $LOGFILE 2>&1 || failure
    # don't use shared GLEW libraries   
    rm -f $ROOT/install/lib/libGLEW*.dylib
    
-   echo "Successfully built and installed GLEW!" | tee -a $LOGFILE
+   log "Successfully built and installed GLEW!"
       
    store_build_state $BS_BUILD_GLEW || failure
    return 0
@@ -362,14 +366,14 @@ build_glfw() {
 
    prepare_glfw || failure
 
-   echo "Building GLFW (this may take a while)..." | tee -a $LOGFILE
+   log "Building GLFW (this may take a while)..."
    cd $ROOT/3rdparty/glfw || failure
 
    export PREFIX=$ROOT/install
 
    make x11-install >> $LOGFILE 2>&1 || failure
    
-   echo "Successfully built and installed GLFW!" | tee -a $LOGFILE
+   log "Successfully built and installed GLFW!"
 
    store_build_state $BS_BUILD_GLFW || failure
    return 0
@@ -382,14 +386,14 @@ build_glfw_mac() {
    
    prepare_glfw || failure
    
-   echo "Building GLFW (this may take a while)..." | tee -a $LOGFILE
+   log "Building GLFW (this may take a while)..."
    cd $ROOT/3rdparty/glfw || failure
    
    export PREFIX=$ROOT/install
    
    make cocoa-install >> $LOGFILE 2>&1 || failure
    
-   echo "Successfully built and installed GLFW!" | tee -a $LOGFILE
+   log "Successfully built and installed GLFW!"
 
    store_build_state $BS_BUILD_GLFW || failure
    return 0
@@ -402,7 +406,7 @@ build_freetype() {
 
    prepare_freetype || failure
 
-   echo "Building Freetype2 (this may take a while)..." | tee -a $LOGFILE
+   log "Building Freetype2 (this may take a while)..."
    cd $ROOT/3rdparty/freetype2 || failure
    chmod +x autogen.sh >> $LOGFILE 2>&1 || failure
    ./autogen.sh >> $LOGFILE 2>&1 || failure
@@ -412,7 +416,7 @@ build_freetype() {
    $ROOT/3rdparty/freetype2/configure --prefix=$ROOT/install --enable-shared=no --enable-static=yes >> $LOGFILE 2>&1 || failure
    make >> $LOGFILE 2>&1 || failure
    make install >> $LOGFILE 2>&1 || failure
-   echo "Successfully built and installed Freetype2!" | tee -a $LOGFILE
+   log "Successfully built and installed Freetype2!"
 
    store_build_state $BS_BUILD_FREETYPE || failure
    return 0
@@ -425,14 +429,14 @@ build_libxml() {
 
    prepare_libxml || failure
 
-   echo "Building libxml2 (this may take a while)..." | tee -a $LOGFILE
+   log "Building libxml2 (this may take a while)..."
    cd $ROOT/3rdparty/libxml2 || failure
    chmod +x configure >> $LOGFILE 2>&1 || failure
    cd $ROOT/build/libxml2 || failure
    $ROOT/3rdparty/libxml2/configure --prefix=$ROOT/install --enable-shared=no --enable-static=yes --without-python >> $LOGFILE 2>&1 || failure
    make >> $LOGFILE 2>&1 || failure
    make install >> $LOGFILE 2>&1 || failure
-   echo "Successfully built and installed libxml2!" | tee -a $LOGFILE
+   log "Successfully built and installed libxml2!"
 
    store_build_state $BS_BUILD_LIBXML || failure
    return 0
@@ -445,14 +449,14 @@ build_oglft() {
 
    prepare_oglft || failure
 
-   echo "Patching OGLFT..." | tee -a $LOGFILE
+   log "Patching OGLFT..."
    cd $ROOT/3rdparty/oglft || failure
    # note: svn has no force/overwrite switch. patched files might not be updated
    # patch: use fixed settings for freetype, deactivate FindFreetype
    FREETYPE2_INCLUDE_DIR="$ROOT/install/include"
    FREETYPE2_LIBRARIES="$ROOT/install/lib/libfreetype.a"
    patch CMakeLists.txt < $ROOT/patches/CMakeLists.txt.oglft.patch >> $LOGFILE 2>&1 || failure
-   echo "Building OGLFT..." | tee -a $LOGFILE
+   log "Building OGLFT..."
    cd $ROOT/build/oglft || failure
    # TODO: do we wanna create universal binaries on mac? If so, add -DCMAKE_OSX_ARCHITECTURES=ppc;i386
    cmake -DFREETYPE2_INCLUDE_DIR="$FREETYPE2_INCLUDE_DIR" -DFREETYPE2_LIBRARIES="$FREETYPE2_LIBRARIES" $ROOT/3rdparty/oglft >> $LOGFILE 2>&1 || failure
@@ -460,7 +464,7 @@ build_oglft() {
    mkdir -p $ROOT/install/include/oglft >> $LOGFILE 2>&1 || failure
    cp OGLFT.h $ROOT/install/include/oglft >> $LOGFILE 2>&1 || failure
    cp liboglft/liboglft.a $ROOT/install/lib >> $LOGFILE 2>&1 || failure
-   echo "Successfully built and installed OGLFT!" | tee -a $LOGFILE
+   log "Successfully built and installed OGLFT!"
 
    store_build_state $BS_BUILD_OGLFT || failure
    return 0
@@ -473,7 +477,7 @@ build_boinc() {
 
    prepare_boinc $TAG_GFXAPPS || failure
 
-   echo "Configuring BOINC..." | tee -a $LOGFILE
+   log "Configuring BOINC..."
    cd $ROOT/3rdparty/boinc || failure
    chmod +x _autosetup >> $LOGFILE 2>&1 || failure
    ./_autosetup >> $LOGFILE 2>&1 || failure
@@ -483,15 +487,15 @@ build_boinc() {
       export CPPFLAGS="-I/sw/include -I/opt/local/include $CPPFLAGS"
       $ROOT/3rdparty/boinc/configure --prefix=$ROOT/install --enable-shared=no --enable-static=yes --disable-server --disable-client --with-apple-opengl-framework --enable-install-headers --enable-libraries --disable-manager --disable-fcgi >> $LOGFILE 2>&1 || failure
    elif [ -d "/usr/local/ssl" ]; then
-      echo "Using local SSL library..." | tee -a $LOGFILE
+      log "Using local SSL library..."
       $ROOT/3rdparty/boinc/configure --prefix=$ROOT/install --enable-shared=no --enable-static=yes --disable-server --disable-client --enable-install-headers --enable-libraries --disable-manager --disable-fcgi CPPFLAGS=-I/usr/local/ssl/include LDFLAGS=-L/usr/local/ssl/lib >> $LOGFILE 2>&1 || failure
    else
       $ROOT/3rdparty/boinc/configure --prefix=$ROOT/install --enable-shared=no --enable-static=yes --disable-server --disable-client --enable-install-headers --enable-libraries --disable-manager --disable-fcgi >> $LOGFILE 2>&1 || failure
    fi
-   echo "Building BOINC (this may take a while)..." | tee -a $LOGFILE
+   log "Building BOINC (this may take a while)..."
    make >> $LOGFILE 2>&1 || failure
    make install >> $LOGFILE 2>&1 || failure
-   echo "Successfully built and installed BOINC!" | tee -a $LOGFILE
+   log "Successfully built and installed BOINC!"
 
    store_build_state $BS_BUILD_BOINC || failure
    return 0
@@ -522,7 +526,7 @@ build_glew_mingw() {
 
  	prepare_glew || failure
 
-   echo "Building GLEW (this may take a while)..." | tee -a $LOGFILE
+   log "Building GLEW (this may take a while)..."
    
    # Not actually building a distinct GLEW library here.
    # Incorporate GLEW via an object file ( glew.o ) to later
@@ -539,7 +543,7 @@ build_glew_mingw() {
    cd $ROOT/3rdparty/glew/src || failure
    cp -f glew.c $ROOT/src/framework  || failure
 
-   echo "Successfully built and installed GLEW!" | tee -a $LOGFILE
+   log "Successfully built and installed GLEW!"
 
    store_build_state $BS_BUILD_GLEW_MINGW || failure
    return 0
@@ -552,13 +556,13 @@ build_glfw_mingw() {
 
    prepare_glfw || failure
 
-   echo "Building GLFW (this may take a while)..." | tee -a $LOGFILE
+   log "Building GLFW (this may take a while)..."
    cd $ROOT/3rdparty/glfw || failure
 
    export PREFIX=$ROOT/install
 
    make cross-mgw-install >> $LOGFILE 2>&1 || failure
-   echo "Successfully built and installed GLFW!" | tee -a $LOGFILE
+   log "Successfully built and installed GLFW!"
 
    store_build_state $BS_BUILD_GLFW_MINGW || failure
    return 0
@@ -571,11 +575,11 @@ build_freetype_mingw() {
 
    prepare_freetype || failure
 
-   echo "Patching Freetype2..." | tee -a $LOGFILE
+   log "Patching Freetype2..."
    cd $ROOT/3rdparty/freetype2/builds || failure
    # patch: deactivating invocation of apinames (would run win32 binary on linux host)
    patch < $ROOT/patches/freetype2.exports.mk.patch >> $LOGFILE 2>&1 || failure
-   echo "Building Freetype2 (this may take a while)..." | tee -a $LOGFILE
+   log "Building Freetype2 (this may take a while)..."
    cd $ROOT/3rdparty/freetype2 || failure
    chmod +x autogen.sh >> $LOGFILE 2>&1 || failure
    ./autogen.sh >> $LOGFILE 2>&1 || failure
@@ -590,7 +594,7 @@ build_freetype_mingw() {
    $ROOT/3rdparty/freetype2/configure --host=$TARGET_HOST --build=$BUILD_HOST --prefix=$PREFIX --enable-shared=no --enable-static=yes >> $LOGFILE 2>&1 || failure
    make >> $LOGFILE 2>&1 || failure
    make install >> $LOGFILE 2>&1 || failure
-   echo "Successfully built and installed Freetype2!" | tee -a $LOGFILE
+   log "Successfully built and installed Freetype2!"
 
    store_build_state $BS_BUILD_FREETYPE_MINGW || failure
    return 0
@@ -603,7 +607,7 @@ build_libxml_mingw() {
 
    prepare_libxml || failure
 
-   echo "Building libxml2 (this may take a while)..." | tee -a $LOGFILE
+   log "Building libxml2 (this may take a while)..."
    cd $ROOT/3rdparty/libxml2 || failure
    chmod +x configure >> $LOGFILE 2>&1 || failure
    if [ -f "$PREFIX/$TARGET_HOST/bin/$TARGET_HOST-xml2-config" ]; then
@@ -615,7 +619,7 @@ build_libxml_mingw() {
    $ROOT/3rdparty/libxml2/configure --host=$TARGET_HOST --build=$BUILD_HOST --prefix=$PREFIX --enable-shared=no --enable-static=yes --without-python >> $LOGFILE 2>&1 || failure
    make >> $LOGFILE 2>&1 || failure
    make install >> $LOGFILE 2>&1 || failure
-   echo "Successfully built and installed libxml2!" | tee -a $LOGFILE
+   log "Successfully built and installed libxml2!"
 
    store_build_state $BS_BUILD_LIBXML_MINGW || failure
    return 0
@@ -628,7 +632,7 @@ build_oglft_mingw() {
 
    prepare_oglft || failure
 
-   echo "Patching OGLFT..." | tee -a $LOGFILE
+   log "Patching OGLFT..."
    cd $ROOT/3rdparty/oglft || failure
    # note: svn has no force/overwrite switch. patched files might not be updated
    # patch: use fixed settings for freetype, deactivate FindFreetype
@@ -637,14 +641,14 @@ build_oglft_mingw() {
    patch CMakeLists.txt < $ROOT/patches/CMakeLists.txt.oglft.patch >> $LOGFILE 2>&1 || failure
    cp $ROOT/patches/toolchain-linux-mingw.oglft.cmake $ROOT/build/oglft >> $LOGFILE 2>&1 || failure
    export OGLFT_INSTALL=$ROOT/install
-   echo "Building OGLFT..." | tee -a $LOGFILE
+   log "Building OGLFT..."
    cd $ROOT/build/oglft || failure
    cmake -DCMAKE_RC_COMPILER="/usr/bin/i586-mingw32msvc-windres" -DCMAKE_TOOLCHAIN_FILE="toolchain-linux-mingw.oglft.cmake" -DFREETYPE2_INCLUDE_DIR="$FREETYPE2_INCLUDE_DIR" -DFREETYPE2_LIBRARIES="$FREETYPE2_LIBRARIES" $ROOT/3rdparty/oglft >> $LOGFILE 2>&1 || failure
    make >> $LOGFILE 2>&1 || failure
    mkdir -p $ROOT/install/include/oglft >> $LOGFILE 2>&1 || failure
    cp OGLFT.h $ROOT/install/include/oglft >> $LOGFILE 2>&1 || failure
    cp liboglft/liboglft.a $ROOT/install/lib >> $LOGFILE 2>&1 || failure
-   echo "Successfully built and installed OGLFT!" | tee -a $LOGFILE
+   log "Successfully built and installed OGLFT!"
 
    store_build_state $BS_BUILD_OGLFT_MINGW || failure
    return 0
@@ -658,26 +662,26 @@ build_boinc_mingw() {
    prepare_boinc $TAG_GFXAPPS || failure
 
    cd $ROOT/3rdparty/boinc/lib || failure
-   echo "Building BOINC (this may take a while)..." | tee -a $LOGFILE
+   log "Building BOINC (this may take a while)..."
    BOINC_SRC="$ROOT/3rdparty/boinc" AR="${TARGET_HOST}-ar" make -f Makefile.mingw >> $LOGFILE 2>&1 || failure
    BOINC_PREFIX="$ROOT/install" RANLIB="${TARGET_HOST}-ranlib" make -f Makefile.mingw install >> $LOGFILE 2>&1 || failure
-   echo "Successfully built and installed BOINC!" | tee -a $LOGFILE
+   log "Successfully built and installed BOINC!"
 
    store_build_state $BS_BUILD_BOINC_MINGW || failure
    return 0
    }
 
-build_solarsystem() {
-   # make sure ORC is always compiled for host platform (it's executed during solarsystem build!)
-   echo "Preparing SolarSystem..." | tee -a $LOGFILE
+build_product() {
+   # make sure ORC is always compiled for host platform (it's executed during $PRODUCT_NAME build!)
+   log "Preparing $PRODUCT_NAME..."
    mkdir -p $ROOT/build/orc >> $LOGFILE || failure
    mkdir -p $ROOT/build/framework >> $LOGFILE || failure
-   mkdir -p $ROOT/build/solarsystem >> $LOGFILE || failure
+   mkdir -p $ROOT/build/$PRODUCT >> $LOGFILE || failure
    export PATH=$PATH_ORG
 
    prepare_version_header || failure
 
-   echo "Building SolarSystem [ORC]..." | tee -a $LOGFILE
+   log "Building $PRODUCT_NAME [ORC]..."
    export ORC_SRC=$ROOT/src/orc || failure
    export ORC_INSTALL=$ROOT/install || failure
    cd $ROOT/build/orc || failure
@@ -697,7 +701,7 @@ build_solarsystem() {
       export CXX=$CXX_MINGW
    fi
    make install >> $LOGFILE 2>&1 || failure
-   echo "Successfully built and installed SolarSystem [ORC]!" | tee -a $LOGFILE
+   log "Successfully built and installed $PRODUCT_NAME [ORC]!"
 
    # set main include directory
    if [ "$1" == "$TARGET_WIN32" ]; then
@@ -706,7 +710,7 @@ build_solarsystem() {
       export PATH=$PATH_ORG
    fi
 
-   echo "Building SolarSystem [Framework]..." | tee -a $LOGFILE
+   log "Building $PRODUCT_NAME [Framework]..."
    export FRAMEWORK_SRC=$ROOT/src/framework || failure
    export FRAMEWORK_INSTALL=$ROOT/install || failure
    cd $ROOT/build/framework || failure
@@ -717,24 +721,27 @@ build_solarsystem() {
    fi
    make $2 >> $LOGFILE 2>&1 || failure
    make install >> $LOGFILE 2>&1 || failure
-   echo "Successfully built and installed SolarSystem [Framework]!" | tee -a $LOGFILE
+   log "Successfully built and installed $PRODUCT_NAME [Framework]!"
 
-   echo "Building SolarSystem [Application]..." | tee -a $LOGFILE
+   log "Building $PRODUCT_NAME [Application]..."
    export PROJECT_ROOT=$ROOT || failure
-   export SOLARSYSTEM_SRC=$ROOT/src/solarsystem || failure
+   export SOLARSYSTEM_SRC=$ROOT/src/$PRODUCT_NAME || failure
    export SOLARSYSTEM_INSTALL=$ROOT/install || failure
-   cd $ROOT/build/solarsystem || failure
-   cp $ROOT/src/solarsystem/*.res . >> $LOGFILE 2>&1 || failure
+   cd $ROOT/build/$PRODUCT || failure
+   cp $ROOT/src/$PRODUCT/*.res . >> $LOGFILE 2>&1 || failure
+   cp -f $ROOT/src/$PRODUCT/Makefile.common Makefile >> $LOGFILE 2>&1 || failure
    if [ "$1" == "$TARGET_MAC" ]; then
-   cp -f $ROOT/src/solarsystem/Makefile.macos Makefile >> $LOGFILE 2>&1 || failure
+   	make release SYSTEM="mac" PRODUCT=$PRODUCT_NAME >> $LOGFILE 2>&1 || failure
+#   cp -f $ROOT/src/solarsystem/Makefile.macos Makefile >> $LOGFILE 2>&1 || failure
       elif [ "$1" == "$TARGET_WIN32" ]; then
-   cp -f $ROOT/src/solarsystem/Makefile.mingw Makefile >> $LOGFILE 2>&1 || failure
+      make release SYSTEM="win32" PRODUCT=$PRODUCT_NAME >> $LOGFILE 2>&1 || failure
+#   cp -f $ROOT/src/solarsystem/Makefile.mingw Makefile >> $LOGFILE 2>&1 || failure
       else
-   cp -f $ROOT/src/solarsystem/Makefile . >> $LOGFILE 2>&1 || failure
+#   cp -f $ROOT/src/solarsystem/Makefile . >> $LOGFILE 2>&1 || failure
+		make release SYSTEM="linux" PRODUCT=$PRODUCT_NAME >> $LOGFILE 2>&1 || failure
       fi
-   make $2 >> $LOGFILE 2>&1 || failure
    make install >> $LOGFILE 2>&1 || failure
-   echo "Successfully built and installed SolarSystem [Application]!" | tee -a $LOGFILE
+   log "Successfully built and installed $PRODUCT_NAME [Application]!"
 
    return 0
    }
@@ -747,7 +754,7 @@ build_linux() {
    build_libxml || failure
    build_oglft || failure
    build_boinc || failure
-   build_solarsystem $1 $2 || failure
+   build_product $1 $2 || failure
 
    return 0
    }
@@ -759,7 +766,7 @@ build_mac() {
    build_libxml || failure
    build_oglft || failure
    build_boinc $1 || failure
-   build_solarsystem $1 || failure
+   build_product $1 || failure
 
    return 0
    }
@@ -776,7 +783,7 @@ build_win32() {
    build_libxml_mingw || failure
    build_oglft_mingw || failure
    build_boinc_mingw || failure
-   build_solarsystem $TARGET_WIN32 || failure
+   build_product $TARGET_WIN32 || failure
 
    return 0
    }
@@ -784,8 +791,8 @@ build_win32() {
 print_usage() {
    cd $ROOT
 
-   echo "*************************"
-   echo "Usage: `basename $0` <target>"
+   echo "++++++++++++++++++++++++++++++++++++"
+   echo "Usage: `basename $0` <target> <product>"
    echo
    echo "Available targets:"
    echo " --linux"
@@ -793,7 +800,12 @@ print_usage() {
    echo " --mac-sdk (build with Mac OS 10.4 x86 SDK)"
    echo " --win32"
    echo " --doc"
-   echo "*************************"
+   echo
+   echo "Available products:"
+   echo " --starsphere"
+   echo " --solarsystem"
+   echo
+   echo "++++++++++++++++++++++++++++++++++++"
 
    echo "Wrong usage. Stopping!" >> $LOGFILE
 
@@ -805,14 +817,14 @@ print_usage() {
 # Delete any prior build log
 rm -f ./build.log
 
-echo "************************************" | tee -a $LOGFILE
-echo "Starting new build!" | tee -a $LOGFILE
-echo "`date`" | tee -a $LOGFILE
-echo "************************************" | tee -a $LOGFILE
+log "++++++++++++++++++++++++++++++++++++"
+log "Starting new build!"
+log "`date`"
+log "++++++++++++++++++++++++++++++++++++"
 
 # crude command line parsing :-)
 
-if [ $# -ne 1 ]; then
+if [ $# -ne 2 ]; then
    print_usage
    exit 1
 fi
@@ -821,41 +833,58 @@ case "$1" in
    "--linux")
       TARGET=$TARGET_LINUX
       check_last_build "$1" || failure
-      echo "Building linux version:" | tee -a $LOGFILE
+      log "Building linux version:"
       check_build_state || failure
       ;;
    "--mac")
       TARGET=$TARGET_MAC
       check_last_build "$1" || failure
-      echo "Building mac (Intel) version:" | tee -a $LOGFILE
+      log "Building mac (Intel) version:"
       check_build_state || failure
       ;;
    "--mac-sdk")
 		TARGET=$TARGET_MAC
 		SDK="yes"
 		check_last_build "$1" || failure
-		echo "Building mac (Intel) version:" | tee -a $LOGFILE
+		log "Building mac (Intel) version:"
 		check_build_state || failure
 		;;
    "--win32")
       TARGET=$TARGET_WIN32
       check_last_build "$1" || failure
-      echo "Building win32 version:" | tee -a $LOGFILE
+      log "Building win32 version:"
       check_build_state || failure
       ;;
    "--doc")
       TARGET=$TARGET_DOC
-      echo "Building documentation..." | tee -a $LOGFILE
+      log "Building documentation..."
       ;;
    "--distclean")
       distclean || failure
       exit 0
       ;;
-   "--solarsystem")
+   "--product_test")
       # "hidden" bonus option :-)
       TARGET=$TARGET_LINUX
-      build_solarsystem $TARGET "memcheck" || failure
+      build_product $TARGET "memcheck" || failure
       exit 0
+      ;;
+   *)
+      print_usage
+      exit 1
+      ;;
+esac
+
+case "$2" in
+   "--starsphere")
+      PRODUCT=starsphere
+      PRODUCT_NAME="Starsphere"
+      log "Building $PRODUCT_NAME"
+      ;;
+   "--solarsystem")
+      PRODUCT=solarsystem
+      PRODUCT_NAME="SolarSystem"
+      log "Building Solarsystem"
       ;;
    *)
       print_usage
@@ -875,7 +904,7 @@ case $TARGET in
       if [ ".$SDK" = "." ] ; then
 			:
 		elif [ -d /Developer/SDKs/MacOSX10.4u.sdk ]; then
-         echo "Preparing Mac OS X 10.4 SDK build environment..." | tee -a $LOGFILE
+         log "Preparing Mac OS X 10.4 SDK build environment..."
          # use 10.4 (Tiger) SDK because of BOINC/10.5 incompatibility (http://boinc.berkeley.edu/doxygen/api/html/QBacktrace_8h.html)
          export LDFLAGS="-isysroot /Developer/SDKs/MacOSX10.4u.sdk -Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk -arch i386 $LDFLAGS"
          export CPPFLAGS="-isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch i386 $CPPFLAGS"
@@ -884,7 +913,7 @@ case $TARGET in
          export SDKROOT="/Developer/SDKs/MacOSX10.4u.sdk"
          export MACOSX_DEPLOYMENT_TARGET=10.4
       else
-         echo "Mac OS X 10.4 SDK required but missing!" | tee -a $LOGFILE
+         log "Mac OS X 10.4 SDK required but missing!"
          failure
       fi
       check_prerequisites || failure
@@ -908,9 +937,9 @@ case $TARGET in
       ;;
 esac
 
-echo "************************************" | tee -a $LOGFILE
-echo "Build finished successfully!" | tee -a $LOGFILE
-echo "`date`" | tee -a $LOGFILE
-echo "************************************" | tee -a $LOGFILE
+log "++++++++++++++++++++++++++++++++++++"
+log "Build finished successfully!"
+log "`date`"
+log "++++++++++++++++++++++++++++++++++++"
 
 exit 0
