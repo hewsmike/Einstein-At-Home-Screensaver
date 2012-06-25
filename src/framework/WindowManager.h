@@ -175,21 +175,21 @@ class WindowManager {
    private:
 		/// Identifiers for video match results.
       enum match {MATCH_NONE, MATCH_CLOSE, MATCH_EXACT};
-      
+
       /// Minimum OpenGL version requirements.
       static unsigned int OPEN_GL_VERSION_MINIMUM_MAJOR;
       static unsigned int OPEN_GL_VERSION_MINIMUM_MINOR;
-      
+
       /// Choices for depth buffer resolution.
       static int DEPTH_BUFFER_GRAIN;
       static int DEPTH_BUFFER_GRAIN_FALLBACK;
-      
+
       /// Stencil option.
       static int NO_STENCIL;
 
 		/// Store the disclosed video modes here.
       std::vector<GLFWvidmode> video_modes;
-      
+
       /// What was the best depth buffer resolution found ?
       int best_depth_buffer_grain;
 
@@ -248,7 +248,7 @@ class WindowManager {
 
       /// The screensaver mode indicator ie. was it requested ?
       bool m_ScreensaverMode;
-      
+
       /// Keep record of current actual window state - fullscreen or not ?
       bool isFullScreenMode;
 

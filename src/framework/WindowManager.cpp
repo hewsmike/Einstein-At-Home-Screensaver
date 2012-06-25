@@ -175,7 +175,7 @@ bool WindowManager::initialize(const int width, const int height, const int fram
    	   return false;
 			}
       }
-      
+
    std::stringstream msg1;
    msg1 << "WindowManager::initialize() : Rendering surface acquired "
    	  << m_CurrentWidth
@@ -191,7 +191,7 @@ bool WindowManager::initialize(const int width, const int height, const int fram
 	// Give GLEW the best chance of finding
 	// functionality with experimental drivers.
 	glewExperimental = GL_TRUE;
-	
+
 	// Now initialise GLEW.
    if(glewInit() != GLEW_OK) {
       ErrorHandler::record("WindowManager::initialize() : Window system could not be initalized - GLEW init fail", ErrorHandler::WARN);
@@ -199,7 +199,7 @@ bool WindowManager::initialize(const int width, const int height, const int fram
       }
    else {
       std::string msg2 = "WindowManager::initialize() : Using GLEW version ";
-      msg2 += SolarSystemGlobals::convertGLstring(glewGetString(GLEW_VERSION));
+      msg2 += ErrorHandler::convertGLstring(glewGetString(GLEW_VERSION));
 		ErrorHandler::record(msg2, ErrorHandler::INFORM);
       }
 
@@ -342,7 +342,7 @@ void WindowManager::eventLoop(void) {
       					}
    					else {
       					std::string msg = "WindowManager::initialize() : Using GLEW version ";
-      					msg += SolarSystemGlobals::convertGLstring(glewGetString(GLEW_VERSION));
+      					msg += ErrorHandler::convertGLstring(glewGetString(GLEW_VERSION));
 							ErrorHandler::record(msg, ErrorHandler::INFORM);
       					}
 						}
@@ -642,12 +642,12 @@ void WindowManager::toggleFullscreen(void) {
 	GLenum desiredMode;
 	int desiredWidth;
 	int desiredHeight;
-	
+
 	if(isFullScreenMode) {
 		// Want a transition to windowed mode.
 		if(m_WindowedModeAvailable) {
          canTransition = true;
-         
+
          // Set dimensions for whatever was the previous windowed mode.
          desiredWidth = m_WindowedWidth;
 	      desiredHeight = m_WindowedHeight;
@@ -665,7 +665,7 @@ void WindowManager::toggleFullscreen(void) {
 		// Want a transition to fullscreen mode.
 		if(m_FullscreenModeAvailable) {
 		   canTransition = true;
-		   
+
 		   // Set dimensions of fullscreen as those of user's desktop.
 		   desiredWidth = m_DesktopWidth;
       	desiredHeight = m_DesktopHeight;
@@ -709,7 +709,7 @@ void WindowManager::toggleFullscreen(void) {
       		}
    		else {
       		std::string msg = "WindowManager::initialize() : Using GLEW version ";
-      		msg += SolarSystemGlobals::convertGLstring(glewGetString(GLEW_VERSION));
+      		msg += ErrorHandler::convertGLstring(glewGetString(GLEW_VERSION));
 				ErrorHandler::record(msg, ErrorHandler::INFORM);
       		}
 			}
@@ -718,7 +718,7 @@ void WindowManager::toggleFullscreen(void) {
 		isFullScreenMode = !isFullScreenMode;
 		m_CurrentWidth = desiredWidth;
 		m_CurrentHeight = desiredHeight;
-			
+
    	// notify our observers (currently exactly one, hence front())
    	// (windoze needs to be reinitialized instead of just resized, oh well)
    	/// \todo Can we determine the host OS? On X11 a resize() is sufficient!
