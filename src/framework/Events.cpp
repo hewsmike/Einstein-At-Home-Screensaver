@@ -44,7 +44,7 @@ Events& Events::operator=(const Events& other) {
 	// Skip self assignment check as no allocation.
 	return *this;
 	}
-	
+
 Events* Events::Instance(GLuint render_interval) {
 	// If we have no instance, then make one and initialise it.
 	if(Events::p_instance.get() == NULL) {
@@ -156,7 +156,7 @@ void Events::boincUpdate(void) {
 
    event_queue.push_back(ev);
    }
-   
+
 void Events::render(void) {
    Event ev;
    ev.render.type = RenderEventType;
@@ -209,21 +209,22 @@ void GLFWCALL Events::mouseButton(int button, int action) {
    }
 
 void GLFWCALL Events::mouseMotion(int x, int y) {
+	static int last_x = 0;
+	static int last_y = 0;
+
 	Event ev;
    ev.m_motion.type = Events::MouseMotionEventType;
-   ev.m_motion.xrel = x;
-   ev.m_motion.yrel = y;
+   ev.m_motion.xrel = x - last_x;
+   ev.m_motion.yrel = y - last_y;
+
+   last_x = x;
+   last_y = y;
 
    event_queue.push_back(ev);
    }
 
 void GLFWCALL Events::mouseWheel(int pos) {
-	std::stringstream msg;
-	msg << "Events::mouseWheel() : position = "
-		 << pos;
-	ErrorHandler::record(msg.str(), ErrorHandler::INFORM);
-
-   Event ev;
+	Event ev;
    ev.m_wheel.type = Events::MouseWheelEventType;
 
    event_queue.push_back(ev);
