@@ -21,6 +21,8 @@
 #ifndef ERRORHANDLER_H_
 #define ERRORHANDLER_H_
 
+#include "framework.h"
+
 #include <string>
 
 /**
@@ -76,11 +78,20 @@ class ErrorHandler {
        * \see message_type
        */
       static void record(std::string msg, message_type mt);
-      
+
       /**
        * \brief Check the current OpenGL context for error.
        */
       static void check_OpenGL_Error(void);
+
+      /**
+       * \brief Transform an OpenGL string type to an STL string type.
+       *
+       * \param glstring : the OpenGL string
+       *
+       * \return : an std::string version
+       */
+      static std::string convertGLstring(const GLubyte* glstring);
 
    private:
          /// Identifiers of program exit codes returned to the OS.

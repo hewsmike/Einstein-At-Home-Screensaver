@@ -55,35 +55,6 @@ SolarSystemGlobals::SolarSystemGlobals() {
 SolarSystemGlobals::~SolarSystemGlobals() {
    }
 
-std::string SolarSystemGlobals::convertGLstring(const GLubyte* glstring) {
-   // gluErrorString(), and others, return 'const GLubyte *' - essentially
-   // devolving to 'const unsigned char *'  - but string expects
-   // 'const char *'. Trouble is that direct type conversion/cast is problematic,
-   // so one has to traverse an OpenGL 'string' ( fortunately null terminated )
-   // in order to construct a workable C++ STL string version. This
-   // assumes that the typedef 'khronos_uint8_t' won't change in future ...
-
-   // Start with an empty string as the return value.
-   std::string ret_val;
-
-   // Check that we weren't given a NULL.
-   if(glstring != NULL) {
-      // Traverse the OpenGL 'string' from it's begining.
-      int i = 0;
-      char current = 0;
-      // Assuming we haven't reached the null character terminator.
-      while((current = *(glstring + i)) != 0) {
-         // Add the current character onto the string.
-         ret_val += current;
-         // Increment to the next character position.
-         ++i;
-         }
-      }
-
-   // Return any string accumulated ( which may be empty ).
-   return ret_val;
-   }
-
 void SolarSystemGlobals::set_render_level(SolarSystemGlobals::render_quality rq) {
    qual = rq;
    }
@@ -104,7 +75,7 @@ void SolarSystemGlobals::getOGLVersion(GLuint* major, GLuint* minor) {
       }
 
    // Convert the version string to STL format.
-   std::string ver = SolarSystemGlobals::convertGLstring(version);
+   std::string ver = ErrorHandler::convertGLstring(version);
 
    // Now tokenise the string thus obtained.
    std::vector<std::string> ver_strings;

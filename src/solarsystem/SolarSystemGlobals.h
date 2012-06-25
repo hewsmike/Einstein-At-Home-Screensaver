@@ -90,15 +90,6 @@ class SolarSystemGlobals {
       static render_quality get_render_level(void);
 
       /**
-       * \brief Transform an OpenGL string type to an STL string type.
-       *
-       * \param glstring : the OpenGL string
-       *
-       * \return : an std::string version
-       */
-      static std::string convertGLstring(const GLubyte* glstring);
-
-      /**
        * \brief Obtain the major and minor version number of the
        *        current OpenGL context.
        *
