@@ -25,8 +25,8 @@
 #include "../solarsystem/SolarSystemS5R3.h"
 #include "../solarsystem/SolarSystemRadio.h"
 #include "../solarsystem/SolarSystemGamma.h"
-//#include "../starsphere/StarsphereS5R3.h"
-//#include "../starsphere/StarsphereRadio.h"
+#include "../starsphere/StarsphereS5R3.h"
+#include "../starsphere/StarsphereRadio.h"
 
 /**
  * \addtogroup framework Framework
@@ -49,7 +49,7 @@ class GraphicsEngineFactory {
 
       /// Identifiers of supported graphics engines
       enum Engines {
-         // Starsphere = 1,
+         Starsphere = 1,
          SolarSystem = 50
          };
 
