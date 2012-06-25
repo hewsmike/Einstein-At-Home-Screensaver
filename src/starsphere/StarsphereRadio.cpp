@@ -73,7 +73,7 @@ void StarsphereRadio::initialize(const int width, const int height, const Resour
 	}
 
 	// create large font instances using font resource (base address + size)
-	m_FontLogo1 = new OGLFT::TranslucentTexture(
+	m_FontLogo1 = new OGLFT::Translucent(
 								&m_FontResource->data()->at(0),
 								m_FontResource->data()->size(),
 								26, 78 );
@@ -86,7 +86,7 @@ void StarsphereRadio::initialize(const int width, const int height, const Resour
 	m_FontLogo1->setForegroundColor(1.0, 1.0, 0.0, 1.0);
 
 	// create medium font instances using font resource (base address + size)
-	m_FontLogo2 = new OGLFT::TranslucentTexture(
+	m_FontLogo2 = new OGLFT::Translucent(
 								&m_FontResource->data()->at(0),
 								m_FontResource->data()->size(),
 								12, 72 );

@@ -649,7 +649,7 @@ void Starsphere::initialize(const int width, const int height, const Resource *f
 		// note: initialization of logo font instances is done in subclasses!
 
 		// create medium font instances using font resource (base address + size)
-		m_FontHeader = new OGLFT::TranslucentTexture(
+		m_FontHeader = new OGLFT::Translucent(
 									&m_FontResource->data()->at(0),
 									m_FontResource->data()->size(),
 									13, 78 );
@@ -662,7 +662,7 @@ void Starsphere::initialize(const int width, const int height, const Resource *f
 		m_FontHeader->setForegroundColor(1.0, 1.0, 0.0, 1.0);
 
 		// create small font instances using font resource (base address + size)
-		m_FontText = new OGLFT::TranslucentTexture(
+		m_FontText = new OGLFT::Translucent(
 									&m_FontResource->data()->at(0),
 									m_FontResource->data()->size(),
 									11, 72 );
@@ -865,7 +865,7 @@ void Starsphere::render(const double timeOfDay)
 		glEnable(GL_DEPTH_TEST);
 	}
 
-	SDL_GL_SwapBuffers();
+	glfwSwapBuffers();;
 }
 
 void Starsphere::renderAdditionalObservatories() {

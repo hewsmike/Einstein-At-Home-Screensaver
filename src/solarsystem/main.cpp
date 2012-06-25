@@ -110,7 +110,7 @@ int main(int argc, char **argv) {
    	std::stringstream msg2;
    	msg2 << "SolarSystem::main() : OpenGL vendor string = "
    		  << "'"
-   		  << SolarSystemGlobals::convertGLstring(vendor)
+   		  << ErrorHandler::convertGLstring(vendor)
 			  << "'";
       ErrorHandler::record(msg2.str(), ErrorHandler::INFORM);
       }
@@ -124,7 +124,7 @@ int main(int argc, char **argv) {
    	std::stringstream msg3;
       msg3 << "SolarSystem::main() : OpenGL renderer string = "
       	  << "'"
-      	  << SolarSystemGlobals::convertGLstring(renderer)
+      	  << ErrorHandler::convertGLstring(renderer)
 			  << "'";
       ErrorHandler::record(msg3.str(), ErrorHandler::INFORM);
       }
