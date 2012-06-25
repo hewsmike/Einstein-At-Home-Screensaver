@@ -725,20 +725,15 @@ build_product() {
 
    log "Building $PRODUCT_NAME [Application]..."
    export PROJECT_ROOT=$ROOT || failure
-   export SOLARSYSTEM_SRC=$ROOT/src/$PRODUCT_NAME || failure
-   export SOLARSYSTEM_INSTALL=$ROOT/install || failure
    cd $ROOT/build/$PRODUCT || failure
    cp $ROOT/src/$PRODUCT/*.res . >> $LOGFILE 2>&1 || failure
    cp -f $ROOT/src/$PRODUCT/Makefile.common Makefile >> $LOGFILE 2>&1 || failure
    if [ "$1" == "$TARGET_MAC" ]; then
-   	make release SYSTEM="mac" PRODUCT=$PRODUCT_NAME >> $LOGFILE 2>&1 || failure
-#   cp -f $ROOT/src/solarsystem/Makefile.macos Makefile >> $LOGFILE 2>&1 || failure
+   		make release SYSTEM="mac" PRODUCT=$PRODUCT_NAME >> $LOGFILE 2>&1 || failure
       elif [ "$1" == "$TARGET_WIN32" ]; then
-      make release SYSTEM="win32" PRODUCT=$PRODUCT_NAME >> $LOGFILE 2>&1 || failure
-#   cp -f $ROOT/src/solarsystem/Makefile.mingw Makefile >> $LOGFILE 2>&1 || failure
+      	make release SYSTEM="win32" PRODUCT=$PRODUCT_NAME >> $LOGFILE 2>&1 || failure
       else
-#   cp -f $ROOT/src/solarsystem/Makefile . >> $LOGFILE 2>&1 || failure
-		make release SYSTEM="linux" PRODUCT=$PRODUCT_NAME >> $LOGFILE 2>&1 || failure
+			make release SYSTEM="linux" PRODUCT=$PRODUCT_NAME >> $LOGFILE 2>&1 || failure
       fi
    make install >> $LOGFILE 2>&1 || failure
    log "Successfully built and installed $PRODUCT_NAME [Application]!"
@@ -846,7 +841,7 @@ case "$1" in
 		TARGET=$TARGET_MAC
 		SDK="yes"
 		check_last_build "$1" || failure
-		log "Building mac (Intel) version:"
+		log "Building mac (Intel) version with SDK:"
 		check_build_state || failure
 		;;
    "--win32")
