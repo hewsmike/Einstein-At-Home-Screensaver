@@ -81,4 +81,5 @@ double EinsteinS5R3Adapter::wuFractionDone() const {
 
 double EinsteinS5R3Adapter::wuCPUTime() const {
    return m_WUCPUTime;
+	}
 
