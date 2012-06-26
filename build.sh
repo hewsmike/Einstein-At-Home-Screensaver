@@ -719,7 +719,7 @@ build_product() {
    else
       cp -f $ROOT/src/framework/Makefile . >> $LOGFILE 2>&1 || failure
    fi
-   make $2 >> $LOGFILE 2>&1 || failure
+   make $2 PRODUCT=$PRODUCT_NAME >> $LOGFILE 2>&1 || failure
    make install >> $LOGFILE 2>&1 || failure
    log "Successfully built and installed $PRODUCT_NAME [Framework]!"
 

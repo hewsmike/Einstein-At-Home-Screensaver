@@ -22,6 +22,10 @@
 FRAMEWORK_SRC?=$(PWD)
 FRAMEWORK_INSTALL?=$(PWD)
 
+# Product specific. Activates code within GraphicsEngineFactory switch cases.
+PRODUCT_UPPER := $(shell echo $(PRODUCT) | tr a-z A-Z)
+CPPFLAGS += -D$(PRODUCT_UPPER)
+
 # config values
 CXX?=g++
 

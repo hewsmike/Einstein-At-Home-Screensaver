@@ -51,6 +51,7 @@
 # Overall settings.
 # Product name in lowercase.
 PRODUCT_LOWER := $(shell echo $(PRODUCT) | tr A-Z a-z)
+PRODUCT_UPPER := $(shell echo $(PRODUCT) | tr a-z A-Z)
 
 # Path settings.
 PRODUCT_SRC := $(PROJECT_ROOT)/src/$(PRODUCT_LOWER)
