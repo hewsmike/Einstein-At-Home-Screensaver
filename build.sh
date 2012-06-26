@@ -786,13 +786,17 @@ build_win32() {
 print_usage() {
    cd $ROOT
 
-   echo "++++++++++++++++++++++++++++++++++++"
-   echo "Usage: `basename $0` <target> <product>"
+   echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+   echo "                         Usage"
+   echo "                        +++++++"
+   echo "With two parameters :" 
+   echo 
+   echo "         `basename $0` <target> <product>"
    echo
    echo "Available targets:"
    echo " --linux"
    echo " --mac"
-   echo " --mac-sdk (build with Mac OS 10.4 x86 SDK)"
+   echo " --mac-sdk    ( build with Mac OS 10.4 x86 SDK )"
    echo " --win32"
    echo " --doc"
    echo
@@ -800,7 +804,14 @@ print_usage() {
    echo " --starsphere"
    echo " --solarsystem"
    echo
-   echo "++++++++++++++++++++++++++++++++++++"
+   echo "OR with a single parameter:"
+   echo 
+   echo "         `basename $0` --linux         ( implies --solarsystem )"
+   echo "         `basename $0` --solarsystem   ( implies --linux )"
+   echo "         `basename $0` --doc"
+   echo "         `basename $0` --distclean" 
+   echo
+   echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
 
    echo "Wrong usage. Stopping!" >> $LOGFILE
 
@@ -820,7 +831,7 @@ log "++++++++++++++++++++++++++++++++++++"
 # crude command line parsing :-)
 
 if [ $# -ne 2 ]; then
-   print_usage
+print_usage
    exit 1
 fi
 
@@ -838,12 +849,12 @@ case "$1" in
       check_build_state || failure
       ;;
    "--mac-sdk")
-		TARGET=$TARGET_MAC
-		SDK="yes"
-		check_last_build "$1" || failure
-		log "Building mac (Intel) version with SDK:"
-		check_build_state || failure
-		;;
+      TARGET=$TARGET_MAC
+      SDK="yes"
+      check_last_build "$1" || failure
+      log "Building mac (Intel) version with SDK:"
+      check_build_state || failure
+      ;;
    "--win32")
       TARGET=$TARGET_WIN32
       check_last_build "$1" || failure
