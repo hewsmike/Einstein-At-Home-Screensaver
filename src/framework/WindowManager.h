@@ -172,6 +172,15 @@ class WindowManager {
        */
       void setScreensaverMode(const bool enabled);
 
+      /**
+       * \brief Obtain the major and minor version number of the
+       *        current OpenGL context.
+       *
+       * \param major : pointer to place the major version number
+       * \param minor : pointer to place the minor version number
+       */
+      void getOGLVersion(GLuint* major, GLuint* minor);
+
    private:
 		/// Identifiers for video match results.
       enum match {MATCH_NONE, MATCH_CLOSE, MATCH_EXACT};
@@ -209,15 +218,6 @@ class WindowManager {
        */
       bool setOGLContext(void);
 #endif
-
-      /**
-       * \brief Obtain the major and minor version number of the
-       *        current OpenGL context.
-       *
-       * \param major : pointer to place the major version number
-       * \param minor : pointer to place the minor version number
-       */
-      void getOGLVersion(GLuint* major, GLuint* minor);
 
       /**
        * \brief Tokenise a given string using a given delimiter character
