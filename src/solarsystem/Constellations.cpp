@@ -1968,7 +1968,6 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    triangulum.add_link(0, 1);
    triangulum.add_link(0, 3);
    triangulum.add_link(1, 2);
-   triangulum.add_link(2, 2);
    cons_list.push_back(triangulum);
    tot_stars += triangulum.total_stars();
    tot_links += triangulum.total_links();
