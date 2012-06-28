@@ -239,7 +239,7 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
    // Set panel justifications.
    north_panel.setPrimaryJustification(HUDFlowLayout::SPAN);
    north_panel.setSecondaryJustification(HUDFlowLayout::MIDDLE);
-   south_panel.setPrimaryJustification(HUDFlowLayout::START_AND_END);
+   south_panel.setPrimaryJustification(HUDFlowLayout::CENTRE);
    south_panel.setSecondaryJustification(HUDFlowLayout::MIDDLE);
    east_panel.setPrimaryJustification(HUDFlowLayout::CENTRE);
    east_panel.setSecondaryJustification(HUDFlowLayout::MIDDLE);
