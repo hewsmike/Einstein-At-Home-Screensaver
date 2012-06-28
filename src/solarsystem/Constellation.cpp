@@ -65,6 +65,8 @@ void Constellation::add_link(unsigned int first, unsigned int second) {
          msg << "Constellation::add_link() - attempt to link a star to itself : ";
          msg << "\tindex = ";
          msg << first;
+         msg << "\tconstellation = ";
+         msg << cons_name;
          ErrorHandler::record(msg.str(), ErrorHandler::WARN);
          }
       }
@@ -76,6 +78,8 @@ void Constellation::add_link(unsigned int first, unsigned int second) {
       msg << first;
       msg << "\tsecond index = ";
       msg << second;
+      msg << "\tconstellation = ";
+      msg << cons_name;
       ErrorHandler::record(msg.str(), ErrorHandler::FATAL);
       }
    }
