@@ -210,6 +210,25 @@ class WindowManager {
       bool setOGLContext(void);
 #endif
 
+      /**
+       * \brief Obtain the major and minor version number of the
+       *        current OpenGL context.
+       *
+       * \param major : pointer to place the major version number
+       * \param minor : pointer to place the minor version number
+       */
+      void getOGLVersion(GLuint* major, GLuint* minor);
+
+      /**
+       * \brief Tokenise a given string using a given delimiter character
+       *
+       * \param str : the string to tokenise
+       * \param delimiter : the character to delimit by
+       * \param store : a reference to the container to store the tokens in
+       *
+       */
+      void tokeniseString(const std::string str, const char delimiter, std::vector<std::string>& store);
+
       /// Local BOINC adapter instance to read project preferences
       BOINCClientAdapter *m_BoincAdapter;
 
