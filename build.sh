@@ -798,18 +798,12 @@ print_usage() {
    echo " --mac"
    echo " --mac-sdk    ( build with Mac OS 10.4 x86 SDK )"
    echo " --win32"
+   echo " --distclean"
    echo " --doc"
    echo
    echo "Available products:"
    echo " --starsphere"
    echo " --solarsystem"
-   echo
-   echo "OR with a single parameter:"
-   echo 
-   echo "         `basename $0` --linux         ( implies --solarsystem )"
-   echo "         `basename $0` --solarsystem   ( implies --linux )"
-   echo "         `basename $0` --doc"
-   echo "         `basename $0` --distclean" 
    echo
    echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
 

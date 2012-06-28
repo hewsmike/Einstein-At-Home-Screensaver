@@ -211,24 +211,20 @@ $(PRODUCT_LOWER)_Einstein_$(GAMMA): CPPFLAGS += -D SCIENCE_APP=Einstein$(GAMMA)
 
 # Target specific options.
 ifeq ".$(SYSTEM)" ".linux"
-
-debug: CPPFLAGS += -ggdb3
-release : CPPFLAGS += -ggdb3
-memcheck: CPPFLAGS += $(DEBUGFLAGSCPP) -D DEBUG_VALGRIND
-callgrind: CPPFLAGS += $(DEBUGFLAGSCPP) -D DEBUG_VALGRIND
-
+   debug: CPPFLAGS += -ggdb3
+   release : CPPFLAGS += -ggdb3
+   memcheck: CPPFLAGS += $(DEBUGFLAGSCPP) -D DEBUG_VALGRIND
+   callgrind: CPPFLAGS += $(DEBUGFLAGSCPP) -D DEBUG_VALGRIND
 endif
+
 ifeq ".$(SYSTEM)" ".win32"
-
-debug: CPPFLAGS += -gstabs3
-release: CPPFLAGS += -gstabs3
-
+   debug: CPPFLAGS += -gstabs3
+   release: CPPFLAGS += -gstabs3
 endif
+
 ifeq ".$(SYSTEM)" ".mac"
-
-debug: CPPFLAGS += -ggdb3
-release: CPPFLAGS += -ggdb3
-
+   debug: CPPFLAGS += -ggdb3
+   release: CPPFLAGS += -ggdb3
 endif
 
 ###########################################################################
