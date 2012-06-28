@@ -98,7 +98,7 @@ int main(int argc, char **argv) {
    // Find out the OpenGL version.
    GLuint major = 0;
    GLuint minor = 0;
-   SolarSystemGlobals::getOGLVersion(&major, &minor);
+   window.getOGLVersion(&major, &minor);
    std::stringstream msg1;
    msg1 << "SolarSystem::main() : OpenGL version = "
 		  << major << '.' << minor;

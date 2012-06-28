@@ -28,7 +28,6 @@
 
 #include "ErrorHandler.h"
 #include "Events.h"
-#include "SolarSystemGlobals.h"
 
 unsigned int WindowManager::OPEN_GL_VERSION_MINIMUM_MAJOR(1);
 unsigned int WindowManager::OPEN_GL_VERSION_MINIMUM_MINOR(5);
@@ -211,7 +210,7 @@ bool WindowManager::initialize(const int width, const int height, const int fram
    	// Find out the OpenGL version.
    	GLuint major = 0;
    	GLuint minor = 0;
-   	SolarSystemGlobals::getOGLVersion(&major, &minor);
+   	getOGLVersion(&major, &minor);
    	std::stringstream msg1;
    	msg1 << "WindowManager::initialize() : OpenGL version = "
    		  << major << '.' << minor;
@@ -808,7 +807,7 @@ bool WindowManager::setOGLContext(void) {
 	// Determine OpenGL version.
 	GLuint major = 0;
 	GLuint minor = 0;
-	SolarSystemGlobals::getOGLVersion(&major, &minor);
+	getOGLVersion(&major, &minor);
 	std::stringstream msg;
 	msg << "WindowManager::setOGLContext() : OpenGL v"
 	  	 << major
@@ -892,3 +891,76 @@ bool WindowManager::setOGLContext(void) {
 	return ret_val;
 	}
 #endif
+
+
+void WindowManager::getOGLVersion(GLuint* major, GLuint* minor)
+{
+    // Try to obtain the version string from the context.
+    const GLubyte* version = glGetString(GL_VERSION);
+
+    // Did that succeed ?
+    if (version == NULL) {
+        // No, can't proceed.
+        std::string msg =
+                "WindowManager::getOGLVersion() : couldn't obtain version string";
+        ErrorHandler::record(msg, ErrorHandler::FATAL);
+    }
+
+    // Convert the version string to STL format.
+    std::string ver = ErrorHandler::convertGLstring(version);
+
+    // Now tokenise the string thus obtained.
+    std::vector<std::string> ver_strings;
+    tokeniseString(ver, '.', ver_strings);
+
+    if (ver_strings.size() < 2) {
+        std::string msg =
+                "WindowManager::getOGLVersion() : couldn't tokenise version string";
+    }
+
+    int major_candidate = 0;
+    std::stringstream convert1(ver_strings[0]);
+    convert1 >> major_candidate;
+
+    if (convert1.goodbit != 0) {
+        std::string msg =
+                "WindowManager::getOGLVersion() : couldn't interpret major version string";
+        ErrorHandler::record(msg, ErrorHandler::FATAL);
+    }
+    *major = major_candidate;
+
+    int minor_candidate = 0;
+    std::stringstream convert2(ver_strings[1]);
+    convert2 >> minor_candidate;
+
+    if (convert2.goodbit != 0) {
+        std::string msg =
+                "WindowManager::getOGLVersion() : couldn't interpret minor version string";
+        ErrorHandler::record(msg, ErrorHandler::FATAL);
+    }
+    *minor = minor_candidate;
+}
+
+void WindowManager::tokeniseString(const std::string str,
+        const char delimiter, std::vector<std::string>& store)
+{
+    size_t string_pos = 0;
+    size_t delimiter_pos = 0;
+
+    // Provided we don't get to the end of ( what remains
+    // of ) the input string and not find a delimiter.
+    while ((delimiter_pos = str.find(delimiter, string_pos))
+            != std::string::npos) {
+        // Are the delimiters adjacent ? Policy is that
+        // we will not create empty tokens, hence multiple
+        // adjacent delimiters are treated as one.
+        if (delimiter_pos > string_pos) {
+            // Non-adjacent.
+            size_t token_len = delimiter_pos - string_pos;
+            std::string token = str.substr(string_pos, token_len);
+            store.push_back(token);
+        }
+        // Move along to the position just after last delimiter found.
+        string_pos = delimiter_pos + 1;
+    }
+}

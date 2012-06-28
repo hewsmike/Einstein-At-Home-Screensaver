@@ -89,25 +89,6 @@ class SolarSystemGlobals {
        */
       static render_quality get_render_level(void);
 
-      /**
-       * \brief Obtain the major and minor version number of the
-       *        current OpenGL context.
-       *
-       * \param major : pointer to place the major version number
-       * \param minor : pointer to place the minor version number
-       */
-      static void getOGLVersion(GLuint* major, GLuint* minor);
-
-      /**
-       * \brief Tokenise a given string using a given delimiter character
-       *
-       * \param str : the string to tokenise
-       * \param delimiter : the character to delimit by
-       * \param store : a reference to the container to store the tokens in
-       *
-       */
-      static void tokeniseString(const std::string str, const char delimiter, std::vector<std::string>& store);
-
    private:
       /// If needed, what is the preferred OpenGL compatibility mode?
       static const GLuint PREFERRED_OGL_COMPATIBILITY_MODE_MAJOR;
