@@ -247,18 +247,18 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
    west_panel.setSecondaryJustification(HUDFlowLayout::MIDDLE);
 
    // Put the panels into the layout.
-	overlay.setPanel(HUDBorderLayout::NORTH, &north_panel);
+	// overlay.setPanel(HUDBorderLayout::NORTH, &north_panel);
 	overlay.setPanel(HUDBorderLayout::SOUTH, &south_panel);
-	overlay.setPanel(HUDBorderLayout::EAST, &east_panel);
-	overlay.setPanel(HUDBorderLayout::WEST, &west_panel);
+	// overlay.setPanel(HUDBorderLayout::EAST, &east_panel);
+	// overlay.setPanel(HUDBorderLayout::WEST, &west_panel);
 
    // Create content and include into panels.
-   LoadImageToPanel(wyp_image, &north_panel, "wypTGA", 5, 5);
-   LoadImageToPanel(aps_image, &north_panel, "apsTGA", 5, 5);
-   LoadImageToPanel(aei_image, &north_panel, "aeiTGA", 5, 5);
-   LoadImageToPanel(opencl_image, &north_panel, "openclTGA", 5, 5);
+   // LoadImageToPanel(wyp_image, &north_panel, "wypTGA", 5, 5);
+   // LoadImageToPanel(aps_image, &north_panel, "apsTGA", 5, 5);
+   // LoadImageToPanel(aei_image, &north_panel, "aeiTGA", 5, 5);
+   // LoadImageToPanel(opencl_image, &north_panel, "openclTGA", 5, 5);
 
-   LoadImageToPanel(boinc_image, &south_panel, "boincTGA", 5, 5);
+   // LoadImageToPanel(boinc_image, &south_panel, "boincTGA", 5, 5);
    version_text = new HUDTextLineScroll(50, overlay.getFont(), 35, 10, HUDTextLineScroll::LEFT, 10);
    if(version_text == NULL) {
       std::string msg = "Simulation::prepare() - failed creation of HUDTextLineScroll instance on heap";
@@ -269,9 +269,9 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
    // Put the content into the panel.
    south_panel.addContent(version_text);
 
-   LoadImageToPanel(ligo_image, &south_panel, "ligoTGA", 5, 5);
-   LoadImageToPanel(geo_image, &south_panel, "geoTGA", 5, 5);
-   LoadImageToPanel(virgo_image, &south_panel, "virgoTGA", 5, 5);
+   // LoadImageToPanel(ligo_image, &south_panel, "ligoTGA", 5, 5);
+   // LoadImageToPanel(geo_image, &south_panel, "geoTGA", 5, 5);
+   // LoadImageToPanel(virgo_image, &south_panel, "virgoTGA", 5, 5);
 
    overlay.activate();
    }
