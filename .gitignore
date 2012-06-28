@@ -5,6 +5,7 @@ Debug
 install
 dist
 doc/html
+.settings
 
 # patterns
 doc/*.tag
