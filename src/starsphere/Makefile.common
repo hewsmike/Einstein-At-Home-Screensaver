@@ -75,7 +75,7 @@ endif
 
 TARGET_XTRA_DEPS=
 ifeq ".$(SYSTEM)" ".mac"
-	TARGET_XTRA_DEPS := "$(PRODUCT_SRC)/EaHMacIcon.h"
+	TARGET_XTRA_DEPS := $(PRODUCT_SRC)/EaHMacIcon.h
 endif
 
 # Config values.
