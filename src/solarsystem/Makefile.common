@@ -75,7 +75,7 @@ endif
 
 TARGET_XTRA_DEPS=
 ifeq ".$(SYSTEM)" ".mac"
-	TARGET_XTRA_DEPS := "$(PRODUCT_SRC)/EaHMacIcon.h"
+	TARGET_XTRA_DEPS := $(PRODUCT_SRC)/EaHMacIcon.h
 endif
 
 # Config values.
@@ -114,10 +114,11 @@ endif
 # Target specific.
 ifeq ".$(SYSTEM)" ".linux"
 	LIBS += -Wl,-Bstatic
-	LIBS += -lframework -loglft -lglfw -L$(PRODUCT_INSTALL)/lib
+	LIBS += -lframework -loglft -lglfw -lrt -L$(PRODUCT_INSTALL)/lib
 	LIBS += $(shell $(PRODUCT_INSTALL)/bin/freetype-config --libs)
 	LIBS += $(shell $(PRODUCT_INSTALL)/bin/xml2-config --libs)
 	LIBS += -lboinc_api -lboinc
+	LIBS += -lXrandr -lXrender
 	LIBS += -lstdc++
 	LIBS += -L/usr/lib
 	LIBS += -Wl,-Bdynamic
