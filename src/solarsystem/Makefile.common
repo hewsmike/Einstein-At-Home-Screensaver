@@ -271,7 +271,7 @@ install:
 	cp graphics_app* $(PRODUCT_INSTALL)/../dist
 
 clean:
-	rm -f $(RESOURCESPEC).cpp $(OBJS) graphics_app*
+	rm -rf $(RESOURCESPEC).cpp $(OBJS) graphics_app*
 	
 # Target specific tools.
 ifeq ".$(SYSTEM)" ".linux"
