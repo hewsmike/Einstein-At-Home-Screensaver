@@ -19,22 +19,23 @@
 ###########################################################################
 # Please invoke this makefile with the following command template 
 # ( where < and > in this explanation delimit the text to be inserted
-# and ' does appear on the command line to encase argument values ) :
+# and ' DOES appear on the command line to encase argument values ) :
 #
-# make TARGET SYSTEM='?' PRODUCT='?'	
-# 
+# make TARGET SYSTEM='?' PRODUCT='?'
+#
 # where :
 #
 # TARGET is <debug> or <release> or <install> or <clean>	( all SYSTEM choices )
-#			is <valgrind> or <callgrind>							( if SYSTEM='linux' )
 #
-# SYSTEM value is <linux> or <win32> or <mac>				( not required if 
-#																			  TARGET is <install>
-#																						or <clean> )
+#        is <valgrind> or <callgrind>                       ( if SYSTEM='linux' )
 #
-# PRODUCT value is case sensitive name of primary   		( not required if 
-#			 AbstractGraphicsEngine derivative for this       TARGET is <install>
-#			 product eg. <Starsphere> or <SolarSystem>	      		or <clean> )
+# SYSTEM value is <linux> or <win32> or <mac>               ( not required if 
+#                                                             TARGET is <install>
+#                                                             or <clean> )
+#
+# PRODUCT value is case sensitive name of primary           ( not required if 
+#         AbstractGraphicsEngine derivative for this          TARGET is <install>
+#         product eg. <Starsphere> or <SolarSystem>           or <clean> )
 #
 # NB The following variables are assumed to have been appropriately
 # set in the environment :
@@ -51,6 +52,7 @@
 # Overall settings.
 # Product name in lowercase.
 PRODUCT_LOWER := $(shell echo $(PRODUCT) | tr A-Z a-z)
+PRODUCT_UPPER := $(shell echo $(PRODUCT) | tr a-z A-Z)
 
 # Path settings.
 PRODUCT_SRC := $(PROJECT_ROOT)/src/$(PRODUCT_LOWER)
@@ -64,18 +66,18 @@ GAMMA := Gamma
 # Target variants.
 TARGET_APPEND=
 ifeq ".$(SYSTEM)" ".linux"
-	TARGET_APPEND := "i686-pc-linux-gnu"
+    TARGET_APPEND := "i686-pc-linux-gnu"
 endif
 ifeq ".$(SYSTEM)" ".win32"
-	TARGET_APPEND := "windows_intelx86.exe"
+    TARGET_APPEND := "windows_intelx86.exe"
 endif
 ifeq ".$(SYSTEM)" ".mac"
-	TARGET_APPEND := "i686-apple-darwin"
+    TARGET_APPEND := "i686-apple-darwin"
 endif
 
 TARGET_XTRA_DEPS=
 ifeq ".$(SYSTEM)" ".mac"
-	TARGET_XTRA_DEPS := $(PRODUCT_SRC)/EaHMacIcon.h
+    TARGET_XTRA_DEPS := $(PRODUCT_SRC)/EaHMacIcon.h
 endif
 
 # Config values.
@@ -93,18 +95,18 @@ CPPFLAGS += -I$(FRAMEWORK_SRC) -I$(PRODUCT_SRC) -I$(PRODUCT_SRC)/../framework
 
 # Target specific.
 ifeq ".$(SYSTEM)" ".linux"
- 	CPPFLAGS += -I/usr/include
-	CPPFLAGS += -DGL_GLEXT_PROTOTYPES
+    CPPFLAGS += -I/usr/include
+    CPPFLAGS += -DGL_GLEXT_PROTOTYPES
 endif
 ifeq ".$(SYSTEM)" ".win32"
-	CPPFLAGS += -DGL_GLEXT_PROTOTYPES
-	CPPFLAGS += -D_WIN32_WINDOWS=0x0410
-	CPPFLAGS += -DWIN32_GLEXT_LINKS
-	CPPFLAGS += -DGLEW_STATIC
+    CPPFLAGS += -DGL_GLEXT_PROTOTYPES
+    CPPFLAGS += -D_WIN32_WINDOWS=0x0410
+    CPPFLAGS += -DWIN32_GLEXT_LINKS
+    CPPFLAGS += -DGLEW_STATIC
 endif
 ifeq ".$(SYSTEM)" ".mac"
-	CPPFLAGS += -I/usr/include
-	CPPFLAGS += $(CXXFLAGS)
+    CPPFLAGS += -I/usr/include
+    CPPFLAGS += $(CXXFLAGS)
 endif
 
 ###########################################################################
@@ -113,38 +115,39 @@ endif
 
 # Target specific.
 ifeq ".$(SYSTEM)" ".linux"
-	LIBS += -Wl,-Bstatic
-	LIBS += -lframework -loglft -lglfw -lrt -L$(PRODUCT_INSTALL)/lib
-	LIBS += $(shell $(PRODUCT_INSTALL)/bin/freetype-config --libs)
-	LIBS += $(shell $(PRODUCT_INSTALL)/bin/xml2-config --libs)
-	LIBS += -lboinc_api -lboinc
-	LIBS += -lXrandr -lXrender
+    LIBS += -Wl,-Bstatic
+    LIBS += -lframework -loglft -lglfw -lrt -L$(PRODUCT_INSTALL)/lib
+    LIBS += $(shell $(PRODUCT_INSTALL)/bin/freetype-config --libs)
+    LIBS += $(shell $(PRODUCT_INSTALL)/bin/xml2-config --libs)
+    LIBS += -lboinc_api -lboinc
+    LIBS += -lXrandr -lXrender 
 	LIBS += -lstdc++
-	LIBS += -L/usr/lib
-	LIBS += -Wl,-Bdynamic
-	LIBS += -lGL -lGLU
-	LIBS += -lpthread -lm -lc
+    LIBS += -L/usr/lib
+    LIBS += -Wl,-Bdynamic
+    LIBS += -lGL -lGLU
+    LIBS += -lpthread -lm -lc
 endif
 
 ifeq ".$(SYSTEM)" ".win32"
-	LIBS += -Wl,-Bstatic
-	LIBS += -lframework -loglft -lglfw -L$(SOLARSYSTEM_INSTALL)/lib
-	LIBS += $(shell $(PRODUCT_INSTALL)/bin/freetype-config --libs)
-	LIBS += $(shell $(PRODUCT_INSTALL)/bin/xml2-config --libs)
-	LIBS += -lws2_32 # required by libxml2
-	LIBS += -lboinc_graphics2 -lboinc_api -lboinc
-	LIBS += -Wl,-Bdynamic
-	LIBS += -lopengl32 -lglu32
+    LIBS += -Wl,-Bstatic
+    LIBS += -lframework -loglft -lglfw -L$(SOLARSYSTEM_INSTALL)/lib
+    LIBS += $(shell $(PRODUCT_INSTALL)/bin/freetype-config --libs)
+    LIBS += $(shell $(PRODUCT_INSTALL)/bin/xml2-config --libs)
+    LIBS += -lws2_32 # required by libxml2
+    LIBS += -lboinc_graphics2 -lboinc_api -lboinc
+    LIBS += -Wl,-Bdynamic
+    LIBS += -lopengl32 -lglu32
 endif
 
 ifeq ".$(SYSTEM)" ".mac"
-	LIBS += -lframework -loglft -L$(SOLARSYSTEM_INSTALL)/lib
-	LIBS += $(shell $(PRODUCT_INSTALL)/bin/freetype-config --libs)
-	LIBS += $(shell $(PRODUCT_INSTALL)/bin/xml2-config --libs)
-	LIBS += -lboinc_graphics2 -lboinc_api -lboinc -L$(SOLARSYSTEM_INSTALL)/lib
-	LIBS += -lglfw -lGLEW -framework AGL -framework OpenGL -framework Carbon -framework AppKit -framework CoreFoundation
-	LIBS += -lstdc++
-	LIBS += -lpthread -lm -lc
+    LIBS += -lframework -loglft -L$(SOLARSYSTEM_INSTALL)/lib
+    LIBS += $(shell $(PRODUCT_INSTALL)/bin/freetype-config --libs)
+    LIBS += $(shell $(PRODUCT_INSTALL)/bin/xml2-config --libs)
+    LIBS += -lboinc_graphics2 -lboinc_api -lboinc -L$(SOLARSYSTEM_INSTALL)/lib
+    LIBS += -lglfw -lGLEW -framework AGL -framework OpenGL
+    LIBS += -framework Carbon -framework AppKit -framework CoreFoundation
+    LIBS += -lstdc++
+    LIBS += -lpthread -lm -lc
 endif
 
 ###########################################################################
@@ -165,10 +168,10 @@ RESOURCESPEC = resources
 
 # Target specific.
 ifeq ".$(SYSTEM)" ".win32"
-	OBJS += $(RESOURCESPEC)_mingw.o
+    OBJS += $(RESOURCESPEC)_mingw.o
 endif
 ifeq ".$(SYSTEM)" ".mac"
-	OBJS += SetMacSSLevel.o
+    OBJS += SetMacSSLevel.o
 endif
 
 # Product specific.
@@ -184,6 +187,9 @@ OBJS += Traversable.o UTC.o Vector3D.o VectorSP.o Vertex.o
 
 # Rules for object builds from sources.
 
+%.o : $(PRODUCT_SRC)/%.C
+	$(CXX) -g $(CPPFLAGS) -c $<
+    
 %.o : $(PRODUCT_SRC)/%.cpp $(PRODUCT_SRC)/%.h
 	$(CXX) -g $(CPPFLAGS) -c $<
 
@@ -212,20 +218,20 @@ $(PRODUCT_LOWER)_Einstein_$(GAMMA): CPPFLAGS += -D SCIENCE_APP=Einstein$(GAMMA)
 
 # Target specific options.
 ifeq ".$(SYSTEM)" ".linux"
-   debug: CPPFLAGS += -ggdb3
-   release : CPPFLAGS += -ggdb3
-   memcheck: CPPFLAGS += $(DEBUGFLAGSCPP) -D DEBUG_VALGRIND
-   callgrind: CPPFLAGS += $(DEBUGFLAGSCPP) -D DEBUG_VALGRIND
+    debug: CPPFLAGS += -ggdb3
+    release : CPPFLAGS += -ggdb3
+    memcheck: CPPFLAGS += $(DEBUGFLAGSCPP) -D DEBUG_VALGRIND
+    callgrind: CPPFLAGS += $(DEBUGFLAGSCPP) -D DEBUG_VALGRIND
 endif
 
 ifeq ".$(SYSTEM)" ".win32"
-   debug: CPPFLAGS += -gstabs3
-   release: CPPFLAGS += -gstabs3
+    debug: CPPFLAGS += -gstabs3
+    release: CPPFLAGS += -gstabs3
 endif
 
 ifeq ".$(SYSTEM)" ".mac"
-   debug: CPPFLAGS += -ggdb3
-   release: CPPFLAGS += -ggdb3
+    debug: CPPFLAGS += -ggdb3
+    release: CPPFLAGS += -ggdb3
 endif
 
 ###########################################################################
