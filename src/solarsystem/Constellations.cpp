@@ -2078,7 +2078,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    vela.add_star(OrdStar(161.69f, -49.42f, 2.69f, OrdStar::SPEC_G, "Peregrini"));
    vela.add_star(OrdStar(149.22f, -54.57f, 3.52f, OrdStar::SPEC_B, "Tseen Ke"));
    vela.add_star(OrdStar(142.68f, -40.47f, 3.60f, OrdStar::SPEC_F, ""));
-   vela.add_star(OrdStar(153.68f, 42.12f, 3.85f, OrdStar::SPEC_A, ""));
+   vela.add_star(OrdStar(153.68f, -42.12f, 3.85f, OrdStar::SPEC_A, ""));
    // Actually part of Puppis : the Poop Deck.
    vela.add_star(OrdStar(121.00f, -40.00f, 2.21f, OrdStar::SPEC_O, "Naos"));
    // Actually part of Carina : the Keel.
