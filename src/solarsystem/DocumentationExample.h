@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2011 by Mike Hewson                                     *
- *   hewsmike@iinet.net.au                                                 *
+ *   Copyright (C) 2012 by Mike Hewson                                     *
+ *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
  *                                                                         *
@@ -32,7 +32,7 @@
 
 /**
  * \brief A short explanation of as many lines as you like until an empty line
- *        just like below. One doesn't ever compile this file by the way!! :-)
+ *        just like below.
  *
  * A somewhat longer explanation with further detail
  *
@@ -51,10 +51,8 @@ class DocumentationExample {
        */
       DocumentationExample(sometype parameter1, sometype parameter2);
 
-      /**
-       * \brief Destructor
-       */
-      ~DocumentationExample();
+      /// Destructor
+      virtual ~DocumentationExample();
 
       /**
        * \brief A short explanation of some public member function

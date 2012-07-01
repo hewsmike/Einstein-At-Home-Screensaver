@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2011 by Mike Hewson                                     *
- *   hewsmike@iinet.net.au                                                 *
+ *   Copyright (C) 2012 by Mike Hewson                                     *
+ *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
  *                                                                         *
@@ -18,10 +18,14 @@
  *                                                                         *
  ***************************************************************************/
 
-// Only include the specific header for this cpp file, with any
-// any other header inclusion done within that. One doesn't ever compile
-// this file by the way!! :-)
+// The specific header for this cpp file.
 #include "DocumentationExample.h"
+
+// Related only to implementation ( this file ).
+#include <a_standard_library_header>
+
+// Related only to implementation ( this file ).
+#include "a_homegrown_header.h
 
 DocumentationExample::DocumentationExample(sometype1 parameter1,
                                            sometype2 parameter2) {
