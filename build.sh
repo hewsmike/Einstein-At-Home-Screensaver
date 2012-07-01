@@ -25,35 +25,48 @@
 
 ### globals ############################################################################################################
 
+# Set paths.
 ROOT=`pwd`
 PATH_ORG="$PATH"
 PATH_MINGW="$PATH"
+
+# Set the logfile. 
 LOGFILE=$ROOT/build.log
 
+# Required for correct access to the BOINC repository. 
 TAG_GFXAPPS="current_gfx_apps"
 
+# For some source fetches we use version strings.
 GLEW_VERSION=1.7.0
 GLFW_VERSION=2.7.5
 FREETYPE_VERSION=2.3.5
 LIBXML_VERSION=2.6.32
 
+# No target set initially each time we run ( to be discovered later ). 
 TARGET=0
-TARGET_LINUX=1
-TARGET_MEMCHECK=2
-TARGET_CALLGRIND=3
-TARGET_MAC=4
-TARGET_WIN32=5
-TARGET_DOC=6
 
+# Target variants.
+TARGET_LINUX=1
+TARGET_MAC=2
+TARGET_WIN32=3
+TARGET_DOC=4
+
+# No buildstate set initially each time we run ( to be discovered later ).
 BUILDSTATE=0
+
+# Common build stages.
 BS_PREREQUISITES=1
 BS_PREPARE_TREE=2
+
+# Non-MinGW build stages
 BS_BUILD_GLEW=3
 BS_BUILD_GLFW=4
 BS_BUILD_FREETYPE=5
 BS_BUILD_LIBXML=6
 BS_BUILD_OGLFT=7
 BS_BUILD_BOINC=8
+
+# MinGW build stages
 BS_BUILD_GLEW_MINGW=9
 BS_BUILD_GLFW_MINGW=10
 BS_BUILD_FREETYPE_MINGW=11
@@ -63,16 +76,16 @@ BS_BUILD_BOINC_MINGW=14
 
 ### functions (utility) ################################################################################################
 
-check_build_state() {
+retrieve_build_state() {
     log "Checking for previous build checkpoints..."
 
     # Do we have a record of the most recent build state?
     if [ ! -f .buildstate ]; then
-        # No, so start fromthe beginning.
+        # No. Start from the beginning.
         cd $ROOT || failure
         log "No previous build checkpoints found! Starting from scratch..."
     else
-        # Yes, so what is that build state?
+        # Yes. Get that build state.
         BUILDSTATE=`cat $ROOT/.buildstate 2>/dev/null`
         log "Recovering previous build..."
     fi
@@ -84,18 +97,18 @@ check_last_build() {
     log "Checking previous build target..."
 
     # Get the contents, if any, of the file recording the most recent build.
-    LASTBUILD=`cat .lastbuild 2>/dev/null`
+    LASTBUILD=`cat $ROOT/.lastbuild 2>/dev/null`
 
     # Assuming you have a record of the most recent build,
     # then is it the currently requested one?
-    if [[ ( -f .lastbuild ) && ( "$LASTBUILD" != "$1" ) ]]; then
+    if [[ ( -f $ROOT/.lastbuild ) && ( "$LASTBUILD" != "$1" ) ]]; then
         # No, the target has changed, purge and (re-)prepare the trees.
         purge_tree
         prepare_tree
     fi
 
-    # Record the currently requested build for examination next time.
-    echo "$1" > .lastbuild || failure
+    # Record the currently requested build target for examination next time.
+    echo "$1" > $ROOT/.lastbuild || failure
 
     return 0
     }
@@ -117,22 +130,21 @@ check_prerequisites() {
         fi
     done
 
+    save_build_state $BS_PREREQUISITES
     return 0
     }
 
 distclean() {
-    cd $ROOT || failure
-
     log "Purging build system..."
 
-    rm -rf 3rdparty || failure
-    rm -rf build || failure
-    rm -rf install || failure
-    rm -rf doc/html || failure
-    rm -f doc/*.tag || failure
+    rm -rf $ROOT/3rdparty || failure
+    rm -rf $ROOT/build || failure
+    rm -rf $ROOT/install || failure
+    rm -rf $ROOT/doc/html || failure
+    rm -f $ROOT/doc/*.tag || failure
 
-    rm -f .lastbuild || failure
-    rm -f .buildstate || failure
+    rm -f $ROOT/.lastbuild || failure
+    rm -f $ROOT/.buildstate || failure
 
     return 0
     }
@@ -157,7 +169,7 @@ failure() {
 
 log() {
     echo $1 | tee -a $LOGFILE
-    
+
     return 0
     }
 
@@ -167,43 +179,53 @@ prepare_tree() {
     fi
 
     log "Preparing tree..."
+
     mkdir -p $ROOT/3rdparty >> $LOGFILE || failure
     mkdir -p $ROOT/install/bin >> $LOGFILE || failure
     mkdir -p $ROOT/install/include >> $LOGFILE || failure
     mkdir -p $ROOT/install/include/GL >> @LOGFILE || failure
     mkdir -p $ROOT/install/lib >> $LOGFILE || failure
 
-    store_build_state $BS_PREPARE_TREE
+    save_build_state $BS_PREPARE_TREE
     return 0
     }
 
-prepare_version_header() {
-    HEADER_FILE="$ROOT/src/erp_git_version.h"
-
-    cd $ROOT || failure
-
+write_version_header() {
     log "Retrieving git version information..."
 
-    if [ -d .git ]; then
+    # Path/name to the version header file. 
+    HEADER_FILE="$ROOT/src/erp_git_version.h"
+
+    # Assuming the $ROOT directory has a git repository. 
+    if [ -d $ROOT/.git ]; then
+        # Get the name of the most recent commit ( ie. the 40 digit hex code of same ).
         GIT_LOG=`git log -n1 --pretty="format:%H"` || failure
+        # Get the name of the machine we are building on.
         HOST=`hostname` || failure
     fi
 
+    # Start constructing the header file with include guards.
     echo "#ifndef ERP_GIT_VERSION_H" > $HEADER_FILE || failure
     echo "#define ERP_GIT_VERSION_H" >> $HEADER_FILE || failure
     echo "" >> $HEADER_FILE || failure
 
+    # Did we have a git repository for the $ROOT directory?
     if [ "no$GIT_LOG" != "no" ]; then
-        echo "#define ERP_GIT_VERSION \"$GIT_LOG ($HOST:$PWD)\"" >> $HEADER_FILE || failure
+        # Yes. Write the git version variable combining the commit name, the host name 
+        # and the top level build directory.      
+        echo "#define ERP_GIT_VERSION \"$GIT_LOG ($HOST:$ROOT)\"" >> $HEADER_FILE || failure
     else
+        # No. Write the git version variable to show that. 
         echo "#define ERP_GIT_VERSION \"unknown (git repository not found!)\"" >> $HEADER_FILE || failure
     fi
 
+    # Close off include guard.
     echo "" >> $HEADER_FILE || failure
     echo "#endif" >> $HEADER_FILE || failure
     }
 
 print_usage() {
+    # Wherever you came from, come back to $ROOT where you invoked this script.
     cd $ROOT
 
     echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
@@ -238,20 +260,23 @@ print_usage() {
     echo
     echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
 
-    echo "Wrong usage. Stopping!" >> $LOGFILE
+    log "Wrong usage. Stopping!"
 
     return 0
     }
 
 purge_tree() {
+    log "Purging build and install directories..."
+    
     rm -rf $ROOT/build >> $LOGFILE || failure
     rm -rf $ROOT/install >> $LOGFILE || failure
 
     return 0
     }
 
-store_build_state() {
+save_build_state() {
     log "Saving build checkpoint..."
+    
     echo "$1" > $ROOT/.buildstate || failure
 
     return 0
@@ -307,7 +332,7 @@ prepare_freetype() {
 prepare_glew() {
     log "Preparing GLEW..."
     mkdir -p $ROOT/3rdparty/glew >> $LOGFILE || failure
-     
+
     cd $ROOT/3rdparty || failure
     wget http://sourceforge.net/projects/glew/files/glew/$GLEW_VERSION/glew-$GLEW_VERSION.tgz >> $LOGFILE 2>&1 || failure
     tar -xf glew-$GLEW_VERSION.tgz >> $LOGFILE 2>&1 || failure
@@ -316,7 +341,7 @@ prepare_glew() {
     rm -rf glew >> $LOGFILE 2>&1 || failure
     mv glew-$GLEW_VERSION glew >> $LOGFILE 2>&1 || failure
 
-	return 0
+    return 0
     }
 
 prepare_glfw() {
@@ -398,7 +423,7 @@ build_glew() {
 
     log "Successfully built and installed GLEW!"
 
-    store_build_state $BS_BUILD_GLEW || failure
+    save_build_state $BS_BUILD_GLEW || failure
     return 0
     }
 
@@ -418,7 +443,7 @@ build_glfw() {
 
     log "Successfully built and installed GLFW!"
 
-    store_build_state $BS_BUILD_GLFW || failure
+    save_build_state $BS_BUILD_GLFW || failure
     return 0
     }
 
@@ -441,7 +466,7 @@ build_freetype() {
     make install >> $LOGFILE 2>&1 || failure
     log "Successfully built and installed Freetype2!"
 
-    store_build_state $BS_BUILD_FREETYPE || failure
+    save_build_state $BS_BUILD_FREETYPE || failure
     return 0
     }
 
@@ -461,7 +486,7 @@ build_libxml() {
     make install >> $LOGFILE 2>&1 || failure
     log "Successfully built and installed libxml2!"
 
-    store_build_state $BS_BUILD_LIBXML || failure
+    save_build_state $BS_BUILD_LIBXML || failure
     return 0
     }
 
@@ -489,7 +514,7 @@ build_oglft() {
     cp liboglft/liboglft.a $ROOT/install/lib >> $LOGFILE 2>&1 || failure
     log "Successfully built and installed OGLFT!"
 
-    store_build_state $BS_BUILD_OGLFT || failure
+    save_build_state $BS_BUILD_OGLFT || failure
     return 0
     }
 
@@ -520,7 +545,7 @@ build_boinc() {
     make install >> $LOGFILE 2>&1 || failure
     log "Successfully built and installed BOINC!"
 
-    store_build_state $BS_BUILD_BOINC || failure
+    save_build_state $BS_BUILD_BOINC || failure
     return 0
     }
 
@@ -530,19 +555,19 @@ build_glew_mac() {
     if [ $BUILDSTATE -ge $BS_BUILD_GLEW ]; then
         return 0
     fi
-      
+
     prepare_glew || failure
-      
+
     log "Building GLEW (this may take a while)..."
-      
+
     cd $ROOT/3rdparty/glew
     GLEW_DEST="$ROOT/install" make install >> $LOGFILE 2>&1 || failure
     # don't use shared GLEW libraries   
     rm -f $ROOT/install/lib/libGLEW*.dylib
-   
+
     log "Successfully built and installed GLEW!"
-      
-    store_build_state $BS_BUILD_GLEW || failure
+
+    save_build_state $BS_BUILD_GLEW || failure
     return 0
     }
 
@@ -562,7 +587,7 @@ build_glfw_mac() {
 
     log "Successfully built and installed GLFW!"
 
-    store_build_state $BS_BUILD_GLFW || failure
+    save_build_state $BS_BUILD_GLFW || failure
     return 0
     }
 
@@ -612,7 +637,7 @@ build_glew_mingw() {
 
     log "Successfully built and installed GLEW!"
 
-    store_build_state $BS_BUILD_GLEW_MINGW || failure
+    save_build_state $BS_BUILD_GLEW_MINGW || failure
     return 0
     }
 
@@ -631,7 +656,7 @@ build_glfw_mingw() {
     make cross-mgw-install >> $LOGFILE 2>&1 || failure
     log "Successfully built and installed GLFW!"
 
-    store_build_state $BS_BUILD_GLFW_MINGW || failure
+    save_build_state $BS_BUILD_GLFW_MINGW || failure
     return 0
     }
 
@@ -663,7 +688,7 @@ build_freetype_mingw() {
     make install >> $LOGFILE 2>&1 || failure
     log "Successfully built and installed Freetype2!"
 
-    store_build_state $BS_BUILD_FREETYPE_MINGW || failure
+    save_build_state $BS_BUILD_FREETYPE_MINGW || failure
     return 0
     }
 
@@ -688,7 +713,7 @@ build_libxml_mingw() {
     make install >> $LOGFILE 2>&1 || failure
     log "Successfully built and installed libxml2!"
 
-    store_build_state $BS_BUILD_LIBXML_MINGW || failure
+    save_build_state $BS_BUILD_LIBXML_MINGW || failure
     return 0
     }
 
@@ -717,7 +742,7 @@ build_oglft_mingw() {
     cp liboglft/liboglft.a $ROOT/install/lib >> $LOGFILE 2>&1 || failure
     log "Successfully built and installed OGLFT!"
 
-    store_build_state $BS_BUILD_OGLFT_MINGW || failure
+    save_build_state $BS_BUILD_OGLFT_MINGW || failure
     return 0
     }
 
@@ -734,7 +759,7 @@ build_boinc_mingw() {
     BOINC_PREFIX="$ROOT/install" RANLIB="${TARGET_HOST}-ranlib" make -f Makefile.mingw install >> $LOGFILE 2>&1 || failure
     log "Successfully built and installed BOINC!"
 
-    store_build_state $BS_BUILD_BOINC_MINGW || failure
+    save_build_state $BS_BUILD_BOINC_MINGW || failure
     return 0
     }
 
@@ -748,7 +773,8 @@ build_product() {
     mkdir -p $ROOT/build/$PRODUCT >> $LOGFILE || failure
     export PATH=$PATH_ORG
 
-    prepare_version_header || failure
+    # Create the header containing ( if available ) any git commit, build machine and working directory information.
+    write_version_header || failure
 
     log "Building $PRODUCT_NAME [ORC]..."
     export ORC_SRC=$ROOT/src/orc || failure
@@ -814,8 +840,17 @@ build_product() {
 
 build_linux() {
     log "Important for an official build: let CC and CXX point to gcc/g++ 4.6+ !"
+
+    # Intercept build stages at the non-MinGW group to build the libraries
+    # that the framework build will depend upon. Except that GLEW actually
+    # is incorporated into the framework library via GLEW source files 
+    # during the framework build. 
+
+    # However use linux specific functions to get GLEW and GLFW.
     build_glew || failure
     build_glfw || failure
+
+    # Common linux/Mac build stages.
     build_freetype || failure
     build_libxml || failure
     build_oglft || failure
@@ -826,8 +861,18 @@ build_linux() {
     }
 
 build_mac() {
+
+    # Intercept build stages at the non-MinGW group to build the libraries
+    # that the framework build will depend upon.
+    # However use Mac specific functions to get GLEW and GLFW.
+
+    # Avoid shared GLEW libraries.
     build_glew_mac || failure
+
+    # Use the GLFW cocoa library.
     build_glfw_mac $1 || failure
+
+    # Common linux/Mac build stages.
     build_freetype || failure
     build_libxml || failure
     build_oglft || failure
@@ -838,25 +883,29 @@ build_mac() {
     }
 
 build_win32() {
-    # no more prepare/build steps for MinGW
-    # we use Debian's MinGW with GCC 4.4 support
+    # No more prepare/build steps for MinGW as we use Debian's MinGW with GCC 4.6 support !!
+
+    # Get ready to use MinGW.
     set_mingw || failure
 
+    # Intercept build stages at the MinGW group to build the libraries
+    # that the framework build will depend upon. Except that GLEW actually
+    # is incorporated into the framework library via GLEW source files 
+    # during the framework build.
     build_glew_mingw || failure
     build_glfw_mingw || failure
-    # build_oglplus_mingw || failure
     build_freetype_mingw || failure
     build_libxml_mingw || failure
     build_oglft_mingw || failure
     build_boinc_mingw || failure
+
+    # Finally build our specific product
     build_product $TARGET_WIN32 || failure
 
     return 0
     }
 
 ### main control #######################################################################################################
-
-
 
 # Delete any prior build log
 rm -f ./build.log
@@ -866,14 +915,14 @@ log "Starting new build!"
 log "`date`"
 log "++++++++++++++++++++++++++++++++++++"
 
-# crude command line parsing :-)
+# Improved command line parsing :-)
 
-if [ $# -eq 0 ] ; then
+if [ $# -eq 0 ]; then
     print_usage
     exit 1
 fi
 
-if [ $# -eq 1 ] ; then
+if [ $# -eq 1 ]; then
         case "$1" in
         "--doc")
             TARGET=$TARGET_DOC
@@ -890,7 +939,7 @@ if [ $# -eq 1 ] ; then
     esac
 fi
 
-if [ $# -eq 2 ] ; then 
+if [ $# -eq 2 ]; then 
     case "$2" in
         "--starsphere")
             PRODUCT=starsphere
@@ -907,32 +956,32 @@ if [ $# -eq 2 ] ; then
             exit 1
             ;;
     esac
-    
+
     case "$1" in
         "--linux")
             TARGET=$TARGET_LINUX
             check_last_build "$1" || failure
             log "Building linux version:"
-            check_build_state || failure
+            retrieve_build_state || failure
             ;;
         "--mac")
             TARGET=$TARGET_MAC
             check_last_build "$1" || failure
             log "Building mac (Intel) version:"
-            check_build_state || failure
+            retrieve_build_state || failure
             ;;
         "--mac-sdk")
             TARGET=$TARGET_MAC
             SDK="yes"
             check_last_build "$1" || failure
             log "Building mac (Intel) version with SDK:"
-            check_build_state || failure
+            retrieve_build_state || failure
             ;;
         "--win32")
             TARGET=$TARGET_WIN32
             check_last_build "$1" || failure
             log "Building win32 version:"
-            check_build_state || failure
+            retrieve_build_state || failure
             ;;
         "--memcheck")
             log "memcheck has temporarily left the building :-)"
@@ -949,11 +998,10 @@ if [ $# -eq 2 ] ; then
     esac
 fi
 
-if [ $# -gt 2 ] ; then
+if [ $# -gt 2 ]; then
     print_usage
     exit 1
 fi
-
 
 # here we go...
 
@@ -964,7 +1012,7 @@ case $TARGET in
         build_linux || failure
         ;;
     $TARGET_MAC)
-        if [ ".$SDK" = "." ] ; then
+        if [ ".$SDK" = "." ]; then
             :
         elif [ -d /Developer/SDKs/MacOSX10.4u.sdk ]; then
             log "Preparing Mac OS X 10.4 SDK build environment..."
