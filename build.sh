@@ -36,9 +36,11 @@ LIBXML_VERSION=2.6.32
 
 TARGET=0
 TARGET_LINUX=1
-TARGET_MAC=2
-TARGET_WIN32=3
-TARGET_DOC=4
+TARGET_MEMCHECK=2
+TARGET_CALLGRIND=3
+TARGET_MAC=4
+TARGET_WIN32=5
+TARGET_DOC=6
 
 BUILDSTATE=0
 BS_PREREQUISITES=1
@@ -121,7 +123,7 @@ check_build_state() {
         log "No previous build checkpoints found! Starting from scratch..."
     else
         BUILDSTATE=`cat $ROOT/.buildstate 2>/dev/null`
-        echo "Recovering previous build..."
+        log "Recovering previous build..."
     fi
 
     return 0
@@ -742,7 +744,7 @@ build_product() {
     }
 
 build_linux() {
-    echo "Important for an official build: let CC and CXX point to gcc/g++ 4.6+ !"
+    log "Important for an official build: let CC and CXX point to gcc/g++ 4.6+ !"
     build_glew || failure
     build_glfw || failure
     build_freetype || failure
@@ -788,22 +790,33 @@ print_usage() {
 
     echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
     echo "                         Usage"
-    echo "                        +++++++"
-    echo "With two parameters :" 
+    echo "                        -------"
+    echo
+    echo "  With two parameters ( create executables ) :"
+    echo "  ------------------------------------------"
+    echo
+    echo "              `basename $0` <target> <product>"
+    echo
+    echo "      Available targets:"
+    echo "          --linux"
+    echo "          --mac"
+    echo "          --mac-sdk           ( Mac OS 10.4 x86 SDK )"
+    echo "          --win32"
+#    echo "          --memcheck          ( assumes linux, not currently enacted )"
+#    echo "          --callgrind         ( assumes linux, not currently enacted )"
+    echo
+    echo "      Available products:"
+    echo "          --starsphere"
+    echo "          --solarsystem"
     echo 
-    echo "         `basename $0` <target> <product>"
+    echo "  With one parameter :"
+    echo "  ------------------"
     echo
-    echo "Available targets:"
-    echo " --linux"
-    echo " --mac"
-    echo " --mac-sdk    ( build with Mac OS 10.4 x86 SDK )"
-    echo " --win32"
-    echo " --distclean"
-    echo " --doc"
+    echo "              `basename $0` <target>"
     echo
-    echo "Available products:"
-    echo " --starsphere"
-    echo " --solarsystem"
+    echo "      Available targets:"
+    echo "          --distclean"
+    echo "          --doc"
     echo
     echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
 
@@ -824,73 +837,92 @@ log "++++++++++++++++++++++++++++++++++++"
 
 # crude command line parsing :-)
 
-if [ $# -ne 2 ]; then
-print_usage
+if [ $# -eq 0 ] ; then
+    print_usage
     exit 1
 fi
 
-case "$1" in
-    "--linux")
-        TARGET=$TARGET_LINUX
-        check_last_build "$1" || failure
-        log "Building linux version:"
-        check_build_state || failure
-        ;;
-    "--mac")
-        TARGET=$TARGET_MAC
-        check_last_build "$1" || failure
-        log "Building mac (Intel) version:"
-        check_build_state || failure
-        ;;
-    "--mac-sdk")
-        TARGET=$TARGET_MAC
-        SDK="yes"
-        check_last_build "$1" || failure
-        log "Building mac (Intel) version with SDK:"
-        check_build_state || failure
-        ;;
-    "--win32")
-        TARGET=$TARGET_WIN32
-        check_last_build "$1" || failure
-        log "Building win32 version:"
-        check_build_state || failure
-        ;;
-    "--doc")
-        TARGET=$TARGET_DOC
-        log "Building documentation..."
-        ;;
-    "--distclean")
-        distclean || failure
-        exit 0
-        ;;
-    "--product_test")
-        # "hidden" bonus option :-)
-        TARGET=$TARGET_LINUX
-        build_product $TARGET "memcheck" || failure
-        exit 0
-        ;;
-    *)
-        print_usage
-        exit 1
-        ;;
-esac
+if [ $# -eq 1 ] ; then
+        case "$1" in
+        "--doc")
+            TARGET=$TARGET_DOC
+            log "Building documentation..."
+            ;;
+        "--distclean")
+            distclean || failure
+            exit 0
+            ;;
+        *)
+            print_usage
+            exit 1
+            ;;
+    esac
+fi
 
-case "$2" in
-    "--starsphere")
-        PRODUCT=starsphere
-        PRODUCT_NAME="Starsphere"
-        log "Building $PRODUCT_NAME"
-        ;;
-    "--solarsystem")
-        PRODUCT=solarsystem
-        PRODUCT_NAME="SolarSystem"
-        log "Building Solarsystem"
-        ;;
-    *)
-        print_usage
-        exit 1
-        ;;
-esac
+if [ $# -eq 2 ] ; then 
+    case "$2" in
+        "--starsphere")
+            PRODUCT=starsphere
+            PRODUCT_NAME="Starsphere"
+            log "Building $PRODUCT_NAME"
+            ;;
+        "--solarsystem")
+            PRODUCT=solarsystem
+            PRODUCT_NAME="SolarSystem"
+            log "Building $PRODUCT_NAME"
+            ;;
+        *)
+            print_usage
+            exit 1
+            ;;
+    esac
+    
+    case "$1" in
+        "--linux")
+            TARGET=$TARGET_LINUX
+            check_last_build "$1" || failure
+            log "Building linux version:"
+            check_build_state || failure
+            ;;
+        "--mac")
+            TARGET=$TARGET_MAC
+            check_last_build "$1" || failure
+            log "Building mac (Intel) version:"
+            check_build_state || failure
+            ;;
+        "--mac-sdk")
+            TARGET=$TARGET_MAC
+            SDK="yes"
+            check_last_build "$1" || failure
+            log "Building mac (Intel) version with SDK:"
+            check_build_state || failure
+            ;;
+        "--win32")
+            TARGET=$TARGET_WIN32
+            check_last_build "$1" || failure
+            log "Building win32 version:"
+            check_build_state || failure
+            ;;
+        "--memcheck")
+            log "memcheck has temporarily left the building :-)"
+            exit 0
+            ;;
+        "--callgrind")
+            log "callgrind has temporarily left the building :-)"
+            exit 0
+            ;;
+        *)
+            print_usage
+            exit 1
+            ;;
+    esac
+fi
+
+if [ $# -gt 2 ] ; then
+    print_usage
+    exit 1
+fi
+
 
 # here we go...
 
@@ -929,6 +961,7 @@ case $TARGET in
         doxygen Doxyfile >> $LOGFILE 2>&1 || failure
         cp -f $ROOT/doc/default/*.png $ROOT/doc/html >> $LOGFILE 2>&1 || failure
         cp -f $ROOT/doc/default/*.gif $ROOT/doc/html >> $LOGFILE 2>&1 || failure
+        exit 0
         ;;
     *)
         # should be unreachable
