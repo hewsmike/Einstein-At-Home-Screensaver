@@ -104,4 +104,8 @@ class SolarSystemGlobals {
       static SolarSystemGlobals::render_quality qual;
    };
 
+/**
+ * @}
+ */
+
 #endif /*SOLARSYSTEM_GLOBALS_H_*/

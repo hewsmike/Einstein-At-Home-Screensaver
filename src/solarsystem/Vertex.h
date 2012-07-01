@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2011 by Mike Hewson                                     *
- *   hewsmike@iinet.net.au                                                 *
+ *   Copyright (C) 2012 by Mike Hewson                                     *
+ *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
  *                                                                         *
@@ -35,68 +35,75 @@
 /**
  * \brief This class encapsulates data relevant to an OpenGL vertex.
  *
- * It contains a position in 3D space, a normal vector of 3 components
- * and a pair of coordinate values for 2D texture mapping.
+ * It contains a position vector in 3D space, a normal vector and a
+ * pair of co-ordinate values for 2D texture mapping.
+ *
+ * \see HUDImage
+ * \see Vector3D
  *
  * \author Mike Hewson\n
  */
 
 class Vertex {
-   public:
-      /**
-       * \brief Constructor ( no argument )
-       *
-       */
-      Vertex();
+    public:
+        /**
+         * \brief Constructor ( no argument )
+         */
+        Vertex();
 
-      /**
-       * \brief Constructor ( fully qualified )
-       *
-       * \param ps The position of the vertex
-       *
-       * \param nm The normal to the vertex
-       *
-       * \param tc The texture coordinates of the vertex
-       */
-      Vertex(const Vector3D& ps, const Vector3D& nm,
-             const std::pair<GLfloat, GLfloat>& tc);
+        /**
+         * \brief Constructor ( fully qualified )
+         *
+         * \param ps The position of the vertex
+         *
+         * \param nm The normal to the vertex
+         *
+         * \param tc The texture coordinates of the vertex
+         */
+        Vertex(const Vector3D& ps, const Vector3D& nm,
+               const std::pair<GLfloat, GLfloat>& tc);
 
-      /**
-       * \brief Constructor ( copy )
-       *
-       */
-      Vertex(const Vertex& other);
+        /**
+         * \brief Constructor ( copy )
+         *
+         * \param A reference to the vertex to be copied
+         */
+        Vertex(const Vertex& other);
 
-      /**
-       * \brief Destructor
-       */
-      ~Vertex();
+        /// Destructor
+        virtual ~Vertex();
 
-      /**
-       * \brief Obtains the position of the vertex
-       */
-      const Vector3D& position(void) const;
+        /**
+         * \brief Obtains the position of the vertex
+         *
+         * \return A position vector to the vertex
+         */
+        const Vector3D& position(void) const;
 
-      /**
-       * \brief Obtains the normal to the vertex
-       */
-      const Vector3D& normal(void) const;
+        /**
+         * \brief Obtains the normal to the vertex
+         *
+         * \return A vector normal to the vertex
+         */
+        const Vector3D& normal(void) const;
 
-      /**
-       * \brief Obtains texture coordinates of the vertex
-       */
-      const std::pair<GLfloat, GLfloat>& texture_co_ords(void) const;
+        /**
+         * \brief Obtains texture coordinates of the vertex
+         *
+         * \return A pair of texture co-ordinates
+         */
+        const std::pair<GLfloat, GLfloat>& texture_co_ords(void) const;
 
-   private:
-      /// Position in 3D space.
-      Vector3D pos;
+    private:
+        /// Position in 3D space.
+        Vector3D pos;
 
-      /// Normal vector.
-      Vector3D norm;
+        /// Normal vector.
+        Vector3D norm;
 
-      /// Coordinate value pair for 2D texturing.
-      std::pair<GLfloat, GLfloat> t_cds;
-   };
+        /// Coordinate value pair for 2D texturing.
+        std::pair<GLfloat, GLfloat> t_cds;
+    };
 
 /**
  * @}

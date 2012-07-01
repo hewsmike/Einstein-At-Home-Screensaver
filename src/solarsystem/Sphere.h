@@ -168,4 +168,8 @@ class Sphere {
       void makeSliceIndices(void);
    };
 
+/**
+ * @}
+ */
+
 #endif // SPHERE_H_

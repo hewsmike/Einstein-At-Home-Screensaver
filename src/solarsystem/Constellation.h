@@ -151,4 +151,8 @@ class Constellation {
       std::vector< std::pair<unsigned int, unsigned int> > link_list;
    };
 
+/**
+ * @}
+ */
+
 #endif // CONSTELLATION_H_

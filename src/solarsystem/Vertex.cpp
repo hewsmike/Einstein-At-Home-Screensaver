@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2011 by Mike Hewson                                     *
- *   hewsmike@iinet.net.au                                                 *
+ *   Copyright (C) 2012 by Mike Hewson                                     *
+ *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
  *                                                                         *
@@ -21,30 +21,30 @@
 #include "Vertex.h"
 
 Vertex::Vertex() {
-   }
+    }
 
 Vertex::Vertex(const Vector3D& ps, const Vector3D& nm,
                const std::pair<GLfloat, GLfloat>& tc)
-               : pos(ps), norm(nm), t_cds(tc) {
-  	}
+                   : pos(ps), norm(nm), t_cds(tc) {
+    }
 
 Vertex::Vertex(const Vertex& other) {
-   this->pos = Vector3D(other.position());
-   this->norm = Vector3D(other.normal());
-   this->t_cds = other.texture_co_ords();
-   }
+    this->pos = Vector3D(other.position());
+    this->norm = Vector3D(other.normal());
+    this->t_cds = other.texture_co_ords();
+    }
 
 Vertex::~Vertex() {
-	}
+    }
 
 const Vector3D& Vertex::position(void) const {
-   return pos;
-   }
+    return pos;
+    }
 
 const Vector3D& Vertex::normal(void) const {
-   return norm;
-   }
+    return norm;
+    }
 
 const std::pair<GLfloat, GLfloat>& Vertex::texture_co_ords(void) const {
-   return t_cds;
-   }
+    return t_cds;
+    }

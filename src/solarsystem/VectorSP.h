@@ -98,4 +98,8 @@ class VectorSP : public Vector3D {
       virtual ~VectorSP();
    };
 
+/**
+ * @}
+ */
+
 #endif // VECTORSP_H_

@@ -33,7 +33,7 @@
  */
 
 /**
- * \brief %Solarsystem Pulsar data type with E@H co-discovery.
+ * \brief %Solarsystem Pulsar data type with Einstein At Home co-discovery.
  *
  * This class comprises the astronomical data relating to a specific pulsar,
  * newly discovered with the assistance of Einstein At Home. This does not
@@ -72,7 +72,7 @@ class PulsarEAH : public Pulsar {
       const std::vector<std::string>& getDiscoverers(void) const;
 
    private:
-      /// The list of associated discoverers ie. E@H contributors.
+      /// The list of associated discoverers ie. Einstein At Home contributors.
       std::vector<std::string> discoverers;
 
       std::string attribution_date;

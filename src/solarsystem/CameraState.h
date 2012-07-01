@@ -41,9 +41,9 @@ class CameraState {
 		/**
 	    * \brief Constructor
 	    *
-	    * \param pos : the position of the camera
+	    * \param position : the position of the camera
 	    * \param focus : the point the camera is looking at
-	    * \param orient : the up direction for the view
+	    * \param orientation : the up direction for the view
 	    */
 		CameraState(const Vector3D& position, const Vector3D& focus, const Vector3D& orientation);
 
