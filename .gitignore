@@ -20,4 +20,5 @@ erp_git_version.h
 .lastbuild
 build.log
 @LOGFILE
+*.cbp
 *~
