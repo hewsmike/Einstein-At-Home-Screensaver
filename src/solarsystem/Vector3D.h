@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2011 by Mike Hewson                                     *
- *   hewsmike@iinet.net.au                                                 *
+ *   Copyright (C) 2012 by Mike Hewson                                     *
+ *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
  *                                                                         *
@@ -23,17 +23,13 @@
 
 #include "framework.h"
 
-#include <cmath>
-#include <iostream>
-#include <string>
-
 /**
  * \addtogroup solarsystem Solarsystem
  * @{
  */
 
-/// Underlying type for vector representation. Don't ever change this!!
-/// Dependencies with OpenGL data representations ...
+/// Underlying type for vector data, capturing dependencies
+/// with the underlying OpenGL representations ... DON'T EVER CHANGE !!
 typedef GLfloat vec_t;
 
 /**
@@ -42,131 +38,135 @@ typedef GLfloat vec_t;
  * This class comprises an orthogonal basis coordinate triplet, with
  * standard Euclidean 3D vectorial behaviours. Specifically a right
  * handed system where the x-axis rotates into the y-axis by a 90
- * degree anticlockwise turn around the positive z-axis.
+ * degree anticlockwise turn looking down the positive z-axis.
  *
  * \author Mike Hewson\n
  */
 
 class Vector3D {
-   public:
-      static const Vector3D NULLV;
+    public:
+        /// The null vector
+        static const Vector3D NULLV;
 
-      /**
-       * \brief Constructor, no arguments, gives the null vector
-       */
-      Vector3D(void);
+        /**
+        * \brief Constructor, no arguments, gives the null vector
+        */
+        Vector3D(void);
 
-      /**
-       * \brief Constructor, giving fully specified member values
-       * in Cartesian co-ordinates.
-       *
-       * \param xc the x co-ordinate
-       *
-       * \param yc the y co-ordinate
-       *
-       * \param zc the z co-ordinate
-       */
-      Vector3D(vec_t xc, vec_t yc, vec_t zc);
+        /**
+        * \brief Constructor, giving fully specified member values
+        * in Cartesian co-ordinates.
+        *
+        * \param xc the x co-ordinate
+        *
+        * \param yc the y co-ordinate
+        *
+        * \param zc the z co-ordinate
+        */
+        Vector3D(vec_t xc, vec_t yc, vec_t zc);
 
-      /**
-       * \brief Copy constructor
-       *
-       * \param ov the other vector
-       */
-      Vector3D(const Vector3D& other);
+        /**
+        * \brief Copy constructor
+        *
+        * \param ov the other vector
+        */
+        Vector3D(const Vector3D& other);
 
-      /**
-       * \brief Destructor
-       */
-      virtual ~Vector3D();
+        /**
+        * \brief Destructor
+        */
+        virtual ~Vector3D();
 
-      /**
-       * \brief Obtain magnitude or length of the vector
-       *
-       * \return The length of the vector
-       */
-      vec_t len(void);
+        /**
+        * \brief Obtain magnitude or length of the vector
+        *
+        * \return The length of the vector
+        */
+        vec_t len(void);
 
-      /**
-       * \brief Obtain the null vector
-       *
-       * \return The null vector
-       */
-      Vector3D nullv(void);
+        /**
+        * \brief Obtain the null vector
+        *
+        * \return The null vector
+        */
+        Vector3D nullv(void);
 
-      /**
-       * \brief Obtain a unit vector in the same direction as the vector
-       *
-       * \return The unit vector
-       */
-      Vector3D unit(void);
+        /**
+        * \brief Obtain a unit vector in the same direction as the vector
+        *
+        *   In the case of actually being the null vector, then the null vector
+        * is returned.
+        *
+        * \return The unit vector
+        */
+        Vector3D unit(void);
 
-      /**
-       * \brief Determine if the vector is null
-       *
-       * \return A boolean indicating true it is null, false otherwise
-       */
-      bool isNullVector(void);
+        /**
+        * \brief Determine if the vector is null
+        *
+        * \return A boolean indicating true it is null, false otherwise
+        */
+        bool isNullVector(void);
 
-      /**
-       * \brief Obtain the x-component
-       *
-       * \return The x-component
-       */
-      vec_t x(void) const;
+        /**
+        * \brief Obtain the x-component
+        *
+        * \return The x-component
+        */
+        vec_t x(void) const;
 
-      /**
-       * \brief Obtain the y-component
-       *
-       * \return The y-component
-       */
-      vec_t y(void) const;
+        /**
+        * \brief Obtain the y-component
+        *
+        * \return The y-component
+        */
+        vec_t y(void) const;
 
-      /**
-       * \brief Obtain the z-component
-       *
-       * \return The z-component
-       */
-      vec_t z(void) const;
+        /**
+        * \brief Obtain the z-component
+        *
+        * \return The z-component
+        */
+        vec_t z(void) const;
 
-      /**
-       * \brief Set the x-component
-       *
-       * \param The x-component
-       */
-      void set_x(vec_t xc);
+        /**
+        * \brief Set the x-component
+        *
+        * \param The x-component
+        */
+        void set_x(vec_t xc);
 
-      /**
-       * \brief Set the y-component
-       *
-       * \param The y-component
-       */
-      void set_y(vec_t yc);
+        /**
+        * \brief Set the y-component
+        *
+        * \param The y-component
+        */
+        void set_y(vec_t yc);
 
-      /**
-       * \brief Set the z-component
-       *
-       * \param The z-component
-       */
-      void set_z(vec_t zc);
+        /**
+        * \brief Set the z-component
+        *
+        * \param The z-component
+        */
+        void set_z(vec_t zc);
 
-   protected:
-      /// The x co-ordinate.
-      vec_t x_comp;
+    protected:
+        /// The x co-ordinate.
+        vec_t x_comp;
 
-      /// The y co-ordinate.
-      vec_t y_comp;
+        /// The y co-ordinate.
+        vec_t y_comp;
 
-      /// The z co-ordinate.
-      vec_t z_comp;
+        /// The z co-ordinate.
+        vec_t z_comp;
 
-   private:
-      /// Initialisers for the null vector.
-      static const GLfloat NULL_LENGTH;
-      static const GLfloat NULL_X;
-      static const GLfloat NULL_Y;
-      static const GLfloat NULL_Z;
-   };
+    private:
+        /// Initialisers for the null vector.
+        static const GLfloat NULL_LENGTH;
+        static const GLfloat NULL_X;
+        static const GLfloat NULL_Y;
+        static const GLfloat NULL_Z;
+    };
 
 /// Non member operators. Probably simpler to do than static methods ....
 
@@ -204,6 +204,9 @@ Vector3D operator-(const Vector3D& vec);
 /**
  * \brief Vector cross product, right handed and non-commutative
  *
+ *      In the case of either actually being the null vector, then
+ * the null vector is returned.
+ *
  * \param first - one vector
  *
  * \param second - another vector
@@ -235,7 +238,10 @@ Vector3D operator*(vec_t factor, const Vector3D& vec);
 Vector3D operator*(const Vector3D& vec, vec_t factor);
 
 /**
- * \brief Vector inner product ie. linear sum of per component multiplication
+ * \brief Vector inner product ie.
+ *
+ *      Linear sum of per component multiplication. Every vector is
+ * orthogonal to the null vector.
  *
  * \param first - one vector
  *
