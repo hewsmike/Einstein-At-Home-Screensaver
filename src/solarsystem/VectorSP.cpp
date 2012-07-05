@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2010 by Mike Hewson                                     *
- *   hewsmike@iinet.net.au                                                 *
+ *   Copyright (C) 2012 by Mike Hewson                                     *
+ *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
  *                                                                         *
@@ -20,14 +20,16 @@
 
 #include "VectorSP.h"
 
-VectorSP::VectorSP() {
-   }
+#include <cmath>
+
+VectorSP::VectorSP(void) {
+    }
 
 VectorSP::VectorSP(vec_t ra, vec_t dec, vec_t rd) {
-   x_comp = rd * COS(dec) * COS(ra);
-   y_comp = rd * COS(dec) * SIN(ra);
-   z_comp = rd * SIN(dec);
-   }
+    this->set_x(rd * COS(dec) * COS(ra));
+    this->set_y(rd * COS(dec) * SIN(ra));
+    this->set_z(rd * SIN(dec));
+    }
 
 VectorSP::~VectorSP() {
-   }
+    }

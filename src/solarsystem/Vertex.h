@@ -49,7 +49,7 @@ class Vertex {
         /**
          * \brief Constructor ( no argument )
          */
-        Vertex();
+        Vertex(void);
 
         /**
          * \brief Constructor ( fully qualified )

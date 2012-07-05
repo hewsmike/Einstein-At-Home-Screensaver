@@ -20,7 +20,7 @@
 
 #include "Vertex.h"
 
-Vertex::Vertex() {
+Vertex::Vertex(void) {
     }
 
 Vertex::Vertex(const Vector3D& position, const Vector3D& normal,

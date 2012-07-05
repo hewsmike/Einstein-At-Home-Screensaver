@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2010 by Mike Hewson                                     *
- *   hewsmike@iinet.net.au                                                 *
+ *   Copyright (C) 2012 by Mike Hewson                                     *
+ *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
  *                                                                         *
@@ -20,8 +20,6 @@
 
 #ifndef VECTORSP_H_
 #define VECTORSP_H_
-
-#include <cmath>
 
 #include "SolarSystemGlobals.h"
 #include "Vector3D.h"
@@ -74,29 +72,29 @@
  */
 
 class VectorSP : public Vector3D {
-   public:
-      /**
-       * \brief Constructor, no arguments, gives the null vector
-       */
-      VectorSP(void);
+    public:
+        /**
+        * \brief Constructor, no arguments, gives the null vector
+        */
+        VectorSP(void);
 
-      /**
-       * \brief Constructor, giving fully specified member values
-       * in spherical polar co-ordinates.
-       *
-       * \param ra the right ascension co-ordinate ( in decimal degrees )
-       *
-       * \param dec the declination co-ordinate ( in decimal degrees )
-       *
-       * \param rd the radius co-ordinate
-       */
-      VectorSP(vec_t ra, vec_t dec, vec_t rd);
+        /**
+        * \brief Constructor, giving fully specified member values
+        * in spherical polar co-ordinates.
+        *
+        * \param ra the right ascension co-ordinate ( in decimal degrees )
+        *
+        * \param dec the declination co-ordinate ( in decimal degrees )
+        *
+        * \param rd the radius co-ordinate
+        */
+        VectorSP(vec_t ra, vec_t dec, vec_t rd);
 
-      /**
-       * \brief Destructor
-       */
-      virtual ~VectorSP();
-   };
+        /**
+        * \brief Destructor
+        */
+        virtual ~VectorSP();
+    };
 
 /**
  * @}

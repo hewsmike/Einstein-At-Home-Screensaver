@@ -30,9 +30,9 @@ const vec_t Vector3D::NULL_Z(0.0f);
 
 const Vector3D Vector3D::NULLV(NULL_X, NULL_Y, NULL_Z);
 
-Vector3D::Vector3D() : x_comp(Vector3D::NULL_X),
-                       y_comp(Vector3D::NULL_Y),
-                       z_comp(Vector3D::NULL_Z) {
+Vector3D::Vector3D(void) : x_comp(Vector3D::NULL_X),
+                           y_comp(Vector3D::NULL_Y),
+                           z_comp(Vector3D::NULL_Z) {
     }
 
 Vector3D::Vector3D(vec_t xc, vec_t yc, vec_t zc) : x_comp(xc),

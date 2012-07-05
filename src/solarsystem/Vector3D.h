@@ -150,7 +150,7 @@ class Vector3D {
         */
         void set_z(vec_t zc);
 
-    protected:
+    private:
         /// The x co-ordinate.
         vec_t x_comp;
 
@@ -160,7 +160,6 @@ class Vector3D {
         /// The z co-ordinate.
         vec_t z_comp;
 
-    private:
         /// Initialisers for the null vector.
         static const GLfloat NULL_LENGTH;
         static const GLfloat NULL_X;
