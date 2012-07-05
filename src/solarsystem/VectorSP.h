@@ -74,25 +74,25 @@
 class VectorSP : public Vector3D {
     public:
         /**
-        * \brief Constructor, no arguments, gives the null vector
-        */
+         * \brief Constructor, no arguments, gives the null vector
+         */
         VectorSP(void);
 
         /**
-        * \brief Constructor, giving fully specified member values
-        * in spherical polar co-ordinates.
-        *
-        * \param ra the right ascension co-ordinate ( in decimal degrees )
-        *
-        * \param dec the declination co-ordinate ( in decimal degrees )
-        *
-        * \param rd the radius co-ordinate
-        */
+         * \brief Constructor, giving fully specified member values
+         * in spherical polar co-ordinates.
+         *
+         * \param ra the right ascension co-ordinate ( in decimal degrees )
+         *
+         * \param dec the declination co-ordinate ( in decimal degrees )
+         *
+         * \param rd the radius co-ordinate
+         */
         VectorSP(vec_t ra, vec_t dec, vec_t rd);
 
         /**
-        * \brief Destructor
-        */
+         * \brief Destructor
+         */
         virtual ~VectorSP();
     };
 

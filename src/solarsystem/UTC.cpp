@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2011 by Mike Hewson                                     *
- *   hewsmike@iinet.net.au                                                 *
+ *   Copyright (C) 2012 by Mike Hewson                                     *
+ *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
  *                                                                         *
@@ -20,46 +20,48 @@
 
 #include "UTC.h"
 
+#include "ErrorHandler.h"
+
 UTC::UTC(void) {
-   }
+    }
 
 UTC::~UTC() {
-   }
+    }
 
 void UTC::getTime(int* minutes60, int* hours24, int* days366) {
-   // Get the number of seconds since 00:00 on Jan 1st 1970
-   time_t seconds = time(NULL);
+    // Get the number of seconds since 00:00 on Jan 1st 1970
+    time_t seconds = time(NULL);
 
-   // Pointer to a 'tm' struct
-   struct tm* now;
+    // Pointer to a 'tm' struct
+    struct tm* now;
 
-   // Fill out the 'tm' struct given the 'time_t' value
-   now = gmtime(&seconds);
+    // Fill out the 'tm' struct given the 'time_t' value
+    now = gmtime(&seconds);
 
-   // Dereference the pointer as passed to set the minutes value, while bewaring
-   // of nullity.
-   if(minutes60 != NULL) {
-      *minutes60 = now->tm_min;
-      }
-   else {
-      ErrorHandler::record("UTC::getTime() : NULL pointer passed for minutes60 parameter", ErrorHandler::FATAL);
-      }
+    // Dereference the pointer as passed to set the minutes
+    // value, while bewaring of nullity.
+    if(minutes60 != NULL) {
+        *minutes60 = now->tm_min;
+        }
+    else {
+        ErrorHandler::record("UTC::getTime() : NULL pointer passed for minutes60 parameter", ErrorHandler::FATAL);
+        }
 
-   // Dereference the pointer as passed to set the hour value, while bewaring
-   // of nullity.
-   if(hours24 != NULL) {
-      *hours24 = now->tm_hour;
-      }
-   else {
-      ErrorHandler::record("UTC::getTime() : NULL pointer passed for hours24 parameter", ErrorHandler::FATAL);
-      }
+    // Dereference the pointer as passed to set the hour
+    // value, while bewaring of nullity.
+    if(hours24 != NULL) {
+        *hours24 = now->tm_hour;
+        }
+    else {
+        ErrorHandler::record("UTC::getTime() : NULL pointer passed for hours24 parameter", ErrorHandler::FATAL);
+        }
 
-   // Dereference the pointer as passed to set the day value, while bewaring
-   // of nullity.
-   if(days366 != NULL) {
-      *days366 = now->tm_yday;
-      }
-   else {
-      ErrorHandler::record("UTC::getTime() : NULL pointer passed for days366 parameter", ErrorHandler::FATAL);
-      }
-   }
+    // Dereference the pointer as passed to set the day
+    // value, while bewaring of nullity.
+    if(days366 != NULL) {
+        *days366 = now->tm_yday;
+        }
+    else {
+        ErrorHandler::record("UTC::getTime() : NULL pointer passed for days366 parameter", ErrorHandler::FATAL);
+        }
+    }

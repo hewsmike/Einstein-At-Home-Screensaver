@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2011 by Mike Hewson                                     *
- *   hewsmike@iinet.net.au                                                 *
+ *   Copyright (C) 2012 by Mike Hewson                                     *
+ *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
  *                                                                         *
@@ -23,8 +23,6 @@
 
 #include <ctime>
 
-#include "ErrorHandler.h"
-
 /**
  * \addtogroup solarsystem Solarsystem
  * @{
@@ -37,29 +35,29 @@
  */
 
 class UTC {
-   public:
-      /**
-       * \brief Constructor
-       */
-      UTC(void);
+    public:
+    /**
+     * \brief Constructor
+     */
+    UTC(void);
 
-      /**
-       * \brief Destructor
-       */
-      ~UTC();
+    /**
+     * \brief Destructor
+     */
+    virtual ~UTC();
 
-      /**
-       * \brief Inquire of the system clock for UTC values
-       *
-       * \param hours24 : pointer to integer, value to be set to integral hours
-       *                  on a 24 hour clock ie. range is 0 - 23
-       *
-       * \param days366 : pointer to integer, value to be set to integral days
-       *                  since January 1st ie. range 0 - 365
-       *                  thus including February 29th if in a leap year
-       */
-      static void getTime(int* minutes60, int* hours24, int* days366);
-   };
+    /**
+     * \brief Inquire of the system clock for UTC values
+     *
+     * \param hours24 : pointer to integer, value to be set to integral hours
+     *                  on a 24 hour clock ie. range is 0 - 23
+     *
+     * \param days366 : pointer to integer, value to be set to integral days
+     *                  since January 1st ie. range 0 - 365
+     *                  thus including February 29th if in a leap year
+     */
+    static void getTime(int* minutes60, int* hours24, int* days366);
+    };
 
 /**
  * @}

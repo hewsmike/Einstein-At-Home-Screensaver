@@ -49,105 +49,105 @@ class Vector3D {
         static const Vector3D NULLV;
 
         /**
-        * \brief Constructor, no arguments, gives the null vector
-        */
+         * \brief Constructor, no arguments, gives the null vector
+         */
         Vector3D(void);
 
         /**
-        * \brief Constructor, giving fully specified member values
-        * in Cartesian co-ordinates.
-        *
-        * \param xc the x co-ordinate
-        *
-        * \param yc the y co-ordinate
-        *
-        * \param zc the z co-ordinate
-        */
+         * \brief Constructor, giving fully specified member values
+         * in Cartesian co-ordinates.
+         *
+         * \param xc the x co-ordinate
+         *
+         * \param yc the y co-ordinate
+         *
+         * \param zc the z co-ordinate
+         */
         Vector3D(vec_t xc, vec_t yc, vec_t zc);
 
         /**
-        * \brief Copy constructor
-        *
-        * \param ov the other vector
-        */
+         * \brief Copy constructor
+         *
+         * \param ov the other vector
+         */
         Vector3D(const Vector3D& other);
 
         /**
-        * \brief Destructor
-        */
+         * \brief Destructor
+         */
         virtual ~Vector3D();
 
         /**
-        * \brief Obtain magnitude or length of the vector
-        *
-        * \return The length of the vector
-        */
+         * \brief Obtain magnitude or length of the vector
+         *
+         * \return The length of the vector
+         */
         vec_t len(void);
 
         /**
-        * \brief Obtain the null vector
-        *
-        * \return The null vector
-        */
+         * \brief Obtain the null vector
+         *
+         * \return The null vector
+         */
         Vector3D nullv(void);
 
         /**
-        * \brief Obtain a unit vector in the same direction as the vector
-        *
-        *   In the case of actually being the null vector, then the null vector
-        * is returned.
-        *
-        * \return The unit vector
-        */
+         * \brief Obtain a unit vector in the same direction as the vector
+         *
+         *   In the case of actually being the null vector, then the null vector
+         * is returned.
+         *
+         * \return The unit vector
+         */
         Vector3D unit(void);
 
         /**
-        * \brief Determine if the vector is null
-        *
-        * \return A boolean indicating true it is null, false otherwise
-        */
+         * \brief Determine if the vector is null
+         *
+         * \return A boolean indicating true it is null, false otherwise
+         */
         bool isNullVector(void);
 
         /**
-        * \brief Obtain the x-component
-        *
-        * \return The x-component
-        */
+         * \brief Obtain the x-component
+         *
+         * \return The x-component
+         */
         vec_t x(void) const;
 
         /**
-        * \brief Obtain the y-component
-        *
-        * \return The y-component
-        */
+         * \brief Obtain the y-component
+         *
+         * \return The y-component
+         */
         vec_t y(void) const;
 
         /**
-        * \brief Obtain the z-component
-        *
-        * \return The z-component
-        */
+         * \brief Obtain the z-component
+         *
+         * \return The z-component
+         */
         vec_t z(void) const;
 
         /**
-        * \brief Set the x-component
-        *
-        * \param The x-component
-        */
+         * \brief Set the x-component
+         *
+         * \param The x-component
+         */
         void set_x(vec_t xc);
 
         /**
-        * \brief Set the y-component
-        *
-        * \param The y-component
-        */
+         * \brief Set the y-component
+         *
+         * \param The y-component
+         */
         void set_y(vec_t yc);
 
         /**
-        * \brief Set the z-component
-        *
-        * \param The z-component
-        */
+         * \brief Set the z-component
+         *
+         * \param The z-component
+         */
         void set_z(vec_t zc);
 
     private:
