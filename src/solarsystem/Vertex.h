@@ -54,14 +54,14 @@ class Vertex {
         /**
          * \brief Constructor ( fully qualified )
          *
-         * \param ps The position of the vertex
+         * \param position The position of the vertex
          *
-         * \param nm The normal to the vertex
+         * \param normal The normal to the vertex
          *
-         * \param tc The texture coordinates of the vertex
+         * \param texture_coords The texture coordinates of the vertex
          */
-        Vertex(const Vector3D& ps, const Vector3D& nm,
-               const std::pair<GLfloat, GLfloat>& tc);
+        Vertex(const Vector3D& position, const Vector3D& normal,
+               const std::pair<GLfloat, GLfloat>& texture_coords);
 
         /**
          * \brief Constructor ( copy )
@@ -102,7 +102,7 @@ class Vertex {
         Vector3D norm;
 
         /// Coordinate value pair for 2D texturing.
-        std::pair<GLfloat, GLfloat> t_cds;
+        std::pair<GLfloat, GLfloat> text_cds;
     };
 
 /**
