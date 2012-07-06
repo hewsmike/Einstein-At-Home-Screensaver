@@ -22,12 +22,14 @@
 
 #include "ErrorHandler.h"
 
+// This will default to NULL vectors from the Vector3D class,
+// that is from the origin to the origin.
+Curve::Curve(void) : begin(), end() {
+    }
+
 Curve::Curve(const Vector3D& start, const Vector3D& finish) :
              begin(start), end(finish) {
-   }
-
-Curve::Curve(void) : begin(), end() {
-   }
+    }
 
 Curve::~Curve() {
 	}

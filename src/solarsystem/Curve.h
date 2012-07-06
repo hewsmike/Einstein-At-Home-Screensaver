@@ -1,5 +1,5 @@
 /***************************************************************************
-*   Copyright (C) 2012 by Mike Hewson                                     *
+ *   Copyright (C) 2012 by Mike Hewson                                     *
  *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
@@ -17,65 +17,78 @@
  *   along with Einstein@Home. If not, see <http://www.gnu.org/licenses/>. *
  *                                                                         *
  ***************************************************************************/
- 
+
 #ifndef CURVE_H_
 #define CURVE_H_
 
 #include "Vector3D.h"
- 
+
 /**
  * \addtogroup solarsystem Solarsystem
  * @{
  */
 
 /**
- * \brief Gives position information along, and thus defines the precise
- *        Curve of, a curve in 3D space.
+ * \brief This class encapsulates a geometric curve in 3D space.
  *
- *    A class invariant is that the 'start' and 'finish' vectors will
- * be referenced by parameter values of 0.0 and 1.0 respectively.
+ *      Take any two points in 3D space ( defined by vectors from the
+ * origin to each of them ) and create a continuous sequence of points
+ * in between them to form a curve. Use a parameter, a real number here
+ * called 'rho', with an appropriate rule or function to determine the
+ * position of points on the curve.
+ *      A class invariant is that the 'start' and 'finish' vectors will
+ * be referenced by parameter values of 0.0 and 1.0 respectively. This
+ * class will still evaluate for any rho value, that is outside of the
+ * range [0.0, 1.0] as well.
+ *
+ * \see Vector3D
  *
  * \author Mike Hewson\n
  */
 
 class Curve {
    public:
-		/**
-	    * \brief Constructor
-	    *
-	    * \param start : the vector to the begining
-	    *
-	    * \param finish : the vector to the end
-	    */
-		Curve(const Vector3D& start, const Vector3D& finish);
+        /**
+         * Constructor ( no argument )
+         */
+        Curve(void);
 
-		Curve(void);
+		/**
+         * \brief Constructor
+	     *
+	     * \param start : the vector to the begining
+	     *
+	     * \param finish : the vector to the end
+	     */
+		Curve(const Vector3D& start, const Vector3D& finish);
 
 		/**
 		 * \brief Destructor
 		 */
 		virtual ~Curve();
 
-		/*
+		/**
 		 * \brief The vector to the point parameterised by the given rho. In this
-		 * 		 base class a simple straight line is emulated.
+		 * 		  base class a simple straight line is emulated.
 		 *
 		 * \param rho : a value indicating the desired point.
-		 *              The start vector can be retrieved by a value of zero,
-		 *              and the finish vector by a value of one. Rho values outside
-		 *              of the interval [0.0, 1.0] will still give an evaluated
-		 *              vector according to said value.
 		 *
 		 * \return a vector indicating the point referred to by the given rho.
 		 */
 		virtual Vector3D value(float rho) const;
 
+        /**
+		 * \brief Obtain the length along the curve ( in notional units ) from
+		 *        the start to the finish point.
+		 *
+		 * \return the length along the curve
+		 */
 		virtual float length(void) const;
 
    private:
 		Vector3D begin;
 		Vector3D end;
-   };
+    };
 
 /**
  * @}
