@@ -21,4 +21,6 @@ erp_git_version.h
 build.log
 @LOGFILE
 *.cbp
+*.cbTemp
+*.layout
 *~
