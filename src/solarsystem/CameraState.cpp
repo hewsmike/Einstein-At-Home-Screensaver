@@ -21,35 +21,34 @@
 #include "CameraState.h"
 
 #include "Craft.h"
-#include "ErrorHandler.h"
 
-CameraState::CameraState(void) {
-   where = Craft::START_POSITION;
-   look_at = Craft::START_LOOKING;
-   up_dir = Craft::START_UP;
-   }
+CameraState::CameraState(void) :
+                            where(Craft::START_POSITION),
+                            look_at(Craft::START_LOOKING),
+                            up_dir(Craft::START_UP) {
+    }
 
 CameraState::CameraState(const Vector3D& position,
-								 const Vector3D& focus,
-								 const Vector3D& orientation) :
-									where(position),
-									look_at(focus),
-									up_dir(orientation) {
-   }
+						 const Vector3D& focus,
+						 const Vector3D& orientation) :
+						    where(position),
+							look_at(focus),
+							up_dir(orientation) {
+    }
 
 CameraState::CameraState(const CameraState& other){
-   this->where = other.position();
-   this->look_at = other.focus();
-   this->up_dir = other.orientation();
+    this->where = other.position();
+    this->look_at = other.focus();
+    this->up_dir = other.orientation();
 	}
 
 CameraState& CameraState::operator=(const CameraState& other) {
-   // Excluding self assignment.
-   if(this != &other) {
-      this->where = other.position();
-      this->look_at = other.focus();
-      this->up_dir = other.orientation();
-      }
+    // Excluding self assignment.
+    if(this != &other) {
+        this->where = other.position();
+        this->look_at = other.focus();
+        this->up_dir = other.orientation();
+        }
 
 	return *this;
 	}
