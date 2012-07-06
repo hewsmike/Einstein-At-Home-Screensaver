@@ -61,7 +61,7 @@ class Traverse {
 		/**
 		 * \brief Destructor
 		 */
-		~Traverse();
+		virtual ~Traverse();
 
         /**
          * \brief Empty the traverse of all LookOuts

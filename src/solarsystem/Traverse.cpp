@@ -52,7 +52,7 @@ unsigned int Traverse::numLookouts(void) const {
 Path Traverse::getFirstPath(void) {
     Path ret_val;
 
-	if(numlookouts() >= MIN_LOOKOUTS) {
+	if(numLookouts() >= MIN_LOOKOUTS) {
 		current_path_index = 0;
 		ret_val = makePath();
 		}
@@ -71,7 +71,7 @@ Path Traverse::getFirstPath(void) {
 Path Traverse::getNextPath(void) {
 	Path ret_val;
 
-	if(numlookouts() >= MIN_LOOKOUTS) {
+	if(numLookouts() >= MIN_LOOKOUTS) {
 	    // We traverse the lookouts in a modulo fashion.
 		current_path_index = (current_path_index + 1) % cam_states.size();
 		ret_val = makePath();
@@ -91,7 +91,7 @@ Path Traverse::getNextPath(void) {
 Path Traverse::makePath() {
     Path ret_val;
 
-	if(numlookouts() >= MIN_LOOKOUTS) {
+	if(numLookouts() >= MIN_LOOKOUTS) {
 	    // Set the indices of the Lookouts that bracket this Path.
 	    unsigned int start_lookout;
         unsigned int finish_lookout = (start_lookout + 1) % cam_states.size();
