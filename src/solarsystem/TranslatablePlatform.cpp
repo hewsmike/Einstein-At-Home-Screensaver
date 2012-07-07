@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2011 by Mike Hewson                                     *
- *   hewsmike@iinet.net.au                                                 *
+ *   Copyright (C) 2012 by Mike Hewson                                     *
+ *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
  *                                                                         *
@@ -27,17 +27,17 @@ TranslatablePlatform::TranslatablePlatform(void) : pos(TranslatablePlatform::INI
 	}
 
 TranslatablePlatform::~TranslatablePlatform() {
-   }
+    }
 
 Vector3D TranslatablePlatform::position(void) const {
-   return pos;
-   }
+    return pos;
+    }
 
-void TranslatablePlatform::set_position(const Vector3D& ps) {
-   pos = ps;
-   }
+void TranslatablePlatform::setPosition(const Vector3D& ps) {
+    pos = ps;
+    }
 
 void TranslatablePlatform::reset(void) {
-   // Reset to a choice of initial position ...
-   set_position(TranslatablePlatform::INIT_POS);
-   }
+    // Reset to a choice of initial position ...
+    set_position(TranslatablePlatform::INIT_POS);
+    }

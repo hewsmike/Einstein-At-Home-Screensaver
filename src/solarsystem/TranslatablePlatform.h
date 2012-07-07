@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2011 by Mike Hewson                                     *
- *   hewsmike@iinet.net.au                                                 *
+ *   Copyright (C) 2012 by Mike Hewson                                     *
+ *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
  *                                                                         *
@@ -19,7 +19,7 @@
  ***************************************************************************/
 
 #ifndef TRANSLATABLE_PLATFORM_H_
-#define TRANSLATABLE_PLATFORM_H_
+#define TRANSLATABLE_PLATFOR
 
 #include "Vector3D.h"
 
@@ -31,46 +31,46 @@
 /**
  * \brief %Solarsystem Translatable Cartesian orthonormal vector set
  *
- * This class comprises position state data, accessors and mutators thereof.
+ *      This class comprises position state data, accessors and mutators thereof.
  *
  * \author Mike Hewson\n
  */
 
 class TranslatablePlatform {
 	public:
-      /**
-       * \brief Constructor
-       */
-      TranslatablePlatform(void);
+        /**
+         * \brief Constructor
+         */
+        TranslatablePlatform(void);
 
-      /**
-       * \brief Destructor
-       */
-      virtual ~TranslatablePlatform();
+        /**
+         * \brief Destructor
+         */
+        virtual ~TranslatablePlatform();
 
-      /**
-       * \brief Get the position
-       */
-      Vector3D position(void) const;
+        /**
+         * \brief Get the position
+         */
+        Vector3D position(void) const;
 
-      /**
-       * \brief Set the position
-       */
-      void set_position(const Vector3D& vc);
+        /**
+         * \brief Set the position
+         */
+        void setPosition(const Vector3D& vc);
 
-   protected:
-      /**
-       * \brief Reset the platform in position and rotation
-       */
-      virtual void reset(void);
+    protected:
+        /**
+         * \brief Reset the platform in position and rotation
+         */
+        virtual void reset(void);
 
-   private:
-      /// Fiducial position
-      static const Vector3D INIT_POS;
+    private:
+        /// Initial position
+        static const Vector3D INIT_POS;
 
-      /// Current position in space.
-      Vector3D pos;
-   };
+        /// Current position in space.
+        Vector3D pos;
+    };
 
 /**
  * @}
