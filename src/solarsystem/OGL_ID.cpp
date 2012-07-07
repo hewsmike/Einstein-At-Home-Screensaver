@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2011 by Mike Hewson                                     *
- *   hewsmike@iinet.net.au                                                 *
+ *   Copyright (C) 2012 by Mike Hewson                                     *
+ *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
  *                                                                         *
@@ -21,17 +21,18 @@
 #include "OGL_ID.h"
 
 // An ID with value zero is neither used nor returned by OpenGL.
-// It semantically indicates 'no identifier assigned'.
+// Thus it may semantically indicate 'no identifier assigned'.
 const GLuint OGL_ID::NO_ID(0);
 
 // Make sure you start with an un-assigned identifier,
 // lest you later over-write resources!
 OGL_ID::OGL_ID() : ident(OGL_ID::NO_ID) {
-   }
+    }
 
+/// Can't call release() from here ( 'cos it's virtual )
 OGL_ID::~OGL_ID() {
-   }
+    }
 
 GLuint OGL_ID::ID(void) const {
-   return ident;
-   }
+    return ident;
+    }

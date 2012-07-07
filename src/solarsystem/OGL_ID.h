@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2011 by Mike Hewson                                     *
- *   hewsmike@iinet.net.au                                                 *
+ *   Copyright (C) 2012 by Mike Hewson                                     *
+ *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
  *                                                                         *
@@ -32,50 +32,51 @@
  * \brief This interface declares public methods to deal with OpenGL
  *        identifiers.
  *
- * Display lists, buffer objects and texture objects have a common
- * functionality for which this class is a wrapper of. The detailed
- * acquisition and release of OpenGL resources is to be provided in
- * subclasses.
+ *      OpenGL display lists, buffer objects and texture objects have
+ * a common functionality for which this class is a wrapper of. The
+ * detailed acquisition and release of OpenGL resources is to be provided
+ * in subclasses. NOTE CAREFULLY that a derived class destructor MUST
+ * call release() !!!
  *
  * \author Mike Hewson\n
  */
 
 class OGL_ID {
-   public:
-      /// Default initialiser for the identifier.
-      static const GLuint NO_ID;
+    public:
+        /// Default initialiser for the identifier.
+        static const GLuint NO_ID;
 
-      /**
-       * \brief Constructor
-       */
-      OGL_ID(void);
+        /**
+         * \brief Constructor ( no argument )
+         */
+        OGL_ID(void);
 
-      /**
-       * \brief Destructor - any derived class destructor must call release()
-       */
-      virtual ~OGL_ID();
+        /**
+         * \brief Destructor - any derived class destructor must call release()
+         */
+        virtual ~OGL_ID();
 
-      /**
-       * \brief Obtains the OpenGL resource.
-       */
-      virtual void acquire(void) = 0;
+        /**
+         * \brief Obtains the OpenGL resource.
+         */
+        virtual void acquire(void) = 0;
 
-      /**
-       * \brief Releases the OpenGL resource.
-       */
-      virtual void release(void) = 0;
+        /**
+         * \brief Releases the OpenGL resource.
+         */
+        virtual void release(void) = 0;
 
-      /**
-       * \brief Obtain the OpenGL resource identifier.
-       *
-       * \return the identifier.
-       */
-      GLuint ID(void) const;
+        /**
+         * \brief Obtain the OpenGL resource identifier.
+         *
+         * \return the identifier.
+         */
+        GLuint ID(void) const;
 
-   protected:
-      /// The identifier as allocated by OpenGL.
-      GLuint ident;
-   };
+    protected:
+        /// The identifier as allocated by OpenGL.
+        GLuint ident;
+    };
 
 /**
  * @}
