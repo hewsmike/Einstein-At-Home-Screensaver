@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2011 by Mike Hewson                                     *
- *   hewsmike@iinet.net.au                                                 *
+ *   Copyright (C) 2012 by Mike Hewson                                     *
+ *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
  *                                                                         *
@@ -31,28 +31,30 @@
 /**
  * \brief %Solarsystem Supernova data type.
  *
- * This class comprises the astronomical data relating to a specific supernova.
+ *      This class comprises the astronomical data relating to a specific supernova.
  * TODO maybe include a name field in constructor, passed through to base class?
+ *
+ * \see Star
  *
  * \author Mike Hewson\n
  */
 
 class Supernova : public Star {
-   public:
-      /**
-       * \brief Constructor, giving fully specified member values.
-       *
-       * \param ra - right ascension of the supernova
-       *
-       * \param dec - declination of the supernova
-       */
-      Supernova(starpos_t ra, starpos_t dec);
+    public:
+        /**
+         * \brief Constructor
+         *
+         * \param ra - right ascension of the supernova
+         *
+         * \param dec - declination of the supernova
+         */
+        Supernova(starpos_t ra, starpos_t dec);
 
-      /**
-       * \brief Destructor
-       */
-      virtual ~Supernova();
-   };
+        /**
+         * \brief Destructor
+         */
+        virtual ~Supernova();
+    };
 
 /**
  * @}

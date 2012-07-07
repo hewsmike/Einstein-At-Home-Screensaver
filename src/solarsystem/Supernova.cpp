@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2011 by Mike Hewson                                     *
- *   hewsmike@iinet.net.au                                                 *
+ *   Copyright (C) 2012 by Mike Hewson                                     *
+ *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
  *                                                                         *
@@ -21,8 +21,8 @@
 #include "Supernova.h"
 
 Supernova::Supernova(starpos_t ra, starpos_t dec) : Star(ra, dec, "") {
-   // Base class constructor has been called.
-   }
+    // Base class constructor has been called.
+    }
 
 Supernova::~Supernova() {
-   }
+    }
