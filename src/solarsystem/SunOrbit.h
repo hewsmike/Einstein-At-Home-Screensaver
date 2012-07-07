@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2011 by Mike Hewson                                     *
- *   hewsmike@iinet.net.au                                                 *
+ *   Copyright (C) 2012 by Mike Hewson                                     *
+ *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
  *                                                                         *
@@ -21,10 +21,6 @@
 #ifndef SUN_ORBIT_H_
 #define SUN_ORBIT_H_
 
-#include <iostream>
-
-#include "ErrorHandler.h"
-#include "SolarSystemGlobals.h"
 #include "Vector3D.h"
 
 /**
@@ -35,55 +31,79 @@
 /**
  * \brief Models the Sun's orbit around the Earth.
  *
+ *      Simple model of a circular orbit, crossing from the Southern
+ * celestial hemisphere to the Northern at the zero of right ascension
+ * on the vernal equinox day. Any input parameter in days is adjusted
+ * modulo 365 to produce the position of the Sun's centre and/or the
+ * rotation angle of the Sun around it's own axis.
+ *
  * \author Mike Hewson\n
  */
 
 class SunOrbit {
-   public:
-      static const GLfloat ECLIPTIC_ANGLE_DEG;
+    public:
+        /// The angle between the Earth's equatorial plane
+        /// and the plane of the Earth's orbit around the Sun.
+        static const GLfloat ECLIPTIC_ANGLE_DEG;
 
-      static const GLfloat DAYS_PER_YEAR;
+        /// The number of (sidereal) days in a year.
+        static const GLfloat DAYS_PER_YEAR;
 
-      static const GLfloat DAYS_PER_ROTATION;
+        /// The number of days for the Sun to rotate around
+        /// it's own North/South axis.
+        static const GLfloat DAYS_PER_ROTATION;
 
-      /// The radius of the Sun's orbit.
-      static const GLfloat SUN_ORBIT_RADIUS;
+        /// The radius of the Sun's orbit.
+        static const GLfloat SUN_ORBIT_RADIUS;
 
-      /// What number of days since Jan 1st is the vernal equinox ?
-      static const int VERNAL_EQUINOX_DAY;
+        /// The number of days from Jan 1st to the vernal equinox.
+        static const int VERNAL_EQUINOX_DAY;
 
-      /**
-       * \brief Destructor
-       */
-      ~SunOrbit();
+        /**
+         *    \brief Destructor
+         */
+        virtual ~SunOrbit();
 
-      /**
-       * \brief Where is the Sun on a given day?
-       *
-       * \param days366 : the integral number of days since January the 1st,
-       *                  ie. range is 0 - 365
-       *
-       * \return position vector from the origin to the centre of the Sun
-       */
-      static Vector3D getPosition(GLfloat days366);
+        /**
+         * \brief Where is the Sun on a given day?
+         *
+         * \param days : the number of days before/since January the 1st,
+         *               whereby modulo arithmetic is used to bring into
+         *               the range [0.0, 365.0)
+         *
+         * \return position vector from the origin to the centre of the Sun
+         */
+        static Vector3D getPosition(GLfloat days);
 
-      /**
-       * \brief What is the rotation of the Sun on a given day?
-       *
-       * \param days366 : the integral number of days since January the 1st,
-       *                  ie. range is 0 - 365
-       *
-       * \return angle of the rotation, modulo 360 degrees
-       */
-      static GLfloat getRotation(GLfloat days366);
+        /**
+         * \brief What is the rotation angle of the Sun on a given day?
+         *
+         * \param days : the number of days before/since January the 1st,
+         *               whereby modulo arithmetic is used to bring into
+         *               the range [0.0, 365.0)
+         *
+         * \return angle of the rotation, modulo 360 degrees
+         */
+        static GLfloat getRotation(GLfloat days);
 
-   private:
-      // Private constructor as static
-       /**
-       * \brief Constructor
-       */
-      SunOrbit(void);
-   };
+    private:
+        // Private constructor as static
+        /**
+         * \brief Constructor
+         */
+        SunOrbit(void);
+
+        /**
+         * \brief Obtain the number of days since the beginning of a cycle
+         *
+         * \param day : the number of days before/since cycle origin
+         *
+         * \param days_per_cycle : the number of days in a cycle
+         *
+         * \return the day offset in the range [0.0, days_per_cycle)
+         */
+        GLfloat moduloDays(GLfloat day, GLfloat days_per_cycle);
+    };
 
 /**
  * @}

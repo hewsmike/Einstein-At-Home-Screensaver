@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2011 by Mike Hewson                                     *
- *   hewsmike@iinet.net.au                                                 *
+ *   Copyright (C) 2012 by Mike Hewson                                     *
+ *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
  *                                                                         *
@@ -20,50 +20,62 @@
 
 #include "SunOrbit.h"
 
+#include "ErrorHandler.h"
+#include "SolarSystemGlobals.h"
+
 const GLfloat SunOrbit::ECLIPTIC_ANGLE_DEG(23.5f);
-const GLfloat SunOrbit::DAYS_PER_YEAR(365.0f);
-const GLfloat SunOrbit::DAYS_PER_ROTATION(27.0f);
+const GLfloat SunOrbit::DAYS_PER_YEAR(365.00f);
+// This gives close to 26 days per rotation ( about right ),
+// and a nice integral number of rotations per year - so no
+// jumps on Jan 1st
+const GLfloat SunOrbit::DAYS_PER_ROTATION(DAYS_PER_YEAR/14.0f);
 const GLfloat SunOrbit::SUN_ORBIT_RADIUS(5*SolarSystemGlobals::SUN_RADIUS);
 const int SunOrbit::VERNAL_EQUINOX_DAY(79);
 
 SunOrbit::SunOrbit(void) {
-   }
+    }
 
 SunOrbit::~SunOrbit() {
-   }
+    }
 
-Vector3D SunOrbit::getPosition(GLfloat days366) {
-   // TODO - be bothered with leap years !!! :-)
+Vector3D SunOrbit::getPosition(GLfloat days) {
+    // Well to start with on, say, Mar 21st the Sun is at the vernal equinox.
+    GLfloat days_since_vernal_equinox = days - VERNAL_EQUINOX_DAY;
 
-   if((days366 < 0) || (days366 > DAYS_PER_YEAR)) {
-      std::string msg = "SunOrbit:getPosition() - bad days366 parameter passed";
-      ErrorHandler::record(msg, ErrorHandler::FATAL);
-      }
+    // Bring into the 'principal value' domain.
+    days_since_vernal_equinox = moduloDay(days_since_vernal_equinox, DAYS_PER_YEAR);
 
-   // Well to start with on, say, Mar 21st the Sun is at the vernal equinox.
-   days366 = (days366 - VERNAL_EQUINOX_DAY);
-   if(days366 < 0) {
-      days366 += DAYS_PER_YEAR;
-      }
+    // OK, now get an angle in the ecliptic plane between a vector to the
+    // vernal equinox and a vector to the position of the Sun on the given
+    // day. Positive going anti-clockwise when looking down on that plane
+    // from the northern side.
+    GLfloat theta = (days_since_vernal_equinox/DAYS_PER_YEAR)*SolarSystemGlobals::FULL_CIRCLE_DEG;
 
-   GLfloat theta = (days366/DAYS_PER_YEAR)*SolarSystemGlobals::FULL_CIRCLE_DEG;
+    // Just a circle.
+    return SUN_ORBIT_RADIUS * Vector3D(COS(theta),
+                                       SIN(theta) * COS(ECLIPTIC_ANGLE_DEG),
+                                       SIN(theta) * SIN(ECLIPTIC_ANGLE_DEG));
+    }
 
-   // Just a circle.
-   return SUN_ORBIT_RADIUS * Vector3D(COS(theta),
-                                      SIN(theta) * COS(ECLIPTIC_ANGLE_DEG),
-                                      SIN(theta) * SIN(ECLIPTIC_ANGLE_DEG));
-   }
+GLfloat SunOrbit::getRotation(GLfloat days) {
+    // 'Unrotated' is for the Sun quite arbitrary ( not a rigid body ) ...
+    GLfloat days_since_unrotated = moduloDays(days, DAYS_PER_ROTATION);
 
-GLfloat SunOrbit::getRotation(GLfloat days366) {
-   // TODO - be bothered with leap years !!! :-)
+    return (days_since_unrotated/DAYS_PER_ROTATION)*SolarSystemGlobals::FULL_CIRCLE_DEG;;
+    }
 
-   if((days366 < 0) || (days366 >= DAYS_PER_YEAR)) {
-      std::string msg = "SunOrbit:getPosition() - bad days366 parameter passed";
-      ErrorHandler::record(msg, ErrorHandler::FATAL);
-      }
+GLfloat SunOrbit::moduloDays(GLfloat day, GLfloat days_per_cycle) {
+    GLfloat ret_val = 0;
 
-   // How many days are we into this rotation - modulo rotation period ?
-   days366 = days366 - DAYS_PER_ROTATION * static_cast<int>(days366/DAYS_PER_ROTATION);
+    // Note : the lower range boundary is included.
+    if(day < 0) {
+        ret_val = day + days_per_cycle;
+        }
 
-   return (days366/DAYS_PER_ROTATION)*SolarSystemGlobals::FULL_CIRCLE_DEG;;
-   }
+    // Note : the upper range boundary is excluded.
+    if(day >= days_per_cycle) {
+        ret_val = day - days_per_cycle;
+        }
+
+    return ret_val;
+    }
