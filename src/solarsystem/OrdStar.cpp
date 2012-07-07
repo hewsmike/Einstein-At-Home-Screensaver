@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2011 by Mike Hewson                                     *
- *   hewsmike@iinet.net.au                                                 *
+ *   Copyright (C) 2012 by Mike Hewson                                     *
+ *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
  *                                                                         *
@@ -27,11 +27,7 @@ OrdStar::OrdStar(starpos_t ra,
                  std::string nm) : Star(ra, dec, nm),
                                    mag(mag),
                                    spect_class(spect) {
-   // Base class constructor has been called, no point in bounds
-   // checking of magnitude ( ie. any float is acceptable )
-   // and/or spectral class ( being an enum that ought pop a
-   // compile time error if bad ).
-   }
+    }
 
 OrdStar::~OrdStar() {
 	}

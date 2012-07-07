@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2011 by Mike Hewson                                     *
- *   hewsmike@iinet.net.au                                                 *
+ *   Copyright (C) 2012 by Mike Hewson                                     *
+ *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
  *                                                                         *
@@ -18,6 +18,7 @@
  *                                                                         *
  ***************************************************************************/
 
+
 #ifndef ORDSTAR_H
 #define ORDSTAR_H
 
@@ -33,60 +34,62 @@
 /**
  * \brief %Solarsystem Ordinary star data type.
  *
- * This class comprises the astronomical data relating to a specifically
+ *      This class comprises the astronomical data relating to a specifically
  * deemed not-especially-notable star. The visual magnitude and color
  * are stored.
+ *
+ * \see Star
  *
  * \author Mike Hewson\n
  */
 
 class OrdStar : public Star {
-   public:
-      /// Identifiers of star spectral class.
-      enum spectral_type {SPEC_A, SPEC_B, SPEC_F, SPEC_G, SPEC_K, SPEC_M, SPEC_O};
+    public:
+        /// Identifiers of star spectral class.
+        enum spectral_type {SPEC_A, SPEC_B, SPEC_F, SPEC_G, SPEC_K, SPEC_M, SPEC_O};
 
-      /**
-       * \brief Constructor, giving fully specified member values.
-       *
-       * \param ra - right ascension of the star
-       *
-       * \param dec - declination of the star
-       *
-       * \param mag - the visual magnitude of the star
-       *
-       * \param spect - the spectral type ( color ) of the star
-       *
-       * \param nm - the name of the star
-       */
-      OrdStar(starpos_t ra, starpos_t dec, GLfloat mag,
-              spectral_type spect, std::string nm);
+        /**
+         * \brief Constructor
+         *
+         * \param ra - right ascension of the star
+         *
+         * \param dec - declination of the star
+         *
+         * \param mag - the visual magnitude ( brightness ) of the star
+         *
+         * \param spect - the spectral type ( color ) of the star
+         *
+         * \param nm - the name of the star
+         */
+        OrdStar(starpos_t ra, starpos_t dec, GLfloat mag,
+                spectral_type spect, std::string nm);
 
-      /**
-       * \brief Destructor
-       */
-      ~OrdStar();
+        /**
+         * \brief Destructor
+         */
+        ~OrdStar();
 
-      /**
-       * \brief Obtain the magnitude
-       *
-       * \return The magnitude
-       */
-      GLfloat magnitude(void) const;
+        /**
+         * \brief Obtain the magnitude ( brightness )
+         *
+         * \return The magnitude
+         */
+        GLfloat magnitude(void) const;
 
-      /**
-       * \brief Obtain the spectral class ( color )
-       *
-       * \return The spectral class
-       */
-      spectral_type spectral_class(void) const;
+        /**
+         * \brief Obtain the spectral class ( color )
+         *
+         * \return The spectral class
+         */
+        spectral_type spectral_class(void) const;
 
-   private:
-      /// The star's brightness.
-      GLfloat mag;
+    private:
+        /// The star's brightness.
+        GLfloat mag;
 
-      /// The star's color.
-      spectral_type spect_class;
-   };
+        /// The star's color.
+        spectral_type spect_class;
+    };
 
 /**
  * @}
