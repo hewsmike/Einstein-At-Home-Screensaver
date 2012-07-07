@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2011 by Mike Hewson                                     *
- *   hewsmike@iinet.net.au                                                 *
+ *   Copyright (C) 2012 by Mike Hewson                                     *
+ *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
  *                                                                         *
@@ -30,33 +30,38 @@
 
 /**
  * \brief This interface declares public methods to deal with OpenGL
- * texture objects. It's a wrapper.
+ *        texture objects.
+ *
+ *      It's a wrapper class to especially manage acquisition and
+ * release of OpenGL resources.
+ *
+ * \see OGL_ID
  *
  * \author Mike Hewson\n
  */
 
 class Texture_OBJ : public OGL_ID {
-   public :
-      /**
-      * \brief Constructor
-      */
-      Texture_OBJ(void);
+    public :
+        /**
+         * \brief Constructor
+         */
+        Texture_OBJ(void);
 
-      /**
-       * \brief Destructor
-       */
-      virtual ~Texture_OBJ();
+        /**
+         * \brief Destructor
+         */
+        virtual ~Texture_OBJ();
 
-      /**
-       * \brief Obtains the texture object resources.
-       */
-      virtual void acquire(void);
+        /**
+         * \brief Acquire the texture object's OpenGL resources.
+         */
+        virtual void acquire(void);
 
-      /**
-       * \brief Releases the texture object resources.
-       */
-      virtual void release(void);
-   };
+        /**
+         * \brief Release the texture object's OpenGL resources.
+         */
+        virtual void release(void);
+    };
 
 /**
  * @}

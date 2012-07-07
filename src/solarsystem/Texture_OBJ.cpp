@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2011 by Mike Hewson                                     *
- *   hewsmike@iinet.net.au                                                 *
+ *   Copyright (C) 2012 by Mike Hewson                                     *
+ *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
  *                                                                         *
@@ -21,19 +21,19 @@
 #include "Texture_OBJ.h"
 
 Texture_OBJ::Texture_OBJ(void) {
-   }
+    }
 
 Texture_OBJ::~Texture_OBJ() {
-   // Must call this here in this derived class.
-   release();
-   }
+    // Must call this here in this derived class.
+    release();
+    }
 
 void Texture_OBJ::acquire(void) {
-   // Ask OpenGL to assign a texture object.
-   glGenTextures(1, &ident);
-   }
+    // Ask OpenGL to assign a texture object.
+    glGenTextures(1, &ident);
+    }
 
 void Texture_OBJ::release(void) {
-   // Ask OpenGL to release the texture object.
-   glDeleteTextures(1, &ident);
-   }
+    // Ask OpenGL to release the texture object.
+    glDeleteTextures(1, &ident);
+    }
