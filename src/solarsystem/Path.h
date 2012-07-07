@@ -33,66 +33,120 @@
  */
 
 /**
- * \brief A path in 3D space with a camera state retrievable
- *        for any position along it.
+ * \brief This class encapsulates a path in 3D space with a camera
+ *        state retrievable for any position along it and descriptions
+ *        at the endpoints.
+ *
+ *      Intended to be used by the Traverse class as one Path in a
+ * sequence. A parameter, here called 'lambda', specifies a camera
+ * state between the start and finish of the Path inclusive. While
+ * any value of lambda may be given, evaluation occurs after clamping
+ * to within the range [0.0, 1.0]. Sets of descriptive messages may
+ * be given and retrieved for either end of the Path.
+ *
+ * \see Curve
+ * \see CameraState
+ * \see Traverse
  *
  * \author Mike Hewson\n
  */
 
 class Path {
-   public:
-		enum component {POSITION, FOCUS, ORIENTATION};
+    public:
+        /// Enumerant for camera view state components.
+        enum component {POSITION, FOCUS, ORIENTATION};
 
-      static const float LAMBDA_LOWER_BOUND;
-      static const float LAMBDA_UPPER_BOUND;
+        /**
+         * \brief Constructor ( no argument )
+         *
+         *      Gives a Path with defaults from the Curve class
+         */
 
-		/**
-	    * \brief Constructor
-	    *
-	    * \param pos : the curve for determining camera position
-	    *
-	    * \param view : the curve for determining camera focus point
-	    *
-	    * \param orient : the curve for determining camera orientation
-	    */
-		Path(const Curve& pos, const Curve& focus, const Curve& orient);
+        Path(void);
 
-		Path(void);
+        /**
+         * \brief Constructor
+         *
+         * \param pos : the curve for determining camera position
+         *
+         * \param view : the curve for determining camera focus point
+         *
+         * \param orient : the curve for determining camera orientation
+         */
+        Path(const Curve& pos, const Curve& focus, const Curve& orient);
 
-		/**
-		 * \brief Destructor
-		 */
-		~Path();
+        /**
+         * \brief Destructor
+         */
+        virtual ~Path();
 
-		/*
-		 * \brief Obtain the camera state parameterised by the given lambda.
-		 *
-		 * \param lambda : a value indicating the desired point. This is
-		 *             clamped to the real number interval [0.0, 1.0],
-		 *             meaning that if given values less than 0.0 that leads
-		 *             to an evaluation at 0.0, likewise for given values
-		 *             greater than 1.0 will evaluate at 1.0 ....
-		 *
-		 * \return The camera state at the given lambda
-		 */
-		CameraState value(float lambda) const;
+        /**
+         * \brief Obtain the camera state parameterised by the given lambda.
+         *
+         * \param lambda : a value indicating the desired point. This is
+         *             clamped to the real number interval [0.0, 1.0],
+         *             meaning that if given values less than 0.0 that leads
+         *             to an evaluation at 0.0, likewise for given values
+         *             greater than 1.0 will evaluate at 1.0 ....
+         *
+         * \return The camera state at the given lambda
+         */
+        CameraState value(float lambda) const;
 
-		float curveLength(Path::component comp) const;
+        /**
+         * \brief Obtain the length of a curve component
+         *
+         *      This evaluates the distance along the chosen curve component
+         * between the points designated by lambda = 0.0 and 1.0
+         *
+         * \param comp : one of the camera view state components
+         *
+         * \return The length of the curve
+         */
+        float curveLength(Path::component comp) const;
 
-		void setStartMessage(const std::vector<std::string>& message);
-		void setFinishMessage(const std::vector<std::string>& message);
+        /**
+         * \brief Specify a set of descriptive strings for the start of the path
+         *
+         * \param message : the set of strings
+         */
+        void setStartMessage(const std::vector<std::string>& message);
 
-		const std::vector<std::string>& getStartMessage(void) const;
-		const std::vector<std::string>& getFinishMessage(void) const;
+        /**
+         * \brief Specify a set of descriptive strings for the finish of the path
+         *
+         * \param message : the set of strings
+         */
+        void setFinishMessage(const std::vector<std::string>& message);
 
-	private:
+        /**
+         * \brief Obtain the set of descriptive strings for the start of the path
+         *
+         * \return the set of strings
+         */
+        const std::vector<std::string>& getStartMessage(void) const;
+
+        /**
+         * \brief Obtain the set of descriptive strings for the finish of the path
+         *
+         * \return the set of strings
+         */
+        const std::vector<std::string>& getFinishMessage(void) const;
+
+    private:
+        /// Evaluation of the curves is limited in their parameter.
+        static const float LAMBDA_LOWER_BOUND;
+        static const float LAMBDA_UPPER_BOUND;
+
+        /// The geometric curves for camera position, focus and orientation.
 		Curve where;
 		Curve look_at;
 		Curve up_dir;
 
+        /// A set of descriptive strings for each end of the path.
 		std::vector<std::string> start_msg;
 		std::vector<std::string> finish_msg;
-	};
+    };
 
 /**
  * @}
