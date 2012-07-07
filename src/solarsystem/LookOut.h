@@ -32,28 +32,48 @@
  */
 
 /**
- * \brief A viewing point or camera state, but with descriptive components.
+ * \brief A camera view state with descriptive components.
+ *
+ * \see CameraState
+ * \see Vector3D
  *
  * \author Mike Hewson\n
  */
 
 class LookOut : public CameraState {
-   public:
-      /**
-	    * \brief Constructor
-	    */
-		LookOut(const Vector3D& position, const Vector3D& focus, const Vector3D& orientation);
+    public:
+        /**
+         * \brief Constructor
+         *
+         * \param position : a vector to the camera's position
+         * \param focus : a vector to the camera's focus point
+         * \param orientation : a vector to be the camera's orientation axis
+         */
+		LookOut(const Vector3D& position,
+                const Vector3D& focus,
+                const Vector3D& orientation);
 
 		/**
 		 * \brief Destructor
 		 */
-		~LookOut();
+		virtual ~LookOut();
 
+        /**
+         * \brief Obtain the description for this camera state
+         *
+         * \return a reference to a set of descriptive strings
+         */
 		const std::vector<std::string>& getDescription(void) const;
 
+        /**
+         * \brief Add a description to this camera state
+         *
+         * \param a descriptive string reference
+         */
 		void addToDescription(const std::string& description);
 
 	private:
+        // The set of descriptive strings for this LookOut
 		std::vector<std::string> desc;
 	};
 

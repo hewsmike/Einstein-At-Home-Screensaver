@@ -20,17 +20,18 @@
 
 #include "LookOut.h"
 
-LookOut::LookOut(const Vector3D& position, const Vector3D& focus,
-		  	  	     const Vector3D& orientation) :
-		  	  	     CameraState(position, focus, orientation) {
+LookOut::LookOut(const Vector3D& position,
+                 const Vector3D& focus,
+		  	  	 const Vector3D& orientation) :
+                    CameraState(position, focus, orientation) {
 	}
 
 LookOut::~LookOut() {
 	}
 
 const std::vector<std::string>& LookOut::getDescription(void) const {
-   return desc;
-   }
+    return desc;
+    }
 
 void LookOut::addToDescription(const std::string& description) {
 	desc.push_back(description);
