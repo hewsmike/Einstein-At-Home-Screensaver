@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2011 by Mike Hewson                                     *
- *   hewsmike@iinet.net.au                                                 *
+ *   Copyright (C) 2012 by Mike Hewson                                     *
+ *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
  *                                                                         *
@@ -20,6 +20,10 @@
 
 #include "Star.h"
 
+#include <sstream>
+
+#include "ErrorHandler.h"
+
 // Set the coordinate boundary values.
 const starpos_t Star::DECLINATION_HIGH(90.0f);
 const starpos_t Star::DECLINATION_LOW(-90.0f);
@@ -27,44 +31,44 @@ const starpos_t Star::RIGHT_ASCENSION_HIGH(360.0f);
 const starpos_t Star::RIGHT_ASCENSION_LOW(0.0f);
 
 Star::Star(starpos_t ra, starpos_t dec, std::string nm) : s_name(nm) {
-   // Note endpoint treatment of bounds. Fail construction if out-of-bounds,
-   // which is no biggie, as heap allocation not involved. Deserves program
-   // exit though as this would indicate an important data error.
+    // Note endpoint treatment of bounds. Fail construction if out-of-bounds,
+    // which is no biggie, as heap allocation not involved. Deserves program
+    // exit though as this would indicate an important data error.
 
-   // Valid if within the range = [RIGHT_ASCENSION_LOW, RIGHT_ASCENSION_HIGH)
-   // Specifically a right ascension of 360 degrees is NOT valid.
-   if((ra < RIGHT_ASCENSION_LOW) || (ra >= RIGHT_ASCENSION_HIGH)) {
-      std::stringstream msg;
-      msg << "Star::Star() : bad right ascension given : ";
-	   msg << "value = ";
-	   msg << ra;
-	   ErrorHandler::record(msg.str(), ErrorHandler::FATAL);
-      }
+    // Valid if within the range = [RIGHT_ASCENSION_LOW, RIGHT_ASCENSION_HIGH)
+    // Specifically a right ascension of 360 degrees is NOT valid.
+    if((ra < RIGHT_ASCENSION_LOW) || (ra >= RIGHT_ASCENSION_HIGH)) {
+        std::stringstream msg;
+        msg << "Star::Star() : bad right ascension given : ";
+        msg << "value = ";
+        msg << ra;
+        ErrorHandler::record(msg.str(), ErrorHandler::FATAL);
+        }
 
-   // Valid if within the range = [DECLINATION_LOW, DECLINATION_HIGH].
-   if((dec < DECLINATION_LOW) || (dec > DECLINATION_HIGH)) {
-      std::stringstream msg;
-      msg << "Star::Star() : bad declination given : ";
-      msg << "value = ";
-      msg << dec;
-      ErrorHandler::record(msg.str(), ErrorHandler::FATAL);
-      }
+    // Valid if within the range = [DECLINATION_LOW, DECLINATION_HIGH].
+    if((dec < DECLINATION_LOW) || (dec > DECLINATION_HIGH)) {
+        std::stringstream msg;
+        msg << "Star::Star() : bad declination given : ";
+        msg << "value = ";
+        msg << dec;
+        ErrorHandler::record(msg.str(), ErrorHandler::FATAL);
+        }
 
-   // Inputs in range, so can now initialise with given arguments.
-	right_asc = ra;
+    // Inputs in range, so can now initialise with given arguments.
+    right_asc = ra;
 	decl = dec;
-   }
+    }
 
 Star::~Star() {
-   }
+    }
 
 starpos_t Star::right_ascension(void) const {
-   return right_asc;
-   }
+    return right_asc;
+    }
 
 starpos_t Star::declination(void) const {
-   return decl;
-   }
+    return decl;
+    }
 
 std::string Star::name(void) const {
 	return s_name;
