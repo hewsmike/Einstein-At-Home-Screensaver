@@ -75,7 +75,7 @@ class LookOut : public CameraState {
 	private:
         // The set of descriptive strings for this LookOut
 		std::vector<std::string> desc;
-	};
+    };
 
 /**
  * @}
