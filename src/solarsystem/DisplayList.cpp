@@ -21,19 +21,19 @@
 #include "DisplayList.h"
 
 DisplayList::DisplayList() {
-   }
+    }
 
 DisplayList::~DisplayList() {
-   // Must call this here in this derived class.
-   release();
-   }
+    // Must call this here in this derived class.
+    release();
+    }
 
 void DisplayList::acquire(void) {
-   // Ask OpenGL to assign a display list.
-   ident = glGenLists(1);
-   }
+    // Ask OpenGL to assign a display list.
+    ident = glGenLists(1);
+    }
 
 void DisplayList::release(void) {
-   // Ask OpenGL to release the display list.
-   glDeleteLists(ident, 1);
-   }
+    // Ask OpenGL to release the display list.
+    glDeleteLists(ident, 1);
+    }
