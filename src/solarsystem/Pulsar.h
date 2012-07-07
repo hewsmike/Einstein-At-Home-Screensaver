@@ -30,8 +30,11 @@
 /**
  * \brief %Solarsystem Pulsar data type.
  *
- * This class comprises the astronomical data relating to a specific pulsar.
+ *      This class comprises the astronomical data relating to a specific pulsar.
  * It stores the catalog origin, or the deemed 'discoverer' of it.
+ *
+ * \see Star
+ *
  * TODO - maybe add a member for other pulsar associated data, say spin
  *        frequency?
  *
@@ -39,43 +42,43 @@
  */
 
 class Pulsar : public Star {
-   public:
-      /// Identifiers of pulsar catalogue source.
-      enum pulsar_source {DUNNO,          // Don't know.
-                          ATNF,           // Australia Telescope National Facility.
-                          PALFA,          // Pulsar ALFA.
-                          FERMILAT,       // The GR detector on the Fermi satellite.
-                          DMB};           // Deep Multi-Beam ( Parkes ).
+    public:
+        /// Identifiers of pulsar catalogue source.
+        enum pulsar_source {DUNNO,          // Don't know.
+                            ATNF,           // Australia Telescope National Facility.
+                            PALFA,          // Pulsar ALFA.
+                            FERMILAT,       // The GR detector on the Fermi satellite.
+                            DMB};           // Deep Multi-Beam ( Parkes ).
 
-      /**
-       * \brief Constructor, giving fully specified member values.
-       *
-       * \param ra - right ascension of the pulsar
-       *
-       * \param dec - declination of the pulsar
-       *
-       * \param nm - the name of the pulsar
-       *
-       * \param sc - the catalog/source of the pulsar
-       */
-      Pulsar(starpos_t ra, starpos_t dec, std::string nm, pulsar_source sc);
+        /**
+         * \brief Constructor, giving fully specified member values.
+         *
+         * \param ra - right ascension of the pulsar
+         *
+         * \param dec - declination of the pulsar
+         *
+         * \param nm - the name of the pulsar
+         *
+         * \param sc - the catalog/source of the pulsar
+         */
+        Pulsar(starpos_t ra, starpos_t dec, std::string nm, pulsar_source sc);
 
-      /**
-       * \brief Destructor
-       */
-      virtual ~Pulsar();
+        /**
+         * \brief Destructor
+         */
+        virtual ~Pulsar();
 
-      /**
-       * \brief Obtain the catalogue
-       *
-       * \return The catalog source
-       */
-      pulsar_source getSource(void) const;
+        /**
+         * \brief Obtain the catalogue
+         *
+         * \return The catalog source
+         */
+        pulsar_source getSource(void) const;
 
-   private:
-      /// The catalog from which information was derived.
-      pulsar_source source;
-   };
+    private:
+        /// The catalog from which information was derived.
+        pulsar_source source;
+    };
 
 /**
  * @}
