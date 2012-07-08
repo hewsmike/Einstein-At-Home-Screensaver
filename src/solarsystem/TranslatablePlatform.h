@@ -29,7 +29,7 @@
  */
 
 /**
- * \brief %Solarsystem Translatable Cartesian orthonormal vector set
+ * \brief %Solarsystem Translatable platform origin.
  *
  *      This class comprises position state data, accessors and mutators thereof.
  *
@@ -39,33 +39,37 @@
 class TranslatablePlatform {
 	public:
         /**
-         * \brief Constructor
+         * \brief Constructor.
+         *
+         * \param position : a vector to the desired point
          */
-        TranslatablePlatform(void);
+        TranslatablePlatform(const Vector3D& position);
 
         /**
-         * \brief Destructor
+         * \brief Destructor.
          */
         virtual ~TranslatablePlatform();
 
         /**
-         * \brief Get the position
+         * \brief Get the position.
          */
         Vector3D position(void) const;
 
         /**
-         * \brief Set the position
+         * \brief Set the position.
+          *
+         * \param position : a vector to the desired point
          */
-        void setPosition(const Vector3D& vc);
+        void setPosition(const Vector3D& position);
 
     protected:
         /**
-         * \brief Reset the platform in position and rotation
+         * \brief Reset the platform in position.
          */
         virtual void reset(void);
 
     private:
-        /// Initial position
+        /// Initial position.
         static const Vector3D INIT_POS;
 
         /// Current position in space.

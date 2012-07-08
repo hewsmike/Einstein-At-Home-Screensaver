@@ -20,10 +20,11 @@
 
 #include "TranslatablePlatform.h"
 
-// The initial stance is at origin.
+// The initial stance is at the (global) origin.
 const Vector3D TranslatablePlatform::INIT_POS(Vector3D::NULLV);
 
-TranslatablePlatform::TranslatablePlatform(void) : pos(TranslatablePlatform::INIT_POS) {
+TranslatablePlatform::TranslatablePlatform(const Vector3D& position = TranslatablePlatform::INIT_POS) :
+                        pos(position) {
 	}
 
 TranslatablePlatform::~TranslatablePlatform() {
@@ -33,11 +34,11 @@ Vector3D TranslatablePlatform::position(void) const {
     return pos;
     }
 
-void TranslatablePlatform::setPosition(const Vector3D& ps) {
-    pos = ps;
+void TranslatablePlatform::setPosition(const Vector3D& position) {
+    pos = position;
     }
 
 void TranslatablePlatform::reset(void) {
-    // Reset to a choice of initial position ...
+    // Reset to a choice of initial position.
     set_position(TranslatablePlatform::INIT_POS);
     }
