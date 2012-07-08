@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2011 by Mike Hewson                                     *
- *   hewsmike@iinet.net.au                                                 *
+ *   Copyright (C) 2012 by Mike Hewson                                     *
+ *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
  *                                                                         *
@@ -23,29 +23,30 @@
 // The initial velocity is motionless.
 const Vector3D InertialPlatform::INIT_VEL(Vector3D::NULLV);
 
-InertialPlatform::InertialPlatform(void) : vel(InertialPlatform::INIT_VEL) {
+InertialPlatform::InertialPlatform(const Vector3D& velocity = InertialPlatform::INIT_VEL) :
+                                       vel(velocity) {
 	}
 
 InertialPlatform::~InertialPlatform() {
-   }
+    }
 
 Vector3D InertialPlatform::velocity(void) const {
-   return vel;
-   }
+    return vel;
+    }
 
-void InertialPlatform::set_velocity(const Vector3D& vc) {
-   vel = vc;
-   }
+void InertialPlatform::set_velocity(const Vector3D& velocity) {
+    vel = velocity;
+    }
 
 void InertialPlatform::reset(void) {
-   // Not only reset to a choice of initial velocity ...
-   set_velocity(InertialPlatform::INIT_VEL);
+    // Not only reset to a choice of initial velocity ...
+    set_velocity(InertialPlatform::INIT_VEL);
 
-   // ... but also reset the position, and hence orientation too.
-   TranslatablePlatform::reset();
-   }
+    // ... but also reset the position too.
+    TranslatablePlatform::reset();
+    }
 
 void InertialPlatform::step(void) {
-   // Evolve in position as per current velocity.
-   TranslatablePlatform::set_position(TranslatablePlatform::position() + vel);
-   }
+    // Evolve in position as per current velocity.
+    TranslatablePlatform::set_position(TranslatablePlatform::position() + vel);
+    }

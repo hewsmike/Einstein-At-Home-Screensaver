@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2011 by Mike Hewson                                     *
- *   hewsmike@iinet.net.au                                                 *
+ *   Copyright (C) 2012 by Mike Hewson                                     *
+ *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
  *                                                                         *
@@ -29,54 +29,58 @@
  */
 
 /**
- * \brief Unaccelerated Cartesian translatable orthonormal vector set
+ * \brief %Solarsystem Unaccelerated translatable origin
  *
- * This class comprises velocity state data, accessors and mutators thereof.
+ *      This class comprises velocity state data, accessors and mutators thereof.
  *
  * \author Mike Hewson\n
  */
 
 class InertialPlatform : public TranslatablePlatform {
-   public:
-      /**
-       * \brief Constructor
-       */
-      InertialPlatform(void);
+    public:
+        /**
+         * \brief Constructor
+         *
+         * \param velocity : a vector indicating the desired velocity.
+         */
+        InertialPlatform(const Vector3D& velocity);
 
-      /**
-       * \brief Destructor
-       */
-      virtual ~InertialPlatform();
+        /**
+         * \brief Destructor
+         */
+        virtual ~InertialPlatform();
 
-      /**
-       * \brief Get the velocity
-       */
-      Vector3D velocity(void) const;
+        /**
+         * \brief Get the velocity
+         */
+        Vector3D velocity(void) const;
 
-      /**
-       * \brief Set the velocity
-       */
-      void set_velocity(const Vector3D& vc);
+        /**
+         * \brief Set the velocity
+         *
+         * \param velocity : a vector indicating the desired velocity.
+         */
+        void set_velocity(const Vector3D& velocity);
 
-   protected:
-      /**
-       * \brief Reset the platform in velocity, position and rotation
-       */
-      virtual void reset(void);
-      
-      /**
-       * \brief Evolve platform one unit step in time
-       */
-      virtual void step(void);
-      
-   private:
-      /// Fiducial velocity.
-      static const Vector3D INIT_VEL;
+    protected:
+        /**
+         * \brief Reset the platform in velocity and position.
+         */
+        virtual void reset(void);
 
-      /// Current velocity in space.
-      Vector3D vel;
-   };
-   
+        /**
+         * \brief Evolve platform one unit step in time
+         */
+        virtual void step(void);
+
+    private:
+        /// Fiducial velocity.
+        static const Vector3D INIT_VEL;
+
+        /// Current velocity in space.
+        Vector3D vel;
+    };
+
 /**
  * @}
  */
