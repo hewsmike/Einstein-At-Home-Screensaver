@@ -49,7 +49,7 @@
  * orthogonality of the three axes ? HINT Set 'look' and 'up' as a pair
  * atomically and have normalisation followed by adjustment of either/both
  * by the addition to them of ( small ) corrective vectors that lie within
- * their mutual plane.
+ * their mutual plane. FATAL if 'look' and 'up' are ( anti- ) parallel.
  *
  * \author Mike Hewson\n
  */

@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2011 by Mike Hewson                                     *
- *   hewsmike@iinet.net.au                                                 *
+ *   Copyright (C) 2012 by Mike Hewson                                     *
+ *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
  *                                                                         *
@@ -29,65 +29,98 @@
  */
 
 /**
- * \brief %Solarsystem Cartesian orthonormal vector set
+ * \brief %Solarsystem rotatable right handed Cartesian orthonormal vector set
  *
- * This class comprises angular velocity state data, accessors and mutators thereof.
+ *      This class comprises angular rate data, accessors and mutators
+ * thereof for an OrthoNormalPlatform.
+ *
+ * \see OrthoNormalPlatform
  *
  * \author Mike Hewson\n
  */
 
 class SpinPlatform : public OrthoNormalPlatform {
-   public:
-      /**
-       * \brief Constructor
-       */
-      SpinPlatform(void);
+    public:
+        /**
+         * \brief Constructor
+         */
+        SpinPlatform(void);
 
-      /**
-       * \brief Destructor
-       */
-      virtual ~SpinPlatform();
+        /**
+         * \brief Destructor
+         */
+        virtual ~SpinPlatform();
 
-      /**
-       * \brief Pitch, positive angle is up
-       *
-       * \param angle in radians
-       */
-      void pitch(vec_t angle);
+        /**
+         * \brief Rotate in pitch by a given angle.
+         *
+         *      A positive angle for this manouevre is toward the 'up'
+         * vector. The 'cross' vector is the axis of rotation and is
+         * hence unaffected.
+         *
+         * \param angle in radians
+         */
+        void pitch(vec_t angle);
 
-       /**
-       * \brief Roll, positive angle is to the right
-       *
-       * \param angle in radians
-       */
-      void roll(vec_t angle);
+        /**
+         * \brief Rotate in roll by a given angle.
+         *
+         *      A positive angle for this manouevre is to the left side.
+         * The 'look' vector is the axis of rotation and is hence unaffected.
+         *
+         * \param angle in radians
+         */
+        void roll(vec_t angle);
 
-       /**
-       * \brief Yaw, positive angle is to the right
-       *
-       * \param angle in radians
-       */
-      void yaw(vec_t angle);
+        /**
+         * \brief Rotate in yaw by a given angle.
+         *
+         *      A positive angle is to the left side. The 'up' vector is
+         * the axis of rotation and is hence unaffected.
+         *
+         * \param angle in radians
+         */
+        void yaw(vec_t angle);
 
-   protected:
-      /**
-       * \brief Reset the platform in spin
-       */
-      virtual void reset(void);
+    protected:
+        /**
+         * \brief Reset the platform in spin
+         */
+        virtual void reset(void);
 
-      /**
-       * \brief Evolve the platform in spin
-       */
-      virtual void step(void);
+        /**
+         * \brief Evolve the platform in spin
+         */
+        virtual void step(void);
 
-      // Current pitch rate.
-      vec_t pitch_rate;
+        /**
+         * \brief Set the pitch rate
+         *
+         * \param the pitch angular rate ( notional units )
+         */
+        void setPitchRate(vec_t rate);
 
-      vec_t roll_rate;
+        /**
+         * \brief Set the roll rate
+         *
+         * \param the roll angular rate ( notional units )
+         */
+        void setRollRate(vec_t rate);
 
-      vec_t yaw_rate;
-   private:
-      static const vec_t NULL_RATE;
+        /**
+         * \brief Set the yaw rate
+         *
+         * \param the yaw angular rate ( notional units )
+         */
+        void setYawRate(vec_t rate);
+
+    private:
+        static const vec_t NULL_RATE;
+
+        // Current rotation rates.
+        vec_t pitch_rate;
+        vec_t roll_rate;
+        vec_t yaw_rate;
 	};
 
 /**
