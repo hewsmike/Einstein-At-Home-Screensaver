@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2011 by Mike Hewson                                     *
- *   hewsmike@iinet.net.au                                                 *
+ *   Copyright (C) 2012 by Mike Hewson                                     *
+ *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
  *                                                                         *
@@ -29,83 +29,100 @@
  */
 
 /**
- * \brief %Solarsystem Cartesian orthonormal vector set
+ * \brief %Solarsystem Cartesian right-handed orthonormal vector set.
+ *
+ *      Consider a mutually orthogonal set of three vectors in space
+ * such that each is of unit length. The vector cross product of the
+ * 'first' vector with the 'second' yields a third vector. Here 'look'
+ * is designated as the first vector, with the meaning that it is the
+ * direction along which a viewpoint is aimed. 'Up' is designated as
+ * the second vector meaning that it is perpendicular to the line of
+ * sight defined by 'look' and specifies which way should be deemed as
+ * us upwards. The remaining vector, here called 'cross' is the final
+ * vector formed by the vector cross product 'look X up' and would in
+ * the above described viewpoint be going to the right and perpendicular
+ * to the first two.
+ *
+ * \see Vector3D
  *
  * TODO Include testing and if necessary adjustment to maintain mutual
- * orthogonality of the three axes ?
+ * orthogonality of the three axes ? HINT Set 'look' and 'up' as a pair
+ * atomically and have normalisation followed by adjustment of either/both
+ * by the addition to them of ( small ) corrective vectors that lie within
+ * their mutual plane.
  *
  * \author Mike Hewson\n
  */
 
 class OrthoNormalPlatform {
-   public:
-      /**
-       * \brief Constructor
-       */
-      OrthoNormalPlatform(void);
+    public:
+        /**
+         * \brief Constructor
+         */
+        OrthoNormalPlatform(void);
 
-      /**
-       * \brief Destructor
-       */
-      virtual ~OrthoNormalPlatform();
+        /**
+         * \brief Destructor
+         */
+        virtual ~OrthoNormalPlatform();
 
-      /**
-       * \brief return the cross vector ( by lazy evaluation )
-       *
-       * This is obtained by forming the cross product of the 'look' and 'up'
-       * vectors in that order. If one is situated at the intersection of these
-       * three vectors, looking along the positive direction of the look axis
-       * ( from the tail to the head of the 'look' vector ), then the 'cross'
-       * vector can be obtained by turning the 'up' vector 90 degrees
-       * clockwise.
-       */
-      Vector3D cross(void) const;
+        /**
+         * \brief return the cross vector
+         *
+         *      This is obtained by forming the cross product of the 'look' and
+         * 'up' vectors in that order. If one is situated at the intersection of
+         * these three vectors, looking along the positive direction of the look
+         * axis ( from the tail to the head of the 'look' vector ), then the
+         * 'cross' vector can be obtained by turning the 'up' vector 90 degrees
+         * clockwise.
+         */
+        Vector3D cross(void) const;
 
-      /**
-       * \brief Retrieve the look vector
-       */
-      Vector3D look(void) const;
+        /**
+         * \brief Retrieve the look vector
+         */
+        Vector3D look(void) const;
 
-      /**
-       * \brief Retrieve the up vector
-       */
-      Vector3D up(void) const;
+        /**
+         * \brief Retrieve the up vector
+         */
+        Vector3D up(void) const;
 
    protected:
-      /**
-       * \brief Set the direction of the 'look' vector
-       *
-       * Protected use only as need to ensure orthogonality of the vector set
-       * ie. can't have arbitrary assignment of the 'look' vector.
-       */
-      void set_look(const Vector3D& n_look);
+        /**
+         * \brief Set the direction of the 'look' vector
+         *
+         * Protected use only as need to ensure orthogonality of the vector set
+         * ie. can't have arbitrary assignment of the 'look' vector.
+         */
+        void set_look(const Vector3D& new_look);
 
-       /**
-       * \brief Set the direction of the 'up' vector
-       *
-       * Protected use only as need to ensure orthogonality of the vector set
-       * ie. can't have arbitrary assignment of the 'up' vector.
-       */
-      void set_up(const Vector3D& n_up);
+        /**
+         * \brief Set the direction of the 'up' vector
+         *
+         * Protected use only as need to ensure orthogonality of the vector set
+         * ie. can't have arbitrary assignment of the 'up' vector.
+         */
+        void set_up(const Vector3D& new_up);
 
-      /**
-       * \brief Reset the platform in orientation
-       */
-      virtual void reset(void);
+        /**
+         * \brief Reset the platform in orientation
+         */
+        virtual void reset(void);
 
-   private:
-      /// Fiducial 'look' vector
-      static const Vector3D INIT_LOOK;
+    private:
+        /// Initial 'look' vector
+        static const Vector3D INIT_LOOK;
 
-      /// Fiducial 'up' vector
-      static const Vector3D INIT_UP;
+        /// Initial 'up' vector
+        static const Vector3D INIT_UP;
 
-      /// The current 'look' vector.
-      Vector3D look_dir;
+        /// The current 'look' vector.
+        Vector3D look_dir;
 
-      /// The current 'up' vector.
-      Vector3D up_dir;
-   };
+        /// The current 'up' vector.
+        Vector3D up_dir;
+    };
 
 /**
  * @}
