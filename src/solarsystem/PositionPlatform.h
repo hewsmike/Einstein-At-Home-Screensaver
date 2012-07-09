@@ -18,8 +18,8 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef TRANSLATABLE_PLATFORM_H_
-#define TRANSLATABLE_PLATFOR
+#ifndef POSITION_PLATFORM_H_
+#define POSITION_PLATFORM_H
 
 #include "Vector3D.h"
 
@@ -29,26 +29,26 @@
  */
 
 /**
- * \brief %Solarsystem Translatable platform origin.
+ * \brief %Solarsystem Position platform origin.
  *
  *      This class comprises position state data, accessors and mutators thereof.
  *
  * \author Mike Hewson\n
  */
 
-class TranslatablePlatform {
-	public:
+class PositionPlatform {
+    public:
         /**
          * \brief Constructor.
          *
          * \param position : a vector to the desired point
          */
-        TranslatablePlatform(const Vector3D& position);
+        PositionPlatform(const Vector3D& position);
 
         /**
          * \brief Destructor.
          */
-        virtual ~TranslatablePlatform();
+        virtual ~PositionPlatform();
 
         /**
          * \brief Get the position.
@@ -70,7 +70,7 @@ class TranslatablePlatform {
 
     private:
         /// Initial position.
-        static const Vector3D INIT_POS;
+        static const Vector3D INITIAL_POSITION;
 
         /// Current position in space.
         Vector3D pos;
@@ -80,4 +80,4 @@ class TranslatablePlatform {
  * @}
  */
 
-#endif // TRANSLATABLE_PLATFORM_H_
+#endif // Position_PLATFORM_H_

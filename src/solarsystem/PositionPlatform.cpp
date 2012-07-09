@@ -18,27 +18,27 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "TranslatablePlatform.h"
+#include "PositionPlatform.h"
 
 // The initial stance is at the (global) origin.
-const Vector3D TranslatablePlatform::INIT_POS(Vector3D::NULLV);
+const Vector3D PositionPlatform::INIT_POS(Vector3D::NULLV);
 
-TranslatablePlatform::TranslatablePlatform(const Vector3D& position = TranslatablePlatform::INIT_POS) :
-                        pos(position) {
-	}
-
-TranslatablePlatform::~TranslatablePlatform() {
+PositionPlatform::PositionPlatform(const Vector3D& position = PositionPlatform::INITIAL_POSITION) :
+                                      pos(position) {
     }
 
-Vector3D TranslatablePlatform::position(void) const {
+PositionPlatform::~PositionPlatform() {
+    }
+
+Vector3D PositionPlatform::position(void) const {
     return pos;
     }
 
-void TranslatablePlatform::setPosition(const Vector3D& position) {
+void PositionPlatform::setPosition(const Vector3D& position) {
     pos = position;
     }
 
-void TranslatablePlatform::reset(void) {
+void PositionPlatform::reset(void) {
     // Reset to a choice of initial position.
-    set_position(TranslatablePlatform::INIT_POS);
+    set_position(PositionPlatform::INITIAL_POSITION);
     }
