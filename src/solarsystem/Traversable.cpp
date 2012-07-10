@@ -21,7 +21,7 @@
 #include "Traversable.h"
 
 Traversable::Traversable() {
-	}
+    }
 
 Traversable::~Traversable() {
-   }
+    }

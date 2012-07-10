@@ -34,19 +34,19 @@
  */
 
 class Traversable {
-   public:
-		/**
-		 * \brief Constructor
-		 */
-	   Traversable(void);
+    public:
+        /**
+         * \brief Constructor
+         */
+        Traversable(void);
 
-      /// Virtual destructor
-      virtual ~Traversable();
+        /// Virtual destructor
+        virtual ~Traversable();
 
-      virtual unsigned int numberOfWayPoints(void) const = 0;
+        virtual unsigned int numberOfWayPoints(void) const = 0;
 
-      virtual LookOut getView(unsigned int sequence) const = 0;
-   };
+        virtual LookOut getView(unsigned int sequence) const = 0;
+    };
 
 /**
  * @}
