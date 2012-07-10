@@ -65,5 +65,6 @@ void OrthoNormalPlatform::setOrientation(const Vector3D& new_look,
 void OrthoNormalPlatform::reset(void) {
     // This will set 'look' and 'up' as orthogonal according
     // to the definitions of INITIAL_LOOK and INITIAL_UP.
-    setOrientation(INITIAL_LOOK, INITIAL_UP);
+    setOrientation(OrthoNormalPlatform::INITIAL_LOOK,
+                   OrthoNormalPlatform::INITIAL_UP);
     }
