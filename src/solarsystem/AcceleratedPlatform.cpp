@@ -35,7 +35,7 @@ Vector3D AcceleratedPlatform::linearAcceleration(void) const {
     }
 
 void AcceleratedPlatform::setLinearAcceleration(const Vector3D& acceleration) {
-    acc = ac;
+    acc = acceleration;
     }
 
 void AcceleratedPlatform::setPitchRate(vec_t rate) {

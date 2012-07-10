@@ -138,7 +138,7 @@ class AcceleratedPlatform : public VelocityPlatform, public RotatablePlatform {
 
         // Current acceleration in space.
         Vector3D acc;
-   };
+    };
 
 /**
  * @}
