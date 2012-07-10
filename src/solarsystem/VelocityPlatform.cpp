@@ -18,35 +18,35 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "InertialPlatform.h"
+#include "VelocityPlatform.h"
 
 // The initial velocity is motionless.
-const Vector3D InertialPlatform::INIT_VEL(Vector3D::NULLV);
+const Vector3D VelocityPlatform::INITIAL_VELOCITY(Vector3D::NULLV);
 
-InertialPlatform::InertialPlatform(const Vector3D& velocity = InertialPlatform::INIT_VEL) :
+VelocityPlatform::VelocityPlatform(const Vector3D& velocity = VelocityPlatform::INITIAL_VELOCITY) :
                                        vel(velocity) {
-	}
-
-InertialPlatform::~InertialPlatform() {
     }
 
-Vector3D InertialPlatform::velocity(void) const {
+VelocityPlatform::~VelocityPlatform() {
+    }
+
+Vector3D VelocityPlatform::velocity(void) const {
     return vel;
     }
 
-void InertialPlatform::set_velocity(const Vector3D& velocity) {
+void VelocityPlatform::setVelocity(const Vector3D& velocity) {
     vel = velocity;
     }
 
-void InertialPlatform::reset(void) {
+void VelocityPlatform::reset(void) {
     // Not only reset to a choice of initial velocity ...
-    set_velocity(InertialPlatform::INIT_VEL);
+    setVelocity(VelocityPlatform::INITIAL_VELOCITY);
 
-    // ... but also reset the position too.
-    TranslatablePlatform::reset();
+    // ... but also reset the Velocity too.
+    PositionPlatform::reset();
     }
 
-void InertialPlatform::step(void) {
-    // Evolve in position as per current velocity.
-    TranslatablePlatform::set_position(TranslatablePlatform::position() + vel);
+void VelocityPlatform::step(void) {
+    // Evolve in Velocity as per current velocity.
+    PositionPlatform::setPosition(PositionPlatform::Position() + vel);
     }

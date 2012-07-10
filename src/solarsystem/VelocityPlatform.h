@@ -18,10 +18,10 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef INERTIAL_PLATFORM_H_
-#define INERTIAL_PLATFORM_H_
+#ifndef VELOCITY_PLATFORM_H_
+#define VELOCITY_PLATFORM_H_
 
-#include "TranslatablePlatform.h"
+#include "PositionPlatform.h"
 
 /**
  * \addtogroup solarsystem Solarsystem
@@ -29,26 +29,27 @@
  */
 
 /**
- * \brief %Solarsystem Unaccelerated translatable origin
+ * \brief Velocity platform
  *
- *      This class comprises velocity state data, accessors and mutators thereof.
+ *      This class comprises velocity state data,
+ * accessors and mutators thereof.
  *
  * \author Mike Hewson\n
  */
 
-class InertialPlatform : public TranslatablePlatform {
+class VelocityPlatform : public PositionPlatform {
     public:
         /**
          * \brief Constructor
          *
          * \param velocity : a vector indicating the desired velocity.
          */
-        InertialPlatform(const Vector3D& velocity);
+        VelocityPlatform(const Vector3D& velocity);
 
         /**
          * \brief Destructor
          */
-        virtual ~InertialPlatform();
+        virtual ~VelocityPlatform();
 
         /**
          * \brief Get the velocity
@@ -60,7 +61,7 @@ class InertialPlatform : public TranslatablePlatform {
          *
          * \param velocity : a vector indicating the desired velocity.
          */
-        void set_velocity(const Vector3D& velocity);
+        void setVelocity(const Vector3D& velocity);
 
     protected:
         /**
@@ -75,7 +76,7 @@ class InertialPlatform : public TranslatablePlatform {
 
     private:
         /// Fiducial velocity.
-        static const Vector3D INIT_VEL;
+        static const Vector3D INITIAL_VELOCITY;
 
         /// Current velocity in space.
         Vector3D vel;
@@ -85,4 +86,4 @@ class InertialPlatform : public TranslatablePlatform {
  * @}
  */
 
-#endif // INERTIAL_PLATFORM_H_
+#endif // VELOCITY_PLATFORM_H_

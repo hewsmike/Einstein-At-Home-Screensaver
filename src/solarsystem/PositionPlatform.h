@@ -29,7 +29,7 @@
  */
 
 /**
- * \brief %Solarsystem Position platform origin.
+ * \brief %Solarsystem Position platform.
  *
  *      This class comprises position state data, accessors and mutators thereof.
  *
