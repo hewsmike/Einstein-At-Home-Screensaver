@@ -18,8 +18,8 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef SPIN_PLATFORM_H_
-#define SPIN_PLATFORM_H_
+#ifndef ROTATABLE_PLATFORM_H_
+#define ROTATABLE_PLATFORM_H_
 
 #include "OrthoNormalPlatform.h"
 
@@ -29,27 +29,27 @@
  */
 
 /**
- * \brief %Solarsystem rotatable right handed Cartesian orthonormal vector set
+ * \brief Rotatable right handed Cartesian orthonormal vector set
  *
- *      This class comprises angular rate data, accessors and mutators
- * thereof for an OrthoNormalPlatform.
+ *      This class performs specific angular changes upon
+ * the axes of the OrthoNormalPlatform class.
  *
  * \see OrthoNormalPlatform
  *
  * \author Mike Hewson\n
  */
 
-class SpinPlatform : public OrthoNormalPlatform {
+class RotatablePlatform : public OrthoNormalPlatform {
     public:
         /**
          * \brief Constructor
          */
-        SpinPlatform(void);
+        RotatablePlatform(void);
 
         /**
          * \brief Destructor
          */
-        virtual ~SpinPlatform();
+        virtual ~RotatablePlatform();
 
         /**
          * \brief Rotate in pitch by a given angle.
@@ -81,50 +81,10 @@ class SpinPlatform : public OrthoNormalPlatform {
          * \param angle in radians
          */
         void yaw(vec_t angle);
-
-    protected:
-        /**
-         * \brief Reset the platform in spin
-         */
-        virtual void reset(void);
-
-        /**
-         * \brief Evolve the platform in spin
-         */
-        virtual void step(void);
-
-        /**
-         * \brief Set the pitch rate
-         *
-         * \param the pitch angular rate ( notional units )
-         */
-        void setPitchRate(vec_t rate);
-
-        /**
-         * \brief Set the roll rate
-         *
-         * \param the roll angular rate ( notional units )
-         */
-        void setRollRate(vec_t rate);
-
-        /**
-         * \brief Set the yaw rate
-         *
-         * \param the yaw angular rate ( notional units )
-         */
-        void setYawRate(vec_t rate);
-
-    private:
-        static const vec_t NULL_RATE;
-
-        // Current rotation rates.
-        vec_t pitch_rate;
-        vec_t roll_rate;
-        vec_t yaw_rate;
-	};
+    };
 
 /**
  * @}
  */
 
-#endif // SPIN_PLATFORM_H_
+#endif // ROTATABLE_PLATFORM_H_

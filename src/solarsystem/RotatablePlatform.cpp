@@ -18,69 +18,37 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "SpinPlatform.h"
+#include "RotatablePlatform.h"
 
-const vec_t SpinPlatform::NULL_RATE(0.0f);
+const vec_t RotatablePlatform::NULL_RATE(0.0f);
 
-SpinPlatform::SpinPlatform(void) {
+RotatablePlatform::RotatablePlatform(void) {
     reset();
     }
 
-SpinPlatform::~SpinPlatform() {
+RotatablePlatform::~RotatablePlatform() {
     }
 
-void SpinPlatform::pitch(vec_t angle) {
+void RotatablePlatform::pitch(vec_t angle) {
     // Here's the trig for the rotation.
     Vector3D new_up = cos(angle)*up() - sin(angle)*look();
     Vector3D new_look = cos(angle)*look() + sin(angle)*up();
 
     // Normalise and store 'up' and 'look' before you go.
-    set_up(new_up.unit());
-    set_look(new_look.unit());
+    OrthoNormalPlatform::setUp(new_up.unit());
+    OrthoNormalPlatform::setLook(new_look.unit());
     }
 
-void SpinPlatform::roll(vec_t angle) {
+void RotatablePlatform::roll(vec_t angle) {
     Vector3D new_up = cos(angle)*up() - sin(angle)*cross();
 
     // Normalise and store 'up' before you go.
-    set_up(new_up.unit());
+    OrthoNormalPlatform::setUp(new_up.unit());
     }
 
-void SpinPlatform::yaw(vec_t angle) {
+void RotatablePlatform::yaw(vec_t angle) {
     Vector3D new_look = cos(angle)*look() - sin(angle)*cross();
 
     // Normalise and store 'look' before you go.
-    set_look(new_look.unit());
-    }
-
-void SpinPlatform::reset(void) {
-    // Stop all rotations.
-    setPitchRate(NULL_RATE);
-    setRollRate(NULL_RATE);
-    setYawRate(NULL_RATE);
-
-    // Re-orient to a standard.
-    OrthoNormalPlatform::reset();
-    }
-
-void SpinPlatform::step(void) {
-    // Confession here : while these operations don't actually commute, you
-    // have to pick some ordering to implement. I chose alphabetical.
-    // Commutation is approached in the limit of tiny rates. But hey, don't
-    // use this code to land the Space Shuttle ! :-)
-    pitch(pitch_rate);
-    roll(roll_rate);
-    yaw(yaw_rate);
-    }
-
-void SpinPlatform::setPitchRate(vec_t rate) {
-    pitch_rate = rate;
-    }
-
-void SpinPlatform::setRollRate(vec_t rate) {
-    roll_rate = rate;
-    }
-
-void SpinPlatform::setYawRate(vec_t rate){
-    yaw_rate = rate;
+    OrthoNormalPlatform::setLook(new_look.unit());
     }
