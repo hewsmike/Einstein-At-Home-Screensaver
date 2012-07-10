@@ -30,8 +30,8 @@
 // The initial stance puts one looking along the positive x-axis with the
 // z-axis being 'up', thus implying the positive y-axis is to the left of
 // view. So our 'cross' vector is initially anti-parallel to the y-axis.
-const Vector3D OrthoNormalPlatform::INIT_LOOK(+1.0f, 0.0f, 0.0f);
-const Vector3D OrthoNormalPlatform::INIT_UP(0.0f, 0.0f, 1.0f);
+const Vector3D OrthoNormalPlatform::INITIAL_LOOK(+1.0f, 0.0f, 0.0f);
+const Vector3D OrthoNormalPlatform::INITIAL_UP(0.0f, 0.0f, 1.0f);
 
 OrthoNormalPlatform::OrthoNormalPlatform(void) {
     reset();
@@ -53,17 +53,17 @@ Vector3D OrthoNormalPlatform::up(void) const {
     return up_dir;
     }
 
-void OrthoNormalPlatform::set_look(const Vector3D& new_look) {
+void OrthoNormalPlatform::setLook(const Vector3D& new_look) {
     look_dir = new_look;
     }
 
-void OrthoNormalPlatform::set_up(const Vector3D& new_up) {
+void OrthoNormalPlatform::setUp(const Vector3D& new_up) {
     up_dir = new_up;
     }
 
 void OrthoNormalPlatform::reset(void) {
     // This will set 'look' and 'up' as orthogonal according to the
-    // definitions of INIT_LOOK and INIT_UP.
-    look_dir = INIT_LOOK;
-    up_dir = INIT_UP;
+    // definitions of INITIAL_LOOK and INITIAL_UP.
+    look_dir = INITIAL_LOOK;
+    up_dir = INITIAL_UP;
     }

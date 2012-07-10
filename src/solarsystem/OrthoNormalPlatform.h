@@ -29,7 +29,7 @@
  */
 
 /**
- * \brief %Solarsystem Cartesian right-handed orthonormal vector set.
+ * \brief Right-handed Cartesian orthonormal vector set.
  *
  *      Consider a mutually orthogonal set of three vectors in space
  * such that each is of unit length. The vector cross product of the
@@ -67,24 +67,24 @@ class OrthoNormalPlatform {
         virtual ~OrthoNormalPlatform();
 
         /**
-         * \brief return the cross vector
+         * \brief return the 'cross' vector
          *
          *      This is obtained by forming the cross product of the 'look' and
-         * 'up' vectors in that order. If one is situated at the intersection of
-         * these three vectors, looking along the positive direction of the look
-         * axis ( from the tail to the head of the 'look' vector ), then the
-         * 'cross' vector can be obtained by turning the 'up' vector 90 degrees
-         * clockwise.
+         * 'up' vectors in that order. Once formed then if one is situated at
+         * the intersection of these three vectors, looking along the positive
+         * direction of the 'look' axis ( from the tail to the head of the 'look'
+         * vector ), then the 'cross' vector can be obtained by turning the 'up'
+         * vector 90 degrees clockwise around that 'look' axis.
          */
         Vector3D cross(void) const;
 
         /**
-         * \brief Retrieve the look vector
+         * \brief Retrieve the 'look' vector
          */
         Vector3D look(void) const;
 
         /**
-         * \brief Retrieve the up vector
+         * \brief Retrieve the 'up' vector
          */
         Vector3D up(void) const;
 
@@ -95,7 +95,7 @@ class OrthoNormalPlatform {
          * Protected use only as need to ensure orthogonality of the vector set
          * ie. can't have arbitrary assignment of the 'look' vector.
          */
-        void set_look(const Vector3D& new_look);
+        void setLook(const Vector3D& new_look);
 
         /**
          * \brief Set the direction of the 'up' vector
@@ -103,7 +103,7 @@ class OrthoNormalPlatform {
          * Protected use only as need to ensure orthogonality of the vector set
          * ie. can't have arbitrary assignment of the 'up' vector.
          */
-        void set_up(const Vector3D& new_up);
+        void setUp(const Vector3D& new_up);
 
         /**
          * \brief Reset the platform in orientation
@@ -112,10 +112,10 @@ class OrthoNormalPlatform {
 
     private:
         /// Initial 'look' vector
-        static const Vector3D INIT_LOOK;
+        static const Vector3D INITIAL_LOOK;
 
         /// Initial 'up' vector
-        static const Vector3D INIT_UP;
+        static const Vector3D INITIAL_UP;
 
         /// The current 'look' vector.
         Vector3D look_dir;
