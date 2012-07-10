@@ -36,7 +36,7 @@
  *      This class comprises acceleration state data, accessors
  * and mutators thereof. HOWEVER this doesn't model angular
  * acceleration ( around centre of mass ), only linear ( of
- * centre of mass ) and constant angular rotation rates.
+ * centre of mass ) and CONSTANT angular rotation rates.
  *
  * \author Mike Hewson\n
  */
@@ -72,21 +72,21 @@ class AcceleratedPlatform : public VelocityPlatform, public RotatablePlatform {
          *
          * \return the pitch rate
          */
-        vec_t pitchRate(void);
+        vec_t pitchRate(void) const;
 
         /**
          * \brief Get the current rate of change of roll
          *
          * \return the roll rate
          */
-        vec_t rollRate(void);
+        vec_t rollRate(void) const;
 
         /**
          * \brief Get the current rate of change of yaw
          *
          * \return the yaw rate
          */
-        vec_t yawRate(void);
+        vec_t yawRate(void) const;
 
         /**
          * \brief Set the pitch rate
@@ -109,13 +109,23 @@ class AcceleratedPlatform : public VelocityPlatform, public RotatablePlatform {
          */
         void setYawRate(vec_t rate);
 
-        CameraState getViewState(void) const;
+        /**
+         * \brief Get the current view state information
+         *
+         * \return the view state in camera format
+         */
+        CameraState viewState(void) const;
 
+        /**
+         * \brief Set the current view state
+         *
+         * \param the desired view state in camera format
+         */
         void setViewState(const CameraState& cam);
 
         /**
-         * \brief Reset the platform in acceleration, velocity, position
-         * and rotation
+         * \brief Reset the platform in acceleration, velocity,
+         *        position and rotation
          */
         virtual void reset(void);
 
@@ -128,7 +138,7 @@ class AcceleratedPlatform : public VelocityPlatform, public RotatablePlatform {
         /// Initial centre of mass acceleration.
         static const Vector3D INITIAL_LINEAR_ACCELERATION;
 
-        /// Initial around centre of mass rotations.
+        /// Initial around centre of mass rotation.
         static const vec_t NULL_RATE;
 
         // Current rotation rates.
@@ -136,7 +146,7 @@ class AcceleratedPlatform : public VelocityPlatform, public RotatablePlatform {
         vec_t roll_rate;
         vec_t yaw_rate;
 
-        // Current acceleration in space.
+        // Current centre of mass acceleration.
         Vector3D acc;
     };
 
