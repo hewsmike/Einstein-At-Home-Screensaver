@@ -42,11 +42,11 @@ void VelocityPlatform::reset(void) {
     // Not only reset to a choice of initial velocity ...
     setVelocity(VelocityPlatform::INITIAL_VELOCITY);
 
-    // ... but also reset the Velocity too.
+    // ... but also reset the position too.
     PositionPlatform::reset();
     }
 
 void VelocityPlatform::step(void) {
-    // Evolve in Velocity as per current velocity.
+    // Evolve in position as per current velocity.
     PositionPlatform::setPosition(PositionPlatform::Position() + vel);
     }
