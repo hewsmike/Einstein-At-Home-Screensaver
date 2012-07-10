@@ -53,17 +53,17 @@ Vector3D OrthoNormalPlatform::up(void) const {
     return up_dir;
     }
 
-void OrthoNormalPlatform::setLook(const Vector3D& new_look) {
-    look_dir = new_look;
-    }
+void OrthoNormalPlatform::setOrientation(const Vector3D& new_look,
+                                         const Vector3D& new_up) {
+    // Ensure unit lengths.
+    look_dir = new_look.unit();
+    up_dir = new_up.unit();
 
-void OrthoNormalPlatform::setUp(const Vector3D& new_up) {
-    up_dir = new_up;
+    /// TODO - for check and correct to orthogonality.
     }
 
 void OrthoNormalPlatform::reset(void) {
-    // This will set 'look' and 'up' as orthogonal according to the
-    // definitions of INITIAL_LOOK and INITIAL_UP.
-    look_dir = INITIAL_LOOK;
-    up_dir = INITIAL_UP;
+    // This will set 'look' and 'up' as orthogonal according
+    // to the definitions of INITIAL_LOOK and INITIAL_UP.
+    setOrientation(INITIAL_LOOK, INITIAL_UP);
     }

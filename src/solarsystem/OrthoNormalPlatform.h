@@ -90,20 +90,17 @@ class OrthoNormalPlatform {
 
    protected:
         /**
-         * \brief Set the direction of the 'look' vector
+         * \brief Set the direction of the 'look' and 'up' vectors
          *
          * Protected use only as need to ensure orthogonality of the vector set
-         * ie. can't have arbitrary assignment of the 'look' vector.
-         */
-        void setLook(const Vector3D& new_look);
-
-        /**
-         * \brief Set the direction of the 'up' vector
+         * ie. can't have arbitrary assignment of the 'look' or 'up' vectors.
+         * Also want the changes as atomic.
          *
-         * Protected use only as need to ensure orthogonality of the vector set
-         * ie. can't have arbitrary assignment of the 'up' vector.
+         * \param new_look : the desired 'look' vector
+         * \param new_up : the desired 'up' vector
          */
-        void setUp(const Vector3D& new_up);
+        void setOrientation(const Vector3D& new_look,
+                            const Vector3D& new_up);
 
         /**
          * \brief Reset the platform in orientation
