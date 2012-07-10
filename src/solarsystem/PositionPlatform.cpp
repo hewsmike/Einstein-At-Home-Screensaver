@@ -21,7 +21,10 @@
 #include "PositionPlatform.h"
 
 // The initial stance is at the (global) origin.
-const Vector3D PositionPlatform::INIT_POS(Vector3D::NULLV);
+const Vector3D PositionPlatform::INITIAL_POSITION(Vector3D::NULLV);
+
+PositionPlatform::PositionPlatform(void) {
+    }
 
 PositionPlatform::PositionPlatform(const Vector3D& position = PositionPlatform::INITIAL_POSITION) :
                                       pos(position) {
@@ -40,5 +43,5 @@ void PositionPlatform::setPosition(const Vector3D& position) {
 
 void PositionPlatform::reset(void) {
     // Reset to a choice of initial position.
-    set_position(PositionPlatform::INITIAL_POSITION);
+    setPosition(PositionPlatform::INITIAL_POSITION);
     }

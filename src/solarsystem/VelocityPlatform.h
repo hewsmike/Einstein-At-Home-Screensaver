@@ -39,6 +39,8 @@
 
 class VelocityPlatform : public PositionPlatform {
     public:
+        VelocityPlatform(void);
+
         /**
          * \brief Constructor
          *

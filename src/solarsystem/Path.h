@@ -133,19 +133,19 @@ class Path {
          */
         const std::vector<std::string>& getFinishMessage(void) const;
 
-    private:
         /// Evaluation of the curves is limited in their parameter.
         static const float LAMBDA_LOWER_BOUND;
         static const float LAMBDA_UPPER_BOUND;
 
+    private:
         /// The geometric curves for camera position, focus and orientation.
-		Curve where;
-		Curve look_at;
-		Curve up_dir;
+        Curve where;
+        Curve look_at;
+        Curve up_dir;
 
         /// A set of descriptive strings for each end of the path.
-		std::vector<std::string> start_msg;
-		std::vector<std::string> finish_msg;
+        std::vector<std::string> start_msg;
+        std::vector<std::string> finish_msg;
     };
 
 /**

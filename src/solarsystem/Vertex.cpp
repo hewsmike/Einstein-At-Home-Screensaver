@@ -29,8 +29,8 @@ Vertex::Vertex(const Vector3D& position, const Vector3D& normal,
     }
 
 Vertex::Vertex(const Vertex& other) {
-    this->position = Vector3D(other.position());
-    this->normal = Vector3D(other.normal());
+    this->position = other.position();
+    this->normal = other.normal();
     this->text_cds = other.texture_co_ords();
     }
 

@@ -36,15 +36,14 @@ const Vector3D Craft::START_POSITION(-3*Craft::START_RADIUS, 0, Craft::START_RAD
 const vec_t Craft::REBOUND_SPEED(3.0f);
 const vec_t Craft::MAX_SPEED(50.0f);
 
-const vec_t Craft::SPEED_DEC(2.5f);
-const vec_t Craft::SPEED_INC(2.5f);
+const vec_t Craft::INLINE_THRUST_DELTA(0.5f);
 
-const vec_t Craft::LATERAL_THRUST_RATE(0.5f);
-const vec_t Craft::VERTICAL_THRUST_RATE(0.5f);
+const vec_t Craft::LATERAL_THRUST_DELTA(0.5f);
+const vec_t Craft::VERTICAL_THRUST_DELTA(0.5f);
 const vec_t Craft::RATE_FUDGE(0.2f);
-const vec_t Craft::PITCH_RATE_INC(RATE_FUDGE*(PI/360.0f));
-const vec_t Craft::ROLL_RATE_INC(RATE_FUDGE*(PI/360.0f));
-const vec_t Craft::YAW_RATE_INC(RATE_FUDGE*(PI/360.0f));
+const vec_t Craft::PITCH_RATE_DELTA(RATE_FUDGE*(PI/360.0f));
+const vec_t Craft::ROLL_RATE_DELTA(RATE_FUDGE*(PI/360.0f));
+const vec_t Craft::YAW_RATE_DELTA(RATE_FUDGE*(PI/360.0f));
 
 Craft::Craft() {
     goHome();
@@ -119,7 +118,7 @@ void Craft::step(GLfloat dayOfYear) {
     if(state.position().len() > Craft::MAX_RANGE) {
         // TODO turn him around to point homewards?
         // Give a little nudge to send it back in the direction of home.
-        state.set_velocity(-Craft::REBOUND_SPEED*state.position().unit());
+        state.setVelocity(-Craft::REBOUND_SPEED*state.position().unit());
         std::cout << "Too far away from Earth - nudged back" << std::endl;
         }
 
@@ -127,7 +126,7 @@ void Craft::step(GLfloat dayOfYear) {
     if(state.position().len() < Craft::MIN_EARTH_RANGE) {
         // TODO turn him around to point outwards?
         // Give a little nudge to send it back away from home.
-        state.set_velocity(+Craft::REBOUND_SPEED*state.position().unit());
+        state.setVelocity(+Craft::REBOUND_SPEED*state.position().unit());
         std::cout << "Too close to Earth - nudged away" << std::endl;
         }
 
@@ -141,97 +140,97 @@ void Craft::step(GLfloat dayOfYear) {
     // Are we too close to the Sun ?
     if(sun_dist < Craft::MIN_SUN_RANGE) {
         // Give a little nudge to send it back AWAY from the Sun.
-        state.set_velocity(+Craft::REBOUND_SPEED*sun_relative.unit());
+        state.setVelocity(+Craft::REBOUND_SPEED*sun_relative.unit());
         std::cout << "Too close to Sun - nudged away" << std::endl;
         }
     }
 
-CameraState Craft::getViewState(void) const {
-    return state.getViewState();
+CameraState Craft::viewState(void) const {
+    return state.viewState();
     }
 
 void Craft::setViewState(const CameraState& cam) {
     state.setViewState(cam);
     }
 
-void Craft::go_home(void) {
+void Craft::goHome(void) {
     // Initially in good position, stationary and not rotating.
     state.reset();
-    state.set_position(START_POSITION);
+    state.setPosition(START_POSITION);
     }
 
-void Craft::forward_thrust(void) {
+void Craft::forwardThrust(void) {
     // Add to the current velocity vector a fraction of the 'look' vector.
     // That is : thrust is applied along the aft-TO-fore axis.
-    vector_thrust(+Craft::SPEED_INC*state.look());
+    vectorThrust(+Craft::INLINE_THRUST_DELTA*state.look());
     }
 
-void Craft::reverse_thrust(void) {
+void Craft::reverseThrust(void) {
     // Subtract from the current velocity vector a fraction of the 'look' vector.
     // That is : thrust is applied along the fore-TO-aft axis.
-    vector_thrust(-Craft::SPEED_DEC*state.look());
+    vectorThrust(-Craft::INLINE_THRUST_DELTA*state.look());
     }
 
-void Craft::nose_down() {
+void Craft::noseDown() {
     // TODO - cap these rotation rates
-    state.set_pitch_rate(state.get_pitch_rate() - Craft::PITCH_RATE_INC);
+    state.setPitchRate(state.pitchRate() - Craft::PITCH_RATE_DELTA);
     }
 
-void Craft::nose_up() {
-    state.set_pitch_rate(state.get_pitch_rate() + Craft::PITCH_RATE_INC);
+void Craft::noseUp() {
+    state.setPitchRate(state.pitchRate() + Craft::PITCH_RATE_DELTA);
     }
 
-void Craft::roll_right() {
-    state.set_roll_rate(state.get_roll_rate() - Craft::ROLL_RATE_INC);
+void Craft::rollRight() {
+    state.setRollRate(state.rollRate() - Craft::ROLL_RATE_DELTA);
     }
 
-void Craft::roll_left() {
-    set_roll_rate(state.get_roll_rate() + Craft::ROLL_RATE_INC);
+void Craft::rollLeft() {
+    state.setRollRate(state.rollRate() + Craft::ROLL_RATE_DELTA);
     }
 
-void Craft::yaw_right() {
-    state.set_yaw_rate(state.get_yaw_rate() - Craft::YAW_RATE_INC);
+void Craft::yawRight() {
+    state.setYawRate(state.yawRate() - Craft::YAW_RATE_DELTA);
     }
 
-void Craft::yaw_left() {
-    state.set_yaw_rate(state.get_yaw_rate() + Craft::YAW_RATE_INC);
+void Craft::yawLeft() {
+    state.setYawRate(state.yawRate() + Craft::YAW_RATE_DELTA);
     }
 
-void Craft::null_rotation(void) {
-    state.set_pitch_rate(0.0f);
-    state.set_roll_rate(0.0f);
-    state.set_yaw_rate(0.0f);
+void Craft::nullRotation(void) {
+    state.setPitchRate(0.0f);
+    state.setRollRate(0.0f);
+    state.setYawRate(0.0f);
     }
 
 void Craft::stop(void) {
-    state.set_velocity(Vector3D(0.0f, 0.0f, 0.0f));
+    state.setVelocity(Vector3D(0.0f, 0.0f, 0.0f));
     }
 
-void Craft::right_thrust() {
+void Craft::rightThrust() {
     // Add to the current velocity vector a fraction of the 'cross' vector.
     // That is : thrust is applied along the left-TO-right wing axis.
-    vector_thrust(+Craft::LATERAL_THRUST_RATE*state.cross());
+    vectorThrust(+Craft::LATERAL_THRUST_DELTA*state.cross());
     }
 
-void Craft::left_thrust() {
+void Craft::leftThrust() {
     // Add to the current velocity vector a fraction of the 'cross' vector.
     // That is : thrust is applied along the right-TO-left wing axis.
-    vector_thrust(-Craft::LATERAL_THRUST_RATE*state.cross());
+    vectorThrust(-Craft::LATERAL_THRUST_DELTA*state.cross());
     }
 
-void Craft::up_thrust() {
+void Craft::upThrust() {
     // Add to the current velocity vector a fraction of the 'up' vector.
     // That is : thrust is applied along the floor-TO-ceiling axis.
-    vector_thrust(+Craft::VERTICAL_THRUST_RATE*state.up());
+    vectorThrust(+Craft::VERTICAL_THRUST_DELTA*state.up());
     }
 
-void Craft::down_thrust() {
+void Craft::downThrust() {
     // Subtract from the current velocity vector a fraction of the 'up' vector.
     // That is : thrust is applied along the ceiling-TO-floor axis.
-    vector_thrust(-Craft::VERTICAL_THRUST_RATE*state.up());
+    vectorThrust(-Craft::VERTICAL_THRUST_DELTA*state.up());
     }
 
-void Craft::vector_thrust(Vector3D thrust) {
+void Craft::vectorThrust(Vector3D thrust) {
     // Apply thrust along given vector.
     Vector3D new_vel = state.velocity() + thrust;
 
@@ -242,5 +241,5 @@ void Craft::vector_thrust(Vector3D thrust) {
         std::cout << "Speed capped at " << new_vel.len() << std::endl;
         }
 
-    state.set_velocity(new_vel);
+    state.setVelocity(new_vel);
     }

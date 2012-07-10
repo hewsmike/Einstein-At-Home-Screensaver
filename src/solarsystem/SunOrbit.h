@@ -102,7 +102,7 @@ class SunOrbit {
          *
          * \return the day offset in the range [0.0, days_per_cycle)
          */
-        GLfloat moduloDays(GLfloat day, GLfloat days_per_cycle);
+        static GLfloat moduloDays(GLfloat day, GLfloat days_per_cycle);
     };
 
 /**

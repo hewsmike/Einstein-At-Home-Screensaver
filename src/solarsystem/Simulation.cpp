@@ -20,6 +20,8 @@
 
 #include "Simulation.h"
 
+#include <sstream>
+
 const std::string Simulation::EARTH_NAME("Earth");
 const std::string Simulation::EARTH_IMAGE_RESOURCE("EarthTGA");
 const GLuint Simulation::EARTH_STACKS(37);
@@ -110,7 +112,7 @@ Simulation::Simulation(void): min60(0),
                                   SUN_STACKS,
                                   SUN_SLICES,
                                   SUN_TEXTURE_OFFSET),
-                              autopilot_view(Craft::START_POSITION, Craft::START_LOOKING, Craft::START_UP),
+                              autopilot_view(),
                               aei_image(NULL),
                               aps_image(NULL),
                               boinc_image(NULL),
@@ -185,7 +187,7 @@ void Simulation::setFont(content element, OGLFT_ft* font) {
    fonts[element] = font;
    }
 
-const CameraState& Simulation::viewPoint(void) {
+const CameraState Simulation::viewPoint(void) {
 	if(pilot.isActive()) {
 		// The autopilot is flying the craft.
 		if(version_text != NULL) {
@@ -202,11 +204,11 @@ const CameraState& Simulation::viewPoint(void) {
 				version_text->setText(msg.str());
 				}
 			}
-		return pilot.getViewState();
+		return pilot.viewState();
 		}
 	else {
 		// The user is flying the craft.
-		return flyboy.getViewState();;
+		return flyboy.viewState();;
 		}
 	}
 
@@ -2584,7 +2586,7 @@ void Simulation::cycle(Simulation::content ct) {
       		// When returning to user control ...
       		flyboy.manouevre(Craft::STOP_ROTATION);
       		flyboy.manouevre(Craft::STOP_TRANSLATION);
-      		flyboy.setViewState(pilot.getViewState());
+      		flyboy.setViewState(pilot.viewState());
       		pilot.inactivate();
   			   }
       	else {
@@ -2594,7 +2596,7 @@ void Simulation::cycle(Simulation::content ct) {
       		// flyboy.manouevre(Craft::STOP_ROTATION);
       		// flyboy.manouevre(Craft::STOP_TRANSLATION);
       	   /// TODO Choice between Traversable objects ....
-      		CameraState current = flyboy.getViewState();
+      		CameraState current = flyboy.viewState();
 
       		// When obtained from our craft the focus vector is unit vector
       		// and also craft based. Thus prefer a distant focus point to

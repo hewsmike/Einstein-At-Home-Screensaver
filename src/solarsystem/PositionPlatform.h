@@ -38,6 +38,8 @@
 
 class PositionPlatform {
     public:
+        PositionPlatform(void);
+
         /**
          * \brief Constructor.
          *

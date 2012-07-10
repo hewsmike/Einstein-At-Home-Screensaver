@@ -84,9 +84,9 @@ class Craft {
          * unit.
          *
          * \param dayOfYear : number of days since Jan 1st,
-         *         used to determine, if needed, position of
-         *         other simulated objects that mau be dynamically
-         *         relevant.
+         *        used to determine, if needed, position of
+         *        other simulated objects that mau be dynamically
+         *        relevant.
          */
         void step(GLfloat dayOfYear);
 
@@ -97,7 +97,7 @@ class Craft {
          */
         CameraState viewState(void) const;
 
-         /**
+        /**
          * \brief Set the view state of the craft in camera format
          *
          * \return camera : the desired camera state
@@ -110,34 +110,38 @@ class Craft {
         static const vec_t MIN_EARTH_RANGE;
         static const vec_t MIN_SUN_RANGE;
 
-
+        static const vec_t START_RADIUS;
         static const Vector3D START_POSITION;
 
         /// Top speed of craft in whatever nett direction
         static const vec_t MAX_SPEED;
 
         /// Rates for about centre of mass craft rotations
-        static const vec_t PITCH_RATE_INC;
-        static const vec_t ROLL_RATE_INC;
-        static const vec_t YAW_RATE_INC;
+        static const vec_t PITCH_RATE_DELTA;
+        static const vec_t ROLL_RATE_DELTA;
+        static const vec_t YAW_RATE_DELTA;
         static const vec_t RATE_FUDGE;
 
         /// Speed setting post 'bounce' off objects
         static const vec_t REBOUND_SPEED;
 
         /// Speed change steps for the aft-to-forward craft axis
-        static const vec_t SPEED_DEC;
-        static const vec_t SPEED_INC;
+        static const vec_t INLINE_THRUST_DELTA;
 
         /// Speed change step for the left-to-right craft axis
-        static const vec_t LATERAL_THRUST_RATE;
+        static const vec_t LATERAL_THRUST_DELTA;
 
         /// Speed change step for the floor-to-ceiling craft axis
-        static const vec_t VERTICAL_THRUST_RATE;
+        static const vec_t VERTICAL_THRUST_DELTA;
 
         AcceleratedPlatform state;
 
+        /**
+         * \brief Return the craft to a 'home' state
+         */
         void goHome(void);
+
+
         void noseDown();
         void noseUp();
         void rollLeft();

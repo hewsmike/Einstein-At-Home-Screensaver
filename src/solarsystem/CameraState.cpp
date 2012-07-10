@@ -22,25 +22,22 @@
 
 #include "Craft.h"
 
-CameraState::CameraState(void) :
-                            where(Craft::START_POSITION),
-                            look_at(Craft::START_LOOKING),
-                            up_dir(Craft::START_UP) {
+CameraState::CameraState(void) {
     }
 
 CameraState::CameraState(const Vector3D& position,
-						 const Vector3D& focus,
-						 const Vector3D& orientation) :
-						    where(position),
-							look_at(focus),
-							up_dir(orientation) {
+                         const Vector3D& focus,
+                         const Vector3D& orientation) :
+                            where(position),
+                            look_at(focus),
+                            up_dir(orientation) {
     }
 
 CameraState::CameraState(const CameraState& other){
     this->where = other.position();
     this->look_at = other.focus();
     this->up_dir = other.orientation();
-	}
+    }
 
 CameraState& CameraState::operator=(const CameraState& other) {
     // Excluding self assignment.
@@ -50,32 +47,32 @@ CameraState& CameraState::operator=(const CameraState& other) {
         this->up_dir = other.orientation();
         }
 
-	return *this;
-	}
+    return *this;
+    }
 
 CameraState::~CameraState() {
-	}
+    }
 
 void CameraState::setPosition(const Vector3D& position) {
-	where = position;
-	}
+    where = position;
+    }
 
 void CameraState::setFocus(const Vector3D& focus) {
-	look_at = focus;
-	}
+    look_at = focus;
+    }
 
 void CameraState::setOrientation(const Vector3D& orientation) {
-	up_dir = orientation;
-	}
+    up_dir = orientation;
+    }
 
 const Vector3D& CameraState::position(void) const {
-	return this->where;
-	}
+    return this->where;
+    }
 
 const Vector3D& CameraState::focus(void) const {
-	return this->look_at;
-	}
+    return this->look_at;
+    }
 
 const Vector3D& CameraState::orientation(void) const {
-	return this->up_dir;
-	}
+    return this->up_dir;
+    }

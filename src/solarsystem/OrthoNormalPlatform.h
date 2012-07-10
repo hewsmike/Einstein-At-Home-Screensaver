@@ -99,8 +99,8 @@ class OrthoNormalPlatform {
          * \param new_look : the desired 'look' vector
          * \param new_up : the desired 'up' vector
          */
-        void setOrientation(const Vector3D& new_look,
-                            const Vector3D& new_up);
+        void setOrientation(Vector3D new_look,
+                            Vector3D new_up);
 
         /**
          * \brief Reset the platform in orientation

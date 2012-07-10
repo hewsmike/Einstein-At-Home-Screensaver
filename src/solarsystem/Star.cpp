@@ -30,7 +30,7 @@ const starpos_t Star::DECLINATION_LOW(-90.0f);
 const starpos_t Star::RIGHT_ASCENSION_HIGH(360.0f);
 const starpos_t Star::RIGHT_ASCENSION_LOW(0.0f);
 
-Star::Star(starpos_t ra, starpos_t dec, std::string nm) : s_name(nm) {
+Star::Star(starpos_t ra, starpos_t dec, const std::string& nm) : s_name(nm) {
     // Note endpoint treatment of bounds. Fail construction if out-of-bounds,
     // which is no biggie, as heap allocation not involved. Deserves program
     // exit though as this would indicate an important data error.

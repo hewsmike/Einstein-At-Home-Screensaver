@@ -41,61 +41,61 @@
  */
 
 class AutoPilot {
-   public :
-      /**
-      * \brief Constructor
-      */
-      AutoPilot(void);
+    public :
+        /**
+         * \brief Constructor
+         */
+        AutoPilot(void);
 
-      /**
-       * \brief Destructor
-       */
-      ~AutoPilot();
+        /**
+         * \brief Destructor
+         */
+        virtual ~AutoPilot();
 
-      void activate(const Traversable& trav, const CameraState& cam);
+        void activate(const Traversable& trav, const CameraState& cam);
 
-      void inactivate(void);
+        void inactivate(void);
 
-      bool isActive(void) const;
+        bool isActive(void) const;
 
-      CameraState getViewState(void);
+        CameraState viewState(void);
 
-      const std::vector<std::string>& getDescription(void) const;
+        const std::vector<std::string>& getDescription(void) const;
 
-      bool hasDescriptionChanged(void) const;
+        bool hasDescriptionChanged(void) const;
 
-   private:
-      enum path_stage {EARLY, MIDDLE, LATE};
+    private:
+        enum path_stage {EARLY, MIDDLE, LATE};
 
-      static const float PATH_EARLY_BOUNDARY;
-      static const float PATH_LATE_BOUNDARY;
+        static const float PATH_EARLY_BOUNDARY;
+        static const float PATH_LATE_BOUNDARY;
 
-      static const float LENGTH_PER_FRAME;
-      static const float LEAST_PATH_LENGTH;
-      static const unsigned int PAUSE_FRAME_COUNT;
+        static const float LENGTH_PER_FRAME;
+        static const float LEAST_PATH_LENGTH;
+        static const unsigned int PAUSE_FRAME_COUNT;
 
-      bool active_flag;
+        bool active_flag;
 
-      CameraState view;
+        CameraState view;
 
-      Traverse current_traverse;
+        Traverse current_traverse;
 
-      Path current_path;
+        Path current_path;
 
-      float lambda;
+        float lambda;
 
-      float current_delta_lambda;
+        float current_delta_lambda;
 
-      std::vector<std::string> current_description;
+        std::vector<std::string> current_description;
 
-      path_stage path_stage_flag;
+        path_stage path_stage_flag;
 
-      bool description_change_flag;
+        bool description_change_flag;
 
-      void set_delta_lambda(void);
+        void set_delta_lambda(void);
 
-      void getTraverse(const Traversable& trav, const CameraState& cam);
-   };
+        void getTraverse(const Traversable& trav, const CameraState& cam);
+    };
 
 /**
  * @}

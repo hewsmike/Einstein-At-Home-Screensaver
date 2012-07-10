@@ -20,7 +20,7 @@
 
 #include "RotatablePlatform.h"
 
-const vec_t RotatablePlatform::NULL_RATE(0.0f);
+#include <cmath>
 
 RotatablePlatform::RotatablePlatform(void) {
     reset();
@@ -35,20 +35,19 @@ void RotatablePlatform::pitch(vec_t angle) {
     Vector3D new_look = cos(angle)*look() + sin(angle)*up();
 
     // Normalise and store 'up' and 'look' before you go.
-    OrthoNormalPlatform::setUp(new_up.unit());
-    OrthoNormalPlatform::setLook(new_look.unit());
+    OrthoNormalPlatform::setOrientation(new_look.unit(), new_up.unit());
     }
 
 void RotatablePlatform::roll(vec_t angle) {
     Vector3D new_up = cos(angle)*up() - sin(angle)*cross();
 
     // Normalise and store 'up' before you go.
-    OrthoNormalPlatform::setUp(new_up.unit());
+    OrthoNormalPlatform::setOrientation(OrthoNormalPlatform::look(), new_up.unit());
     }
 
 void RotatablePlatform::yaw(vec_t angle) {
     Vector3D new_look = cos(angle)*look() - sin(angle)*cross();
 
     // Normalise and store 'look' before you go.
-    OrthoNormalPlatform::setLook(new_look.unit());
+    OrthoNormalPlatform::setOrientation(new_look.unit(), OrthoNormalPlatform::up());
     }

@@ -23,6 +23,9 @@
 // The initial velocity is motionless.
 const Vector3D VelocityPlatform::INITIAL_VELOCITY(Vector3D::NULLV);
 
+VelocityPlatform::VelocityPlatform(void) {
+    }
+
 VelocityPlatform::VelocityPlatform(const Vector3D& velocity = VelocityPlatform::INITIAL_VELOCITY) :
                                        vel(velocity) {
     }
@@ -48,5 +51,5 @@ void VelocityPlatform::reset(void) {
 
 void VelocityPlatform::step(void) {
     // Evolve in position as per current velocity.
-    PositionPlatform::setPosition(PositionPlatform::Position() + vel);
+    PositionPlatform::setPosition(PositionPlatform::position() + vel);
     }

@@ -54,33 +54,33 @@
 class Traverse {
    public:
         /**
-	     * \brief Constructor
-	     */
-		Traverse(void);
+         * \brief Constructor
+         */
+        Traverse(void);
 
-		/**
-		 * \brief Destructor
-		 */
-		virtual ~Traverse();
+        /**
+         * \brief Destructor
+         */
+        virtual ~Traverse();
 
         /**
          * \brief Empty the traverse of all LookOuts
          */
-		void clear(void);
-
-		/**
-		 * \brief Add a LookOut onto the tail of the list
-		 *
-		 * \param cam : the camera state to add
-		 */
-		void addLookout(const LookOut& cam);
+        void clear(void);
 
         /**
-		 * \brief Obtain the current number of stored LookOuts
-		 *
-		 * \return the number of Lookouts
-		 */
-		unsigned int numLookouts(void) const;
+         * \brief Add a LookOut onto the tail of the list
+         *
+         * \param cam : the camera state to add
+         */
+        void addLookout(const LookOut& cam);
+
+        /**
+         * \brief Obtain the current number of stored LookOuts
+         *
+         * \return the number of Lookouts
+         */
+        unsigned int numLookouts(void) const;
 
         /**
          * \brief Obtain the initial path in the list
@@ -90,29 +90,29 @@ class Traverse {
          *
          * \return the first Path in the list
          */
-		Path getFirstPath(void);
+        Path getFirstPath(void);
 
-		/**
-		 * \brief Obtain the next path from the traverse
-		 *
-		 *      This occurs in a cyclic fashion where the most
-		 * recently added lookout is connected to the first
-		 * added lookout. If there are fewer than two Lookouts
-		 * present then a fatal error is triggered.
-		 *
-		 * \return the next Path in the list
-		 */
-		Path getNextPath(void);
+        /**
+         * \brief Obtain the next path from the traverse
+         *
+         *      This occurs in a cyclic fashion where the most
+         * recently added lookout is connected to the first
+         * added lookout. If there are fewer than two Lookouts
+         * present then a fatal error is triggered.
+         *
+         * \return the next Path in the list
+         */
+        Path getNextPath(void);
 
-	private:
+    private:
         static unsigned int MIN_LOOKOUTS;
 
-		std::deque<LookOut> cam_states;
+        std::deque<LookOut> cam_states;
 
-		unsigned int current_path_index;
+        unsigned int current_path_index;
 
-		Path makePath();
-	};
+        Path makePath();
+    };
 
 /**
  * @}

@@ -36,103 +36,106 @@
 
 /**
  * \brief This interface declares all mandatory public methods to be provided by
- * any given OpenGL Renderable object. One can compose a given scene element
- * with several Renderable objects. The intent of encapsulating is to ensure
- * proper acquisition and release of OpenGL resources. If the existing global
- * render quality setting is altered then current resources are released,
- * new resources are acquired as per needs and rendering continues with said
- * resources. This class does not deal with any specific OpenGL mechanisms.
+ * any given OpenGL Renderable object.
+ *
+ *      One can compose a given scene element with several Renderable objects.
+ * The intent of encapsulating is to ensure proper acquisition and release of OpenGL
+ * resources. If the existing global render quality setting is altered then current
+ * resources are released, new resources are acquired as per needs and rendering
+ * continues with said resources. This class does not deal with any specific OpenGL
+ * mechanisms.
  *
  * \author Mike Hewson\n
  */
 
 class Renderable {
-   public:
-      // Visibility ie. to be rendered at all?
-      enum activity_state {INACTIVE, ACTIVE};
+    public:
+        // Visibility ie. to be rendered at all?
+        enum activity_state {INACTIVE, ACTIVE};
 
-      /// Virtual destructor
-      virtual ~Renderable();
+        /// Virtual destructor
+        virtual ~Renderable();
 
-      /**
-       * \brief Invoke display of the object within the scene according to it's
-       *        activation state.
-       */
-      void draw(void);
+        /**
+         * \brief Invoke display of the object within the scene according to it's
+         *        activation state.
+         */
+        void draw(void);
 
-      /**
-       * \brief Mark object as to be shown
-       */
-      void activate(void);
+        /**
+         * \brief Mark object as to be shown.
+         */
+        void activate(void);
 
-      /**
-       * \brief Mark object as to NOT be shown
-       */
-      void inactivate(void);
+        /**
+         * \brief Mark object as to NOT be shown.
+         */
+        void inactivate(void);
 
-      /**
-       * \brief Retrieves the activation state
-       *
-       * \return The activation state
-       */
-      Renderable::activity_state is_activated() const;
+        /**
+         * \brief Retrieves the activation state.
+         *
+         * \return The activation state.
+         */
+        Renderable::activity_state is_activated() const;
 
-      /**
-       * \brief Cycles the activation state of the object
-       */
-      virtual void cycleActivation(void);
+        /**
+         * \brief Cycles the activation state of the object.
+         */
+        virtual void cycleActivation(void);
 
-      /**
-       * \brief Retrieves the rendering quality level
-       */
-      SolarSystemGlobals::render_quality render_level(void);
+        /**
+         * \brief Retrieves the rendering quality level.
+         */
+        SolarSystemGlobals::render_quality render_level(void);
 
-      /**
-       * \brief Sets the rendering quality level
-       */
-      void set_render_level(SolarSystemGlobals::render_quality rq);
+        /**
+         * \brief Sets the rendering quality level.
+         */
+        void set_render_level(SolarSystemGlobals::render_quality rq);
 
-      /**
-       * \brief Sets the font. ABSOLUTE need to set the font BEFORE
-       * activation or you won't see any text!
-       */
-      void setFont(OGLFT_ft* a_font);
+        /**
+         * \brief Sets the font.
+         *
+         *      ABSOLUTE need to set the font BEFORE activation or you won't see any text!
+         */
+        void setFont(OGLFT_ft* a_font);
 
-      /**
-       * \brief Gets the font.
-       */
-      OGLFT_ft* getFont(void) const;
+        /**
+         * \brief Obtain the font.
+         */
+        OGLFT_ft* getFont(void) const;
 
-   protected:
-      /**
-       * \brief Constructor
-       *
-       * The constructor is protected since this is an abstract class.
-       */
-      Renderable();
+    protected:
+        /**
+         * \brief Constructor.
+         *
+         *      The constructor is protected since this is an abstract class.
+         */
+        Renderable();
 
-      /// In subclasses this will provide OpenGL code
-      /// to prepare for rendering.
-      virtual void prepare(SolarSystemGlobals::render_quality rq) = 0;
+        /// In subclasses this will provide OpenGL code
+        /// to prepare for rendering.
+        virtual void prepare(SolarSystemGlobals::render_quality rq) = 0;
 
-      /// In subclasses this will provide OpenGL code
-      /// to release any resources used.
-      virtual void release(void) = 0;
+        /// In subclasses this will provide OpenGL code
+        /// to release any resources used.
+        virtual void release(void) = 0;
 
-      /// In subclasses this will provide OpenGL code
-      /// to render the object.
-      virtual void render(void) = 0;
+        /// In subclasses this will provide OpenGL code
+        /// to render the object.
+        virtual void render(void) = 0;
 
-   private:
-      /// Indicates whether object is to be shown at all.
-      activity_state activity;
+    private:
+        /// Indicates whether object is to be shown at all.
+        activity_state activity;
 
-      /// Current choice of rendering quality.
-      SolarSystemGlobals::render_quality quality;
+        /// Current choice of rendering quality.
+        SolarSystemGlobals::render_quality quality;
 
-      /// The font to use for any rendering.
-      OGLFT_ft* myFont;
-   };
+        /// The font to use for any rendering.
+        OGLFT_ft* myFont;
+    };
 
 /**
  * @}

@@ -29,16 +29,16 @@
 unsigned int Traverse::MIN_LOOKOUTS(2);
 
 Traverse::Traverse(void) {
-	current_path_index = 0;
-	}
+    current_path_index = 0;
+    }
 
 Traverse::~Traverse() {
-	}
+    }
 
 void Traverse::clear() {
-	cam_states.clear();
-	current_path_index = 0;
-	}
+    cam_states.clear();
+    current_path_index = 0;
+    }
 
 void Traverse::addLookout(const LookOut& cam) {
     cam_states.push_back(cam);
@@ -46,54 +46,54 @@ void Traverse::addLookout(const LookOut& cam) {
     }
 
 unsigned int Traverse::numLookouts(void) const {
-	return cam_states.size();
-	}
+    return cam_states.size();
+    }
 
 Path Traverse::getFirstPath(void) {
     Path ret_val;
 
-	if(numLookouts() >= MIN_LOOKOUTS) {
-		current_path_index = 0;
-		ret_val = makePath();
-		}
-	else {
-	    // Or if there aren't enough Lookouts ....
-	    stringstream msg;
-	    msg << "Traverse::getFirstPath() : Fewer than ";
-	    msg << MIN_LOOKOUTS;
-	    msg << " LookOuts present in Traverse !!"
-        ErrorHandler::record(msg.str(), ErrorHandler::FATAL);
+    if(numLookouts() >= MIN_LOOKOUTS) {
+        current_path_index = 0;
+        ret_val = makePath();
         }
-
-	return ret_val;
-    }
-
-Path Traverse::getNextPath(void) {
-	Path ret_val;
-
-	if(numLookouts() >= MIN_LOOKOUTS) {
-	    // We traverse the lookouts in a modulo fashion.
-		current_path_index = (current_path_index + 1) % cam_states.size();
-		ret_val = makePath();
-		}
     else {
         // Or if there aren't enough Lookouts ....
-	    stringstream msg;
-	    msg << "Traverse::getNextPath() : Fewer than ";
-	    msg << MIN_LOOKOUTS;
-	    msg << " LookOuts present in Traverse !!"
+        std::stringstream msg;
+        msg << "Traverse::getFirstPath() : Fewer than ";
+        msg << MIN_LOOKOUTS;
+        msg << " LookOuts present in Traverse !!";
         ErrorHandler::record(msg.str(), ErrorHandler::FATAL);
         }
 
     return ret_val;
-	}
+    }
+
+Path Traverse::getNextPath(void) {
+    Path ret_val;
+
+    if(numLookouts() >= MIN_LOOKOUTS) {
+        // We traverse the lookouts in a modulo fashion.
+        current_path_index = (current_path_index + 1) % cam_states.size();
+        ret_val = makePath();
+        }
+    else {
+        // Or if there aren't enough Lookouts ....
+        std::stringstream msg;
+        msg << "Traverse::getNextPath() : Fewer than ";
+        msg << MIN_LOOKOUTS;
+        msg << " LookOuts present in Traverse !!";
+        ErrorHandler::record(msg.str(), ErrorHandler::FATAL);
+        }
+
+    return ret_val;
+    }
 
 Path Traverse::makePath() {
     Path ret_val;
 
-	if(numLookouts() >= MIN_LOOKOUTS) {
-	    // Set the indices of the Lookouts that bracket this Path.
-	    unsigned int start_lookout;
+    if(numLookouts() >= MIN_LOOKOUTS) {
+        // Set the indices of the Lookouts that bracket this Path.
+        unsigned int start_lookout;
         unsigned int finish_lookout = (start_lookout + 1) % cam_states.size();
 
         // Construct the three curves between these Lookouts.
@@ -112,10 +112,10 @@ Path Traverse::makePath() {
         }
     else {
         // Or if there aren't enough Lookouts ....
-	    stringstream msg;
-	    msg << "Traverse::makePath() : Fewer than ";
-	    msg << MIN_LOOKOUTS;
-	    msg << " LookOuts present in Traverse !!"
+        std::stringstream msg;
+        msg << "Traverse::makePath() : Fewer than ";
+        msg << MIN_LOOKOUTS;
+        msg << " LookOuts present in Traverse !!";
         ErrorHandler::record(msg.str(), ErrorHandler::FATAL);
         }
 

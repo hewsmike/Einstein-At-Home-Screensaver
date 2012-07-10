@@ -53,8 +53,8 @@ Vector3D OrthoNormalPlatform::up(void) const {
     return up_dir;
     }
 
-void OrthoNormalPlatform::setOrientation(const Vector3D& new_look,
-                                         const Vector3D& new_up) {
+void OrthoNormalPlatform::setOrientation(Vector3D new_look,
+                                         Vector3D new_up) {
     // Ensure unit lengths.
     look_dir = new_look.unit();
     up_dir = new_up.unit();

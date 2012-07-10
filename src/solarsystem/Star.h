@@ -23,6 +23,8 @@
 
 #include <string>
 
+#include "Vector3D.h"
+
 /**
  * \addtogroup solarsystem Solarsystem
  * @{

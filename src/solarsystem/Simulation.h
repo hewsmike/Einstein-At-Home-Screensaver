@@ -93,7 +93,7 @@ class Simulation : public Renderable {
 
       void setFont(content element, OGLFT_ft* font);
 
-      const CameraState& viewPoint(void);
+      const CameraState viewPoint(void);
 
       // This is not the Renderable base class function,
       // it is additional to that interface and allows

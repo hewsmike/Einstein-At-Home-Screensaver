@@ -2188,9 +2188,9 @@ unsigned int Constellations::numberOfWayPoints(void) const {
 	}
 
 LookOut Constellations::getView(unsigned int sequence) const {
-	// Default view - in absence of any constellations - the
-   // simulation's initial view.
-   LookOut ret_val(Craft::START_POSITION, Craft::START_LOOKING, Craft::START_UP);
+    // Default view - in absence of any constellations - the
+    // simulation's initial view.
+    LookOut ret_val;
 
    // Assuming there is at least one constellation.
    if(cons_list.size() > 0) {

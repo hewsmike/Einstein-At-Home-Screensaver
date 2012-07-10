@@ -22,7 +22,7 @@
 
 // The initial acceleration is none in either translation or rotation.
 const Vector3D AcceleratedPlatform::INITIAL_LINEAR_ACCELERATION(Vector3D::NULLV);
-const Vector3D AcceleratedPlatform::NULL_RATE(0.0f);
+const vec_t AcceleratedPlatform::NULL_RATE(0.0f);
 
 AcceleratedPlatform::AcceleratedPlatform(void) : acc(INITIAL_LINEAR_ACCELERATION) {
     }
@@ -50,10 +50,10 @@ void AcceleratedPlatform::setYawRate(vec_t rate) {
     yaw_rate = rate;
     }
 
-CameraState AcceleratedPlatform::getViewState(void) const {
-    return CameraState(PositionPlatform.position(),
-                       OrthoNormalPlatform.look(),
-                       OrthoNormalPlatform.up());
+CameraState AcceleratedPlatform::viewState(void) const {
+    return CameraState(PositionPlatform::position(),
+                       OrthoNormalPlatform::look(),
+                       OrthoNormalPlatform::up());
     }
 
 void AcceleratedPlatform::setViewState(const CameraState& cam) {
@@ -61,15 +61,15 @@ void AcceleratedPlatform::setViewState(const CameraState& cam) {
     OrthoNormalPlatform::setOrientation(cam.focus(), cam.orientation());
     }
 
-vec_t AcceleratedPlatform::pitchRate(void) {
+vec_t AcceleratedPlatform::pitchRate(void) const {
     return pitch_rate;
     }
 
-vec_t AcceleratedPlatform::rollRate(void) {
+vec_t AcceleratedPlatform::rollRate(void) const {
     return roll_rate;
     }
 
-vec_t AcceleratedPlatform::yawRate(void) {
+vec_t AcceleratedPlatform::yawRate(void) const {
     return yaw_rate;
     }
 
@@ -101,16 +101,4 @@ void AcceleratedPlatform::step(void) {
     pitch(pitch_rate);
     roll(roll_rate);
     yaw(yaw_rate);
-    }
-
-void RotatablePlatform::setPitchRate(vec_t rate) {
-    pitch_rate = rate;
-    }
-
-void RotatablePlatform::setRollRate(vec_t rate) {
-    roll_rate = rate;
-    }
-
-void RotatablePlatform::setYawRate(vec_t rate){
-    yaw_rate = rate;
     }

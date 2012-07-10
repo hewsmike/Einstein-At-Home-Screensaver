@@ -20,9 +20,12 @@
 
 #include "LookOut.h"
 
+LookOut::LookOut() {
+    }
+
 LookOut::LookOut(const Vector3D& position,
                  const Vector3D& focus,
-		  	  	 const Vector3D& orientation) :
+                 const Vector3D& orientation) :
                     CameraState(position, focus, orientation) {
     }
 
@@ -34,5 +37,5 @@ const std::vector<std::string>& LookOut::getDescription(void) const {
     }
 
 void LookOut::addToDescription(const std::string& description) {
-	desc.push_back(description);
-	}
+    desc.push_back(description);
+    }

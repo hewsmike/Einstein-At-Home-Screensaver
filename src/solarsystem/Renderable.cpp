@@ -24,63 +24,63 @@
 Renderable::Renderable() : activity(Renderable::INACTIVE),
                            quality(SolarSystemGlobals::RENDER_LOWEST),
                            myFont(NULL) {
-   // Don't call any preparation code from constructor as OpenGL context
-   // may not exist or be valid at construction time.
-   }
+    // Don't call any preparation code from constructor as OpenGL context
+    // may not exist or be valid at construction time.
+    }
 
 Renderable::~Renderable() {
-   }
+    }
 
 void Renderable::activate(void) {
-   // Prepare resources as we have decided to show it.
-   prepare(quality);
-   // Mark as active.
-   activity = Renderable::ACTIVE;
-   }
+    // Prepare resources as we have decided to show it.
+    prepare(quality);
+    // Mark as active.
+    activity = Renderable::ACTIVE;
+    }
 
 void Renderable::inactivate(void) {
-   // Release resources as we have decided not to show it.
-   release();
-   // Mark as inactive.
-   activity = Renderable::INACTIVE;
-   }
+    // Release resources as we have decided not to show it.
+    release();
+    // Mark as inactive.
+    activity = Renderable::INACTIVE;
+    }
 
 Renderable::activity_state Renderable::is_activated(void) const {
-   return activity;
-   }
+    return activity;
+    }
 
 void Renderable::cycleActivation(void) {
-   // In this base class the activity state is simply toggled.
-   // Re-define this in a derived class if you want other behaviours.
-   is_activated() ? inactivate() : activate();
-   }
+    // In this base class the activity state is simply toggled.
+    // Re-define this in a derived class if you want other behaviours.
+    is_activated() ? inactivate() : activate();
+    }
 
 void Renderable::draw(void) {
-   // Only show if it is marked active.
-   if(activity == Renderable::ACTIVE) {
-      render();
-      }
-   }
+    // Only show if it is marked active.
+    if(activity == Renderable::ACTIVE) {
+        render();
+        }
+    }
 
 SolarSystemGlobals::render_quality Renderable::render_level(void) {
-   return quality;
-   }
+    return quality;
+    }
 
 void Renderable::set_render_level(SolarSystemGlobals::render_quality rq) {
-   // Remember new quality setting.
-   quality = rq;
+    // Remember new quality setting.
+    quality = rq;
 
-   // Inactivate the item, thus releasing resources.
-   inactivate();
+    // Inactivate the item, thus releasing resources.
+    inactivate();
 
-   // Then re-activate which will trigger preparation at the new level.
-   activate();
-   }
+    // Then re-activate which will trigger preparation at the new level.
+    activate();
+    }
 
 void Renderable::setFont(OGLFT_ft* a_font) {
-   myFont = a_font;
-   }
+    myFont = a_font;
+    }
 
 OGLFT_ft* Renderable::getFont(void) const {
-   return myFont;
-   }
+    return myFont;
+    }
