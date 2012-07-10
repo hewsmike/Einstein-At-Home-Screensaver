@@ -23,7 +23,6 @@
 
 #include "AcceleratedPlatform.h"
 #include "CameraState.h"
-#include "SolarSystemGlobals.h"
 
 /**
  * \addtogroup solarsystem Solarsystem
@@ -37,90 +36,125 @@
  */
 
 class Craft {
-   public:
-		enum movements {GO_HOME,
-	                   STOP_TRANSLATION,
-	                   STOP_ROTATION,
-	                   FORWARD,
-	                   REVERSE,
-	                   UPWARDS,
-	                   DOWNWARDS,
-	                   LEFTWARDS,
-	                   RIGHTWARDS,
-	                   PITCH_UP,
-	                   PITCH_DOWN,
-	                   ROLL_LEFT,
-	                   ROLL_RIGHT,
-	                   YAW_LEFT,
-	                   YAW_RIGHT };
+    public:
+        enum movements {GO_HOME,
+                        STOP_TRANSLATION,
+                        STOP_ROTATION,
+                        FORWARD,
+                        REVERSE,
+                        UPWARDS,
+                        DOWNWARDS,
+                        LEFTWARDS,
+                        RIGHTWARDS,
+                        PITCH_UP,
+                        PITCH_DOWN,
+                        ROLL_LEFT,
+                        ROLL_RIGHT,
+                        YAW_LEFT,
+                        YAW_RIGHT };
 
-      Craft();
-      ~Craft();
+        /**
+         * \brief Constructor
+         */
+        Craft();
 
-      void manouevre(Craft::movements mov);
+        /**
+         * \brief Destructor
+         */
+        ~Craft();
 
-      const AcceleratedPlatform& get_platform() const;
+        /**
+         * \brief Manouevre the craft
+         *
+         * \param movement : one of the allowable enumerants
+         */
+        void manouevre(Craft::movements movement);
 
-      void step(GLfloat dayOfYear);
+        /**
+         * \brief Obtain the platform data
+         *
+         * \return a constant reference to the platform
+         */
+        const AcceleratedPlatform& platform() const;
 
-      CameraState getViewState(void) const;
+        /**
+         * \brief Evolve the craft's dynamics
+         *
+         *      Update craft state variables by one notional time
+         * unit.
+         *
+         * \param dayOfYear : number of days since Jan 1st,
+         *         used to determine, if needed, position of
+         *         other simulated objects that mau be dynamically
+         *         relevant.
+         */
+        void step(GLfloat dayOfYear);
 
-      void setViewState(const CameraState& cam);
+        /**
+         * \brief Obtain the view state of the craft in camera format
+         *
+         * \return the camera state
+         */
+        CameraState viewState(void) const;
 
-      static const Vector3D START_POSITION;
-      static const Vector3D START_LOOKING;
-      static const Vector3D START_UP;
+         /**
+         * \brief Set the view state of the craft in camera format
+         *
+         * \return camera : the desired camera state
+         */
+        void setViewState(const CameraState& camera);
 
-   private:
-      /// Global bounds for craft position
-      static const vec_t MAX_RANGE;
-      static const vec_t MIN_EARTH_RANGE;
-      static const vec_t MIN_SUN_RANGE;
+    private:
+        /// Global bounds for craft position
+        static const vec_t MAX_RANGE;
+        static const vec_t MIN_EARTH_RANGE;
+        static const vec_t MIN_SUN_RANGE;
 
-      static const vec_t START_RADIUS;
 
-      /// Top speed of craft in whatever nett direction
-      static const vec_t MAX_SPEED;
+        static const Vector3D START_POSITION;
 
-      /// Rates for about centre of mass craft rotations
-      static const vec_t PITCH_RATE_INC;
-      static const vec_t ROLL_RATE_INC;
-      static const vec_t YAW_RATE_INC;
-      static const vec_t RATE_FUDGE;
+        /// Top speed of craft in whatever nett direction
+        static const vec_t MAX_SPEED;
 
-      /// Speed setting post 'bounce' off objects
-      static const vec_t REBOUND_SPEED;
+        /// Rates for about centre of mass craft rotations
+        static const vec_t PITCH_RATE_INC;
+        static const vec_t ROLL_RATE_INC;
+        static const vec_t YAW_RATE_INC;
+        static const vec_t RATE_FUDGE;
 
-      /// Speed change steps for the aft-to-forward craft axis
-      static const vec_t SPEED_DEC;
-      static const vec_t SPEED_INC;
+        /// Speed setting post 'bounce' off objects
+        static const vec_t REBOUND_SPEED;
 
-      /// Speed change step for the left-to-right craft axis
-      static const vec_t LATERAL_THRUST_RATE;
+        /// Speed change steps for the aft-to-forward craft axis
+        static const vec_t SPEED_DEC;
+        static const vec_t SPEED_INC;
 
-      /// Speed change step for the floor-to-ceiling craft axis
-      static const vec_t VERTICAL_THRUST_RATE;
+        /// Speed change step for the left-to-right craft axis
+        static const vec_t LATERAL_THRUST_RATE;
 
-      AcceleratedPlatform state;
+        /// Speed change step for the floor-to-ceiling craft axis
+        static const vec_t VERTICAL_THRUST_RATE;
 
-      void go_home(void);
-      void nose_down();
-      void nose_up();
-      void roll_left();
-      void roll_right();
-      void stop(void);
-      void reverse_thrust(void);
-      void forward_thrust(void);
-      void yaw_left();
-      void yaw_right();
-      void right_thrust(void);
-      void left_thrust(void);
-      void null_rotation(void);
-      void up_thrust(void);
-      void down_thrust(void);
+        AcceleratedPlatform state;
 
-      void vector_thrust(Vector3D thrust);
-   };
+        void goHome(void);
+        void noseDown();
+        void noseUp();
+        void rollLeft();
+        void rollRight();
+        void stop(void);
+        void reverseThrust(void);
+        void forwardThrust(void);
+        void yawLeft();
+        void yawRight();
+        void rightThrust(void);
+        void leftThrust(void);
+        void nullRotation(void);
+        void upThrust(void);
+        void downThrust(void);
+
+        void vectorThrust(Vector3D thrust);
+    };
 
 /**
  * @}
