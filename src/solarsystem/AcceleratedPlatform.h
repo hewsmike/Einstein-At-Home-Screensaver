@@ -22,8 +22,8 @@
 #define ACCELERATED_PLATFORM_H_
 
 #include "CameraState.h"
-#include "InertialPlatform.h"
-#include "SpinPlatform.h"
+#include "VelocityPlatform.h"
+#include "RotatablePlatform.h"
 
 /**
  * \addtogroup solarsystem Solarsystem
@@ -31,71 +31,113 @@
  */
 
 /**
- * \brief Accelerated Cartesian translatable orthonormal vector set
+ * \brief Fully accelerated Cartesian orthonormal vector set
  *
- * This class comprises acceleration state data, accessors and mutators thereof.
- * HOWEVER this doesn't model angular acceleration ( around centre of mass ),
- * only linear ( of centre of mass ). A constant angular rotation rate is
- * already an acceleration ... :-)
+ *      This class comprises acceleration state data, accessors
+ * and mutators thereof. HOWEVER this doesn't model angular
+ * acceleration ( around centre of mass ), only linear ( of
+ * centre of mass ) and constant angular rotation rates.
  *
  * \author Mike Hewson\n
  */
 
-class AcceleratedPlatform : public InertialPlatform, public SpinPlatform {
-   public:
-      /**
-       * \brief Constructor
-       */
-      AcceleratedPlatform(void);
+class AcceleratedPlatform : public VelocityPlatform, public RotatablePlatform {
+    public:
+        /**
+         * \brief Constructor
+         */
+        AcceleratedPlatform(void);
 
-      /**
-       * \brief Destructor
-       */
-      virtual ~AcceleratedPlatform();
+        /**
+         * \brief Destructor
+         */
+        virtual ~AcceleratedPlatform();
 
-      /**
-       * \brief Get the acceleration
-       */
-      Vector3D linear_acceleration(void) const;
+        /**
+         * \brief Get the acceleration
+         *
+         * \return a vector representing the acceleration
+         */
+        Vector3D linearAcceleration(void) const;
 
-      /**
-       * \brief Set the acceleration
-       */
-      void set_linear_acceleration(const Vector3D& ac);
+        /**
+         * \brief Set the acceleration
+         *
+         * \param acceleration : a vector indicating the desired acceleration
+         */
+        void setLinearAcceleration(const Vector3D& acceleration);
 
-      void set_pitch_rate(vec_t rate);
+        /**
+         * \brief Get the current rate of change of pitch
+         *
+         * \return the pitch rate
+         */
+        vec_t pitchRate(void);
 
-      void set_roll_rate(vec_t rate);
+        /**
+         * \brief Get the current rate of change of roll
+         *
+         * \return the roll rate
+         */
+        vec_t rollRate(void);
 
-      void set_yaw_rate(vec_t rate);
+        /**
+         * \brief Get the current rate of change of yaw
+         *
+         * \return the yaw rate
+         */
+        vec_t yawRate(void);
 
-      CameraState getViewState(void) const;
+        /**
+         * \brief Set the pitch rate
+         *
+         * \param the pitch angular rate ( notional units )
+         */
+        void setPitchRate(vec_t rate);
 
-      void setViewState(const CameraState& cam);
+        /**
+         * \brief Set the roll rate
+         *
+         * \param the roll angular rate ( notional units )
+         */
+        void setRollRate(vec_t rate);
 
-      vec_t get_pitch_rate(void);
+        /**
+         * \brief Set the yaw rate
+         *
+         * \param the yaw angular rate ( notional units )
+         */
+        void setYawRate(vec_t rate);
 
-      vec_t get_roll_rate(void);
+        CameraState getViewState(void) const;
 
-      vec_t get_yaw_rate(void);
+        void setViewState(const CameraState& cam);
 
-      /**
-       * \brief Reset the platform in acceleration, velocity, position
-       * and rotation
-       */
-      virtual void reset(void);
+        /**
+         * \brief Reset the platform in acceleration, velocity, position
+         * and rotation
+         */
+        virtual void reset(void);
 
-      /**
-       * \brief Evolve platform one unit step in time
-       */
-      virtual void step(void);
+        /**
+         * \brief Evolve platform one unit step in time
+         */
+        virtual void step(void);
 
-   private:
-      /// Fiducial acceleration.
-      static const Vector3D INIT_ACC;
+    private:
+        /// Initial centre of mass acceleration.
+        static const Vector3D INITIAL_LINEAR_ACCELERATION;
 
-      // Current acceleration in space.
-      Vector3D acc;
+        /// Initial around centre of mass rotations.
+        static const vec_t NULL_RATE;
+
+        // Current rotation rates.
+        vec_t pitch_rate;
+        vec_t roll_rate;
+        vec_t yaw_rate;
+
+        // Current acceleration in space.
+        Vector3D acc;
    };
 
 /**

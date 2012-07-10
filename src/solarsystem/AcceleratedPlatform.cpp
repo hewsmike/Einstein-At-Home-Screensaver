@@ -20,77 +20,97 @@
 
 #include "AcceleratedPlatform.h"
 
-// The initial acceleration is none.
-const Vector3D AcceleratedPlatform::INIT_ACC(Vector3D::NULLV);
+// The initial acceleration is none in either translation or rotation.
+const Vector3D AcceleratedPlatform::INITIAL_LINEAR_ACCELERATION(Vector3D::NULLV);
+const Vector3D AcceleratedPlatform::NULL_RATE(0.0f);
 
-AcceleratedPlatform::AcceleratedPlatform(void) : acc(INIT_ACC) {
-	}
+AcceleratedPlatform::AcceleratedPlatform(void) : acc(INITIAL_LINEAR_ACCELERATION) {
+    }
 
 AcceleratedPlatform::~AcceleratedPlatform() {
-   }
+    }
 
-Vector3D AcceleratedPlatform::linear_acceleration(void) const {
-   return acc;
-   }
+Vector3D AcceleratedPlatform::linearAcceleration(void) const {
+    return acc;
+    }
 
-void AcceleratedPlatform::set_linear_acceleration(const Vector3D& ac) {
-   acc = ac;
-   }
+void AcceleratedPlatform::setLinearAcceleration(const Vector3D& acceleration) {
+    acc = ac;
+    }
 
-void AcceleratedPlatform::set_pitch_rate(vec_t rate) {
-   SpinPlatform::pitch_rate = rate;
-   }
+void AcceleratedPlatform::setPitchRate(vec_t rate) {
+    pitch_rate = rate;
+    }
 
-void AcceleratedPlatform::set_roll_rate(vec_t rate) {
-   SpinPlatform::roll_rate = rate;
-   }
+void AcceleratedPlatform::setRollRate(vec_t rate) {
+    roll_rate = rate;
+    }
 
-void AcceleratedPlatform::set_yaw_rate(vec_t rate) {
-   SpinPlatform::yaw_rate = rate;
-   }
+void AcceleratedPlatform::setYawRate(vec_t rate) {
+    yaw_rate = rate;
+    }
 
 CameraState AcceleratedPlatform::getViewState(void) const {
-	return CameraState(this->position(),
-							 this->look(),
-							 this->up());
-	}
+    return CameraState(PositionPlatform.position(),
+                       OrthoNormalPlatform.look(),
+                       OrthoNormalPlatform.up());
+    }
 
 void AcceleratedPlatform::setViewState(const CameraState& cam) {
-	this->set_position(cam.position());
-	this->set_look(cam.focus());
-	this->set_up(cam.orientation());
-	}
+    PositionPlatform::setPosition(cam.position());
+    OrthoNormalPlatform::setOrientation(cam.focus(), cam.orientation());
+    }
 
-vec_t AcceleratedPlatform::get_pitch_rate(void) {
-   return SpinPlatform::pitch_rate;
-   }
+vec_t AcceleratedPlatform::pitchRate(void) {
+    return pitch_rate;
+    }
 
-vec_t AcceleratedPlatform::get_roll_rate(void) {
-   return SpinPlatform::roll_rate;
-   }
+vec_t AcceleratedPlatform::rollRate(void) {
+    return roll_rate;
+    }
 
-vec_t AcceleratedPlatform::get_yaw_rate(void) {
-   return SpinPlatform::yaw_rate;
-   }
+vec_t AcceleratedPlatform::yawRate(void) {
+    return yaw_rate;
+    }
 
 void AcceleratedPlatform::reset(void) {
-   // Not only reset to a choice of initial acceleration ...
-   set_linear_acceleration(INIT_ACC);
+    // Not only reset to a choice of initial acceleration ...
+    setLinearAcceleration(INITIAL_LINEAR_ACCELERATION);
 
-   // ... but also reset the velocity, position.
-   InertialPlatform::reset();
+    // But also reset the velocity, position.
+    VelocityPlatform::reset();
 
-   // ... and in rotation and orientation.
-   SpinPlatform::reset();
-   }
+    // ... and in rotation rates and orientation.
+    setPitchRate(NULL_RATE);
+    setRollRate(NULL_RATE);
+    setYawRate(NULL_RATE);
+    OrthoNormalPlatform::reset();
+    }
 
 void AcceleratedPlatform::step(void) {
-   // Evolve in velocity as per current linear acceleration.
-   InertialPlatform::set_velocity(InertialPlatform::velocity() + acc);
+    // Evolve in velocity as per current linear acceleration.
+    VelocityPlatform::setVelocity(VelocityPlatform::velocity() + acc);
 
-   // Call parent class to further state evolution in translation.
-   InertialPlatform::step();
+    // Call parent class to further state evolution in translation.
+    VelocityPlatform::step();
 
-   // Call parent class to further state evolution in rotation.
-   SpinPlatform::step();
-   }
+    // Confession here : while these operations don't actually commute,
+    // you have to pick some ordering to implement and I chose
+    // alphabetical. Commutation is approached in the limit of tiny
+    // rates. But hey, don't use this code to land the Space Shuttle ! :-)
+    pitch(pitch_rate);
+    roll(roll_rate);
+    yaw(yaw_rate);
+    }
+
+void RotatablePlatform::setPitchRate(vec_t rate) {
+    pitch_rate = rate;
+    }
+
+void RotatablePlatform::setRollRate(vec_t rate) {
+    roll_rate = rate;
+    }
+
+void RotatablePlatform::setYawRate(vec_t rate){
+    yaw_rate = rate;
+    }
