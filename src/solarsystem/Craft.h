@@ -104,14 +104,15 @@ class Craft {
          */
         void setViewState(const CameraState& camera);
 
+        static const Vector3D START_POSITION;
+
     private:
+        static const vec_t START_RADIUS;
+
         /// Global bounds for craft position
         static const vec_t MAX_RANGE;
         static const vec_t MIN_EARTH_RANGE;
         static const vec_t MIN_SUN_RANGE;
-
-        static const vec_t START_RADIUS;
-        static const Vector3D START_POSITION;
 
         /// Top speed of craft in whatever nett direction
         static const vec_t MAX_SPEED;

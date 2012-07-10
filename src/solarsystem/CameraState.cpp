@@ -22,7 +22,7 @@
 
 #include "Craft.h"
 
-CameraState::CameraState(void) {
+CameraState::CameraState(void) : where(Craft::START_POSITION) {
     }
 
 CameraState::CameraState(const Vector3D& position,
