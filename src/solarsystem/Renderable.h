@@ -77,7 +77,7 @@ class Renderable {
          *
          * \return The activation state.
          */
-        Renderable::activity_state is_activated() const;
+        Renderable::activity_state isActivated() const;
 
         /**
          * \brief Cycles the activation state of the object.
@@ -87,12 +87,12 @@ class Renderable {
         /**
          * \brief Retrieves the rendering quality level.
          */
-        SolarSystemGlobals::render_quality render_level(void);
+        SolarSystemGlobals::render_quality renderLevel(void);
 
         /**
          * \brief Sets the rendering quality level.
          */
-        void set_render_level(SolarSystemGlobals::render_quality rq);
+        void setRenderLevel(SolarSystemGlobals::render_quality rq);
 
         /**
          * \brief Sets the font.

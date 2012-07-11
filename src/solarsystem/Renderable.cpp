@@ -45,7 +45,7 @@ void Renderable::inactivate(void) {
     activity = Renderable::INACTIVE;
     }
 
-Renderable::activity_state Renderable::is_activated(void) const {
+Renderable::activity_state Renderable::isActivated(void) const {
     return activity;
     }
 
@@ -62,11 +62,11 @@ void Renderable::draw(void) {
         }
     }
 
-SolarSystemGlobals::render_quality Renderable::render_level(void) {
+SolarSystemGlobals::render_quality Renderable::renderLevel(void) {
     return quality;
     }
 
-void Renderable::set_render_level(SolarSystemGlobals::render_quality rq) {
+void Renderable::setRenderLevel(SolarSystemGlobals::render_quality rq) {
     // Remember new quality setting.
     quality = rq;
 
