@@ -60,197 +60,212 @@
  */
 
 /**
- * \brief %Solarsystem Container for 3D scene renderable elements
+ * \brief %Solarsystem Container for scene renderable elements
  *
- * This class aggregates all the 3D scene elements ( non-HUD ) that one
- * wants in a given rendering frame.
+ *      This class aggregates all the scene elements ( 3D + HUD )
+ * that one wants in a given rendering frame.
  *
+ * \see AutoPilot
+ * \see CameraState
+ * \see Constellations
+ * \see Craft
+ * \see Globe
+ * \see GridGlobe
+ * \see HUDBorderLayout
+ * \see HUDFlowLayout
+ * \see HUDImage
+ * \see HUDTextLineScroll
+ * \see Pulsars
+ * \see PulsarsEAH
  * \see Renderable
+ * \see Stars
+ * \see Supernovae
+ * \see UTC
+ * \see Vector3D
  *
  * \author Mike Hewson\n
  */
 
 class Simulation : public Renderable {
-   public:
-      /// Enumerants for the scene elements
-      enum content {AXES, CONSTELLATIONS, EARTH, EARTH_GRID, SUN, SKY_GRID, PULSARS, SUPERNOVAE, HUDOVER, AUTOPILOT};
+    public:
+        /// Enumerants for the scene elements
+        enum content {AXES, CONSTELLATIONS, EARTH, EARTH_GRID, SUN, SKY_GRID, PULSARS, SUPERNOVAE, HUDOVER, AUTOPILOT};
 
-      /**
-       * \brief Constructor
-       */
-      Simulation(void);
+        /**
+        * \brief Constructor
+        */
+        Simulation(void);
 
-      /**
-       * \brief Destructor
-       */
-      virtual ~Simulation();
+        /**
+        * \brief Destructor
+        */
+        virtual ~Simulation();
 
-      void step(void);
+        void step(void);
 
-      void moveRequest(Craft::movements mv);
+        void moveRequest(Craft::movements mv);
 
-      void resize(GLuint width, GLuint height);
+        void resize(GLuint width, GLuint height);
 
-      void setFont(content element, OGLFT_ft* font);
+        void setFont(content element, OGLFT_ft* font);
 
-      const CameraState viewPoint(void);
+        const CameraState viewPoint(void);
 
-      // This is not the Renderable base class function,
-      // it is additional to that interface and allows
-      // per component cycling.
-      void cycle(Simulation::content ct);
+        // This is not the Renderable base class function,
+        // it is additional to that interface and allows
+        // per component cycling.
+        void cycle(Simulation::content ct);
 
-   protected:
-      /// These three routines below satisfy the Renderable interface.
+        protected:
+        /// These three routines below satisfy the Renderable interface.
 
-      /// Provide OpenGL code to prepare for rendering.
-      virtual void prepare(SolarSystemGlobals::render_quality rq);
+        /// Provide OpenGL code to prepare for rendering.
+        virtual void prepare(SolarSystemGlobals::render_quality rq);
 
-      /// Provide OpenGL code to release any resources used.
-      virtual void release(void);
+        /// Provide OpenGL code to release any resources used.
+        virtual void release(void);
 
-      /// Provide OpenGL code to render the object.
-      virtual void render(void);
+        /// Provide OpenGL code to render the object.
+        virtual void render(void);
 
-   private:
-      static const std::string EARTH_NAME;
-      static const std::string EARTH_IMAGE_RESOURCE;
-      static const GLuint EARTH_STACKS;
-      static const GLuint EARTH_SLICES;
-      static const GLfloat EARTH_TEXTURE_OFFSET;
+    private:
+        static const std::string EARTH_NAME;
+        static const std::string EARTH_IMAGE_RESOURCE;
+        static const GLuint EARTH_STACKS;
+        static const GLuint EARTH_SLICES;
+        static const GLfloat EARTH_TEXTURE_OFFSET;
 
-      static const std::string SUN_NAME;
-      static const std::string SUN_IMAGE_RESOURCE;
-      static const GLuint SUN_STACKS;
-      static const GLuint SUN_SLICES;
-      static const GLfloat SUN_TEXTURE_OFFSET;
+        static const std::string SUN_NAME;
+        static const std::string SUN_IMAGE_RESOURCE;
+        static const GLuint SUN_STACKS;
+        static const GLuint SUN_SLICES;
+        static const GLfloat SUN_TEXTURE_OFFSET;
 
-      static const GLfloat AT_INFINITY;
+        static const GLfloat AT_INFINITY;
 
-      /// Ephemeris interval counter limit values.
-      static const unsigned int COUNT_START;
-      static const unsigned int COUNT_END;
+        /// Ephemeris interval counter limit values.
+        static const unsigned int COUNT_START;
+        static const unsigned int COUNT_END;
 
-      static const GLuint CONSTELLATIONS_RADIUS;
+        static const GLuint CONSTELLATIONS_RADIUS;
 
-      static const GLuint PULSARS_RADIUS;
-      static const GLfloat PULSARS_MAG_SIZE;
-      static const GLfloat PULSARS_RGB_RED;
-      static const GLfloat PULSARS_RGB_GREEN;
-      static const GLfloat PULSARS_RGB_BLUE;
+        static const GLuint PULSARS_RADIUS;
+        static const GLfloat PULSARS_MAG_SIZE;
+        static const GLfloat PULSARS_RGB_RED;
+        static const GLfloat PULSARS_RGB_GREEN;
+        static const GLfloat PULSARS_RGB_BLUE;
 
-      static const GLuint SUPERNOVAE_RADIUS;
-      static const GLfloat SUPERNOVAE_MAG_SIZE;
-      static const GLfloat SUPERNOVAE_RGB_RED;
-      static const GLfloat SUPERNOVAE_RGB_GREEN;
-      static const GLfloat SUPERNOVAE_RGB_BLUE;
+        static const GLuint SUPERNOVAE_RADIUS;
+        static const GLfloat SUPERNOVAE_MAG_SIZE;
+        static const GLfloat SUPERNOVAE_RGB_RED;
+        static const GLfloat SUPERNOVAE_RGB_GREEN;
+        static const GLfloat SUPERNOVAE_RGB_BLUE;
 
+        static const GLuint SKYGRID_RADIUS;
+        static const GLuint SKYGRID_STACKS;
+        static const GLuint SKYGRID_SLICES;
+        static const GLfloat SKYGRID_MAIN_WIDTH;
+        static const GLfloat SKYGRID_MAIN_RED;
+        static const GLfloat SKYGRID_MAIN_GREEN;
+        static const GLfloat SKYGRID_MAIN_BLUE;
+        static const GLfloat SKYGRID_CELESTIAL_EQUATOR_WIDTH;
+        static const GLfloat SKYGRID_CELESTIAL_EQUATOR_RED;
+        static const GLfloat SKYGRID_CELESTIAL_EQUATOR_GREEN;
+        static const GLfloat SKYGRID_CELESTIAL_EQUATOR_BLUE;
+        static const GLfloat SKYGRID_PRIME_MERIDIAN_WIDTH;
+        static const GLfloat SKYGRID_PRIME_MERIDIAN_RED;
+        static const GLfloat SKYGRID_PRIME_MERIDIAN_GREEN;
+        static const GLfloat SKYGRID_PRIME_MERIDIAN_BLUE;
 
-      static const GLuint SKYGRID_RADIUS;
-      static const GLuint SKYGRID_STACKS;
-      static const GLuint SKYGRID_SLICES;
-      static const GLfloat SKYGRID_MAIN_WIDTH;
-      static const GLfloat SKYGRID_MAIN_RED;
-      static const GLfloat SKYGRID_MAIN_GREEN;
-      static const GLfloat SKYGRID_MAIN_BLUE;
-      static const GLfloat SKYGRID_CELESTIAL_EQUATOR_WIDTH;
-      static const GLfloat SKYGRID_CELESTIAL_EQUATOR_RED;
-      static const GLfloat SKYGRID_CELESTIAL_EQUATOR_GREEN;
-      static const GLfloat SKYGRID_CELESTIAL_EQUATOR_BLUE;
-      static const GLfloat SKYGRID_PRIME_MERIDIAN_WIDTH;
-      static const GLfloat SKYGRID_PRIME_MERIDIAN_RED;
-      static const GLfloat SKYGRID_PRIME_MERIDIAN_GREEN;
-      static const GLfloat SKYGRID_PRIME_MERIDIAN_BLUE;
+        static const GLuint EARTHGRID_RADIUS;
+        static const GLuint EARTHGRID_STACKS;
+        static const GLuint EARTHGRID_SLICES;
+        static const GLfloat EARTHGRID_MAIN_WIDTH;
+        static const GLfloat EARTHGRID_MAIN_RED;
+        static const GLfloat EARTHGRID_MAIN_GREEN;
+        static const GLfloat EARTHGRID_MAIN_BLUE;
+        static const GLfloat EARTHGRID_CELESTIAL_EQUATOR_WIDTH;
+        static const GLfloat EARTHGRID_CELESTIAL_EQUATOR_RED;
+        static const GLfloat EARTHGRID_CELESTIAL_EQUATOR_GREEN;
+        static const GLfloat EARTHGRID_CELESTIAL_EQUATOR_BLUE;
+        static const GLfloat EARTHGRID_PRIME_MERIDIAN_WIDTH;
+        static const GLfloat EARTHGRID_PRIME_MERIDIAN_RED;
+        static const GLfloat EARTHGRID_PRIME_MERIDIAN_GREEN;
+        static const GLfloat EARTHGRID_PRIME_MERIDIAN_BLUE;
 
-      static const GLuint EARTHGRID_RADIUS;
-      static const GLuint EARTHGRID_STACKS;
-      static const GLuint EARTHGRID_SLICES;
-      static const GLfloat EARTHGRID_MAIN_WIDTH;
-      static const GLfloat EARTHGRID_MAIN_RED;
-      static const GLfloat EARTHGRID_MAIN_GREEN;
-      static const GLfloat EARTHGRID_MAIN_BLUE;
-      static const GLfloat EARTHGRID_CELESTIAL_EQUATOR_WIDTH;
-      static const GLfloat EARTHGRID_CELESTIAL_EQUATOR_RED;
-      static const GLfloat EARTHGRID_CELESTIAL_EQUATOR_GREEN;
-      static const GLfloat EARTHGRID_CELESTIAL_EQUATOR_BLUE;
-      static const GLfloat EARTHGRID_PRIME_MERIDIAN_WIDTH;
-      static const GLfloat EARTHGRID_PRIME_MERIDIAN_RED;
-      static const GLfloat EARTHGRID_PRIME_MERIDIAN_GREEN;
-      static const GLfloat EARTHGRID_PRIME_MERIDIAN_BLUE;
+        /// HUD orthographic clip bounds.
+        static const GLint HUD_LEFT_CLIP;
+        static const GLint HUD_BOTTOM_CLIP;
+        static const GLint HUD_NEAR_CLIP;
+        static const GLint HUD_FAR_CLIP;
 
-      /// HUD orthographic clip bounds.
-      static const GLint HUD_LEFT_CLIP;
-      static const GLint HUD_BOTTOM_CLIP;
-      static const GLint HUD_NEAR_CLIP;
-      static const GLint HUD_FAR_CLIP;
+        void loadPulsars(void);
 
-      void loadPulsars(void);
+        void loadPulsarsEAH(void);
 
-      void loadPulsarsEAH(void);
+        void loadSupernovae(void);
 
-      void loadSupernovae(void);
+        /// The current screen/window dimensions
+        GLuint screen_width;
+        GLuint screen_height;
 
-      /// The current screen/window dimensions
-      GLuint screen_width;
-      GLuint screen_height;
+        /// Ephemeris refresh interval counter.
+        unsigned int count_down;
 
-      /// Ephemeris refresh interval counter.
-      unsigned int count_down;
+        AutoPilot pilot;
 
-      AutoPilot pilot;
+        /// Last UTC query
+        int min60;
 
-      /// Last UTC query
-      int min60;
+        int hour24;
 
-      int hour24;
+        GLfloat day366;
 
-      GLfloat day366;
+        /// Variable Earth factors.
+        GLfloat earth_hour_angle;
 
-      /// Variable Earth factors.
-      GLfloat earth_hour_angle;
+        /// Variable Sun factors
+        GLfloat sun_rot_angle;
+        Vector3D sun_pos;
 
-      /// Variable Sun factors
-      GLfloat sun_rot_angle;
-      Vector3D sun_pos;
+        /// The renderable scene elements
+        Constellations cs;
+        Stars<Pulsar> ps;
+        Stars<PulsarEAH> ps_EAH;
+        Stars<Supernova> sn;
+        GridGlobe c_sphere;
+        Globe earth;
+        GridGlobe e_sphere;
+        Globe sun;
 
-      /// The renderable scene elements
-      Constellations cs;
-      Stars<Pulsar> ps;
-      Stars<PulsarEAH> ps_EAH;
-      Stars<Supernova> sn;
-      GridGlobe c_sphere;
-      Globe earth;
-      GridGlobe e_sphere;
-      Globe sun;
+        Craft flyboy;
 
-      Craft flyboy;
+        CameraState autopilot_view;
 
-      CameraState autopilot_view;
+        UTC clock;
 
-      UTC clock;
+        std::map<content, OGLFT_ft*> fonts;
 
-      std::map<content, OGLFT_ft*> fonts;
+        HUDImage* aei_image;
+        HUDImage* aps_image;
+        HUDImage* boinc_image;
+        HUDImage* geo_image;
+        HUDImage* ligo_image;
+        HUDImage* opencl_image;
+        HUDImage* virgo_image;
+        HUDImage* wyp_image;
+        HUDTextLineScroll* version_text;
 
-      HUDImage* aei_image;
-      HUDImage* aps_image;
-      HUDImage* boinc_image;
-      HUDImage* geo_image;
-      HUDImage* ligo_image;
-      HUDImage* opencl_image;
-      HUDImage* virgo_image;
-      HUDImage* wyp_image;
-      HUDTextLineScroll* version_text;
+        HUDBorderLayout overlay;
 
-      HUDBorderLayout overlay;
+        HUDFlowLayout north_panel;
+        HUDFlowLayout south_panel;
+        HUDFlowLayout east_panel;
+        HUDFlowLayout west_panel;
 
-      HUDFlowLayout north_panel;
-      HUDFlowLayout south_panel;
-      HUDFlowLayout east_panel;
-      HUDFlowLayout west_panel;
-
-      void LoadImageToPanel(HUDImage* hip, HUDFlowLayout* hfl,
-      							 std::string resource_name, GLuint margin_x, GLuint margin_y);
-	};
+        void LoadImageToPanel(HUDImage* hip, HUDFlowLayout* hfl,
+                              std::string resource_name, GLuint margin_x, GLuint margin_y);
+    };
 
 /**
  * @}
