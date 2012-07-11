@@ -73,58 +73,81 @@ bool AutoPilot::isActive(void) const {
     }
 
 CameraState AutoPilot::viewState(void) {
+    // Counter for pausing at LookOuts.
     static GLuint count_down = PAUSE_FRAME_COUNT;
+    // Flag to indicate if we are pausing or not.
     static bool pause_flag = false;
 
+    // Are we waiting at a Lookout ?
     if(pause_flag != true) {
-        // Increment along the current path.
+        // No, so increment along the current path.
         lambda += current_delta_lambda;
 
         // Is it the end of the current path ??
         if(lambda >= Path::LAMBDA_UPPER_BOUND) {
-            // Then pause movement and reset pause counter.
+            // Then pause movement and (re-)set the pause counter.
             pause_flag = true;
             count_down = PAUSE_FRAME_COUNT;
             }
         }
     else {
-        // One less frame to wait here.
+        // Yes we are waiting, so one less frame to wait here.
         --count_down;
 
         // End of pause interval ?
         if(count_down == 0) {
+            // Yes, so move on to evolve the next available Path.
             current_path = current_traverse.getNextPath();
+            // Find the right lambda increment for this new Path.
             set_delta_lambda();
+            // Unpause movement.
             pause_flag = false;
             }
         }
 
+    // Set the description as unchanged.
     description_change_flag = false;
 
+    // Are we in the LATE portion of a Path?
     if(lambda > PATH_LATE_BOUNDARY) {
+        // Yes, so have we just transitioned from the MIDDLE portion?
         if(path_stage_flag == MIDDLE) {
+            // Yes, thus set the stage as LATE.
             path_stage_flag = LATE;
-            description_change_flag = true;
+            // Change the current description to that of the upcoming Lookout.
             current_description = current_path.getFinishMessage();
+            // Flag that the description has therefore altered.
+            description_change_flag = true;
             }
         }
     else {
+        // No, so we aren't in the LATE part of the current Path.
+        // Are we in the EARLY part?
         if (lambda < PATH_EARLY_BOUNDARY) {
+            // Yes, so have we just transitioned from the LATE portion?
             if(path_stage_flag == LATE) {
+                // Yes, thus set the stage as EARLY.
                 path_stage_flag = EARLY;
-                description_change_flag = true;
-                current_description = current_path.getStartMessage();
+                // NB : We don't need to change any description as, if properly
+                // setup elsewhere, the Finish message for one Path is the
+                // Start message for the next.
                 }
             }
         else {
+            // No, we aren't in the EARLY part either, must be the MIDDLE.
+            // But have we just transitioned from the MIDDLE portion?
             if(path_stage_flag == EARLY) {
+                // So set the stage as MIDDLE.
                 path_stage_flag = MIDDLE;
-                description_change_flag = true;
+                // Clear the descriptions.
                 current_description.clear();
+                // Flag that the description has therefore altered.
+                description_change_flag = true;
                 }
             }
         }
 
+    // Update the camera state according to the current lambda value.
     view = current_path.value(lambda);
 
     return view;
@@ -163,11 +186,16 @@ void AutoPilot::set_delta_lambda(void) {
     }
 
 void AutoPilot::getTraverse(const Traversable& trav, const CameraState& cam) {
+    // Empty any existing Traverse data.
+    current_traverse.clear();
+
+    // Construct a Lookout from the existing position and orientation
+    // within the Simulation.
     LookOut first(cam.position(), cam.focus(), cam.orientation());
-    // Kick off traverse with the given camera state.
+    // Use that as the initial Lookout in the Traverse being constructed.
     current_traverse.addLookout(first);
 
-    // The remainder from our given Traversable object.
+    // The remaining Lookouts come from our given Traversable object.
     for(unsigned int way_point = 0; way_point < trav.numberOfWayPoints(); ++way_point) {
         current_traverse.addLookout(trav.getView(way_point));
         }

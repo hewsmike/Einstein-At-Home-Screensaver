@@ -41,13 +41,14 @@
  * the concept of a Traverse, being a series of waypoints or Lookouts
  * separate by Paths. When the Autopilot is engaged a Traverse is created
  * by querying a Traversable object and combining the received listing
- * with the current CameraState. That yields and endless loop of viewpoints
- * to visit.
+ * with the current CameraState. That yields an endless loop of points of
+ * interest to visit.
  *
  * \see CameraState
+ * \see Curve
  * \see Path
- * \see Traverse
  * \see Traversable
+ * \see Traverse
  *
  * \author Mike Hewson\n
  */
@@ -78,7 +79,7 @@ class AutoPilot {
         void inactivate(void);
 
         /**
-         * \brief Query the activity state
+         * \brief Query the activation state
          *
          * \return a boolean indicating :
          *              TRUE if active
@@ -122,11 +123,10 @@ class AutoPilot {
         // frame based and not ( wall clock ) based.
         static const float LENGTH_PER_FRAME;
 
-        // Of the three curves that define a Path,
-        // what is the length of the shortest? This
-        // is used to govern the rate of change of
-        // camera state, and thus reduces the possibility
-        // of overly rapid movement and/or slewing.
+        // If a Path has the length of its longest Curve any
+        // LESS than this amount, then only one frame will
+        // be rendered. Prevents ( allegedly ) jerkiness or stutter
+        // with really short Paths - including those of zero length.
         static const float LEAST_PATH_LENGTH;
 
         // The number of frames to delay viewpoint
@@ -136,25 +136,36 @@ class AutoPilot {
         // Flag for activation state.
         bool active_flag;
 
-        // The
+        // The current CameraState which is progressively evolved.
         CameraState view;
 
+        // The Traverse currently being used in a cyclical fashion.
         Traverse current_traverse;
 
+        // The current Path within the current Traverse.
         Path current_path;
 
+        // The paramater used to evolve the CameraState along the current Path.
         float lambda;
 
+        // The increment in lambda to use which yields ( closely ) the LENGTH_PER_FRAME
+        // distance between CameraStates.
         float current_delta_lambda;
 
+        // The current set of descriptive strings.
         std::vector<std::string> current_description;
 
+        // A flag having the value of one of the path_stage enumerants that
+        // indicate the stage of the current Path that we are in.
         path_stage path_stage_flag;
 
+        // Flag indicating whether there has been a change of descriptive strings.
         bool description_change_flag;
 
+        // For the current Path decide upon the best increment in lambda to use.
         void set_delta_lambda(void);
 
+        // Populate
         void getTraverse(const Traversable& trav, const CameraState& cam);
     };
 
