@@ -134,10 +134,6 @@ const std::vector<std::string>& AutoPilot::getDescription(void) const {
     return current_description;
     }
 
-bool AutoPilot::hasDescriptionChanged(void) const {
-    return description_change_flag;
-    }
-
 void AutoPilot::set_delta_lambda(void) {
     // Note that a delta lambda of zero implies no movement !!
     lambda = Path::LAMBDA_LOWER_BOUND;

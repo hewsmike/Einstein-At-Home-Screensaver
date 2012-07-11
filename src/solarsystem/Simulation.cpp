@@ -187,7 +187,7 @@ void Simulation::setFont(content element, OGLFT_ft* font) {
    fonts[element] = font;
    }
 
-const CameraState Simulation::viewPoint(void) {
+const CameraState& Simulation::viewPoint(void) {
 	if(pilot.isActive()) {
 		// The autopilot is flying the craft.
 		if(version_text != NULL) {
