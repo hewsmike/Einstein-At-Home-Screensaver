@@ -36,9 +36,6 @@ const GLfloat Simulation::SUN_TEXTURE_OFFSET(0.0f);
 
 const GLfloat Simulation::AT_INFINITY(0.0f);
 
-const unsigned int Simulation::COUNT_START(5);
-const unsigned int Simulation::COUNT_END(0);
-
 const GLuint Simulation::CONSTELLATIONS_RADIUS(SolarSystemGlobals::CELESTIAL_SPHERE_RADIUS);
 
 const GLuint Simulation::PULSARS_RADIUS(SolarSystemGlobals::CELESTIAL_SPHERE_RADIUS - 25);
@@ -90,52 +87,68 @@ const GLint Simulation::HUD_BOTTOM_CLIP(0);
 const GLint Simulation::HUD_NEAR_CLIP(-1);
 const GLint Simulation::HUD_FAR_CLIP(+1);
 
-Simulation::Simulation(void): min60(0),
-                              hour24(0),
-                              day366(0),
-                              earth_hour_angle(0),
-                              sun_rot_angle(0),
-                              cs(CONSTELLATIONS_RADIUS),
-                              ps(PULSARS_RADIUS, PULSARS_MAG_SIZE, PULSARS_RGB_RED, PULSARS_RGB_GREEN, PULSARS_RGB_BLUE),
-                              sn(SUPERNOVAE_RADIUS, SUPERNOVAE_MAG_SIZE, SUPERNOVAE_RGB_RED, SUPERNOVAE_RGB_GREEN, SUPERNOVAE_RGB_BLUE),
-                              c_sphere(SKYGRID_RADIUS, SKYGRID_SLICES, SKYGRID_STACKS, GridGlobe::INSIDE),
-                              earth(EARTH_NAME,
-                                    EARTH_IMAGE_RESOURCE,
-                                    SolarSystemGlobals::EARTH_RADIUS,
-                                    EARTH_STACKS,
-                                    EARTH_SLICES,
-                                    EARTH_TEXTURE_OFFSET),
-                              e_sphere(EARTHGRID_RADIUS, EARTHGRID_SLICES, EARTHGRID_STACKS, GridGlobe::OUTSIDE),
-                              sun(SUN_NAME,
-                                  SUN_IMAGE_RESOURCE,
-                                  SolarSystemGlobals::SUN_RADIUS,
-                                  SUN_STACKS,
-                                  SUN_SLICES,
-                                  SUN_TEXTURE_OFFSET),
-                              autopilot_view(),
-                              aei_image(NULL),
-                              aps_image(NULL),
-                              boinc_image(NULL),
-                              geo_image(NULL),
-                              ligo_image(NULL),
-                              opencl_image(NULL),
-                              virgo_image(NULL),
-                              wyp_image(NULL),
-                              version_text(NULL),
-                              overlay(NULL),
-                              north_panel(&overlay, HUDFlowLayout::HORIZONTAL),
-                              south_panel(&overlay, HUDFlowLayout::HORIZONTAL),
-                              east_panel(&overlay, HUDFlowLayout::VERTICAL),
-                              west_panel(&overlay, HUDFlowLayout::VERTICAL) {
-   c_sphere.setLine(GridGlobe::MAIN, SKYGRID_MAIN_WIDTH, SKYGRID_MAIN_RED, SKYGRID_MAIN_GREEN, SKYGRID_MAIN_BLUE);
-   c_sphere.setLine(GridGlobe::EQUATOR, SKYGRID_CELESTIAL_EQUATOR_WIDTH, SKYGRID_CELESTIAL_EQUATOR_RED, SKYGRID_CELESTIAL_EQUATOR_GREEN, SKYGRID_CELESTIAL_EQUATOR_BLUE);
-   c_sphere.setLine(GridGlobe::PRIME_MERIDIAN, SKYGRID_PRIME_MERIDIAN_WIDTH, SKYGRID_PRIME_MERIDIAN_RED, SKYGRID_PRIME_MERIDIAN_GREEN, SKYGRID_PRIME_MERIDIAN_BLUE);
-   e_sphere.setLine(GridGlobe::MAIN, EARTHGRID_MAIN_WIDTH, EARTHGRID_MAIN_RED, EARTHGRID_MAIN_GREEN, EARTHGRID_MAIN_BLUE);
-   e_sphere.setLine(GridGlobe::EQUATOR, EARTHGRID_CELESTIAL_EQUATOR_WIDTH, EARTHGRID_CELESTIAL_EQUATOR_RED, EARTHGRID_CELESTIAL_EQUATOR_GREEN, EARTHGRID_CELESTIAL_EQUATOR_BLUE);
-   e_sphere.setLine(GridGlobe::PRIME_MERIDIAN, EARTHGRID_PRIME_MERIDIAN_WIDTH, EARTHGRID_PRIME_MERIDIAN_RED, EARTHGRID_PRIME_MERIDIAN_GREEN, EARTHGRID_PRIME_MERIDIAN_BLUE);
-   loadPulsars();
-   loadSupernovae();
-   }
+Simulation::Simulation(void) : cs(CONSTELLATIONS_RADIUS),
+                               ps(PULSARS_RADIUS, PULSARS_MAG_SIZE, PULSARS_RGB_RED, PULSARS_RGB_GREEN, PULSARS_RGB_BLUE),
+                               sn(SUPERNOVAE_RADIUS, SUPERNOVAE_MAG_SIZE, SUPERNOVAE_RGB_RED, SUPERNOVAE_RGB_GREEN, SUPERNOVAE_RGB_BLUE),
+                               c_sphere(SKYGRID_RADIUS, SKYGRID_SLICES, SKYGRID_STACKS, GridGlobe::INSIDE),
+                               earth(EARTH_NAME,
+                                     EARTH_IMAGE_RESOURCE,
+                                     SolarSystemGlobals::EARTH_RADIUS,
+                                     EARTH_STACKS,
+                                     EARTH_SLICES,
+                                     EARTH_TEXTURE_OFFSET),
+                               e_sphere(EARTHGRID_RADIUS, EARTHGRID_SLICES, EARTHGRID_STACKS, GridGlobe::OUTSIDE),
+                               sun(SUN_NAME,
+                                   SUN_IMAGE_RESOURCE,
+                                   SolarSystemGlobals::SUN_RADIUS,
+                                   SUN_STACKS,
+                                   SUN_SLICES,
+                                   SUN_TEXTURE_OFFSET),
+                               overlay(NULL),
+                               north_panel(&overlay, HUDFlowLayout::HORIZONTAL),
+                               south_panel(&overlay, HUDFlowLayout::HORIZONTAL),
+                               east_panel(&overlay, HUDFlowLayout::VERTICAL),
+                               west_panel(&overlay, HUDFlowLayout::VERTICAL) {
+    // Starting values of simulation parameters.
+    min60(0);
+    hour24(0);
+    day366(0);
+    earth_hour_angle(0);
+    sun_rot_angle(0);
+
+    // Image pointers.
+    aei_image(NULL);
+    aps_image(NULL);
+    boinc_image(NULL);
+    geo_image(NULL);
+    ligo_image(NULL);
+    opencl_image(NULL);
+    virgo_image(NULL);
+    wyp_image(NULL);
+
+    // Pointer to scrolling marquee.
+    version_text(NULL);
+
+    // Line rendering detail for celestial coordinate grids.
+    c_sphere.setLine(GridGlobe::MAIN, SKYGRID_MAIN_WIDTH,
+                     SKYGRID_MAIN_RED, SKYGRID_MAIN_GREEN, SKYGRID_MAIN_BLUE);
+    c_sphere.setLine(GridGlobe::EQUATOR, SKYGRID_CELESTIAL_EQUATOR_WIDTH,
+                     KYGRID_CELESTIAL_EQUATOR_RED, SKYGRID_CELESTIAL_EQUATOR_GREEN, SKYGRID_CELESTIAL_EQUATOR_BLUE);
+    c_sphere.setLine(GridGlobe::PRIME_MERIDIAN, SKYGRID_PRIME_MERIDIAN_WIDTH,
+                     SKYGRID_PRIME_MERIDIAN_RED, SKYGRID_PRIME_MERIDIAN_GREEN, SKYGRID_PRIME_MERIDIAN_BLUE);
+
+    // Line rendering detail for terrestrial coordinate grids.
+    e_sphere.setLine(GridGlobe::MAIN, EARTHGRID_MAIN_WIDTH,
+                     EARTHGRID_MAIN_RED, EARTHGRID_MAIN_GREEN, EARTHGRID_MAIN_BLUE);
+    e_sphere.setLine(GridGlobe::EQUATOR, EARTHGRID_CELESTIAL_EQUATOR_WIDTH,
+                     EARTHGRID_CELESTIAL_EQUATOR_RED, EARTHGRID_CELESTIAL_EQUATOR_GREEN, EARTHGRID_CELESTIAL_EQUATOR_BLUE);
+    e_sphere.setLine(GridGlobe::PRIME_MERIDIAN, EARTHGRID_PRIME_MERIDIAN_WIDTH,
+                     EARTHGRID_PRIME_MERIDIAN_RED, EARTHGRID_PRIME_MERIDIAN_GREEN, EARTHGRID_PRIME_MERIDIAN_BLUE);
+
+    // Get the pulsar and supernovae data.
+    loadPulsars();
+    loadSupernovae();
+    }
 
 Simulation::~Simulation() {
    }
@@ -174,13 +187,16 @@ void Simulation::moveRequest(Craft::movements mv) {
 void Simulation::resize(GLuint width, GLuint height) {
     screen_width = width;
     screen_height = height;
-    std::cout << "Simulation::resize() : resize screen to "
-              << "width = " << screen_width
-               << "\theight = " << screen_height << std::endl;
+
+    std::string msg;
+    msg << "Simulation::resize() - resize screen to "
+        << "width = " << width
+        << "\theight = " << height;
+    ErrorHandler::record(msg.str(), ErrorHandler::INFORM);
 
     // Now tell the HUD of such settings.
     // TODO - if resize denied then inactivate HUD ?? Complex ....
-        overlay.requestResize(width, height);
+    overlay.requestResize(width, height);
     }
 
 void Simulation::setFont(content element, OGLFT_ft* font) {
@@ -2610,10 +2626,11 @@ void Simulation::cycle(Simulation::content ct) {
         }
     }
 
-void Simulation::LoadImageToPanel(HUDImage* hip, HUDFlowLayout* hfl, std::string resource_name,
-                                  GLuint margin_x, GLuint margin_y) {
+void Simulation::LoadImageToPanel(HUDImage* hip, HUDFlowLayout* hfl,
+                                  std::string resource_name,
+                                  GLuint margin_width, GLuint margin_height) {
     // Put an image into the content.
-    hip = new HUDImage(resource_name, margin_x, margin_y);
+    hip = new HUDImage(resource_name, margin_width, margin_height);
     if(hip == NULL) {
         std::string msg = "Simulation::LoadImageToPanel() - failed creation of HUDImage instance on heap : ";
         msg += resource_name;
