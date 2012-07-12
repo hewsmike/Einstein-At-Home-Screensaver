@@ -321,8 +321,8 @@ void Globe::loadPolarIndexBuffer(Buffer_OBJ& polar_buffer, enum pole p) {
 
     // What size byte allocation are we after for this array of indices? For
     // each point we have sizeof(GLuint) worth. What is the point count ?
-    // - one for the pole (+1) , plus
-    // - one for each vertex within the stack just adjacent the pole.
+    //      - one for the pole (+1) , plus
+    //      - one for each vertex within the stack just adjacent the pole.
     GLsizeiptr polar_size = sizeof(GLuint) * (1 + verts_per_lat);
 
     GLuint* buffer_base_ptr = new GLuint[1 + verts_per_lat];

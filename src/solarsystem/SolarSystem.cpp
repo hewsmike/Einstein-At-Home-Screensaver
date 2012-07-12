@@ -262,166 +262,166 @@ void SolarSystem::initialize(const int width, const int height, const Resource* 
    }
 
 /**
- * Rendering routine:  this is what does the drawing:
+ * Rendering routine: this is what does the drawing:
  */
 void SolarSystem::render(const double tOD) {
-	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
-   // Clear the canvas plus set z ordering to the far-clip plane.
-   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    // Clear the canvas plus set z ordering to the far-clip plane.
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-   // Set modelview matrix to unity.
-   glLoadIdentity();
+    // Set modelview matrix to unity.
+    glLoadIdentity();
 
-   // Evolve the simulation.
-   sim.step();
+    // Evolve the simulation.
+    sim.step();
 
-   // Where are we etc .... in our virtual world?
-   const CameraState& cam = sim.viewPoint();
+    // Where are we etc .... in our virtual world?
+    const CameraState& cam = sim.viewPoint();
 
-   // Set up the camera position and orientation.
-   gluLookAt(cam.position().x(),
-				 cam.position().y(),							// eyes position
+    // Set up the camera position and orientation.
+    gluLookAt(cam.position().x(),
+                 cam.position().y(),                            // eyes position
              cam.position().z(),
              SolarSystem::FAR_LOOK_DISTANCE*cam.focus().x(),
              SolarSystem::FAR_LOOK_DISTANCE*cam.focus().y(),    // looking towards here
              SolarSystem::FAR_LOOK_DISTANCE*cam.focus().z(),
              cam.orientation().x(),
-             cam.orientation().y(),                        // which way is up?
+             cam.orientation().y(),                             // which way is up?
              cam.orientation().z());
 
-   // Render from the current viewpoint.
-   sim.draw();
+    // Render from the current viewpoint.
+    sim.draw();
 
-   // Check for and report any errors generated.
-   ErrorHandler::check_OpenGL_Error();
+    // Check for and report any errors generated.
+    ErrorHandler::check_OpenGL_Error();
 
-   // Switch buffers.
-   glfwSwapBuffers();
-   }
+    // Switch buffers.
+    glfwSwapBuffers();
+    }
 
 void SolarSystem::mouseButtonEvent(const int positionX, const int positionY,
                                    const AbstractGraphicsEngine::MouseButton buttonPressed) {
-   }
+    }
 
 void SolarSystem::mouseMoveEvent(const int deltaX, const int deltaY,
                                  const AbstractGraphicsEngine::MouseButton buttonPressed) {
-   switch(buttonPressed) {
-      case MouseButtonLeft:
-         break;
-      case MouseButtonRight:
-         break;
-      default:
-         break;
-      }
-   }
+    switch(buttonPressed) {
+        case MouseButtonLeft:
+            break;
+        case MouseButtonRight:
+            break;
+        default:
+            break;
+        }
+    }
 
 void SolarSystem::keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey keyPressed) {
-   switch(keyPressed) {
-      case KeyC:
-         sim.moveRequest(Craft::REVERSE);
-         break;
-      case KeyD:
-         sim.moveRequest(Craft::STOP_TRANSLATION);
-         break;
-      case KeyE:
-         sim.moveRequest(Craft::FORWARD);
-         break;
-      case KeyF:
-         sim.moveRequest(Craft::RIGHTWARDS);
-         break;
-      case KeyG:
-         sim.moveRequest(Craft::GO_HOME);
-         break;
-      case KeyK:
-         sim.moveRequest(Craft::ROLL_LEFT);
-         break;
-      case KeyL:
-         sim.moveRequest(Craft::STOP_ROTATION);
-         break;
-      case KeyO:
-         sim.moveRequest(Craft::PITCH_DOWN);
-         break;
-      case KeyR:
-         sim.moveRequest(Craft::UPWARDS);
-         break;
-      case KeyS:
-         sim.moveRequest(Craft::LEFTWARDS);
-         break;
-      case KeyV:
-         sim.moveRequest(Craft::DOWNWARDS);
-         break;
-      case KeyF1:
-         // TODO - future 'help' functionality
-         break;
-      case KeyF2:
-         // TODO - cycle the rendering level.
-         // SolarSystemGlobals::set_render_level(SolarSystemGlobals::RENDER_LOWEST);
-         break;
-      case KeyF4:
-      	// TODO - cycle the HUD
-         // sim.cycle(Simulation::HUDOVER);
-         break;
-      case KeyF5:
-         sim.cycle(Simulation::CONSTELLATIONS);
-         break;
-      case KeyF6:
-         sim.cycle(Simulation::PULSARS);
-         break;
-      case KeyF7:
-         sim.cycle(Simulation::SUPERNOVAE);
-         break;
-      case KeyF8:
-         sim.cycle(Simulation::SKY_GRID);
-         break;
-      case KeyF9:
-         sim.cycle(Simulation::EARTH_GRID);
-         break;
-      case KeyF12:
-         // TODO - Toggle the state of the autopilot
-         sim.cycle(Simulation::AUTOPILOT);
-         break;
-      case KeySpace:
-         sim.moveRequest(Craft::STOP_TRANSLATION);
-         sim.moveRequest(Craft::STOP_ROTATION);
-         break;
-      case KeyKP1:
-      	sim.moveRequest(Craft::YAW_LEFT);
-         break;
-      case KeyKP2:
-         sim.moveRequest(Craft::PITCH_UP);
-         break;
-      case KeyKP3:
-      	sim.moveRequest(Craft::YAW_RIGHT);
-      	break;
-      case KeyKP4:
-         sim.moveRequest(Craft::ROLL_LEFT);
-         break;
-      case KeyKP5:
-         sim.moveRequest(Craft::STOP_ROTATION);
-         break;
-      case KeyKP6:
-         sim.moveRequest(Craft::ROLL_RIGHT);
-         break;
-      case KeyKP8:
-         sim.moveRequest(Craft::PITCH_DOWN);
-         break;
-      case KeyComma:
-         sim.moveRequest(Craft::YAW_LEFT);
-         break;
-      case KeyPeriod:
-         sim.moveRequest(Craft::PITCH_UP);
-         break;
-      case KeyForwardSlash:
-         sim.moveRequest(Craft::YAW_RIGHT);
-         break;
-      case KeySemiColon:
-         sim.moveRequest(Craft::ROLL_RIGHT);
-         break;
-      default:
-         break;
-      }
-	}
+    switch(keyPressed) {
+        case KeyC:
+            sim.moveRequest(Craft::REVERSE);
+            break;
+        case KeyD:
+            sim.moveRequest(Craft::STOP_TRANSLATION);
+            break;
+        case KeyE:
+            sim.moveRequest(Craft::FORWARD);
+            break;
+        case KeyF:
+            sim.moveRequest(Craft::RIGHTWARDS);
+            break;
+        case KeyG:
+            sim.moveRequest(Craft::GO_HOME);
+            break;
+        case KeyK:
+            sim.moveRequest(Craft::ROLL_LEFT);
+            break;
+        case KeyL:
+            sim.moveRequest(Craft::STOP_ROTATION);
+            break;
+        case KeyO:
+            sim.moveRequest(Craft::PITCH_DOWN);
+            break;
+        case KeyR:
+            sim.moveRequest(Craft::UPWARDS);
+            break;
+        case KeyS:
+            sim.moveRequest(Craft::LEFTWARDS);
+            break;
+        case KeyV:
+            sim.moveRequest(Craft::DOWNWARDS);
+            break;
+        case KeyF1:
+            // TODO - future 'help' functionality
+            break;
+        case KeyF2:
+            // TODO - cycle the rendering level.
+            // SolarSystemGlobals::set_render_level(SolarSystemGlobals::RENDER_LOWEST);
+            break;
+        case KeyF4:
+            // TODO - cycle the HUD
+            // sim.cycle(Simulation::HUDOVER);
+            break;
+        case KeyF5:
+            sim.cycle(Simulation::CONSTELLATIONS);
+            break;
+        case KeyF6:
+            sim.cycle(Simulation::PULSARS);
+            break;
+        case KeyF7:
+            sim.cycle(Simulation::SUPERNOVAE);
+            break;
+        case KeyF8:
+            sim.cycle(Simulation::SKY_GRID);
+            break;
+        case KeyF9:
+            sim.cycle(Simulation::EARTH_GRID);
+            break;
+        case KeyF12:
+            // TODO - Toggle the state of the autopilot
+            sim.cycle(Simulation::AUTOPILOT);
+            break;
+        case KeySpace:
+                sim.moveRequest(Craft::STOP_TRANSLATION);
+                sim.moveRequest(Craft::STOP_ROTATION);
+                break;
+        case KeyKP1:
+            sim.moveRequest(Craft::YAW_LEFT);
+            break;
+        case KeyKP2:
+            sim.moveRequest(Craft::PITCH_UP);
+            break;
+        case KeyKP3:
+            sim.moveRequest(Craft::YAW_RIGHT);
+            break;
+        case KeyKP4:
+            sim.moveRequest(Craft::ROLL_LEFT);
+            break;
+        case KeyKP5:
+            sim.moveRequest(Craft::STOP_ROTATION);
+            break;
+        case KeyKP6:
+            sim.moveRequest(Craft::ROLL_RIGHT);
+            break;
+        case KeyKP8:
+            sim.moveRequest(Craft::PITCH_DOWN);
+            break;
+        case KeyComma:
+            sim.moveRequest(Craft::YAW_LEFT);
+            break;
+        case KeyPeriod:
+            sim.moveRequest(Craft::PITCH_UP);
+            break;
+        case KeyForwardSlash:
+            sim.moveRequest(Craft::YAW_RIGHT);
+            break;
+        case KeySemiColon:
+            sim.moveRequest(Craft::ROLL_RIGHT);
+            break;
+        default:
+            break;
+
+    }
 
 void SolarSystem::refreshLocalBOINCInformation() {
-   }
+    }
