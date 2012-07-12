@@ -28,138 +28,189 @@
 #include "Vector3D.h"
 
 /**
-* \addtogroup solarsystem Solarsystem
-* @{
-*/
+ * \addtogroup solarsystem Solarsystem
+ *  @{
+ */
 
 /**
-* \brief A renderable object of spherical shape with texture, to be
-* instantiated in detail for the Earth, the Sun etc
-*
-* \author Mike Hewson\n
-*/
+ * \brief A renderable object of spherical shape with grid
+ *        features, primarily used as for coordinate display.
+ *
+ * \author Mike Hewson\n
+ */
 
 class GridGlobe : public Renderable {
-   public:
-      enum lineType {MAIN, EQUATOR, PRIME_MERIDIAN};
+    public:
+        /// Enumerant of line features.
+        enum lineType {MAIN, EQUATOR, PRIME_MERIDIAN};
 
-      enum textFacing{INSIDE, OUTSIDE};
+        /// Which side will text be readable on?
+        enum textFacing{INSIDE, OUTSIDE};
 
-      GridGlobe(vec_t rad, GLuint slices, GLuint stacks, GridGlobe::textFacing tf);
+        /**
+         * \brief Constructor.
+         *
+         * \param rad : the radius of the sphere.
+         * \param slices : the number of longitudinal partitions.
+         * \param stacks : the number of latitudinal partitions.
+         * \param tf : the side ( in or out ) from which text ought be read.
+         */
+        GridGlobe(vec_t rad, GLuint slices, GLuint stacks, GridGlobe::textFacing tf);
 
-      virtual ~GridGlobe();
+        /**
+         * \brief Destructor.
+         */
+        virtual ~GridGlobe();
 
-      /**
-       * \brief Cycles the activation state of the object
-       */
-      virtual void cycleActivation(void);
+        /**
+         * \brief Cycles the activation state of the object
+         */
+        virtual void cycleActivation(void);
 
-      void setLine(lineType type,
-                   GLfloat width,
-                   GLfloat red,
-                   GLfloat green,
-                   GLfloat blue);
+        /**
+         * \brief Set the rendering features of a given line feature
+         *
+         * \param type : the line feature to set the values of.
+         * \param width : the width of the line.
+         * \param red : the red RGB compononet of the line.
+         * \param green : the green RGB compononet of the line.
+         * \param blue : the blue RGB compononet of the line.
+         */
+        void setLine(lineType type,
+                     GLfloat width,
+                     GLfloat red,
+                     GLfloat green,
+                     GLfloat blue);
 
-   private:
-      enum state {ALL_OFF, GRID, ALL_ON};
+    private:
+        /// Cyclic rendering states
+        enum state {ALL_OFF, GRID, ALL_ON};
 
-      static const state INITIAL_CYCLE_STATE;
+        /// Initial cycle state.
+        static const state INITIAL_CYCLE_STATE;
 
-      static const GLuint ARRAY_START;
-      static const GLsizei ARRAY_STRIDE;
-      static const GLuint BYTE_OFFSET;
-      static const GLuint COORDS_PER_VERTEX;
-      static const GLuint VERTICES_PER_LINK;
+        /// OpenGL server side buffer parameters.
+        static const GLuint ARRAY_START;
+        static const GLsizei ARRAY_STRIDE;
+        static const GLuint BYTE_OFFSET;
+        static const GLuint COORDS_PER_VERTEX;
+        static const GLuint VERTICES_PER_LINK;
 
-      static const bool STAGGERING;
-      static const bool STITCHING;
+        /// Whether adjacent latitudes have a longitude offset.
+        static const bool STAGGERING;
 
-      static const GLfloat TEXT_RATIO;
-      static const GLfloat TEXT_OTHER_RATIO;
-      static const GLfloat TEXT_OFFSET;
-      static const GLfloat TEXT_UNITS_RATIO;
+        /// Whether a prime meridian longitude is reproduced,
+        /// possibly required for later texture mapping.
+        static const bool STITCHING;
 
-      struct Vert {
-      	vec_t x_pos;
-         vec_t y_pos;
-         vec_t z_pos;
-         };
+        ///
+        static const GLfloat TEXT_RATIO;
+        static const GLfloat TEXT_OTHER_RATIO;
+        static const GLfloat TEXT_OFFSET;
+        static const GLfloat TEXT_UNITS_RATIO;
 
-      struct Line {
-         GLfloat width;
-         GLfloat red;
-         GLfloat green;
-         GLfloat blue;
-         };
+        struct Vert {
+            vec_t x_pos;
+            vec_t y_pos;
+            vec_t z_pos;
+            };
 
-      Line main;
-      Line equator;
-      Line prime_meridian;
+        struct Line {
+            GLfloat width;
+            GLfloat red;
+            GLfloat green;
+            GLfloat blue;
+            };
 
-      Sphere* sp;
+        Line main;
+        Line equator;
+        Line prime_meridian;
 
-      vec_t radius;
-      GLuint slices;
-      GLuint stacks;
+        Sphere* sp;
 
-      bool hasEquator;
+        vec_t radius;
+        GLuint slices;
+        GLuint stacks;
 
-      bool textInside;
+        bool hasEquator;
 
-      state current_cycle_state;
+        bool textInside;
 
-      GLuint grid_links;
+        state current_cycle_state;
 
-      GLuint prime_meridian_links;
+        GLuint grid_links;
 
-      GLuint celestial_equator_links;
+        GLuint prime_meridian_links;
 
-      /// The OpenGL buffer object wrapper for vertex data.
-      Buffer_OBJ buff_obj_points;
+        GLuint celestial_equator_links;
 
-      /// The OpenGL buffer object wrapper for grid vertex indices.
-      Buffer_OBJ buff_obj_grid_links;
+        /// The OpenGL buffer object wrapper for vertex data.
+        Buffer_OBJ buff_obj_points;
 
-      /// The OpenGL buffer object wrapper for grid vertex indices.
-      Buffer_OBJ buff_obj_prime_meridian_links;
+        /// The OpenGL buffer object wrapper for grid vertex indices.
+        Buffer_OBJ buff_obj_grid_links;
 
-      /// The OpenGL buffer object wrapper for grid vertex indices.
-      Buffer_OBJ buff_obj_celestial_equator_links;
+        /// The OpenGL buffer object wrapper for grid vertex indices.
+        Buffer_OBJ buff_obj_prime_meridian_links;
 
-      void loadVertexBuffer(void);
+        /// The OpenGL buffer object wrapper for grid vertex indices.
+        Buffer_OBJ buff_obj_celestial_equator_links;
 
-      void loadGridIndexBuffer(void);
+        /**
+         * \brief Load the vertex list into a server side buffer.
+         */
+        void loadVertexBuffer(void);
 
-      void loadPrimeMeridianIndexBuffer(void);
+        /**
+         * \brief Load the vertex indice list for the grid
+         *        into a server side buffer.
+         */
+        void loadGridIndexBuffer(void);
 
-      void loadCelestialEquatorIndexBuffer(void);
+        /**
+         * \brief Load the vertex indice list for the prime
+         *        meridian into a server side buffer.
+         */
+        void loadPrimeMeridianIndexBuffer(void);
 
-      void createMarkerLists(void);
+        /**
+         * \brief Load the vertex indice list for the celestial
+         *        equator into a server side buffer.
+         */
+        void loadCelestialEquatorIndexBuffer(void);
 
-      /**
-       * \brief Clears the OpenGL display lists for the grid marking symbols.
-       *
-       * Releases OpenGL display list resources associated with the grid markers,
-       * and empties the marker_lists STL container. Used when cycling the display
-       * components and overall resource release with inactivation.
-       */
-      void clearMarkerLists(void);
+        /**
+         * \brief Create display lists for coordinate markers.
+         */
+        void createMarkerLists(void);
 
-      /// Provide OpenGL code to prepare for rendering.
-      void prepare(SolarSystemGlobals::render_quality rq);
+        /**
+         * \brief Clears the OpenGL display lists for the grid marking symbols.
+         *
+         *      Releases OpenGL display list resources associated with the grid
+         * markers, and empties the marker_lists STL container. Used when cycling
+         * the display components and overall resource release with inactivation.
+         */
+        void clearMarkerLists(void);
 
-      /// Provide OpenGL code to release any resources used.
-      void release(void);
+        /// Provide OpenGL code to prepare for rendering.
+        void prepare(SolarSystemGlobals::render_quality rq);
 
-      /// Provide OpenGL code to render the object.
-      void render(void);
+        /// Provide OpenGL code to release any resources used.
+        void release(void);
 
-      GLuint hour_glyph;
+        /// Provide OpenGL code to render the object.
+        void render(void);
 
-      GLuint degree_glyph;
+        /// Assigned display list identifier for the hour glyph.
+        GLuint hour_glyph;
 
-      std::vector<std::vector<GLuint> > marker_lists;
-   };
+        /// Assigned display list identifier for the degree glyph.
+        GLuint degree_glyph;
+
+        /// The listing by latitude/stacks of the coordinate markers.
+        std::vector<std::vector<GLuint> > marker_lists;
+    };
 
 /**
 * @}
