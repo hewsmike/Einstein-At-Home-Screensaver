@@ -146,11 +146,11 @@ class AutoPilot {
         Path current_path;
 
         // The paramater used to evolve the CameraState along the current Path.
-        float lambda;
+        GLfloat lambda;
 
         // The increment in lambda to use which yields ( closely ) the LENGTH_PER_FRAME
         // distance between CameraStates.
-        float current_delta_lambda;
+        GLfloat current_delta_lambda;
 
         // The current set of descriptive strings.
         std::vector<std::string> current_description;

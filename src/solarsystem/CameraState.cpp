@@ -34,17 +34,17 @@ CameraState::CameraState(const Vector3D& position,
     }
 
 CameraState::CameraState(const CameraState& other){
-    this->where = other.position();
-    this->look_at = other.focus();
-    this->up_dir = other.orientation();
+    where = other.position();
+    look_at = other.focus();
+    up_dir = other.orientation();
     }
 
 CameraState& CameraState::operator=(const CameraState& other) {
     // Excluding self assignment.
     if(this != &other) {
-        this->where = other.position();
-        this->look_at = other.focus();
-        this->up_dir = other.orientation();
+        where = other.position();
+        look_at = other.focus();
+        up_dir = other.orientation();
         }
 
     return *this;

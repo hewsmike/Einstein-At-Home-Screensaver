@@ -206,8 +206,8 @@ void Simulation::setFont(content element, OGLFT_ft* font) {
 const CameraState& Simulation::viewPoint(void) {
     if(pilot.isActive()) {
         // The autopilot is flying the craft.
-        // Check and/or change the descriptive HUD text
-        // on a per Lookout basis.
+        // Check and/or change the descriptive
+        // HUD text on a per Lookout basis.
         if(version_text != NULL) {
             version_text->setDirection(HUDTextLineScroll::NONE);
             if(pilot.hasDescriptionChanged() == true) {
