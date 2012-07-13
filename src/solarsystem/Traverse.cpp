@@ -20,6 +20,7 @@
 
 #include "Traverse.h"
 
+#include <iostream>
 #include <sstream>
 #include <string>
 
@@ -89,35 +90,31 @@ Path Traverse::getNextPath(void) {
     }
 
 Path Traverse::makePath() {
-    Path ret_val;
-
-    if(numLookouts() >= MIN_LOOKOUTS) {
-        // Set the indices of the Lookouts that bracket this Path.
-        unsigned int start_lookout;
-        unsigned int finish_lookout = (start_lookout + 1) % cam_states.size();
-
-        // Construct the three curves between these Lookouts.
-        Curve pos(cam_states.at(start_lookout).position(), cam_states.at(finish_lookout).position());
-        Curve focus(cam_states.at(start_lookout).focus(), cam_states.at(finish_lookout).focus());
-        Curve orient(cam_states.at(start_lookout).orientation(), cam_states.at(finish_lookout).orientation());
-
-        // Combine these into a single Path.
-        Path ret_val(pos, focus, orient);
-
-        // Retrieve the LookOut descriptions too.
-        const std::vector<std::string>& start_msg = cam_states.at(start_lookout).getDescription();
-        ret_val.setStartMessage(start_msg);
-        const std::vector<std::string>& finish_msg = cam_states.at(finish_lookout).getDescription();
-        ret_val.setFinishMessage(finish_msg);
-        }
-    else {
-        // Or if there aren't enough Lookouts ....
+    // If there aren't enough Lookouts ....
+    if(numLookouts() < MIN_LOOKOUTS) {
         std::stringstream msg;
         msg << "Traverse::makePath() : Fewer than ";
         msg << MIN_LOOKOUTS;
         msg << " LookOuts present in Traverse !!";
         ErrorHandler::record(msg.str(), ErrorHandler::FATAL);
         }
+
+    // Set the indices of the Lookouts that bracket this Path.
+    unsigned int start_lookout = current_path_index;
+    unsigned int finish_lookout = (start_lookout + 1) % cam_states.size();
+
+    // Construct the three curves between these Lookouts.
+    Curve pos(cam_states.at(start_lookout).position(), cam_states.at(finish_lookout).position());
+    Curve focus(cam_states.at(start_lookout).focus(), cam_states.at(finish_lookout).focus());
+    Curve orient(cam_states.at(start_lookout).orientation(), cam_states.at(finish_lookout).orientation());
+
+    Path ret_val(pos, focus, orient);
+
+    // Retrieve the LookOut descriptions too.
+    const std::vector<std::string>& start_msg = cam_states.at(start_lookout).getDescription();
+    ret_val.setStartMessage(start_msg);
+    const std::vector<std::string>& finish_msg = cam_states.at(finish_lookout).getDescription();
+    ret_val.setFinishMessage(finish_msg);
 
     return ret_val;
     }

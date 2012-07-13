@@ -22,6 +22,7 @@
 
 #include <sstream>
 #include <cmath>
+#include <iostream>
 
 #include "ErrorHandler.h"
 

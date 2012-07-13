@@ -222,7 +222,6 @@ CameraState Simulation::viewPoint(void) {
                 version_text->setText(msg.str());
                 }
             }
-        pilot.viewState().print();
         return pilot.viewState();
         }
     else {
@@ -2613,13 +2612,11 @@ void Simulation::cycle(Simulation::content ct) {
                 // flyboy.manouevre(Craft::STOP_TRANSLATION);
                 /// TODO Choice between Traversable objects ....
                 CameraState current = flyboy.viewState();
-                std::cout << "Initial autopilot view state : " << std::endl;
-                current.print();
 
                 // When obtained from our craft the focus vector is unit vector
                 // and also craft based. Thus prefer a distant focus point to
                 // reduce possible high initial slew rate.
-                current.setFocus(current.position() + SolarSystemGlobals::CELESTIAL_SPHERE_RADIUS*current.focus());
+                //current.setFocus(current.position() + SolarSystemGlobals::CELESTIAL_SPHERE_RADIUS*current.focus());
                 pilot.activate(cs, current);
                 }
             break;
