@@ -48,94 +48,96 @@
 class CameraState {
     public:
         /**
-	     * \brief Constructor ( no argument )
-	     *
-	     *      The camera state will be set to that which
-	     * is defined by the initial/default view of the Craft class.
-	     */
+         * \brief Constructor ( no argument )
+         *
+         *      The camera state will be set to that which
+         * is defined by the initial/default view of the Craft class.
+         */
         CameraState(void);
 
-		/**
-	     * \brief Constructor
-	     *
-	     * \param position : the position of the camera
-	     * \param focus : the point the camera is looking at
-	     * \param orientation : the up direction for the view
-	     */
-		CameraState(const Vector3D& position,
+        /**
+         * \brief Constructor
+         *
+         * \param position : the position of the camera
+         * \param focus : the point the camera is looking at
+         * \param orientation : the up direction for the view
+         */
+        CameraState(const Vector3D& position,
                     const Vector3D& focus,
                     const Vector3D& orientation);
 
         /**
-	     * \brief Constructor (copy)
-	     *
-	     * \param other : camera state to copy
-	     */
-		CameraState(const CameraState& other);
+         * \brief Constructor (copy)
+         *
+         * \param other : camera state to copy
+         */
+        CameraState(const CameraState& other);
 
         /**
-	     * \brief Assignment operator
-	     *
-	     * \param other : camera state to copy from
-	     */
-		CameraState& operator=(const CameraState& other);
-
-		/**
-		 * \brief Destructor
-		 */
-		virtual ~CameraState();
+         * \brief Assignment operator
+         *
+         * \param other : camera state to copy from
+         */
+        CameraState& operator=(const CameraState& other);
 
         /**
-		 * \brief Set the camera position
-		 *
-		 * \param position : the point to place the camera at
-		 */
-		void setPosition(const Vector3D& position);
+         * \brief Destructor
+         */
+        virtual ~CameraState();
 
         /**
-		 * \brief Set the camera focus
-		 *
-		 * \param focus : the point to focus the camera toward
-		 */
-		void setFocus(const Vector3D& focus);
+         * \brief Set the camera position
+         *
+         * \param position : the point to place the camera at
+         */
+        void setPosition(const Vector3D& position);
 
         /**
-		 * \brief Set the camera orientation
-		 *
-		 * \param orientation : the axis to align the camera
-		 */
-		void setOrientation(const Vector3D& orientation);
+         * \brief Set the camera focus
+         *
+         * \param focus : the point to focus the camera toward
+         */
+        void setFocus(const Vector3D& focus);
 
         /**
-		 * \brief Obtain the camera position
-		 *
-		 * \return a vector pointing to where the camera is
-		 */
-		const Vector3D& position(void) const;
+         * \brief Set the camera orientation
+         *
+         * \param orientation : the axis to align the camera
+         */
+        void setOrientation(const Vector3D& orientation);
 
         /**
-		 * \brief Obtain the camera focus point
-		 *
-		 * \return a vector pointing to where the camera is focussed
-		 */
-		const Vector3D& focus(void) const;
+         * \brief Obtain the camera position
+         *
+         * \return a vector pointing to where the camera is
+         */
+        const Vector3D& position(void) const;
 
-		/**
-		 * \brief Obtain the camera orientation
-		 *
-		 * \return a vector defining the orientation of the camera
-		 */
-		const Vector3D& orientation(void) const;
+        /**
+         * \brief Obtain the camera focus point
+         *
+         * \return a vector pointing to where the camera is focussed
+         */
+        const Vector3D& focus(void) const;
+
+        /**
+         * \brief Obtain the camera orientation
+         *
+         * \return a vector defining the orientation of the camera
+         */
+        const Vector3D& orientation(void) const;
+
+        void print(void) const;
 
    private:
         // The camera's position
         Vector3D where;
 
         // The camera's focus point
-		Vector3D look_at;
+        Vector3D look_at;
 
-		// The camera's orientation axis
-		Vector3D up_dir;
+        // The camera's orientation axis
+        Vector3D up_dir;
     };
 
 /**

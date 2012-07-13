@@ -20,6 +20,8 @@
 
 #include "CameraState.h"
 
+#include <iostream>
+
 #include "Craft.h"
 
 CameraState::CameraState(void) : where(Craft::START_POSITION) {
@@ -75,4 +77,14 @@ const Vector3D& CameraState::focus(void) const {
 
 const Vector3D& CameraState::orientation(void) const {
     return this->up_dir;
+    }
+
+void CameraState::print(void) const {
+    std::cout << "Position : ";
+    this->where.print();
+    std::cout << "Focus : ";
+    this->look_at.print();
+    std::cout << "Orientation : ";
+    this->up_dir.print();
+    std::cout << std::endl;
     }
