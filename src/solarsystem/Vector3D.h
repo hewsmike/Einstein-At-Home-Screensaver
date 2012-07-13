@@ -108,6 +108,8 @@ class Vector3D {
          */
         bool isNullVector(void);
 
+        void print(void) const;
+
         /**
          * \brief Obtain the x-component
          *

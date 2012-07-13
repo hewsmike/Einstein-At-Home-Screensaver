@@ -21,6 +21,7 @@
 #include "Vector3D.h"
 
 #include <cmath>
+#include <iostream>
 
 // The null vector connects the origin to itself :-)
 const vec_t Vector3D::NULL_LENGTH(0.0f);
@@ -72,6 +73,10 @@ Vector3D Vector3D::unit(void) {
         ret_val.set_z(z_comp / mag);
         }
     return ret_val;
+    }
+
+void Vector3D::print(void) const {
+    std::cout << "x = " << x_comp << "\ty = " << y_comp << "\tz = " << z_comp << std::endl;
     }
 
 Vector3D Vector3D::nullv(void) {
