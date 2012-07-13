@@ -95,7 +95,7 @@ class AutoPilot {
          * \return a camera state for animation
          *
          */
-        const CameraState& viewState(void);
+        CameraState viewState(void);
 
         /**
          * \brief Obtain the descriptive strings for the nearest Lookout.
@@ -108,6 +108,8 @@ class AutoPilot {
          * \return a list of descriptive strings
          */
         const std::vector<std::string>& getDescription(void) const;
+
+        bool hasDescriptionChanged(void) const;
 
     private:
         // Enumerants for Path stages.

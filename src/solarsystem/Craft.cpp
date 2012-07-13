@@ -118,16 +118,18 @@ void Craft::step(GLfloat dayOfYear) {
     if(state.position().len() > Craft::MAX_RANGE) {
         // TODO turn him around to point homewards?
         // Give a little nudge to send it back in the direction of home.
-        state.setVelocity(-Craft::REBOUND_SPEED*state.position().unit());
-        std::cout << "Too far away from Earth - nudged back" << std::endl;
+        // state.setVelocity(-Craft::REBOUND_SPEED*state.position().unit());
+        // std::cout << "Too far away from Earth - nudged back" << std::endl;
         }
 
     // Too close to home ?
     if(state.position().len() < Craft::MIN_EARTH_RANGE) {
         // TODO turn him around to point outwards?
+        // Put him at the minimum distance.
+        // state.setPosition(Craft::MIN_EARTH_RANGE * state.position());
         // Give a little nudge to send it back away from home.
-        state.setVelocity(+Craft::REBOUND_SPEED*state.position().unit());
-        std::cout << "Too close to Earth - nudged away" << std::endl;
+        // state.setVelocity(+Craft::REBOUND_SPEED*state.position().unit());
+        /// std::cout << "Too close to Earth - nudged away" << std::endl;
         }
 
     // Where is the Sun ? That depends upon it's orbital position,
@@ -139,9 +141,11 @@ void Craft::step(GLfloat dayOfYear) {
     GLfloat sun_dist = sun_relative.len();
     // Are we too close to the Sun ?
     if(sun_dist < Craft::MIN_SUN_RANGE) {
+        // Put him at the minimum distance.
+        // state.setPosition(sun_pos + Craft::MIN_SUN_RANGE * sun_relative);
         // Give a little nudge to send it back AWAY from the Sun.
-        state.setVelocity(+Craft::REBOUND_SPEED*sun_relative.unit());
-        std::cout << "Too close to Sun - nudged away" << std::endl;
+        ///state.setVelocity(+Craft::REBOUND_SPEED*sun_relative.unit());
+        ///std::cout << "Too close to Sun - nudged away" << std::endl;
         }
     }
 

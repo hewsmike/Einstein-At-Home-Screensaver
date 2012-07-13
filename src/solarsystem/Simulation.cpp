@@ -110,30 +110,30 @@ Simulation::Simulation(void) : cs(CONSTELLATIONS_RADIUS),
                                east_panel(&overlay, HUDFlowLayout::VERTICAL),
                                west_panel(&overlay, HUDFlowLayout::VERTICAL) {
     // Starting values of simulation parameters.
-    min60(0);
-    hour24(0);
-    day366(0);
-    earth_hour_angle(0);
-    sun_rot_angle(0);
+    min60 = 0;
+    hour24 = 0;
+    day366 = 0;
+    earth_hour_angle = 0;
+    sun_rot_angle = 0;
 
     // Image pointers.
-    aei_image(NULL);
-    aps_image(NULL);
-    boinc_image(NULL);
-    geo_image(NULL);
-    ligo_image(NULL);
-    opencl_image(NULL);
-    virgo_image(NULL);
-    wyp_image(NULL);
+    aei_image = NULL;
+    aps_image = NULL;
+    boinc_image = NULL;
+    geo_image = NULL;
+    ligo_image = NULL;
+    opencl_image = NULL;
+    virgo_image = NULL;
+    wyp_image = NULL;
 
     // Pointer to scrolling marquee.
-    version_text(NULL);
+    version_text = NULL;
 
     // Line rendering detail for celestial coordinate grids.
     c_sphere.setLine(GridGlobe::MAIN, SKYGRID_MAIN_WIDTH,
                      SKYGRID_MAIN_RED, SKYGRID_MAIN_GREEN, SKYGRID_MAIN_BLUE);
     c_sphere.setLine(GridGlobe::EQUATOR, SKYGRID_CELESTIAL_EQUATOR_WIDTH,
-                     KYGRID_CELESTIAL_EQUATOR_RED, SKYGRID_CELESTIAL_EQUATOR_GREEN, SKYGRID_CELESTIAL_EQUATOR_BLUE);
+                     SKYGRID_CELESTIAL_EQUATOR_RED, SKYGRID_CELESTIAL_EQUATOR_GREEN, SKYGRID_CELESTIAL_EQUATOR_BLUE);
     c_sphere.setLine(GridGlobe::PRIME_MERIDIAN, SKYGRID_PRIME_MERIDIAN_WIDTH,
                      SKYGRID_PRIME_MERIDIAN_RED, SKYGRID_PRIME_MERIDIAN_GREEN, SKYGRID_PRIME_MERIDIAN_BLUE);
 
@@ -188,7 +188,7 @@ void Simulation::resize(GLuint width, GLuint height) {
     screen_width = width;
     screen_height = height;
 
-    std::string msg;
+    std::stringstream msg;
     msg << "Simulation::resize() - resize screen to "
         << "width = " << width
         << "\theight = " << height;
@@ -203,7 +203,7 @@ void Simulation::setFont(content element, OGLFT_ft* font) {
     fonts[element] = font;
     }
 
-const CameraState& Simulation::viewPoint(void) {
+CameraState Simulation::viewPoint(void) {
     if(pilot.isActive()) {
         // The autopilot is flying the craft.
         // Check and/or change the descriptive
@@ -222,6 +222,7 @@ const CameraState& Simulation::viewPoint(void) {
                 version_text->setText(msg.str());
                 }
             }
+        pilot.viewState().print();
         return pilot.viewState();
         }
     else {
@@ -2612,6 +2613,8 @@ void Simulation::cycle(Simulation::content ct) {
                 // flyboy.manouevre(Craft::STOP_TRANSLATION);
                 /// TODO Choice between Traversable objects ....
                 CameraState current = flyboy.viewState();
+                std::cout << "Initial autopilot view state : " << std::endl;
+                current.print();
 
                 // When obtained from our craft the focus vector is unit vector
                 // and also craft based. Thus prefer a distant focus point to

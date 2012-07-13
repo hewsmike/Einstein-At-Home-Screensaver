@@ -420,7 +420,7 @@ void SolarSystem::keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey k
             break;
         default:
             break;
-
+        }
     }
 
 void SolarSystem::refreshLocalBOINCInformation() {

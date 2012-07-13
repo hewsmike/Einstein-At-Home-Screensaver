@@ -136,7 +136,7 @@ class Simulation : public Renderable {
          *
          * \return the camera state
          */
-        const CameraState viewPoint(void);
+        CameraState viewPoint(void);
 
         /**
          * \brief Cycle the activation state of a given scene element

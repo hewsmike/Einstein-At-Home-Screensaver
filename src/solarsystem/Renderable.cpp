@@ -52,7 +52,7 @@ Renderable::activity_state Renderable::isActivated(void) const {
 void Renderable::cycleActivation(void) {
     // In this base class the activity state is simply toggled.
     // Re-define this in a derived class if you want other behaviours.
-    is_activated() ? inactivate() : activate();
+    isActivated() ? inactivate() : activate();
     }
 
 void Renderable::draw(void) {

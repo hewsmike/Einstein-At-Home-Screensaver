@@ -157,7 +157,7 @@ void GridGlobe::prepare(SolarSystemGlobals::render_quality rq) {
 
     // Get rid of the sphere now that we have everything in place, server side.
     delete sp;
-
+    }
 
 void GridGlobe::release(void) {
     // Release the buffer object's resources.
@@ -302,7 +302,7 @@ void GridGlobe::loadGridIndexBuffer(void) {
             ++buffer_ptr;
             }
         ++stack_count;
-
+        }
 
     // Now do half-rings of longitude/right-ascension. Exempt the prime
     // meridian.
@@ -441,7 +441,7 @@ void GridGlobe::createMarkerLists(void) {
                 }
 
             // Only show a second digit if it's non-zero.
-            f(abs(declin) >= 10) {
+            if(abs(declin) >= 10) {
                 dec_token += dec_tens;
                 }
 
@@ -453,7 +453,7 @@ void GridGlobe::createMarkerLists(void) {
             GLfloat t_scale;
 
             if((hasEquator && (stack == (stacks - 1)/2)) || (slice == 0)) {
-            /   / On the celestial equator (if present) or the prime meridian.
+            // On the celestial equator (if present) or the prime meridian.
                 t_scale = text_scale_factor;
                 }
             else {
