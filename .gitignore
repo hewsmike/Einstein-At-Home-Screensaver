@@ -5,6 +5,10 @@ Debug
 install
 dist
 doc/html
+/win32
+/linux
+/mac
+/mac_sdk
 .settings
 
 # patterns

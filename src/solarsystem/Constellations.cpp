@@ -2150,8 +2150,8 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    Constellation vulpecula("Vulpecula");
    vulpecula.addToDescription("The little fox");
    vulpecula.add_star(OrdStar(292.18f, 24.67f, 4.44f, OrdStar::SPEC_M, "Anser"));
-   vulpecula.add_star(OrdStar(313.03f, 27.81f, 4.50f, OrdStar::SPEC_K, ""));
-   vulpecula.add_star(OrdStar(121.98f, 27.10f, 4.56f, OrdStar::SPEC_G, ""));
+   vulpecula.add_star(OrdStar(303.94f, 27.81f, 4.50f, OrdStar::SPEC_K, ""));
+   vulpecula.add_star(OrdStar(313.03f, 27.10f, 4.56f, OrdStar::SPEC_G, ""));
    vulpecula.add_star(OrdStar(298.37f, 24.08f, 4.57f, OrdStar::SPEC_B, ""));
    vulpecula.add_star(OrdStar(300.28f, 27.75f, 4.66f, OrdStar::SPEC_A, ""));
    vulpecula.add_star(OrdStar(303.82f, 25.59f, 4.79f, OrdStar::SPEC_B, ""));
@@ -2181,409 +2181,409 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
    }
 
 Constellations::~Constellations() {
-   }
+    }
 
 unsigned int Constellations::numberOfWayPoints(void) const {
-	return cons_list.size();
-	}
+    return cons_list.size();
+    }
 
 LookOut Constellations::getView(unsigned int sequence) const {
     // Default view - in absence of any constellations - the
     // simulation's initial view.
     LookOut ret_val;
 
-   // Assuming there is at least one constellation.
-   if(cons_list.size() > 0) {
-      if(sequence > (cons_list.size() - 1)) {
-         sequence = cons_list.size() - 1;
-         }
-
-      Constellation current_con = cons_list.at(sequence);
-
-      std::pair<float, float> cons_centroid = current_con.centre();
-
-      VectorSP centroid = VectorSP(cons_centroid.first, cons_centroid.second, radius);
-
-      Vector3D viewpoint = centroid - centroid.unit() * VIEW_OFFSET;
-
-      ret_val.setPosition(viewpoint);
-      ret_val.setFocus(centroid);
-      ret_val.setOrientation(VIEW_UP);
-
-      ret_val.addToDescription(current_con.name());
-
-      const std::vector<std::string>& current_description = current_con.getDescription();
-
-      for(unsigned int index = 0; index < current_description.size(); ++index) {
-         ret_val.addToDescription(current_description[index]);
-         }
-      }
-
-	return ret_val;
-	}
-
-void Constellations::cycleActivation(void) {
-   // Mimic five state cycling switch.
-   switch (current_cycle_state) {
-      case ALL_OFF :
-         current_cycle_state = STARS;
-         activate();
-         break;
-      case STARS :
-         current_cycle_state = STARS_N_LINKS;
-         break;
-      case STARS_N_LINKS :
-         current_cycle_state = STARS_N_NAMES;
-         break;
-      case STARS_N_NAMES :
-         current_cycle_state = ALL_ON;
-         break;
-      case ALL_ON :
-         current_cycle_state = ALL_OFF;
-         inactivate();
-         break;
-      default:
-         ErrorHandler::record("GridGlobe::cycleActivation() - bad switch case reached (default)", ErrorHandler::FATAL);
-         break;
-      }
-   }
-
-void Constellations::prepare(SolarSystemGlobals::render_quality rq) {
-   // Get the OpenGL buffer objects.
-   buff_obj_points.acquire();
-   buff_obj_indices.acquire();
-
-   /// Preparations may depend upon the requested rendering quality level.
-   switch (rq) {
-      case SolarSystemGlobals::RENDER_LOWEST :
-      case SolarSystemGlobals::RENDER_MEDIUM :
-      case SolarSystemGlobals::RENDER_HIGHEST :
-         loadVertexBuffer();
-         loadIndexBuffer();
-         createMarkerLists();
-         break;
-      default :
-         // Ought not get here !!
-         ErrorHandler::record("Constellations::prepare() - bad switch case reached (default)", ErrorHandler::FATAL);
-         break;
-      }
-   }
-
-void Constellations::release(void) {
-   // Release the buffer objects' resources.
-   buff_obj_points.release();
-   buff_obj_indices.release();
-
-	// Then the marker lists.
-   for(std::vector<std::vector<GLuint> >::const_iterator lists = marker_lists.begin();
-       lists != marker_lists.end();
-       ++lists) {
-      for(std::vector<GLuint>::const_iterator list = lists->begin();
-          list != lists->end();
-          ++list) {
-         glDeleteLists(*list, 1);
-         }
-      }
-
-   // This destroys any contained vectors too ...
-   marker_lists.clear();
-   }
-
-void Constellations::render(void) {
-   // Provided we should be showing anything at all.
-   if(current_cycle_state != ALL_OFF) {
-      // Plot the stars first ie. a color at a point.
-      glEnableClientState(GL_VERTEX_ARRAY);
-      glBindBuffer(GL_ARRAY_BUFFER, buff_obj_points.ID());
-      glEnableClientState(GL_COLOR_ARRAY);
-
-      // Using interleaved color/position data
-      glInterleavedArrays(GL_C3F_V3F, 0, BUFFER_OFFSET(0));
-
-      glPointSize(Constellations::MAG_SIZE);
-      glDrawArrays(GL_POINTS, 0, tot_stars);
-
-      // Not using color values now.
-      glDisableClientState(GL_COLOR_ARRAY);
-
-      // Provided we show the links
-      if((current_cycle_state == STARS_N_LINKS) || (current_cycle_state == ALL_ON)) {
-         // The GL_ELEMENT_ARRAY_BUFFER target will be serviced by the other buffer.
-         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buff_obj_indices.ID());
-
-         // OK, set up the vertex array within.
-         glVertexPointer(COORDS_PER_VERTEX,
-                         GL_FLOAT,
-                         BYTE_STRIDE_PER_VERTEX*sizeof(GL_FLOAT),
-                         BUFFER_OFFSET(COLORS_PER_VERTEX*sizeof(GL_FLOAT)));
-
-         glColor3f(LINK_RGB_RED, LINK_RGB_GREEN, LINK_RGB_BLUE);
-         glLineWidth(LINK_WIDTH);
-         glLineStipple(LINK_STIPPLE_FACTOR, LINK_STIPPLE_PATTERN);
-         glDrawElements(GL_LINES, tot_links*INDICES_PER_LINK, GL_UNSIGNED_INT, BUFFER_OFFSET(0));
-         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Buffer_OBJ::NO_ID);
-         }
-
-      // Disable various capabilities from the OpenGL state machine.
-      glDisableClientState(GL_VERTEX_ARRAY);
-      glBindBuffer(GL_ARRAY_BUFFER, Buffer_OBJ::NO_ID);
-
-      // Provided we show the names.
-      if((current_cycle_state == STARS_N_NAMES) || (current_cycle_state == ALL_ON)) {
-         // Now print the names at the centroids.
-         glEnable(GL_TEXTURE_2D);
-         glDisable(GL_CULL_FACE);
-
-         // Go through and call every call list.
-         for(std::vector<std::vector<GLuint> >::const_iterator lists = marker_lists.begin();
-             lists != marker_lists.end();
-             ++lists) {
-            // Only call the first, as others are called by it.
-            glCallList((*lists)[0]);
+    // Assuming there is at least one constellation.
+    if(cons_list.size() > 0) {
+        if(sequence > (cons_list.size() - 1)) {
+            sequence = cons_list.size() - 1;
             }
 
-         glDisable(GL_TEXTURE_2D);
-         }
-      }
-   }
+        Constellation current_con = cons_list.at(sequence);
+
+        std::pair<float, float> cons_centroid = current_con.centre();
+
+        VectorSP centroid = VectorSP(cons_centroid.first, cons_centroid.second, radius);
+
+        Vector3D viewpoint = centroid - centroid.unit() * VIEW_OFFSET;
+
+        ret_val.setPosition(viewpoint);
+        ret_val.setFocus(centroid);
+        ret_val.setOrientation(VIEW_UP);
+
+        ret_val.addToDescription(current_con.name());
+
+        const std::vector<std::string>& current_description = current_con.getDescription();
+
+        for(unsigned int index = 0; index < current_description.size(); ++index) {
+            ret_val.addToDescription(current_description[index]);
+            }
+        }
+
+    return ret_val;
+    }
+
+void Constellations::cycleActivation(void) {
+    // Mimic five state cycling switch.
+    switch (current_cycle_state) {
+        case ALL_OFF :
+            current_cycle_state = STARS;
+            activate();
+            break;
+        case STARS :
+            current_cycle_state = STARS_N_LINKS;
+            break;
+        case STARS_N_LINKS :
+            current_cycle_state = STARS_N_NAMES;
+            break;
+        case STARS_N_NAMES :
+            current_cycle_state = ALL_ON;
+            break;
+        case ALL_ON :
+        current_cycle_state = ALL_OFF;
+        inactivate();
+        break;
+        default:
+            ErrorHandler::record("GridGlobe::cycleActivation() - bad switch case reached (default)", ErrorHandler::FATAL);
+            break;
+        }
+    }
+
+void Constellations::prepare(SolarSystemGlobals::render_quality rq) {
+    // Get the OpenGL buffer objects.
+    buff_obj_points.acquire();
+    buff_obj_indices.acquire();
+
+    /// Preparations may depend upon the requested rendering quality level.
+    switch (rq) {
+        case SolarSystemGlobals::RENDER_LOWEST :
+        case SolarSystemGlobals::RENDER_MEDIUM :
+        case SolarSystemGlobals::RENDER_HIGHEST :
+            loadVertexBuffer();
+            loadIndexBuffer();
+            createMarkerLists();
+            break;
+        default :
+            // Ought not get here !!
+            ErrorHandler::record("Constellations::prepare() - bad switch case reached (default)", ErrorHandler::FATAL);
+            break;
+        }
+    }
+
+void Constellations::release(void) {
+    // Release the buffer objects' resources.
+    buff_obj_points.release();
+    buff_obj_indices.release();
+
+    // Then the marker lists.
+    for(std::vector<std::vector<GLuint> >::const_iterator lists = marker_lists.begin();
+        lists != marker_lists.end();
+        ++lists) {
+        for(std::vector<GLuint>::const_iterator list = lists->begin();
+            list != lists->end();
+            ++list) {
+            glDeleteLists(*list, 1);
+            }
+        }
+
+    // This destroys any contained vectors too ...
+    marker_lists.clear();
+    }
+
+void Constellations::render(void) {
+    // Provided we should be showing anything at all.
+    if(current_cycle_state != ALL_OFF) {
+        // Plot the stars first ie. a color at a point.
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glBindBuffer(GL_ARRAY_BUFFER, buff_obj_points.ID());
+        glEnableClientState(GL_COLOR_ARRAY);
+
+        // Using interleaved color/position data
+        glInterleavedArrays(GL_C3F_V3F, 0, BUFFER_OFFSET(0));
+
+        glPointSize(Constellations::MAG_SIZE);
+        glDrawArrays(GL_POINTS, 0, tot_stars);
+
+        // Not using color values now.
+        glDisableClientState(GL_COLOR_ARRAY);
+
+        // Provided we show the links
+        if((current_cycle_state == STARS_N_LINKS) || (current_cycle_state == ALL_ON)) {
+            // The GL_ELEMENT_ARRAY_BUFFER target will be serviced by the other buffer.
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buff_obj_indices.ID());
+
+            // OK, set up the vertex array within.
+            glVertexPointer(COORDS_PER_VERTEX,
+                            GL_FLOAT,
+                            BYTE_STRIDE_PER_VERTEX*sizeof(GL_FLOAT),
+                            BUFFER_OFFSET(COLORS_PER_VERTEX*sizeof(GL_FLOAT)));
+
+            glColor3f(LINK_RGB_RED, LINK_RGB_GREEN, LINK_RGB_BLUE);
+            glLineWidth(LINK_WIDTH);
+            glLineStipple(LINK_STIPPLE_FACTOR, LINK_STIPPLE_PATTERN);
+            glDrawElements(GL_LINES, tot_links*INDICES_PER_LINK, GL_UNSIGNED_INT, BUFFER_OFFSET(0));
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Buffer_OBJ::NO_ID);
+            }
+
+        // Disable various capabilities from the OpenGL state machine.
+        glDisableClientState(GL_VERTEX_ARRAY);
+        glBindBuffer(GL_ARRAY_BUFFER, Buffer_OBJ::NO_ID);
+
+      // Provided we show the names.
+        if((current_cycle_state == STARS_N_NAMES) || (current_cycle_state == ALL_ON)) {
+            // Now print the names at the centroids.
+            glEnable(GL_TEXTURE_2D);
+            glDisable(GL_CULL_FACE);
+
+            // Go through and call every call list.
+            for(std::vector<std::vector<GLuint> >::const_iterator lists = marker_lists.begin();
+                lists != marker_lists.end();
+                ++lists) {
+                // Only call the first, as others are called by it.
+                glCallList((*lists)[0]);
+                }
+
+            glDisable(GL_TEXTURE_2D);
+            }
+        }
+    }
 
 void Constellations::class_color(OrdStar::spectral_type spectral_class, Vert* vt) {
-   switch (spectral_class) {
-      case OrdStar::SPEC_A :
-         // Hottish and white.
-         (*vt).col.red = 1.0f;
-         (*vt).col.green = 1.0f;
-         (*vt).col.blue = 1.0f;
-         break;
-      case OrdStar::SPEC_B :
-         // Quite hot and blue.
-      	(*vt).col.red = 0.65f;
-      	(*vt).col.green = 0.85f;
-      	(*vt).col.blue = 0.95f;
-         break;
-      case OrdStar::SPEC_F :
-         // Bit hotter than Sol and yellowish white.
-      	(*vt).col.red = 1.00f;
-      	(*vt).col.green = 0.95f;
-      	(*vt).col.blue = 0.75f;
-         break;
-      case OrdStar::SPEC_G :
-         // Like our Sun and yellow.
-      	(*vt).col.red = 0.95f;
-      	(*vt).col.green = 0.90f;
-      	(*vt).col.blue = 0.0f;
-         break;
-      case OrdStar::SPEC_K :
-         // Lukewarm and orange.
-      	(*vt).col.red = 0.95f;
-      	(*vt).col.green = 0.65f;
-      	(*vt).col.blue = 0.15f;
-         break;
-      case OrdStar::SPEC_M :
-         // Quite cool and deep red.
-      	(*vt).col.red = 1.00f;
-      	(*vt).col.green = 0.05f;
-      	(*vt).col.blue = 0.05f;
-         break;
-      case OrdStar::SPEC_O :
-         // Cracking hot and very blue.
-      	(*vt).col.red = 0.05f;
-      	(*vt).col.green = 0.05f;
-      	(*vt).col.blue = 1.00f;
-         break;
-      default:
-         // Ought not get here !!
-         std::string msg = "Constellations::class_color() - bad switch case reached (default)";
-         ErrorHandler::record(msg, ErrorHandler::FATAL);
-         break;
-      }
-   return;
-   }
+    switch (spectral_class) {
+        case OrdStar::SPEC_A :
+            // Hottish and white.
+            (*vt).col.red = 1.0f;
+            (*vt).col.green = 1.0f;
+            (*vt).col.blue = 1.0f;
+            break;
+        case OrdStar::SPEC_B :
+            // Quite hot and blue.
+            (*vt).col.red = 0.65f;
+            (*vt).col.green = 0.85f;
+            (*vt).col.blue = 0.95f;
+            break;
+        case OrdStar::SPEC_F :
+            // Bit hotter than Sol and yellowish white.
+            (*vt).col.red = 1.00f;
+            (*vt).col.green = 0.95f;
+            (*vt).col.blue = 0.75f;
+            break;
+        case OrdStar::SPEC_G :
+            // Like our Sun and yellow.
+            (*vt).col.red = 0.95f;
+            (*vt).col.green = 0.90f;
+            (*vt).col.blue = 0.0f;
+            break;
+        case OrdStar::SPEC_K :
+            // Lukewarm and orange.
+            (*vt).col.red = 0.95f;
+            (*vt).col.green = 0.65f;
+            (*vt).col.blue = 0.15f;
+            break;
+        case OrdStar::SPEC_M :
+            // Quite cool and deep red.
+            (*vt).col.red = 1.00f;
+            (*vt).col.green = 0.05f;
+            (*vt).col.blue = 0.05f;
+            break;
+        case OrdStar::SPEC_O :
+            // Cracking hot and very blue.
+            (*vt).col.red = 0.05f;
+            (*vt).col.green = 0.05f;
+            (*vt).col.blue = 1.00f;
+            break;
+        default:
+            // Ought not get here !!
+            std::string msg = "Constellations::class_color() - bad switch case reached (default)";
+            ErrorHandler::record(msg, ErrorHandler::FATAL);
+            break;
+        }
+    return;
+    }
 
 void Constellations::loadVertexBuffer(void) {
-   // We need to look at all constellations and create a consecutive
-   // listing of colors and positions for all stars to be rendered.
+    // We need to look at all constellations and create a consecutive
+    // listing of colors and positions for all stars to be rendered.
 
-	// First create a heap based map of the data.
-	// Total buffer size is the storage for color/vertex interleaved data.
-   GLsizeiptr buffer_size = sizeof(Vert) * tot_stars;
+    // First create a heap based map of the data.
+    // Total buffer size is the storage for color/vertex interleaved data.
+    GLsizeiptr buffer_size = sizeof(Vert) * tot_stars;
 
-   Vert* buffer_base_ptr = new Vert[tot_stars];
-   Vert* buffer_vert_ptr = buffer_base_ptr;
+    Vert* buffer_base_ptr = new Vert[tot_stars];
+    Vert* buffer_vert_ptr = buffer_base_ptr;
 
-   // Work through the constellations one by one.
-	for(std::vector<Constellation>::const_iterator cs = cons_list.begin();
-		 cs < cons_list.end();
-		 cs++ ) {
-		// Process the color and location of the stars within this
-		// constellation. Get access to the star list.
-		const std::vector<OrdStar>& star_list = cs->stars();
-		for(std::vector<OrdStar>::const_iterator st = star_list.begin();
-		st < star_list.end();
-		st++ ) {
-			// Take the star's spectral type and convert that to RGB color values.
-			class_color(st->spectral_class(), buffer_vert_ptr);
+    // Work through the constellations one by one.
+    for(std::vector<Constellation>::const_iterator cs = cons_list.begin();
+         cs < cons_list.end();
+         cs++ ) {
+        // Process the color and location of the stars within this
+        // constellation. Get access to the star list.
+        const std::vector<OrdStar>& star_list = cs->stars();
+        for(std::vector<OrdStar>::const_iterator st = star_list.begin();
+        st < star_list.end();
+        st++ ) {
+            // Take the star's spectral type and convert that to RGB color values.
+            class_color(st->spectral_class(), buffer_vert_ptr);
 
-			// This is the current star with spherical polar co-ordinates.
-			VectorSP c_star = VectorSP(st->right_ascension(), st->declination(), radius);
-			// But Cartesian co-ordinates will be stored in the buffer.
-			buffer_vert_ptr->x_pos = c_star.x();
-			buffer_vert_ptr->y_pos = c_star.y();
-			buffer_vert_ptr->z_pos = c_star.z();
+            // This is the current star with spherical polar co-ordinates.
+            VectorSP c_star = VectorSP(st->right_ascension(), st->declination(), radius);
+            // But Cartesian co-ordinates will be stored in the buffer.
+            buffer_vert_ptr->x_pos = c_star.x();
+            buffer_vert_ptr->y_pos = c_star.y();
+            buffer_vert_ptr->z_pos = c_star.z();
 
-			++buffer_vert_ptr;
-			}
-		}
+            ++buffer_vert_ptr;
+            }
+        }
 
-	buff_obj_points.loadBuffer(GL_ARRAY_BUFFER, GL_STATIC_DRAW, buffer_size, buffer_base_ptr);
+    buff_obj_points.loadBuffer(GL_ARRAY_BUFFER, GL_STATIC_DRAW, buffer_size, buffer_base_ptr);
 
-   // Free the heap.
-   delete[] buffer_base_ptr;
-   }
+    // Free the heap.
+    delete[] buffer_base_ptr;
+    }
 
 void Constellations::loadIndexBuffer(void) {
-   // We need to look at all constellations and create a consecutive
-   // listing of star indices for all links to be rendered. Obviously
-   // there are two star indices per link, where each link will be
-   // represented as a line in the render() routine.
+    // We need to look at all constellations and create a consecutive
+    // listing of star indices for all links to be rendered. Obviously
+    // there are two star indices per link, where each link will be
+    // represented as a line in the render() routine.
 
-	// First create a heap based map of the data.
-	// Total buffer size is the storage for index data.
-	GLsizeiptr buffer_size = sizeof(unsigned int) * INDICES_PER_LINK * tot_links;
+    // First create a heap based map of the data.
+    // Total buffer size is the storage for index data.
+    GLsizeiptr buffer_size = sizeof(unsigned int) * INDICES_PER_LINK * tot_links;
 
-	unsigned int* buffer_base_ptr = new unsigned int[buffer_size];
-	unsigned int* buffer_index_ptr = buffer_base_ptr;
+    unsigned int* buffer_base_ptr = new unsigned int[buffer_size];
+    unsigned int* buffer_index_ptr = buffer_base_ptr;
 
-	// Need to keep track of the indices with respect to the entire set of constellations.
-	unsigned int link_base_index = 0;
-	// Now go through all the constellations.
-	for(std::vector<Constellation>::const_iterator cs = cons_list.begin();
-		 cs < cons_list.end();
-		 cs++ ) {
-		// Process the index data within this constellation. Get access to the
-		// index list.
-		const std::vector< std::pair<unsigned int, unsigned int> >& link_list = cs->links();
-		// Beware of an 'empty' constellation.
-		GLuint total_stars_this_con = cs->total_stars();
+    // Need to keep track of the indices with respect to the entire set of constellations.
+    unsigned int link_base_index = 0;
+    // Now go through all the constellations.
+    for(std::vector<Constellation>::const_iterator cs = cons_list.begin();
+         cs < cons_list.end();
+         cs++ ) {
+        // Process the index data within this constellation. Get access to the
+        // index list.
+        const std::vector< std::pair<unsigned int, unsigned int> >& link_list = cs->links();
+        // Beware of an 'empty' constellation.
+        GLuint total_stars_this_con = cs->total_stars();
 
-		if(total_stars_this_con != 0) {
-			for(std::vector< std::pair<unsigned int, unsigned int> >::const_iterator lk = link_list.begin();
-			lk < link_list.end();
-			lk++ ) {
-				// For each linkage, store the indices at two per link.
-				// Store indices in the buffer, but with the indices relative to
-				// entire set of stars that all the constellations represent.
-				// Need to check that any index within a constellation does not
-				// go out of bounds with respect to the number of stars in said
-				// constellation. The link indices are unsigned so only need to
-				// check upper index bound.
-				if((lk->first < total_stars_this_con) && (lk->first < total_stars_this_con)) {
-					*(buffer_index_ptr) = link_base_index + lk->first;
-					buffer_index_ptr++;
-					*(buffer_index_ptr) = link_base_index + lk->second;
-					buffer_index_ptr++;
-					}
-				else {
-					// Doesn't need to be FATAL but ought be noted.
-					std::stringstream msg;
-					msg << "Constellations::loadIndexBuffer() - bad link for ";
-					msg << cs->name();
-					msg << " : ";
-					msg << lk->first;
-					msg << " <-> ";
-					msg << lk->second;
-					ErrorHandler::record(msg.str(), ErrorHandler::WARN);
-					}
-				}
-			// Update the index into all stars within all constellations.
-			link_base_index += total_stars_this_con;
-			}
-		else {
-			// Doesn't need to be FATAL but ought be noted.
-			std::stringstream msg;
-			msg << "Constellations::loadIndexBuffer() - empty constellation : ";
-			msg << cs->name();
-			ErrorHandler::record(msg.str(), ErrorHandler::WARN);
-			}
-		}
+        if(total_stars_this_con != 0) {
+            for(std::vector< std::pair<unsigned int, unsigned int> >::const_iterator lk = link_list.begin();
+            lk < link_list.end();
+            lk++ ) {
+                // For each linkage, store the indices at two per link.
+                // Store indices in the buffer, but with the indices relative to
+                // entire set of stars that all the constellations represent.
+                // Need to check that any index within a constellation does not
+                // go out of bounds with respect to the number of stars in said
+                // constellation. The link indices are unsigned so only need to
+                // check upper index bound.
+                if((lk->first < total_stars_this_con) && (lk->first < total_stars_this_con)) {
+                    *(buffer_index_ptr) = link_base_index + lk->first;
+                    buffer_index_ptr++;
+                    *(buffer_index_ptr) = link_base_index + lk->second;
+                    buffer_index_ptr++;
+                    }
+                else {
+                    // Doesn't need to be FATAL but ought be noted.
+                    std::stringstream msg;
+                    msg << "Constellations::loadIndexBuffer() - bad link for ";
+                    msg << cs->name();
+                    msg << " : ";
+                    msg << lk->first;
+                    msg << " <-> ";
+                    msg << lk->second;
+                    ErrorHandler::record(msg.str(), ErrorHandler::WARN);
+                    }
+                }
+            // Update the index into all stars within all constellations.
+            link_base_index += total_stars_this_con;
+            }
+        else {
+            // Doesn't need to be FATAL but ought be noted.
+            std::stringstream msg;
+            msg << "Constellations::loadIndexBuffer() - empty constellation : ";
+            msg << cs->name();
+            ErrorHandler::record(msg.str(), ErrorHandler::WARN);
+            }
+        }
 
-	buff_obj_indices.loadBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW, buffer_size, buffer_base_ptr);
+    buff_obj_indices.loadBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW, buffer_size, buffer_base_ptr);
 
-	// Free the heap.
-   delete[] buffer_base_ptr;
-   }
+    // Free the heap.
+    delete[] buffer_base_ptr;
+    }
 
 void Constellations::createMarkerLists(void) {
-	// Get the OGLFT font for this class.
-   OGLFT_ft* myFont = this->getFont();
+    // Get the OGLFT font for this class.
+    OGLFT_ft* myFont = this->getFont();
 
-   // This destroys any contained vectors too ...
-   marker_lists.clear();
+    // This destroys any contained vectors too ...
+    marker_lists.clear();
 
-   // An independent scaling.
-   GLfloat text_scale_factor = radius/TEXT_RATIO;
+    // An independent scaling.
+    GLfloat text_scale_factor = radius/TEXT_RATIO;
 
-   // Work through the constellations one by one.
-   for(std::vector<Constellation>::iterator cs = cons_list.begin();
-       cs < cons_list.end();
-       cs++) {
-   	// A temporary STL vector for populating with display list ID's.
-      std::vector<GLuint> temp;
+    // Work through the constellations one by one.
+    for(std::vector<Constellation>::iterator cs = cons_list.begin();
+        cs < cons_list.end();
+        cs++) {
+        // A temporary STL vector for populating with display list ID's.
+        std::vector<GLuint> temp;
 
-      // The constellation's name.
-      std::string con_name = cs->name();
+        // The constellation's name.
+        std::string con_name = cs->name();
 
-      // The co-ordinates of the centroid of the constellation.
-      std::pair<GLfloat, GLfloat> con_centre = cs->centre();
+        // The co-ordinates of the centroid of the constellation.
+        std::pair<GLfloat, GLfloat> con_centre = cs->centre();
 
-      // A display list for the constellation's name, OGLFT constructs this for us.
-      GLuint cons_draw_ID = myFont->compile(con_name.c_str());
+        // A display list for the constellation's name, OGLFT constructs this for us.
+        GLuint cons_draw_ID = myFont->compile(con_name.c_str());
 
-      // Ask OGL for a display list ID that will represent the transform from the origin.
-      GLuint transform_ID = glGenLists(1);
+        // Ask OGL for a display list ID that will represent the transform from the origin.
+        GLuint transform_ID = glGenLists(1);
 
-      // Now create and compile that list.
-      glNewList(transform_ID, GL_COMPILE);
-         // Isolate the transforms.
-         glPushMatrix();
-            // Transforms etc ... in reverse order if "world space" description.
+        // Now create and compile that list.
+        glNewList(transform_ID, GL_COMPILE);
+            // Isolate the transforms.
+            glPushMatrix();
+                // Transforms etc ... in reverse order if "world space" description.
 
-            // Rotate to desired right ascension.
-            // Rotate anti-clockwise, seen looking from +ve z-axis to origin.
-            glRotatef(con_centre.first, 0, 0, 1);
+                // Rotate to desired right ascension.
+                // Rotate anti-clockwise, seen looking from +ve z-axis to origin.
+                glRotatef(con_centre.first, 0, 0, 1);
 
-            // Rotate to desired declination.
-            // Rotate anti-clockwise, seen looking from -ve y-axis to origin.
-            glRotatef(con_centre.second, 0, -1, 0);
+                // Rotate to desired declination.
+                // Rotate anti-clockwise, seen looking from -ve y-axis to origin.
+                glRotatef(con_centre.second, 0, -1, 0);
 
-            // Shift out to grid radius nearby the First Point of Aries.
-            glTranslatef(radius, 0, 0);
+                // Shift out to grid radius nearby the First Point of Aries.
+                glTranslatef(radius, 0, 0);
 
-            // Rotate 90 degrees clockwise, seen looking from +ve y-axis to origin.
-            glRotatef(-90, 0, 1, 0);
+                // Rotate 90 degrees clockwise, seen looking from +ve y-axis to origin.
+                glRotatef(-90, 0, 1, 0);
 
-            // Rotate 90 degrees clockwise, seen looking from +ve z-axis to origin.
-            glRotatef(-90, 0, 0, 1);
+                // Rotate 90 degrees clockwise, seen looking from +ve z-axis to origin.
+                glRotatef(-90, 0, 0, 1);
 
-            // When lying on the x-y plane, expand the text.
-            glScalef(text_scale_factor, text_scale_factor, 1);
+                // When lying on the x-y plane, expand the text.
+                glScalef(text_scale_factor, text_scale_factor, 1);
 
-            // Ascertain the dimensions of the bounding box for the entire constellation name string.
-            OGLFT::BBox con_box = myFont->measure(con_name.c_str());
+                // Ascertain the dimensions of the bounding box for the entire constellation name string.
+                OGLFT::BBox con_box = myFont->measure(con_name.c_str());
 
-            // Place one-half of rendered string length away from the centroid
-            glTranslatef(-con_box.x_max_/2, 0, 0);
+                // Place one-half of rendered string length away from the centroid
+                glTranslatef(-con_box.x_max_/2, 0, 0);
 
-            glCallList(cons_draw_ID);
-         // Restore the prior transform state.
-         glPopMatrix();
-      glEndList();
+                glCallList(cons_draw_ID);
+            // Restore the prior transform state.
+            glPopMatrix();
+        glEndList();
 
-		// Store the diplay list ID for the transform followed by that which does the drawing.
-      temp.push_back(transform_ID);
-      temp.push_back(cons_draw_ID);
+        // Store the diplay list ID for the transform followed by that which does the drawing.
+        temp.push_back(transform_ID);
+        temp.push_back(cons_draw_ID);
 
-      // Make an entry for this constellation in a master list.
-      marker_lists.push_back(temp);
-      }
-   }
+        // Make an entry for this constellation in a master list.
+        marker_lists.push_back(temp);
+        }
+    }

@@ -59,11 +59,11 @@ bool WindowManager::initialize(const int width, const int height, const int fram
       glfwGetVersion(&major, &minor, &revision);
       std::stringstream msg;
       msg << "WindowManager::initialize() : Using GLfW version "
-      	 << major
-			 << "."
-			 << minor
-			 << "."
-			 << revision;
+          << major
+          << "."
+          << minor
+          << "."
+          << revision;
       ErrorHandler::record(msg.str(), ErrorHandler::INFORM);
       }
 
@@ -153,26 +153,26 @@ bool WindowManager::initialize(const int width, const int height, const int fram
                                     current_desktop_mode.RedBits,			// Alpha range same as individual colors
                                     best_depth_buffer_grain,
                                     NO_STENCIL,
-                                    GLFW_WINDOW);
+                                    GLFW_FULLSCREEN);
 
-	// If that didn't work, then maybe it was the depth buffer,
-	// and try again with a lesser spec.
-   if(window_open == GL_FALSE) {
-		best_depth_buffer_grain = DEPTH_BUFFER_GRAIN_FALLBACK;
-		int window_open = glfwOpenWindow(m_CurrentWidth, m_CurrentHeight,
-                                    	current_desktop_mode.RedBits,
-	                                    current_desktop_mode.GreenBits,
-   	                                 current_desktop_mode.BlueBits,
-      	                              current_desktop_mode.RedBits,    // Alpha range same as individual colors
-         	                           best_depth_buffer_grain,
-            	                        NO_STENCIL,
-               	                     GLFW_WINDOW);
+    // If that didn't work, then maybe it was the depth buffer,
+    // and try again with a lesser spec.
+    if(window_open == GL_FALSE) {
+        best_depth_buffer_grain = DEPTH_BUFFER_GRAIN_FALLBACK;
+        int window_open = glfwOpenWindow(m_CurrentWidth, m_CurrentHeight,
+                                        current_desktop_mode.RedBits,
+                                        current_desktop_mode.GreenBits,
+                                     current_desktop_mode.BlueBits,
+                                      current_desktop_mode.RedBits,    // Alpha range same as individual colors
+                                       best_depth_buffer_grain,
+                                        NO_STENCIL,
+                                     GLFW_WINDOW);
 
-		// Did that work?
+        // Did that work?
       if(window_open == GL_FALSE) {
          ErrorHandler::record("WindowManager::initialize() : Could not acquire rendering surface", ErrorHandler::WARN);
-   	   return false;
-			}
+       return false;
+            }
       }
 
    std::stringstream msg1;
