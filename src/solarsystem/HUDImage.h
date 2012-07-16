@@ -38,100 +38,99 @@
  */
 
 /**
- * \brief Image on the HUD.
+ * \brief This class encapslates an image to display upon the HUD.
+ *
+ * \see HUDContent
+ * \see Vector3D
+ * \see Vertex
  *
  * \author Mike Hewson\n
  */
 
 class HUDImage : public HUDContent {
-   public:
-      /**
-       * \brief Constructor
-       *
-       * \param fileName : the name of the image file
-       * \param horizontalMargin : the horizontal pixel margin to be applied
-       *                           either side of the enclosed content
-       * \param verticalMargin : the vertical pixel margin to be applied
-       *                         above and below the enclosed content
-       */
-      HUDImage(std::string resourceName, GLuint horizontalMargin,
-               GLuint verticalMargin);
+    public:
+        /**
+         * \brief Constructor
+         *
+         * \param resourceName : the name of the image resource
+         *
+         * \param horizontalMargin : the horizontal pixel margin to be applied
+         *                           either side of the enclosed content
+         * \param verticalMargin : the vertical pixel margin to be applied
+         *                         above and below the enclosed content
+         */
+        HUDImage(std::string resourceName, GLuint horizontalMargin,
+                 GLuint verticalMargin);
 
-      /**
-       * \brief Destructor
-       */
-      virtual ~HUDImage();
+        /**
+         * \brief Destructor
+         */
+        virtual ~HUDImage();
 
-   protected:
-      /// These three routines below satisfy the Renderable interface.
+    protected:
+        /// These three routines below satisfy the Renderable interface.
 
-      /// Provide OpenGL code to prepare for rendering.
-      virtual void prepare(SolarSystemGlobals::render_quality rq);
+        /// Provide OpenGL code to prepare for rendering.
+        virtual void prepare(SolarSystemGlobals::render_quality rq);
 
-      /// Provide OpenGL code to release any resources used.
-      virtual void release(void);
+        /// Provide OpenGL code to release any resources used.
+        virtual void release(void);
 
-      /// Provide OpenGL code to render the object.
-      virtual void render(void);
+        /// Provide OpenGL code to render the object.
+        virtual void render(void);
 
-   private:
-      /// The number of position coordinates per OpenGL vertex.
-      static const GLuint POS_COORDS_PER_VERTEX;
+    private:
+        /// The number of position coordinates per OpenGL vertex.
+        static const GLuint POSITION_COORDS_PER_VERTEX;
 
-      /// The number of texture coordinates per OpenGL vertex.
-      static const GLuint TEXTURE_COORDS_PER_VERTEX;
+        /// The number of texture coordinates per OpenGL vertex.
+        static const GLuint TEXTURE_COORDS_PER_VERTEX;
 
-      /// The total number of coordinates per OpenGL vertex.
-      static const GLuint ELEMENTS_PER_VERTEX;
+        /// The total number of coordinates per OpenGL vertex.
+        static const GLuint ELEMENTS_PER_VERTEX;
 
-      /// Offset of the vertex data into the server-side buffer
-      static const GLuint ARRAY_START;
+        /// Offset of the vertex data into the server-side buffer
+        static const GLuint ARRAY_START;
 
-      /// The number of bytes in the server-side buffer between each vertex
-      static const GLsizei ARRAY_STRIDE;
+        /// The number of bytes in the server-side buffer between each vertex
+        static const GLsizei ARRAY_STRIDE;
 
-      /// Indicate level zero only texture creation.
-      static const GLint NO_MIPMAP;
+        /**
+         * \brief Load a pixel map into a server-side texture buffer.
+         */
+        void loadTexture(void);
 
-      /// Don't want an image border.
-      static const GLint NO_BORDER;
+        /**
+         * \brief Create vertex and texture coordinate data for the rectangular
+         *        area to be textured upon.
+         */
+        void createVertexData(void);
 
-      /**
-       * \brief Load a pixel map into a server-side texture buffer.
-       */
-      void loadTexture();
+        /**
+         * \brief Load vertex data into a server-side buffer.
+         */
+        void loadVertexBuffer(void);
 
-      /**
-       * \brief Create vertex and texture coordinate data for the rectangular
-       *        area to be textured upon.
-       */
-      void createVertexData(void);
+        /// Load a single vertex's data into a server-side buffer
+        void vertex2buffer(const Vertex& vert, vec_t* buffer) const;
 
-      /**
-       * \brief Load vertex data into a server-side buffer.
-       */
-      void loadVertexBuffer(void);
+        /// Listing of vertices.
+        std::vector<Vertex> verts;
 
-      /// Load a single vertex's data into a server-side buffer
-      void vertex2buffer(const Vertex& vert, vec_t* buffer) const;
+        /// An OpenGL texture object identifier
+        Texture_OBJ texture;
 
-      /// Listing of vertices.
-      std::vector<Vertex> verts;
+        /// An OpenGL buffer object ( in server-side memory ) holding
+        /// the vertex associated data for a quad.
+        Buffer_OBJ buff_obj_points;
 
-      /// An OpenGL texture object identifier
-      Texture_OBJ texture;
+        /// Filename to load image from.
+        std::string image_resource_name;
 
-      /// An OpenGL buffer object ( in server-side memory ) holding
-      /// the vertex associated data for a quad.
-      Buffer_OBJ buff_obj_points;
-
-		/// Filename to load image from.
-      std::string image_resource_name;
-      
-      /// Dimensions of loaded image.
-      GLuint image_width;
-      GLuint image_height;
-   };
+        /// Dimensions of loaded image.
+        GLuint image_width;
+        GLuint image_height;
+    };
 
 /**
  * @}

@@ -32,6 +32,8 @@
  * \brief Base class for holders of images and text with fixed horizontal
  *        and vertical margins.
  *
+ * \see HUDItem
+ *
  * \author Mike Hewson\n
  */
 
