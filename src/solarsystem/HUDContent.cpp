@@ -21,17 +21,17 @@
 #include "HUDContent.h"
 
 HUDContent::HUDContent(GLuint horizontalMargin, GLuint verticalMargin) :
-                       hz_marg(horizontalMargin),
-                       vt_marg(verticalMargin) {
-   }
+                        hz_marg(horizontalMargin),
+                        vt_marg(verticalMargin) {
+    }
 
 HUDContent::~HUDContent() {
-   }
+    }
 
 GLuint HUDContent::horzMargin(void) const {
-   return hz_marg;
-   }
+    return hz_marg;
+    }
 
 GLuint HUDContent::vertMargin(void) const {
-   return vt_marg;
-   }
+    return vt_marg;
+    }

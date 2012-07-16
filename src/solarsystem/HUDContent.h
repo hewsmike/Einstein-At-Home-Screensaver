@@ -36,41 +36,40 @@
  */
 
 class HUDContent : public HUDItem {
-   public:
-      /**
-       * \brief Constructor. Note a derived class must independently set
-       *        the minimum dimensions via HUDItem::setMinimumDimensions()
-       *
-       * \param horizontalMargin : the horizontal pixel margin to be applied
-       *                           either side of the enclosed content
-       * \param verticalMargin : the vertical pixel margin to be applied
-       */
-      HUDContent(GLuint horizontalMargin, GLuint verticalMargin);
+    public:
+        /**
+         * \brief Constructor.
+         *
+         * \param horizontalMargin : the horizontal pixel margin to be applied
+         *                           either side of the enclosed content
+         * \param verticalMargin : the vertical pixel margin to be applied
+         */
+        HUDContent(GLuint horizontalMargin, GLuint verticalMargin);
 
-      /**
-       * \brief Destructor
-       */
-      virtual ~HUDContent();
+        /**
+         * \brief Destructor
+         */
+        virtual ~HUDContent();
 
-      /**
-       * \brief Get the size of the fixed horizontal margin
-       *
-       * \return the margin
-       */
-      GLuint horzMargin(void) const;
+        /**
+         * \brief Get the size of the fixed horizontal margin
+         *
+         * \return the horizontal margin
+         */
+        GLuint horzMargin(void) const;
 
-      /**
-       * \brief Get the size of the fixed vertical margin
-       *
-       * \return the margin
-       */
-      GLuint vertMargin(void) const;
+        /**
+         * \brief Get the size of the fixed vertical margin
+         *
+         * \return the vertical margin
+         */
+        GLuint vertMargin(void) const;
 
-   private:
-      /// Current margins
-      GLuint hz_marg;
-      GLuint vt_marg;
-   };
+    private:
+        /// Current margins
+        GLuint hz_marg;
+        GLuint vt_marg;
+    };
 
 /**
  * @}

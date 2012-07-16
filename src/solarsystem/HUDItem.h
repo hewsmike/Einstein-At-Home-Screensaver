@@ -115,7 +115,10 @@ class HUDItem : public Renderable {
 
     protected:
         /**
-         * \brief Unconditionally set the minimum dimensions
+         * \brief Unconditionally set the minimum dimensions.
+         *
+         *      Note a derived class must independently set the
+         * minimum dimensions via this function.
          *
          * \param minWidth - the minimum width
          * \param minHeight - the minimum height
