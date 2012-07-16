@@ -21,51 +21,51 @@
 #include "HUDItem.h"
 
 HUDItem::HUDItem(void) {
-   // Set base coordinates to zero ie. lower left corner of the
-   // area assigned during acquisition of the graphics context.
-   // A safe assignment, independent of screen/window size.
-   hz_base = 0;
-   vt_base = 0;
-   // Set minimum size to zero.
-   wd_min = 0;
-   ht_min = 0;
-   // Assume no enclosing container.
-   surround = NULL;
-   }
+    // Set base coordinates to zero ie. lower left corner of the
+    // area assigned during acquisition of the graphics context.
+    // A safe assignment, independent of screen/window size.
+    hz_base = 0;
+    vt_base = 0;
+    // Set minimum size to zero.
+    wd_min = 0;
+    ht_min = 0;
+    // Assume no enclosing container.
+    surround = NULL;
+    }
 
 HUDItem::~HUDItem() {
-   }
+    }
 
 GLuint HUDItem::minWidth(void) const {
-   return wd_min;
-   }
+    return wd_min;
+    }
 
 GLuint HUDItem::minHeight(void) const {
-   return ht_min;
-   }
+    return ht_min;
+    }
 
 GLuint HUDItem::horzBase(void) const {
-   return hz_base;
-   }
+    return hz_base;
+    }
 
 GLuint HUDItem::vertBase(void) const {
-   return vt_base;
-   }
+    return vt_base;
+    }
 
 void HUDItem::reBase(GLuint newHorz, GLuint newVert) {
-   hz_base = newHorz;
-   vt_base = newVert;
-   }
+    hz_base = newHorz;
+    vt_base = newVert;
+    }
 
 void HUDItem::setMinimumDimensions(GLuint minWidth, GLuint minHeight) {
-   wd_min = minWidth;
-   ht_min = minHeight;
-   }
+    wd_min = minWidth;
+    ht_min = minHeight;
+    }
 
 void HUDItem::setEnclosingContainer(HUDContainer* enclosing) {
-   surround = enclosing;
-   }
+    surround = enclosing;
+    }
 
 HUDContainer* HUDItem::getEnclosingContainer(void) const {
-   return surround;
-   }
+    return surround;
+    }
