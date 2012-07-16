@@ -143,7 +143,7 @@ void GridGlobe::prepare(SolarSystemGlobals::render_quality rq) {
             loadPrimeMeridianIndexBuffer();
             // Only prepare an equatorial circle if there is one.
             if(hasEquator) {
-            loadCelestialEquatorIndexBuffer();
+                loadCelestialEquatorIndexBuffer();
                 }
             createMarkerLists();
             break;
@@ -281,8 +281,8 @@ void GridGlobe::loadGridIndexBuffer(void) {
     GLuint* buffer_base_ptr = new GLuint[grid_links * VERTICES_PER_LINK];
     GLuint* buffer_ptr = buffer_base_ptr;
 
-    // Do rings of latitude/declination first. Don't need a ring at either pole! Exempt
-    // any equatorial slice, if present.
+    // Do rings of latitude/declination first. Don't need a ring at either pole!
+    // Exempt any equatorial slice, if present.
     GLuint stack_count = 0;
     GLuint equator_stack_count = (sp->stacks() - 1)/2 - 1;
     for(std::vector<std::vector<GLuint> >::const_iterator stack = sp->stackIndices().begin() + 1;
@@ -357,7 +357,7 @@ void GridGlobe::loadCelestialEquatorIndexBuffer(void) {
     // There'll be no links in the equator unless ....
     celestial_equator_links = 0;
 
-    // There is an equator to draw ?
+    // ... there is an equator to draw.
     if(hasEquator) {
         // Yes, so it will have as many links as there are slices.
         celestial_equator_links = sp->slices();
