@@ -180,8 +180,12 @@ class Globe : public Renderable {
         /**
          * \brief Load an immediate peri-polar region's worth of
          *        indices into a server-side buffer.
+         *
+         * \param buff : the buffer object to load
+         *
+         * \param po : which pole is adjacent
          */
-        void loadPolarIndexBuffer(Buffer_OBJ& buff, enum pole p);
+        void loadPolarIndexBuffer(Buffer_OBJ& buff, enum pole po);
 
         /**
          * \brief Load the ( many latitudes worth of ) non-peri-polar

@@ -315,7 +315,7 @@ void Globe::loadWaistIndexBuffer(void) {
     delete[] buffer_base_ptr;
     }
 
-void Globe::loadPolarIndexBuffer(Buffer_OBJ& polar_buffer, enum pole p) {
+void Globe::loadPolarIndexBuffer(Buffer_OBJ& polar_buffer, enum pole po) {
     // Get a valid buffer object ( server-side ) identifier.
     polar_buffer.acquire();
 
@@ -334,7 +334,7 @@ void Globe::loadPolarIndexBuffer(Buffer_OBJ& polar_buffer, enum pole p) {
     GLuint pole_index = 0;
     GLuint peri_polar_index = pole_index + 1;
     GLuint delta = 1;
-    if(p == SOUTH) {
+    if(po == SOUTH) {
         // The south polar index is however many vertex entries there
         // are for the entire sphere minus one.
         pole_index = sp.vertices().size() - 1;
