@@ -170,7 +170,7 @@ void HUDContainer::prepare(SolarSystemGlobals::render_quality rq) {
                                   ErrorHandler::FATAL);
             }
         }
-
+    }
 
 void HUDContainer::release(void) {
     // Policy is that when a container is inactivated, then all
