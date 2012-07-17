@@ -57,55 +57,6 @@ void HUDBorderLayout::setPanel(enum BorderPanel panel, HUDContainer* container) 
         }
     }
 
-void HUDBorderLayout::getCentre(std::pair<GLuint, GLuint>* base,
-                                std::pair<GLuint, GLuint>* size) const {
-    // By lazy evaluation. First get pointers to all the panels.
-    HUDContainer* north_panel = getItem(NORTH);
-    HUDContainer* south_panel = getItem(SOUTH);
-    HUDContainer* east_panel = getItem(EAST);
-    HUDContainer* west_panel = getItem(WEST);
-
-    // The left edge of the centre area is positioned at
-    // the left edge of the WEST panel plus the WEST panel's
-    // width. But only if the WEST panel 'exists' and is
-    // active.
-    base->first = 0;
-    if((west_panel != NULL ) && (west_panel.isActivated() == true)) {
-        base->first = west_panel->horzBase() +
-                      west_panel->width();
-        }
-
-    // The lower edge of the centre area is positioned at
-    // the lower edge of the SOUTH panel plus the SOUTH panel's
-    // height. But only if the SOUTH panel 'exists' and  is
-    // active.
-    base->second = 0;
-    if((south_panel != NULL) && (south_panel.isActivated() == true)) {
-        base->second = south_panel->vertBase() +
-                       south_panel->height();
-        }
-
-    // Initially assume the centre area is the full width of
-    // this entire container, minus the horizontal base position
-    // as determined above.
-    size->first = this->width() - base->first;
-    // But if the EAST panel 'exists' and is activated,
-    // then subtract it's width too.
-    if((east_panel != NULL ) && (east_panel.isActivated() == true)) {
-        size->first -= east_panel->width();
-        }
-
-    // Similiarly for the height, assume it is that of the entire
-    // container minus the vertical base position as determined
-    // above.
-    size->second = this->height() - base->second;
-    // But if the NORTH panel 'exists' and is activated,
-    // then subtract it's height too.
-    if((north_panel != NULL) && (north_panel.isActivated() == true)) {
-        size->second -= north_panel->height();
-        }
-    }
-
 std::pair<GLuint, GLuint> HUDBorderLayout::reassessMinimumDimensions(void) {
     // Minimum overall width is the maximum of :
     //    - the minimum of the north area

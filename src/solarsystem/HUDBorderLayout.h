@@ -83,19 +83,6 @@ class HUDBorderLayout : public HUDContainer {
          */
         void setPanel(enum BorderPanel panel, HUDContainer* container);
 
-        /**
-         * \brief Obtain the position and dimensions of the centre area
-         *
-         * \param base : pointer to a GLuint pair for the horizontal and
-         *               vertical coordinates respectively of the
-         *               lower left corner of the region.
-         *
-         * \param size : pointer to a GLuint pair for the horizontal
-         *               width and vertical height respectively.
-         */
-        void getCentre(std::pair<GLuint, GLuint>* base,
-                       std::pair<GLuint, GLuint>* size) const;
-
     protected:
         /**
          * \brief Determine the miminum dimensions as per the internal
