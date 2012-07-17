@@ -111,7 +111,13 @@ class HUDImage : public HUDContent {
          */
         void loadVertexBuffer(void);
 
-        /// Load a single vertex's data into a server-side buffer
+        /**
+         * \brief Load a single vertex's data into a server-side buffer
+         *
+         * \param vert : the vertex
+         *
+         * \param buffer : the buffer
+         */
         void vertex2buffer(const Vertex& vert, vec_t* buffer) const;
 
         /// Listing of vertices.

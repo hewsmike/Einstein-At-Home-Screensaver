@@ -29,78 +29,78 @@ HUDTextLine::HUDTextLine(GLuint length, OGLFT_ft* font,
                            HUDContent(horizontalMargin, verticalMargin),
                            len(length),
                            lineFont(font) {
-   // Initial setting of minimum dimensions are those of the initial null
-   // content ie. zero width and height, in combination with the
-   // given fixed margins.
-   setMinimumDimensions(2*horizontalMargin, 2*verticalMargin);
-   }
+    // Initial setting of minimum dimensions are those of the initial null
+    // content ie. zero width and height, in combination with the
+    // given fixed margins.
+    setMinimumDimensions(2*horizontalMargin, 2*verticalMargin);
+    }
 
 HUDTextLine::~HUDTextLine() {
-   }
+    }
 
 void HUDTextLine::setText(const std::string text) {
-   // Overwrite any previous content.
-   txt.assign(text);
+    // Overwrite any previous content.
+    txt.assign(text);
 
-   // Call base class to set minima for the given text content.
-   this->setMinimumDimensions(width() + 2*horzMargin(),
-                              height() + 2*vertMargin());
+    // Call base class to set minima for the given text content.
+    this->setMinimumDimensions(width() + 2*horzMargin(),
+                               height() + 2*vertMargin());
 
-   // Any enclosing container must be made aware of size change.
-   HUDContainer* outer = getEnclosingContainer();
-   if(outer !=NULL) {
-      outer->adjust();
-      }
-   }
+    // Any enclosing container must be made aware of size change.
+    HUDContainer* outer = getEnclosingContainer();
+    if(outer !=NULL) {
+        outer->adjust();
+        }
+    }
 
 std::string HUDTextLine::getText(void) const {
-   return txt;
-   }
+    return txt;
+    }
 
 GLuint HUDTextLine::maxLength(void) const {
-   return len;
-   }
+    return len;
+    }
 
 GLuint HUDTextLine::width(void) const {
-   // Lazy evaluate.
-   // Ask OGLFT what the pixel bounds are for the current text.
-   OGLFT::BBox currentBox = lineFont->measure(txt.substr(0, len).c_str());
-   // Round up the advance in horizontal direction to nearest integer.
-   return ceil(currentBox.advance_.dx_);
-   }
+    // Lazy evaluate.
+    // Ask OGLFT what the pixel bounds are for the current text.
+    OGLFT::BBox currentBox = lineFont->measure(txt.substr(0, len).c_str());
+    // Round up the advance in horizontal direction to nearest integer.
+    return ceil(currentBox.advance_.dx_);
+    }
 
 GLuint HUDTextLine::height(void) const {
-   // Lazy evaluate.
-   // Round up the height to nearest integer.
-   return ceil(lineFont->height()*2);
-   }
+    // Lazy evaluate.
+    // Round up the height to nearest integer.
+    return ceil(lineFont->height()*2);
+    }
 
 void HUDTextLine::prepare(SolarSystemGlobals::render_quality rq) {
-   // Call base class to set minima for the given text content.
-   this->setMinimumDimensions(width() + 2*horzMargin(),
-                              height() + 2*vertMargin());
+    // Call base class to set minima for the given text content.
+    this->setMinimumDimensions(width() + 2*horzMargin(),
+                               height() + 2*vertMargin());
 
-   // Any enclosing container must be made aware of size change.
-   HUDContainer* outer = getEnclosingContainer();
-   if(outer !=NULL) {
-      outer->adjust();
-      }
-   }
+    // Any enclosing container must be made aware of size change.
+    HUDContainer* outer = getEnclosingContainer();
+    if(outer !=NULL) {
+        outer->adjust();
+        }
+    }
 
 void HUDTextLine::release(void) {
-   // Policy is to set size to zero when rendering is not implied.
+    // Policy is to set size to zero when rendering is not implied.
 
-   // Call base class to set minima to no content.
-   setMinimumDimensions(0, 0);
+    // Call base class to set minima to no content.
+    setMinimumDimensions(0, 0);
 
-   // Release of text implies any enclosing
-   // container must be made aware of size change.
-   HUDContainer* outer = getEnclosingContainer();
-   if(outer !=NULL) {
-      outer->adjust();
-      }
-   }
+    // Release of text implies any enclosing
+    // container must be made aware of size change.
+    HUDContainer* outer = getEnclosingContainer();
+    if(outer !=NULL) {
+        outer->adjust();
+        }
+    }
 
 void HUDTextLine::render(void) {
-   lineFont->draw(horzBase(), vertBase() + this->height()/4, txt.substr(0, len).c_str());
-   }
+    lineFont->draw(horzBase(), vertBase() + this->height()/4, txt.substr(0, len).c_str());
+    }

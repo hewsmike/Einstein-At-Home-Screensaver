@@ -86,7 +86,6 @@ class HUDContainer : public HUDItem {
          */
         void emptyContainer(void);
 
-    protected:
         /**
          * \brief Obtain the count of contained items
          *
@@ -115,6 +114,7 @@ class HUDContainer : public HUDItem {
          */
         bool isEmpty(void) const;
 
+    protected:
         /**
          * \brief Get a pointer to a contained item
          *
