@@ -153,7 +153,7 @@ bool WindowManager::initialize(const int width, const int height, const int fram
                                     current_desktop_mode.RedBits,			// Alpha range same as individual colors
                                     best_depth_buffer_grain,
                                     NO_STENCIL,
-                                    GLFW_FULLSCREEN);
+                                    GLFW_WINDOW);
 
     // If that didn't work, then maybe it was the depth buffer,
     // and try again with a lesser spec.
@@ -175,23 +175,23 @@ bool WindowManager::initialize(const int width, const int height, const int fram
             }
       }
 
-   std::stringstream msg1;
-   msg1 << "WindowManager::initialize() : Rendering surface acquired "
-   	  << m_CurrentWidth
-		  << " x "
-		  << m_CurrentHeight
-		  << " @ "
-		  << (current_desktop_mode.RedBits + current_desktop_mode.GreenBits + current_desktop_mode.BlueBits)
-		  << " colors with a "
-		  << best_depth_buffer_grain
-		  << " bit depth buffer";
-	ErrorHandler::record(msg1.str(), ErrorHandler::INFORM);
+    std::stringstream msg1;
+    msg1 << "WindowManager::initialize() : Rendering surface acquired "
+         << m_CurrentWidth
+         << " x "
+         << m_CurrentHeight
+         << " @ "
+         << (current_desktop_mode.RedBits + current_desktop_mode.GreenBits + current_desktop_mode.BlueBits)
+         << " colors with a "
+         << best_depth_buffer_grain
+         << " bit depth buffer";
+    ErrorHandler::record(msg1.str(), ErrorHandler::INFORM);
 
-	// Give GLEW the best chance of finding
-	// functionality with experimental drivers.
-	glewExperimental = GL_TRUE;
+    // Give GLEW the best chance of finding
+    // functionality with experimental drivers.
+    glewExperimental = GL_TRUE;
 
-	// Now initialise GLEW.
+    // Now initialise GLEW.
    if(glewInit() != GLEW_OK) {
       ErrorHandler::record("WindowManager::initialize() : Window system could not be initalized - GLEW init fail", ErrorHandler::WARN);
       return false;

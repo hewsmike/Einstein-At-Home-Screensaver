@@ -53,6 +53,7 @@ log() {
 
 prepare_directories() {
     log "Preparing $1 directories ... "
+    mkdir -p $ROOT/$1
     rm -rf $ROOT/$1/src
     rm -rf $ROOT/$1/patches
     rm -f $ROOT/$1/build.sh
@@ -171,11 +172,7 @@ case $TARGET in
         cd ..
         ;;
     $TARGET_WIN32)
-        log "Preparing win32 directories ... "
-        mkdir -p $ROOT/win32
-        cp -r -f $ROOT/src $ROOT/win32/src
-        cp -r -f $ROOT/patches $ROOT/win32/patches
-        cp -f $ROOT/build.sh $ROOT/win32/build.sh
+        prepare_directories win32
         log "For $PRODUCT_NAME : invoking win32 build script ... "
         cd win32
         ./build.sh --win32 --$PRODUCT

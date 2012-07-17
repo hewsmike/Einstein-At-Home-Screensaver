@@ -147,7 +147,7 @@ void Sphere::makeVertices(void) {
             // Perhaps staggering of even-indexed stacks,
             // but only applied for non-pole stacks. Longitudinal
             // staggering of poles would matter for texturing.
-            if((stack != 0) && (stack != num_stacks - 1)) {}
+            if((stack != 0) && (stack != num_stacks - 1)) {
                 longit += long_stag_step * (stack % 2);
                 }
 
