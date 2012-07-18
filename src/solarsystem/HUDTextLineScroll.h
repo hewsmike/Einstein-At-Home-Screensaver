@@ -22,7 +22,6 @@
 #define HUD_TEXT_LINE_SCROLL_H_
 
 #include "HUDTextLine.h"
-#include "TriggerTimer.h"
 
 /**
  * \addtogroup solarsystem Solarsystem
@@ -37,63 +36,63 @@
  */
 
 class HUDTextLineScroll : public HUDTextLine {
-   public:
-      /// Enumerants for the scroll behaviour.
-      enum mode {NONE, LEFT, RIGHT};
+    public:
+        /// Enumerants for the scroll behaviour.
+        enum mode {NONE, LEFT, RIGHT};
 
-      /**
-       * \brief Constructor
-       *
-       * \param length : the maximum length of displayed characters
-       * \param font : pointer to an OGLFT font instance
-       * \param horizontalMargin : the horizontal pixel margin to be applied
-       *                           either side of the enclosed content
-       * \param verticalMargin : the vertical pixel margin to be applied
-       *                         above and below the enclosed content
-       * \param direction : the direction in which to scroll the text
-       * \param scroll_interval : the number of frames between transitions
-       */
-      HUDTextLineScroll(GLuint length, OGLFT_ft* font,
-                        GLuint horizontalMargin, GLuint verticalMargin,
-                        mode direction, GLuint scroll_interval);
+        /**
+         * \brief Constructor
+         *
+         * \param length : the maximum length of displayed characters
+         * \param font : pointer to an OGLFT font instance
+         * \param horizontalMargin : the horizontal pixel margin to be applied
+         *                           either side of the enclosed content
+         * \param verticalMargin : the vertical pixel margin to be applied
+         *                         above and below the enclosed content
+         * \param direction : the direction in which to scroll the text
+         * \param scroll_interval : the number of frames between transitions
+         */
+        HUDTextLineScroll(GLuint length, OGLFT_ft* font,
+                          GLuint horizontalMargin, GLuint verticalMargin,
+                          mode direction, GLuint scroll_interval);
 
-      /**
-       * \brief Destructor
-       */
-      virtual ~HUDTextLineScroll();
+        /**
+         * \brief Destructor
+         */
+        virtual ~HUDTextLineScroll();
 
-      /**
-       * \brief Get the direction of scroll
-       *
-       * \return the direction in which to scroll the text
-       */
-      HUDTextLineScroll::mode getDirection(void);
+        /**
+         * \brief Get the direction of scroll
+         *
+         * \return the direction in which to scroll the text
+         */
+        HUDTextLineScroll::mode getDirection(void);
 
-      /**
-       * \brief Set the direction of scroll
-       *
-       * \param direction : the direction in which to scroll the text
-       */
-      void setDirection(mode direction);
+        /**
+         * \brief Set the direction of scroll
+         *
+         * \param direction : the direction in which to scroll the text
+         */
+        void setDirection(mode direction);
 
-      /**
-       * \brief Reverse the direction of scroll
-       */
-      void toggleDirection(void);
+        /**
+         * \brief Reverse the direction of scroll
+         */
+        void toggleDirection(void);
 
-   protected:
-      /// This routine satisfies the Renderable interface.
+    protected:
+        /// This routine satisfies the Renderable interface.
 
-      /// Provide OpenGL code to render the object.
-      virtual void render(void);
+        /// Provide OpenGL code to render the object.
+        virtual void render(void);
 
-   private:
-      mode dir;
+    private:
+        mode dir;
 
-      GLuint interval;
+        GLuint interval;
 
-      GLuint frame_count;
-   };
+        GLuint frame_count;
+    };
 
 /**
  * @}
