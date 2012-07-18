@@ -21,16 +21,16 @@
 #include "PulsarEAH.h"
 
 PulsarEAH::PulsarEAH(starpos_t ra, starpos_t dec, std::string nm, Pulsar::pulsar_source sc) :
-               		Pulsar(ra, dec, nm, sc) {
-	}
+                     Pulsar(ra, dec, nm, sc) {
+    }
 
 PulsarEAH::~PulsarEAH() {
-   }
+    }
 
 void PulsarEAH::addDiscoverer(const std::string& discov) {
-	discoverers.push_back(discov);
-	}
+    discoverers.push_back(discov);
+    }
 
 const std::vector<std::string>& PulsarEAH::getDiscoverers(void) const {
-	return discoverers;
-	}
+    return discoverers;
+    }

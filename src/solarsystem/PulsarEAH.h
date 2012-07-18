@@ -35,7 +35,7 @@
 /**
  * \brief %Solarsystem Pulsar data type with Einstein At Home co-discovery.
  *
- * This class comprises the astronomical data relating to a specific pulsar,
+ *      This class comprises the astronomical data relating to a pulsar,
  * newly discovered with the assistance of Einstein At Home. This does not
  * include the re-discovery of prior known pulsars.
  *
@@ -43,48 +43,48 @@
  */
 
 class PulsarEAH : public Pulsar {
-   public:
-      /**
-       * \brief Constructor, giving fully specified member values.
-       *
-       * \param ra - right ascension of the pulsar
-       *
-       * \param dec - declination of the pulsar
-       *
-       * \param nm - the name of the pulsar
-       *
-       * \param sc - the catalog/source of the pulsar
-       */
-      PulsarEAH(starpos_t ra, starpos_t dec, std::string nm, pulsar_source sc);
+    public:
+        /**
+         * \brief Constructor, giving fully specified member values.
+         *
+         * \param ra - right ascension of the pulsar
+         *
+         * \param dec - declination of the pulsar
+         *
+         * \param nm - the name of the pulsar
+         *
+         * \param sc - the catalog/source of the pulsar
+         */
+        PulsarEAH(starpos_t ra, starpos_t dec, std::string nm, pulsar_source sc);
 
-      /**
-       * \brief Destructor
-       */
-      virtual ~PulsarEAH();
+        /**
+         * \brief Destructor
+         */
+        virtual ~PulsarEAH();
 
-      void addDiscoverer(const std::string& discov);
+        void addDiscoverer(const std::string& discov);
 
-      /**
-       * \brief Obtain the discoverers.
-       *
-       * \return a reference to the discoverers.
-       */
-      const std::vector<std::string>& getDiscoverers(void) const;
+        /**
+         * \brief Obtain the discoverers.
+         *
+         * \return a reference to the discoverers.
+         */
+        const std::vector<std::string>& getDiscoverers(void) const;
 
-   private:
-      /// The list of associated discoverers ie. Einstein At Home contributors.
-      std::vector<std::string> discoverers;
+    private:
+        /// The list of associated discoverers ie. Einstein At Home contributors.
+        std::vector<std::string> discoverers;
 
-      std::string attribution_date;
+        std::string attribution_date;
 
-      HUDImage* pulse_profile;
+        HUDImage* pulse_profile;
 
-      double pulse_frequency;
+        double pulse_frequency;
 
-      double pulse_period;
+        double pulse_period;
 
-      double dispersion_measure;
-   };
+        double dispersion_measure;
+    };
 
 /**
  * @}
