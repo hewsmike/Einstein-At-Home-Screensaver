@@ -30,48 +30,48 @@
 
 /**
  * \brief Enacts a countdown timer with recurrent triggering
- *	based upon a given interval, measured in milliseconds.
+ *        based upon a given interval, measured in milliseconds.
  *
- *		It requires polling to allow updates from the system clock,
- *	and determine if a trigger has fired. A given callback routine
+ *        It requires regular updates from the system clock to
+ * determine if a trigger has fired. A given callback routine
  * is called when such occurs.
  *
  * \author Mike Hewson\n
  */
 
 class TriggerTimer {
-   public:
-		/// Enact a minimum time in milliseconds between triggers.
-      static const GLuint TRIGGER_MIN;
+    public:
+        /// Enact a minimum time in milliseconds between triggers.
+        static const GLuint TRIGGER_MIN;
 
-      /**
-       * \brief Constructor
-       *
-       * \param interval : the minimum time in milliseconds between triggers.
-       * \param cbFunc : the function to call upon triggering
-       */
-      TriggerTimer(double interval, void (*cbFunc)(void));
+        /**
+         * \brief Constructor
+         *
+         * \param interval : the minimum time in milliseconds between triggers.
+         * \param cbFunc : the function to call upon triggering
+         */
+        TriggerTimer(double interval, void (*cbFunc)(void));
 
-      /**
-       * \brief Destructor
-       */
-      virtual ~TriggerTimer();
+        /**
+         * \brief Destructor
+         */
+        virtual ~TriggerTimer();
 
-      /**
-       * \brief Refresh the timer, and act if triggered.
-       */
-      void update(void);
+        /**
+         * \brief Refresh the timer, and act if triggered.
+         */
+        void update(void);
 
-   private:
-      /// The time when the next trigger occurs.
-      double trigger_time;
+    private:
+        /// The time when the next trigger occurs.
+        double trigger_time;
 
-      /// The interval in seconds between triggers.
-      double trigger_interval;
+        /// The interval in seconds between triggers.
+        double trigger_interval;
 
-		/// Who you gonna call .... :-)
-      void (*callback)(void);
-   };
+        /// Who you gonna call .... :-)
+        void (*callback)(void);
+    };
 
 /**
  * @}

@@ -26,43 +26,42 @@
 const GLuint TriggerTimer::TRIGGER_MIN(10);
 
 TriggerTimer::TriggerTimer(double interval, void (*cbFunc)(void)) {
-   // Having a NULL callback gives a useless timer, so
-	// this ought be immediately disclosed as a fatal.
-	/// TODO - make this so
-	if(cbFunc == NULL) {
-      ErrorHandler::record("TriggerTimer::TriggerTimer() : NULL passed for timer callback", ErrorHandler::FATAL);
-      }
+    // Having a NULL callback gives a useless timer, so
+    // this ought be immediately disclosed as a fatal.
+    if(cbFunc == NULL) {
+        ErrorHandler::record("TriggerTimer::TriggerTimer() : NULL passed for timer callback", ErrorHandler::FATAL);
+        }
 
-	// Remember the callback routine to be invoked.
-   callback = cbFunc;
+    // Remember the callback routine to be invoked.
+    callback = cbFunc;
 
-   // Enforce minimum trigger interval.
-   if(interval < TRIGGER_MIN) {
-      interval = TRIGGER_MIN;
-      }
+    // Enforce minimum trigger interval.
+    if(interval < TRIGGER_MIN) {
+        interval = TRIGGER_MIN;
+        }
 
-   // Convert interval in milliseconds to minutes.
-   trigger_interval = interval/1000;
+    // Convert interval in milliseconds to minutes.
+    trigger_interval = interval/1000;
 
-   // Set first trigger point.
-   trigger_time = glfwGetTime() + trigger_interval;
-   }
+    // Set first trigger point.
+    trigger_time = glfwGetTime() + trigger_interval;
+    }
 
 TriggerTimer::~TriggerTimer() {
-   }
+    }
 
 void TriggerTimer::update(void) {
-   // Get number of seconds since the GLFW initialisation.
-   double now = glfwGetTime();
+    // Get number of seconds since the GLFW initialisation.
+    double now = glfwGetTime();
 
-   // Fire the trigger if we have passed the trigger point.
-   if(now > trigger_time) {
-      // Assuming we have a non-NULL callback target, invoke it.
-      if(callback != NULL) {
-         callback();
-         }
+    // Fire the trigger if we have passed the trigger point.
+    if(now > trigger_time) {
+        // Assuming we have a non-NULL callback target, invoke it.
+        if(callback != NULL) {
+            callback();
+            }
 
-      // Reset the trigger point.
-      trigger_time = now + trigger_interval;
-      }
-   }
+        // Reset the trigger point.
+        trigger_time = now + trigger_interval;
+        }
+    }
