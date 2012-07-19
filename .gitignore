@@ -8,7 +8,7 @@ doc/html
 /win32
 /linux
 /mac
-/mac_sdk
+/mac-sdk
 .settings
 
 # patterns
@@ -20,6 +20,7 @@ doc/*.tag
 
 # files
 erp_git_version.h
+topbuild.sh
 .buildstate
 .lastbuild
 build.log
