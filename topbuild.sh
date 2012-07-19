@@ -167,7 +167,7 @@ case $TARGET in
     $TARGET_MAC_SDK)
         prepare_directories mac-sdk
         log "For $PRODUCT_NAME : invoking mac-sdk build script ... "
-        cd mac_sdk
+        cd mac-sdk
         ./build.sh --mac-sdk --$PRODUCT
         cd ..
         ;;

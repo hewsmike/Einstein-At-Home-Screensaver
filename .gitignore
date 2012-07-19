@@ -20,7 +20,6 @@ doc/*.tag
 
 # files
 erp_git_version.h
-topbuild.sh
 .buildstate
 .lastbuild
 build.log
