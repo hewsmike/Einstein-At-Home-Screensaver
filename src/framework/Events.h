@@ -145,7 +145,8 @@ class Events {
          * \param ev  : pointer to an Event which may be filled with
          *              the detail of said event.
          * \return boolean indicating :
-         *                  true, if an event was available, and the queue
+         *                  true, if an event was available, in which
+         *                        case it will be removed and the queue
          *                        will have one fewer.
          *                  false, if no event was waiting to be read.
          */
