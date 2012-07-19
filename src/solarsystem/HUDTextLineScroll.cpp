@@ -101,7 +101,6 @@ void HUDTextLineScroll::render(void) {
                     std::string msg = "HUDTextLineScroll::render() - bad switch case reached (default)";
                     ErrorHandler::record(msg, ErrorHandler::FATAL);
                     break;
-                    }
                 }
             // Set the (new) text contents.
             setText(contents);
