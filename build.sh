@@ -30,10 +30,10 @@ ROOT=`pwd`
 PATH_ORG="$PATH"
 PATH_MINGW="$PATH"
 
-# Set the logfile. 
+# Set the logfile.
 LOGFILE=$ROOT/build.log
 
-# Required for correct access to the BOINC repository. 
+# Required for correct access to the BOINC repository.
 TAG_GFXAPPS="current_gfx_apps"
 
 # For some source fetches we use version strings.
@@ -42,19 +42,28 @@ GLFW_VERSION=2.7.5
 FREETYPE_VERSION=2.3.5
 LIBXML_VERSION=2.6.32
 
-# No target set initially each time we run ( to be discovered later ). 
-TARGET=0
-
 # Target variants.
+TARGET_NONE=0
 TARGET_LINUX=1
 TARGET_MAC=2
 TARGET_WIN32=3
 TARGET_DOC=4
 
-# No buildstate set initially each time we run ( to be discovered later ).
-BUILDSTATE=0
+# No target set initially.
+TARGET=TARGET_NONE
+
+# Build mode variants.
+MODE_NONE=0
+MODE_DEBUG=1
+MODE_RELEASE=2
+MODE_MEMCHECK=3
+MODE_CALLGRIND=4
+
+# Assume DEBUG mode as default.
+MODE=MODE_DEBUG
 
 # Common build stages.
+BS_NONE=0
 BS_PREREQUISITES=1
 BS_PREPARE_TREE=2
 
@@ -74,24 +83,10 @@ BS_BUILD_LIBXML_MINGW=12
 BS_BUILD_OGLFT_MINGW=13
 BS_BUILD_BOINC_MINGW=14
 
+# No buildstate set initially.
+BUILDSTATE=BS_NONE
+
 ### functions (utility) ################################################################################################
-
-retrieve_build_state() {
-    log "Checking for previous build checkpoints..."
-
-    # Do we have a record of the most recent build state?
-    if [ ! -f .buildstate ]; then
-        # No. Start from the beginning.
-        cd $ROOT || failure
-        log "No previous build checkpoints found! Starting from scratch..."
-    else
-        # Yes. Get that build state.
-        BUILDSTATE=`cat $ROOT/.buildstate 2>/dev/null`
-        log "Recovering previous build..."
-    fi
-
-    return 0
-    }
 
 check_last_build() {
     log "Checking previous build target..."
@@ -173,6 +168,20 @@ log() {
     return 0
     }
 
+mode_check() {
+    if [ $TARGET != $TARGET_LINUX ]; then
+        if [ $MODE = $MODE_MEMCHECK ]; then
+            log "$1 mode not available for $2 target !!"
+            return 1
+        fi
+        if [ $MODE = $MODE_CALLGRIND ]; then
+            log "$1 mode not available for $2 target !!"
+            return 1
+        fi
+    fi
+    return 0
+    }
+
 prepare_tree() {
     if [ $BUILDSTATE -ge $BS_PREPARE_TREE ]; then
         return 0
@@ -190,65 +199,35 @@ prepare_tree() {
     return 0
     }
 
-write_version_header() {
-    log "Retrieving git version information..."
-
-    # Path/name to the version header file. 
-    HEADER_FILE="$ROOT/src/erp_git_version.h"
-
-    # Assuming the $ROOT directory has a git repository. 
-    if [ -d $ROOT/.git ]; then
-        # Get the name of the most recent commit ( ie. the 40 digit hex code of same ).
-        GIT_LOG=`git log -n1 --pretty="format:%H"` || failure
-        # Get the name of the machine we are building on.
-        HOST=`hostname` || failure
-    fi
-
-    # Start constructing the header file with include guards.
-    echo "#ifndef ERP_GIT_VERSION_H" > $HEADER_FILE || failure
-    echo "#define ERP_GIT_VERSION_H" >> $HEADER_FILE || failure
-    echo "" >> $HEADER_FILE || failure
-
-    # Did we have a git repository for the $ROOT directory?
-    if [ "no$GIT_LOG" != "no" ]; then
-        # Yes. Write the git version variable combining the commit name, the host name 
-        # and the top level build directory.      
-        echo "#define ERP_GIT_VERSION \"$GIT_LOG ($HOST:$ROOT)\"" >> $HEADER_FILE || failure
-    else
-        # No. Write the git version variable to show that. 
-        echo "#define ERP_GIT_VERSION \"unknown (git repository not found!)\"" >> $HEADER_FILE || failure
-    fi
-
-    # Close off include guard.
-    echo "" >> $HEADER_FILE || failure
-    echo "#endif" >> $HEADER_FILE || failure
-    }
-
 print_usage() {
     # Wherever you came from, come back to $ROOT where you invoked this script.
     cd $ROOT
 
     echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
-    echo "                         Usage"
-    echo "                        -------"
+    echo "                      BUILD Usage"
+    echo "                      -----------"
     echo
-    echo "  With two parameters ( create executables ) :"
-    echo "  ------------------------------------------"
+    echo "  With three parameters ( create executables ) :"
+    echo "  --------------------------------------------"
     echo
-    echo "              `basename $0` <target> <product>"
+    echo "              `basename $0` <target> <mode> <product>"
     echo
     echo "      Available targets:"
     echo "          --linux"
     echo "          --mac"
     echo "          --mac-sdk           ( Mac OS 10.4 x86 SDK )"
     echo "          --win32"
-#    echo "          --memcheck          ( assumes linux, not currently enacted )"
-#    echo "          --callgrind         ( assumes linux, not currently enacted )"
+    echo
+    echo "      Available modes:"
+    echo "          --debug"
+    echo "          --release"
+    echo "          --memcheck          ( linux only )"
+    echo "          --callgrind         ( linux only )"
     echo
     echo "      Available products:"
     echo "          --starsphere"
     echo "          --solarsystem"
-    echo 
+    echo
     echo "  With one parameter :"
     echo "  ------------------"
     echo
@@ -267,19 +246,70 @@ print_usage() {
 
 purge_tree() {
     log "Purging build and install directories..."
-    
+
     rm -rf $ROOT/build >> $LOGFILE || failure
     rm -rf $ROOT/install >> $LOGFILE || failure
 
     return 0
     }
 
+retrieve_build_state() {
+    log "Checking for previous build checkpoints..."
+
+    # Do we have a record of the most recent build state?
+    if [ ! -f .buildstate ]; then
+        # No. Start from the beginning.
+        cd $ROOT || failure
+        log "No previous build checkpoints found! Starting from scratch..."
+    else
+        # Yes. Get that build state.
+        BUILDSTATE=`cat $ROOT/.buildstate 2>/dev/null`
+        log "Recovering previous build..."
+    fi
+
+    return 0
+    }
+
 save_build_state() {
     log "Saving build checkpoint..."
-    
+
     echo "$1" > $ROOT/.buildstate || failure
 
     return 0
+    }
+
+write_version_header() {
+    log "Retrieving git version information..."
+
+    # Path/name to the version header file.
+    HEADER_FILE="$ROOT/src/erp_git_version.h"
+
+    # Assuming the $ROOT directory has a git repository.
+    if [ -d $ROOT/.git ]; then
+        # Get the name of the most recent commit ( ie. the 40 digit hex code of same ).
+        GIT_LOG=`git log -n1 --pretty="format:%H"` || failure
+        # Get the name of the machine we are building on.
+        HOST=`hostname` || failure
+    fi
+
+    # Start constructing the header file with include guards.
+    echo "#ifndef ERP_GIT_VERSION_H" > $HEADER_FILE || failure
+    echo "#define ERP_GIT_VERSION_H" >> $HEADER_FILE || failure
+    echo "" >> $HEADER_FILE || failure
+
+    # Did we have a git repository for the $ROOT directory?
+    if [ "no$GIT_LOG" != "no" ]; then
+        # Yes. Write the git version variable combining the commit name, the host name
+        # and the top level build directory.
+        echo "#define ERP_GIT_VERSION \"$GIT_LOG ($HOST:$ROOT)\"" >> $HEADER_FILE || failure
+    else
+        # No. Write the git version variable to show that.
+        echo "#define ERP_GIT_VERSION \"unknown (git repository not found!)\"" >> $HEADER_FILE || failure
+    fi
+
+    # Close off include guard.
+    echo "" >> $HEADER_FILE || failure
+    echo "#endif" >> $HEADER_FILE || failure
     }
 
 ### functions to obtain sources ########################################################################################
@@ -562,7 +592,7 @@ build_glew_mac() {
 
     cd $ROOT/3rdparty/glew
     GLEW_DEST="$ROOT/install" make install >> $LOGFILE 2>&1 || failure
-    # don't use shared GLEW libraries   
+    # don't use shared GLEW libraries
     rm -f $ROOT/install/lib/libGLEW*.dylib
 
     log "Successfully built and installed GLEW!"
@@ -766,14 +796,15 @@ build_boinc_mingw() {
 ### generic build function #############################################################################################
 
 build_product() {
-    # make sure ORC is always compiled for host platform (it's executed during $PRODUCT_NAME build!)
+    # make sure ORC is always compiled for host platform
     log "Preparing $PRODUCT_NAME..."
     mkdir -p $ROOT/build/orc >> $LOGFILE || failure
     mkdir -p $ROOT/build/framework >> $LOGFILE || failure
     mkdir -p $ROOT/build/$PRODUCT >> $LOGFILE || failure
     export PATH=$PATH_ORG
 
-    # Create the header containing ( if available ) any git commit, build machine and working directory information.
+    # Create the header containing ( if available ) any git commit,
+    # build machine and working directory information.
     write_version_header || failure
 
     log "Building $PRODUCT_NAME [ORC]..."
@@ -814,7 +845,7 @@ build_product() {
     else
         cp -f $ROOT/src/framework/Makefile . >> $LOGFILE 2>&1 || failure
     fi
-    make $2 PRODUCT=$PRODUCT_NAME >> $LOGFILE 2>&1 || failure
+    make ${2:2} PRODUCT=$PRODUCT_NAME >> $LOGFILE 2>&1 || failure
     make install >> $LOGFILE 2>&1 || failure
     log "Successfully built and installed $PRODUCT_NAME [Framework]!"
 
@@ -824,11 +855,11 @@ build_product() {
     cp $ROOT/src/$PRODUCT/*.res . >> $LOGFILE 2>&1 || failure
     cp -f $ROOT/src/$PRODUCT/Makefile.common Makefile >> $LOGFILE 2>&1 || failure
     if [ "$1" == "$TARGET_MAC" ]; then
-        make release SYSTEM="mac" PRODUCT=$PRODUCT_NAME >> $LOGFILE 2>&1 || failure
+        make ${2:2} SYSTEM="mac" PRODUCT=$PRODUCT_NAME >> $LOGFILE 2>&1 || failure
     elif [ "$1" == "$TARGET_WIN32" ]; then
-        make release SYSTEM="win32" PRODUCT=$PRODUCT_NAME >> $LOGFILE 2>&1 || failure
+        make ${2:2} SYSTEM="win32" PRODUCT=$PRODUCT_NAME >> $LOGFILE 2>&1 || failure
     else
-        make release SYSTEM="linux" PRODUCT=$PRODUCT_NAME >> $LOGFILE 2>&1 || failure
+        make ${2:2} SYSTEM="linux" PRODUCT=$PRODUCT_NAME >> $LOGFILE 2>&1 || failure
     fi
     make install >> $LOGFILE 2>&1 || failure
     log "Successfully built and installed $PRODUCT_NAME [Application]!"
@@ -843,8 +874,8 @@ build_linux() {
 
     # Intercept build stages at the non-MinGW group to build the libraries
     # that the framework build will depend upon. Except that GLEW actually
-    # is incorporated into the framework library via GLEW source files 
-    # during the framework build. 
+    # is incorporated into the framework library via GLEW source files
+    # during the framework build.
 
     # However use linux specific functions to get GLEW and GLFW.
     build_glew || failure
@@ -855,7 +886,7 @@ build_linux() {
     build_libxml || failure
     build_oglft || failure
     build_boinc || failure
-    build_product $1 $2 || failure
+    build_product $TARGET_LINUX $2 || failure
 
     return 0
     }
@@ -870,14 +901,14 @@ build_mac() {
     build_glew_mac || failure
 
     # Use the GLFW cocoa library.
-    build_glfw_mac $1 || failure
+    build_glfw_mac $TARGET_MAC $2 || failure
 
     # Common linux/Mac build stages.
     build_freetype || failure
     build_libxml || failure
     build_oglft || failure
-    build_boinc $1 || failure
-    build_product $1 || failure
+    build_boinc $TARGET_MAC $2 || failure
+    build_product $TARGET_MAC $2 || failure
 
     return 0
     }
@@ -890,7 +921,7 @@ build_win32() {
 
     # Intercept build stages at the MinGW group to build the libraries
     # that the framework build will depend upon. Except that GLEW actually
-    # is incorporated into the framework library via GLEW source files 
+    # is incorporated into the framework library via GLEW source files
     # during the framework build.
     build_glew_mingw || failure
     build_glfw_mingw || failure
@@ -900,7 +931,9 @@ build_win32() {
     build_boinc_mingw || failure
 
     # Finally build our specific product
-    build_product $TARGET_WIN32 || failure
+    log "In build_win32() : \$1 = $1"
+    log "In build_win32() : \$2 = $2"
+    build_product $TARGET_WIN32 $2 || failure
 
     return 0
     }
@@ -939,66 +972,93 @@ if [ $# -eq 1 ]; then
     esac
 fi
 
-if [ $# -eq 2 ]; then 
-    case "$2" in
-        "--starsphere")
-            PRODUCT=starsphere
-            PRODUCT_NAME="Starsphere"
-            log "Building $PRODUCT_NAME"
+if [ $# -eq 2 ]; then
+    print_usage
+    exit 1
+fi
+
+if [ $# -eq 3 ]; then
+    case "$1" in
+        "--linux")
+            TARGET=$TARGET_LINUX
+            check_last_build "$1" || failure
+            log "Building linux version "
+            retrieve_build_state || failure
             ;;
-        "--solarsystem")
-            PRODUCT=solarsystem
-            PRODUCT_NAME="SolarSystem"
-            log "Building $PRODUCT_NAME"
+        "--mac")
+            TARGET=$TARGET_MAC
+            mode_check
+            check_last_build "$1" || failure
+            log "Building mac (Intel) version "
+            retrieve_build_state || failure
+            ;;
+        "--mac-sdk")
+            TARGET=$TARGET_MAC
+            mode_check
+            SDK="yes"
+            check_last_build "$1" || failure
+            log "Building mac (Intel) version with SDK "
+            retrieve_build_state || failure
+            ;;
+        "--win32")
+            TARGET=$TARGET_WIN32
+            mode_check
+            check_last_build "$1" || failure
+            log "Building win32 version:"
+            retrieve_build_state || failure
             ;;
         *)
+            log "Incorrect first argument given !!"
             print_usage
             exit 1
             ;;
     esac
 
-    case "$1" in
-        "--linux")
-            TARGET=$TARGET_LINUX
-            check_last_build "$1" || failure
-            log "Building linux version:"
-            retrieve_build_state || failure
+    case "$2" in
+        "--debug")
+            log "Debug build chosen"
+            MODE=$MODE_DEBUG
             ;;
-        "--mac")
-            TARGET=$TARGET_MAC
-            check_last_build "$1" || failure
-            log "Building mac (Intel) version:"
-            retrieve_build_state || failure
-            ;;
-        "--mac-sdk")
-            TARGET=$TARGET_MAC
-            SDK="yes"
-            check_last_build "$1" || failure
-            log "Building mac (Intel) version with SDK:"
-            retrieve_build_state || failure
-            ;;
-        "--win32")
-            TARGET=$TARGET_WIN32
-            check_last_build "$1" || failure
-            log "Building win32 version:"
-            retrieve_build_state || failure
+        "--release")
+            log "Release build chosen"
+            MODE=$MODE_RELEASE
             ;;
         "--memcheck")
-            log "memcheck has temporarily left the building :-)"
-            exit 0
+            log "Memcheck facility chosen"
+            MODE=$MODE_MEMCHECK
             ;;
         "--callgrind")
-            log "callgrind has temporarily left the building :-)"
-            exit 0
+            log "Callgrind facility chosen"
+            MODE=$MODE_CALLGRIND
             ;;
         *)
+            log "Incorrect second argument given !!"
+            print_usage
+            exit 1
+            ;;
+    esac
+
+    case "$3" in
+        "--starsphere")
+            PRODUCT=starsphere
+            PRODUCT_NAME="Starsphere"
+            log "Building $PRODUCT_NAME..."
+            ;;
+        "--solarsystem")
+            PRODUCT=solarsystem
+            PRODUCT_NAME="SolarSystem"
+            log "Building $PRODUCT_NAME..."
+            ;;
+        *)
+            log "Incorrect third argument given !!"
             print_usage
             exit 1
             ;;
     esac
 fi
 
-if [ $# -gt 2 ]; then
+if [ $# -gt 3 ]; then
+    log "Too many command line arguments given !!"
     print_usage
     exit 1
 fi
@@ -1009,7 +1069,7 @@ case $TARGET in
     $TARGET_LINUX)
         check_prerequisites || failure
         prepare_tree || failure
-        build_linux || failure
+        build_linux $1 $2 || failure
         ;;
     $TARGET_MAC)
         if [ ".$SDK" = "." ]; then
@@ -1029,12 +1089,14 @@ case $TARGET in
         fi
         check_prerequisites || failure
         prepare_tree || failure
-        build_mac $TARGET_MAC || failure
+        build_mac $1 $2 || failure
         ;;
     $TARGET_WIN32)
         check_prerequisites || failure
         prepare_tree || failure
-        build_win32 || failure
+        log "In main() : \$1 = $1"
+        log "In main() : \$2 = $2"
+        build_win32 $1 $2 || failure
         ;;
     $TARGET_DOC)
         doxygen Doxyfile >> $LOGFILE 2>&1 || failure

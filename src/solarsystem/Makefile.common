@@ -17,7 +17,7 @@
 #   along with Einstein@Home. If not, see <http://www.gnu.org/licenses/>. #
 #                                                                         #
 ###########################################################################
-# Please invoke this makefile with the following command template 
+# Please invoke this makefile with the following command template
 # ( where < and > in this explanation delimit the text to be inserted
 # and ' DOES appear on the command line to encase argument values ) :
 #
@@ -29,11 +29,11 @@
 #
 #        is <valgrind> or <callgrind>                       ( if SYSTEM='linux' )
 #
-# SYSTEM value is <linux> or <win32> or <mac>               ( not required if 
+# SYSTEM value is <linux> or <win32> or <mac>               ( not required if
 #                                                             TARGET is <install>
 #                                                             or <clean> )
 #
-# PRODUCT value is case sensitive name of primary           ( not required if 
+# PRODUCT value is case sensitive name of primary           ( not required if
 #         AbstractGraphicsEngine derivative for this          TARGET is <install>
 #         product eg. <Starsphere> or <SolarSystem>           or <clean> )
 #
@@ -110,8 +110,8 @@ ifeq ".$(SYSTEM)" ".mac"
 endif
 
 ###########################################################################
-# Library variables. Note carefully the ordering of library 
-# mentions with respect to '-Wl, -Bstatic' and '-Wl, -Bdynamic' 
+# Library variables. Note carefully the ordering of library
+# mentions with respect to '-Wl, -Bstatic' and '-Wl, -Bdynamic'
 
 # Target specific.
 ifeq ".$(SYSTEM)" ".linux"
@@ -120,8 +120,8 @@ ifeq ".$(SYSTEM)" ".linux"
     LIBS += $(shell $(PRODUCT_INSTALL)/bin/freetype-config --libs)
     LIBS += $(shell $(PRODUCT_INSTALL)/bin/xml2-config --libs)
     LIBS += -lboinc_api -lboinc
-    LIBS += -lXrandr -lXrender 
-	LIBS += -lstdc++
+    LIBS += -lXrandr -lXrender
+    LIBS += -lstdc++
     LIBS += -L/usr/lib
     LIBS += -Wl,-Bdynamic
     LIBS += -lGL -lGLU
@@ -181,7 +181,7 @@ OBJS += GridGlobe.o HUDBorderLayout.o HUDContainer.o HUDContent.o
 OBJS += HUDFlowLayout.o HUDImage.o HUDItem.o HUDTextLine.o HUDTextLineScroll.o
 OBJS += LookOut.o OGL_ID.o OrdStar.o OrthoNormalPlatform.o
 OBJS += Path.o PositionPlatform.o Pulsar.o PulsarEAH.o Renderable.o
-OBJS += RotatablePlatform.o Simulation.o 
+OBJS += RotatablePlatform.o Simulation.o
 OBJS += SolarSystemGlobals.o Sphere.o Star.o SunOrbit.o
 OBJS += Supernova.o Texture_OBJ.o Traverse.o
 OBJS += Traversable.o UTC.o Vector3D.o VectorSP.o VelocityPlatform.o Vertex.o
@@ -190,7 +190,7 @@ OBJS += Traversable.o UTC.o Vector3D.o VectorSP.o VelocityPlatform.o Vertex.o
 
 %.o : $(PRODUCT_SRC)/%.C
 	$(CXX) -g $(CPPFLAGS) -c $<
-    
+
 %.o : $(PRODUCT_SRC)/%.cpp $(PRODUCT_SRC)/%.h
 	$(CXX) -g $(CPPFLAGS) -c $<
 
@@ -275,11 +275,11 @@ install:
 
 clean:
 	rm -f $(RESOURCESPEC).cpp $(OBJS) graphics_app*
-	
+
 # Target specific tools.
 ifeq ".$(SYSTEM)" ".linux"
 memcheck:
 	valgrind --tool=memcheck --track-fds=yes --time-stamp=yes --log-file=$(PWD)/memcheck.out.%p --leak-check=full $(PWD)/graphics_app=einstein_RUNLABEL_VERSION_graphics_$(TARGET_APPEND)
 callgrind:
 	valgrind --tool=callgrind --track-fds=yes --time-stamp=yes $(PWD)/graphics_app=einstein_RUNLABEL_VERSION_graphics_$(TARGET_APPEND)
-endif	
+endif
