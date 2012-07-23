@@ -20,6 +20,8 @@
 
 #include "HUDTextBox.h"
 
+#include "HUDContainer.h"
+
 HUDTextBox::HUDTextBox(GLuint width, GLuint height,
                        OGLFT_ft* font, GLuint padding,
                        GLuint horizontalMargin, GLuint verticalMargin) {
@@ -56,6 +58,15 @@ GLuint HUDTextBox::heightInPixels(void) const {
 
 void HUDTextBox::setText(const std::string& text) {
 
+    // Call base class to set minima for the given text content.
+    this->setMinimumDimensions(widthInPixels() + 2*horzMargin(),
+                               heightInPixels() + 2*vertMargin());
+
+    // Any enclosing container must be made aware of size change.
+    HUDContainer* outer = getEnclosingContainer();
+    if(outer !=NULL) {
+        outer->adjust();
+        }
     }
 
 std::string HUDTextBox::text(void) const {
