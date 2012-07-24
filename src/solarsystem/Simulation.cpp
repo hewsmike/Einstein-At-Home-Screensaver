@@ -151,34 +151,100 @@ Simulation::Simulation(void) : cs(CONSTELLATIONS_RADIUS),
     }
 
 Simulation::~Simulation() {
-   }
+    if(aei_image != NULL) {
+        delete aei_image;
+        }
+    if(aps_image != NULL) {
+        delete aps_image;
+        }
+    if(boinc_image != NULL) {
+        delete boinc_image;
+        }
+    if(geo_image != NULL) {
+        delete geo_image;
+        }
+    if(ligo_image != NULL) {
+        delete ligo_image;
+        }
+    if(opencl_image != NULL) {
+        delete opencl_image;
+        }
+    if(virgo_image != NULL) {
+        delete virgo_image;
+        }
+    if(wyp_image != NULL) {
+        delete wyp_image;
+        }
+    if(version_text != NULL) {
+        delete version_text;
+        }
+    }
 
 void Simulation::step(void) {
     /// TODO - demo code only, needs proper ephemeris model.
-    // Evolve the craft's mechanics with
-    // knowledge of the day within the year.
-    flyboy.step(day366);
+    // Is the autopilot inactive?
+    if(!pilot.isActive()) {
+        // Yes, then evolve the user's craft's mechanics
+        // with knowledge of the day within the year.
+        flyboy.step(day366);
+        }
+    else {
+        // No, the autopilot is operating so check for any
+        // content change of the tour's descriptive text.
+        if(pilot.hasDescriptionChanged() == true) {
+            // Clean up any prior panel contents.
+            east_panel.erase();
 
+            // Then put new content lines, derived from the
+            // current position in the tour, into the panel.
+            const std::vector<std::string>& messages = pilot.getDescription();
+            for(unsigned int index = 0; index < messages.size(); ++index) {
+                east_panel.addContent(new HUDTextLine(messages[index].size(),
+                                      overlay.getFont(), 0, 2));
+                }
+            }
+        }
+
+    // The time increments are minute granular.
     ++min60;
+    // Have we rolled over to the next hour?
     if(min60 > 59) {
+        // Yes, so zero minutes at the start of a fresh hour.
         min60 = 0;
+        // Roll the hour forward.
         ++hour24;
+        // Have we rolled over to another day?
         if(hour24 > 23) {
+            // Yes, so zero hours at the start of a fresh day.
             hour24 = 0;
             }
         }
-    earth_hour_angle = (hour24 + min60/60.0f)* 15.0f;
+    // Set the Earth's hour angle based upon the above.
+    earth_hour_angle = (hour24 + min60/60.0f) * 15.0f;
 
+    // This is a fudge for demo purposes, and makes the
+    // Sun orbit far quicker and out of sync with Earth
+    // rotations. Time increment in 20th's of a day.
     day366 += 0.05f;
+    // Have we rolled over to another year ?
     if(day366 >= SunOrbit::DAYS_PER_YEAR) {
+        // Yup, reset the day count to zero
+        // for a fresh year.
         day366 = 0.0f;
         }
+
+    // Discover where the Sun should
+    // be for that time of the year.
     sun_pos = SunOrbit::getPosition(day366);
 
+    // Also set the Sun's rotation about
+    // it's own axis accordingly.
     sun_rot_angle = SunOrbit::getRotation(day366);
     }
 
 void Simulation::moveRequest(Craft::movements mv) {
+    // Movement requests are only passed through
+    // to the craft if the autopilot is off.
     if(!pilot.isActive()) {
         flyboy.manouevre(mv);
         }
@@ -206,22 +272,6 @@ void Simulation::setFont(content element, OGLFT_ft* font) {
 CameraState Simulation::viewPoint(void) {
     if(pilot.isActive()) {
         // The autopilot is flying the craft.
-        // Check and/or change the descriptive
-        // HUD text on a per Lookout basis.
-        if(version_text != NULL) {
-            version_text->setDirection(HUDTextLineScroll::NONE);
-            if(pilot.hasDescriptionChanged() == true) {
-                std::stringstream msg;
-                const std::vector<std::string>& messages = pilot.getDescription();
-                for(unsigned int index = 0; index < messages.size(); ++index) {
-                    msg << messages[index];
-                    if(index < messages.size() - 1) {
-                        msg << " : ";
-                        }
-                    }
-                version_text->setText(msg.str());
-                }
-            }
         return pilot.viewState();
         }
     else {
@@ -251,10 +301,10 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
     // Now to arrange the HUD components.
 
     // First empty the panels, as we may be recycling.
-    north_panel.emptyContainer();
-    south_panel.emptyContainer();
-    east_panel.emptyContainer();
-    west_panel.emptyContainer();
+    north_panel.erase();
+    south_panel.erase();
+    east_panel.erase();
+    west_panel.erase();
 
     // Set panel justifications.
     north_panel.setPrimaryJustification(HUDFlowLayout::SPAN);
@@ -269,7 +319,7 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
     // Put the panels into the layout.
     // overlay.setPanel(HUDBorderLayout::NORTH, &north_panel);
     overlay.setPanel(HUDBorderLayout::SOUTH, &south_panel);
-    // overlay.setPanel(HUDBorderLayout::EAST, &east_panel);
+    overlay.setPanel(HUDBorderLayout::EAST, &east_panel);
     // overlay.setPanel(HUDBorderLayout::WEST, &west_panel);
 
     // Create content and include into panels.
@@ -334,6 +384,9 @@ void Simulation::release(void) {
         }
     if(version_text != NULL) {
         delete version_text;
+        }
+    if(tour_text != NULL) {
+        delete tour_text;
         }
     }
 
@@ -2603,11 +2656,13 @@ void Simulation::cycle(Simulation::content ct) {
                 flyboy.manouevre(Craft::STOP_TRANSLATION);
                 flyboy.setViewState(pilot.viewState());
                 pilot.inactivate();
-               }
+
+                // Eliminate any remaining informative
+                // text from the HUD.
+                east_panel.erase();
+                }
             else {
                 // When enabling autopilot ....
-                version_text->setDirection(HUDTextLineScroll::NONE);
-
                 // flyboy.manouevre(Craft::STOP_ROTATION);
                 // flyboy.manouevre(Craft::STOP_TRANSLATION);
                 /// TODO Choice between Traversable objects ....
