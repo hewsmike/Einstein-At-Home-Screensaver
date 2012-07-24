@@ -75,7 +75,7 @@ class HUDTextLine : public HUDContent {
          *
          * \return : an std::string containing the desired text
          */
-        std::string getText(void) const;
+        std::string text(void) const;
 
         /**
          * \brief Get the maximum length, in characters, of the text line
