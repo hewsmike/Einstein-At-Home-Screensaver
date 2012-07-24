@@ -90,7 +90,16 @@
 class Simulation : public Renderable {
     public:
         /// Enumerants for the scene elements
-        enum content {AXES, CONSTELLATIONS, EARTH, EARTH_GRID, SUN, SKY_GRID, PULSARS, SUPERNOVAE, HUDOVER, AUTOPILOT};
+        enum content {AXES,
+                      CONSTELLATIONS,
+                      EARTH,
+                      EARTH_GRID,
+                      SUN,
+                      SKY_GRID,
+                      PULSARS,
+                      SUPERNOVAE,
+                      HUDOVER,
+                      AUTOPILOT};
 
         /**
          * \brief Constructor
@@ -319,7 +328,8 @@ class Simulation : public Renderable {
          * \param margin_height : the vertical margin to apply around the image.
          */
         void LoadImageToPanel(HUDImage* hip, HUDFlowLayout* hfl,
-                              std::string resource_name, GLuint margin_width, GLuint margin_height);
+                              std::string resource_name, GLuint margin_width,
+                              GLuint margin_height);
     };
 
 /**

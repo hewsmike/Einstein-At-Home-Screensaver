@@ -51,7 +51,7 @@ void HUDTextLine::setText(const std::string text) {
         }
     }
 
-std::string HUDTextLine::getText(void) const {
+std::string HUDTextLine::text(void) const {
     return txt;
     }
 

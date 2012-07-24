@@ -160,7 +160,7 @@ class HUDFlowLayout : public HUDContainer {
 
     private:
         /** brief Determine how many of, and how wide are, the
-        *         whitespace gaps as per the justification setting.
+         *         whitespace gaps as per the justification setting.
          */
         void setGaps(void);
 

@@ -84,7 +84,7 @@ class HUDContainer : public HUDItem {
         /**
          * \brief Empty the underlying container.
          */
-        void emptyContainer(void);
+        void erase(void);
 
         /**
          * \brief Obtain the count of contained items

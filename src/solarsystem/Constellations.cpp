@@ -2413,14 +2413,14 @@ void Constellations::loadVertexBuffer(void) {
 
     // Work through the constellations one by one.
     for(std::vector<Constellation>::const_iterator cs = cons_list.begin();
-         cs < cons_list.end();
-         cs++ ) {
+        cs < cons_list.end();
+        ++cs) {
         // Process the color and location of the stars within this
         // constellation. Get access to the star list.
         const std::vector<OrdStar>& star_list = cs->stars();
         for(std::vector<OrdStar>::const_iterator st = star_list.begin();
         st < star_list.end();
-        st++ ) {
+        ++st) {
             // Take the star's spectral type and convert that to RGB color values.
             class_color(st->spectral_class(), buffer_vert_ptr);
 
@@ -2458,8 +2458,8 @@ void Constellations::loadIndexBuffer(void) {
     unsigned int link_base_index = 0;
     // Now go through all the constellations.
     for(std::vector<Constellation>::const_iterator cs = cons_list.begin();
-         cs < cons_list.end();
-         cs++ ) {
+        cs < cons_list.end();
+        ++cs) {
         // Process the index data within this constellation. Get access to the
         // index list.
         const std::vector< std::pair<unsigned int, unsigned int> >& link_list = cs->links();
@@ -2469,7 +2469,7 @@ void Constellations::loadIndexBuffer(void) {
         if(total_stars_this_con != 0) {
             for(std::vector< std::pair<unsigned int, unsigned int> >::const_iterator lk = link_list.begin();
             lk < link_list.end();
-            lk++ ) {
+            ++lk) {
                 // For each linkage, store the indices at two per link.
                 // Store indices in the buffer, but with the indices relative to
                 // entire set of stars that all the constellations represent.
@@ -2526,7 +2526,7 @@ void Constellations::createMarkerLists(void) {
     // Work through the constellations one by one.
     for(std::vector<Constellation>::iterator cs = cons_list.begin();
         cs < cons_list.end();
-        cs++) {
+        ++cs) {
         // A temporary STL vector for populating with display list ID's.
         std::vector<GLuint> temp;
 
