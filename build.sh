@@ -60,7 +60,7 @@ MODE_MEMCHECK=3
 MODE_CALLGRIND=4
 
 # Assume DEBUG mode as default.
-MODE=MODE_DEBUG
+MODE=$MODE_DEBUG
 
 # Common build stages.
 BS_NONE=0
@@ -84,7 +84,7 @@ BS_BUILD_OGLFT_MINGW=13
 BS_BUILD_BOINC_MINGW=14
 
 # No buildstate set initially.
-BUILDSTATE=BS_NONE
+BUILDSTATE=$BS_NONE
 
 ### functions (utility) ################################################################################################
 
@@ -1094,8 +1094,6 @@ case $TARGET in
     $TARGET_WIN32)
         check_prerequisites || failure
         prepare_tree || failure
-        log "In main() : \$1 = $1"
-        log "In main() : \$2 = $2"
         build_win32 $1 $2 || failure
         ;;
     $TARGET_DOC)

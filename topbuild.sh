@@ -267,14 +267,14 @@ case $TARGET in
         prepare_directories mac
         log "For $PRODUCT_NAME : invoking mac build script ... "
         cd mac
-        # ./build.sh --mac $2 $3
+        ./build.sh --mac $2 $3
         cd ..
         ;;
     $TARGET_MAC_SDK)
         prepare_directories mac-sdk
         log "For $PRODUCT_NAME : invoking mac-sdk build script ... "
         cd mac-sdk
-        #./build.sh --mac-sdk $2 $3
+        ./build.sh --mac-sdk $2 $3
         cd ..
         ;;
     $TARGET_WIN32)
