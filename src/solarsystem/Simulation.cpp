@@ -105,7 +105,7 @@ Simulation::Simulation(void) : cs(CONSTELLATIONS_RADIUS),
                                    SUN_SLICES,
                                    SUN_TEXTURE_OFFSET),
                                overlay(NULL),
-                               north_panel(&overlay, HUDFlowLayout::HORIZONTAL),
+                               north_panel(&overlay, HUDFlowLayout::VERTICAL),
                                south_panel(&overlay, HUDFlowLayout::HORIZONTAL),
                                east_panel(&overlay, HUDFlowLayout::VERTICAL),
                                west_panel(&overlay, HUDFlowLayout::VERTICAL) {
@@ -199,8 +199,8 @@ void Simulation::step(void) {
             // current position in the tour, into the panel.
             const std::vector<std::string>& messages = pilot.getDescription();
             for(unsigned int index = 0; index < messages.size(); ++index) {
-                north_panel.addContent(new HUDTextLine(messages[index].size(),
-                                       overlay.getFont(), 0, 2));
+                north_panel.addContent(new HUDTextLine(messages.at(index).size(),
+                                       overlay.getFont(), messages.at(index), 0, 2));
                 }
             }
         }
@@ -224,7 +224,7 @@ void Simulation::step(void) {
 
     // This is a fudge for demo purposes, and makes the
     // Sun orbit far quicker and out of sync with Earth
-    // rotations. Time increment in 20th's of a day.
+    // rotations. Time increment in 1/20th's of a day.
     day366 += 0.05f;
     // Have we rolled over to another year ?
     if(day366 >= SunOrbit::DAYS_PER_YEAR) {
@@ -329,12 +329,13 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
     // LoadImageToPanel(opencl_image, &north_panel, "openclTGA", 5, 5);
 
     // LoadImageToPanel(boinc_image, &south_panel, "boincTGA", 5, 5);
-    version_text = new HUDTextLineScroll(50, overlay.getFont(), 35, 10, HUDTextLineScroll::LEFT, 10);
+    version_text = new HUDTextLineScroll(80, overlay.getFont(),
+                                         "    https://github.com/hewsmike/Einstein-At-Home-Screensaver/tree/solarsystem",
+                                         35, 10, HUDTextLineScroll::LEFT, 10);
     if(version_text == NULL) {
         std::string msg = "Simulation::prepare() - failed creation of HUDTextLineScroll instance on heap";
         ErrorHandler::record(msg, ErrorHandler::FATAL);
         }
-    version_text->setText("    https://github.com/hewsmike/Einstein-At-Home-Screensaver/tree/solarsystem");
 
     // Put the content into the panel.
     south_panel.addContent(version_text);
@@ -384,9 +385,6 @@ void Simulation::release(void) {
         }
     if(version_text != NULL) {
         delete version_text;
-        }
-    if(tour_text != NULL) {
-        delete tour_text;
         }
     }
 

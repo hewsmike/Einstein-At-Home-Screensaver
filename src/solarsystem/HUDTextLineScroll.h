@@ -45,6 +45,7 @@ class HUDTextLineScroll : public HUDTextLine {
          *
          * \param length : the maximum length of displayed characters
          * \param font : pointer to an OGLFT font instance
+         * \param text : a string containing the desired text
          * \param horizontalMargin : the horizontal pixel margin to be applied
          *                           either side of the enclosed content
          * \param verticalMargin : the vertical pixel margin to be applied
@@ -53,6 +54,7 @@ class HUDTextLineScroll : public HUDTextLine {
          * \param scroll_interval : the number of frames between transitions
          */
         HUDTextLineScroll(GLuint length, OGLFT_ft* font,
+                          const std::string& text,
                           GLuint horizontalMargin, GLuint verticalMargin,
                           mode direction, GLuint scroll_interval);
 

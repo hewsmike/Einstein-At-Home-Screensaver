@@ -23,24 +23,14 @@
 #include "HUDContainer.h"
 
 HUDTextLine::HUDTextLine(GLuint length, OGLFT_ft* font,
+                         const std::string& text,
                          GLuint horizontalMargin, GLuint verticalMargin) :
                            HUDContent(horizontalMargin, verticalMargin),
                            len(length),
-                           lineFont(font) {
-    // Initial setting of minimum dimensions are those of the initial null
-    // content ie. zero width and height, in combination with the
-    // given fixed margins.
-    setMinimumDimensions(2*horizontalMargin, 2*verticalMargin);
-    }
-
-HUDTextLine::~HUDTextLine() {
-    }
-
-void HUDTextLine::setText(const std::string text) {
-    // Overwrite any previous content.
-    txt.assign(text);
-
-    // Call base class to set minima for the given text content.
+                           lineFont(font),
+                           txt(text) {
+    // Initial setting of minimum dimensions are those of the initial text
+    // content in combination with the given fixed margins.
     this->setMinimumDimensions(width() + 2*horzMargin(),
                                height() + 2*vertMargin());
 
@@ -51,8 +41,7 @@ void HUDTextLine::setText(const std::string text) {
         }
     }
 
-std::string HUDTextLine::text(void) const {
-    return txt;
+HUDTextLine::~HUDTextLine() {
     }
 
 GLuint HUDTextLine::maxLength(void) const {
@@ -101,4 +90,12 @@ void HUDTextLine::release(void) {
 
 void HUDTextLine::render(void) {
     lineFont->draw(horzBase(), vertBase() + this->height()/4, txt.substr(0, len).c_str());
+    }
+
+std::string HUDTextLine::text(void) const {
+    return txt;
+    }
+
+void HUDTextLine::setText(const std::string& text) {
+    txt = text;
     }

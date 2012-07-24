@@ -50,32 +50,20 @@ class HUDTextLine : public HUDContent {
          *
          * \param length : the maximum length in characters to be displayed
          * \param font : pointer to an OGLFT font instance
+         * \param text : a string containing the desired text
          * \param horizontalMargin : the horizontal pixel margin to be applied
          *                           either side of the enclosed content
          * \param verticalMargin : the vertical pixel margin to be applied
          *                         above and below the enclosed content
          */
         HUDTextLine(GLuint length, OGLFT_ft* font,
+                    const std::string& text,
                     GLuint horizontalMargin, GLuint verticalMargin);
 
         /**
          * \brief Destructor
          */
         virtual ~HUDTextLine();
-
-        /**
-         * \brief Set the line's actual text content
-         *
-         * \param text : an std::string containing the desired text
-         */
-        void setText(const std::string text);
-
-        /**
-         * \brief Get the line's actual text content
-         *
-         * \return : an std::string containing the desired text
-         */
-        std::string text(void) const;
 
         /**
          * \brief Get the maximum length, in characters, of the text line
@@ -111,6 +99,10 @@ class HUDTextLine : public HUDContent {
 
         /// Provide OpenGL code to render the object.
         virtual void render(void);
+
+        std::string text(void) const;
+
+        void setText(const std::string& text);
 
     private:
         // The line's maximum number of characters.

@@ -23,9 +23,10 @@
 #include "ErrorHandler.h"
 
 HUDTextLineScroll::HUDTextLineScroll(GLuint length, OGLFT_ft* font,
+                                     const std::string& text,
                                      GLuint horizontalMargin, GLuint verticalMargin,
                                      mode direction = NONE, GLuint scroll_interval = 10) :
-                                        HUDTextLine(length, font, horizontalMargin, verticalMargin),
+                                        HUDTextLine(length, font, text, horizontalMargin, verticalMargin),
                                         dir(direction), interval(scroll_interval), frame_count(0) {
     }
 
@@ -66,7 +67,7 @@ void HUDTextLineScroll::render(void) {
     // Has the timer triggered ?
     if((frame_count % interval) == 0) {
         // Yes, get the line's text content.
-        std::string contents = getText();
+        std::string contents = text();
         // It must have at least two characters
         if(contents.size() >= MIN_STRING_SIZE) {
             // Depending upon the scroll direction .....
