@@ -73,7 +73,7 @@ bool HUDContainer::isEmpty(void) const {
     return container.empty();
     }
 
-void HUDContainer::emptyContainer(void) {
+void HUDContainer::erase(void) {
     container.clear();
     }
 
