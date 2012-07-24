@@ -193,14 +193,14 @@ void Simulation::step(void) {
         // content change of the tour's descriptive text.
         if(pilot.hasDescriptionChanged() == true) {
             // Clean up any prior panel contents.
-            east_panel.erase();
+            north_panel.erase();
 
             // Then put new content lines, derived from the
             // current position in the tour, into the panel.
             const std::vector<std::string>& messages = pilot.getDescription();
             for(unsigned int index = 0; index < messages.size(); ++index) {
-                east_panel.addContent(new HUDTextLine(messages[index].size(),
-                                      overlay.getFont(), 0, 2));
+                north_panel.addContent(new HUDTextLine(messages[index].size(),
+                                       overlay.getFont(), 0, 2));
                 }
             }
         }
@@ -317,9 +317,9 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
     west_panel.setSecondaryJustification(HUDFlowLayout::MIDDLE);
 
     // Put the panels into the layout.
-    // overlay.setPanel(HUDBorderLayout::NORTH, &north_panel);
+    overlay.setPanel(HUDBorderLayout::NORTH, &north_panel);
     overlay.setPanel(HUDBorderLayout::SOUTH, &south_panel);
-    overlay.setPanel(HUDBorderLayout::EAST, &east_panel);
+    // overlay.setPanel(HUDBorderLayout::EAST, &east_panel);
     // overlay.setPanel(HUDBorderLayout::WEST, &west_panel);
 
     // Create content and include into panels.
@@ -2659,7 +2659,7 @@ void Simulation::cycle(Simulation::content ct) {
 
                 // Eliminate any remaining informative
                 // text from the HUD.
-                east_panel.erase();
+                north_panel.erase();
                 }
             else {
                 // When enabling autopilot ....
