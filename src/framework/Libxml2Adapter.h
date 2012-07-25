@@ -35,11 +35,12 @@ using namespace std;
  */
 
 /**
- * \brief This class implements XMLProcessorInterface providing an adapter to libxml2
+ * \brief This class implements XMLProcessorInterface providing an adapter
+ *        to libxml2.
  *
- * For the time being libxml2 is considered to be the only interesting XML processing
- * library because of its rich feature set that comprises DOM, SAX, XPath, XSLT as well
- * as validation based on DTD and XML Schema.
+ *      For the time being libxml2 is considered to be the only interesting
+ * XML processing library because of its rich feature set that comprises
+ * DOM, SAX, XPath, XSLT as well as validation based on DTD and XML Schema.
  *
  * \see XMLProcessorInterface
  *
