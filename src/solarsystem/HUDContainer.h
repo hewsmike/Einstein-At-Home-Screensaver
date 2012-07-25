@@ -34,9 +34,14 @@
 /**
  * \brief Base container type for display of HUD content.
  *
- *      The key design issue here is that a HUDContainer
- * may be one/both of container and contained, meaning that
- * a HUDContainer may contain another HUDContainer.
+ *      The key design feature here is that a HUDContainer
+ * may be one/both of container and contained. That is, any
+ * HUDContainer object may contain another HUDContainer
+ * object.
+ *
+ *      Any contained object(s) will be activated for rendering
+ * when the container itself is activated, but only those
+ * present within at such time of activation.
  *
  * \see HUDItem
  *
@@ -178,15 +183,12 @@ class HUDContainer : public HUDItem {
         virtual void render(void);
 
     private:
-        /// The actual container within. Yes I'd like to do references,
-        /// but the STL container classes imply assignable elements ...
-        /// ..... I can't even have a const pointer! :-(
-        /// The key is going to store an integral cast of an enumerator.
+        /// Associative array b/w item pointers and integral labels.
         std::map<int, HUDItem*> container;
 
-        /// Current actual dimensions ie. reflects the amounts above it's
-        /// minima, and are thus available to distribute b/w contents as
-        /// justification.
+        /// Current actual dimensions which can be used to calculate the
+        /// margin(s) above minima, and are thus available to distribute
+        /// b/w contents as justification.
         GLuint wd;
         GLuint ht;
     };

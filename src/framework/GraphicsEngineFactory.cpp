@@ -21,53 +21,52 @@
 #include "GraphicsEngineFactory.h"
 
 GraphicsEngineFactory::~GraphicsEngineFactory() {
-   }
+    }
 
 GraphicsEngineFactory::GraphicsEngineFactory() {
-   }
+    }
 
 AbstractGraphicsEngine* GraphicsEngineFactory::createInstance(
-                     GraphicsEngineFactory::Engines engine,
-                     GraphicsEngineFactory::Applications application) {
-	// First switch upon engine type, then variants.
-	// A NULL return indicates failure to instantiate.
-   switch(engine) {
+                        GraphicsEngineFactory::Engines engine,
+                        GraphicsEngineFactory::Applications application) {
+    // First switch upon engine type, then variants.
+    // A NULL return indicates failure to instantiate.
+    switch(engine) {
 #ifdef SOLARSYSTEM
-   	case SolarSystem :
-   		switch(application) {
-            case EinsteinS5R3 :
-               return new SolarSystemS5R3();
-               break;
-            case EinsteinRadio :
-               return new SolarSystemRadio();
-               break;
-            case EinsteinGamma :
-               return new SolarSystemGamma();
-               break;
-            default:
-               return NULL;
-               break;
-            }
-   		break;
+        case SolarSystem :
+            switch(application) {
+                case EinsteinS5R3 :
+                    return new SolarSystemS5R3();
+                    break;
+                case EinsteinRadio :
+                    return new SolarSystemRadio();
+                    break;
+                case EinsteinGamma :
+                    return new SolarSystemGamma();
+                    break;
+                default:
+                    return NULL;
+                    break;
+                }
+            break;
 #endif
 #ifdef STARSPHERE
-      case Starsphere:
-      	switch(application) {
-      		case EinsteinS5R3 :
-      			return new StarsphereS5R3();
-      			break;
-      		case EinsteinRadio :
-      			return new StarsphereRadio();
-      			break;
-      		default:
-      			return NULL;
-      			break;
-      		}
-      	break;
+        case Starsphere:
+            switch(application) {
+                case EinsteinS5R3 :
+                    return new StarsphereS5R3();
+                    break;
+                case EinsteinRadio :
+                    return new StarsphereRadio();
+                    break;
+                default:
+                    return NULL;
+                    break;
+            }
+            break;
 #endif
-      default:
-         return NULL;
-         break;
-      }
-	}
-
+        default:
+            return NULL;
+            break;
+        }
+    }

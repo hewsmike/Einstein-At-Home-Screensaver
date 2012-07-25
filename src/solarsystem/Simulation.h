@@ -275,6 +275,9 @@ class Simulation : public Renderable {
         GLfloat sun_rot_angle;
         Vector3D sun_pos;
 
+        /// Flags for data sourcing.
+        bool pulsar_external_load;
+
         /// The renderable scene elements
         Constellations cs;
         Stars<Pulsar> ps;

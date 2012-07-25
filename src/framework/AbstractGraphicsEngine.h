@@ -47,182 +47,182 @@ using namespace std;
  */
 
 class AbstractGraphicsEngine {
-   public:
-      /// Destructor
-      virtual ~AbstractGraphicsEngine();
+    public:
+        /// Destructor
+        virtual ~AbstractGraphicsEngine();
 
-      /**
-       * \brief This method is called when an implementing graphics engine should initialize itself
-       *
-       * \param width The current width of the display surface
-       * \param height The current height of the display surface
-       * \param font A pointer to a Resource object containing TTF font faces for text rendering
-       * \param recycle This flag indicates whether we initialize (FALSE) or reinitialize (TRUE) the context
-       */
-      virtual void initialize(const int width, const int height, const Resource *font, const bool recycle = false) = 0;
+        /**
+         * \brief This method is called when an implementing graphics engine should initialize itself
+         *
+         * \param width The current width of the display surface
+         * \param height The current height of the display surface
+         * \param font A pointer to a Resource object containing TTF font faces for text rendering
+         * \param recycle This flag indicates whether we initialize (FALSE) or reinitialize (TRUE) the context
+         */
+        virtual void initialize(const int width, const int height, const Resource *font, const bool recycle = false) = 0;
 
-      /**
-       * \brief This method is called when the windowing system encounters a window resize event
-       *
-       * \param width The new width of the display surface
-       * \param height The new height of the display surface
-       */
-      virtual void resize(const int width, const int height) = 0;
+        /**
+         * \brief This method is called when the windowing system encounters a window resize event
+         *
+         * \param width The new width of the display surface
+         * \param height The new height of the display surface
+         */
+        virtual void resize(const int width, const int height) = 0;
 
-      /**
-       * \brief This method is called when an implementing graphics engine should render one frame
-       *
-       * \param timeOfDay The current time in "seconds since the Epoch" (with microsecond precision)
-       */
-      virtual void render(const double timeOfDay) = 0;
+        /**
+         * \brief This method is called when an implementing graphics engine should render one frame
+         *
+         * \param timeOfDay The current time in "seconds since the Epoch" (with microsecond precision)
+         */
+        virtual void render(const double timeOfDay) = 0;
 
-      /**
-       * \brief Defined mouse button identifiers
-       *
-       * \see mouseButtonEvent
-       * \see mouseMoveEvent
-       */
-      enum MouseButton {
-         MouseButtonLeft = 1,
-         MouseButtonRight = 2
-         };
+        /**
+         * \brief Defined mouse button identifiers
+         *
+         * \see mouseButtonEvent
+         * \see mouseMoveEvent
+         */
+        enum MouseButton {
+            MouseButtonLeft = 1,
+            MouseButtonRight = 2
+            };
 
-      /**
-       * \brief This method is called when the windowing system encounters a mouse button event
-       *
-       * \param positionX The mouse position on the x-axis when the event occurred (range: 0-width)
-       * \param positionY The mouse position on the y-axis when the event occurred (range: 0-height)
-       * \param buttonPressed The mouse button pressed (if any) when the event occurred.
-       * It can be identified using the elements of \ref MouseButton.
-       *
-       * \see MouseButton
-       */
-      virtual void mouseButtonEvent(const int positionX, const int positionY, const MouseButton buttonPressed) = 0;
+        /**
+         * \brief This method is called when the windowing system encounters a mouse button event
+         *
+         * \param positionX The mouse position on the x-axis when the event occurred (range: 0-width)
+         * \param positionY The mouse position on the y-axis when the event occurred (range: 0-height)
+         * \param buttonPressed The mouse button pressed (if any) when the event occurred.
+         * It can be identified using the elements of \ref MouseButton.
+         *
+         * \see MouseButton
+         */
+        virtual void mouseButtonEvent(const int positionX, const int positionY, const MouseButton buttonPressed) = 0;
 
-      /**
-       * \brief This method is called when the windowing system encounters a mouse move event
-       *
-       * \param deltaX The relative mouse position change with respect to the x-axis when the event occurred
-       * \param deltaY The relative mouse position change with respect to the y-axis when the event occurred
-       * \param buttonPressed The mouse button pressed (if any) when the event occurred.
-       * It can be identified using the elements of \ref MouseButton.
-       *
-       * \see MouseButton
-       */
-      virtual void mouseMoveEvent(const int deltaX, const int deltaY, const MouseButton buttonPressed) = 0;
+        /**
+         * \brief This method is called when the windowing system encounters a mouse move event
+         *
+         * \param deltaX The relative mouse position change with respect to the x-axis when the event occurred
+         * \param deltaY The relative mouse position change with respect to the y-axis when the event occurred
+         * \param buttonPressed The mouse button pressed (if any) when the event occurred.
+         * It can be identified using the elements of \ref MouseButton.
+         *
+         * \see MouseButton
+         */
+        virtual void mouseMoveEvent(const int deltaX, const int deltaY, const MouseButton buttonPressed) = 0;
 
-      /**
-       * \brief Defined keyboard identifiers
-       *
-       * \see keyboardPressEvent
-       */
-      enum KeyBoardKey {
-         KeyA = 0x1,
-         KeyB = 0x2,
-         KeyC = 0x4,
-         KeyD = 0x8,
-         KeyE = 0x10,
-         KeyF = 0x20,
-         KeyG = 0x40,
-         KeyH = 0x80,
-         KeyI = 0x100,
-         KeyJ = 0x200,
-         KeyK = 0x400,
-         KeyL = 0x800,
-         KeyM = 0x1000,
-         KeyN = 0x2000,
-         KeyO = 0x4000,
-         KeyP = 0x8000,
-         KeyQ = 0x10000,
-         KeyR = 0x20000,
-         KeyS = 0x40000,
-         KeyT = 0x80000,
-         KeyU = 0x100000,
-         KeyV = 0x200000,
-         KeyW = 0x400000,
-         KeyX = 0x800000,
-         KeyY = 0x1000000,
-         KeyZ = 0x2000000,
-         KeyF1 = 0x2000001,
-         KeyF2 = 0x2000002,
-         KeyF3 = 0x2000003,
-         KeyF4 = 0x2000004,
-         KeyF5 = 0x2000005,
-         KeyF6 = 0x2000006,
-         KeyF7 = 0x2000007,
-         KeyF8 = 0x2000008,
-         KeyF9 = 0x2000009,
-         KeyF10 = 0x200000A,
-         KeyF11 = 0x200000B,
-         KeyF12 = 0x200000C,
-         KeyEnter = 0x4000000,
-         KeySpace = 0x4000001,
-         KeyEscape = 0x8000000,
-         KeyKP1 = 0xA000001,
-         KeyKP2 = 0xA000002,
-         KeyKP3 = 0xA000003,
-         KeyKP4 = 0xA000004,
-         KeyKP5 = 0xA000005,
-         KeyKP6 = 0xA000006,
-         KeyKP8 = 0xA000008,
-         KeyKP0 = 0xA00000A,
-         KeyKPPeriod = 0xA00000B,
-         KeyComma = 0xB00002C,
-         KeyPeriod = 0xB00002E,
-         KeyForwardSlash = 0xB00002F,
-         KeySemiColon = 0xB00003B,
-         };
+        /**
+         * \brief Defined keyboard identifiers
+         *
+         * \see keyboardPressEvent
+         */
+        enum KeyBoardKey {
+            KeyA = 0x1,
+            KeyB = 0x2,
+            KeyC = 0x4,
+            KeyD = 0x8,
+            KeyE = 0x10,
+            KeyF = 0x20,
+            KeyG = 0x40,
+            KeyH = 0x80,
+            KeyI = 0x100,
+            KeyJ = 0x200,
+            KeyK = 0x400,
+            KeyL = 0x800,
+            KeyM = 0x1000,
+            KeyN = 0x2000,
+            KeyO = 0x4000,
+            KeyP = 0x8000,
+            KeyQ = 0x10000,
+            KeyR = 0x20000,
+            KeyS = 0x40000,
+            KeyT = 0x80000,
+            KeyU = 0x100000,
+            KeyV = 0x200000,
+            KeyW = 0x400000,
+            KeyX = 0x800000,
+            KeyY = 0x1000000,
+            KeyZ = 0x2000000,
+            KeyF1 = 0x2000001,
+            KeyF2 = 0x2000002,
+            KeyF3 = 0x2000003,
+            KeyF4 = 0x2000004,
+            KeyF5 = 0x2000005,
+            KeyF6 = 0x2000006,
+            KeyF7 = 0x2000007,
+            KeyF8 = 0x2000008,
+            KeyF9 = 0x2000009,
+            KeyF10 = 0x200000A,
+            KeyF11 = 0x200000B,
+            KeyF12 = 0x200000C,
+            KeyEnter = 0x4000000,
+            KeySpace = 0x4000001,
+            KeyEscape = 0x8000000,
+            KeyKP1 = 0xA000001,
+            KeyKP2 = 0xA000002,
+            KeyKP3 = 0xA000003,
+            KeyKP4 = 0xA000004,
+            KeyKP5 = 0xA000005,
+            KeyKP6 = 0xA000006,
+            KeyKP8 = 0xA000008,
+            KeyKP0 = 0xA00000A,
+            KeyKPPeriod = 0xA00000B,
+            KeyComma = 0xB00002C,
+            KeyPeriod = 0xB00002E,
+            KeyForwardSlash = 0xB00002F,
+            KeySemiColon = 0xB00003B,
+            };
 
-      /**
-       * \brief This method is called when the windowing system encounters a key press event
-       *
-       * \attention Please note that not all key events are currently forwarded (this should be change
-       * as soon as the need arises). Please see WindowManager::eventLoop for details.
-       *
-       * \param keyPressed The keyboard key pressed. It can be identified using the elements of \ref KeyBoardKey.
-       *
-       * \see KeyBoardKey
-       * \see WindowManager::eventLoop
-       */
-      virtual void keyboardPressEvent(const KeyBoardKey keyPressed) = 0;
+        /**
+         * \brief This method is called when the windowing system encounters a key press event
+         *
+         * \attention Please note that not all key events are currently forwarded (this should be change
+         * as soon as the need arises). Please see WindowManager::eventLoop for details.
+         *
+         * \param keyPressed The keyboard key pressed. It can be identified using the elements of \ref KeyBoardKey.
+         *
+         * \see KeyBoardKey
+         * \see WindowManager::eventLoop
+         */
+        virtual void keyboardPressEvent(const KeyBoardKey keyPressed) = 0;
 
-      /**
-       * \brief This method is called when the BOINC client information should be updated
-       *
-       * When you inherit from this class and implement this method, please make sure you call
-       * \ref refreshLocalBOINCInformation() to invoke the generic default implementation which
-       * refreshes \ref m_BoincAdapter.
-       *
-       * \see refreshLocalBOINCInformation()
-       */
-      virtual void refreshBOINCInformation() = 0;
+        /**
+         * \brief This method is called when the BOINC client information should be updated
+         *
+         * When you inherit from this class and implement this method, please make sure you call
+         * \ref refreshLocalBOINCInformation() to invoke the generic default implementation which
+         * refreshes \ref m_BoincAdapter.
+         *
+         * \see refreshLocalBOINCInformation()
+         */
+        virtual void refreshBOINCInformation() = 0;
 
-   protected:
-      /**
-       * \brief Constructor
-       *
-       * The constructor is protected since this is an abstract class. It takes
-       * as an argument the name of the shared memory area which is propagated
-       * to the BOINC client adapter instance (during construction).
-       *
-       * \param sharedMemoryIdentifier The identifier of the shared memory area
-       *
-       * \see BOINCClientAdapter::BOINCClientAdapter()
-       */
-      AbstractGraphicsEngine(string sharedMemoryIdentifier);
+    protected:
+        /**
+         * \brief Constructor
+         *
+         * The constructor is protected since this is an abstract class. It takes
+         * as an argument the name of the shared memory area which is propagated
+         * to the BOINC client adapter instance (during construction).
+         *
+         * \param sharedMemoryIdentifier The identifier of the shared memory area
+         *
+         * \see BOINCClientAdapter::BOINCClientAdapter()
+         */
+        AbstractGraphicsEngine(string sharedMemoryIdentifier);
 
-      /**
-       * \brief This method has to be called in order to update the BOINC client information
-       *
-       * This is the local/generic implementation which refreshes \ref m_BoincAdapter.
-       *
-       * \see refreshBOINCInformation()
-       */
-      virtual void refreshLocalBOINCInformation();
+        /**
+         * \brief This method has to be called in order to update the BOINC client information
+         *
+         * This is the local/generic implementation which refreshes \ref m_BoincAdapter.
+         *
+         * \see refreshBOINCInformation()
+         */
+        virtual void refreshLocalBOINCInformation();
 
-      /// BOINC client adapter instance for information retrieval
-      BOINCClientAdapter m_BoincAdapter;
-   };
+        /// BOINC client adapter instance for information retrieval
+        BOINCClientAdapter m_BoincAdapter;
+    };
 
 /**
  * @}

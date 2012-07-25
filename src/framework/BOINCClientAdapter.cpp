@@ -24,219 +24,219 @@
 #include <sstream>
 
 BOINCClientAdapter::BOINCClientAdapter(string sharedMemoryIdentifier) {
-   m_Initialized = false;
-   m_SharedMemoryAreaIdentifier = sharedMemoryIdentifier;
-   m_SharedMemoryAreaAvailable = false;
+    m_Initialized = false;
+    m_SharedMemoryAreaIdentifier = sharedMemoryIdentifier;
+    m_SharedMemoryAreaAvailable = false;
 
-   m_xmlIFace = new Libxml2Adapter();
+    m_xmlIFace = new Libxml2Adapter();
 
-   m_GraphicsFrameRate = 20;
-   m_GraphicsQualitySetting = BOINCClientAdapter::LowGraphicsQualitySetting;
-   m_GraphicsWindowWidth = 800;
-   m_GraphicsWindowHeight = 600;
-   }
+    m_GraphicsFrameRate = 20;
+    m_GraphicsQualitySetting = BOINCClientAdapter::LowGraphicsQualitySetting;
+    m_GraphicsWindowWidth = 800;
+    m_GraphicsWindowHeight = 600;
+    }
 
 BOINCClientAdapter::~BOINCClientAdapter() {
-   if(m_xmlIFace) delete m_xmlIFace;
-   }
+    if(m_xmlIFace) delete m_xmlIFace;
+    }
 
 void BOINCClientAdapter::initialize() {
-   if(!m_Initialized) {
-      readUserInfo();
-      readSharedMemoryArea();
-      readProjectPreferences();
+    if(!m_Initialized) {
+        readUserInfo();
+        readSharedMemoryArea();
+        readProjectPreferences();
 
-      m_Initialized = true;
-      }
-   }
+        m_Initialized = true;
+        }
+    }
 
 void BOINCClientAdapter::refresh() {
-   if(m_Initialized) {
-      readUserInfo();
-      readSharedMemoryArea();
+    if(m_Initialized) {
+        readUserInfo();
+        readSharedMemoryArea();
 
-      /// \todo Check that we're still watching our own WU (or science app)!
-      }
-   else {
-      cerr << "The BOINC Client Adapter has not yet been initialized! Doing so now..." << endl;
-      initialize();
-      }
-   }
+        /// \todo Check that we're still watching our own WU (or science app)!
+        }
+    else {
+        cerr << "The BOINC Client Adapter has not yet been initialized! Doing so now..." << endl;
+        initialize();
+        }
+    }
 
 void BOINCClientAdapter::readUserInfo() {
-   boinc_parse_init_data_file();
-   boinc_get_init_data(m_UserData);
-   }
+    boinc_parse_init_data_file();
+    boinc_get_init_data(m_UserData);
+    }
 
 void BOINCClientAdapter::readSharedMemoryArea() {
-   // check if we already have a pointer
-   if(m_SharedMemoryAreaAvailable) {
-      // load contents
-      m_SharedMemoryAreaContents = string(m_SharedMemoryArea);
-      }
-   // the shared memory area's not available, try to get a pointer to it
-   else {
-      m_SharedMemoryArea = (char*) boinc_graphics_get_shmem((char*)m_SharedMemoryAreaIdentifier.c_str());
+    // check if we already have a pointer
+    if(m_SharedMemoryAreaAvailable) {
+        // load contents
+        m_SharedMemoryAreaContents = string(m_SharedMemoryArea);
+        }
+    // the shared memory area's not available, try to get a pointer to it
+    else {
+        m_SharedMemoryArea = (char*) boinc_graphics_get_shmem((char*)m_SharedMemoryAreaIdentifier.c_str());
 
-      if(m_SharedMemoryArea) {
-         // fine, get the contents recursively
-         m_SharedMemoryAreaAvailable = true;
-         readSharedMemoryArea();
-         }
-      else {
-         // bad luck
-         m_SharedMemoryAreaContents = "";
-         m_SharedMemoryAreaAvailable = false;
-         }
-      }
-   }
+        if(m_SharedMemoryArea) {
+            // fine, get the contents recursively
+            m_SharedMemoryAreaAvailable = true;
+            readSharedMemoryArea();
+            }
+        else {
+            // bad luck
+            m_SharedMemoryAreaContents = "";
+            m_SharedMemoryAreaAvailable = false;
+            }
+        }
+
 
 void BOINCClientAdapter::readProjectPreferences() {
-   string temp;
-   istringstream converter;
-   converter.exceptions(ios_base::badbit | ios_base::failbit);
+    string temp;
+    istringstream converter;
+    converter.exceptions(ios_base::badbit | ios_base::failbit);
 
-   // prepare xml document
-   m_xmlIFace->setXmlDocument(projectInformation(), "http://einstein.phys.uwm.edu");
+    // prepare xml document
+    m_xmlIFace->setXmlDocument(projectInformation(), "http://einstein.phys.uwm.edu");
 
-   // use XPath queries to get attributes
-   try {
-      temp = m_xmlIFace->getSingleNodeContentByXPath("/project_preferences/graphics/@fps");
-      if(temp.length() > 0) {
-         converter.clear();
-         converter.str(temp);
-         converter >> dec >> m_GraphicsFrameRate;
-         }
-
-      temp = m_xmlIFace->getSingleNodeContentByXPath("/project_preferences/graphics/@quality");
-      if(temp.length() > 0) {
-         if(temp == "high") {
-            m_GraphicsQualitySetting = BOINCClientAdapter::HighGraphicsQualitySetting;
+    // use XPath queries to get attributes
+    try {
+        temp = m_xmlIFace->getSingleNodeContentByXPath("/project_preferences/graphics/@fps");
+        if(temp.length() > 0) {
+            converter.clear();
+            converter.str(temp);
+            converter >> dec >> m_GraphicsFrameRate;
             }
-         else if(temp == "medium") {
-            m_GraphicsQualitySetting = BOINCClientAdapter::MediumGraphicsQualitySetting;
-            }
-         else {
-            m_GraphicsQualitySetting = BOINCClientAdapter::LowGraphicsQualitySetting;
-            }
-         }
 
-      temp = m_xmlIFace->getSingleNodeContentByXPath("/project_preferences/graphics/@width");
-      if(temp.length() > 0) {
-         converter.clear();
-         converter.str(temp);
-         converter >> dec >> m_GraphicsWindowWidth;
-         }
+        temp = m_xmlIFace->getSingleNodeContentByXPath("/project_preferences/graphics/@quality");
+        if(temp.length() > 0) {
+            if(temp == "high") {
+                m_GraphicsQualitySetting = BOINCClientAdapter::HighGraphicsQualitySetting;
+                }
+            else if(temp == "medium") {
+                m_GraphicsQualitySetting = BOINCClientAdapter::MediumGraphicsQualitySetting;
+                }
+            else {
+                m_GraphicsQualitySetting = BOINCClientAdapter::LowGraphicsQualitySetting;
+                }
+            }
 
-      temp = m_xmlIFace->getSingleNodeContentByXPath("/project_preferences/graphics/@height");
-      if(temp.length() > 0) {
-         converter.clear();
-         converter.str(temp);
-         converter >> dec >> m_GraphicsWindowHeight;
-         }
-      }
-   catch(ios_base::failure) {
-      cerr << "Error parsing project preferences! Using defaults..." << endl;
-      }
-   }
+        temp = m_xmlIFace->getSingleNodeContentByXPath("/project_preferences/graphics/@width");
+        if(temp.length() > 0) {
+            converter.clear();
+            converter.str(temp);
+            converter >> dec >> m_GraphicsWindowWidth;
+            }
+
+        temp = m_xmlIFace->getSingleNodeContentByXPath("/project_preferences/graphics/@height");
+        if(temp.length() > 0) {
+            converter.clear();
+            converter.str(temp);
+            converter >> dec >> m_GraphicsWindowHeight;
+            }
+        }
+    catch(ios_base::failure) {
+        cerr << "Error parsing project preferences! Using defaults..." << endl;
+        }
+    }
 
 string BOINCClientAdapter::applicationInformation() const {
-   return m_SharedMemoryAreaContents;
-   }
+    return m_SharedMemoryAreaContents;
+    }
 
 string BOINCClientAdapter::projectInformation() const {
-   string temp("<project_preferences />\n");
+    string temp("<project_preferences />\n");
 
-   // use preferences if available (BOINC initializes them with 0)
-   if(m_UserData.project_preferences != 0) {
-      temp = string(m_UserData.project_preferences);
-      }
+    // use preferences if available (BOINC initializes them with 0)
+    if(m_UserData.project_preferences != 0) {
+        temp = string(m_UserData.project_preferences);
+        }
 
-   return temp;
-   }
+    return temp;
+    }
 
 int BOINCClientAdapter::graphicsFrameRate() const {
-   return m_GraphicsFrameRate;
-   }
+    return m_GraphicsFrameRate;
+    }
 
 BOINCClientAdapter::GraphicsQualitySetting BOINCClientAdapter::graphicsQualitySetting() const {
-   return m_GraphicsQualitySetting;
-   }
+    return m_GraphicsQualitySetting;
+    }
 
 int BOINCClientAdapter::graphicsWindowWidth() const {
-   return m_GraphicsWindowWidth;
-   }
+    return m_GraphicsWindowWidth;
+    }
 
 int BOINCClientAdapter::graphicsWindowHeight() const {
-   return m_GraphicsWindowHeight;
-   }
+    return m_GraphicsWindowHeight;
+    }
 
 string BOINCClientAdapter::coreVersion() const {
-   stringstream buffer;
+    stringstream buffer;
 
-   // build common version string
-   buffer << m_UserData.major_version << "."
-          << m_UserData.minor_version << "."
-          << m_UserData.release;
+    // build common version string
+    buffer << m_UserData.major_version << "."
+           << m_UserData.minor_version << "."
+           << m_UserData.release;
 
-   return string(buffer.str());
-   }
+    return string(buffer.str());
+    }
 
 string BOINCClientAdapter::applicationName() const {
-   return string(m_UserData.app_name);
-   }
+    return string(m_UserData.app_name);
+    }
 
 string BOINCClientAdapter::applicationVersion() const {
-   stringstream buffer;
-   buffer << m_UserData.app_version;
+    stringstream buffer;
+    buffer << m_UserData.app_version;
 
-   return string(buffer.str());
-   }
+    return string(buffer.str());
+    }
 
 string BOINCClientAdapter::userName() const {
-   return string(m_UserData.user_name);
-   }
+    return string(m_UserData.user_name);
+    }
 
 string BOINCClientAdapter::teamName() const {
-   return string(m_UserData.team_name);
-   }
+    return string(m_UserData.team_name);
+    }
 
 double BOINCClientAdapter::userCredit() const {
-   return m_UserData.user_total_credit;
-   }
+    return m_UserData.user_total_credit;
+    }
 
 double BOINCClientAdapter::userRACredit() const {
-   return m_UserData.user_expavg_credit;
-   }
+    return m_UserData.user_expavg_credit;
+    }
 
 double BOINCClientAdapter::hostCredit() const {
-   return m_UserData.host_total_credit;
-   }
+    return m_UserData.host_total_credit;
+    }
 
 double BOINCClientAdapter::hostRACredit() const {
-   return m_UserData.host_expavg_credit;
-   }
+    return m_UserData.host_expavg_credit;
+    }
 
 string BOINCClientAdapter::wuName() const {
-   return string(m_UserData.wu_name);
-   }
+    return string(m_UserData.wu_name);
+    }
 
 double BOINCClientAdapter::wuFPOpsEstimated() const {
-   return m_UserData.rsc_fpops_est;
-   }
+    return m_UserData.rsc_fpops_est;
+    }
 
 double BOINCClientAdapter::wuFPOpsBound() const {
-   return m_UserData.rsc_fpops_bound;
-   }
+    return m_UserData.rsc_fpops_bound;
+    }
 
 double BOINCClientAdapter::wuMemoryBound() const {
-   return m_UserData.rsc_memory_bound;
-   }
+    return m_UserData.rsc_memory_bound;
+    }
 
 double BOINCClientAdapter::wuDiskBound() const {
-   return m_UserData.rsc_disk_bound;
-   }
+    return m_UserData.rsc_disk_bound;
+    }
 
 double BOINCClientAdapter::wuCPUTimeSpent() const {
-   return m_UserData.wu_cpu_time;
-   }
+    return m_UserData.wu_cpu_time;
+    }

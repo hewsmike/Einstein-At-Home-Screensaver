@@ -58,32 +58,32 @@ using namespace std;
  */
 
 class ResourceFactory {
-   public:
-      /// Default constructor
-      ResourceFactory();
+    public:
+        /// Default constructor
+        ResourceFactory();
 
-      /// Destructor
-      virtual ~ResourceFactory();
+        /// Destructor
+        virtual ~ResourceFactory();
 
-      /**
-       * \brief Creates an instance of the requested resource
-       *
-       * The identifier has to be the same as the one specified in the \c *.orc file
-       * used to compile the resources
-       *
-       * \param identifier The identifer of the resource to be instantiated
-       *
-       * \return A constant pointer to the newly instantiated resource
-       * or NULL if the specified resource could not be found
-       *
-       * \see ResourceCompiler
-       */
-      const Resource* createInstance(const string identifier);
+        /**
+         * \brief Creates an instance of the requested resource
+         *
+         * The identifier has to be the same as the one specified in the \c *.orc file
+         * used to compile the resources
+         *
+         * \param identifier The identifer of the resource to be instantiated
+         *
+         * \return A constant pointer to the newly instantiated resource
+         * or NULL if the specified resource could not be found
+         *
+         * \see ResourceCompiler
+         */
+        const Resource* createInstance(const string identifier);
 
-   private:
-      /// Hashtable mapping identifiers to resource data
-      map<string, vector<unsigned char> > m_ResourceMap;
-   };
+    private:
+        /// Hashtable mapping identifiers to resource data
+        map<string, vector<unsigned char> > m_ResourceMap;
+    };
 
 /**
  * \brief Declaration of the external list of resource identifiers
