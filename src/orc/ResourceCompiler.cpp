@@ -71,7 +71,7 @@ void ResourceCompiler::compile() {
             // store byte value as part of array initializer
             resourceStorageInitializer << "0x" << hex << (size_t)*dataPos << ",";
             }
-
+        }
 
     // open the output code file
     ofstream outputFile(m_ResourceCodeFile.c_str(), ios::out);
@@ -136,18 +136,18 @@ void ResourceCompiler::parseInputFile() {
             // we (sort of) allow for empty lines and comments
             if(firstCharacter != string::npos && line.substr(firstCharacter, 1) != "#") {
 
-            // find our token delimiter
-            size_t separator = line.find("|");
+                // find our token delimiter
+                size_t separator = line.find("|");
 
-            // make sure there's exactly one delimiter
-            if(separator == string::npos || separator != line.rfind("|")) {
-               cerr << "Unexpected resource specification: " << line << endl;
+                    // make sure there's exactly one delimiter
+                if(separator == string::npos || separator != line.rfind("|")) {
+                cerr << "Unexpected resource specification: " << line << endl;
+                    }
+                else {
+                    // store tokens in resource file map
+                    m_ResourceFileMap[line.substr(0, separator)] = line.substr(separator + 1);
+                    }
                 }
-            else {
-                // store tokens in resource file map
-                m_ResourceFileMap[line.substr(0, separator)] = line.substr(separator + 1);
-                }
-            }
             }
         }
     catch(const ios::failure& error) {

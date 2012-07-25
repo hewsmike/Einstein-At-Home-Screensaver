@@ -84,7 +84,7 @@ prepare_directories() {
     rm -rf $ROOT/$1/patches
     rm -f $ROOT/$1/build.sh
 
-    mkdir $ROOT/$1/install
+    mkdir -p $ROOT/$1/install
 
     cp -rf $ROOT/src $ROOT/$1/src
     cp -rf $ROOT/patches $ROOT/$1/patches

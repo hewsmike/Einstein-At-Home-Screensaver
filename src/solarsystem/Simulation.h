@@ -313,6 +313,7 @@ class Simulation : public Renderable {
 
         /// Pointer to the scrolling marquee.
         HUDTextLineScroll* version_text;
+        HUDTextLine* tour_text;
 
         /// The overall HUD layout and it's component panels.
         HUDBorderLayout overlay;

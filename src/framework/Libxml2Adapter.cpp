@@ -55,7 +55,7 @@ string Libxml2Adapter::getSingleNodeContentByXPath(const string xpath) {
     if(xpathCtx == NULL) {
         cerr << "Error getting XPath context!" << endl;
         return("");
-
+        }
 
     // prepare xpath expression
     xmlChar* xpathExpr = xmlCharStrdup(xpath.c_str());

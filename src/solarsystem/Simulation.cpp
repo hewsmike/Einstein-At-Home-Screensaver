@@ -310,7 +310,7 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
     west_panel.erase();
 
     // Set panel justifications.
-    north_panel.setPrimaryJustification(HUDFlowLayout::SPAN);
+    north_panel.setPrimaryJustification(HUDFlowLayout::CENTRE);
     north_panel.setSecondaryJustification(HUDFlowLayout::MIDDLE);
     south_panel.setPrimaryJustification(HUDFlowLayout::CENTRE);
     south_panel.setSecondaryJustification(HUDFlowLayout::MIDDLE);
@@ -322,8 +322,8 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
     // Put the panels into the layout.
     overlay.setPanel(HUDBorderLayout::NORTH, &north_panel);
     overlay.setPanel(HUDBorderLayout::SOUTH, &south_panel);
-    // overlay.setPanel(HUDBorderLayout::EAST, &east_panel);
-    // overlay.setPanel(HUDBorderLayout::WEST, &west_panel);
+    overlay.setPanel(HUDBorderLayout::EAST, &east_panel);
+    overlay.setPanel(HUDBorderLayout::WEST, &west_panel);
 
     // Create content and include into panels.
     // LoadImageToPanel(wyp_image, &north_panel, "wypTGA", 5, 5);
@@ -342,6 +342,16 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
 
     // Put the content into the panel.
     south_panel.addContent(version_text);
+
+    tour_text = new HUDTextLine(80, overlay.getFont(),
+                                "Barry Barge-Arse can fuck off",
+                                35, 10);
+    if(tour_text == NULL) {
+        std::string msg = "Simulation::prepare() - failed creation of HUDTextLineScroll instance on heap";
+        ErrorHandler::record(msg, ErrorHandler::FATAL);
+        }
+
+    north_panel.addContent(tour_text);
 
     // LoadImageToPanel(ligo_image, &south_panel, "ligoTGA", 5, 5);
     // LoadImageToPanel(geo_image, &south_panel, "geoTGA", 5, 5);

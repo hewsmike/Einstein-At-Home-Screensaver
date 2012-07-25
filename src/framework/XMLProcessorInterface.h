@@ -86,7 +86,7 @@ class XMLProcessorInterface {
          * \return The node's content or NULL in case of an error
          */
         virtual string getSingleNodeContentByXPath(const string xml, const string url, const string xpath) = 0;
-    }
+    };
 
 /**
  * @}

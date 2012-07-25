@@ -89,7 +89,7 @@ void BOINCClientAdapter::readSharedMemoryArea() {
             m_SharedMemoryAreaAvailable = false;
             }
         }
-
+    }
 
 void BOINCClientAdapter::readProjectPreferences() {
     string temp;
