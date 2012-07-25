@@ -31,11 +31,11 @@ using namespace std;
  */
 
 /**
- * \brief This interface declares all mandatory public methods to be provied by any
- * given XML Processor.
+ * \brief This interface declares all mandatory public methods to be
+ *        provided by any given XML Processor.
  *
- * All classes implementing this interface have to provide at least the set of methods
- * declared here.
+ *      All classes implementing this interface have to provide at
+ * least the set of methods declared here.
  *
  * \see Libxml2Adapter
  *
@@ -86,7 +86,7 @@ class XMLProcessorInterface {
          * \return The node's content or NULL in case of an error
          */
         virtual string getSingleNodeContentByXPath(const string xml, const string url, const string xpath) = 0;
-    ;
+    }
 
 /**
  * @}
