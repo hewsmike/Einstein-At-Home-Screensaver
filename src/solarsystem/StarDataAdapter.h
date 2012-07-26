@@ -23,6 +23,9 @@
 
 #include "Libxml2Adapter.h"
 
+#include <string>
+#include <vector>
+
 /**
  * \addtogroup solarsystem Solarsystem
  * @{
@@ -46,24 +49,32 @@ class StarDataAdapter : public Libxml2Adapter {
          */
         virtual ~StarDataAdapter();
 
+    protected:
         /**
-         * \brief Obtain the first star from the data source.
+         * \brief Obtain data for the first star from the data source.
          *
-         * \return A pointer to a Star object, or NULL if none
-         *         available.
+         * \return A list of star parameters, empty if none available.
          */
-        std::vector<std::string> getFirstStar(void);
+        std::vector<std::string> getFirstStar(void) const;
 
         /**
          * \brief Obtain the next star from the data source.
          *
-         * \return A pointer to a Star object, or NULL if none
-         *         available.
+         * \return A list of star parameters, empty if none available.
          */
-        std::vector<std::string> getNextStar(void);
+        std::vector<std::string> getNextStar(void) const;
 
     private:
-        int star_index;
+        /// These depend upon the XML document's data model,
+        /// being used to construct an XPath expression for
+        /// actual data retrieval.
+        static const std::string XML_BASE_PATH;
+        static const std::string STAR_ELEMENT_NAME;
+        static const std::string STAR_DATA_NAME;
+
+        /// The current index of the data 'record' being
+        /// accessed.
+        unsigned int star_index;
     };
 
 /**
