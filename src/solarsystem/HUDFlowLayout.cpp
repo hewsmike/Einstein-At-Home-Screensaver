@@ -31,6 +31,7 @@ HUDFlowLayout::HUDFlowLayout(HUDContainer* enclosing, Axis axis) :
     item_gap = 0;
     primary_just = CENTRE;
     secondary_just = MIDDLE;
+    load_dir = FIRST;
     }
 
 HUDFlowLayout::~HUDFlowLayout() {
@@ -99,21 +100,52 @@ void HUDFlowLayout::allocateItemBases(void) {
     // We only need to bother with this if there are items to render.
     if(itemCount() > 0) {
         setGaps();
+
+        GLuint newHorz = 0;
+        GLuint newVert = 0;
+        GLint flip = 0;
+
         // Starting position.
-        GLuint newHorz = horzBase();
-        GLuint newVert = vertBase();
+        switch(load_dir) {
+            case FIRST:
+                newHorz = horzBase();
+                newVert = vertBase();
+                flip = 1;
+                break;
+            case LAST:
+                switch(ax) {
+                    case HORIZONTAL:
+                        newHorz = horzBase() + width();
+                        break;
+                    case VERTICAL:
+                        newVert = vertBase() + height();
+                        break;
+                    default:
+                        // Shouldn't ever get here!!
+                        ErrorHandler::record("HUDFlowLayout::allocateItemBases() - bad switch case (load/last) reached (default)",
+                                             ErrorHandler::FATAL);
+                        break;
+                    }
+                flip = -1;
+                break;
+            default:
+                // Shouldn't ever get here!!
+                ErrorHandler::record("HUDFlowLayout::allocateItemBases() - bad switch case (load) reached (default)",
+                                     ErrorHandler::FATAL);
+                break;
+            }
 
         // Offset added as per flow axis.
         switch(ax) {
             case HORIZONTAL:
-                newHorz += start_offset;
+                newHorz += flip*start_offset;
                 break;
             case VERTICAL:
-                newVert += start_offset;
+                newVert += flip*start_offset;
                 break;
             default:
                 // Shouldn't ever get here!!
-                ErrorHandler::record("HUDFlowLayout::allocateItemBases() - bad switch case reached (default)",
+                ErrorHandler::record("HUDFlowLayout::allocateItemBases() - bad switch case (offset) reached (default)",
                                      ErrorHandler::FATAL);
                 break;
             }
@@ -124,17 +156,17 @@ void HUDFlowLayout::allocateItemBases(void) {
             getItem(count)->reBase(newHorz, newVert);
 
             // Shift to next insert position by the dimensions of this content plus any gap,
-            // accounting for the flow axis.
+            // accounting for the flow axis and direction of load.
             switch(ax) {
                 case HORIZONTAL:
-                    newHorz += getItem(count)->minWidth() + item_gap;
+                    newHorz += flip*(getItem(count)->minWidth() + item_gap);
                     break;
                 case VERTICAL:
-                    newVert += getItem(count)->minHeight() + item_gap;;
+                    newVert += flip*(getItem(count)->minHeight() + item_gap);
                     break;
                 default:
                     // Shouldn't ever get here!!
-                    ErrorHandler::record("HUDFlowLayout::allocateItemBases() - bad switch case reached (default)",
+                    ErrorHandler::record("HUDFlowLayout::allocateItemBases() - bad switch case (axis) reached (default)",
                                          ErrorHandler::FATAL);
                 break;
                 }
@@ -146,7 +178,7 @@ void HUDFlowLayout::setGaps(void) {
     // Determine any available horizontal 'whitespace' b/w items. This is
     // the amount above the minimum required for display. By design this
     // whitespace ought be non-negative, but let's check to be sure.
-    switch(this->ax) {}
+    switch(this->ax) {
         case HORIZONTAL:
             if(width() >= minWidth()) {
                 total_white_space = width() - minWidth();
@@ -224,4 +256,8 @@ void HUDFlowLayout::setGaps(void) {
                                  ErrorHandler::FATAL);
             break;
         }
+    }
+
+void HUDFlowLayout::setLoad(load side) {
+    load_dir = side;
     }

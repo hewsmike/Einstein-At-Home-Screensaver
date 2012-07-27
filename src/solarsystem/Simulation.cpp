@@ -105,7 +105,7 @@ Simulation::Simulation(void) : cs(CONSTELLATIONS_RADIUS),
                                    SUN_SLICES,
                                    SUN_TEXTURE_OFFSET),
                                overlay(NULL),
-                               north_panel(&overlay, HUDFlowLayout::VERTICAL),
+                               north_panel(&overlay, HUDFlowLayout::HORIZONTAL),
                                south_panel(&overlay, HUDFlowLayout::HORIZONTAL),
                                east_panel(&overlay, HUDFlowLayout::VERTICAL),
                                west_panel(&overlay, HUDFlowLayout::VERTICAL) {
@@ -195,16 +195,17 @@ void Simulation::step(void) {
         // content change of the tour's descriptive text.
         if(pilot.hasDescriptionChanged() == true) {
             // Clean up any prior panel contents.
-            north_panel.erase();
+            west_panel.erase();
+            west_panel.setLoad(HUDFlowLayout::LAST);
 
             // Then put new content lines, derived from the
             // current position in the tour, into the panel.
             const std::vector<std::string>& messages = pilot.getDescription();
             for(unsigned int index = 0; index < messages.size(); ++index) {
-                north_panel.addContent(new HUDTextLine(messages.at(index).size(),
-                                       overlay.getFont(), messages.at(index), 0, 2));
+                west_panel.addContent(new HUDTextLine(messages.at(index).size(),
+                                      overlay.getFont(), messages.at(index), 0, 2));
                 }
-            north_panel.activate();
+            west_panel.activate();
             }
         }
 
@@ -342,16 +343,6 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
 
     // Put the content into the panel.
     south_panel.addContent(version_text);
-
-    tour_text = new HUDTextLine(80, overlay.getFont(),
-                                "Barry Barge-Arse can fuck off",
-                                35, 10);
-    if(tour_text == NULL) {
-        std::string msg = "Simulation::prepare() - failed creation of HUDTextLineScroll instance on heap";
-        ErrorHandler::record(msg, ErrorHandler::FATAL);
-        }
-
-    north_panel.addContent(tour_text);
 
     // LoadImageToPanel(ligo_image, &south_panel, "ligoTGA", 5, 5);
     // LoadImageToPanel(geo_image, &south_panel, "geoTGA", 5, 5);
