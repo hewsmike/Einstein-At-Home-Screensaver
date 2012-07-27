@@ -146,12 +146,29 @@ void HUDFlowLayout::setGaps(void) {
     // Determine any available horizontal 'whitespace' b/w items. This is
     // the amount above the minimum required for display. By design this
     // whitespace ought be non-negative, but let's check to be sure.
-    if(width() >= minWidth()) {
-        total_white_space = width() - minWidth();
-        }
-    else {
-        ErrorHandler::record("HUDFlowLayout::setGaps() - negative whitespace!!",
-                             ErrorHandler::FATAL);
+    switch(this->ax) {}
+        case HORIZONTAL:
+            if(width() >= minWidth()) {
+                total_white_space = width() - minWidth();
+                }
+            else  {
+                ErrorHandler::record("HUDFlowLayout::setGaps() - negative horizontal whitespace!!",
+                                     ErrorHandler::FATAL);
+                }
+            break;
+        case VERTICAL:
+            if(height() >= minHeight()) {
+                total_white_space = height() - minHeight();
+                }
+            else {
+                ErrorHandler::record("HUDFlowLayout::setGaps() - negative vertical whitespace!!",
+                                     ErrorHandler::FATAL);
+                }
+            break;
+        default :
+            ErrorHandler::record("HUDFlowLayout::setGaps() - bad switch case reached (default)",
+                                  ErrorHandler::FATAL);
+            break;
         }
 
     // For the items, what is the distribution of whitespace?
