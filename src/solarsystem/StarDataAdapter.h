@@ -55,14 +55,14 @@ class StarDataAdapter : public Libxml2Adapter {
          *
          * \return A list of star parameters, empty if none available.
          */
-        std::vector<std::string> getFirstStar(void) const;
+        std::vector<std::string> getFirstStar(void);
 
         /**
          * \brief Obtain the next star from the data source.
          *
          * \return A list of star parameters, empty if none available.
          */
-        std::vector<std::string> getNextStar(void) const;
+        std::vector<std::string> getNextStar(void);
 
     private:
         /// These depend upon the XML document's data model,

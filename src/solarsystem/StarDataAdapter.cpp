@@ -23,8 +23,8 @@
 #include <sstream>
 
 const std::string StarDataAdapter::XML_BASE_PATH("/RESOURCE/TABLE/DATA/TABLEDATA/");
-const std::string StarDataAdapter::STAR_ELEMENT_NAME(XML_BASE_PATH + "TR");
-const std::string StarDataAdapter::STAR_DATA_NAME(STAR_ELEMENT_NAME + "TD");
+const std::string StarDataAdapter::STAR_ELEMENT_NAME("TR");
+const std::string StarDataAdapter::STAR_DATA_NAME("TD");
 
 StarDataAdapter::StarDataAdapter(const string xml, const string url) {
     setXmlDocument(xml, url);
@@ -43,21 +43,21 @@ std::vector<std::string> StarDataAdapter::getNextStar(void) {
     std::vector<std::string> ret_val;
 
     unsigned int param_index = 0;
-    std:string param_value;
+    std::string param_value;
     do{
         std::stringstream xpath_query;
         xpath_query << XML_BASE_PATH
                     << STAR_ELEMENT_NAME
                     << "["
-                    << param_index
+                    << star_index
                     << "]/"
                     << STAR_DATA_NAME
                     << "["
-                    <<
-                    << "]/"
+                    << param_index
+                    << "]/";
 
-        param_value = getSingleNodeContentByXPath(xpath_query);
-        /library/book/title[2]/text()
+        param_value = getSingleNodeContentByXPath(xpath_query.str());
+        //library/book/title[2]/text()
         if(param_value.size() != 0){
             ret_val.push_back(param_value);
             ++param_index;
