@@ -26,7 +26,7 @@
 
 #include "ErrorHandler.h"
 
-const float AutoPilot::LENGTH_PER_FRAME(10.0f);
+const float AutoPilot::LENGTH_PER_FRAME(20.0f);
 const float AutoPilot::LEAST_PATH_LENGTH(0.00001f);
 const unsigned int AutoPilot::PAUSE_FRAME_COUNT(250);
 
