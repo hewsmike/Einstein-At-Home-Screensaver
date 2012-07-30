@@ -402,11 +402,8 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
     carina.addToDescription("The keel");
     carina.add_star(OrdStar(95.77f, -52.68f, -0.72f, OrdStar::SPEC_F, "Canopus"));
     carina.add_star(OrdStar(138.25f, -69.72f, 1.67f, OrdStar::SPEC_A, "Miaplacidus"));
-
     carina.add_star(OrdStar(125.51f, -59.52f, 1.86f, OrdStar::SPEC_K, "Avior"));
-
     carina.add_star(OrdStar(139.25f, -59.28f, 2.21f, OrdStar::SPEC_A, "Aspidiske"));
-
     carina.add_star(OrdStar(160.52f, -64.40f, 2.74f, OrdStar::SPEC_B, ""));
     carina.add_star(OrdStar(146.75f, -65.07f, 2.92f, OrdStar::SPEC_A, ""));
     carina.add_star(OrdStar(153.26f, -70.04f, 3.29f, OrdStar::SPEC_B, ""));
@@ -426,7 +423,7 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
     tot_links += carina.total_links();
 
     Constellation cassiopeia("Cassiopeia");
-    cassiopeia.addToDescription("The lady tied to a chair");
+    cassiopeia.addToDescription("The wife of Cepheus");
     cassiopeia.add_star(OrdStar(14.01f, 60.72f, 2.15f, OrdStar::SPEC_B, "Tsih"));
     cassiopeia.add_star(OrdStar(10.01f, 56.54f, 2.24f, OrdStar::SPEC_K, "Schedar"));
     cassiopeia.add_star(OrdStar(2.25f, 59.15f, 2.28f, OrdStar::SPEC_F, "Caph"));
