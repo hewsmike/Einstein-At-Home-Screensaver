@@ -195,17 +195,17 @@ void Simulation::step(void) {
         // content change of the tour's descriptive text.
         if(pilot.hasDescriptionChanged() == true) {
             // Clean up any prior panel contents.
-            west_panel.erase();
-            west_panel.setLoad(HUDFlowLayout::LAST);
+            east_panel.erase();
+            east_panel.setLoad(HUDFlowLayout::LAST);
 
             // Then put new content lines, derived from the
             // current position in the tour, into the panel.
             const std::vector<std::string>& messages = pilot.getDescription();
             for(unsigned int index = 0; index < messages.size(); ++index) {
-                west_panel.addContent(new HUDTextLine(messages.at(index).size(),
+                east_panel.addContent(new HUDTextLine(messages.at(index).size(),
                                       overlay.getFont(), messages.at(index), 0, 2));
                 }
-            west_panel.activate();
+            east_panel.activate();
             }
         }
 
@@ -327,10 +327,10 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
     overlay.setPanel(HUDBorderLayout::WEST, &west_panel);
 
     // Create content and include into panels.
-    // LoadImageToPanel(wyp_image, &north_panel, "wypTGA", 5, 5);
-    // LoadImageToPanel(aps_image, &north_panel, "apsTGA", 5, 5);
-    // LoadImageToPanel(aei_image, &north_panel, "aeiTGA", 5, 5);
-    // LoadImageToPanel(opencl_image, &north_panel, "openclTGA", 5, 5);
+    //LoadImageToPanel(wyp_image, &west_panel, "wypTGA", 5, 5);
+    //LoadImageToPanel(aps_image, &west_panel, "apsTGA", 5, 5);
+    //LoadImageToPanel(aei_image, &east_panel, "aeiTGA", 5, 5);
+    //LoadImageToPanel(opencl_image, &east_panel, "openclTGA", 5, 5);
 
     // LoadImageToPanel(boinc_image, &south_panel, "boincTGA", 5, 5);
     version_text = new HUDTextLineScroll(80, overlay.getFont(),
@@ -344,8 +344,8 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
     // Put the content into the panel.
     south_panel.addContent(version_text);
 
-    // LoadImageToPanel(ligo_image, &south_panel, "ligoTGA", 5, 5);
-    // LoadImageToPanel(geo_image, &south_panel, "geoTGA", 5, 5);
+    //LoadImageToPanel(ligo_image, &west_panel, "ligoTGA", 5, 5);
+    //LoadImageToPanel(geo_image, &east_panel, "geoTGA", 5, 5);
     // LoadImageToPanel(virgo_image, &south_panel, "virgoTGA", 5, 5);
 
     overlay.activate();

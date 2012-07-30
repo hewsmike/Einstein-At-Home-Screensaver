@@ -144,7 +144,12 @@ class HUDFlowLayout : public HUDContainer {
          */
         HUDFlowLayout::secondaryJustification getSecondaryJustification(void) const;
 
-        void setLoad(load side);
+        /**
+         * \brief Set which end of the primary axis to load into.
+         *
+         * \param the desired end
+         */
+        void setLoad(load end);
 
     protected:
         /**
@@ -168,6 +173,8 @@ class HUDFlowLayout : public HUDContainer {
          *         whitespace gaps as per the justification setting.
          */
         void setGaps(void);
+
+        GLuint setSideGap(secondaryJustification just, GLuint gap_total);
 
         GLuint gap_count;
         GLuint total_white_space;

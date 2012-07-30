@@ -22,6 +22,8 @@
 
 #include "ErrorHandler.h"
 
+#include <iostream>
+
 HUDFlowLayout::HUDFlowLayout(HUDContainer* enclosing, Axis axis) :
                 HUDContainer(enclosing),
                 ax(axis) {
@@ -80,14 +82,35 @@ std::pair<GLuint, GLuint> HUDFlowLayout::reassessMinimumDimensions(void) {
         // Examine this item.
         HUDItem* current = getItem(count);
 
-        // We add up all the minimum widths.
-        layoutMinWidth += current->minWidth();
-
-        // But take the overall minimum height to be the
-        // greatest of the minima of the contained items.
-        GLuint currentHeight = current->minHeight();
-        if(currentHeight > layoutMinHeight) {
-            layoutMinHeight = currentHeight;
+        switch(ax) {
+            case HORIZONTAL:
+                {
+                // We add up all the minimum widths.
+                layoutMinWidth += current->minWidth();
+                // But take the overall minimum height to be the
+                // greatest of the minima of the contained items.
+                GLuint currentHeight = current->minHeight();
+                if(currentHeight > layoutMinHeight) {
+                    layoutMinHeight = currentHeight;
+                    }
+                }
+                break;
+            case VERTICAL:
+                {
+                // We add up all the minimum heights.
+                layoutMinHeight += current->minHeight();
+                // But take the overall minimum width to be the
+                // greatest of the minima of the contained items.
+                GLuint currentWidth = current->minWidth();
+                if(currentWidth > layoutMinWidth) {
+                    layoutMinWidth = currentWidth;
+                    }
+                }
+                break;
+            default:
+                ErrorHandler::record("HUDFlowLayout::reassessMinimumDimensions() - bad switch case reached (default)",
+                                     ErrorHandler::FATAL);
+                break;
             }
         }
 
@@ -101,38 +124,26 @@ void HUDFlowLayout::allocateItemBases(void) {
     if(itemCount() > 0) {
         setGaps();
 
-        GLuint newHorz = 0;
-        GLuint newVert = 0;
-        GLint flip = 0;
+        // The settings apply for the case FIRST.
+        GLuint newHorz = horzBase();
+        GLuint newVert = vertBase();
+        GLint flip = 1;
 
-        // Starting position.
-        switch(load_dir) {
-            case FIRST:
-                newHorz = horzBase();
-                newVert = vertBase();
-                flip = 1;
-                break;
-            case LAST:
-                switch(ax) {
-                    case HORIZONTAL:
-                        newHorz = horzBase() + width();
-                        break;
-                    case VERTICAL:
-                        newVert = vertBase() + height();
-                        break;
-                    default:
-                        // Shouldn't ever get here!!
-                        ErrorHandler::record("HUDFlowLayout::allocateItemBases() - bad switch case (load/last) reached (default)",
-                                             ErrorHandler::FATAL);
-                        break;
-                    }
-                flip = -1;
-                break;
-            default:
-                // Shouldn't ever get here!!
-                ErrorHandler::record("HUDFlowLayout::allocateItemBases() - bad switch case (load) reached (default)",
-                                     ErrorHandler::FATAL);
-                break;
+        if(load_dir == LAST) {
+            switch(ax) {
+                case HORIZONTAL:
+                    newHorz += width();
+                    break;
+                case VERTICAL:
+                    newVert += height();
+                    break;
+                default:
+                    // Shouldn't ever get here!!
+                    ErrorHandler::record("HUDFlowLayout::allocateItemBases() - bad switch case (load/last) reached (default)",
+                                         ErrorHandler::FATAL);
+                    break;
+                }
+            flip = -1;
             }
 
         // Offset added as per flow axis.
@@ -153,15 +164,18 @@ void HUDFlowLayout::allocateItemBases(void) {
         // Then contents are placed in the order of their insertion.
         for(GLuint count = 0; count < itemCount(); ++count) {
             // Place the current content.
-            getItem(count)->reBase(newHorz, newVert);
 
             // Shift to next insert position by the dimensions of this content plus any gap,
             // accounting for the flow axis and direction of load.
             switch(ax) {
                 case HORIZONTAL:
+                    getItem(count)->reBase(newHorz,
+                                           newVert + setSideGap(secondary_just, this->height() - getItem(count)->minHeight()));
                     newHorz += flip*(getItem(count)->minWidth() + item_gap);
                     break;
                 case VERTICAL:
+                    getItem(count)->reBase(newHorz + setSideGap(secondary_just, this->width() - getItem(count)->minWidth()),
+                                           newVert);
                     newVert += flip*(getItem(count)->minHeight() + item_gap);
                     break;
                 default:
@@ -258,6 +272,29 @@ void HUDFlowLayout::setGaps(void) {
         }
     }
 
-void HUDFlowLayout::setLoad(load side) {
-    load_dir = side;
+void HUDFlowLayout::setLoad(load end) {
+    load_dir = end;
+    }
+
+GLuint HUDFlowLayout::setSideGap(secondaryJustification just, GLuint gap_total) {
+    GLuint ret_val = 0;
+
+    switch(just) {
+        case PROXIMAL:
+            ret_val = 0;
+            break;
+        case MIDDLE:
+            ret_val = gap_total/2;
+            break;
+        case DISTAL:
+            ret_val = gap_total;
+            break;
+        default:
+            // Shouldn't ever get here!!
+            ErrorHandler::record("HUDFlowLayout::allocateItemBases() - bad switch case (horz/sec-adjust) reached (default)",
+                                 ErrorHandler::FATAL);
+            break;
+        }
+
+    return ret_val;
     }
