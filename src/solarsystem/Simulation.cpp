@@ -105,7 +105,7 @@ Simulation::Simulation(void) : cs(CONSTELLATIONS_RADIUS),
                                    SUN_SLICES,
                                    SUN_TEXTURE_OFFSET),
                                overlay(NULL),
-                               north_panel(&overlay, HUDFlowLayout::HORIZONTAL),
+                               north_panel(&overlay, HUDFlowLayout::VERTICAL),
                                south_panel(&overlay, HUDFlowLayout::HORIZONTAL),
                                east_panel(&overlay, HUDFlowLayout::VERTICAL),
                                west_panel(&overlay, HUDFlowLayout::VERTICAL) {
@@ -195,17 +195,17 @@ void Simulation::step(void) {
         // content change of the tour's descriptive text.
         if(pilot.hasDescriptionChanged() == true) {
             // Clean up any prior panel contents.
-            east_panel.erase();
-            east_panel.setLoad(HUDFlowLayout::LAST);
+            north_panel.erase();
+            north_panel.setLoad(HUDFlowLayout::LAST);
 
             // Then put new content lines, derived from the
             // current position in the tour, into the panel.
             const std::vector<std::string>& messages = pilot.getDescription();
             for(unsigned int index = 0; index < messages.size(); ++index) {
-                east_panel.addContent(new HUDTextLine(messages.at(index).size(),
+                north_panel.addContent(new HUDTextLine(messages.at(index).size(),
                                       overlay.getFont(), messages.at(index), 0, 2));
                 }
-            east_panel.activate();
+            north_panel.activate();
             }
         }
 
