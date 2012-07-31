@@ -129,13 +129,18 @@ void HUDFlowLayout::allocateItemBases(void) {
         GLuint newVert = vertBase();
         GLint flip = 1;
 
+        // But if it is LAST ...
         if(load_dir == LAST) {
             switch(ax) {
                 case HORIZONTAL:
                     newHorz += width();
                     break;
                 case VERTICAL:
-                    newVert += height();
+                    // Default loading sense ( FIRST ) is from the top
+                    // going downwards, so for LAST is from the bottom
+                    // going upwards BUT we measure the vertical scale
+                    // as zero at the bottom and increasing upwards.
+                    newVert -= height();
                     break;
                 default:
                     // Shouldn't ever get here!!
