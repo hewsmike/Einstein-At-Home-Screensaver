@@ -35,16 +35,25 @@ StarDataAdapter::~StarDataAdapter() {
     }
 
 std::vector<std::string> StarDataAdapter::getFirstStar(void) {
+    // Reset index to zero.
     star_index = 0;
+
+    // Then get the data.
     return getNextStar();
     }
 
 std::vector<std::string> StarDataAdapter::getNextStar(void) {
+    // An array of strings to return a single star's
+    // stored data parameters with.
     std::vector<std::string> ret_val;
 
+    // Assume no parameters.
     unsigned int param_index = 0;
     std::string param_value;
     do{
+        // Constuct an XPath query string, using the current
+        // indicies for star and parameter. Context node for
+        // the query is the document's root node.
         std::stringstream xpath_query;
         xpath_query << XML_BASE_PATH
                     << STAR_ELEMENT_NAME
@@ -54,15 +63,23 @@ std::vector<std::string> StarDataAdapter::getNextStar(void) {
                     << STAR_DATA_NAME
                     << "["
                     << param_index
-                    << "]/";
+                    << "]/text()";
 
+        // Use the constructed string to find any content.
         param_value = getSingleNodeContentByXPath(xpath_query.str());
-        //library/book/title[2]/text()
+
+        // If the query succeeded and content returned ...
         if(param_value.size() != 0){
+            // Then save said content to our string array.
             ret_val.push_back(param_value);
+            // Assume another parameter might be available.
             ++param_index;
             }
+
+        // Keep queries going until no content returned.
         }while(param_value.size() != 0);
+
+    // Nudge the index and return what ( if any ) was found.
     ++star_index;
     return ret_val;
     }

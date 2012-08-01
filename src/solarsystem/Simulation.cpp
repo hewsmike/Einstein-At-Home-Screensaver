@@ -87,6 +87,9 @@ const GLint Simulation::HUD_BOTTOM_CLIP(0);
 const GLint Simulation::HUD_NEAR_CLIP(-1);
 const GLint Simulation::HUD_FAR_CLIP(+1);
 
+const std::string Simulation::PULSAR_XML_FILENAME("ATNF.xml");
+const std::string Simulation::PULSAR_XML_URL("./");
+
 Simulation::Simulation(void) : cs(CONSTELLATIONS_RADIUS),
                                ps(PULSARS_RADIUS, PULSARS_MAG_SIZE, PULSARS_RGB_RED, PULSARS_RGB_GREEN, PULSARS_RGB_BLUE),
                                sn(SUPERNOVAE_RADIUS, SUPERNOVAE_MAG_SIZE, SUPERNOVAE_RGB_RED, SUPERNOVAE_RGB_GREEN, SUPERNOVAE_RGB_BLUE),
@@ -108,8 +111,9 @@ Simulation::Simulation(void) : cs(CONSTELLATIONS_RADIUS),
                                north_panel(&overlay, HUDFlowLayout::VERTICAL),
                                south_panel(&overlay, HUDFlowLayout::HORIZONTAL),
                                east_panel(&overlay, HUDFlowLayout::VERTICAL),
-                               west_panel(&overlay, HUDFlowLayout::VERTICAL) {
-    pulsar_external_load = false;
+                               west_panel(&overlay, HUDFlowLayout::VERTICAL),
+                               pulsar_adapter(NULL) {
+    pulsar_external_load = true;
 
     // Starting values of simulation parameters.
     min60 = 0;
@@ -148,7 +152,16 @@ Simulation::Simulation(void) : cs(CONSTELLATIONS_RADIUS),
                      EARTHGRID_PRIME_MERIDIAN_RED, EARTHGRID_PRIME_MERIDIAN_GREEN, EARTHGRID_PRIME_MERIDIAN_BLUE);
 
     // Get the pulsar and supernovae data.
-    loadPulsars();
+    bool pulsar_load_flag = loadPulsars();
+    if(pulsar_load_flag == false) {
+        ErrorHandler::record("Simulation::Simulation() - no Pulsars loaded",
+                              ErrorHandler::WARN);
+
+        // OK so an external load failed, take default/compiled data.
+        pulsar_external_load = false;
+        loadPulsars();
+        }
+
     loadSupernovae();
     }
 
@@ -496,7 +509,9 @@ void Simulation::render(void) {
         }
     }
 
-void Simulation::loadPulsars(void) {
+bool Simulation::loadPulsars(void) {
+    bool ret_val = false;
+
     if(pulsar_external_load == false) {
         // Default listing.
         ps.add(Pulsar(1.52000f, 18.58306f, "J0006+1834", Pulsar::ATNF));
@@ -2379,10 +2394,38 @@ void Simulation::loadPulsars(void) {
         ps.add(Pulsar(354.27408f, 61.85047f, "J2337+6151", Pulsar::ATNF));
         ps.add(Pulsar(356.71023f, -6.16653f, "J2346-0609", Pulsar::ATNF));
         ps.add(Pulsar(358.51968f, 61.92966f, "J2354+6155", Pulsar::ATNF));
+        ret_val = true;
         }
     else {
-        // Get the pulsar data from an outside source.
+        // Create a data adapter on the heap.
+        pulsar_adapter = new StarDataAdapter(PULSAR_XML_FILENAME, PULSAR_XML_URL);
+
+        // Did we succeed in getting an adapter ??
+        if(pulsar_adapter != NULL) {}
+            // Get the pulsar data from an outside source.
+            std::vector<std::string> pulsar_data = pulsar_adapter->getFirstStar();
+
+            do{
+                if(pulsar_data.size() != 0) {
+                    ps.add(data2pulsar(pulsar_data));
+                    }
+                pulsar_data.clear();
+                pulsar_data = pulsar_adapter->getNextStar();
+                }while(pulsar_data.size() != 0);
+
+            // No longer need the adapeter.
+            delete pulsar_adapter;
+
+            ret_val = true;
+            }
+        else {
+            // No, record a warning.
+            ErrorHandler::record("Simulation::loadPulsars() - failed creation of StarDataAdapter instance on heap",
+                                 ErrorHandler::WARN);
+            }
         }
+
+    return ret_val;
     }
 
 void Simulation::loadPulsarsEAH(void) {
@@ -2704,4 +2747,8 @@ void Simulation::LoadImageToPanel(HUDImage* hip, HUDFlowLayout* hfl,
 
     // Put the content into the panel.
     hfl->addContent(hip);
+    }
+
+Pulsar Simulation::data2pulsar(std::vector<std::string>& data) {
+    return Pulsar(data.at(RIGHT_ASCENSION, DECLINATION, "ATNF"));
     }

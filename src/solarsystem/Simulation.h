@@ -47,6 +47,7 @@
 #include "Renderable.h"
 #include "SolarSystemGlobals.h"
 #include "Sphere.h"
+#include "StarDataAdapter.h"
 #include "Stars.h"
 #include "SunOrbit.h"
 #include "Supernova.h"
@@ -243,8 +244,11 @@ class Simulation : public Renderable {
 
         /**
          * \brief Load a list of general pulsar data
+         *
+         * \return a boolean indicating true if pulsars were
+         *         successfully loaded, false otherwise.
          */
-        void loadPulsars(void);
+        bool loadPulsars(void);
 
         /**
          * \brief Load a list of E@H assisted pulsar data
@@ -322,6 +326,11 @@ class Simulation : public Renderable {
         HUDFlowLayout east_panel;
         HUDFlowLayout west_panel;
 
+        /// XML data sources.
+        std::string PULSAR_XML_FILENAME;
+        std::string PULSAR_XML_URL;
+        StarDataAdapter* pulsar_adapter;
+
         /**
          * \brief Add an image as named by a Resource to a panel.
          *
@@ -334,6 +343,20 @@ class Simulation : public Renderable {
         void LoadImageToPanel(HUDImage* hip, HUDFlowLayout* hfl,
                               std::string resource_name, GLuint margin_width,
                               GLuint margin_height);
+
+        enum xml_data_indices {UNIQUE_ID,
+                               J2000_DESIGNATION,
+                               RIGHT_ASCENSION,
+                               DECLINATION,
+                               PERIOD,
+                               PERIOD_DELTA,
+                               PERIOD_DERIV,
+                               PERIOD_DERIV_DELTA,
+                               DISPERSION,
+                               DISPERSION_DELTA,
+                               SEARCH_OFFSET};
+
+        Pulsar data2pulsar(std::vector<std::string>& data);
     };
 
 /**

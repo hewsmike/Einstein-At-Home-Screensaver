@@ -72,8 +72,8 @@ class StarDataAdapter : public Libxml2Adapter {
         static const std::string STAR_ELEMENT_NAME;
         static const std::string STAR_DATA_NAME;
 
-        /// The current index of the data 'record' being
-        /// accessed.
+        /// The index of the current star's
+        /// data 'record' being accessed.
         unsigned int star_index;
     };
 
