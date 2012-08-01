@@ -20,6 +20,7 @@
 
 #include "StarDataAdapter.h"
 
+#include <iostream>
 #include <sstream>
 
 const std::string StarDataAdapter::XML_BASE_PATH("/RESOURCE/TABLE/DATA/TABLEDATA/");
@@ -69,7 +70,8 @@ std::vector<std::string> StarDataAdapter::getNextStar(void) {
         param_value = getSingleNodeContentByXPath(xpath_query.str());
 
         // If the query succeeded and content returned ...
-        if(param_value.size() != 0){
+        if(param_value.size() != 0) {
+            std::cout << "Yeey hha" << std::endl;
             // Then save said content to our string array.
             ret_val.push_back(param_value);
             // Assume another parameter might be available.

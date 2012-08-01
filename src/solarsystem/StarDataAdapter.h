@@ -49,7 +49,7 @@ class StarDataAdapter : public Libxml2Adapter {
          */
         virtual ~StarDataAdapter();
 
-    protected:
+    // protected:
         /**
          * \brief Obtain data for the first star from the data source.
          *

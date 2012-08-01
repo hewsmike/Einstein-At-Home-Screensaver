@@ -20,6 +20,7 @@
 
 #include "Simulation.h"
 
+#include <cstdlib>
 #include <sstream>
 
 const std::string Simulation::EARTH_NAME("Earth");
@@ -88,7 +89,7 @@ const GLint Simulation::HUD_NEAR_CLIP(-1);
 const GLint Simulation::HUD_FAR_CLIP(+1);
 
 const std::string Simulation::PULSAR_XML_FILENAME("ATNF.xml");
-const std::string Simulation::PULSAR_XML_URL("./");
+const std::string Simulation::PULSAR_XML_URL("");
 
 Simulation::Simulation(void) : cs(CONSTELLATIONS_RADIUS),
                                ps(PULSARS_RADIUS, PULSARS_MAG_SIZE, PULSARS_RGB_RED, PULSARS_RGB_GREEN, PULSARS_RGB_BLUE),
@@ -2397,20 +2398,24 @@ bool Simulation::loadPulsars(void) {
         ret_val = true;
         }
     else {
+
         // Create a data adapter on the heap.
         pulsar_adapter = new StarDataAdapter(PULSAR_XML_FILENAME, PULSAR_XML_URL);
 
         // Did we succeed in getting an adapter ??
-        if(pulsar_adapter != NULL) {}
+        if(pulsar_adapter != NULL) {
+            int count = 0;
             // Get the pulsar data from an outside source.
             std::vector<std::string> pulsar_data = pulsar_adapter->getFirstStar();
 
             do{
                 if(pulsar_data.size() != 0) {
+                    std::cout << "Pulsar #" << count << std::endl;
                     ps.add(data2pulsar(pulsar_data));
                     }
                 pulsar_data.clear();
                 pulsar_data = pulsar_adapter->getNextStar();
+                ++count;
                 }while(pulsar_data.size() != 0);
 
             // No longer need the adapeter.
@@ -2750,5 +2755,5 @@ void Simulation::LoadImageToPanel(HUDImage* hip, HUDFlowLayout* hfl,
     }
 
 Pulsar Simulation::data2pulsar(std::vector<std::string>& data) {
-    return Pulsar(data.at(RIGHT_ASCENSION, DECLINATION, "ATNF"));
+    return Pulsar(atof(data.at(RIGHT_ASCENSION).c_str()), atof(data.at(DECLINATION).c_str()), data.at(J2000_DESIGNATION), Pulsar::ATNF);
     }

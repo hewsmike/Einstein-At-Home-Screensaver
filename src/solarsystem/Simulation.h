@@ -327,8 +327,8 @@ class Simulation : public Renderable {
         HUDFlowLayout west_panel;
 
         /// XML data sources.
-        std::string PULSAR_XML_FILENAME;
-        std::string PULSAR_XML_URL;
+        static const std::string PULSAR_XML_FILENAME;
+        static const std::string PULSAR_XML_URL;
         StarDataAdapter* pulsar_adapter;
 
         /**
