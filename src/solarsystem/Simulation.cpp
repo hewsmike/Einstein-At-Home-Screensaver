@@ -2398,12 +2398,14 @@ bool Simulation::loadPulsars(void) {
         ret_val = true;
         }
     else {
-
         // Create a data adapter on the heap.
         pulsar_adapter = new StarDataAdapter(PULSAR_XML_FILENAME, PULSAR_XML_URL);
 
         // Did we succeed in getting an adapter ??
         if(pulsar_adapter != NULL) {
+            std::cout << "Yes, we have a StarDataAdapter on heap using : "
+                      << PULSAR_XML_FILENAME << " @ "
+                      << PULSAR_XML_URL << std::endl;
             int count = 0;
             // Get the pulsar data from an outside source.
             std::vector<std::string> pulsar_data = pulsar_adapter->getFirstStar();
@@ -2418,7 +2420,7 @@ bool Simulation::loadPulsars(void) {
                 ++count;
                 }while(pulsar_data.size() != 0);
 
-            // No longer need the adapeter.
+            // No longer need the adapter.
             delete pulsar_adapter;
 
             ret_val = true;
