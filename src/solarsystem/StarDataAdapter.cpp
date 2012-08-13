@@ -21,14 +21,15 @@
 #include "StarDataAdapter.h"
 
 #include <iostream>
+#include <fstream>
 #include <sstream>
 
 const std::string StarDataAdapter::XML_BASE_PATH("/RESOURCE/TABLE/DATA/TABLEDATA/");
 const std::string StarDataAdapter::STAR_ELEMENT_NAME("TR");
 const std::string StarDataAdapter::STAR_DATA_NAME("TD");
 
-StarDataAdapter::StarDataAdapter(const string xml, const string url) {
-    setXmlDocument(xml, url);
+StarDataAdapter::StarDataAdapter(const string& xmlFile, const string& xmlURL) :
+                                  file(xmlFile), url(xmlURL) {
     star_index = 0;
     }
 
@@ -36,6 +37,14 @@ StarDataAdapter::~StarDataAdapter() {
     }
 
 std::vector<std::string> StarDataAdapter::getFirstStar(void) {
+    ifstream file(xmlFile.c_str(), std::ios::in);
+
+    // Is the stream state good?
+    if(!file) {
+        // No
+
+        }
+
     // Reset index to zero.
     star_index = 0;
 

@@ -42,7 +42,7 @@ class StarDataAdapter : public Libxml2Adapter {
         /**
          * \brief Constructor
          */
-        StarDataAdapter(const string xml, const string url);
+        StarDataAdapter(const string& xmlFile, const string xmlURL);
 
         /**
          * \brief Destructor
@@ -71,6 +71,9 @@ class StarDataAdapter : public Libxml2Adapter {
         static const std::string XML_BASE_PATH;
         static const std::string STAR_ELEMENT_NAME;
         static const std::string STAR_DATA_NAME;
+
+        std::string file;
+        std::string url;
 
         /// The index of the current star's
         /// data 'record' being accessed.
