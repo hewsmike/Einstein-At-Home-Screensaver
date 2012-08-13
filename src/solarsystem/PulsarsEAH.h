@@ -18,14 +18,8 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef PULSAR_EAH_H_
-#define PULSAR_EAH_H_
-
-#include "Pulsar.h"
-
-#include <vector>
-
-#include "HUDImage.h"
+#ifndef PULRARS_H_
+#define PULSARS_H_
 
 /**
  * \addtogroup solarsystem Solarsystem
@@ -33,54 +27,53 @@
  */
 
 /**
- * \brief %Solarsystem Pulsar data type with Einstein At Home co-discovery.
+ * \brief This class manages the rendering of EAH discoverd pulsars.
  *
- *      This class comprises the astronomical data relating to a pulsar,
- * newly discovered with the assistance of Einstein At Home. This does not
- * include the re-discovery of prior known pulsars.
+ *
+ *
+ * \see Renderable
+ * \see Star
  *
  * \author Mike Hewson\n
  */
 
-class PulsarEAH : public Pulsar {
+class PulsarsEAH : public Stars, public Traversable {
     public:
         /**
-         * \brief Constructor, giving fully specified member values.
+         * \brief Constructor
          *
-         * \param ra - right ascension of the pulsar
-         *
-         * \param dec - declination of the pulsar
-         *
-         * \param nm - the name of the pulsar
-         *
-         * \param sc - the catalog/source of the pulsar
+         * \param rad : the radius from the origin where the Stars map to.
+         * \param magsize : the pixel radius to render a Star at.
+         * \param red : the red component of the RGB color.
+         * \param green : the green component of the RGB color.
+         * \param blue : the blue component of the RGB color.
          */
-        PulsarEAH(starpos_t ra, starpos_t dec, std::string nm, pulsar_source sc);
+        PulsarsEAH(vec_t rad, GLfloat magsize,
+                   GLclampf red,
+                   GLclampf green,
+                   GLclampf blue);
 
-        /**
-         * \brief Destructor
-         */
-        virtual ~PulsarEAH();
+        /// Virtual destructor
+        virtual ~PulsarsEAH();
 
-        const std::vector<std::string>& PulsarEAH::getDescription(void) const;
+        virtual unsigned int numberOfWayPoints(void) const;
+
+        virtual LookOut getView(unsigned int sequence) const;
 
     private:
-        /// The list of associated discoverers ie. Einstein At Home contributors.
-        std::vector<std::string> desc;
+        static const GLfloat PULSAR_EAH_RGB_RED;
+        static const GLfloat PULSAR_EAH_RGB_GREEN;
+        static const GLfloat PULSAR_EAH_RGB_BLUE;
+        static const GLfloat PULSAR_EAH_MAG_SIZE;
+        static const float VIEW_OFFSET;
 
-        std::string attribution_date;
-
-        HUDImage* pulse_profile;
-
-        double pulse_frequency;
-
-        double pulse_period;
-
-        double dispersion_measure;
+        /// The radius from the origin at which the constellations will be drawn.
+        vec_t radius;
     };
+
 
 /**
  * @}
  */
 
-#endif /*PULSAR_EAH_H_*/
+#endif /* PULSARS_H_*/

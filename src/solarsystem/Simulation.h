@@ -248,7 +248,7 @@ class Simulation : public Renderable {
          * \return a boolean indicating true if pulsars were
          *         successfully loaded, false otherwise.
          */
-        bool loadPulsars(void);
+        void loadPulsars(void);
 
         /**
          * \brief Load a list of E@H assisted pulsar data
@@ -278,9 +278,6 @@ class Simulation : public Renderable {
         /// Variable Sun factors
         GLfloat sun_rot_angle;
         Vector3D sun_pos;
-
-        /// Flags for data sourcing.
-        bool pulsar_external_load;
 
         /// The renderable scene elements
         Constellations cs;
@@ -329,7 +326,6 @@ class Simulation : public Renderable {
         /// XML data sources.
         static const std::string PULSAR_XML_FILENAME;
         static const std::string PULSAR_XML_URL;
-        StarDataAdapter* pulsar_adapter;
 
         /**
          * \brief Add an image as named by a Resource to a panel.
@@ -355,8 +351,6 @@ class Simulation : public Renderable {
                                DISPERSION,
                                DISPERSION_DELTA,
                                SEARCH_OFFSET};
-
-        Pulsar data2pulsar(std::vector<std::string>& data);
     };
 
 /**

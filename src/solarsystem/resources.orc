@@ -1,6 +1,6 @@
 # Resource specification of the Einstein@Home graphics application : SolarSystem
 
-# Font. 
+# Font.
 FontSansSerif|FreeMono.ttf.res
 
 # For the window icon.
@@ -19,3 +19,5 @@ ligoTGA|ligo.tga.res
 openclTGA|opencl.tga.res
 virgoTGA|virgo.tga.res
 wypTGA|wyp.tga.res
+
+# For EAH discovered pulsar waveforms

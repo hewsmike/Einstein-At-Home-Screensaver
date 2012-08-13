@@ -91,6 +91,11 @@ template<class T> class Stars : public Renderable {
             return star_rad;
         }
 
+    protected:
+        const std::vector<T>& listing(void) const{
+            return starlist;
+            }
+
     private:
         /// The displayed size and color parameters of generic Stars.
         static const GLfloat DEFAULT_MAG_SIZE;
