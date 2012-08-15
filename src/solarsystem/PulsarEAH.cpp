@@ -20,15 +20,36 @@
 
 #include "PulsarEAH.h"
 
-PulsarEAH::PulsarEAH(starpos_t ra, starpos_t dec, std::string nm, Pulsar::pulsar_source sc) :
-                     Pulsar(ra, dec, nm, sc) :
-                        {
-    /// TODO add descriptors to desc.
+PulsarEAH::PulsarEAH(starpos_t right_asc,
+                     starpos_t decl,
+                     std::string name,
+                     Pulsar::pulsar_source src,
+                     float period,
+                     float disp_mod,
+                     float dist,
+                     std::string disc) :
+                        Pulsar(right_asc, decl, name, src),
+                        pulse_period(period),
+                        dispersion_modulus(disp_mod),
+                        kp_distance(dist),
+                        volunteers(disc) {
     }
 
 PulsarEAH::~PulsarEAH() {
     }
 
-const std::vector<std::string>& PulsarEAH::getDescription(void) const {
-    return desc;
+const float PulsarEAH::period(void) const {
+    return pulse_period;
+    }
+
+const float PulsarEAH::dispersionModulus(void) const {
+    return dispersion_modulus;
+    }
+
+const float PulsarEAH::distance(void) const {
+    return kp_distance;
+    }
+
+const std::vector<std::string>& PulsarEAH::discoverers(void) const {
+    return volunteers;
     }

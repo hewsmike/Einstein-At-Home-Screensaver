@@ -45,10 +45,10 @@ class Pulsar : public Star {
     public:
         /// Identifiers of pulsar catalogue source.
         enum pulsar_source {DUNNO,          // Don't know.
-                            ATNF,           // Australia Telescope National Facility.
+                            ATNF,           // ATNF catalog
                             PALFA,          // Pulsar ALFA.
                             FERMILAT,       // The GR detector on the Fermi satellite.
-                            DMB};           // Deep Multi-Beam ( Parkes ).
+                            PMPS};          // Deep Multi-Beam ( Parkes ).
 
         /**
          * \brief Constructor, giving fully specified member values.
@@ -73,7 +73,7 @@ class Pulsar : public Star {
          *
          * \return The catalog source
          */
-        pulsar_source getSource(void) const;
+        pulsar_source source(void) const;
 
     private:
         /// The catalog from which information was derived.

@@ -23,7 +23,7 @@
 
 #include "Pulsar.h"
 
-#include <vector>
+#include <string>
 
 #include "HUDImage.h"
 
@@ -37,7 +37,7 @@
  *
  *      This class comprises the astronomical data relating to a pulsar,
  * newly discovered with the assistance of Einstein At Home. This does not
- * include the re-discovery of prior known pulsars.
+ * include the re-discovery of known pulsars.
  *
  * \author Mike Hewson\n
  */
@@ -47,36 +47,58 @@ class PulsarEAH : public Pulsar {
         /**
          * \brief Constructor, giving fully specified member values.
          *
-         * \param ra - right ascension of the pulsar
+         * \param right_asc - right ascension of the pulsar
          *
-         * \param dec - declination of the pulsar
+         * \param decl - declination of the pulsar
          *
-         * \param nm - the name of the pulsar
+         * \param name - the name of the pulsar
          *
-         * \param sc - the catalog/source of the pulsar
+         * \param src - the catalog/source of the pulsar
+         *
+         * \param period - the period in milliseconds
+         *
+         * \param disp_mod - the dispersion modulus
+         *
+         * \param dist - the distance in kiloparsecs
+         *
+         * \param disc - the E@H volunteers who helped discover
          */
-        PulsarEAH(starpos_t ra, starpos_t dec, std::string nm, pulsar_source sc);
+        PulsarEAH(starpos_t right_asc,
+                  starpos_t decl,
+                  std::string name,
+                  pulsar_source src,
+                  float period,
+                  float disp_mod,
+                  float dist,
+                  std::string disc);
 
         /**
          * \brief Destructor
          */
         virtual ~PulsarEAH();
 
-        const std::vector<std::string>& PulsarEAH::getDescription(void) const;
+        const float period(void) const;
+
+        const float dispersionModulus(void) const;
+
+        const float kp_distance(void) const;
+
+        const std::vector<std::string>& discoverers(void) const;
 
     private:
-        /// The list of associated discoverers ie. Einstein At Home contributors.
-        std::vector<std::string> desc;
-
-        std::string attribution_date;
-
-        HUDImage* pulse_profile;
-
-        double pulse_frequency;
-
+        /// The period of the pulsar in milliseconds.
         double pulse_period;
 
-        double dispersion_measure;
+        /// The dispersion modulus of the pulsar.
+        double dispersion_modulus;
+
+        /// The distance in kiloparsecs.
+        float kp_distance;
+
+        /// The list of associated discoverers ie. Einstein At Home
+        /// contributors upon whose machines the relevant WU's
+        /// were done.
+        std::vector<std::string> volunteers;
     };
 
 /**

@@ -242,6 +242,10 @@ class Simulation : public Renderable {
         static const GLint HUD_NEAR_CLIP;
         static const GLint HUD_FAR_CLIP;
 
+        /// Filename to obtain EAH assisted pulsar data.
+        static const std::string EAH_PULSAR_FILE;
+        static const std::string EAH_PULSAR_FILE_EXT;
+
         /**
          * \brief Load a list of general pulsar data
          *
@@ -302,7 +306,7 @@ class Simulation : public Renderable {
         /// store choices for each scene element.
         std::map<content, OGLFT_ft*> fonts;
 
-        /// Pointers to the images used on the HUD.
+        /// Pointers to logo type images used on the HUD.
         HUDImage* aei_image;
         HUDImage* aps_image;
         HUDImage* boinc_image;
@@ -311,6 +315,10 @@ class Simulation : public Renderable {
         HUDImage* opencl_image;
         HUDImage* virgo_image;
         HUDImage* wyp_image;
+
+        /// Associative array of names to image pointers
+        /// for pulse profiles to display on the HUD.
+        std::map<std::string, HUDItem*> pulse_profiles;
 
         /// Pointer to the scrolling marquee.
         HUDTextLineScroll* version_text;
@@ -323,10 +331,6 @@ class Simulation : public Renderable {
         HUDFlowLayout east_panel;
         HUDFlowLayout west_panel;
 
-        /// XML data sources.
-        static const std::string PULSAR_XML_FILENAME;
-        static const std::string PULSAR_XML_URL;
-
         /**
          * \brief Add an image as named by a Resource to a panel.
          *
@@ -336,21 +340,17 @@ class Simulation : public Renderable {
          * \param margin_width : the horizontal margin to apply around the image.
          * \param margin_height : the vertical margin to apply around the image.
          */
-        void LoadImageToPanel(HUDImage* hip, HUDFlowLayout* hfl,
+        void loadImageToPanel(HUDImage* hip, HUDFlowLayout* hfl,
                               std::string resource_name, GLuint margin_width,
                               GLuint margin_height);
 
-        enum xml_data_indices {UNIQUE_ID,
-                               J2000_DESIGNATION,
-                               RIGHT_ASCENSION,
-                               DECLINATION,
-                               PERIOD,
-                               PERIOD_DELTA,
-                               PERIOD_DERIV,
-                               PERIOD_DERIV_DELTA,
-                               DISPERSION,
-                               DISPERSION_DELTA,
-                               SEARCH_OFFSET};
+        std::string getEAHPulsarDataFileName(void);
+
+        float str2ra(std::string right_ascension) const;
+
+        float str2dec(std::string declination) const;
+
+        std::vector<string> tokenize(const string& str, const string& delimiters) const;
     };
 
 /**

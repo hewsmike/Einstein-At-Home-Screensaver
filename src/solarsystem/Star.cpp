@@ -71,5 +71,5 @@ starpos_t Star::declination(void) const {
     }
 
 std::string Star::name(void) const {
-	return s_name;
-	}
+    return s_name;
+    }

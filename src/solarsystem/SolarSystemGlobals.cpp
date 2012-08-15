@@ -41,6 +41,9 @@ SolarSystemGlobals::render_quality SolarSystemGlobals::qual(SolarSystemGlobals::
 const GLfloat SolarSystemGlobals::FULL_CIRCLE_DEG(360.0f);
 const GLfloat SolarSystemGlobals::HALF_CIRCLE_DEG(180.0f);
 const GLfloat SolarSystemGlobals::QUARTER_CIRCLE_DEG(90.0f);
+const GLfloat SolarSystemGlobals::MINUTES_PER_HOUR(60.0f);
+const GLfloat SolarSystemGlobals::SECONDS_PER_MINUTE(60.0f);
+const GLfloat SolarSystemGlobals::DEGREES_PER_HOUR(15.0f);
 
 const GLuint SolarSystemGlobals::MIN_SCREEN_WIDTH(800);
 const GLuint SolarSystemGlobals::MIN_SCREEN_HEIGHT(600);

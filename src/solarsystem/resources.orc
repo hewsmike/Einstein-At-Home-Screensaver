@@ -21,3 +21,4 @@ virgoTGA|virgo.tga.res
 wypTGA|wyp.tga.res
 
 # For EAH discovered pulsar waveforms
+J1851_02TGA|J1851_02.tga.res

@@ -21,7 +21,11 @@
 #include "Simulation.h"
 
 #include <cstdlib>
+#include <cstring>
+#include <fstream>
+#include <iostream>
 #include <sstream>
+#include <string>
 
 const std::string Simulation::EARTH_NAME("Earth");
 const std::string Simulation::EARTH_IMAGE_RESOURCE("EarthTGA");
@@ -88,8 +92,8 @@ const GLint Simulation::HUD_BOTTOM_CLIP(0);
 const GLint Simulation::HUD_NEAR_CLIP(-1);
 const GLint Simulation::HUD_FAR_CLIP(+1);
 
-const std::string Simulation::PULSAR_XML_FILENAME("ATNF.xml");
-const std::string Simulation::PULSAR_XML_URL("");
+const std::string Simulation::EAH_PULSAR_FILE("EatH_mastercat");
+const std::string Simulation::EAH_PULSAR_FILE_EXT("txt");
 
 Simulation::Simulation(void) : cs(CONSTELLATIONS_RADIUS),
                                ps(PULSARS_RADIUS, PULSARS_MAG_SIZE, PULSARS_RGB_RED, PULSARS_RGB_GREEN, PULSARS_RGB_BLUE),
@@ -330,10 +334,10 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
     overlay.setPanel(HUDBorderLayout::WEST, &west_panel);
 
     // Create content and include into panels.
-    //LoadImageToPanel(wyp_image, &west_panel, "wypTGA", 5, 5);
-    //LoadImageToPanel(aps_image, &west_panel, "apsTGA", 5, 5);
-    //LoadImageToPanel(aei_image, &east_panel, "aeiTGA", 5, 5);
-    //LoadImageToPanel(opencl_image, &east_panel, "openclTGA", 5, 5);
+    //loadImageToPanel(wyp_image, &west_panel, "wypTGA", 5, 5);
+    //loadImageToPanel(aps_image, &west_panel, "apsTGA", 5, 5);
+    //loadImageToPanel(aei_image, &east_panel, "aeiTGA", 5, 5);
+    //loadImageToPanel(opencl_image, &east_panel, "openclTGA", 5, 5);
 
     // LoadImageToPanel(boinc_image, &south_panel, "boincTGA", 5, 5);
     version_text = new HUDTextLineScroll(80, overlay.getFont(),
@@ -347,9 +351,9 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
     // Put the content into the panel.
     south_panel.addContent(version_text);
 
-    //LoadImageToPanel(ligo_image, &west_panel, "ligoTGA", 5, 5);
-    //LoadImageToPanel(geo_image, &east_panel, "geoTGA", 5, 5);
-    // LoadImageToPanel(virgo_image, &south_panel, "virgoTGA", 5, 5);
+    //loadImageToPanel(ligo_image, &west_panel, "ligoTGA", 5, 5);
+    //loadImageToPanel(geo_image, &east_panel, "geoTGA", 5, 5);
+    //loadImageToPanel(virgo_image, &south_panel, "virgoTGA", 5, 5);
 
     overlay.activate();
     }
@@ -2382,8 +2386,69 @@ void Simulation::loadPulsars(void) {
     ps.add(Pulsar(358.51968f, 61.92966f, "J2354+6155", Pulsar::ATNF));
     }
 
-void Simulation::loadPulsarsEAH(void) {
+bool Simulation::loadPulsarsEAH(void) {
+    // Assume failure.
+    bool ret_val = false;
 
+    std::string data_file_name = getEAHPulsarDataFileName(void);
+    if(file_name.size() != 0) {
+        std::cout << "Simulation::loadPulsarsEAH() - filename is '"
+                  << file_name
+                  << "'"
+                  << std::endl;
+
+        // Load the data file.
+        ifstream data_file(data_file_name + EAH_PULSAR_FILE_EXT);
+        data_file.open();
+        if(data_file.good() == true) {
+            std::string line;
+            do {
+                line.clear();
+                getline(data_file, line);
+                if(line.size() != 0) {
+                    char* line_c_string = line.c_str();
+                    // Get the pulsar's name.
+                    std::string pulsar_name(strtok(line.c_string, ' '));
+
+                    // Get the pulsar's right ascension.
+                    std::string right_ascension(strtok(NULL, ' '));
+                    float ra = str2ra(right_ascension);
+
+                    // Get the pulsar's declination.
+                    std::stringstream declination(strtok(NULL, ' '));
+                    float dec = str2dec(declination);
+
+                    // Get the pulsar's period.
+                    float pp;
+                    std::stringstream period(strtok(NULL, ' '));
+                    period >> pp;
+
+                    // Get the pulsar's dispersion modulus.
+                    float dm;
+                    std::stringstream dispersion_modulus(strtok(NULL, ' '));
+                    dispersion_modulus >> dm;
+
+                    // Get the pulsar's distance.
+                    float ds;
+                    std::string distance(strtok(NULL, ' '));
+                    distance >> ds;
+
+                    std::string discoverers(strtok(NULL, ' '));
+
+                    std::string source(strtok(NULL, ' '));
+
+                    }
+                }while(line.size() != 0);
+            data_file.close();
+            }
+        else {
+            // Failed to load data file.
+            ErrorHandler::record("Simulation::loadPulsarsEAH() - could not open pulsar data file",
+                                 ErrorHandler::WARN);
+            }
+        }
+
+    return ret_val;
     }
 
 void Simulation::loadSupernovae(void) {
@@ -2685,7 +2750,7 @@ void Simulation::cycle(Simulation::content ct) {
         }
     }
 
-void Simulation::LoadImageToPanel(HUDImage* hip, HUDFlowLayout* hfl,
+void Simulation::loadImageToPanel(HUDImage* hip, HUDFlowLayout* hfl,
                                   std::string resource_name,
                                   GLuint margin_width, GLuint margin_height) {
     // Put an image into the content.
@@ -2698,4 +2763,134 @@ void Simulation::LoadImageToPanel(HUDImage* hip, HUDFlowLayout* hfl,
 
     // Put the content into the panel.
     hfl->addContent(hip);
+    }
+
+std::string Simulation::getEAHPulsarDataFileName(void) {
+    std::string ret_val;
+
+    // Read the soft link file to get the latest
+    // catalog filename.
+    ifstream soft_link(EAH_PULSAR_FILE + EAH_PULSAR_FILE_EXT);
+
+    soft_link.open();
+    std::string soft_link_contents;
+    if(soft_link.good() == true) {
+        soft_link >> soft_link_contents;
+        std::string::size_type data_file_name_idx_start = soft_link_contents.find(EAH_PULSAR_FILE.c_str(),
+                                                                                  0, EAH_PULSAR_FILE.size());
+        if(data_file_name_idx_start != string::npos) {
+            std::string::size_type data_file_name_idx_end = soft_link_contents.find(".", data_file_name_idx_start);
+            if(data_file_name_idx_start != string::npos) {
+                std::string data_file(soft_link_contents,
+                                      data_file_name_idx_start,
+                                      data_file_name_idx_end - data_file_name_idx_start);
+                std::cout << "Simulation::getEAHPulsarDataFileName() - filename is '"
+                          << data_file
+                          << "'"
+                          << std::endl;
+                return data_file;
+                }
+            else {
+                ErrorHandler::record("Simulation::getEAHPulsarDataFileName() - could not parse(2) pulsar soft link file",
+                                 ErrorHandler::WARN);
+                }
+            }
+        else {
+            ErrorHandler::record("Simulation::getEAHPulsarDataFileName() - could not parse(1) pulsar soft link file",
+                                 ErrorHandler::WARN);
+            }
+        soft_link.close();
+        }
+    else {
+        ErrorHandler::record("Simulation::getEAHPulsarDataFileName() - could not open pulsar soft link file",
+                             ErrorHandler::WARN);
+        }
+
+    return ret_val;
+    }
+
+float Simulation::str2ra(std::string right_ascension) const {
+    char* value_c_string = right_ascension.c_str();
+
+    float hours = 0.0;
+    std::stringstream ra_hours(strtok(value.c_string, ':'));
+    ra_hours >> hours;
+
+    float minutes = 0.0;
+    std::stringstream ra_minutes(strtok(NULL, ':'));
+    ra_minutes >> minutes;
+
+    float seconds = 0.0;
+    std::stringstream ra_seconds(strtok(NULL, ':'));
+    ra_seconds >> seconds;
+
+    return (hours +
+            (minutes +
+             seconds/SolarSystemGlobals::SECONDS_PER_MINUTE)/
+             SolarSystemGlobals::MINUTES_PER_HOUR)*
+             SolarSystemGlobals::DEGREES_PER_HOUR;
+    }
+
+float Simulation::str2dec(std::string declination) const {
+    float ret_val = 0.0f;
+
+    char* value_c_string = declination.c_str();
+
+    switch(value_c_string[0]) {
+        case '-'":
+            ret_val = -1.0f;
+
+            break;
+        case '+':
+            ret_val = 1.0f;
+
+            break;
+        default:
+            break;
+        }
+    if(value_c_string[0] == '-') {
+        ret_val = -1.0f
+        }
+
+
+    return ret_val;
+    }
+
+std::vector<string> Simulation::tokenize(const string& str,const string& delimiters) const {
+    std::vector<string> tokens;
+    string::size_type delimPos = 0, tokenPos = 0, pos = 0;
+
+    if(str.length() < 1) {
+        return tokens;
+        }
+
+    while(1) {
+        delimPos = str.find_first_of(delimiters, pos);
+        tokenPos = str.find_first_not_of(delimiters, pos);
+
+        if(string::npos != delimPos) {
+            if(string::npos != tokenPos) {
+                if(tokenPos < delimPos) {
+                    tokens.push_back(str.substr(pos, delimPos - pos));
+                    }
+                else{
+                    tokens.push_back("");
+                    }
+                }
+            else{
+                tokens.push_back("");
+                }
+            pos = delimPos + 1;
+            }
+        else {
+            if(string::npos != tokenPos) {
+                tokens.push_back(str.substr(pos));
+                }
+            else {
+                tokens.push_back("");
+                }
+            break;
+            }
+        }
+    return tokens;
     }

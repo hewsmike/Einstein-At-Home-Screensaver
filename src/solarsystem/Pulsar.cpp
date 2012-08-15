@@ -28,6 +28,6 @@ Pulsar::Pulsar(starpos_t ra, starpos_t dec, std::string nm, pulsar_source sc) :
 Pulsar::~Pulsar() {
     }
 
-Pulsar::pulsar_source Pulsar::getSource(void) const {
+Pulsar::pulsar_source Pulsar::source(void) const {
     return source;
     }
