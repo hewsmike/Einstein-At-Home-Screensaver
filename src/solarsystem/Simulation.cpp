@@ -26,6 +26,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <vector>
 
 const std::string Simulation::EARTH_NAME("Earth");
 const std::string Simulation::EARTH_IMAGE_RESOURCE("EarthTGA");
@@ -48,6 +49,12 @@ const GLfloat Simulation::PULSARS_MAG_SIZE(2.0f);
 const GLfloat Simulation::PULSARS_RGB_RED(0.35f);
 const GLfloat Simulation::PULSARS_RGB_GREEN(0.15f);
 const GLfloat Simulation::PULSARS_RGB_BLUE(0.38f);
+
+const GLuint Simulation::PULSARS_EAH_RADIUS(SolarSystemGlobals::CELESTIAL_SPHERE_RADIUS - 75);
+const GLfloat Simulation::PULSARS_EAH_MAG_SIZE(4.0f);
+const GLfloat Simulation::PULSARS_EAH_RGB_RED(1.00f);
+const GLfloat Simulation::PULSARS_EAH_RGB_GREEN(0.60f);
+const GLfloat Simulation::PULSARS_EAH_RGB_BLUE(0.20f);
 
 const GLuint Simulation::SUPERNOVAE_RADIUS(SolarSystemGlobals::CELESTIAL_SPHERE_RADIUS - 50);
 const GLfloat Simulation::SUPERNOVAE_MAG_SIZE(2.0f);
@@ -97,6 +104,7 @@ const std::string Simulation::EAH_PULSAR_FILE_EXT("txt");
 
 Simulation::Simulation(void) : cs(CONSTELLATIONS_RADIUS),
                                ps(PULSARS_RADIUS, PULSARS_MAG_SIZE, PULSARS_RGB_RED, PULSARS_RGB_GREEN, PULSARS_RGB_BLUE),
+                               ps_EAH(PULSARS_EAH_RADIUS, PULSARS_EAH_MAG_SIZE, PULSARS_EAH_RGB_RED, PULSARS_EAH_RGB_GREEN, PULSARS_EAH_RGB_BLUE),
                                sn(SUPERNOVAE_RADIUS, SUPERNOVAE_MAG_SIZE, SUPERNOVAE_RGB_RED, SUPERNOVAE_RGB_GREEN, SUPERNOVAE_RGB_BLUE),
                                c_sphere(SKYGRID_RADIUS, SKYGRID_SLICES, SKYGRID_STACKS, GridGlobe::INSIDE),
                                earth(EARTH_NAME,
@@ -2390,53 +2398,66 @@ bool Simulation::loadPulsarsEAH(void) {
     // Assume failure.
     bool ret_val = false;
 
-    std::string data_file_name = getEAHPulsarDataFileName(void);
-    if(file_name.size() != 0) {
+    std::string data_file_name = getEAHPulsarDataFileName();
+    if(data_file_name.size() != 0) {
         std::cout << "Simulation::loadPulsarsEAH() - filename is '"
-                  << file_name
+                  << data_file_name
                   << "'"
                   << std::endl;
 
         // Load the data file.
-        ifstream data_file(data_file_name + EAH_PULSAR_FILE_EXT);
-        data_file.open();
+        ifstream data_file(data_file_name.c_str());
         if(data_file.good() == true) {
             std::string line;
             do {
                 line.clear();
                 getline(data_file, line);
                 if(line.size() != 0) {
-                    char* line_c_string = line.c_str();
-                    // Get the pulsar's name.
-                    std::string pulsar_name(strtok(line.c_string, ' '));
+                    static const char LINE_DELIMITER = ' ';
 
-                    // Get the pulsar's right ascension.
-                    std::string right_ascension(strtok(NULL, ' '));
-                    float ra = str2ra(right_ascension);
+                    std::vector<std::string> tokens(tokenise(line, LINE_DELIMITER));
 
-                    // Get the pulsar's declination.
-                    std::stringstream declination(strtok(NULL, ' '));
-                    float dec = str2dec(declination);
+                    if(tokens.size() == LINE_TOKENS) {
+                        // Get the pulsar's name.
+                        std::string pulsar_name(tokens.at(NAME));
 
-                    // Get the pulsar's period.
-                    float pp;
-                    std::stringstream period(strtok(NULL, ' '));
-                    period >> pp;
+                        // Get the pulsar's right ascension.
+                        std::string right_ascension(tokens.at(RIGHT_ASCENSION));
+                        float pulsar_ra = 0.0f;
+                        if(!str2ra(right_ascension, &pulsar_ra)) {
+                            ErrorHandler::record("Simulation::loadPulsarsEAH() - bad right ascension value", ErrorHandler::WARN);
+                            }
 
-                    // Get the pulsar's dispersion modulus.
-                    float dm;
-                    std::stringstream dispersion_modulus(strtok(NULL, ' '));
-                    dispersion_modulus >> dm;
+                        // Get the pulsar's declination.
+                        std::string declination(tokens.at(DECLINATION));
+                        float pulsar_dec = 0.0f;
+                        if(!str2dec(declination, &pulsar_dec)){
+                            ErrorHandler::record("Simulation::loadPulsarsEAH() - bad right declination value", ErrorHandler::WARN);
+                            }
 
-                    // Get the pulsar's distance.
-                    float ds;
-                    std::string distance(strtok(NULL, ' '));
-                    distance >> ds;
+                        // Get the pulsar's period.
+                        float pp;
+                        std::stringstream period(tokens.at(PERIOD));
+                        period >> pp;
 
-                    std::string discoverers(strtok(NULL, ' '));
+                        // Get the pulsar's dispersion modulus.
+                        float dm;
+                        std::stringstream dispersion_modulus(tokens.at(DISPERSION_MODULUS));
+                        dispersion_modulus >> dm;
 
-                    std::string source(strtok(NULL, ' '));
+                        // Get the pulsar's distance.
+                        float ds;
+                        std::stringstream distance(tokens.at(DISTANCE));
+                        distance >> ds;
 
+                        std::string discoverers(tokens.at(VOLUNTEERS));
+
+                        std::string source(tokens.at(SEARCH_SOURCE));
+                        }
+                    else {
+                        ErrorHandler::record("Simulation::loadPulsarsEAH() - wrong number of tokens on line",
+                                             ErrorHandler::WARN);
+                        }
                     }
                 }while(line.size() != 0);
             data_file.close();
@@ -2770,9 +2791,9 @@ std::string Simulation::getEAHPulsarDataFileName(void) {
 
     // Read the soft link file to get the latest
     // catalog filename.
-    ifstream soft_link(EAH_PULSAR_FILE + EAH_PULSAR_FILE_EXT);
+    std::string soft_link_file(EAH_PULSAR_FILE + EAH_PULSAR_FILE_EXT);
+    ifstream soft_link(soft_link_file.c_str());
 
-    soft_link.open();
     std::string soft_link_contents;
     if(soft_link.good() == true) {
         soft_link >> soft_link_contents;
@@ -2788,6 +2809,7 @@ std::string Simulation::getEAHPulsarDataFileName(void) {
                           << data_file
                           << "'"
                           << std::endl;
+                data_file += EAH_PULSAR_FILE_EXT;
                 return data_file;
                 }
             else {
@@ -2809,88 +2831,74 @@ std::string Simulation::getEAHPulsarDataFileName(void) {
     return ret_val;
     }
 
-float Simulation::str2ra(std::string right_ascension) const {
-    char* value_c_string = right_ascension.c_str();
+bool Simulation::str2ra(std::string right_ascension, float* result) const {
+    static const char DELIM = ':';
+    static const unsigned int RA_TOKENS = 3;
 
-    float hours = 0.0;
-    std::stringstream ra_hours(strtok(value.c_string, ':'));
-    ra_hours >> hours;
+    // Assume failure.
+    bool ret_val = false;
 
-    float minutes = 0.0;
-    std::stringstream ra_minutes(strtok(NULL, ':'));
-    ra_minutes >> minutes;
+    // Split the right ascension string into tokens.
+    std::vector<std::string> tokens = tokenise(right_ascension, DELIM);
 
-    float seconds = 0.0;
-    std::stringstream ra_seconds(strtok(NULL, ':'));
-    ra_seconds >> seconds;
+    // Assuming we have the correct number of tokens.
+    if(tokens.size() == RA_TOKENS) {
+        /// TODO bounds checking on values?
+        float hours = 0.0f;
+        std::stringstream ra_hours(tokens.at(0));
+        ra_hours >> hours;
 
-    return (hours +
-            (minutes +
-             seconds/SolarSystemGlobals::SECONDS_PER_MINUTE)/
-             SolarSystemGlobals::MINUTES_PER_HOUR)*
-             SolarSystemGlobals::DEGREES_PER_HOUR;
+        float minutes = 0.0f;
+        std::stringstream ra_minutes(tokens.at(1));
+        ra_minutes >> minutes;
+
+        float seconds = 0.0f;
+        std::stringstream ra_seconds(tokens.at(2));
+        ra_seconds >> seconds;
+
+        *result = (hours +
+                  (minutes +
+                   seconds/SolarSystemGlobals::SECONDS_PER_MINUTE)/
+                   SolarSystemGlobals::MINUTES_PER_HOUR)*
+                   SolarSystemGlobals::DEGREES_PER_HOUR;
+        }
+
+    return ret_val;
     }
 
-float Simulation::str2dec(std::string declination) const {
-    float ret_val = 0.0f;
+bool Simulation::str2dec(const std::string declination, float* result) const {
+    bool ret_val = true;
 
-    char* value_c_string = declination.c_str();
-
-    switch(value_c_string[0]) {
-        case '-'":
-            ret_val = -1.0f;
-
-            break;
-        case '+':
-            ret_val = 1.0f;
-
-            break;
-        default:
-            break;
-        }
-    if(value_c_string[0] == '-') {
-        ret_val = -1.0f
-        }
 
 
     return ret_val;
     }
 
-std::vector<string> Simulation::tokenize(const string& str,const string& delimiters) const {
-    std::vector<string> tokens;
-    string::size_type delimPos = 0, tokenPos = 0, pos = 0;
+std::vector<std::string> Simulation::tokenise(std::string input, char delimiter) const {
+    // The array of tokens to return.
+    std::vector<std::string> split;
 
-    if(str.length() < 1) {
-        return tokens;
-        }
-
-    while(1) {
-        delimPos = str.find_first_of(delimiters, pos);
-        tokenPos = str.find_first_not_of(delimiters, pos);
-
-        if(string::npos != delimPos) {
-            if(string::npos != tokenPos) {
-                if(tokenPos < delimPos) {
-                    tokens.push_back(str.substr(pos, delimPos - pos));
-                    }
-                else{
-                    tokens.push_back("");
-                    }
-                }
-            else{
-                tokens.push_back("");
-                }
-            pos = delimPos + 1;
+    // Assuming there is any ( remaining ) input string to examine.
+    while(!input.empty()) {
+        // Find the next instance of the delimiter.
+        size_t found = input.find(delimiter);
+        // Did we find a delimiter?
+        if(found == std::string::npos) {
+            // Yes then add this token to the array.
+            split.push_back(input.substr(0, found));
+            // Remove the found token plus the delimiter
+            // from the input string.
+            input = input.substr(found + 1);
             }
         else {
-            if(string::npos != tokenPos) {
-                tokens.push_back(str.substr(pos));
-                }
-            else {
-                tokens.push_back("");
-                }
-            break;
+            // No delimiter found with end of input string reached,
+            // so store ( the remainder of ) the string as a token.
+            split.push_back(input);
+            // then clear the input string.
+            input.clear();
             }
         }
-    return tokens;
+
+    // Return the array of tokens.
+    return split;
     }

@@ -18,8 +18,11 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef PULRARS_H_
+#ifndef PULSARS_H_
 #define PULSARS_H_
+
+#include "Stars.h"
+#include "Traversable.h"
 
 /**
  * \addtogroup solarsystem Solarsystem
@@ -27,7 +30,7 @@
  */
 
 /**
- * \brief This class manages the rendering of EAH discoverd pulsars.
+ * \brief This class manages the rendering of EAH discovered pulsars.
  *
  *
  *
@@ -37,7 +40,7 @@
  * \author Mike Hewson\n
  */
 
-class PulsarsEAH : public Stars, public Traversable {
+template<class T> class PulsarsEAH : public Stars<T>, public Traversable {
     public:
         /**
          * \brief Constructor
@@ -48,29 +51,57 @@ class PulsarsEAH : public Stars, public Traversable {
          * \param green : the green component of the RGB color.
          * \param blue : the blue component of the RGB color.
          */
-        PulsarsEAH(vec_t rad, GLfloat magsize,
-                   GLclampf red,
-                   GLclampf green,
-                   GLclampf blue);
+        PulsarsEAH(GLfloat rad, GLfloat magsize,
+                   GLfloat red,
+                   GLfloat green,
+                   GLfloat blue) {
+                Stars<T>(rad, magsize, red, green, blue);
+            }
 
         /// Virtual destructor
-        virtual ~PulsarsEAH();
+        virtual ~PulsarsEAH() {
+            }
 
-        virtual unsigned int numberOfWayPoints(void) const;
+        virtual unsigned int numberOfWayPoints(void) const {
+            return listing().size();
+            }
 
-        virtual LookOut getView(unsigned int sequence) const;
+        virtual LookOut getView(unsigned int sequence) const {
+            // Default view - in absence of any pulsars - the
+            // simulation's initial view.
+            LookOut ret_val;
 
+            const std::vector<PulsarEAH>& list = listing();
+
+            // Assuming there is at least one pulsar.
+            if(list.size() > 0) {
+                if(sequence > (list.size() - 1)) {
+                    sequence = list.size() - 1;
+                    }
+
+                PulsarEAH current_pulsar = list.at(sequence);
+
+                VectorSP pulsar_position = VectorSP(current_pulsar.right_ascension(),
+                                                    current_pulsar.declination(),
+                                                    radius);
+
+                Vector3D viewpoint = pulsar_position.unit() * (radius - VIEW_OFFSET);
+
+                ret_val.setPosition(viewpoint);
+                ret_val.setFocus(pulsar_position);
+                ret_val.setOrientation(VIEW_UP);
+
+                const std::vector<std::string>& current_description = current_pulsar.getDescription();
+
+                for(unsigned int index = 0; index < current_description.size(); ++index) {
+                    ret_val.addToDescription(current_description[index]);
+                    }
+                }
+
+            return ret_val;
+            }
     private:
-        static const GLfloat PULSAR_EAH_RGB_RED;
-        static const GLfloat PULSAR_EAH_RGB_GREEN;
-        static const GLfloat PULSAR_EAH_RGB_BLUE;
-        static const GLfloat PULSAR_EAH_MAG_SIZE;
-        static const float VIEW_OFFSET;
-
-        /// The radius from the origin at which the constellations will be drawn.
-        vec_t radius;
     };
-
 
 /**
  * @}

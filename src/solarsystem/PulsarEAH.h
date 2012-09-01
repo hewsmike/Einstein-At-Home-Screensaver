@@ -70,7 +70,7 @@ class PulsarEAH : public Pulsar {
                   float period,
                   float disp_mod,
                   float dist,
-                  std::string disc);
+                  const std::string& disc);
 
         /**
          * \brief Destructor
@@ -81,9 +81,9 @@ class PulsarEAH : public Pulsar {
 
         const float dispersionModulus(void) const;
 
-        const float kp_distance(void) const;
+        const float distance(void) const;
 
-        const std::vector<std::string>& discoverers(void) const;
+        const std::string discoverers(void) const;
 
     private:
         /// The period of the pulsar in milliseconds.
@@ -98,7 +98,7 @@ class PulsarEAH : public Pulsar {
         /// The list of associated discoverers ie. Einstein At Home
         /// contributors upon whose machines the relevant WU's
         /// were done.
-        std::vector<std::string> volunteers;
+        std::string volunteers;
     };
 
 /**

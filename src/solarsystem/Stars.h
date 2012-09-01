@@ -93,7 +93,7 @@ template<class T> class Stars : public Renderable {
 
     protected:
         const std::vector<T>& listing(void) const{
-            return starlist;
+            return star_list;
             }
 
     private:

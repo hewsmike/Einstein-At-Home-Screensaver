@@ -27,7 +27,7 @@ PulsarEAH::PulsarEAH(starpos_t right_asc,
                      float period,
                      float disp_mod,
                      float dist,
-                     std::string disc) :
+                     const std::string& disc) :
                         Pulsar(right_asc, decl, name, src),
                         pulse_period(period),
                         dispersion_modulus(disp_mod),
@@ -50,6 +50,6 @@ const float PulsarEAH::distance(void) const {
     return kp_distance;
     }
 
-const std::vector<std::string>& PulsarEAH::discoverers(void) const {
+const std::string PulsarEAH::discoverers(void) const {
     return volunteers;
     }

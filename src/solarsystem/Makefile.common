@@ -182,7 +182,7 @@ OBJS += HUDFlowLayout.o HUDImage.o HUDItem.o HUDTextLine.o HUDTextLineScroll.o
 OBJS += LookOut.o OGL_ID.o OrdStar.o OrthoNormalPlatform.o
 OBJS += Path.o PositionPlatform.o Pulsar.o PulsarEAH.o Renderable.o
 OBJS += RotatablePlatform.o Simulation.o
-OBJS += SolarSystemGlobals.o Sphere.o Star.o StarDataAdapter.o SunOrbit.o
+OBJS += SolarSystemGlobals.o Sphere.o Star.o SunOrbit.o
 OBJS += Supernova.o Texture_OBJ.o Traverse.o
 OBJS += Traversable.o UTC.o Vector3D.o VectorSP.o VelocityPlatform.o Vertex.o
 

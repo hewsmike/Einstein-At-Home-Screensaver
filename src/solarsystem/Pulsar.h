@@ -77,7 +77,7 @@ class Pulsar : public Star {
 
     private:
         /// The catalog from which information was derived.
-        pulsar_source source;
+        pulsar_source p_source;
     };
 
 /**

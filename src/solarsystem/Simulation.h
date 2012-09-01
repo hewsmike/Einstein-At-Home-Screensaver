@@ -44,6 +44,7 @@
 #include "HUDTextLineScroll.h"
 #include "Pulsar.h"
 #include "PulsarEAH.h"
+#include "PulsarsEAH.h"
 #include "Renderable.h"
 #include "SolarSystemGlobals.h"
 #include "Sphere.h"
@@ -168,6 +169,17 @@ class Simulation : public Renderable {
         virtual void render(void);
 
     private:
+        /// Enumerants for EAH pulsar file parsing
+        enum line_content {NAME,
+                           RIGHT_ASCENSION,
+                           DECLINATION,
+                           PERIOD,
+                           DISPERSION_MODULUS,
+                           DISTANCE,
+                           VOLUNTEERS,
+                           SEARCH_SOURCE,
+                           LINE_TOKENS};
+
         /// Earth rendering parameters.
         static const std::string EARTH_NAME;
         static const std::string EARTH_IMAGE_RESOURCE;
@@ -194,6 +206,13 @@ class Simulation : public Renderable {
         static const GLfloat PULSARS_RGB_RED;
         static const GLfloat PULSARS_RGB_GREEN;
         static const GLfloat PULSARS_RGB_BLUE;
+
+        /// E@H discovered pulsars rendering parameters.
+        static const GLuint PULSARS_EAH_RADIUS;
+        static const GLfloat PULSARS_EAH_MAG_SIZE;
+        static const GLfloat PULSARS_EAH_RGB_RED;
+        static const GLfloat PULSARS_EAH_RGB_GREEN;
+        static const GLfloat PULSARS_EAH_RGB_BLUE;
 
         /// Supernovae rendering parameters.
         static const GLuint SUPERNOVAE_RADIUS;
@@ -257,7 +276,7 @@ class Simulation : public Renderable {
         /**
          * \brief Load a list of E@H assisted pulsar data
          */
-        void loadPulsarsEAH(void);
+        bool loadPulsarsEAH(void);
 
         /**
          * \brief Load a list of supernovae data
@@ -286,7 +305,7 @@ class Simulation : public Renderable {
         /// The renderable scene elements
         Constellations cs;
         Stars<Pulsar> ps;
-        Stars<PulsarEAH> ps_EAH;
+        PulsarsEAH<PulsarEAH> ps_EAH;
         Stars<Supernova> sn;
         GridGlobe c_sphere;
         Globe earth;
@@ -346,11 +365,11 @@ class Simulation : public Renderable {
 
         std::string getEAHPulsarDataFileName(void);
 
-        float str2ra(std::string right_ascension) const;
+        bool str2ra(std::string right_ascension, float* result) const;
 
-        float str2dec(std::string declination) const;
+        bool str2dec(std::string declination, float* result) const;
 
-        std::vector<string> tokenize(const string& str, const string& delimiters) const;
+        std::vector<std::string> tokenise(std::string input, char delimiter) const;
     };
 
 /**

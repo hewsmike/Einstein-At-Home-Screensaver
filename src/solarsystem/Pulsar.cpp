@@ -22,12 +22,12 @@
 
 Pulsar::Pulsar(starpos_t ra, starpos_t dec, std::string nm, pulsar_source sc) :
                Star(ra, dec, nm),
-               source(sc) {
+               p_source(sc) {
     }
 
 Pulsar::~Pulsar() {
     }
 
 Pulsar::pulsar_source Pulsar::source(void) const {
-    return source;
+    return p_source;
     }
