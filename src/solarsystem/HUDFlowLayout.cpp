@@ -131,24 +131,25 @@ void HUDFlowLayout::allocateItemBases(void) {
 
         // But if it is LAST ...
         if(load_dir == LAST) {
-            switch(ax) {
-                case HORIZONTAL:
-                    newHorz += width();
-                    break;
-                case VERTICAL:
-                    // Default loading sense ( FIRST ) is from the top
-                    // going downwards, so for LAST is from the bottom
-                    // going upwards BUT we measure the vertical scale
-                    // as zero at the bottom and increasing upwards.
-                    newVert -= height();
-                    break;
-                default:
-                    // Shouldn't ever get here!!
-                    ErrorHandler::record("HUDFlowLayout::allocateItemBases() - bad switch case (load/last) reached (default)",
-                                         ErrorHandler::FATAL);
-                    break;
-                }
-            flip = -1;
+            /// TODO - this case is currently faulty.
+//            switch(ax) {
+//                case HORIZONTAL:
+//                    newHorz += width();
+//                    break;
+//                case VERTICAL:
+//                    // Default loading sense ( FIRST ) is from the top
+//                    // going downwards, so for LAST is from the bottom
+//                    // going upwards BUT we measure the vertical scale
+//                    // as zero at the bottom and increasing upwards.
+//                    newVert -= height();
+//                    break;
+//                default:
+//                    // Shouldn't ever get here!!
+//                    ErrorHandler::record("HUDFlowLayout::allocateItemBases() - bad switch case (load/last) reached (default)",
+//                                         ErrorHandler::FATAL);
+//                    break;
+//                }
+//            flip = -1;
             }
 
         // Offset added as per flow axis.

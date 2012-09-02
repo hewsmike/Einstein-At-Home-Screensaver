@@ -211,14 +211,15 @@ void Simulation::step(void) {
         if(pilot.hasDescriptionChanged() == true) {
             // Clean up any prior panel contents.
             north_panel.erase();
-            north_panel.setLoad(HUDFlowLayout::LAST);
+            north_panel.setLoad(HUDFlowLayout::FIRST);
 
             // Then put new content lines, derived from the
             // current position in the tour, into the panel.
             const std::vector<std::string>& messages = pilot.getDescription();
             for(unsigned int index = 0; index < messages.size(); ++index) {
-                north_panel.addContent(new HUDTextLine(messages.at(index).size(),
-                                       overlay.getFont(), messages.at(index), 0, 2));
+                /// TODO - currently entering in reverse order ( see HUDFlowLayout::allocateItemBases() LAST case ).
+                std::string msg = messages.at(messages.size() - index - 1);
+                north_panel.addContent(new HUDTextLine(msg.size(), overlay.getFont(), msg, 0, 2));
                 }
             north_panel.activate();
             }
@@ -347,10 +348,9 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
     //loadImageToPanel(aps_image, &west_panel, "apsTGA", 5, 5);
     //loadImageToPanel(aei_image, &east_panel, "aeiTGA", 5, 5);
     //loadImageToPanel(opencl_image, &east_panel, "openclTGA", 5, 5);
-
     // LoadImageToPanel(boinc_image, &south_panel, "boincTGA", 5, 5);
-    version_text = new HUDTextLineScroll(80, overlay.getFont(),
-                                         "    https://github.com/hewsmike/Einstein-At-Home-Screensaver/tree/solarsystem",
+    version_text = new HUDTextLineScroll(70, overlay.getFont(),
+                                         "                  http://einstein.phys.uwm.edu",
                                          35, 10, HUDTextLineScroll::LEFT, 10);
     if(version_text == NULL) {
         std::string msg = "Simulation::prepare() - failed creation of HUDTextLineScroll instance on heap";

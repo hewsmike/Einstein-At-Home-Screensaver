@@ -29,37 +29,37 @@ const GLdouble SolarSystem::FAR_CLIP(SolarSystemGlobals::CELESTIAL_SPHERE_RADIUS
 const int SolarSystem::FAR_LOOK_DISTANCE(SolarSystemGlobals::CELESTIAL_SPHERE_RADIUS*SolarSystem::FAR_LOOK_RATIO);
 
 SolarSystem::SolarSystem(string sharedMemoryAreaIdentifier) :
-   AbstractGraphicsEngine(sharedMemoryAreaIdentifier) {
-   /**
-    * Parameters and State info
-    */
-   spaceFontResource = NULL;
-   }
+    AbstractGraphicsEngine(sharedMemoryAreaIdentifier) {
+    /**
+     * Parameters and State info
+     */
+    spaceFontResource = NULL;
+    }
 
 SolarSystem::~SolarSystem() {
-}
+    }
 
 /**
  * Window resize/remap. This is not directly called from WindowManager
  * but from initialize().
  */
 void SolarSystem::resize(const int width, const int height) {
-   // store current settings
-   m_CurrentWidth = width;
-   m_CurrentHeight = height;
-   aspect = (float)width / (float)height;
+    // store current settings
+    m_CurrentWidth = width;
+    m_CurrentHeight = height;
+    aspect = (float)width / (float)height;
 
-   // adjust aspect ratio and projection
-   glViewport(0, 0, (GLsizei) width, (GLsizei) height);
-   glMatrixMode(GL_PROJECTION);
-   glLoadIdentity();
-   gluPerspective(FOV_ANGLE, aspect, NEAR_CLIP, FAR_CLIP);
-   glMatrixMode(GL_MODELVIEW);
+    // adjust aspect ratio and projection
+    glViewport(0, 0, (GLsizei) width, (GLsizei) height);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluPerspective(FOV_ANGLE, aspect, NEAR_CLIP, FAR_CLIP);
+    glMatrixMode(GL_MODELVIEW);
 
-   // Tell the underlying simulation that it's window
-   // has been resized, and what it's dimensions are.
-   sim.resize(static_cast<GLuint>(width), static_cast<GLuint>(height));
-   }
+    // Tell the underlying simulation that it's window
+    // has been resized, and what it's dimensions are.
+    sim.resize(static_cast<GLuint>(width), static_cast<GLuint>(height));
+    }
 
 /**
  *  What to do when graphics are "initialized". Due to a Windows quirk
@@ -71,195 +71,195 @@ void SolarSystem::resize(const int width, const int height) {
  *  value for recycle = false
  */
 void SolarSystem::initialize(const int width, const int height, const Resource* font, const bool recycle) {
-   // Check whether we initialize the first time or have to recycle (required for windoze)
-   if(recycle == false) {
-      // This is the first call of this routine from main().
-      if(font != NULL) {
-         // So remember the font resource pointer, if non NULL.
-         spaceFontResource = font;
-         }
-      // initialize the BOINC client adapter
-      m_BoincAdapter.initialize();
-      }
-   else {
-      // This is the recurrent call of this routine from WindowManager.
-      // Seems that windoze also "resets" our OpenGL fonts, so
-      // let's clean up before reinitializing them.
-      if(skygridFont != NULL) {
-         delete skygridFont;
-         }
-      if(earthgridFont != NULL) {
-         delete earthgridFont;
-         }
-      if(constellationFont != NULL) {
-         delete constellationFont;
-         }
-      if(HUDFont != NULL) {
-         delete HUDFont;
-         }
-      }
+    // Check whether we initialize the first time or have to recycle (required for windoze)
+    if(recycle == false) {
+        // This is the first call of this routine from main().
+        if(font != NULL) {
+            // So remember the font resource pointer, if non NULL.
+            spaceFontResource = font;
+            }
+        // initialize the BOINC client adapter
+        m_BoincAdapter.initialize();
+        }
+    else {
+        // This is the recurrent call of this routine from WindowManager.
+        // Seems that windoze also "resets" our OpenGL fonts, so
+        // let's clean up before reinitializing them.
+        if(skygridFont != NULL) {
+            delete skygridFont;
+            }
+        if(earthgridFont != NULL) {
+            delete earthgridFont;
+            }
+        if(constellationFont != NULL) {
+            delete constellationFont;
+            }
+        if(HUDFont != NULL) {
+            delete HUDFont;
+            }
+        }
 
-   // We might be called to recycle even before initialization. Why's that ??
-   if(spaceFontResource == NULL) {
-      // So we are here because spaceFontResource was not assigned
-      // to an actual resource instance. Display a warning ???
-      cerr << "Warning: font resource still unknown! You might want to recycle at a later stage..." << endl;
-      }
-   else {
-      // create font instance using font resource (base address + size)
-      skygridFont = new OGLFT_ft(&spaceFontResource->data()->at(0),
-                              spaceFontResource->data()->size(),
-                              13, 78);
-
-      // Note short-circuit evaluation relevant in this if clause ie. right side
-      // expression is evaluated only if left side expression is false. Matters
-      // for pointer dereference so don't swap order of expressions here.
-      if(skygridFont == NULL || (skygridFont->isValid() == false)) {
-         // TODO - better error path
-         std::string msg = "SolarSystem::initialize() - Could not construct sky grid font face from in memory resource!";
-         ErrorHandler::record(msg, ErrorHandler::FATAL);
-         }
-      skygridFont->setBackgroundColor(0.0f, 0.0f, 0.0f, 0.0f);
-      skygridFont->setForegroundColor(1.0f, 1.0f, 1.0f, 0.6f);
-
-      // create font instance using font resource (base address + size)
-      earthgridFont = new OGLFT_ft(&spaceFontResource->data()->at(0),
+    // We might be called to recycle even before initialization. Why's that ??
+    if(spaceFontResource == NULL) {
+        // So we are here because spaceFontResource was not assigned
+        // to an actual resource instance. Display a warning ???
+        cerr << "Warning: font resource still unknown! You might want to recycle at a later stage..." << endl;
+        }
+    else {
+        // create font instance using font resource (base address + size)
+        skygridFont = new OGLFT_ft(&spaceFontResource->data()->at(0),
                                    spaceFontResource->data()->size(),
                                    13, 78);
 
-      if(earthgridFont == NULL || (earthgridFont->isValid() == false)) {
-         // TODO - better error path
-         std::string msg = "SolarSystem::initialize() - Could not construct earth grid font face from in memory resource!";
-         ErrorHandler::record(msg, ErrorHandler::FATAL);
-         }
-      earthgridFont->setBackgroundColor(0.0f, 0.0f, 0.0f, 0.0f);
-      earthgridFont->setForegroundColor(1.0f, 1.0f, 1.0f, 0.6f);
+        // Note short-circuit evaluation relevant in this if clause ie. right side
+        // expression is evaluated only if left side expression is false. Matters
+        // for pointer dereference so don't swap order of expressions here.
+        if(skygridFont == NULL || (skygridFont->isValid() == false)) {
+            /// TODO - better error path
+            std::string msg = "SolarSystem::initialize() - Could not construct sky grid font face from in memory resource!";
+            ErrorHandler::record(msg, ErrorHandler::FATAL);
+            }
+        skygridFont->setBackgroundColor(0.0f, 0.0f, 0.0f, 0.0f);
+        skygridFont->setForegroundColor(1.0f, 1.0f, 1.0f, 0.6f);
 
-      // create font instance using font resource (base address + size)
-      constellationFont = new OGLFT_ft(&spaceFontResource->data()->at(0),
-                                       spaceFontResource->data()->size(),
-                                       13, 78);
-      // Short-circuit .....
-      if(constellationFont == NULL || (constellationFont->isValid() == false)) {
-         // TODO - better error path ?
-         std::string msg = "SolarSystem::initialize() - Could not construct constellation font face from in memory resource!";
-         ErrorHandler::record(msg, ErrorHandler::FATAL);
-         }
-      constellationFont->setBackgroundColor(0.0f, 0.0f, 0.0f, 0.0f);
-      constellationFont->setForegroundColor(1.0f, 0.84f, 0.0f, 0.6f);
+        // create font instance using font resource (base address + size)
+        earthgridFont = new OGLFT_ft(&spaceFontResource->data()->at(0),
+                                     spaceFontResource->data()->size(),
+                                     13, 78);
 
-      // create font instance using font resource (base address + size)
-      HUDFont = new OGLFT_ft(&spaceFontResource->data()->at(0),
-                             spaceFontResource->data()->size(),
-                             18, 90);
+        if(earthgridFont == NULL || (earthgridFont->isValid() == false)) {
+            // TODO - better error path
+            std::string msg = "SolarSystem::initialize() - Could not construct earth grid font face from in memory resource!";
+            ErrorHandler::record(msg, ErrorHandler::FATAL);
+            }
+        earthgridFont->setBackgroundColor(0.0f, 0.0f, 0.0f, 0.0f);
+        earthgridFont->setForegroundColor(1.0f, 1.0f, 1.0f, 0.6f);
 
-      // Short-circuit .....
-      if(HUDFont == NULL || (HUDFont->isValid() == false)) {
-         // TODO - better error path ?
-         std::string msg = "SolarSystem::initialize() - Could not construct HUD font face from in memory resource!";
-         ErrorHandler::record(msg, ErrorHandler::FATAL);
-         }
-      HUDFont->setBackgroundColor(0.0f, 0.0f, 0.0f, 0.0f);
-      HUDFont->setForegroundColor(0.0f, 1.0f, 0.0f, 0.9f);
-      }
+        // create font instance using font resource (base address + size)
+        constellationFont = new OGLFT_ft(&spaceFontResource->data()->at(0),
+                                         spaceFontResource->data()->size(),
+                                         13, 78);
+        // Short-circuit .....
+        if(constellationFont == NULL || (constellationFont->isValid() == false)) {
+            // TODO - better error path ?
+            std::string msg = "SolarSystem::initialize() - Could not construct constellation font face from in memory resource!";
+            ErrorHandler::record(msg, ErrorHandler::FATAL);
+            }
+        constellationFont->setBackgroundColor(0.0f, 0.0f, 0.0f, 0.0f);
+        constellationFont->setForegroundColor(1.0f, 0.84f, 0.0f, 0.6f);
 
-   // Some Simulation components need to have a font before activation.
-   sim.setFont(Simulation::CONSTELLATIONS, constellationFont);
-   sim.setFont(Simulation::SKY_GRID, skygridFont);
-   sim.setFont(Simulation::EARTH_GRID, earthgridFont);
-   sim.setFont(Simulation::HUDOVER, HUDFont);
+        // create font instance using font resource (base address + size)
+        HUDFont = new OGLFT_ft(&spaceFontResource->data()->at(0),
+                               spaceFontResource->data()->size(),
+                               18, 90);
 
-   // more font setup and optimizations
+        // Short-circuit .....
+        if(HUDFont == NULL || (HUDFont->isValid() == false)) {
+            // TODO - better error path ?
+            std::string msg = "SolarSystem::initialize() - Could not construct HUD font face from in memory resource!";
+            ErrorHandler::record(msg, ErrorHandler::FATAL);
+            }
+        HUDFont->setBackgroundColor(0.0f, 0.0f, 0.0f, 0.0f);
+        HUDFont->setForegroundColor(1.0f, 1.0f, 1.0f, 0.9f);
+        }
+
+    // Some Simulation components need to have a font before activation.
+    sim.setFont(Simulation::CONSTELLATIONS, constellationFont);
+    sim.setFont(Simulation::SKY_GRID, skygridFont);
+    sim.setFont(Simulation::EARTH_GRID, earthgridFont);
+    sim.setFont(Simulation::HUDOVER, HUDFont);
+
+    // more font setup and optimizations
    glPixelStorei( GL_UNPACK_ALIGNMENT, 1 );
 #if defined( GL_RASTER_POSITION_UNCLIPPED_IBM )
-   glEnable( GL_RASTER_POSITION_UNCLIPPED_IBM );
+    glEnable( GL_RASTER_POSITION_UNCLIPPED_IBM );
 #endif
 
-   // drawing setup:
-   glClearColor(0.0, 0.0, 0.0, 0.0); // background is black
-   glEnable(GL_CULL_FACE);
-   glFrontFace(GL_CCW);
-   glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+    // drawing setup:
+    glClearColor(0.0, 0.0, 0.0, 0.0); // background is black
+    glEnable(GL_CULL_FACE);
+    glFrontFace(GL_CCW);
+    glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 
-   // FSAA will be enabled explicitly when needed!
-   glDisable(GL_MULTISAMPLE_ARB);
+    // FSAA will be enabled explicitly when needed!
+    glDisable(GL_MULTISAMPLE_ARB);
 
-   // we need alpha blending for proper font rendering
-   glEnable(GL_BLEND);
-   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    // we need alpha blending for proper font rendering
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-   // enable depth buffering for 3D graphics
-   glClearDepth(1.0f);
-   glEnable(GL_DEPTH_TEST);
-   glDepthFunc(GL_LEQUAL);
+    // enable depth buffering for 3D graphics
+    glClearDepth(1.0f);
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LEQUAL);
 
-   // enable opt-in quality feature
-   switch (m_BoincAdapter.graphicsQualitySetting()) {
-      case BOINCClientAdapter::LowGraphicsQualitySetting :
-         SolarSystemGlobals::set_render_level(SolarSystemGlobals::RENDER_LOWEST);
-         break;
-      case BOINCClientAdapter::MediumGraphicsQualitySetting :
-         SolarSystemGlobals::set_render_level(SolarSystemGlobals::RENDER_MEDIUM);
-         // fog aids depth perception
-         glEnable(GL_FOG);
-         glFogi(GL_FOG_MODE, GL_EXP2);
-         glFogf(GL_FOG_DENSITY, 0.085);
-         glHint(GL_FOG_HINT, GL_DONT_CARE);
-         break;
-      case BOINCClientAdapter::HighGraphicsQualitySetting :
-         SolarSystemGlobals::set_render_level(SolarSystemGlobals::RENDER_HIGHEST);
-         // fog aids depth perception
-         glEnable(GL_FOG);
-         glFogi(GL_FOG_MODE, GL_EXP2);
-         glFogf(GL_FOG_DENSITY, 0.085);
-         glHint(GL_FOG_HINT, GL_DONT_CARE);
-         // some polishing
-         glShadeModel(GL_SMOOTH);
-         glEnable(GL_POINT_SMOOTH);
-         glEnable(GL_LINE_SMOOTH);
-         glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
-         glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-         break;
-      default :
-         // Ought not get here !!
-         std::string msg = "SolarSystem::initialize() - bad switch case reached (default)";
-         ErrorHandler::record(msg, ErrorHandler::FATAL);
-         break;
-      }
+    // enable opt-in quality feature
+    switch (m_BoincAdapter.graphicsQualitySetting()) {
+        case BOINCClientAdapter::LowGraphicsQualitySetting :
+            SolarSystemGlobals::set_render_level(SolarSystemGlobals::RENDER_LOWEST);
+            break;
+        case BOINCClientAdapter::MediumGraphicsQualitySetting :
+            SolarSystemGlobals::set_render_level(SolarSystemGlobals::RENDER_MEDIUM);
+            // fog aids depth perception
+            glEnable(GL_FOG);
+            glFogi(GL_FOG_MODE, GL_EXP2);
+            glFogf(GL_FOG_DENSITY, 0.085);
+            glHint(GL_FOG_HINT, GL_DONT_CARE);
+            break;
+        case BOINCClientAdapter::HighGraphicsQualitySetting :
+            SolarSystemGlobals::set_render_level(SolarSystemGlobals::RENDER_HIGHEST);
+            // fog aids depth perception
+            glEnable(GL_FOG);
+            glFogi(GL_FOG_MODE, GL_EXP2);
+            glFogf(GL_FOG_DENSITY, 0.085);
+            glHint(GL_FOG_HINT, GL_DONT_CARE);
+            // some polishing
+            glShadeModel(GL_SMOOTH);
+            glEnable(GL_POINT_SMOOTH);
+            glEnable(GL_LINE_SMOOTH);
+            glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
+            glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+            break;
+        default :
+            // Ought not get here !!
+            std::string msg = "SolarSystem::initialize() - bad switch case reached (default)";
+            ErrorHandler::record(msg, ErrorHandler::FATAL);
+            break;
+        }
 
-   //// Set up lighting.
-   GLfloat mat_specular[] = {1.0, 1.0, 1.0, 1.0};
-   GLfloat mat_shininess[] = {50.0};
-   // GLfloat lmodel_ambient[] = {0.1, 0.1, 0.1, 1.0};
-   // glLightModelfv(GL_LIGHT_MODEL_AMBIENT, lmodel_ambient);
-   glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
-   glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
+    //// Set up lighting.
+    GLfloat mat_specular[] = {1.0, 1.0, 1.0, 1.0};
+    GLfloat mat_shininess[] = {50.0};
+    // GLfloat lmodel_ambient[] = {0.1, 0.1, 0.1, 1.0};
+    // glLightModelfv(GL_LIGHT_MODEL_AMBIENT, lmodel_ambient);
+    glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+    glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
 
-   glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
-   glMaterialfv(GL_BACK, GL_SPECULAR, mat_specular);
-   glMaterialfv(GL_BACK, GL_SHININESS, mat_shininess);
+    glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
+    glMaterialfv(GL_BACK, GL_SPECULAR, mat_specular);
+    glMaterialfv(GL_BACK, GL_SHININESS, mat_shininess);
 
-   // LIGHT0 is from the Sun towards the Earth.
-   GLfloat white_light[] = {1.0, 1.0, 1.0, 1.0};
-   // GLfloat ambient[] = {0.0, 0.0, 0.0, 1.0};
-   glLightfv(GL_LIGHT0, GL_AMBIENT, white_light);
-   glLightfv(GL_LIGHT0, GL_DIFFUSE, white_light);
-   glLightfv(GL_LIGHT0, GL_SPECULAR, white_light);
+    // LIGHT0 is from the Sun towards the Earth.
+    GLfloat white_light[] = {1.0, 1.0, 1.0, 1.0};
+    // GLfloat ambient[] = {0.0, 0.0, 0.0, 1.0};
+    glLightfv(GL_LIGHT0, GL_AMBIENT, white_light);
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, white_light);
+    glLightfv(GL_LIGHT0, GL_SPECULAR, white_light);
 
-   // LIGHT1 is from our viewpoint towards the Sun.
-   glLightfv(GL_LIGHT1, GL_DIFFUSE, white_light);
-   glLightfv(GL_LIGHT1, GL_SPECULAR, white_light);
+    // LIGHT1 is from our viewpoint towards the Sun.
+    glLightfv(GL_LIGHT1, GL_DIFFUSE, white_light);
+    glLightfv(GL_LIGHT1, GL_SPECULAR, white_light);
 
-   glDisable(GL_CLIP_PLANE0);
-   glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-   sim.activate();
+    glDisable(GL_CLIP_PLANE0);
+    glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+    sim.activate();
 
-   // Setup dimensions. NB this is currently the only call to
-   // invoke this !!
-   resize(width, height);
+    // Setup dimensions. NB this is currently the only call to
+    // invoke this !!
+    resize(width, height);
 
-   ErrorHandler::check_OpenGL_Error();
-   }
+    ErrorHandler::check_OpenGL_Error();
+    }
 
 /**
  * Rendering routine: this is what does the drawing:
@@ -281,14 +281,14 @@ void SolarSystem::render(const double tOD) {
 
     // Set up the camera position and orientation.
     gluLookAt(cam.position().x(),
-                 cam.position().y(),                            // eyes position
-             cam.position().z(),
-             SolarSystem::FAR_LOOK_DISTANCE*cam.focus().x(),
-             SolarSystem::FAR_LOOK_DISTANCE*cam.focus().y(),    // looking towards here
-             SolarSystem::FAR_LOOK_DISTANCE*cam.focus().z(),
-             cam.orientation().x(),
-             cam.orientation().y(),                             // which way is up?
-             cam.orientation().z());
+              cam.position().y(),                               // eyes position
+              cam.position().z(),
+              SolarSystem::FAR_LOOK_DISTANCE*cam.focus().x(),
+              SolarSystem::FAR_LOOK_DISTANCE*cam.focus().y(),   // looking towards here
+              SolarSystem::FAR_LOOK_DISTANCE*cam.focus().z(),
+              cam.orientation().x(),
+              cam.orientation().y(),                            // which way is up?
+              cam.orientation().z());
 
     // Render from the current viewpoint.
     sim.draw();
