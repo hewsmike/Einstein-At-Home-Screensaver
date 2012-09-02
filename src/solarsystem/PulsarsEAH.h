@@ -71,6 +71,7 @@ template<class T> class PulsarsEAH : public Stars<T>, public Traversable {
             }
 
         virtual LookOut getView(unsigned int sequence) const {
+            static const GLuint VIEW_OFFSET = 3000;
             // Default view - in absence of any pulsars - the
             // simulation's initial view.
             LookOut ret_val;
@@ -89,7 +90,7 @@ template<class T> class PulsarsEAH : public Stars<T>, public Traversable {
                                                     current_pulsar.declination(),
                                                     Stars<T>::getRadius());
 
-                Vector3D viewpoint = pulsar_position.unit() * Stars<T>::getRadius();
+                Vector3D viewpoint = pulsar_position.unit() * (Stars<T>::getRadius() - VIEW_OFFSET);
 
                 ret_val.setPosition(viewpoint);
                 ret_val.setFocus(pulsar_position);

@@ -69,6 +69,7 @@ class SolarSystemGlobals {
       static const GLfloat QUARTER_CIRCLE_DEG;
       static const GLfloat MINUTES_PER_HOUR;
       static const GLfloat SECONDS_PER_MINUTE;
+      static const GLfloat MINUTES_PER_DEGREE;
       static const GLfloat DEGREES_PER_HOUR;
 
       /// Minimum accepted screen/window dimensions

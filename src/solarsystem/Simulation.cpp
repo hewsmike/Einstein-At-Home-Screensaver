@@ -308,6 +308,7 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
     cs.setFont(fonts[CONSTELLATIONS]);
     cs.activate();
     ps.activate();
+    ps_EAH.activate();
     sn.activate();
     c_sphere.setFont(fonts[SKY_GRID]);
     c_sphere.activate();
@@ -369,6 +370,7 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
 void Simulation::release(void) {
     cs.inactivate();
     ps.inactivate();
+    ps_EAH.inactivate();
     sn.inactivate();
     c_sphere.inactivate();
     earth.inactivate();
@@ -411,6 +413,7 @@ void Simulation::render(void) {
     // Invoke the draw method for each scene element.
     cs.draw();
     ps.draw();
+    ps_EAH.draw();
     sn.draw();
     c_sphere.draw();
 
@@ -2418,12 +2421,6 @@ bool Simulation::loadPulsarsEAH(void) {
 
                     std::vector<std::string> tokens(parseLine(line));
 
-                    std::cout << "Line = '";
-                    for(unsigned int i = 0; i < tokens.size(); ++i) {
-                        std::cout << "@" << tokens.at(i);
-                        }
-                    std::cout << "'" << std::endl;
-
                     if(tokens.size() == LINE_TOKENS) {
                         // Get the pulsar's name.
                         std::string pulsar_name(tokens.at(NAME));
@@ -2439,7 +2436,7 @@ bool Simulation::loadPulsarsEAH(void) {
                         std::string declination(tokens.at(DECLINATION));
                         float pulsar_dec = 0.0f;
                         if(!str2dec(declination, &pulsar_dec)){
-                            ErrorHandler::record("Simulation::loadPulsarsEAH() - bad right declination value", ErrorHandler::WARN);
+                            ErrorHandler::record("Simulation::loadPulsarsEAH() - bad declination value", ErrorHandler::WARN);
                             }
 
                         // Get the pulsar's period.
@@ -2460,6 +2457,33 @@ bool Simulation::loadPulsarsEAH(void) {
                         std::string discoverers(tokens.at(VOLUNTEERS));
 
                         std::string source(tokens.at(SEARCH_SOURCE));
+                        Pulsar::pulsar_source src;
+
+                        if(source == "ATNF") {
+                            src = Pulsar::ATNF;
+                            }
+                        else {
+                            if(source == "PALFA") {
+                                src = Pulsar::PALFA;
+                                }
+                            else {
+                                if(source == "PMPS") {
+                                    src = Pulsar::PMPS;
+                                    }
+                                else {
+                                    src = Pulsar::DUNNO;
+                                    }
+                                }
+                            }
+
+                        ps_EAH.add(PulsarEAH(pulsar_ra,
+                                             pulsar_dec,
+                                             pulsar_name,
+                                             src,
+                                             pp,
+                                             dm,
+                                             ds,
+                                             discoverers));
                         }
                     else {
                         ErrorHandler::record("Simulation::loadPulsarsEAH() - wrong number of tokens on line",
@@ -2869,15 +2893,47 @@ bool Simulation::str2ra(std::string right_ascension, float* result) const {
                    seconds/SolarSystemGlobals::SECONDS_PER_MINUTE)/
                    SolarSystemGlobals::MINUTES_PER_HOUR)*
                    SolarSystemGlobals::DEGREES_PER_HOUR;
+
+        ret_val = true;
         }
 
     return ret_val;
     }
 
 bool Simulation::str2dec(std::string declination, float* result) const {
-    bool ret_val = true;
+    static const char DELIM = ':';
+    static const unsigned int DEC_TOKENS = 3;
 
+    // Assume failure.
+    bool ret_val = false;
 
+    // Split the declination string into tokens.
+    std::vector<std::string> tokens = tokenise(declination, DELIM);
+
+    // Assuming we have the correct number of tokens.
+    if(tokens.size() == DEC_TOKENS) {
+        /// TODO bounds checking on values?
+        float degrees = 0.0f;
+        std::stringstream dec_degrees(tokens.at(0));
+        dec_degrees >> degrees;
+
+        float signum = 1;
+        if(degrees < 0.0f) {
+            signum = -1;
+            degrees = signum*degrees;
+            }
+
+        float minutes = 0.0f;
+        std::stringstream dec_minutes(tokens.at(1));
+        dec_minutes >> minutes;
+
+        float seconds = 0.0f;
+        std::stringstream dec_seconds(tokens.at(2));
+        dec_seconds >> seconds;
+
+        *result = signum*(degrees + (minutes + seconds/SolarSystemGlobals::SECONDS_PER_MINUTE)/SolarSystemGlobals::MINUTES_PER_DEGREE);
+        ret_val = true;
+        }
 
     return ret_val;
     }
@@ -2914,16 +2970,12 @@ std::vector<std::string> Simulation::tokenise(std::string input, char delimiter)
 
 std::vector<std::string> Simulation::parseLine(std::string input) const {
     static const char LINE_DELIMITER = ' ';
-    static const char QUOTE = '"';
     std::vector<std::string> ret_val;
 
     std::vector<std::string> splits(tokenise(input, LINE_DELIMITER));
 
-    std::cout << "Simulation::parseLine() - tokens = " << splits.size() << std::endl;
-
-    int token;
+    unsigned int token;
     for(token = NAME; token <= DISTANCE; ++token) {
-        std::cout << "\ttoken[" << token << "] = '" << splits.at(token) << "'" << std::endl;
         ret_val.push_back(splits.at(token));
         }
 
@@ -2945,11 +2997,9 @@ std::vector<std::string> Simulation::parseLine(std::string input) const {
             }
         }
 
-    std::cout << "\tdiscoverers = '" << discs << "'" << std::endl;
     ret_val.push_back(discs);
 
     ++token;
-    std::cout << "\tsearch source = '" << splits.at(splits.size() - 1) << "'" << std::endl;
     ret_val.push_back(splits.at(splits.size() - 1));
 
     return ret_val;
