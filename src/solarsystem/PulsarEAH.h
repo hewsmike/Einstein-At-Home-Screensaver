@@ -77,15 +77,22 @@ class PulsarEAH : public Pulsar {
          */
         virtual ~PulsarEAH();
 
-        const float period(void) const;
+        unsigned int raHours(void) const;
 
-        const float dispersionModulus(void) const;
+        unsigned int raMinutes(void) const;
 
-        const float distance(void) const;
+        float period(void) const;
 
-        const std::string discoverers(void) const;
+        float dispersionModulus(void) const;
+
+        float distance(void) const;
+
+        std::string discoverers(void) const;
 
     private:
+        unsigned int ra_hours;
+        unsigned int ra_minutes;
+
         /// The period of the pulsar in milliseconds.
         double pulse_period;
 

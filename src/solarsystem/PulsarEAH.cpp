@@ -19,6 +19,7 @@
  ***************************************************************************/
 
 #include "PulsarEAH.h"
+#include "SolarSystemGlobals.h"
 
 PulsarEAH::PulsarEAH(starpos_t right_asc,
                      starpos_t decl,
@@ -33,23 +34,34 @@ PulsarEAH::PulsarEAH(starpos_t right_asc,
                         dispersion_modulus(disp_mod),
                         kp_distance(dist),
                         volunteers(disc) {
+    ra_hours = right_asc/SolarSystemGlobals::DEGREES_PER_HOUR;
+    float extra_degrees = right_asc - ra_hours*SolarSystemGlobals::DEGREES_PER_HOUR;
+    ra_minutes = (extra_degrees/SolarSystemGlobals::DEGREES_PER_HOUR)*SolarSystemGlobals::MINUTES_PER_HOUR;
     }
 
 PulsarEAH::~PulsarEAH() {
     }
 
-const float PulsarEAH::period(void) const {
+unsigned int PulsarEAH::raHours(void) const {
+    return ra_hours;
+    }
+
+unsigned int PulsarEAH::raMinutes(void) const {
+    return ra_minutes;
+    }
+
+float PulsarEAH::period(void) const {
     return pulse_period;
     }
 
-const float PulsarEAH::dispersionModulus(void) const {
+float PulsarEAH::dispersionModulus(void) const {
     return dispersion_modulus;
     }
 
-const float PulsarEAH::distance(void) const {
+float PulsarEAH::distance(void) const {
     return kp_distance;
     }
 
-const std::string PulsarEAH::discoverers(void) const {
+std::string PulsarEAH::discoverers(void) const {
     return volunteers;
     }

@@ -48,7 +48,6 @@
 #include "Renderable.h"
 #include "SolarSystemGlobals.h"
 #include "Sphere.h"
-#include "StarDataAdapter.h"
 #include "Stars.h"
 #include "SunOrbit.h"
 #include "Supernova.h"
@@ -370,6 +369,8 @@ class Simulation : public Renderable {
         bool str2dec(std::string declination, float* result) const;
 
         std::vector<std::string> tokenise(std::string input, char delimiter) const;
+
+        std::vector<std::string> parseLine(std::string input) const;
     };
 
 /**

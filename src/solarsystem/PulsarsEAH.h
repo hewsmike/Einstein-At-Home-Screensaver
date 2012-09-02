@@ -21,8 +21,12 @@
 #ifndef PULSARS_H_
 #define PULSARS_H_
 
+#include <iostream>
+
 #include "Stars.h"
 #include "Traversable.h"
+#include "Vector3D.h"
+#include "VectorSP.h"
 
 /**
  * \addtogroup solarsystem Solarsystem
@@ -54,8 +58,8 @@ template<class T> class PulsarsEAH : public Stars<T>, public Traversable {
         PulsarsEAH(GLfloat rad, GLfloat magsize,
                    GLfloat red,
                    GLfloat green,
-                   GLfloat blue) {
-                Stars<T>(rad, magsize, red, green, blue);
+                   GLfloat blue) :
+                    Stars<T>::Stars(rad, magsize, red, green, blue) {
             }
 
         /// Virtual destructor
@@ -63,7 +67,7 @@ template<class T> class PulsarsEAH : public Stars<T>, public Traversable {
             }
 
         virtual unsigned int numberOfWayPoints(void) const {
-            return listing().size();
+            return Stars<T>::listing().size();
             }
 
         virtual LookOut getView(unsigned int sequence) const {
@@ -71,7 +75,7 @@ template<class T> class PulsarsEAH : public Stars<T>, public Traversable {
             // simulation's initial view.
             LookOut ret_val;
 
-            const std::vector<PulsarEAH>& list = listing();
+            const std::vector<T>& list = Stars<T>::listing();
 
             // Assuming there is at least one pulsar.
             if(list.size() > 0) {
@@ -79,25 +83,20 @@ template<class T> class PulsarsEAH : public Stars<T>, public Traversable {
                     sequence = list.size() - 1;
                     }
 
-                PulsarEAH current_pulsar = list.at(sequence);
+                T current_pulsar = list.at(sequence);
 
                 VectorSP pulsar_position = VectorSP(current_pulsar.right_ascension(),
                                                     current_pulsar.declination(),
-                                                    radius);
+                                                    Stars<T>::getRadius());
 
-                Vector3D viewpoint = pulsar_position.unit() * (radius - VIEW_OFFSET);
+                Vector3D viewpoint = pulsar_position.unit() * Stars<T>::getRadius();
 
                 ret_val.setPosition(viewpoint);
                 ret_val.setFocus(pulsar_position);
-                ret_val.setOrientation(VIEW_UP);
+                ret_val.setOrientation(Vector3D(0, 0, 1));
 
-                const std::vector<std::string>& current_description = current_pulsar.getDescription();
-
-                for(unsigned int index = 0; index < current_description.size(); ++index) {
-                    ret_val.addToDescription(current_description[index]);
-                    }
+                ret_val.addToDescription(current_pulsar.name());
                 }
-
             return ret_val;
             }
     private:

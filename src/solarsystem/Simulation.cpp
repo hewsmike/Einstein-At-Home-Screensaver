@@ -2409,13 +2409,20 @@ bool Simulation::loadPulsarsEAH(void) {
         ifstream data_file(data_file_name.c_str());
         if(data_file.good() == true) {
             std::string line;
+            // Toss the first line ( header ).
+            getline(data_file, line);
             do {
                 line.clear();
                 getline(data_file, line);
                 if(line.size() != 0) {
-                    static const char LINE_DELIMITER = ' ';
 
-                    std::vector<std::string> tokens(tokenise(line, LINE_DELIMITER));
+                    std::vector<std::string> tokens(parseLine(line));
+
+                    std::cout << "Line = '";
+                    for(unsigned int i = 0; i < tokens.size(); ++i) {
+                        std::cout << "@" << tokens.at(i);
+                        }
+                    std::cout << "'" << std::endl;
 
                     if(tokens.size() == LINE_TOKENS) {
                         // Get the pulsar's name.
@@ -2791,7 +2798,7 @@ std::string Simulation::getEAHPulsarDataFileName(void) {
 
     // Read the soft link file to get the latest
     // catalog filename.
-    std::string soft_link_file(EAH_PULSAR_FILE + EAH_PULSAR_FILE_EXT);
+    std::string soft_link_file(EAH_PULSAR_FILE + "." + EAH_PULSAR_FILE_EXT);
     ifstream soft_link(soft_link_file.c_str());
 
     std::string soft_link_contents;
@@ -2805,10 +2812,11 @@ std::string Simulation::getEAHPulsarDataFileName(void) {
                 std::string data_file(soft_link_contents,
                                       data_file_name_idx_start,
                                       data_file_name_idx_end - data_file_name_idx_start);
-                std::cout << "Simulation::getEAHPulsarDataFileName() - filename is '"
+                std::cout << "Simulation::getEAHPulsarDataFileName() - filename ( stub ) is '"
                           << data_file
                           << "'"
                           << std::endl;
+                data_file += ".";
                 data_file += EAH_PULSAR_FILE_EXT;
                 return data_file;
                 }
@@ -2866,7 +2874,7 @@ bool Simulation::str2ra(std::string right_ascension, float* result) const {
     return ret_val;
     }
 
-bool Simulation::str2dec(const std::string declination, float* result) const {
+bool Simulation::str2dec(std::string declination, float* result) const {
     bool ret_val = true;
 
 
@@ -2876,16 +2884,17 @@ bool Simulation::str2dec(const std::string declination, float* result) const {
 
 std::vector<std::string> Simulation::tokenise(std::string input, char delimiter) const {
     // The array of tokens to return.
-    std::vector<std::string> split;
+    std::vector<std::string> ret_val;
 
     // Assuming there is any ( remaining ) input string to examine.
     while(!input.empty()) {
         // Find the next instance of the delimiter.
         size_t found = input.find(delimiter);
+
         // Did we find a delimiter?
-        if(found == std::string::npos) {
+        if(found != std::string::npos) {
             // Yes then add this token to the array.
-            split.push_back(input.substr(0, found));
+            ret_val.push_back(input.substr(0, found));
             // Remove the found token plus the delimiter
             // from the input string.
             input = input.substr(found + 1);
@@ -2893,12 +2902,55 @@ std::vector<std::string> Simulation::tokenise(std::string input, char delimiter)
         else {
             // No delimiter found with end of input string reached,
             // so store ( the remainder of ) the string as a token.
-            split.push_back(input);
+            ret_val.push_back(input);
             // then clear the input string.
             input.clear();
             }
         }
 
     // Return the array of tokens.
-    return split;
+    return ret_val;
+    }
+
+std::vector<std::string> Simulation::parseLine(std::string input) const {
+    static const char LINE_DELIMITER = ' ';
+    static const char QUOTE = '"';
+    std::vector<std::string> ret_val;
+
+    std::vector<std::string> splits(tokenise(input, LINE_DELIMITER));
+
+    std::cout << "Simulation::parseLine() - tokens = " << splits.size() << std::endl;
+
+    int token;
+    for(token = NAME; token <= DISTANCE; ++token) {
+        std::cout << "\ttoken[" << token << "] = '" << splits.at(token) << "'" << std::endl;
+        ret_val.push_back(splits.at(token));
+        }
+
+    std::string discs;
+    for(token = VOLUNTEERS; token < splits.size() - 1; ++token) {
+        std::string temp = splits.at(token);
+        if(token == VOLUNTEERS) {
+            discs += temp.substr(1);
+            discs += LINE_DELIMITER;
+            }
+        else {
+            if(token == (splits.size() - 2)) {
+                discs += temp.substr(0, temp.size() - 1);
+                }
+            else {
+                discs += temp;
+                discs += LINE_DELIMITER;
+                }
+            }
+        }
+
+    std::cout << "\tdiscoverers = '" << discs << "'" << std::endl;
+    ret_val.push_back(discs);
+
+    ++token;
+    std::cout << "\tsearch source = '" << splits.at(splits.size() - 1) << "'" << std::endl;
+    ret_val.push_back(splits.at(splits.size() - 1));
+
+    return ret_val;
     }
