@@ -22,6 +22,7 @@
 #define PULSARS_H_
 
 #include <iostream>
+#include <sstream>
 
 #include "Stars.h"
 #include "Traversable.h"
@@ -97,6 +98,20 @@ template<class T> class PulsarsEAH : public Stars<T>, public Traversable {
                 ret_val.setOrientation(Vector3D(0, 0, 1));
 
                 ret_val.addToDescription(current_pulsar.name());
+
+                std::stringstream pd;
+                pd << "Period = " << current_pulsar.period() << " (ms)";
+                ret_val.addToDescription(pd.str());
+
+                std::stringstream dm;
+                dm << "Dispersion Modulus = " << current_pulsar.dispersionModulus();
+                ret_val.addToDescription(dm.str());
+
+                std::stringstream ds;
+                ds << "Distance = " << current_pulsar.distance() << " (kpc)";
+                ret_val.addToDescription(ds.str());
+
+                ret_val.addToDescription(current_pulsar.discoverers());
                 }
             return ret_val;
             }
