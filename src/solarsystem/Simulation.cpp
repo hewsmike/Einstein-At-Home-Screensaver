@@ -219,8 +219,11 @@ void Simulation::step(void) {
             for(unsigned int index = 0; index < messages.size(); ++index) {
                 /// TODO - currently entering in reverse order ( see HUDFlowLayout::allocateItemBases() LAST case ).
                 std::string msg = messages.at(messages.size() - index - 1);
+                /// TODO - is this a source of memory leak???
                 north_panel.addContent(new HUDTextLine(msg.size(), overlay.getFont(), msg, 0, 2));
                 }
+            // north_panel.addContent();
+
             north_panel.activate();
             }
         }

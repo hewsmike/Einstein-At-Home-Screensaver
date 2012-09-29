@@ -112,6 +112,11 @@ template<class T> class PulsarsEAH : public Stars<T>, public Traversable {
                 ret_val.addToDescription(ds.str());
 
                 ret_val.addToDescription(current_pulsar.discoverers());
+
+                std::string imageResourceName(current_pulsar.name);
+                imageResourceName += "TGA";
+
+                ret_val.addImageResource(imageResourceName);
                 }
             return ret_val;
             }

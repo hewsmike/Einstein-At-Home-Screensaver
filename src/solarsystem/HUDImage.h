@@ -130,7 +130,7 @@ class HUDImage : public HUDContent {
         /// the vertex associated data for a quad.
         Buffer_OBJ buff_obj_points;
 
-        /// Filename to load image from.
+        /// Name to resource to load image from.
         std::string image_resource_name;
 
         /// Dimensions of loaded image.

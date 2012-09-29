@@ -25,6 +25,7 @@
 #include <vector>
 
 #include "CameraState.h"
+#include "HUDImage.h"
 
 /**
  * \addtogroup solarsystem Solarsystem
@@ -64,22 +65,41 @@ class LookOut : public CameraState {
         virtual ~LookOut();
 
         /**
-         * \brief Obtain the description for this camera state
-         *
-         * \return a reference to a set of descriptive strings
-         */
-        const std::vector<std::string>& getDescription(void) const;
-
-        /**
          * \brief Add a description to this camera state
          *
          * \param a descriptive string reference
          */
         void addToDescription(const std::string& description);
 
+        /**
+         * \brief Obtain the description for this camera state
+         *
+         * \return a reference to a set of descriptive strings
+         */
+        const std::vector<std::string>& getDescription(void) const;
+
+        /*
+         * \brief Add an image from resource
+         *
+         * \param a string denoting the resource
+         */
+        void addImageResource(std::string resourceName);
+
+        /**
+         * \brief Obtain the image for this camera state
+         *
+         * \return a pointer to the HUDImage, this may be null !!
+         */
+        const HUDImage* getImage(void) const;
+
     private:
         // The set of descriptive strings for this LookOut
         std::vector<std::string> desc;
+
+        // The image
+        HUDImage* image;
+
+        void clearImage(void);
     };
 
 /**
