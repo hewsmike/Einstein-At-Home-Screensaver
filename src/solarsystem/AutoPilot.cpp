@@ -34,6 +34,7 @@ const float AutoPilot::PATH_EARLY_BOUNDARY(0.1f);
 const float AutoPilot::PATH_LATE_BOUNDARY(0.9f);
 
 AutoPilot::AutoPilot(void) {
+    image = NULL;
     lambda = Path::LAMBDA_LOWER_BOUND;
     current_delta_lambda = 0.0f;
     active_flag = false;
@@ -117,6 +118,7 @@ CameraState AutoPilot::viewState(void) {
             path_stage_flag = LATE;
             // Change the current description to that of the upcoming Lookout.
             current_description = current_path.getFinishMessage();
+            image =
             // Flag that the description has therefore altered.
             description_change_flag = true;
             }
@@ -142,6 +144,8 @@ CameraState AutoPilot::viewState(void) {
                 path_stage_flag = MIDDLE;
                 // Clear the descriptions.
                 current_description.clear();
+
+                image = NULL;
                 // Flag that the description has therefore altered.
                 description_change_flag = true;
                 }
@@ -156,6 +160,10 @@ CameraState AutoPilot::viewState(void) {
 
 const std::vector<std::string>& AutoPilot::getDescription(void) const {
     return current_description;
+    }
+
+const HUDImage* getImage(void) const {
+    return image;
     }
 
 bool AutoPilot::hasDescriptionChanged(void) const {

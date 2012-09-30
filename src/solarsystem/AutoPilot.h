@@ -24,6 +24,7 @@
 #include <vector>
 
 #include "CameraState.h"
+#include "HUDImage.h"
 #include "Path.h"
 #include "Traversable.h"
 #include "Traverse.h"
@@ -109,6 +110,8 @@ class AutoPilot {
          */
         const std::vector<std::string>& getDescription(void) const;
 
+        const HUDImage* getImage(void) const;
+
         bool hasDescriptionChanged(void) const;
 
     private:
@@ -156,6 +159,8 @@ class AutoPilot {
 
         // The current set of descriptive strings.
         std::vector<std::string> current_description;
+
+        HUDImage* image;
 
         // A flag having the value of one of the path_stage enumerants that
         // indicate the stage of the current Path that we are in.

@@ -38,33 +38,33 @@ Path::~Path() {
     }
 
 float Path::curveLength(Path::component comp) const {
-	float ret_val = 0.0f;
+    float ret_val = 0.0f;
 
-	switch (comp) {
-		case Path::POSITION :
-			ret_val = where.length();
-			break;
-		case Path::FOCUS :
-			ret_val = look_at.length();
-			break;
-		case Path::ORIENTATION:
-			ret_val = up_dir.length();
-			break;
-		default :
-			// Ought not get here !!
-			std::string msg = "Path::curveLength() - bad switch case reached (default)";
-			ErrorHandler::record(msg, ErrorHandler::FATAL);
-			break;
-		}
+    switch (comp) {
+        case Path::POSITION :
+            ret_val = where.length();
+            break;
+        case Path::FOCUS :
+            ret_val = look_at.length();
+            break;
+        case Path::ORIENTATION:
+            ret_val = up_dir.length();
+            break;
+        default :
+            // Ought not get here !!
+            std::string msg = "Path::curveLength() - bad switch case reached (default)";
+            ErrorHandler::record(msg, ErrorHandler::FATAL);
+            break;
+        }
 
-	return ret_val;
-	}
+    return ret_val;
+    }
 
 void Path::setStartMessage(const std::vector<std::string>& message) {
     for(unsigned int index = 0; index < message.size(); ++index) {
         start_msg.push_back(message[index]);
         }
-	}
+    }
 
 void Path::setFinishMessage(const std::vector<std::string>& message) {
     for(unsigned int index = 0; index < message.size(); ++index) {
@@ -74,20 +74,20 @@ void Path::setFinishMessage(const std::vector<std::string>& message) {
 
 CameraState Path::value(float lambda) const {
     // Clamp lambda
-	if(lambda < LAMBDA_LOWER_BOUND) {
+    if(lambda < LAMBDA_LOWER_BOUND) {
         lambda = LAMBDA_LOWER_BOUND;
         }
-	if(lambda > LAMBDA_UPPER_BOUND) {
+    if(lambda > LAMBDA_UPPER_BOUND) {
         lambda = LAMBDA_UPPER_BOUND;
         }
 
-	return CameraState(where.value(lambda), look_at.value(lambda), up_dir.value(lambda));
+    return CameraState(where.value(lambda), look_at.value(lambda), up_dir.value(lambda));
     }
 
 const std::vector<std::string>& Path::getStartMessage(void) const {
-	return start_msg;
+    return start_msg;
     }
 
 const std::vector<std::string>& Path::getFinishMessage(void) const {
-	return finish_msg;
+    return finish_msg;
     }

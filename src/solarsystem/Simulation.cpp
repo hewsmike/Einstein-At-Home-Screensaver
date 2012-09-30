@@ -222,7 +222,7 @@ void Simulation::step(void) {
                 /// TODO - is this a source of memory leak???
                 north_panel.addContent(new HUDTextLine(msg.size(), overlay.getFont(), msg, 0, 2));
                 }
-            // north_panel.addContent();
+            north_panel.addContent();
 
             north_panel.activate();
             }
