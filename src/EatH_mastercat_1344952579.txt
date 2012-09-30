@@ -1,0 +1,47 @@
+# PSR RA DEC P0 (ms) DM d (kpc) volunteers search
+J0811-3857 08:11:39.9 -38:57:28.2 482.5939 336.2 6.2 "Nemo / ATLAS AEI Hannover" PMPS
+J1227-6210 12:27:34.0 -62:10:25.0 34.5296853 363.2 8.4 "Rolf Schuster / Darren Chase" PMPS
+J1305-6639 13:05:37.8 -66:39:25.3 197.27629 316.1 7.5 "Victor1st / Dussan Pirc" PMPS
+J1322-6251 13:22:21.8 -62:51:44.5 1044.8511 733.6 13.2 "Vadim Gusev / David" PMPS
+J1455-5922 14:55:04.7 -59:23:00.0 176.19117 498.0 7.0 "Arax / UW-Madison CAE" PMPS
+J1601-5023 16:01:25.2 -50:23:27.6 860.7771 59.0 3.6 "Sirko Rosenberg / Ton van Born" PMPS
+J1619-4202 16:19:04.5 -42:02:21.5 1023.1524 172.0 3.7 "Metod, S56RKO / RAMA" PMPS
+J1626-4422 16:26:58.7 -44:22:26.7 308.35364 269.2 4.8 "Aku Leijala / Og" PMPS
+J1637-4613 16:37:36.4 -46:13:02.6 493.0910 660.4 7.0 "Riaan Strydom / Edelgas" PMPS
+J1644-4409 16:44:35.2 -44:09:34.5 173.91055 535.1 6.2 "Jesse Charles Wagner II [USA] / Ras" PMPS
+J1644-4625 16:44:05.2 -46:25:43.3 250.94056 405.8 4.8 "Augusto Cortemiglia / Axiel" PMPS
+J1652-4844 16:52:53.9 -48:44:38.9 3.78512377 187.8 3.3 "Craig G / Brian Adrian" PMPS
+J1726-3156 17:26:33.4 -31:56:47.5 123.470178 264.4 4.1 "Boguslaw Sobczak / Steve Mellor" PMPS
+J1748-3010 17:48:34.2 -30:10:53.8 9.6842731 420.2 5.0 "Jürgen Sauermann / Stan Galka" PMPS
+J1750-2534 17:50:23.1 -25:34:44.3 34.7490529 178.4 3.2 "Frederick J. Pfitzer / Rosenthal Library / Masor_DC / Gordon E. Hartman" PMPS
+J1755-3331 17:55:13.6 -33:31:17.0 959.4656 266.5 5.7 "Omega Sector - Game Systems / Dwaine / revoluzzer / Jacek Richter" PMPS
+J1811-1047 18:11:23.4 -10:47:21.5 2623.916 239.7 5.0 "ingo / Paul Serban" PMPS
+J1817-1937 18:18:11.6 -19:36:48.1 2046.916 523.7 9.5 "Jaska / Keith Sloan / cjsturgess / Companion_Cube" PMPS
+J1821-0325 18:21:41.2 -03:25:19.5 902.3136 171.5 4.3 "Robert Hoyt / Kevin Battaile" PMPS
+J1838-0100 18:38:31.8 -01:00:45.7 183.29478 320.4 6.9 "Eric Nietering / Tim Taylor" PMPS
+J1838-1848 18:38:20.6 -18:48:11.5 488.2396 167.3 4.3 "gwyll / IG_the_cheetah" PMPS
+J1840-0644 18:40:22.3 -06:44:21.0 35.5775996 494.1 6.6 "terrydudley / nemo / Trey / nemo" PMPS
+J1851+02 18:51:22.2 +02:42:36.6 1497.04 534.1 9.8 "Mel S Stark / TRON" PALFA
+J1855+03 18:55:41.0 +03:07:07.1 1633.46 625.6 9.4 "Jeroen Moetwil / Bob Inman" PALFA
+J1857+0259 18:57:13.1 +02:59:46.4 772.747 681.4 9.5 "Philemon1752 / edgen" PALFA
+J1858+0319 18:58:39.5 +03:19:01.9 867.378 289.8 6.1 "Philipp Kählitz / Termit" PALFA
+J1858-0736 18:58:36.9 -07:36:59.7 551.0553 201.4 5.1 "Christoph Donat / gone" PMPS
+J1900+0439 19:00:14.3 +04:39:07.7 312.3018 639.0 9.4 "Robert D Burbeck / Harald Buchholz" PALFA
+J1901+0510 19:01:48.0 +05:10:19.6 657.154 417.9 7.1 "John A. Lorimer Jr. / Ugur Munir Kir (Guzel Sanatlar Saatchi & Saatchi)" PALFA
+J1903+06 19:03:52.7 +06:54:09.3 791.150 338.3 6.7 "Paul Frei / Jyrki Ojala" PALFA
+J1906+05 19:06:52.9 +05:10:16.1 397.5884 104.6 3.6 "Piotr Kaminski / zebo-the-fat" PALFA
+J1907+09 19:07:02.9 +09:00:47.9 1526.800 189.9 5.2 "Carat@voice / Thomas Herdtle" PALFA
+J1908+0831 19:08:18.3 +08:31:43.9 512.2027 698.1 12.6 "Josha / SF Chance" PALFA
+J1909+12 19:09:57.7 +12:04:55.3 1229.338 292.5 7.7 "Alexandr Jungwirth / Administrator" PALFA
+J1910+10 19:10:29.4 +10:17:33.9 411.0894 636.6 12.4 "mglogan / Dave & Emma Johnston" PALFA
+J1912+09 19:12:03.0 +09:24:51.5 323.8824 490.9 7.0 "Matthias / spacemort" PALFA
+J1913+10 19:13:31.9 +10:50:12.8 190.0660 234.1 6.0 "Zsolt Szvoboda / Rensk" PALFA
+J1913+11 19:13:34.6 +11:02:56.5 27.299106 341.4 7.7 "Uwe Tittmar / Gerald Schrader" PALFA
+J1914+14 19:14:56.3 +14:28:13.6 1159.602 205.9 6.5 "John-Luke Peck, TerraPower & Intellectual Ventures / Mark Henderson" PALFA
+J1922+11 19:22:48.9 +11:33:47.2 562.065 331.3 9.0 "Edvin Grabar / Pete(r) van der Spoel" PALFA
+J1950+24 19:50:48.8 +24:16:06.6 4.3049581 142.2 5.5 "georges01 / David Miller" PALFA
+J1952+25 19:52:22.8 +25:12:19.1 1077.804 245.1 8.0 "Joe / Jarmo Kahila" PALFA
+J1952+2630 19:52:36.96 +26:30:25.5 20.7323604 315.3 9.4 "Dr. Vitaliy V. Shiryaev / Stacey Eastham" PALFA
+J1953+2407 19:53:59.1 +24:07:44.0 193.4061 80.8 3.9 "Andrew Fullford / Pavlo Ovchinnikov" PALFA
+J2005+26 20:05:01.9 +26:55:23.7 665.846 158.5 6.2 "Cauche Nathanael / Shadowfax" PALFA
+J2007+2722 20:07:15.8 +27:22:47.7 24.497388537 127.0 5.4 "Daniel Gebhardt / Chris and Helen Colvin" PALFA

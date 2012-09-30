@@ -23,6 +23,7 @@
 
 #include <iostream>
 #include <sstream>
+#include <string>
 
 #include "Stars.h"
 #include "Traversable.h"
@@ -113,7 +114,7 @@ template<class T> class PulsarsEAH : public Stars<T>, public Traversable {
 
                 ret_val.addToDescription(current_pulsar.discoverers());
 
-                std::string imageResourceName(current_pulsar.name);
+                std::string imageResourceName(current_pulsar.name());
                 imageResourceName += "TGA";
 
                 ret_val.addImageResource(imageResourceName);
