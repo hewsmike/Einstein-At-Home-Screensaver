@@ -88,16 +88,16 @@ class LookOut : public CameraState {
         /**
          * \brief Obtain the image for this camera state
          *
-         * \return a pointer to the HUDImage, this may be null !!
+         * \return a pointer a listing of HUDImages, this may be empty !!
          */
-        const HUDImage* getImage(void) const;
+        const std::vector<const HUDImage*> getImages(void) const;
 
     private:
         // The set of descriptive strings for this LookOut
         std::vector<std::string> desc;
 
-        // The image
-        HUDImage* image;
+        // The image listing
+        std::vector<const HUDImage*> images;
 
         void clearImage(void);
     };
