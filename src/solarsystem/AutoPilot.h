@@ -108,7 +108,7 @@ class AutoPilot {
          *
          * \return a list of descriptive strings
          */
-        const std::vector<std::string>& getDescription(void) const;
+        const std::vector<const std::string>& getDescription(void) const;
 
         /**
          * \brief Obtain the images for the nearest Lookout.
@@ -120,7 +120,7 @@ class AutoPilot {
          *
          * \return a list of image pointers
          */
-        const std::vector<HUDImage*> getImage(void) const;
+        const std::vector<const HUDImage*>& getImages(void) const;
 
         bool hasDescriptionChanged(void) const;
 
