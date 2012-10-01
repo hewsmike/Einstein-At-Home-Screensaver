@@ -110,7 +110,17 @@ class AutoPilot {
          */
         const std::vector<std::string>& getDescription(void) const;
 
-        const HUDImage* getImage(void) const;
+        /**
+         * \brief Obtain the images for the nearest Lookout.
+         *
+         *      Along each Path in the Traverse the available images change.
+         * So just prior to, and just after, visiting a LookOut an image is
+         * available. In the midsection of a Path between LookOut visits no
+         * image is available.
+         *
+         * \return a list of image pointers
+         */
+        const std::vector<HUDImage*> getImage(void) const;
 
         bool hasDescriptionChanged(void) const;
 
@@ -160,7 +170,7 @@ class AutoPilot {
         // The current set of descriptive strings.
         std::vector<std::string> current_description;
 
-        HUDImage* image;
+        std::vector<HUDImage*> current_images;
 
         // A flag having the value of one of the path_stage enumerants that
         // indicate the stage of the current Path that we are in.
