@@ -21,18 +21,16 @@
 #include "LookOut.h"
 
 LookOut::LookOut() {
-    image = NULL;
     }
 
 LookOut::LookOut(const Vector3D& position,
                  const Vector3D& focus,
                  const Vector3D& orientation) :
                     CameraState(position, focus, orientation) {
-    image = NULL;
     }
 
 LookOut::~LookOut() {
-    clearImage();
+    clearImages();
     }
 
 const std::vector<std::string>& LookOut::getDescription(void) const {
@@ -49,16 +47,18 @@ void LookOut::addImageResource(std::string resourceName) {
     image = new HUDImage(resourceName, 0, 0);
     }
 
-const HUDImage* LookOut::getImage(void) const {
-    return image;
+const std::vector<const HUDImage*> LookOut::getImages(void) const {
+    return images;
     }
 
-void LookOut::clearImage(void) {
-    // Provided we have an image allocated.
-    if(image != NULL) {
-        // Inactivate it, thus releasing OpenGL server resources.
-        image->inactivate();
-        // Then free the heap memory.
-        delete image;
+void LookOut::clearImages(void) {
+    // Provided we have any images allocated.
+    if(images.size() != 0) {
+        for (int im = 0; im < images.size(); ++im) {
+            // Inactivate this image, thus releasing OpenGL server resources.
+            images[im]->inactivate();
+            // Then free the heap memory.
+            delete images[im];
+            }
         }
     }
