@@ -55,10 +55,13 @@ void LookOut::clearImages(void) {
     // Provided we have any images allocated.
     if(images.size() != 0) {
         for (int im = 0; im < images.size(); ++im) {
+            HUDImage* image = images[im];
             // Inactivate this image, thus releasing OpenGL server resources.
-            images[im]->inactivate();
+            image->inactivate();
             // Then free the heap memory.
-            delete images[im];
+            delete image;
             }
+        // Empty the list.    
+        images.clear();
         }
     }
