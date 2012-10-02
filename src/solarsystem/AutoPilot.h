@@ -108,7 +108,7 @@ class AutoPilot {
          *
          * \return a list of descriptive strings
          */
-        const std::vector<const std::string>& getDescription(void) const;
+        const std::vector<std::string>& getDescription(void) const;
 
         /**
          * \brief Obtain the images for the nearest Lookout.
@@ -120,7 +120,7 @@ class AutoPilot {
          *
          * \return a list of image pointers
          */
-        const std::vector<const HUDImage*>& getImages(void) const;
+        const std::vector<HUDImage*>& getImages(void) const;
 
         bool hasDescriptionChanged(void) const;
 
@@ -170,6 +170,7 @@ class AutoPilot {
         // The current set of descriptive strings.
         std::vector<std::string> current_description;
 
+        // The current set of HUD displayable images.
         std::vector<HUDImage*> current_images;
 
         // A flag having the value of one of the path_stage enumerants that
