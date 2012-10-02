@@ -42,26 +42,22 @@ void LookOut::addToDescription(const std::string& description) {
     }
 
 void LookOut::addImageResource(std::string resourceName) {
-    clearImage();
-
-    image = new HUDImage(resourceName, 0, 0);
+    images.push_back(new HUDImage(resourceName, 0, 0));
     }
 
-const std::vector<const HUDImage*> LookOut::getImages(void) const {
+const std::vector<HUDImage*> LookOut::getImages(void) const {
     return images;
     }
 
 void LookOut::clearImages(void) {
-    // Provided we have any images allocated.
-    if(images.size() != 0) {
-        for (int im = 0; im < images.size(); ++im) {
-            HUDImage* image = images[im];
-            // Inactivate this image, thus releasing OpenGL server resources.
-            image->inactivate();
-            // Then free the heap memory.
-            delete image;
-            }
-        // Empty the list.    
-        images.clear();
+    // Provided we any images allocated.
+    for (int im = 0; im < images.size(); ++im) {
+        HUDImage* image = images[im];
+        // Inactivate this image, thus releasing OpenGL server resources.
+        image->inactivate();
+        // Then free the heap memory.
+        delete image;
         }
+    // Empty the list.    
+    images.clear();
     }
