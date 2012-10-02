@@ -211,7 +211,9 @@ void Simulation::step(void) {
         if(pilot.hasDescriptionChanged() == true) {
             // Clean up any prior panel contents.
             north_panel.erase();
+            west_panel.erase();
             north_panel.setLoad(HUDFlowLayout::FIRST);
+            west_panel.setLoad(HUDFlowLayout::FIRST);
 
             // Then put new content lines, derived from the
             // current position in the tour, into the panel.
@@ -222,7 +224,11 @@ void Simulation::step(void) {
                 /// TODO - is this a source of memory leak???
                 north_panel.addContent(new HUDTextLine(msg.size(), overlay.getFont(), msg, 0, 2));
                 }
-            north_panel.addContent();
+               
+            const std::vector<HUDImage*> images = pilot.getImages();   
+            for(int im = 0; im < images.size(); ++im) {    
+                west_panel.addContent(images[im]);
+                }                               
 
             north_panel.activate();
             }
