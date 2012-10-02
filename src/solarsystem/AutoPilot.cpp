@@ -34,7 +34,6 @@ const float AutoPilot::PATH_EARLY_BOUNDARY(0.1f);
 const float AutoPilot::PATH_LATE_BOUNDARY(0.9f);
 
 AutoPilot::AutoPilot(void) {
-    image = NULL;
     lambda = Path::LAMBDA_LOWER_BOUND;
     current_delta_lambda = 0.0f;
     active_flag = false;
@@ -162,8 +161,8 @@ const std::vector<std::string>& AutoPilot::getDescription(void) const {
     return current_description;
     }
 
-const HUDImage* getImage(void) const {
-    return image;
+const std::vector<HUDImage*> getImages(void) const {
+    return current_images;
     }
 
 bool AutoPilot::hasDescriptionChanged(void) const {
