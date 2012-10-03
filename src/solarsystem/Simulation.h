@@ -337,6 +337,8 @@ class Simulation : public Renderable {
         /// Associative array of names to image pointers
         /// for pulse profiles to display on the HUD.
         std::map<std::string, HUDItem*> pulse_profiles;
+        
+        std::vector<HUDTextLine*> text_lines;
 
         /// Pointer to the scrolling marquee.
         HUDTextLineScroll* version_text;
@@ -371,6 +373,8 @@ class Simulation : public Renderable {
         std::vector<std::string> tokenise(std::string input, char delimiter) const;
 
         std::vector<std::string> parseLine(std::string input) const;
+        
+        void clearTextLines(void);
     };
 
 /**
