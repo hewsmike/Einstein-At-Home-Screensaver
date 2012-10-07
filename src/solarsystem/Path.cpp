@@ -60,15 +60,27 @@ float Path::curveLength(Path::component comp) const {
     return ret_val;
     }
 
-void Path::setStartMessage(const std::vector<std::string>& message) {
-    for(unsigned int index = 0; index < message.size(); ++index) {
-        start_msg.push_back(message[index]);
+void Path::setStartMessages(const std::vector<std::string>& messages) {
+    for(unsigned int index = 0; index < messages.size(); ++index) {
+        start_msg.push_back(messages[index]);
         }
     }
 
-void Path::setFinishMessage(const std::vector<std::string>& message) {
-    for(unsigned int index = 0; index < message.size(); ++index) {
-        finish_msg.push_back(message[index]);
+void Path::setFinishMessages(const std::vector<std::string>& messages) {
+    for(unsigned int index = 0; index < messages.size(); ++index) {
+        finish_msg.push_back(messages[index]);
+        }
+    }
+
+void Path::setStartImages(const std::vector<HUDImage*>& images) {
+    for(unsigned int index = 0; index < images.size(); ++index) {
+        start_images.push_back(images[index]);
+        }
+    }
+
+void Path::setFinishImages(const std::vector<HUDImage*>& images) {
+    for(unsigned int index = 0; index < images.size(); ++index) {
+        finish_images.push_back(images[index]);
         }
     }
 
@@ -84,10 +96,18 @@ CameraState Path::value(float lambda) const {
     return CameraState(where.value(lambda), look_at.value(lambda), up_dir.value(lambda));
     }
 
-const std::vector<std::string>& Path::getStartMessage(void) const {
+const std::vector<std::string>& Path::getStartMessages(void) const {
     return start_msg;
     }
 
-const std::vector<std::string>& Path::getFinishMessage(void) const {
+const std::vector<std::string>& Path::getFinishMessages(void) const {
     return finish_msg;
+    }
+
+const std::vector<HUDImage*>& Path::getStartImages(void) const {
+    return start_images;
+    }
+
+const std::vector<HUDImage*>& Path::getFinishImages(void) const {
+    return finish_images;
     }

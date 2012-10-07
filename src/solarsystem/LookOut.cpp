@@ -51,13 +51,13 @@ const std::vector<HUDImage*> LookOut::getImages(void) const {
 
 void LookOut::clearImages(void) {
     // Provided we any images allocated.
-    for (int im = 0; im < images.size(); ++im) {
+    for(unsigned int im = 0; im < images.size(); ++im) {
         HUDImage* image = images[im];
         // Inactivate this image, thus releasing OpenGL server resources.
         image->inactivate();
         // Then free the heap memory.
         delete image;
         }
-    // Empty the list.    
+    // Empty the list.
     images.clear();
     }

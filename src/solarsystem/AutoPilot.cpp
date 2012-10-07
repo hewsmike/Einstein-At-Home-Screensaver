@@ -116,8 +116,11 @@ CameraState AutoPilot::viewState(void) {
             // Yes, thus set the stage as LATE.
             path_stage_flag = LATE;
             // Change the current description to that of the upcoming Lookout.
-            current_description = current_path.getFinishMessage();
-            image =
+            for(unsigned int ms = 0; ms < current_path.getFinishMessages().size(); ++ms) {
+                current_description.push_back(current_path.getFinishMessages()[ms]);
+                }
+
+            //current_images.push_back(current_path.getFinishImages());
             // Flag that the description has therefore altered.
             description_change_flag = true;
             }
@@ -143,8 +146,7 @@ CameraState AutoPilot::viewState(void) {
                 path_stage_flag = MIDDLE;
                 // Clear the descriptions.
                 current_description.clear();
-
-                image = NULL;
+                current_images.clear();
                 // Flag that the description has therefore altered.
                 description_change_flag = true;
                 }
@@ -161,7 +163,7 @@ const std::vector<std::string>& AutoPilot::getDescription(void) const {
     return current_description;
     }
 
-const std::vector<HUDImage*> getImages(void) const {
+const std::vector<HUDImage*>& AutoPilot::getImages(void) const {
     return current_images;
     }
 

@@ -224,12 +224,13 @@ void Simulation::step(void) {
                 /// TODO - is this a source of memory leak???
                 north_panel.addContent(new HUDTextLine(msg.size(), overlay.getFont(), msg, 0, 2));
                 }
-               
-            const std::vector<HUDImage*> images = pilot.getImages();   
-            for(int im = 0; im < images.size(); ++im) {    
-                west_panel.addContent(images[im]);
-                }                               
 
+            const std::vector<HUDImage*> images = pilot.getImages();
+            for(int im = 0; im < images.size(); ++im) {
+                west_panel.addContent(images[im]);
+                }
+
+            west_panel.activate();
             north_panel.activate();
             }
         }

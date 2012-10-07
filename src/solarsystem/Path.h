@@ -26,6 +26,7 @@
 
 #include "CameraState.h"
 #include "Curve.h"
+#include "HUDImage.h"
 
 /**
  * \addtogroup solarsystem Solarsystem
@@ -110,28 +111,56 @@ class Path {
          *
          * \param message : the set of strings
          */
-        void setStartMessage(const std::vector<std::string>& message);
+        void setStartMessages(const std::vector<std::string>& message);
 
         /**
          * \brief Specify a set of descriptive strings for the finish of the path
          *
          * \param message : the set of strings
          */
-        void setFinishMessage(const std::vector<std::string>& message);
+        void setFinishMessages(const std::vector<std::string>& message);
+
+        /**
+         * \brief Specify a set of images for the start of the path
+         *
+         * \param message : the set of images
+         */
+        void setStartImages(const std::vector<HUDImage*>& message);
+
+        /**
+         * \brief Specify a set of images for the finish of the path
+         *
+         * \param message : the set of images
+         */
+        void setFinishImages(const std::vector<HUDImage*>& message);
 
         /**
          * \brief Obtain the set of descriptive strings for the start of the path
          *
          * \return the set of strings
          */
-        const std::vector<std::string>& getStartMessage(void) const;
+        const std::vector<std::string>& getStartMessages(void) const;
 
         /**
          * \brief Obtain the set of descriptive strings for the finish of the path
          *
          * \return the set of strings
          */
-        const std::vector<std::string>& getFinishMessage(void) const;
+        const std::vector<std::string>& getFinishMessages(void) const;
+
+        /**
+         * \brief Obtain the set of images for the start of the path
+         *
+         * \return the set of images
+         */
+        const std::vector<HUDImage*>& getStartImages(void) const;
+
+        /**
+         * \brief Obtain the set of images for the finish of the path
+         *
+         * \return the set of images
+         */
+        const std::vector<HUDImage*>& getFinishImages(void) const;
 
         /// Evaluation of the curves is limited in their parameter.
         static const float LAMBDA_LOWER_BOUND;
@@ -146,6 +175,10 @@ class Path {
         /// A set of descriptive strings for each end of the path.
         std::vector<std::string> start_msg;
         std::vector<std::string> finish_msg;
+
+        /// A set of descriptive strings for each end of the path.
+        std::vector<HUDImage*> start_images;
+        std::vector<HUDImage*> finish_images;
     };
 
 /**
