@@ -42,6 +42,7 @@
 #include "HUDImage.h"
 #include "HUDTextLine.h"
 #include "HUDTextLineScroll.h"
+#include "PtrHolder.h"
 #include "Pulsar.h"
 #include "PulsarEAH.h"
 #include "PulsarsEAH.h"
@@ -77,6 +78,7 @@
  * \see HUDFlowLayout
  * \see HUDImage
  * \see HUDTextLineScroll
+ * \see PtrHolder
  * \see Pulsars
  * \see PulsarsEAH
  * \see Renderable
@@ -337,12 +339,11 @@ class Simulation : public Renderable {
         /// Associative array of names to image pointers
         /// for pulse profiles to display on the HUD.
         std::map<std::string, HUDItem*> pulse_profiles;
-        
-        std::vector<HUDTextLine*> text_lines;
 
-        /// Pointer to the scrolling marquee.
+        PtrHolder text_lines;
+
+        /// Pointer to the scrolling marquee text.
         HUDTextLineScroll* version_text;
-        HUDTextLine* tour_text;
 
         /// The overall HUD layout and it's component panels.
         HUDBorderLayout overlay;
@@ -373,8 +374,6 @@ class Simulation : public Renderable {
         std::vector<std::string> tokenise(std::string input, char delimiter) const;
 
         std::vector<std::string> parseLine(std::string input) const;
-        
-        void clearTextLines(void);
     };
 
 /**

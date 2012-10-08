@@ -18,33 +18,66 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "LookOut.h"
+#ifndef PTRHOLDER_H_
+#define PTRHOLDER_H_
 
-LookOut::LookOut() {
-    }
+#include "framework.h"
 
-LookOut::LookOut(const Vector3D& position,
-                 const Vector3D& focus,
-                 const Vector3D& orientation) :
-                    CameraState(position, focus, orientation) {
-    }
+#include <vector>
 
-LookOut::~LookOut() {
-    clearImages();
-    }
+/**
+ * \addtogroup solarsystem Solarsystem
+ * @{
+ */
 
-const std::vector<std::string>& LookOut::getDescription(void) const {
-    return desc;
-    }
+/**
+ * \brief %Solarsystem Generic container for pointers to heap objects
+ * of Renderable type.
+ *
+ *      This class encapsulates a variable length array of pointers
+ * to heap based objects of Renderable type. Ensures proper cleanup
+ * of both OpenGL and heap resources.
+ *
+ * \author Mike Hewson\n
+ */
 
-void LookOut::addToDescription(const std::string& description) {
-    desc.push_back(description);
-    }
+class PtrHolder {
+    public:
+        /**
+         * \brief Constructor
+         */
+        PtrHolder(void);
 
-void LookOut::addImageResource(std::string resourceName) {
-    images.add(new HUDImage(resourceName, 0, 0));
-    }
+        /**
+         * \brief Destructor
+         */
+        virtual ~PtrHolder();
 
-const PtrHolder& LookOut::getImages(void) const {
-    return images;
-    }
+        /**
+         * \brief Add a pointer to a heap object.
+         */
+        void add(const Renderable* pointer);
+
+        /**
+         * \brief Empty the container of pointers while releasing
+         * OpenGL resources and heap memory.
+         */
+        void clear(void);
+
+        /**
+         * \brief Obtain access to the pointer listing.
+         *
+         * \return a reference to the pointer listing.
+         */
+        const std::vector<Renderable*>& pointers(void);
+
+    private:
+        // The pointer listing.
+        std::vector<Renderable*> ptr_list;
+    };
+
+/**
+ * @}
+ */
+
+#endif /* PTRHOLDER_H_*/

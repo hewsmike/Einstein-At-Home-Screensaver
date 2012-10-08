@@ -72,16 +72,12 @@ void Path::setFinishMessages(const std::vector<std::string>& messages) {
         }
     }
 
-void Path::setStartImages(const std::vector<HUDImage*>& images) {
-    for(unsigned int index = 0; index < images.size(); ++index) {
-        start_images.push_back(images[index]);
-        }
+void Path::setStartImages(const PtrHolder& images) {
+    start_images = images;
     }
 
-void Path::setFinishImages(const std::vector<HUDImage*>& images) {
-    for(unsigned int index = 0; index < images.size(); ++index) {
-        finish_images.push_back(images[index]);
-        }
+void Path::setFinishImages(const PtrHolder& images) {
+    finish_images = images;
     }
 
 CameraState Path::value(float lambda) const {
@@ -104,10 +100,10 @@ const std::vector<std::string>& Path::getFinishMessages(void) const {
     return finish_msg;
     }
 
-const std::vector<HUDImage*>& Path::getStartImages(void) const {
+const PtrHolder& Path::getStartImages(void) const {
     return start_images;
     }
 
-const std::vector<HUDImage*>& Path::getFinishImages(void) const {
+const PtrHolder& Path::getFinishImages(void) const {
     return finish_images;
     }

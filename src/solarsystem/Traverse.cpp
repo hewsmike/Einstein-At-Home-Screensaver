@@ -26,6 +26,7 @@
 
 #include "Curve.h"
 #include "ErrorHandler.h"
+#include "PtrHolder.h"
 
 unsigned int Traverse::MIN_LOOKOUTS(2);
 
@@ -111,10 +112,12 @@ Path Traverse::makePath() {
     Path ret_val(pos, focus, orient);
 
     // Retrieve the LookOut descriptions too.
-    const std::vector<std::string>& start_msg = cam_states.at(start_lookout).getDescription();
-    ret_val.setStartMessages(start_msg);
-    const std::vector<std::string>& finish_msg = cam_states.at(finish_lookout).getDescription();
-    ret_val.setFinishMessages(finish_msg);
+    ret_val.setStartMessages(cam_states.at(start_lookout).getDescription());
+    ret_val.setFinishMessages(cam_states.at(finish_lookout).getDescription());
+
+    // Plus the images
+    ret_val.setStartImages(start_lookout.getImages());
+    ret_val.setFinishImages(finish_lookout.getImages());
 
     return ret_val;
     }

@@ -198,15 +198,14 @@ Simulation::~Simulation() {
     }
 
 void Simulation::step(void) {
-    /// TODO - demo code only, needs proper ephemeris model.
     // Is the autopilot inactive?
     if(!pilot.isActive()) {
-        // Yes, then evolve the user's craft's mechanics
+        // No, then evolve the user's craft's mechanics
         // with knowledge of the day within the year.
         flyboy.step(day366);
         }
     else {
-        // No, the autopilot is operating so check for any
+        // Yes, the autopilot is operating so check for any
         // content change of the tour's descriptive text.
         if(pilot.hasDescriptionChanged() == true) {
             // Clean up any prior panel contents.
@@ -215,17 +214,21 @@ void Simulation::step(void) {
             north_panel.setLoad(HUDFlowLayout::FIRST);
             west_panel.setLoad(HUDFlowLayout::FIRST);
 
-            // Then put new content lines, derived from the
-            // current position in the tour, into the panel.
+            // Then put new content lines, if any, into the panel.
+            // Derived according to the current position in the tour.
             const std::vector<std::string>& messages = pilot.getDescription();
             for(unsigned int index = 0; index < messages.size(); ++index) {
                 /// TODO - currently entering in reverse order ( see HUDFlowLayout::allocateItemBases() LAST case ).
                 std::string msg = messages.at(messages.size() - index - 1);
                 /// TODO - is this a source of memory leak???
-                north_panel.addContent(new HUDTextLine(msg.size(), overlay.getFont(), msg, 0, 2));
+                HUDTextLine* line = new HUDTextLine(msg.size(), overlay.getFont(), msg, 0, 2);
+                text_lines.add(line);
+                north_panel.addContent(line);
                 }
 
-            const std::vector<HUDImage*> images = pilot.getImages();
+            // Then put new images, if any, into the panel.
+            // Derived according to the current position in the tour.
+            const std::vector<HUDImage*>& images = pilot.getImages();
             for(int im = 0; im < images.size(); ++im) {
                 west_panel.addContent(images[im]);
                 }
@@ -252,6 +255,7 @@ void Simulation::step(void) {
     // Set the Earth's hour angle based upon the above.
     earth_hour_angle = (hour24 + min60/60.0f) * 15.0f;
 
+    /// TODO - demo code only, needs proper ephemeris model.
     // This is a fudge for demo purposes, and makes the
     // Sun orbit far quicker and out of sync with Earth
     // rotations. Time increment in 1/20th's of a day.

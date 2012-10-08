@@ -18,33 +18,34 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "LookOut.h"
+#include "PtrHolder.h"
 
-LookOut::LookOut() {
+PtrHolder::PtrHolder(void) {
     }
 
-LookOut::LookOut(const Vector3D& position,
-                 const Vector3D& focus,
-                 const Vector3D& orientation) :
-                    CameraState(position, focus, orientation) {
+PtrHolder::~PtrHolder() {
+    clear();
     }
 
-LookOut::~LookOut() {
-    clearImages();
+void PtrHolder::add(const Renderable* pointer) {
+    ptr_list.push_back(pointer);
     }
 
-const std::vector<std::string>& LookOut::getDescription(void) const {
-    return desc;
+void PtrHolder::clear(void) {
+    // Provided we have any pointers allocated.
+    for(unsigned int index = 0; index < ptr_list.size(); ++index) {
+        Renderable* ptr = ptr_list[index];
+        if(ptr != NULL) {
+            // Free up any OpenGL resources.
+            ptr->inactivate();
+            // Free the heap memory.
+            delete ptr;
+            }
+        }
+    // Empty the list.
+    ptr_list.clear();
     }
 
-void LookOut::addToDescription(const std::string& description) {
-    desc.push_back(description);
-    }
-
-void LookOut::addImageResource(std::string resourceName) {
-    images.add(new HUDImage(resourceName, 0, 0));
-    }
-
-const PtrHolder& LookOut::getImages(void) const {
-    return images;
+const std::vector<Renderable*>& PtrHolder::pointers(void) {
+    return ptr_list;
     }

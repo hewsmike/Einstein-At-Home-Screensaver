@@ -26,6 +26,7 @@
 #include "CameraState.h"
 #include "HUDImage.h"
 #include "Path.h"
+#include "PtrHolder.h"
 #include "Traversable.h"
 #include "Traverse.h"
 
@@ -106,7 +107,7 @@ class AutoPilot {
          * a LookOut a description is available. In the midsection of a
          * Path between LookOut visits no description is available.
          *
-         * \return a list of descriptive strings
+         * \return a reference to a list of descriptive strings
          */
         const std::vector<std::string>& getDescription(void) const;
 
@@ -118,9 +119,9 @@ class AutoPilot {
          * available. In the midsection of a Path between LookOut visits no
          * image is available.
          *
-         * \return a list of image pointers
+         * \return a reference to a list of image pointers
          */
-        const std::vector<HUDImage*>& getImages(void) const;
+        const PtrHolder& getImages(void) const;
 
         bool hasDescriptionChanged(void) const;
 
@@ -171,7 +172,7 @@ class AutoPilot {
         std::vector<std::string> current_description;
 
         // The current set of HUD displayable images.
-        std::vector<HUDImage*> current_images;
+        PtrHolder current_images;
 
         // A flag having the value of one of the path_stage enumerants that
         // indicate the stage of the current Path that we are in.

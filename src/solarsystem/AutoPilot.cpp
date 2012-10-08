@@ -119,8 +119,8 @@ CameraState AutoPilot::viewState(void) {
             for(unsigned int ms = 0; ms < current_path.getFinishMessages().size(); ++ms) {
                 current_description.push_back(current_path.getFinishMessages()[ms]);
                 }
-
-            //current_images.push_back(current_path.getFinishImages());
+            // Get the image set.
+            current_images = current_path.getFinishImages();
             // Flag that the description has therefore altered.
             description_change_flag = true;
             }

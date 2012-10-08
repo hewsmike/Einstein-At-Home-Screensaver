@@ -27,6 +27,7 @@
 #include "CameraState.h"
 #include "Curve.h"
 #include "HUDImage.h"
+#include "PtrHolder.h"
 
 /**
  * \addtogroup solarsystem Solarsystem
@@ -125,14 +126,14 @@ class Path {
          *
          * \param message : the set of images
          */
-        void setStartImages(const std::vector<HUDImage*>& message);
+        void setStartImages(const PtrHolder& message);
 
         /**
          * \brief Specify a set of images for the finish of the path
          *
          * \param message : the set of images
          */
-        void setFinishImages(const std::vector<HUDImage*>& message);
+        void setFinishImages(const PtrHolder& message);
 
         /**
          * \brief Obtain the set of descriptive strings for the start of the path
@@ -153,14 +154,14 @@ class Path {
          *
          * \return the set of images
          */
-        const std::vector<HUDImage*>& getStartImages(void) const;
+        const PtrHolder& getStartImages(void) const;
 
         /**
          * \brief Obtain the set of images for the finish of the path
          *
          * \return the set of images
          */
-        const std::vector<HUDImage*>& getFinishImages(void) const;
+        const PtrHolder& getFinishImages(void) const;
 
         /// Evaluation of the curves is limited in their parameter.
         static const float LAMBDA_LOWER_BOUND;
@@ -176,9 +177,9 @@ class Path {
         std::vector<std::string> start_msg;
         std::vector<std::string> finish_msg;
 
-        /// A set of descriptive strings for each end of the path.
-        std::vector<HUDImage*> start_images;
-        std::vector<HUDImage*> finish_images;
+        /// A set of images for each end of the path.
+        PtrHolder start_images;
+        PtrHolder finish_images;
     };
 
 /**
