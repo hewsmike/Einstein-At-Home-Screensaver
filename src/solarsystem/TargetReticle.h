@@ -40,12 +40,26 @@ class TargetReticle : public Renderable {
         TargetReticle(void);
 
         /**
-         * \brief Destructor
+         * \brief Destructor.
          */
         virtual ~TargetReticle();
 
-    private:
+        void reset(void);
 
+    protected:
+        /// These three routines below satisfy the Renderable interface.
+
+        /// Provide OpenGL code to prepare for rendering.
+        virtual void prepare(SolarSystemGlobals::render_quality rq);
+
+        /// Provide OpenGL code to release any resources used.
+        virtual void release(void);
+
+        /// Provide OpenGL code to render the object.
+        virtual void render(void);
+
+    private:
+        unsigned int phase;
     };
 
 /**

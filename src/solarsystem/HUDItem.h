@@ -29,7 +29,7 @@
  */
 
 /**
- * \brief Base type for all HUD classes.
+ * \brief Base type for most HUD classes.
  *
  *      Especially note that the option exists of storing a pointer to
  * a HUDContainer type. This is used, if non-NULL, in order to alert
