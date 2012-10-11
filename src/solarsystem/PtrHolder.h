@@ -22,6 +22,7 @@
 #define PTRHOLDER_H_
 
 #include "framework.h"
+#include "Renderable.h"
 
 #include <vector>
 
@@ -56,7 +57,7 @@ class PtrHolder {
         /**
          * \brief Add a pointer to a heap object.
          */
-        void add(const Renderable* pointer);
+        void add(Renderable* pointer);
 
         /**
          * \brief Empty the container of pointers while releasing

@@ -27,7 +27,7 @@ PtrHolder::~PtrHolder() {
     clear();
     }
 
-void PtrHolder::add(const Renderable* pointer) {
+void PtrHolder::add(Renderable* pointer) {
     ptr_list.push_back(pointer);
     }
 

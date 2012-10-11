@@ -30,7 +30,6 @@ LookOut::LookOut(const Vector3D& position,
     }
 
 LookOut::~LookOut() {
-    clearImages();
     }
 
 const std::vector<std::string>& LookOut::getDescription(void) const {
