@@ -228,7 +228,8 @@ void Simulation::step(void) {
 
             // Then put new images, if any, into the panel.
             // Derived according to the current position in the tour.
-            const std::vector<Renderable*> images = pilot.getImages().pointers();
+            // Cast from base ( Renderable ) to derived ( HUDContent ) class.
+            const static_cast<std::vector<HUDContent*> >& images = pilot.getImages().pointers();
             for(unsigned int im = 0; im < images.size(); ++im) {
                 west_panel.addContent(images[im]);
                 }
