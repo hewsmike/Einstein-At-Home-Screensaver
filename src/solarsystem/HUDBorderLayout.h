@@ -47,8 +47,11 @@
  * populated by a single item of HUDContainer type, or not at all : in
  * which case the particular panel is deemed to have no dimensions.
  *      The central screen region enclosed by the panels is un-named and
- * un-addressed, so by default has whatever space remains after
- * allocation to the panels.
+ * un-addressed, but by default has whatever space remains after
+ * allocation to the other panels. Specifically it's dimensions are not able
+ * to be directly set, do not contribute to determining the entire
+ * container's  dimensions, and could indeed be of zero size if
+ * space is insufficient.
  *      Notably the panel dimensions are dynamic, in that the addition or
  * removal or any other resizing of the containers within ( ie. the
  * HUDContainers allocated to North/South/East/West ) causes a
