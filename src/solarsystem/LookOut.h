@@ -26,7 +26,6 @@
 
 #include "CameraState.h"
 #include "HUDImage.h"
-#include "PtrHolder.h"
 
 /**
  * \addtogroup solarsystem Solarsystem
@@ -80,25 +79,25 @@ class LookOut : public CameraState {
         const std::vector<std::string>& getDescription(void) const;
 
         /**
-         * \brief Add an image from resource
+         * \brief Add an image resource name
          *
          * \param a string denoting the resource
          */
-        void addImageResource(std::string resourceName);
+        void addImageResource(const std::string& resourceName);
 
         /**
-         * \brief Obtain the image for this camera state
+         * \brief Obtain the image resource names for this camera state
          *
-         * \return a pointer a listing of HUDImages, this may be empty !!
+         * \return a listing of resource names, which may be empty.
          */
-        const PtrHolder& getImages(void) const;
+        const std::vector<std::string>& getImageResourceNames(void) const;
 
     private:
         // The set of descriptive strings for this LookOut
         std::vector<std::string> desc;
 
-        // The image listing
-        PtrHolder images;
+        // The image name listing
+        std::vector<std::string> images;
     };
 
 /**

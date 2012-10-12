@@ -72,11 +72,11 @@ void Path::setFinishMessages(const std::vector<std::string>& messages) {
         }
     }
 
-void Path::setStartImages(const PtrHolder& images) {
+void Path::setStartImageResourceNames(const std::vector<std::string>& images) {
     start_images = images;
     }
 
-void Path::setFinishImages(const PtrHolder& images) {
+void Path::setFinishImageResourceNames(const std::vector<std::string>& images) {
     finish_images = images;
     }
 
@@ -100,10 +100,10 @@ const std::vector<std::string>& Path::getFinishMessages(void) const {
     return finish_msg;
     }
 
-const PtrHolder& Path::getStartImages(void) const {
+const std::vector<std::string>& Path::getStartImageResourceNames(void) const {
     return start_images;
     }
 
-const PtrHolder& Path::getFinishImages(void) const {
+const std::vector<std::string>& Path::getFinishImageResourceNames(void) const {
     return finish_images;
     }

@@ -163,7 +163,7 @@ const std::vector<std::string>& AutoPilot::getDescription(void) const {
     return current_description;
     }
 
-const PtrHolder& AutoPilot::getImages(void) const {
+const std::vector<std::string>& AutoPilot::getImageResourceNames(void) const {
     return current_images;
     }
 

@@ -27,7 +27,6 @@
 #include "CameraState.h"
 #include "Curve.h"
 #include "HUDImage.h"
-#include "PtrHolder.h"
 
 /**
  * \addtogroup solarsystem Solarsystem
@@ -122,18 +121,18 @@ class Path {
         void setFinishMessages(const std::vector<std::string>& message);
 
         /**
-         * \brief Specify a set of images for the start of the path
+         * \brief Specify a set of image resource names for the start of the path
          *
-         * \param message : the set of images
+         * \param images : the list of image resource names
          */
-        void setStartImages(const PtrHolder& message);
+        void setStartImages(const std::vector<std::string>& images);
 
         /**
-         * \brief Specify a set of images for the finish of the path
+         * \brief Specify a set of image resource names for the finish of the path
          *
-         * \param message : the set of images
+         * \param images : the list of image resource names
          */
-        void setFinishImages(const PtrHolder& message);
+        void setFinishImages(const std::vector<std::string>& message);
 
         /**
          * \brief Obtain the set of descriptive strings for the start of the path
@@ -150,20 +149,20 @@ class Path {
         const std::vector<std::string>& getFinishMessages(void) const;
 
         /**
-         * \brief Obtain the set of images for the start of the path
+         * \brief Obtain the set of image resource names for the start of the path
          *
-         * \return the set of images
+         * \return the list of image resource names
          */
-        const PtrHolder& getStartImages(void) const;
+        const std::vector<std::string>& getStartImageResourceNames(void) const;
 
         /**
-         * \brief Obtain the set of images for the finish of the path
+         * \brief Obtain the set of image resource names for the finish of the path
          *
-         * \return the set of images
+         * \return the list of image resource names
          */
-        const PtrHolder& getFinishImages(void) const;
+        const std::vector<std::string>& getFinishImageResourceNames(void) const;
 
-        /// Evaluation of the curves is limited in their parameter.
+        /// Evaluation of curves uses the 'lambda' parameter and needs limits.
         static const float LAMBDA_LOWER_BOUND;
         static const float LAMBDA_UPPER_BOUND;
 
@@ -177,9 +176,9 @@ class Path {
         std::vector<std::string> start_msg;
         std::vector<std::string> finish_msg;
 
-        /// A set of images for each end of the path.
-        PtrHolder start_images;
-        PtrHolder finish_images;
+        /// A set of image resource names for each end of the path.
+        std::vector<std::string> start_images;
+        std::vector<std::string> finish_images;
     };
 
 /**

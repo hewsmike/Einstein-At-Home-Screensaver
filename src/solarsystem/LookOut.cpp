@@ -32,18 +32,18 @@ LookOut::LookOut(const Vector3D& position,
 LookOut::~LookOut() {
     }
 
-const std::vector<std::string>& LookOut::getDescription(void) const {
-    return desc;
-    }
-
 void LookOut::addToDescription(const std::string& description) {
     desc.push_back(description);
     }
 
-void LookOut::addImageResource(std::string resourceName) {
-    images.add(new HUDImage(resourceName, 0, 0));
+const std::vector<std::string>& LookOut::getDescription(void) const {
+    return desc;
     }
 
-const PtrHolder& LookOut::getImages(void) const {
+void LookOut::addImageResource(const std::string& resourceName) {
+    images.push_back(resourceName);
+    }
+
+const std::vector<std::string>& LookOut::getImageResourceNames(void) const {
     return images;
     }

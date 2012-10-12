@@ -26,7 +26,6 @@
 
 #include "Curve.h"
 #include "ErrorHandler.h"
-#include "PtrHolder.h"
 
 unsigned int Traverse::MIN_LOOKOUTS(2);
 
@@ -116,8 +115,8 @@ Path Traverse::makePath() {
     ret_val.setFinishMessages(cam_states.at(finish_lookout).getDescription());
 
     // Plus the images
-    ret_val.setStartImages(start_lookout.getImages());
-    ret_val.setFinishImages(finish_lookout.getImages());
+    ret_val.setStartImages(start_lookout.getImageResourceNames());
+    ret_val.setFinishImages(finish_lookout.getImageResourceNames());
 
     return ret_val;
     }

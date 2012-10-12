@@ -26,7 +26,6 @@
 #include "CameraState.h"
 #include "HUDImage.h"
 #include "Path.h"
-#include "PtrHolder.h"
 #include "Traversable.h"
 #include "Traverse.h"
 
@@ -112,16 +111,16 @@ class AutoPilot {
         const std::vector<std::string>& getDescription(void) const;
 
         /**
-         * \brief Obtain the images for the nearest Lookout.
+         * \brief Obtain the image resource names for the nearest Lookout.
          *
          *      Along each Path in the Traverse the available images change.
          * So just prior to, and just after, visiting a LookOut an image is
          * available. In the midsection of a Path between LookOut visits no
          * image is available.
          *
-         * \return a reference to a list of image pointers
+         * \return a reference to a list of image resource names
          */
-        const PtrHolder& getImages(void) const;
+        const std::vector<std::string>& getImageResourceNames(void) const;
 
         bool hasDescriptionChanged(void) const;
 
@@ -171,8 +170,8 @@ class AutoPilot {
         // The current set of descriptive strings.
         std::vector<std::string> current_description;
 
-        // The current set of HUD displayable images.
-        PtrHolder current_images;
+        // The current set of HUD displayable image resource names.
+        std::vector<std::string> current_images;
 
         // A flag having the value of one of the path_stage enumerants that
         // indicate the stage of the current Path that we are in.
