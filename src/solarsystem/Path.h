@@ -125,14 +125,14 @@ class Path {
          *
          * \param images : the list of image resource names
          */
-        void setStartImages(const std::vector<std::string>& images);
+        void setStartImageResourceNames(const std::vector<std::string>& images);
 
         /**
          * \brief Specify a set of image resource names for the finish of the path
          *
          * \param images : the list of image resource names
          */
-        void setFinishImages(const std::vector<std::string>& message);
+        void setFinishImageResourceNames(const std::vector<std::string>& message);
 
         /**
          * \brief Obtain the set of descriptive strings for the start of the path

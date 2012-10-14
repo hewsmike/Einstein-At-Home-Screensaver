@@ -115,8 +115,8 @@ Path Traverse::makePath() {
     ret_val.setFinishMessages(cam_states.at(finish_lookout).getDescription());
 
     // Plus the images
-    ret_val.setStartImages(start_lookout.getImageResourceNames());
-    ret_val.setFinishImages(finish_lookout.getImageResourceNames());
+    ret_val.setStartImageResourceNames(cam_states.at(start_lookout).getImageResourceNames());
+    ret_val.setFinishImageResourceNames(cam_states.at(finish_lookout).getImageResourceNames());
 
     return ret_val;
     }

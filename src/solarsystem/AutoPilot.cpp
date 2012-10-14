@@ -120,7 +120,7 @@ CameraState AutoPilot::viewState(void) {
                 current_description.push_back(current_path.getFinishMessages()[ms]);
                 }
             // Get the image set.
-            current_images = current_path.getFinishImages();
+            current_images = current_path.getFinishImageResourceNames();
             // Flag that the description has therefore altered.
             description_change_flag = true;
             }

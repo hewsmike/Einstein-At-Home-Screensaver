@@ -195,6 +195,8 @@ Simulation::~Simulation() {
     if(version_text != NULL) {
         delete version_text;
         }
+    clearTextLines();
+    clearImages();
     }
 
 void Simulation::step(void) {
@@ -208,6 +210,8 @@ void Simulation::step(void) {
         // Yes, the autopilot is operating so check for any
         // content change of the tour's descriptive text.
         if(pilot.hasDescriptionChanged() == true) {
+            clearTextLines();
+            clearImages();
             // Clean up any prior panel contents.
             north_panel.erase();
             west_panel.erase();
@@ -220,18 +224,20 @@ void Simulation::step(void) {
             for(unsigned int index = 0; index < messages.size(); ++index) {
                 /// TODO - currently entering in reverse order ( see HUDFlowLayout::allocateItemBases() LAST case ).
                 std::string msg = messages.at(messages.size() - index - 1);
-                /// TODO - is this a source of memory leak???
                 HUDTextLine* line = new HUDTextLine(msg.size(), overlay.getFont(), msg, 0, 2);
-                text_lines.add(line);
+                text_lines.push_back(line);
                 north_panel.addContent(line);
                 }
 
             // Then put new images, if any, into the panel.
             // Derived according to the current position in the tour.
             // Cast from base ( Renderable ) to derived ( HUDContent ) class.
-            static_cast<std::vector<HUDContent*> >(images) = pilot.getImages().pointers();
-            for(unsigned int im = 0; im < images.size(); ++im) {
-                west_panel.addContent(images[im]);
+            lookout_images.clear();
+            const std::vector<std::string>& image_names = pilot.getImageResourceNames();
+            for(unsigned int im = 0; im < image_names.size(); ++im) {
+                HUDImage* image = new HUDImage(image_names[im], 10, 10);
+                lookout_images.push_back(image);
+                west_panel.addContent(image);
                 }
 
             west_panel.activate();
@@ -422,6 +428,8 @@ void Simulation::release(void) {
     if(version_text != NULL) {
         delete version_text;
         }
+    clearTextLines();
+    clearImages();
     }
 
 void Simulation::render(void) {
@@ -3018,4 +3026,24 @@ std::vector<std::string> Simulation::parseLine(std::string input) const {
     ret_val.push_back(splits.at(splits.size() - 1));
 
     return ret_val;
+    }
+
+void Simulation::clearTextLines(void) {
+    for(unsigned int txt = 0; txt < text_lines.size(); ++txt) {
+        HUDTextLine* line = text_lines[txt];
+        if(line != NULL) {
+            line->inactivate();
+            }
+        }
+    text_lines.clear();
+    }
+
+void Simulation::clearImages(void) {
+    for(unsigned int im = 0; im < lookout_images.size(); ++im) {
+        HUDImage* image = lookout_images[im];
+        if(image != NULL) {
+            image->inactivate();
+            }
+        }
+    lookout_images.clear();
     }
