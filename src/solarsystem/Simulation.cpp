@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2012 by Mike Hewson                                     *
- *   hewsmike@iinet.net.au                                                 *
+ *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
  *                                                                         *
@@ -210,6 +210,8 @@ void Simulation::step(void) {
         // Yes, the autopilot is operating so check for any
         // content change of the tour's descriptive text.
         if(pilot.hasDescriptionChanged() == true) {
+            target.inactivate();
+
             clearTextLines();
             clearImages();
             // Clean up any prior panel contents.
@@ -221,12 +223,15 @@ void Simulation::step(void) {
             // Then put new content lines, if any, into the panel.
             // Derived according to the current position in the tour.
             const std::vector<std::string>& messages = pilot.getDescription();
-            for(unsigned int index = 0; index < messages.size(); ++index) {
-                /// TODO - currently entering in reverse order ( see HUDFlowLayout::allocateItemBases() LAST case ).
-                std::string msg = messages.at(messages.size() - index - 1);
-                HUDTextLine* line = new HUDTextLine(msg.size(), overlay.getFont(), msg, 0, 2);
-                text_lines.push_back(line);
-                north_panel.addContent(line);
+            if(messages.size() != 0) {
+                target.activate();
+                for(unsigned int index = 0; index < messages.size(); ++index) {
+                    /// TODO - currently entering in reverse order ( see HUDFlowLayout::allocateItemBases() LAST case ).
+                    std::string msg = messages.at(messages.size() - index - 1);
+                    HUDTextLine* line = new HUDTextLine(msg.size(), overlay.getFont(), msg, 0, 2);
+                    text_lines.push_back(line);
+                    north_panel.addContent(line);
+                    }
                 }
 
             // Then put new images, if any, into the panel.
@@ -397,6 +402,7 @@ void Simulation::release(void) {
     earth.inactivate();
     e_sphere.inactivate();
     sun.inactivate();
+    target.inactivate();
 
     // Must inactivate the layout first !!
     overlay.inactivate();
@@ -523,6 +529,7 @@ void Simulation::render(void) {
 
         // Finally draw the HUD.
         overlay.draw();
+        reticle.draw();
 
         // Restore the projection and modelview stacks.
         glMatrixMode(GL_PROJECTION);
@@ -2816,6 +2823,9 @@ void Simulation::cycle(Simulation::content ct) {
                 //current.setFocus(current.position() + SolarSystemGlobals::CELESTIAL_SPHERE_RADIUS*current.focus());
                 pilot.activate(ps_EAH, current);
                 }
+            break;
+        case Simulation::TARGET_RETICLE:
+            reticle.cycleActivation();
             break;
         default:
             // Ought not get here !!

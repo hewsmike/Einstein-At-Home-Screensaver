@@ -53,7 +53,7 @@ public:
 	 * \brief This method is called to initialize the engine
 	 *
 	 * As this method overrides its parent's implementation, it calls SolarSystem::initialize()
-	 * first in order to "add" the sepcialized parts afterwards.
+	 * first in order to "add" the specialized parts afterwards.
 	 *
 	 * \param width The current width of the display surface
 	 * \param height The current height of the display surface
@@ -66,7 +66,7 @@ public:
 	 * \brief This method is called when the windowing system encounters a window resize event
 	 *
 	 * As this method overrides its parent's implementation, it calls SolarSystem::resize()
-	 * first in order to "add" the sepcialized parts afterwards.
+	 * first in order to "add" the specialized parts afterwards.
 	 *
 	 * \param width The new width of the display surface
 	 * \param height The new height of the display surface

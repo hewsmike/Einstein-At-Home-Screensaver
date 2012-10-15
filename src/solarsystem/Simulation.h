@@ -51,6 +51,7 @@
 #include "Stars.h"
 #include "SunOrbit.h"
 #include "Supernova.h"
+#include "TargetReticle.h"
 #include "UTC.h"
 #include "Vector3D.h"
 #include "VectorSP.h"
@@ -82,6 +83,7 @@
  * \see Renderable
  * \see Stars
  * \see Supernovae
+ * \see TargetReticle
  * \see UTC
  * \see Vector3D
  *
@@ -100,7 +102,8 @@ class Simulation : public Renderable {
                       PULSARS,
                       SUPERNOVAE,
                       HUDOVER,
-                      AUTOPILOT};
+                      AUTOPILOT,
+                      TARGET_RETICLE};
 
         /**
          * \brief Constructor
@@ -310,6 +313,7 @@ class Simulation : public Renderable {
         Globe earth;
         GridGlobe e_sphere;
         Globe sun;
+        TargetReticle target;
 
         /// The craft instance.
         Craft flyboy;

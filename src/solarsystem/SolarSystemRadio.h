@@ -1,6 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2011 by Mike Hewson                                     *
- *   hewsmike@iinet.net.au                                                 *
+ *   Copyright (C) 2012 by Mike Hewson                                     *
+ *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
  *                                                                         *
@@ -30,7 +30,7 @@
  */
 
 /**
- * \brief Specialized rendering engine for the S5R3 science run
+ * \brief Specialized rendering engine for the radio pulsar searches
  *
  * This class comprises the specialized parts of the SolarSystem rendering engine.
  * The main differences stem from the fact that most science runs differ in their
@@ -52,7 +52,7 @@ public:
 	 * \brief This method is called to initialize the engine
 	 *
 	 * As this method overrides its parent's implementation, it calls SolarSystem::initialize()
-	 * first in order to "add" the sepcialized parts afterwards.
+	 * first in order to "add" the specialized parts afterwards.
 	 *
 	 * \param width The current width of the display surface
 	 * \param height The current height of the display surface
@@ -65,7 +65,7 @@ public:
 	 * \brief This method is called when the windowing system encounters a window resize event
 	 *
 	 * As this method overrides its parent's implementation, it calls SolarSystem::resize()
-	 * first in order to "add" the sepcialized parts afterwards.
+	 * first in order to "add" the specialized parts afterwards.
 	 *
 	 * \param width The new width of the display surface
 	 * \param height The new height of the display surface

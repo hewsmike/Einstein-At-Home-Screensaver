@@ -18,58 +18,27 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef TARGET_RETICLE_H_
-#define TARGET_RETICLE_H_
+#include "TargetReticle.h"
 
-/**
- * \addtogroup solarsystem Solarsystem
- * @{
- */
+const unsigned int TargetReticle::FRAMES(4);
 
-/**
- * \brief A target reticle that appears on the centre of the HUD.
- *
- * \author Mike Hewson\n
- */
+TargetReticle::TargetReticle(void) {
+    reset();
+    }
 
-class TargetReticle : public Renderable {
-    public:
-        /**
-         * \brief Constructor.
-         */
-        TargetReticle(void);
+TargetReticle::~TargetReticle() {
+    }
 
-        /**
-         * \brief Destructor.
-         */
-        virtual ~TargetReticle();
+void TargetReticle::reset(void) {
+    phase = 0;
+    }
 
-        /**
-         * \brief Set reticle animation to first frame
-         */
-        void reset(void);
+void prepare(SolarSystemGlobals::render_quality rq) {
+    }
 
-    protected:
-        /// These three routines below satisfy the Renderable interface.
+void release(void) {
+    }
 
-        /// Provide OpenGL code to prepare for rendering.
-        virtual void prepare(SolarSystemGlobals::render_quality rq);
-
-        /// Provide OpenGL code to release any resources used.
-        virtual void release(void);
-
-        /// Provide OpenGL code to render the object.
-        virtual void render(void);
-
-    private:
-        static const unsigned int FRAMES;
-
-        /// The frame/phase of the reticle animation.
-        unsigned int phase;
-    };
-
-/**
- * @}
- */
-
-#endif // TARGET_RETICLE_H_
+void render(void) {
+    phase = (phase + 1) % FRAMES;
+    }

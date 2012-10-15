@@ -30,7 +30,7 @@
  */
 
 /**
- * \brief Specialized rendering engine for the gamma-ray science run
+ * \brief Specialized rendering engine for the gamma-ray pulsar searches
  *
  * This class comprises the specialized parts of the SolarSystem rendering engine.
  * The main differences stem from the fact that most science runs differ in their
@@ -65,7 +65,7 @@ public:
     * \brief This method is called when the windowing system encounters a window resize event
     *
     * As this method overrides its parent's implementation, it calls SolarSystem::resize()
-    * first in order to "add" the sepcialized parts afterwards.
+    * first in order to "add" the specialized parts afterwards.
     *
     * \param width The new width of the display surface
     * \param height The new height of the display surface
