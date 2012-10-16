@@ -40,7 +40,14 @@
 #define COS(X)   cos( (X) * PI2/360.0 )
 #define SIN(X)   sin( (X) * PI2/360.0 )
 
-typedef void (*cbptr)(SolarSystemGlobals::render_quality);
+// Forward declaration for the subsequent typedef ??
+// class SolarSystemGlobals;
+// cbptr is a typedef for a function pointer, where the
+// function has prototype indicating it takes one
+// parameter of type enumerant SolarSystemGlobals::render_quality
+// and returns nothing.
+// typedef void (*cbptr)(enum SolarSystemGlobals::render_quality);  ??
+typedef void (*cbptr)(enum);
 
 /**
  * \addtogroup solarsystem SolarSystem
