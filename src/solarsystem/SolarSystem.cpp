@@ -378,13 +378,14 @@ void SolarSystem::keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey k
             sim.cycle(Simulation::EARTH_GRID);
             break;
         case KeyF12:
-            // TODO - Toggle the state of the autopilot
+            // Toggle the state of the autopilot
             sim.cycle(Simulation::AUTOPILOT);
             break;
         case KeySpace:
-                sim.moveRequest(Craft::STOP_TRANSLATION);
-                sim.moveRequest(Craft::STOP_ROTATION);
-                break;
+            // Whoa! Stop everything happening ...
+            sim.moveRequest(Craft::STOP_TRANSLATION);
+            sim.moveRequest(Craft::STOP_ROTATION);
+            break;
         case KeyKP1:
             sim.moveRequest(Craft::YAW_LEFT);
             break;

@@ -45,6 +45,10 @@
  * continues with said resources. This class does not deal with any specific OpenGL
  * mechanisms.
  *
+ *      Addition of show/hide feature which enables control of drawing without
+ * loading/unloading of resources. Use if you want persistent resource acquisition
+ * but optional rendering. Default upon construction is to show.
+ *
  * \author Mike Hewson\n
  */
 
@@ -57,18 +61,18 @@ class Renderable {
         virtual ~Renderable();
 
         /**
-         * \brief Invoke display of the object within the scene according to it's
-         *        activation state.
+         * \brief Invoke display of the object within the scene according to
+         *        it's activation and show state.
          */
         void draw(void);
 
         /**
-         * \brief Mark object as to be shown.
+         * \brief Mark object to have resources acquired.
          */
         void activate(void);
 
         /**
-         * \brief Mark object as to NOT be shown.
+         * \brief Mark object to have resources de-allocated.
          */
         void inactivate(void);
 
@@ -83,6 +87,29 @@ class Renderable {
          * \brief Cycles the activation state of the object.
          */
         virtual void cycleActivation(void);
+
+        /**
+         * \brief Allow the object to be shown if activated.
+         */
+        void show(void);
+
+        /**
+         * \brief Allow the object to not be shown even if activated.
+         */
+        void hide(void);
+
+        /**
+         * \brief Toggle the show state of the object.
+         */
+        void toggleShow(void);
+
+        /**
+         * \brief Report on the show state of the object.
+         *
+         * \return a boolean indicating - true if to be shown
+         *                              - false if to be hidden
+         */
+        bool isShown(void) const;
 
         /**
          * \brief Retrieves the rendering quality level.
@@ -127,8 +154,11 @@ class Renderable {
         virtual void render(void) = 0;
 
     private:
-        /// Indicates whether object is to be shown at all.
+        /// Indicates whether object is activated.
         activity_state activity;
+
+        /// Indicates if the object is to be shown, if activated.
+        bool show_flag;
 
         /// Current choice of rendering quality.
         SolarSystemGlobals::render_quality quality;

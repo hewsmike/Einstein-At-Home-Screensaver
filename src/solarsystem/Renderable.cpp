@@ -20,8 +20,10 @@
 
 #include "Renderable.h"
 
-// Mark initial state as being inactive, and lowest render quality.
+// Mark initial state as being inactive, but able to be shown if later
+// activated, with lowest render quality and no associated font.
 Renderable::Renderable() : activity(Renderable::INACTIVE),
+                           show_flag(true),
                            quality(SolarSystemGlobals::RENDER_LOWEST),
                            myFont(NULL) {
     // Don't call any preparation code from constructor as OpenGL context
@@ -55,9 +57,25 @@ void Renderable::cycleActivation(void) {
     isActivated() ? inactivate() : activate();
     }
 
+void Renderable::show(void) {
+    show_flag = true;
+    }
+
+void Renderable::hide(void) {
+    show_flag = false;
+    }
+
+void Renderable::toggleShow(void) {
+    show_flag = !show_flag;
+    }
+
+bool Renderable::isShown(void) const {
+    return show_flag;
+    }
+
 void Renderable::draw(void) {
-    // Only show if it is marked active.
-    if(activity == Renderable::ACTIVE) {
+    // Only show if it is marked as so, with resources acquired.
+    if((show_flag == true) && (activity == Renderable::ACTIVE)) {
         render();
         }
     }
