@@ -61,6 +61,11 @@ SolarSystemGlobals::~SolarSystemGlobals() {
 
 void SolarSystemGlobals::setRenderLevel(SolarSystemGlobals::render_quality rq) {
     qual = rq;
+    // Now call back each registered listener to let them know of
+    // the quality change.
+    for(unsigned int fp = 0; fp < callbacks.size(); ++fp) {
+        callbacks[fp](rq);
+        }
     }
 
 SolarSystemGlobals::render_quality SolarSystemGlobals::getRenderLevel(void) {
