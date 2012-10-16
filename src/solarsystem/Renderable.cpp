@@ -88,17 +88,20 @@ SolarSystemGlobals::render_quality Renderable::renderLevel(void) {
     }
 
 void Renderable::setRenderLevel(SolarSystemGlobals::render_quality rq) {
-    // Remember new quality setting.
-    quality = rq;
+    // Assuming the render level has altered.
+    if(rq != quality) {
+        // Remember new quality setting.
+        quality = rq;
 
-    // Provided the item is marked as active.
-    if(isActivated() == true) {
-        // Then inactivate the item, thus releasing resources.
-        inactivate();
+        // Provided the item is marked as active.
+        if(isActivated() == true) {
+            // Then inactivate the item, thus releasing resources.
+            inactivate();
 
-        // Followed by re-activation which will trigger preparation
-        // at the new level.
-        activate();
+            // Followed by re-activation which will trigger preparation
+            // at the new level.
+            activate();
+            }
         }
     }
 
