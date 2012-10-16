@@ -59,10 +59,10 @@ SolarSystemGlobals::SolarSystemGlobals() {
 SolarSystemGlobals::~SolarSystemGlobals() {
    }
 
-void SolarSystemGlobals::set_render_level(SolarSystemGlobals::render_quality rq) {
+void SolarSystemGlobals::setRenderLevel(SolarSystemGlobals::render_quality rq) {
    qual = rq;
    }
 
-SolarSystemGlobals::render_quality SolarSystemGlobals::get_render_level(void) {
+SolarSystemGlobals::render_quality SolarSystemGlobals::getRenderLevel(void) {
    return qual;
    }

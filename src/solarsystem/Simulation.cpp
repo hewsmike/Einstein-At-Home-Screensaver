@@ -327,8 +327,8 @@ CameraState Simulation::viewPoint(void) {
     }
 
 void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
-    // TODO - write cases per render_quality ... presently ignored
-    // at this level.
+    /// TODO - write cases per render_quality ... presently ignored
+    /// at this level.
 
     // Activate 3D scene objects, while nominating any fonts
     // prior to activation of their respective objects..

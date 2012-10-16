@@ -196,10 +196,10 @@ void SolarSystem::initialize(const int width, const int height, const Resource* 
     // enable opt-in quality feature
     switch (m_BoincAdapter.graphicsQualitySetting()) {
         case BOINCClientAdapter::LowGraphicsQualitySetting :
-            SolarSystemGlobals::set_render_level(SolarSystemGlobals::RENDER_LOWEST);
+            SolarSystemGlobals::setRenderLevel(SolarSystemGlobals::RENDER_LOWEST);
             break;
         case BOINCClientAdapter::MediumGraphicsQualitySetting :
-            SolarSystemGlobals::set_render_level(SolarSystemGlobals::RENDER_MEDIUM);
+            SolarSystemGlobals::setRenderLevel(SolarSystemGlobals::RENDER_MEDIUM);
             // fog aids depth perception
             glEnable(GL_FOG);
             glFogi(GL_FOG_MODE, GL_EXP2);
@@ -207,7 +207,7 @@ void SolarSystem::initialize(const int width, const int height, const Resource* 
             glHint(GL_FOG_HINT, GL_DONT_CARE);
             break;
         case BOINCClientAdapter::HighGraphicsQualitySetting :
-            SolarSystemGlobals::set_render_level(SolarSystemGlobals::RENDER_HIGHEST);
+            SolarSystemGlobals::setRenderLevel(SolarSystemGlobals::RENDER_HIGHEST);
             // fog aids depth perception
             glEnable(GL_FOG);
             glFogi(GL_FOG_MODE, GL_EXP2);
@@ -356,7 +356,7 @@ void SolarSystem::keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey k
             break;
         case KeyF2:
             // TODO - cycle the rendering level.
-            // SolarSystemGlobals::set_render_level(SolarSystemGlobals::RENDER_LOWEST);
+            // SolarSystemGlobals::setRenderLevel(SolarSystemGlobals::RENDER_LOWEST);
             break;
         case KeyF4:
             // TODO - cycle the HUD

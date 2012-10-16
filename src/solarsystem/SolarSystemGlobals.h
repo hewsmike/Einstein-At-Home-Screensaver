@@ -28,6 +28,10 @@
 
 #include <oglft/OGLFT.h>
 
+#include "AbstractGraphicsEngine.h"
+#include "Resource.h"
+#include "SolarSystem.h"
+
 // SIN and COS take arguments in DEGREES
 // TODO - Make these static constants.
 #define PI 3.14159265
@@ -51,62 +55,72 @@ typedef OGLFT::TranslucentTexture OGLFT_ft;
  */
 
 class SolarSystemGlobals {
-   public:
-      // Levels of rendering quality.
-      enum render_quality {RENDER_LOWEST, RENDER_MEDIUM, RENDER_HIGHEST};
+    public:
+        // Levels of rendering quality.
+        enum render_quality {RENDER_LOWEST, RENDER_MEDIUM, RENDER_HIGHEST};
 
-      // TODO - arbitrary distance units here, what of 'realistic' scaling ??
-      // How far away is the distant sky ?
-      static const GLuint CELESTIAL_SPHERE_RADIUS;
+        // Arbitrary distance units here.
+        // How far away is the distant sky, plus sizes of the globes.
+        static const GLuint CELESTIAL_SPHERE_RADIUS;
+        static const GLuint EARTH_RADIUS;
+        static const GLuint SUN_RADIUS;
 
-      static const GLuint EARTH_RADIUS;
+        /// Useful degree measures of arc.
+        static const GLfloat FULL_CIRCLE_DEG;
+        static const GLfloat HALF_CIRCLE_DEG;
+        static const GLfloat QUARTER_CIRCLE_DEG;
+        static const GLfloat MINUTES_PER_HOUR;
+        static const GLfloat SECONDS_PER_MINUTE;
+        static const GLfloat MINUTES_PER_DEGREE;
+        static const GLfloat DEGREES_PER_HOUR;
 
-      static const GLuint SUN_RADIUS;
+        /// Minimum accepted screen/window dimensions
+        static const GLuint MIN_SCREEN_WIDTH;
+        static const GLuint MIN_SCREEN_HEIGHT;
 
-      /// Useful degree measures of arc.
-      static const GLfloat FULL_CIRCLE_DEG;
-      static const GLfloat HALF_CIRCLE_DEG;
-      static const GLfloat QUARTER_CIRCLE_DEG;
-      static const GLfloat MINUTES_PER_HOUR;
-      static const GLfloat SECONDS_PER_MINUTE;
-      static const GLfloat MINUTES_PER_DEGREE;
-      static const GLfloat DEGREES_PER_HOUR;
+        /**
+         * \brief Constructor.
+         */
+        SolarSystemGlobals();
 
-      /// Minimum accepted screen/window dimensions
-      static const GLuint MIN_SCREEN_WIDTH;
-      static const GLuint MIN_SCREEN_HEIGHT;
+        /**
+         * \brief Destructor.
+         */
+        ~SolarSystemGlobals();
 
-      SolarSystemGlobals();
-      ~SolarSystemGlobals();
+        /**
+         * \brief Obtain the current render level setting.
+         *
+         * \return : the current render level setting
+         */
+        static render_quality getRenderLevel(void);
 
-      /**
-       * \brief Set the current render level setting.
-       *
-       * \param : the desired render level setting
-       */
-      static void set_render_level(SolarSystemGlobals::render_quality rq);
+        /// Some friend functions, able to change the render
+        /// quality flag specifically.
+        friend void SolarSystem::keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey);
+        friend void SolarSystem::initialize(const int, const int, const Resource*, const bool);
 
-      /**
-       * \brief Obtain the current render level setting.
-       *
-       * \return : the current render level setting
-       */
-      static render_quality get_render_level(void);
+    private:
+        /// If needed, what is the preferred OpenGL compatibility mode?
+        static const GLuint PREFERRED_OGL_COMPATIBILITY_MODE_MAJOR;
+        static const GLuint PREFERRED_OGL_COMPATIBILITY_MODE_MINOR;
 
-   private:
-      /// If needed, what is the preferred OpenGL compatibility mode?
-      static const GLuint PREFERRED_OGL_COMPATIBILITY_MODE_MAJOR;
-      static const GLuint PREFERRED_OGL_COMPATIBILITY_MODE_MINOR;
+        /// How many color channels if an alpha channel included.
+        static const GLuint ALPHA_CHANNEL;
 
-      /// How many color channels if an alpha channel included.
-      static const GLuint ALPHA_CHANNEL;
+        /// How many color channels if an alpha channel NOT included.
+        static const GLuint NO_ALPHA_CHANNEL;
 
-      /// How many color channels if an alpha channel NOT included.
-      static const GLuint NO_ALPHA_CHANNEL;
+        /// The current quality level.
+        static SolarSystemGlobals::render_quality qual;
 
-      /// The current quality level.
-      static SolarSystemGlobals::render_quality qual;
-   };
+        /**
+         * \brief Set the current render level setting.
+         *
+         * \param : the desired render level setting
+         */
+        static void setRenderLevel(SolarSystemGlobals::render_quality rq);
+    };
 
 /**
  * @}
