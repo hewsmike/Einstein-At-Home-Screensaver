@@ -225,24 +225,28 @@ void Simulation::step(void) {
             const std::vector<std::string>& messages = pilot.getDescription();
             if(messages.size() != 0) {
                 target.activate();
-                for(unsigned int index = 0; index < messages.size(); ++index) {
+                for(std::vector<HUDTextLine*>::const_iterator message = messages.begin();
+                    message != messages.end();
+                    ++message) {
                     /// TODO - currently entering in reverse order ( see HUDFlowLayout::allocateItemBases() LAST case ).
-                    std::string msg = messages.at(messages.size() - index - 1);
-                    HUDTextLine* line = new HUDTextLine(msg.size(), overlay.getFont(), msg, 0, 2);
+                    HUDTextLine* line = new HUDTextLine(message->size(), overlay.getFont(), *message, 0, 2);
                     text_lines.push_back(line);
                     north_panel.addContent(line);
                     }
                 }
 
-            // Then put new images, if any, into the panel.
-            // Derived according to the current position in the tour.
+            // Then put new images, if any, into the west panel.
+            // Derived according to the current position in the tour
+            // and are currently the pulse profile
             // Cast from base ( Renderable ) to derived ( HUDContent ) class.
             lookout_images.clear();
             const std::vector<std::string>& image_names = pilot.getImageResourceNames();
-            for(unsigned int im = 0; im < image_names.size(); ++im) {
-                HUDImage* image = new HUDImage(image_names[im], 10, 10);
-                lookout_images.push_back(image);
-                west_panel.addContent(image);
+            for(std::vector<std::string>::const_iterator image_name = image_names.begin();
+                image_name != image_names.end();
+                ++image_name) {
+                HUDImage* profile = new HUDImage(*image_name, 10, 10);
+                lookout_images.push_back(profile);
+                west_panel.addContent(profile);
                 }
 
             west_panel.activate();
@@ -3039,9 +3043,10 @@ std::vector<std::string> Simulation::parseLine(std::string input) const {
     }
 
 void Simulation::clearTextLines(void) {
-    for(unsigned int txt = 0; txt < text_lines.size(); ++txt) {
-        HUDTextLine* line = text_lines[txt];
-        if(line != NULL) {
+    for(std::vector<HUDTextLine*>::iterator line = text_lines.begin();
+        line != text_lines.end();
+        ++line) {
+        if(*line != NULL) {
             line->inactivate();
             }
         }
@@ -3049,9 +3054,10 @@ void Simulation::clearTextLines(void) {
     }
 
 void Simulation::clearImages(void) {
-    for(unsigned int im = 0; im < lookout_images.size(); ++im) {
-        HUDImage* image = lookout_images[im];
-        if(image != NULL) {
+    for(std::vector<HUDImage*>::iterator image = lookout_images.begin();
+        image != lookout_images.end();
+        ++image) {
+        if(*image != NULL) {
             image->inactivate();
             }
         }

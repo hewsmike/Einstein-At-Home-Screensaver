@@ -79,7 +79,7 @@ GridGlobe::~GridGlobe() {
 
 void GridGlobe::cycleActivation(void) {
     // Mimic three state cycling switch.
-    switch (current_cycle_state) {
+    switch(current_cycle_state) {
         case ALL_OFF :
             current_cycle_state = GRID;
             activate();
@@ -246,7 +246,7 @@ void GridGlobe::loadVertexBuffer(void) {
 
     // Store the vertex position data in the buffer.
     for(std::vector<Vertex>::const_iterator vt = sp->vertices().begin();
-        vt < sp->vertices().end();
+        vt != sp->vertices().end();
         ++vt) {
         buffer_ptr->x_pos = vt->position().x();
         buffer_ptr->y_pos = vt->position().y();

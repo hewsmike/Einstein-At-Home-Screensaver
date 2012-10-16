@@ -61,14 +61,18 @@ float Path::curveLength(Path::component comp) const {
     }
 
 void Path::setStartMessages(const std::vector<std::string>& messages) {
-    for(unsigned int index = 0; index < messages.size(); ++index) {
-        start_msg.push_back(messages[index]);
+    for(std::vector<std::string>::const_iterator message = messages.begin();
+        message != messages.end();
+        ++message) {
+        start_msg.push_back(*messages);
         }
     }
 
 void Path::setFinishMessages(const std::vector<std::string>& messages) {
-    for(unsigned int index = 0; index < messages.size(); ++index) {
-        finish_msg.push_back(messages[index]);
+    for(std::vector<std::string>::const_iterator message = messages.begin();
+        message != messages.end;
+        ++message) {
+        finish_msg.push_back(*messages);
         }
     }
 

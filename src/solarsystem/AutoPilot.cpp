@@ -116,8 +116,10 @@ CameraState AutoPilot::viewState(void) {
             // Yes, thus set the stage as LATE.
             path_stage_flag = LATE;
             // Change the current description to that of the upcoming Lookout.
-            for(unsigned int ms = 0; ms < current_path.getFinishMessages().size(); ++ms) {
-                current_description.push_back(current_path.getFinishMessages()[ms]);
+            for(std::vector<std::string>::const_iterator message = current_path.getFinishMessages.begin();
+                message != current_path.getFinishMessages().end;
+                ++message) {
+                current_description.push_back(*message);
                 }
             // Get the image set.
             current_images = current_path.getFinishImageResourceNames();

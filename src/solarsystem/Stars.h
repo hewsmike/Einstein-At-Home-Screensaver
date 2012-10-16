@@ -152,7 +152,7 @@ template<class T> class Stars : public Renderable {
                     // Traverse the listing of Star positions and
                     // store such vertices in the buffer.
                     for(typename std::vector<T>::iterator st = star_list.begin();
-                        st < star_list.end();
+                        st != star_list.end();
                         ++st) {
                         Star stc = static_cast<Star>(*st);
                         // Take each Star in spherical polar co-ordinate representation.
