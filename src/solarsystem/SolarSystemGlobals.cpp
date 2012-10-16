@@ -54,15 +54,19 @@ const GLuint SolarSystemGlobals::NO_ALPHA_CHANNEL(3);
 const GLuint SolarSystemGlobals::ALPHA_CHANNEL(NO_ALPHA_CHANNEL + 1);
 
 SolarSystemGlobals::SolarSystemGlobals() {
-   }
+    }
 
 SolarSystemGlobals::~SolarSystemGlobals() {
-   }
+    }
 
 void SolarSystemGlobals::setRenderLevel(SolarSystemGlobals::render_quality rq) {
-   qual = rq;
-   }
+    qual = rq;
+    }
 
 SolarSystemGlobals::render_quality SolarSystemGlobals::getRenderLevel(void) {
-   return qual;
-   }
+    return qual;
+    }
+
+void SolarSystemGlobals::registerRenderQualityCallback(fptr function) {
+    callbacks.push_back(function);
+    }

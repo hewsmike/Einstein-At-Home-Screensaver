@@ -40,6 +40,8 @@
 #define COS(X)   cos( (X) * PI2/360.0 )
 #define SIN(X)   sin( (X) * PI2/360.0 )
 
+typedef void (*fptr) (SolarSystemGlobals::render_quality);
+
 /**
  * \addtogroup solarsystem SolarSystem
  * @{
@@ -95,6 +97,12 @@ class SolarSystemGlobals {
          */
         static render_quality getRenderLevel(void);
 
+        /**
+         * \brief Register a function to be called back
+         *        if the render quality is changed.
+         */
+        static void registerRenderQualityCallback(fptr function);
+
         /// Some friend functions, able to change the render
         /// quality flag specifically.
         friend void SolarSystem::keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey);
@@ -113,6 +121,9 @@ class SolarSystemGlobals {
 
         /// The current quality level.
         static SolarSystemGlobals::render_quality qual;
+
+        /// The list of functions to call back if teh rendering quality changes.
+        static std::vector<fptr> callbacks;
 
         /**
          * \brief Set the current render level setting.

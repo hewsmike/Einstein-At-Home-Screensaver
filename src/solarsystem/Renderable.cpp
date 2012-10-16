@@ -28,6 +28,9 @@ Renderable::Renderable() : activity(Renderable::INACTIVE),
                            myFont(NULL) {
     // Don't call any preparation code from constructor as OpenGL context
     // may not exist or be valid at construction time.
+
+    // Register for callback when the global rendering level is altered.
+    SolarSystemGlobals::registerRenderQualityCallback(setRenderLevel());
     }
 
 Renderable::~Renderable() {
@@ -88,11 +91,15 @@ void Renderable::setRenderLevel(SolarSystemGlobals::render_quality rq) {
     // Remember new quality setting.
     quality = rq;
 
-    // Inactivate the item, thus releasing resources.
-    inactivate();
+    // Provided the item is marked as active.
+    if(isActivated() == true) {
+        // Then inactivate the item, thus releasing resources.
+        inactivate();
 
-    // Then re-activate which will trigger preparation at the new level.
-    activate();
+        // Followed by re-activation which will trigger preparation
+        // at the new level.
+        activate();
+        }
     }
 
 void Renderable::setFont(OGLFT_ft* a_font) {
