@@ -36,7 +36,6 @@
 
 #include "AbstractGraphicsEngine.h"
 #include "Craft.h"
-#include "SolarSystemGlobals.h"
 #include "Simulation.h"
 
 /**
