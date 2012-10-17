@@ -40,14 +40,11 @@
 #define COS(X)   cos( (X) * PI2/360.0 )
 #define SIN(X)   sin( (X) * PI2/360.0 )
 
-// Forward declaration for the subsequent typedef ??
-// class SolarSystemGlobals;
+class SolarSystem;
 // cbptr is a typedef for a function pointer, where the
 // function has prototype indicating it takes one
-// parameter of type enumerant SolarSystemGlobals::render_quality
-// and returns nothing.
-// typedef void (*cbptr)(enum SolarSystemGlobals::render_quality);  ??
-typedef void (*cbptr)(enum);
+// parameter of type int (enum) and returns nothing.
+typedef void (*cbptr)(int);
 
 /**
  * \addtogroup solarsystem SolarSystem
@@ -112,8 +109,7 @@ class SolarSystemGlobals {
 
         /// Some friend functions, able to change the render
         /// quality flag specifically.
-        friend void SolarSystem::keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey);
-        friend void SolarSystem::initialize(const int, const int, const Resource*, const bool);
+        friend class SolarSystem;
 
     private:
         /// If needed, what is the preferred OpenGL compatibility mode?
