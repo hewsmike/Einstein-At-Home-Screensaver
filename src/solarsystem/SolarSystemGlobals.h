@@ -129,7 +129,7 @@ class SolarSystemGlobals {
         /// The current quality level.
         static SolarSystemGlobals::render_quality qual;
 
-        /// The list of functions to call back if teh rendering quality changes.
+        /// The list of functions to call back on change of rendering quality.
         static std::vector<cbptr> callbacks;
 
         /**

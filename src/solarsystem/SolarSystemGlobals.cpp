@@ -63,7 +63,7 @@ void SolarSystemGlobals::setRenderLevel(SolarSystemGlobals::render_quality rq) {
     qual = rq;
     // Now call back each registered listener to let them know of
     // the quality change.
-    for(std::vector<cbptr>::const_iterator fp = callbacks.begin;
+    for(std::vector<cbptr>::const_iterator fp = callbacks.begin();
         fp != callbacks.end();
         ++fp) {
         *fp(rq);
