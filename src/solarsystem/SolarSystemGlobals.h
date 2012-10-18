@@ -30,7 +30,6 @@
 
 #include "AbstractGraphicsEngine.h"
 #include "Resource.h"
-#include "SolarSystem.h"
 
 // SIN and COS take arguments in DEGREES
 // TODO - Make these static constants.
@@ -41,9 +40,8 @@
 #define SIN(X)   sin( (X) * PI2/360.0 )
 
 class SolarSystem;
-// cbptr is a typedef for a function pointer, where the
-// function has prototype indicating it takes one
-// parameter of type int (enum) and returns nothing.
+
+// cbptr is a typedef for a function pointer used with callbacks.
 typedef void (*cbptr)(int);
 
 /**
@@ -107,8 +105,6 @@ class SolarSystemGlobals {
          */
         static void registerRenderQualityCallback(cbptr function);
 
-        /// Some friend functions, able to change the render
-        /// quality flag specifically.
         friend class SolarSystem;
 
     private:
