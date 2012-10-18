@@ -30,6 +30,7 @@
 
 #include "AbstractGraphicsEngine.h"
 #include "Resource.h"
+#include "SolarSystemGlobals.h"
 
 // SIN and COS take arguments in DEGREES
 // TODO - Make these static constants.
@@ -42,7 +43,7 @@
 class SolarSystem;
 
 // cbptr is a typedef for a function pointer used with callbacks.
-typedef void (*cbptr)(int);
+typedef void (*cbptr)(SolarSystemGlobals::render_quality);
 
 /**
  * \addtogroup solarsystem SolarSystem

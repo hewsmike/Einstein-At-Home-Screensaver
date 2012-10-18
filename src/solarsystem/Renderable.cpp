@@ -30,7 +30,7 @@ Renderable::Renderable() : activity(Renderable::INACTIVE),
     // may not exist or be valid at construction time.
 
     // Register for callback when the global rendering level is altered.
-    SolarSystemGlobals::registerRenderQualityCallback(setRenderLevel());
+    SolarSystemGlobals::registerRenderQualityCallback(setRenderLevel);
     }
 
 Renderable::~Renderable() {

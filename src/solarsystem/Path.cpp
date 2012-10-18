@@ -64,15 +64,15 @@ void Path::setStartMessages(const std::vector<std::string>& messages) {
     for(std::vector<std::string>::const_iterator message = messages.begin();
         message != messages.end();
         ++message) {
-        start_msg.push_back(*messages);
+        start_msg.push_back(*message);
         }
     }
 
 void Path::setFinishMessages(const std::vector<std::string>& messages) {
     for(std::vector<std::string>::const_iterator message = messages.begin();
-        message != messages.end;
+        message != messages.end();
         ++message) {
-        finish_msg.push_back(*messages);
+        finish_msg.push_back(*message);
         }
     }
 
