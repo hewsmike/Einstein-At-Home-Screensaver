@@ -37,19 +37,23 @@ Renderable::~Renderable() {
 void Renderable::activate(void) {
     // Prepare resources as we have decided to show it.
     prepare(quality);
+
+    // Register for callback should the global rendering level alter.
+    SolarSystemGlobals::registerRenderQualityCallback(this);
+
     // Mark as active.
     activity = Renderable::ACTIVE;
-    // Register for callback when the global rendering level is altered.
-    SolarSystemGlobals::registerRenderQualityCallback(this);
     }
 
 void Renderable::inactivate(void) {
     // Release resources as we have decided not to show it.
     release();
+
+    // Unregister the callback for any global rendering level alteration.
+    SolarSystemGlobals::unRegisterRenderQualityCallback(this);
+
     // Mark as inactive.
     activity = Renderable::INACTIVE;
-    // Unregister the callback used for when the global rendering level is altered.
-    SolarSystemGlobals::unRegisterRenderQualityCallback(this);
     }
 
 Renderable::activity_state Renderable::isActivated(void) const {
@@ -79,7 +83,7 @@ bool Renderable::isShown(void) const {
     }
 
 void Renderable::draw(void) {
-    // Only show if it is marked as so, with resources acquired.
+    // Only display if it is marked as to be shown, with resources acquired.
     if((show_flag == true) && (activity == Renderable::ACTIVE)) {
         render();
         }

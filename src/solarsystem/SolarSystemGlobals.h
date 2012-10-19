@@ -89,7 +89,7 @@ class SolarSystemGlobals {
         ~SolarSystemGlobals();
 
         /**
-         * \brief Obtain the current render level setting.
+         * \brief Obtain the current render level setting
          *
          * \return : the current render level setting
          */
@@ -97,18 +97,22 @@ class SolarSystemGlobals {
 
         /**
          * \brief Register a Renderable object to be informed
-         *        if the render quality is changed.
+         *        when the render quality is changes
+         *
+         * \param ro - pointer to the Renderable object to register
          */
-        static void registerRenderQualityCallback(Renderable ro);
+        static void registerRenderQualityCallback(Renderable* ro);
 
         /**
-         * \brief Unregister a Renderable object to be informed
-         *        if the render quality is changed.
+         * \brief Unregister a Renderable object for callback
+         *        when there is a cahnge in render quality
+         *
+         * \param ro - pointer the Renderable object to unregister
          */
-        static void unRegisterRenderQualityCallback(Renderable ro);
+        static void unRegisterRenderQualityCallback(Renderable* ro);
 
         /**
-         * \brief Set the current render level setting.
+         * \brief Set the current render level setting
          *
          * \param rq - the desired render level setting
          */

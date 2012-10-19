@@ -78,7 +78,7 @@ SolarSystemGlobals::render_quality SolarSystemGlobals::getRenderLevel(void) {
     return qual;
     }
 
-void SolarSystemGlobals::registerRenderQualityCallback(Renderable ro) {
+void SolarSystemGlobals::registerRenderQualityCallback(Renderable* ro) {
     // Bar null pointers.
     if(ro != NULL) {
         // Remember this one.
@@ -86,7 +86,7 @@ void SolarSystemGlobals::registerRenderQualityCallback(Renderable ro) {
         }
     }
 
-void SolarSystemGlobals::unRegisterRenderQualityCallback(Renderable ro) {
+void SolarSystemGlobals::unRegisterRenderQualityCallback(Renderable* ro) {
     // Bar null pointers.
     if(ro != NULL) {
         // Go through the current listing of stored pointers.
