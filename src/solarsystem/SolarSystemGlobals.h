@@ -29,8 +29,8 @@
 #include <oglft/OGLFT.h>
 
 #include "AbstractGraphicsEngine.h"
+#include "Renderable.h"
 #include "Resource.h"
-#include "SolarSystemGlobals.h"
 
 // SIN and COS take arguments in DEGREES
 // TODO - Make these static constants.
@@ -39,11 +39,6 @@
 // TODO - Make these static ( inline ? ) functions.
 #define COS(X)   cos( (X) * PI2/360.0 )
 #define SIN(X)   sin( (X) * PI2/360.0 )
-
-class SolarSystem;
-
-// cbptr is a typedef for a function pointer used with callbacks.
-typedef void (*cbptr)(SolarSystemGlobals::render_quality);
 
 /**
  * \addtogroup solarsystem SolarSystem
@@ -101,12 +96,23 @@ class SolarSystemGlobals {
         static render_quality getRenderLevel(void);
 
         /**
-         * \brief Register a function to be called back
+         * \brief Register a Renderable object to be informed
          *        if the render quality is changed.
          */
-        static void registerRenderQualityCallback(cbptr function);
+        static void registerRenderQualityCallback(Renderable ro);
 
-        friend class SolarSystem;
+        /**
+         * \brief Unregister a Renderable object to be informed
+         *        if the render quality is changed.
+         */
+        static void unRegisterRenderQualityCallback(Renderable ro);
+
+        /**
+         * \brief Set the current render level setting.
+         *
+         * \param rq - the desired render level setting
+         */
+        static void setRenderLevel(SolarSystemGlobals::render_quality rq);
 
     private:
         /// If needed, what is the preferred OpenGL compatibility mode?
@@ -122,15 +128,9 @@ class SolarSystemGlobals {
         /// The current quality level.
         static SolarSystemGlobals::render_quality qual;
 
-        /// The list of functions to call back on change of rendering quality.
-        static std::vector<cbptr> callbacks;
-
-        /**
-         * \brief Set the current render level setting.
-         *
-         * \param : the desired render level setting
-         */
-        static void setRenderLevel(SolarSystemGlobals::render_quality rq);
+        /// The list of pointers to functions to call back
+        /// should there be any change of rendering quality.
+        static std::vector<Renderable> callbacks;
     };
 
 /**

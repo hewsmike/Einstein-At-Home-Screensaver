@@ -28,12 +28,10 @@ Renderable::Renderable() : activity(Renderable::INACTIVE),
                            myFont(NULL) {
     // Don't call any preparation code from constructor as OpenGL context
     // may not exist or be valid at construction time.
-
-    // Register for callback when the global rendering level is altered.
-    SolarSystemGlobals::registerRenderQualityCallback(setRenderLevel);
     }
 
 Renderable::~Renderable() {
+    inactivate();
     }
 
 void Renderable::activate(void) {
@@ -41,6 +39,8 @@ void Renderable::activate(void) {
     prepare(quality);
     // Mark as active.
     activity = Renderable::ACTIVE;
+    // Register for callback when the global rendering level is altered.
+    SolarSystemGlobals::registerRenderQualityCallback(this);
     }
 
 void Renderable::inactivate(void) {
@@ -48,6 +48,8 @@ void Renderable::inactivate(void) {
     release();
     // Mark as inactive.
     activity = Renderable::INACTIVE;
+    // Unregister the callback used for when the global rendering level is altered.
+    SolarSystemGlobals::unRegisterRenderQualityCallback(this);
     }
 
 Renderable::activity_state Renderable::isActivated(void) const {
