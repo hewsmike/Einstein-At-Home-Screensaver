@@ -119,11 +119,8 @@ class Renderable {
         /**
          * \brief Sets the rendering quality level.
          *
-         *      This function is routinely set as a callback target
-         * by the SolarSystemGlobals class, invoked by the
-         * SolarSystemGlobals::setRenderLevel function.
          */
-        void setRenderLevel(SolarSystemGlobals::render_quality rq);
+        void renderChangeCallback(void);
 
         /**
          * \brief Sets the font.

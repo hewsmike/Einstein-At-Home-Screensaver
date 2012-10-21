@@ -93,7 +93,8 @@ SolarSystemGlobals::render_quality Renderable::renderLevel(void) {
     return quality;
     }
 
-void Renderable::setRenderLevel(SolarSystemGlobals::render_quality rq) {
+void Renderable::renderChangeCallback(void) {
+    SolarSystemGlobals::render_quality rq = SolarSystemGlobals::getRenderLevel();
     // Assuming the render level has altered.
     if(rq != quality) {
         // Remember new quality setting.

@@ -225,7 +225,7 @@ void Simulation::step(void) {
             const std::vector<std::string>& messages = pilot.getDescription();
             if(messages.size() != 0) {
                 target.activate();
-                for(std::vector<HUDTextLine*>::const_iterator message = messages.begin();
+                for(std::vector<std::string>::const_iterator message = messages.begin();
                     message != messages.end();
                     ++message) {
                     /// TODO - currently entering in reverse order ( see HUDFlowLayout::allocateItemBases() LAST case ).
@@ -533,7 +533,7 @@ void Simulation::render(void) {
 
         // Finally draw the HUD.
         overlay.draw();
-        reticle.draw();
+        target.draw();
 
         // Restore the projection and modelview stacks.
         glMatrixMode(GL_PROJECTION);
@@ -2829,7 +2829,7 @@ void Simulation::cycle(Simulation::content ct) {
                 }
             break;
         case Simulation::TARGET_RETICLE:
-            reticle.cycleActivation();
+            target.cycleActivation();
             break;
         default:
             // Ought not get here !!
@@ -3047,7 +3047,7 @@ void Simulation::clearTextLines(void) {
         line != text_lines.end();
         ++line) {
         if(*line != NULL) {
-            line->inactivate();
+            (*line)->inactivate();
             }
         }
     text_lines.clear();
@@ -3058,7 +3058,7 @@ void Simulation::clearImages(void) {
         image != lookout_images.end();
         ++image) {
         if(*image != NULL) {
-            image->inactivate();
+            (*image)->inactivate();
             }
         }
     lookout_images.clear();

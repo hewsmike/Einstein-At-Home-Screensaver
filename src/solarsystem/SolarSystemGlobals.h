@@ -101,15 +101,15 @@ class SolarSystemGlobals {
          *
          * \param ro - pointer to the Renderable object to register
          */
-        static void registerRenderQualityCallback(Renderable* ro);
+        static void registerRenderQualityCallback(Renderable* rc);
 
         /**
          * \brief Unregister a Renderable object for callback
-         *        when there is a cahnge in render quality
+         *        when there is a change in render quality
          *
          * \param ro - pointer the Renderable object to unregister
          */
-        static void unRegisterRenderQualityCallback(Renderable* ro);
+        static void unRegisterRenderQualityCallback(Renderable* rc);
 
         /**
          * \brief Set the current render level setting
@@ -132,9 +132,9 @@ class SolarSystemGlobals {
         /// The current quality level.
         static SolarSystemGlobals::render_quality qual;
 
-        /// The list of pointers to functions to call back
+        /// The list of pointers to  call back
         /// should there be any change of rendering quality.
-        static std::vector<Renderable> callbacks;
+        static std::list<Renderable*> callbacks;
     };
 
 /**

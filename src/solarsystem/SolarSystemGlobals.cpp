@@ -66,10 +66,10 @@ void SolarSystemGlobals::setRenderLevel(SolarSystemGlobals::render_quality rq) {
         qual = rq;
         // Now call back each registered listener to let
         // them know of the quality change.
-        for(std::vector<Renderable>::const_iterator fp = callbacks.begin();
+        for(std::vector<Renderable*>::const_iterator fp = callbacks.begin();
             fp != callbacks.end();
             ++fp) {
-            fp->setRenderLevel();
+            *fp.;
             }
         }
     }
@@ -78,7 +78,7 @@ SolarSystemGlobals::render_quality SolarSystemGlobals::getRenderLevel(void) {
     return qual;
     }
 
-void SolarSystemGlobals::registerRenderQualityCallback(Renderable* ro) {
+void SolarSystemGlobals::registerRenderQualityCallback(cbptr ro) {
     // Bar null pointers.
     if(ro != NULL) {
         // Remember this one.
@@ -86,11 +86,11 @@ void SolarSystemGlobals::registerRenderQualityCallback(Renderable* ro) {
         }
     }
 
-void SolarSystemGlobals::unRegisterRenderQualityCallback(Renderable* ro) {
+void SolarSystemGlobals::unRegisterRenderQualityCallback(cbptr ro) {
     // Bar null pointers.
     if(ro != NULL) {
         // Go through the current listing of stored pointers.
-        for(std::vector<Renderable>::iterator fp = callbacks.begin();
+        for(std::vector<cbptr>::iterator fp = callbacks.begin();
             fp != callbacks.end();
             ++fp) {
             // Is the given pointer in the list?
