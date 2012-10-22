@@ -21,7 +21,6 @@
 #define SSG_OBSERVER_H_
 
 #include "framework.h"
-#include "SolarSystemGlobals.h"
 
 /**
 * \addtogroup solarsystem Solarsystem
@@ -70,7 +69,7 @@ class SSGObserver {
          *      This routine is called when there is a change in the render
          * quality setting. A derived class must define the behaviour.
          */
-        void SSGUpdate(void) = 0;
+        virtual void SSGUpdate(void);
 
     private:
         bool attach_flag;

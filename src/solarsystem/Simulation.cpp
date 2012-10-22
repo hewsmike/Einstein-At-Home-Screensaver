@@ -210,7 +210,7 @@ void Simulation::step(void) {
         // Yes, the autopilot is operating so check for any
         // content change of the tour's descriptive text.
         if(pilot.hasDescriptionChanged() == true) {
-            target.inactivate();
+            //target.inactivate();
 
             clearTextLines();
             clearImages();
@@ -224,7 +224,7 @@ void Simulation::step(void) {
             // Derived according to the current position in the tour.
             const std::vector<std::string>& messages = pilot.getDescription();
             if(messages.size() != 0) {
-                target.activate();
+                //target.activate();
                 for(std::vector<std::string>::const_iterator message = messages.begin();
                     message != messages.end();
                     ++message) {
@@ -406,7 +406,7 @@ void Simulation::release(void) {
     earth.inactivate();
     e_sphere.inactivate();
     sun.inactivate();
-    target.inactivate();
+    //target.inactivate();
 
     // Must inactivate the layout first !!
     overlay.inactivate();
@@ -533,7 +533,7 @@ void Simulation::render(void) {
 
         // Finally draw the HUD.
         overlay.draw();
-        target.draw();
+        //target.draw();
 
         // Restore the projection and modelview stacks.
         glMatrixMode(GL_PROJECTION);
@@ -2829,7 +2829,7 @@ void Simulation::cycle(Simulation::content ct) {
                 }
             break;
         case Simulation::TARGET_RETICLE:
-            target.cycleActivation();
+            //target.cycleActivation();
             break;
         default:
             // Ought not get here !!

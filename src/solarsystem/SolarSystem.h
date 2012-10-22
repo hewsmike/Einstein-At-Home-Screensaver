@@ -116,7 +116,7 @@ class SolarSystem : public AbstractGraphicsEngine, public SSGObserver {
          */
         void keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey keyPressed);
 
-        void SSGUpdate(void);
+        virtual void SSGUpdate(void);
 
     protected:
         /**

@@ -24,7 +24,7 @@
 #include "framework.h"
 
 #include <string>
-#include <vector>
+#include <set>
 
 #include <oglft/OGLFT.h>
 

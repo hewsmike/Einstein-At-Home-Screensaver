@@ -19,6 +19,7 @@
  ***************************************************************************/
 
 #include "SSGObserver.h"
+#include "SolarSystemGlobals.h"
 
 SSGObserver::SSGObserver() {
     /// Automatically attach on construction.
@@ -42,4 +43,8 @@ void SSGObserver::detach(void) {
 
 bool SSGObserver::isAttached(void) const {
     return attach_flag;
+    }
+
+void SSGObserver::SSGUpdate(void) {
+
     }
