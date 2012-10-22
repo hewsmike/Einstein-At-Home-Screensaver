@@ -116,6 +116,12 @@ class SolarSystem : public AbstractGraphicsEngine, public SSGObserver {
          */
         void keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey keyPressed);
 
+        /**
+         * \brief Receives any rendering quality level change from the
+         *        static SolarSystemGlobals instance.
+         *
+         *      Satisfies SSGObserver interface.
+         */
         virtual void SSGUpdate(void);
 
     protected:
