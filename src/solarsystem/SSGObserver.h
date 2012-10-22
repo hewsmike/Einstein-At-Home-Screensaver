@@ -70,7 +70,7 @@ class SSGObserver {
          *      This routine is called when there is a change in the render
          * quality setting. A derived class must define the behaviour.
          */
-        void update(void) = 0;
+        void SSGUpdate(void) = 0;
 
     private:
         bool attach_flag;

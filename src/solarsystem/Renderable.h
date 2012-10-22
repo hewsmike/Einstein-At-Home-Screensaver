@@ -113,11 +113,12 @@ class Renderable : public SSGObserver {
         bool isShown(void) const;
 
         /**
-         * \brief Retrieves the rendering quality level change.
+         * \brief Receives any rendering quality level change from the
+         *        static SolarSystemGlobals instance.
          *
          *      Satisfies SSGObserver interface.
          */
-        void update(void);
+        void SSGupdate(void);
 
         /**
          * \brief Sets the font.

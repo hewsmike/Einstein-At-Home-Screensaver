@@ -34,6 +34,7 @@ void TargetReticle::reset(void) {
     }
 
 void prepare(SolarSystemGlobals::render_quality rq) {
+
     }
 
 void release(void) {

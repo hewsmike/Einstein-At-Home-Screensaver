@@ -89,7 +89,7 @@ void Renderable::draw(void) {
         }
     }
 
-void Renderable::update(void) {
+void Renderable::SSGupdate(void) {
     // Store the new rendering level.
     quality = SolarSystemGlobals::getRenderLevel();
 

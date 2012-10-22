@@ -200,25 +200,9 @@ void SolarSystem::initialize(const int width, const int height, const Resource* 
             break;
         case BOINCClientAdapter::MediumGraphicsQualitySetting :
             SolarSystemGlobals::setRenderLevel(SolarSystemGlobals::RENDER_MEDIUM);
-            // fog aids depth perception
-            glEnable(GL_FOG);
-            glFogi(GL_FOG_MODE, GL_EXP2);
-            glFogf(GL_FOG_DENSITY, 0.085);
-            glHint(GL_FOG_HINT, GL_DONT_CARE);
             break;
         case BOINCClientAdapter::HighGraphicsQualitySetting :
             SolarSystemGlobals::setRenderLevel(SolarSystemGlobals::RENDER_HIGHEST);
-            // fog aids depth perception
-            glEnable(GL_FOG);
-            glFogi(GL_FOG_MODE, GL_EXP2);
-            glFogf(GL_FOG_DENSITY, 0.085);
-            glHint(GL_FOG_HINT, GL_DONT_CARE);
-            // some polishing
-            glShadeModel(GL_SMOOTH);
-            glEnable(GL_POINT_SMOOTH);
-            glEnable(GL_LINE_SMOOTH);
-            glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
-            glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
             break;
         default :
             // Ought not get here !!
@@ -425,4 +409,45 @@ void SolarSystem::keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey k
     }
 
 void SolarSystem::refreshLocalBOINCInformation() {
+    }
+
+void SSGUpdate(void) {
+    switch(SolarSystemGlobals::getRenderLevel()) {
+        case SolarSystemGlobals::RENDER_LOWEST:
+            glDisable(GL_FOG);
+            glDisable(GL_POINT_SMOOTH);
+            glDisable(GL_LINE_SMOOTH);
+            glHint(GL_POINT_SMOOTH_HINT, GL_DONT_CARE);
+            glHint(GL_LINE_SMOOTH_HINT, GL_DONT_CARE);
+            break;
+        case SolarSystemGlobals::RENDER_MEDIUM:
+            // fog aids depth perception
+            glEnable(GL_FOG);
+            glFogi(GL_FOG_MODE, GL_EXP2);
+            glFogf(GL_FOG_DENSITY, 0.085);
+            glHint(GL_FOG_HINT, GL_DONT_CARE);
+            glDisable(GL_POINT_SMOOTH);
+            glDisable(GL_LINE_SMOOTH);
+            glHint(GL_POINT_SMOOTH_HINT, GL_DONT_CARE);
+            glHint(GL_LINE_SMOOTH_HINT, GL_DONT_CARE);
+            break;
+        case SolarSystemGlobals::RENDER_HIGHEST:
+            // fog aids depth perception
+            glEnable(GL_FOG);
+            glFogi(GL_FOG_MODE, GL_EXP2);
+            glFogf(GL_FOG_DENSITY, 0.085);
+            glHint(GL_FOG_HINT, GL_DONT_CARE);
+            // some polishing
+            glShadeModel(GL_SMOOTH);
+            glEnable(GL_POINT_SMOOTH);
+            glEnable(GL_LINE_SMOOTH);
+            glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
+            glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+            break;
+        default :
+            // Ought not get here !!
+            std::string msg = "SolarSystem::SSGUpdate() - bad switch case reached (default)";
+            ErrorHandler::record(msg, ErrorHandler::FATAL);
+            break;
+        }
     }

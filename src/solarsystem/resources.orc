@@ -20,6 +20,11 @@ openclTGA|opencl.tga.res
 virgoTGA|virgo.tga.res
 wypTGA|wyp.tga.res
 
+# For the target reticle on the HUD
+reticle1TGA|reticle1.tga.res
+reticle2TGA|reticle2.tga.res
+reticle3TGA|reticle3.tga.res
+
 # For EAH discovered pulsar waveforms
 J0811-3857TGA|J0811-3857.tga.res
 # J1277-6210TGA|J1277-6210.tga.res

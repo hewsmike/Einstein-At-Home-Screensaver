@@ -510,7 +510,7 @@ void Simulation::render(void) {
     // Constraint used is the current minimum size of the outermost HUD container,
     // which is in turn derived from an aggregation of all it's content.
     if((screen_width >= overlay.minWidth()) &&
-        (screen_height >= overlay.minHeight())) {
+       (screen_height >= overlay.minHeight())) {
 
         // Swap into 2D with back face culling, textures and no depth testing.
         glDisable(GL_DEPTH_TEST);

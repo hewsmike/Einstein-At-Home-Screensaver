@@ -36,6 +36,7 @@
 
 #include "AbstractGraphicsEngine.h"
 #include "Craft.h"
+#include "SSGObserver.h"
 #include "Simulation.h"
 
 /**
@@ -54,7 +55,7 @@
  * of this engine.
  *
  */
-class SolarSystem : public AbstractGraphicsEngine {
+class SolarSystem : public AbstractGraphicsEngine, public SSGObserver {
     public:
         // How many times the celestial sphere radius do we look at?
         static const int FAR_LOOK_RATIO;
@@ -114,6 +115,8 @@ class SolarSystem : public AbstractGraphicsEngine {
          * \param keyPressed The key pressed
          */
         void keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey keyPressed);
+
+        void SSGUpdate(void);
 
     protected:
         /**
