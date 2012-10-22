@@ -64,12 +64,12 @@ void SolarSystemGlobals::setRenderLevel(SolarSystemGlobals::render_quality rq) {
     if(qual != rq) {
         // Store the new quality level.
         qual = rq;
-        // Now call back each registered listener to let
+        // Now call back each observer to let
         // them know of the quality change.
-        for(std::vector<Renderable*>::const_iterator fp = callbacks.begin();
-            fp != callbacks.end();
-            ++fp) {
-            *fp.;
+        for(std::set<SSGObserver*>::const_iterator ob = quality_observers.begin();
+            ob != quality_observers.end();
+            ++ob) {
+            ob->update();
             }
         }
     }
@@ -78,28 +78,18 @@ SolarSystemGlobals::render_quality SolarSystemGlobals::getRenderLevel(void) {
     return qual;
     }
 
-void SolarSystemGlobals::registerRenderQualityCallback(cbptr ro) {
+void SolarSystemGlobals::registerRenderObserver(SSGObserver* observer) {
     // Bar null pointers.
-    if(ro != NULL) {
-        // Remember this one.
-        callbacks.push_back(ro);
+    if(observer != NULL) {
+        // Using std::set semantics will ensure no repeated entries.
+        quality_observers.insert(observer);
         }
     }
 
-void SolarSystemGlobals::unRegisterRenderQualityCallback(cbptr ro) {
+void SolarSystemGlobals::unRegisterRenderObserver(SSGObserver* observer) {
     // Bar null pointers.
-    if(ro != NULL) {
-        // Go through the current listing of stored pointers.
-        for(std::vector<cbptr>::iterator fp = callbacks.begin();
-            fp != callbacks.end();
-            ++fp) {
-            // Is the given pointer in the list?
-            if(ro == fp){
-                // Yes, so delete it from the list,
-                callbacks.erase(fp);
-                // and stop looking.
-                break;
-                }
-            }
+    if(observer != NULL) {
+        // Using std::set semantics will ensure removal if present.
+        quality_observers.erase(observer);
         }
     }

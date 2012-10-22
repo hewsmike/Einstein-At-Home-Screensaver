@@ -27,6 +27,7 @@
 
 #include <oglft/OGLFT.h>
 
+#include "SSGObserver.h"
 #include "SolarSystemGlobals.h"
 
 /**
@@ -52,7 +53,7 @@
  * \author Mike Hewson\n
  */
 
-class Renderable {
+class Renderable : public SSGObserver {
     public:
         // Visibility ie. to be rendered at all?
         enum activity_state {INACTIVE, ACTIVE};
@@ -112,15 +113,11 @@ class Renderable {
         bool isShown(void) const;
 
         /**
-         * \brief Retrieves the rendering quality level.
-         */
-        SolarSystemGlobals::render_quality renderLevel(void);
-
-        /**
-         * \brief Sets the rendering quality level.
+         * \brief Retrieves the rendering quality level change.
          *
+         *      Satisfies SSGObserver interface.
          */
-        void renderChangeCallback(void);
+        void update(void);
 
         /**
          * \brief Sets the font.

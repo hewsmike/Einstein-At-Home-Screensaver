@@ -39,7 +39,7 @@ void Renderable::activate(void) {
     prepare(quality);
 
     // Register for callback should the global rendering level alter.
-    SolarSystemGlobals::registerRenderQualityCallback(this);
+    attach();
 
     // Mark as active.
     activity = Renderable::ACTIVE;
@@ -50,7 +50,7 @@ void Renderable::inactivate(void) {
     release();
 
     // Unregister the callback for any global rendering level alteration.
-    SolarSystemGlobals::unRegisterRenderQualityCallback(this);
+    detach();
 
     // Mark as inactive.
     activity = Renderable::INACTIVE;
@@ -89,26 +89,18 @@ void Renderable::draw(void) {
         }
     }
 
-SolarSystemGlobals::render_quality Renderable::renderLevel(void) {
-    return quality;
-    }
+void Renderable::update(void) {
+    // Store the new rendering level.
+    quality = SolarSystemGlobals::getRenderLevel();
 
-void Renderable::renderChangeCallback(void) {
-    SolarSystemGlobals::render_quality rq = SolarSystemGlobals::getRenderLevel();
-    // Assuming the render level has altered.
-    if(rq != quality) {
-        // Remember new quality setting.
-        quality = rq;
+    // Provided the item is marked as active.
+    if(isActivated() == true) {
+        // Then inactivate the item, thus releasing resources.
+        inactivate();
 
-        // Provided the item is marked as active.
-        if(isActivated() == true) {
-            // Then inactivate the item, thus releasing resources.
-            inactivate();
-
-            // Followed by re-activation which will trigger preparation
-            // at the new level.
-            activate();
-            }
+        // Followed by re-activation which will trigger preparation
+        // at the new level.
+        activate();
         }
     }
 
