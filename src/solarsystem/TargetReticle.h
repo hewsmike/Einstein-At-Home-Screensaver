@@ -32,12 +32,12 @@
  * \author Mike Hewson\n
  */
 
-class TargetReticle : public Renderable {
+class TargetReticle : public Renderable, public SSGObserver {
     public:
         /**
          * \brief Constructor.
          */
-        TargetReticle(void);
+        TargetReticle(std::string resource_base_name, unsigned int frames);
 
         /**
          * \brief Destructor.
@@ -48,6 +48,8 @@ class TargetReticle : public Renderable {
          * \brief Set reticle animation to first frame
          */
         void reset(void);
+
+        virtual void SSGUpdate(void);
 
     protected:
         /// These three routines below satisfy the Renderable interface.
@@ -62,10 +64,17 @@ class TargetReticle : public Renderable {
         virtual void render(void);
 
     private:
-        static const unsigned int FRAMES;
+        static const std::string FRAME_RESOURCE_END_NAME;
+
+        std::string base_name;
+        unsigned int frame_count;
 
         /// The frame/phase of the reticle animation.
         unsigned int phase;
+
+        std::vector<HUDImages*> frames;
+
+        void clearFrames(void);
     };
 
 /**

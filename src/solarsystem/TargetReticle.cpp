@@ -20,26 +20,58 @@
 
 #include "TargetReticle.h"
 
-const unsigned int TargetReticle::FRAMES(4);
+#include <sstream>
 
-TargetReticle::TargetReticle(void) {
+#include "HUDImage.h"
+
+const string TargetReticle::FRAME_RESOURCE_END_NAME("TGA");
+
+TargetReticle::TargetReticle(std::string resource_base_name, unsigned int frames) {
+    base_name = resource_base_name;
+    frame_count = frames;
     reset();
     }
 
 TargetReticle::~TargetReticle() {
+    clearFrames();
     }
 
 void TargetReticle::reset(void) {
     phase = 0;
     }
 
-void prepare(SolarSystemGlobals::render_quality rq) {
+void TargetReticle::SSGUpdate(void) {
+    }
+
+void TargetReticle::prepare(SolarSystemGlobals::render_quality rq) {
+    // Eliminate any prior stored frames.
+    clearFrames();
+    for(unsigned int fc = 0; fc < frame_count; ++fc) {
+        std::stringstream frame_name;
+        frame_name << base_name;
+        frame_name.precision(1);
+        frame_name << fc;
+        frame_name << FRAME_RESOURCE_END_NAME;
+        frames.push_back(new HUDImage(frame_name, 0, 0));
+        }
+    }
+
+void TargetReticle::release(void) {
+    clearFrames();
+    }
+
+void TargetReticle::render(void) {
+    phase = (phase + 1) % frame_count;
 
     }
 
-void release(void) {
-    }
-
-void render(void) {
-    phase = (phase + 1) % FRAMES;
+void TargetReticle::clearFrames(void) {
+    for(std::vector<HUDImage*>::iterator fr = frames.begin();
+        fr != frames.end();
+        ++fr) {
+        if(fr != NULL) {
+            fr->inactivate();
+            }
+        }
+    frames.clear();
     }

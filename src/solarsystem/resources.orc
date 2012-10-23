@@ -21,6 +21,7 @@ virgoTGA|virgo.tga.res
 wypTGA|wyp.tga.res
 
 # For the target reticle on the HUD
+reticle0TGA|reticle0.tga.res
 reticle1TGA|reticle1.tga.res
 reticle2TGA|reticle2.tga.res
 reticle3TGA|reticle3.tga.res
