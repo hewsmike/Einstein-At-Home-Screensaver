@@ -17,9 +17,14 @@
  *   along with Einstein@Home. If not, see <http://www.gnu.org/licenses/>. *
  *                                                                         *
  ***************************************************************************/
-
 #ifndef TARGET_RETICLE_H_
 #define TARGET_RETICLE_H_
+
+#include <string>
+#include <vector>
+
+#include "HUDImage.h"
+#include "Renderable.h"
 
 /**
  * \addtogroup solarsystem Solarsystem
@@ -32,7 +37,7 @@
  * \author Mike Hewson\n
  */
 
-class TargetReticle : public Renderable, public SSGObserver {
+class TargetReticle : public Renderable {
     public:
         /**
          * \brief Constructor.
@@ -72,7 +77,7 @@ class TargetReticle : public Renderable, public SSGObserver {
         /// The frame/phase of the reticle animation.
         unsigned int phase;
 
-        std::vector<HUDImages*> frames;
+        std::vector<HUDImage*> frames;
 
         void clearFrames(void);
     };

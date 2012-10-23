@@ -52,7 +52,7 @@ void TargetReticle::prepare(SolarSystemGlobals::render_quality rq) {
         frame_name.precision(1);
         frame_name << fc;
         frame_name << FRAME_RESOURCE_END_NAME;
-        frames.push_back(new HUDImage(frame_name, 0, 0));
+        frames.push_back(new HUDImage(frame_name.str(), 0, 0));
         }
     }
 
@@ -69,8 +69,8 @@ void TargetReticle::clearFrames(void) {
     for(std::vector<HUDImage*>::iterator fr = frames.begin();
         fr != frames.end();
         ++fr) {
-        if(fr != NULL) {
-            fr->inactivate();
+        if(*fr != NULL) {
+            (*fr)->inactivate();
             }
         }
     frames.clear();

@@ -53,6 +53,8 @@ const GLuint SolarSystemGlobals::MIN_SCREEN_HEIGHT(600);
 const GLuint SolarSystemGlobals::NO_ALPHA_CHANNEL(3);
 const GLuint SolarSystemGlobals::ALPHA_CHANNEL(NO_ALPHA_CHANNEL + 1);
 
+std::set<SSGObserver*> SolarSystemGlobals::quality_observers;
+
 SolarSystemGlobals::SolarSystemGlobals() {
     }
 
@@ -66,8 +68,8 @@ void SolarSystemGlobals::setRenderLevel(SolarSystemGlobals::render_quality rq) {
         qual = rq;
         // Now call back each observer to let
         // them know of the quality change.
-        for(std::set<SSGObserver*>::const_iterator ob = quality_observers.begin();
-            ob != quality_observers.end();
+        for(std::set<SSGObserver*>::const_iterator ob = SolarSystemGlobals::quality_observers.begin();
+            ob != SolarSystemGlobals::quality_observers.end();
             ++ob) {
             (*ob)->SSGUpdate();
             }
@@ -82,7 +84,7 @@ void SolarSystemGlobals::registerRenderQualityObserver(SSGObserver* observer) {
     // Bar null pointers.
     if(observer != NULL) {
         // Using std::set semantics will ensure no repeated entries.
-        quality_observers.insert(observer);
+        SolarSystemGlobals::quality_observers.insert(observer);
         }
     }
 
@@ -90,6 +92,6 @@ void SolarSystemGlobals::unRegisterRenderQualityObserver(SSGObserver* observer) 
     // Bar null pointers.
     if(observer != NULL) {
         // Using std::set semantics will ensure removal if present.
-        quality_observers.erase(observer);
+        SolarSystemGlobals::quality_observers.erase(observer);
         }
     }

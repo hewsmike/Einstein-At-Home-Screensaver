@@ -132,21 +132,21 @@ class SolarSystemGlobals {
         /// The current quality level.
         static SolarSystemGlobals::render_quality qual;
 
-        class ObsComp {
-            public:
-                bool operator()(SSGObserver* s1, SSGObserver* s2) {
-                    if(s1 < s2) {
-                        return true;
-                        }
-                    else {
-                        return false;
-                        }
-                    }
-            };
+//        class ObsComp {
+//            public:
+//                bool operator()(SSGObserver* s1, SSGObserver* s2) {
+//                    if(s1 < s2) {
+//                        return true;
+//                        }
+//                    else {
+//                        return false;
+//                        }
+//                    }
+//            };
 
         /// The set of observers to inform of any
         /// change to the rendering quality setting.
-        static std::set<SSGObserver*, ObsComp> quality_observers;
+        static std::set<SSGObserver*> quality_observers;
     };
 
 /**
