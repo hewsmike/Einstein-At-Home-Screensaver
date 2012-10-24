@@ -120,7 +120,7 @@ Simulation::Simulation(void) : cs(CONSTELLATIONS_RADIUS),
                                    SUN_STACKS,
                                    SUN_SLICES,
                                    SUN_TEXTURE_OFFSET),
-                               target("reticle", 4),
+                               target(std::string("reticle"), screen_width, screen_height, 4),
                                overlay(NULL),
                                north_panel(&overlay, HUDFlowLayout::VERTICAL),
                                south_panel(&overlay, HUDFlowLayout::HORIZONTAL),
@@ -314,6 +314,8 @@ void Simulation::resize(GLuint width, GLuint height) {
     // Now tell the HUD of such settings.
     // TODO - if resize denied then inactivate HUD ?? Complex ....
     overlay.requestResize(width, height);
+
+    target.resize(screen_width, screen_height);
     }
 
 void Simulation::setFont(content element, OGLFT_ft* font) {

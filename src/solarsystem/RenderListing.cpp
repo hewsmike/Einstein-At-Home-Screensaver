@@ -42,11 +42,11 @@ void RenderListing::clear(void) {
         // Free the heap memory that was allocated, this
         // will also call the destructor for the Renderable
         // object that, by design, releases OpenGL resources.
-        delete (*fr);
+        delete (*rp);
         }
     // Finally empty the container using a call to std::vector.clear() that
     // calls the destructor for each item ( being pointers in this case ) and
     // then finally sets the vector's size to zero. NB A pointer's destructor
     // "does" nothing ...
-    frames.clear();
+    r_ptrs.clear();
     }

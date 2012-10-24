@@ -54,7 +54,7 @@ void TargetReticle::resize(GLuint screen_width, GLuint screen_height) {
 void TargetReticle::prepare(SolarSystemGlobals::render_quality rq) {
     // Eliminate any prior stored frames.
     frames.clear();
-    for(unsigned int fc = 0; fc < frame_count; ++fc) {
+    for(unsigned int fc = 0; fc < max_frames; ++fc) {
         std::stringstream frame_name;
         frame_name << base_name;
         frame_name.precision(1);

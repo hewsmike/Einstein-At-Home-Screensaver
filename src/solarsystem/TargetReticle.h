@@ -92,7 +92,6 @@ class TargetReticle : public Renderable {
         static const unsigned int INITIAL_PHASE;
 
         std::string base_name;
-        unsigned int max_frames;
 
         /// The frame/phase of the reticle animation.
         unsigned int phase;
@@ -102,6 +101,8 @@ class TargetReticle : public Renderable {
 
         /// The current screen width as advised through resize()
         GLuint scr_height;
+
+        unsigned int max_frames;
 
         /// Storage for the sequence of frames to animate the reticle
         RenderListing frames;
