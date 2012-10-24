@@ -118,7 +118,7 @@ class Renderable : public SSGObserver {
          *
          *      Satisfies SSGObserver interface.
          */
-        virtual void SSGupdate(void);
+        virtual void SSGUpdate(void);
 
         /**
          * \brief Sets the font.

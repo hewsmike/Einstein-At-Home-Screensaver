@@ -23,15 +23,15 @@
 #include "framework.h"
 
 /**
-* \addtogroup solarsystem Solarsystem
-* @{
-*/
+ * \addtogroup solarsystem Solarsystem
+ * @{
+ */
 
 /**
-* \brief A virtual base class for observers of the SolarSystemGlobals object.
-*
-* \author Mike Hewson\n
-*/
+ * \brief A virtual base class for observers of the SolarSystemGlobals object.
+ *
+ * \author Mike Hewson\n
+ */
 
 class SSGObserver {
     public:
@@ -67,7 +67,8 @@ class SSGObserver {
          * \brief Callback target for the static SolarSystemGlobals instance.
          *
          *      This routine is called when there is a change in the render
-         * quality setting. A derived class must define the behaviour.
+         * quality setting. Default is to do nothing, but a derived class
+         * may re-define this behaviour.
          */
         virtual void SSGUpdate(void);
 
@@ -76,7 +77,7 @@ class SSGObserver {
     };
 
 /**
-* @}
-*/
+ * @}
+ */
 
 #endif // SSG_OBSERVER_H_

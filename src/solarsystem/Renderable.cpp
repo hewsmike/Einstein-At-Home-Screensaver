@@ -49,7 +49,7 @@ void Renderable::inactivate(void) {
     // Release resources as we have decided not to show it.
     release();
 
-    // Unregister the callback for any global rendering level alteration.
+    // Unregister any callback triggered by global rendering level alteration.
     detach();
 
     // Mark as inactive.
@@ -89,7 +89,7 @@ void Renderable::draw(void) {
         }
     }
 
-void Renderable::SSGupdate(void) {
+void Renderable::SSGUpdate(void) {
     // Store the new rendering level.
     quality = SolarSystemGlobals::getRenderLevel();
 

@@ -46,5 +46,5 @@ bool SSGObserver::isAttached(void) const {
     }
 
 void SSGObserver::SSGUpdate(void) {
-
+    // Does nothing, override in derived class otherwise.
     }
