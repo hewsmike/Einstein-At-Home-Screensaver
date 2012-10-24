@@ -18,57 +18,35 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "TargetReticle.h"
+#include "RenderListing.h"
 
-#include <sstream>
-
-#include "HUDImage.h"
-
-const string TargetReticle::FRAME_RESOURCE_END_NAME("TGA");
-const unsigned int TargetReticle::INITIAL_PHASE(0);
-
-TargetReticle::TargetReticle(std::string resource_base_name,
-                             GLuint screen_width,
-                             GLuint screen_height,
-                             unsigned int frame_count) :
-                                base_name(resource_base_name),
-                                scr_width(screen_width),
-                                scr_height(screen_height),
-                                max_frames(frame_count){
-    reset();
+RenderListing::RenderListing() {
     }
 
-TargetReticle::~TargetReticle() {
-    frames.clear();
+RenderListing::~RenderListing() {
+    clear();
     }
 
-void TargetReticle::reset(void) {
-    phase = INITIAL_PHASE;
-    }
-
-void TargetReticle::resize(GLuint screen_width, GLuint screen_height) {
-    scr_width = screen_width;
-    scr_height = screen_height;
-    }
-
-void TargetReticle::prepare(SolarSystemGlobals::render_quality rq) {
-    // Eliminate any prior stored frames.
-    frames.clear();
-    for(unsigned int fc = 0; fc < frame_count; ++fc) {
-        std::stringstream frame_name;
-        frame_name << base_name;
-        frame_name.precision(1);
-        frame_name << fc;
-        frame_name << FRAME_RESOURCE_END_NAME;
-        frames.add(new HUDImage(frame_name.str(), 0, 0));
+void RenderListing::add(Renderable* renderable_ptr) {
+    // Prevent a NULL sneaking in.
+    if(renderable_ptr != NULL) {
+        r_ptrs.push_back(renderable_ptr);
         }
     }
 
-void TargetReticle::release(void) {
+void RenderListing::clear(void) {
+    // Go through all elements currently in the container.
+    for(std::vector<Renderable*>::iterator rp = r_ptrs.begin();
+        rp != r_ptrs.end();
+        ++rp) {
+        // Free the heap memory that was allocated, this
+        // will also call the destructor for the Renderable
+        // object that, by design, releases OpenGL resources.
+        delete (*fr);
+        }
+    // Finally empty the container using a call to std::vector.clear() that
+    // calls the destructor for each item ( being pointers in this case ) and
+    // then finally sets the vector's size to zero. NB A pointer's destructor
+    // "does" nothing ...
     frames.clear();
-    }
-
-void TargetReticle::render(void) {
-    phase = (phase + 1) % max_frames;
-
     }
