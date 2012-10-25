@@ -29,7 +29,11 @@ const GLfloat SunOrbit::DAYS_PER_YEAR(365.00f);
 // and a nice integral number of rotations per year - so no
 // jumps on Jan 1st
 const GLfloat SunOrbit::DAYS_PER_ROTATION(DAYS_PER_YEAR/14.0f);
+
+// Arbitrary but looks nice
 const GLfloat SunOrbit::SUN_ORBIT_RADIUS(5*SolarSystemGlobals::SUN_RADIUS);
+
+// Ignoring leap years this is March 21st
 const int SunOrbit::VERNAL_EQUINOX_DAY(79);
 
 SunOrbit::SunOrbit(void) {
@@ -39,7 +43,7 @@ SunOrbit::~SunOrbit() {
     }
 
 Vector3D SunOrbit::getPosition(GLfloat days) {
-    // Well to start with on, say, Mar 21st the Sun is at the vernal equinox.
+    // Well to start with : on Mar 21st the Sun is at the vernal equinox.
     GLfloat days_since_vernal_equinox = days - VERNAL_EQUINOX_DAY;
 
     // Bring into the 'principal value' domain.
@@ -51,14 +55,15 @@ Vector3D SunOrbit::getPosition(GLfloat days) {
     // from the northern side.
     GLfloat theta = (days_since_vernal_equinox/DAYS_PER_YEAR)*SolarSystemGlobals::FULL_CIRCLE_DEG;
 
-    // Just a circle.
+    // Just modelling a circle but tilted with respect to the celestial equator.
     return SUN_ORBIT_RADIUS * Vector3D(COS(theta),
                                        SIN(theta) * COS(ECLIPTIC_ANGLE_DEG),
                                        SIN(theta) * SIN(ECLIPTIC_ANGLE_DEG));
     }
 
 GLfloat SunOrbit::getRotation(GLfloat days) {
-    // 'Unrotated' is for the Sun quite arbitrary ( not a rigid body ) ...
+    // 'Unrotated' is for the Sun quite arbitrary ( not a rigid body and
+    // without constant features ) ...
     GLfloat days_since_unrotated = moduloDays(days, DAYS_PER_ROTATION);
 
     return (days_since_unrotated/DAYS_PER_ROTATION)*SolarSystemGlobals::FULL_CIRCLE_DEG;;

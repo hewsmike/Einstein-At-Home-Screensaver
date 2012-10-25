@@ -36,15 +36,16 @@ const GLuint SolarSystemGlobals::EARTH_RADIUS(100);
 const GLuint SolarSystemGlobals::SUN_RADIUS(800);
 
 // Default rendering quality is the lowest.
-SolarSystemGlobals::render_quality SolarSystemGlobals::qual(SolarSystemGlobals::RENDER_LOWEST);
+SolarSystemGlobals::render_quality SolarSystemGlobals::qual(RENDER_LOWEST);
 
 const GLfloat SolarSystemGlobals::FULL_CIRCLE_DEG(360.0f);
-const GLfloat SolarSystemGlobals::HALF_CIRCLE_DEG(180.0f);
-const GLfloat SolarSystemGlobals::QUARTER_CIRCLE_DEG(90.0f);
+const GLfloat SolarSystemGlobals::HALF_CIRCLE_DEG(FULL_CIRCLE_DEG/2);
+const GLfloat SolarSystemGlobals::QUARTER_CIRCLE_DEG(FULL_CIRCLE_DEG/4);
 const GLfloat SolarSystemGlobals::MINUTES_PER_HOUR(60.0f);
+const GLFloat SolarSystemGlobals::HOURS_PER_DAY(24.0f);
 const GLfloat SolarSystemGlobals::SECONDS_PER_MINUTE(60.0f);
 const GLfloat SolarSystemGlobals::MINUTES_PER_DEGREE(60.0f);
-const GLfloat SolarSystemGlobals::DEGREES_PER_HOUR(15.0f);
+const GLfloat SolarSystemGlobals::DEGREES_PER_HOUR(FULL_CIRCLE_DEG/HOURS_PER_DAY);
 
 const GLuint SolarSystemGlobals::MIN_SCREEN_WIDTH(800);
 const GLuint SolarSystemGlobals::MIN_SCREEN_HEIGHT(600);
@@ -91,7 +92,7 @@ void SolarSystemGlobals::registerRenderQualityObserver(SSGObserver* observer) {
 void SolarSystemGlobals::unRegisterRenderQualityObserver(SSGObserver* observer) {
     // Bar null pointers.
     if(observer != NULL) {
-        // Using std::set semantics will ensure removal if present.
+        // Using std::set semantics will ensure removal only if present.
         SolarSystemGlobals::quality_observers.erase(observer);
         }
     }

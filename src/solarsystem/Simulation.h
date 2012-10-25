@@ -46,6 +46,7 @@
 #include "PulsarEAH.h"
 #include "PulsarsEAH.h"
 #include "Renderable.h"
+#include "RenderListing.h"
 #include "SolarSystemGlobals.h"
 #include "Sphere.h"
 #include "Stars.h"
@@ -267,6 +268,17 @@ class Simulation : public Renderable {
         static const std::string EAH_PULSAR_FILE;
         static const std::string EAH_PULSAR_FILE_EXT;
 
+        /// The dimensions in pixels of the target reticle images
+        /// used in animation, assumed square.
+        static const GLuint TARGET_RETICLE_SIZE;
+
+        /// The number of image frames used to
+        /// animate the target reticle.
+        static const GLuint TARGET_RETICLE_FRAMES;
+
+        /// The base name of the image resources used for reticle animation.
+        static const std::string TARGET_RETICLE_RESOURCE_NAME_BASE;
+
         /**
          * \brief Load a list of general pulsar data
          *
@@ -342,9 +354,9 @@ class Simulation : public Renderable {
         /// for pulse profiles to display on the HUD.
         std::map<std::string, HUDItem*> pulse_profiles;
 
-        std::vector<HUDTextLine*> text_lines;
+        RenderListing text_lines;
 
-        std::vector<HUDImage*> lookout_images;
+        RenderListing lookout_images;
 
         /// Pointer to the scrolling marquee text.
         HUDTextLineScroll* version_text;
@@ -378,10 +390,6 @@ class Simulation : public Renderable {
         std::vector<std::string> tokenise(std::string input, char delimiter) const;
 
         std::vector<std::string> parseLine(std::string input) const;
-
-        void clearTextLines(void);
-
-        void clearImages(void);
     };
 
 /**

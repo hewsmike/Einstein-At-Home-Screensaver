@@ -102,25 +102,52 @@ const GLint Simulation::HUD_FAR_CLIP(+1);
 const std::string Simulation::EAH_PULSAR_FILE("EatH_mastercat");
 const std::string Simulation::EAH_PULSAR_FILE_EXT("txt");
 
+const GLuint Simulation::TARGET_RETICLE_SIZE(64);
+const GLuint Simulation::TARGET_RETICLE_FRAMES(4);
+const std::string Simulation::TARGET_RETICLE_RESOURCE_NAME_BASE("reticle");
+
 Simulation::Simulation(void) : cs(CONSTELLATIONS_RADIUS),
-                               ps(PULSARS_RADIUS, PULSARS_MAG_SIZE, PULSARS_RGB_RED, PULSARS_RGB_GREEN, PULSARS_RGB_BLUE),
-                               ps_EAH(PULSARS_EAH_RADIUS, PULSARS_EAH_MAG_SIZE, PULSARS_EAH_RGB_RED, PULSARS_EAH_RGB_GREEN, PULSARS_EAH_RGB_BLUE),
-                               sn(SUPERNOVAE_RADIUS, SUPERNOVAE_MAG_SIZE, SUPERNOVAE_RGB_RED, SUPERNOVAE_RGB_GREEN, SUPERNOVAE_RGB_BLUE),
-                               c_sphere(SKYGRID_RADIUS, SKYGRID_SLICES, SKYGRID_STACKS, GridGlobe::INSIDE),
+                               ps(PULSARS_RADIUS,
+                                  PULSARS_MAG_SIZE,
+                                  PULSARS_RGB_RED,
+                                  PULSARS_RGB_GREEN,
+                                  PULSARS_RGB_BLUE),
+                               ps_EAH(PULSARS_EAH_RADIUS,
+                                      PULSARS_EAH_MAG_SIZE,
+                                      PULSARS_EAH_RGB_RED,
+                                      PULSARS_EAH_RGB_GREEN,
+                                      PULSARS_EAH_RGB_BLUE),
+                               sn(SUPERNOVAE_RADIUS,
+                                  SUPERNOVAE_MAG_SIZE,
+                                  SUPERNOVAE_RGB_RED,
+                                  SUPERNOVAE_RGB_GREEN,
+                                  SUPERNOVAE_RGB_BLUE),
+                               c_sphere(SKYGRID_RADIUS,
+                                        SKYGRID_SLICES,
+                                        SKYGRID_STACKS,
+                                        GridGlobe::INSIDE),
                                earth(EARTH_NAME,
                                      EARTH_IMAGE_RESOURCE,
                                      SolarSystemGlobals::EARTH_RADIUS,
                                      EARTH_STACKS,
                                      EARTH_SLICES,
                                      EARTH_TEXTURE_OFFSET),
-                               e_sphere(EARTHGRID_RADIUS, EARTHGRID_SLICES, EARTHGRID_STACKS, GridGlobe::OUTSIDE),
+                               e_sphere(EARTHGRID_RADIUS,
+                                        EARTHGRID_SLICES,
+                                        EARTHGRID_STACKS,
+                                        GridGlobe::OUTSIDE),
                                sun(SUN_NAME,
                                    SUN_IMAGE_RESOURCE,
                                    SolarSystemGlobals::SUN_RADIUS,
                                    SUN_STACKS,
                                    SUN_SLICES,
                                    SUN_TEXTURE_OFFSET),
-                               target(std::string("reticle"), screen_width, screen_height, 4),
+                               target(TARGET_RETICLE_RESOURCE_NAME_BASE,
+                                      TARGET_RETICLE_SIZE/2,
+                                      TARGET_RETICLE_SIZE/2,
+                                      screen_width,
+                                      screen_height,
+                                      TARGET_RETICLE_FRAMES),
                                overlay(NULL),
                                north_panel(&overlay, HUDFlowLayout::VERTICAL),
                                south_panel(&overlay, HUDFlowLayout::HORIZONTAL),
@@ -196,14 +223,14 @@ Simulation::~Simulation() {
     if(version_text != NULL) {
         delete version_text;
         }
-    clearTextLines();
-    clearImages();
+    text_lines.clear();
+    lookout_images.clear();
     }
 
 void Simulation::step(void) {
     // Is the autopilot inactive?
     if(!pilot.isActive()) {
-        // No, then evolve the user's craft's mechanics
+        // No, then evolve the user's craft mechanics
         // with knowledge of the day within the year.
         flyboy.step(day366);
         }
@@ -211,10 +238,10 @@ void Simulation::step(void) {
         // Yes, the autopilot is operating so check for any
         // content change of the tour's descriptive text.
         if(pilot.hasDescriptionChanged() == true) {
-            target.inactivate();
+            target.hide();
 
-            clearTextLines();
-            clearImages();
+            text_lines.clear();
+            lookout_images.clear();
             // Clean up any prior panel contents.
             north_panel.erase();
             west_panel.erase();
@@ -225,28 +252,27 @@ void Simulation::step(void) {
             // Derived according to the current position in the tour.
             const std::vector<std::string>& messages = pilot.getDescription();
             if(messages.size() != 0) {
-                target.activate();
+                target.show();
                 for(std::vector<std::string>::const_iterator message = messages.begin();
                     message != messages.end();
                     ++message) {
                     /// TODO - currently entering in reverse order ( see HUDFlowLayout::allocateItemBases() LAST case ).
                     HUDTextLine* line = new HUDTextLine(message->size(), overlay.getFont(), *message, 0, 2);
-                    text_lines.push_back(line);
+                    text_lines.add(line);
                     north_panel.addContent(line);
                     }
                 }
 
-            // Then put new images, if any, into the west panel.
+            // Then put new image(s), if any, into the west panel.
             // Derived according to the current position in the tour
-            // and are currently the pulse profile
-            // Cast from base ( Renderable ) to derived ( HUDContent ) class.
+            // and are currently the pulse profile plots.
             lookout_images.clear();
             const std::vector<std::string>& image_names = pilot.getImageResourceNames();
             for(std::vector<std::string>::const_iterator image_name = image_names.begin();
                 image_name != image_names.end();
                 ++image_name) {
                 HUDImage* profile = new HUDImage(*image_name, 10, 10);
-                lookout_images.push_back(profile);
+                lookout_images.add(profile);
                 west_panel.addContent(profile);
                 }
 
@@ -258,19 +284,20 @@ void Simulation::step(void) {
     // The time increments are minute granular.
     ++min60;
     // Have we rolled over to the next hour?
-    if(min60 > 59) {
+    if(min60 = SolarSystemGlobals::MINUTES_PER_HOUR) {
         // Yes, so zero minutes at the start of a fresh hour.
         min60 = 0;
         // Roll the hour forward.
         ++hour24;
         // Have we rolled over to another day?
-        if(hour24 > 23) {
+        if(hour24 = SolarSystemGlobals::HOURS_PER_DAY) {
             // Yes, so zero hours at the start of a fresh day.
             hour24 = 0;
             }
         }
     // Set the Earth's hour angle based upon the above.
-    earth_hour_angle = (hour24 + min60/60.0f) * 15.0f;
+    earth_hour_angle = (hour24 + min60/SolarSystemGlobals::MINUTES_PER_HOUR) *
+                       SolarSystemGlobals::DEGREES_PER_HOUR;
 
     /// TODO - demo code only, needs proper ephemeris model.
     // This is a fudge for demo purposes, and makes the
@@ -441,8 +468,8 @@ void Simulation::release(void) {
     if(version_text != NULL) {
         delete version_text;
         }
-    clearTextLines();
-    clearImages();
+    text_lines.clear();
+    lookout_images.clear();
     }
 
 void Simulation::render(void) {
@@ -2812,6 +2839,7 @@ void Simulation::cycle(Simulation::content ct) {
                 flyboy.manouevre(Craft::STOP_TRANSLATION);
                 flyboy.setViewState(pilot.viewState());
                 pilot.inactivate();
+                target.inactivate();
 
                 // Eliminate any remaining informative
                 // text from the HUD.
@@ -2829,6 +2857,10 @@ void Simulation::cycle(Simulation::content ct) {
                 // reduce possible high initial slew rate.
                 //current.setFocus(current.position() + SolarSystemGlobals::CELESTIAL_SPHERE_RADIUS*current.focus());
                 pilot.activate(ps_EAH, current);
+
+                // Activate the target reticle but don't show it yet.
+                target.activate();
+                target.hide();
                 }
             break;
         case Simulation::TARGET_RETICLE:
@@ -3043,26 +3075,4 @@ std::vector<std::string> Simulation::parseLine(std::string input) const {
     ret_val.push_back(splits.at(splits.size() - 1));
 
     return ret_val;
-    }
-
-void Simulation::clearTextLines(void) {
-    for(std::vector<HUDTextLine*>::iterator line = text_lines.begin();
-        line != text_lines.end();
-        ++line) {
-        if(*line != NULL) {
-            (*line)->inactivate();
-            }
-        }
-    text_lines.clear();
-    }
-
-void Simulation::clearImages(void) {
-    for(std::vector<HUDImage*>::iterator image = lookout_images.begin();
-        image != lookout_images.end();
-        ++image) {
-        if(*image != NULL) {
-            (*image)->inactivate();
-            }
-        }
-    lookout_images.clear();
     }

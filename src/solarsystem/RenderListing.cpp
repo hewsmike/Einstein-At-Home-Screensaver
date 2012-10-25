@@ -50,3 +50,21 @@ void RenderListing::clear(void) {
     // "does" nothing ...
     r_ptrs.clear();
     }
+
+const Renderable* RenderListing::at(GLuint index) const {
+    // Assume out of range.
+    Renderable ret_val = NULL;
+
+    // If container non-empty and index in range then ...
+    if((size() != 0) && (index < size()) {
+        // As written expect an exception to be thrown from
+        // std::vector if out-of-range anyway.
+        ret_val = r_ptrs.at(index);
+        }
+
+    return ret_val;
+    }
+
+unsigned int RenderListing::size(void) const {
+    return r_ptrs.size();
+    }

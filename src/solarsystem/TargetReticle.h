@@ -50,17 +50,33 @@ class TargetReticle : public Renderable {
          *                             minus one eg. 'reticle0TGA' thru
          *                             'reticle3TGA' ( 'reticle' is this base
          *                             name and the frame_count is 4 )
+         *
          * \param screen_width - the width in pixels of the current total client
          *                       display area allocated by OpenGL
+         *
          * \param screen_height - the height in pixels of the current total client
          *                        display area allocated by OpenGL
+         *
+         * \param centre_offset_x - the adjustment in the horizontal direction,
+         *                          measured as positive to the left of the
+         *                          centre of the HUD, to base the lower left
+         *                          corner of any given animation frame.
+         *
+         * \param centre_offset_y - the adjustment in the vertical direction,
+         *                          measured as positive below the
+         *                          centre of the HUD, to base the lower left
+         *                          corner of any given animation frame.
+         *
          * \param frame_count - the total number of frames to be animated, which
-         *                      MUST at least match the available resources as
-         *                      given by the aforementioned naming scheme
+         *                      MUST at least be the number of available
+         *                      resources as given by the aforementioned naming
+         *                      scheme, and not exceed nine.
          */
         TargetReticle(std::string resource_base_name,
                       GLuint screen_width,
                       GLuint screen_height,
+                      GLuint centre_offset_x,
+                      GLuint centre_offset_y,
                       unsigned int frame_count);
 
         /**
@@ -73,6 +89,14 @@ class TargetReticle : public Renderable {
          */
         void reset(void);
 
+        /**
+         * \brief Set the screensize to render to
+         *
+         * \param screen_width - the width in pixels of the current total client
+         *                       display area allocated by OpenGL
+         * \param screen_height - the height in pixels of the current total client
+         *                        display area allocated by OpenGL
+         */
         void resize(GLuint screen_width, GLuint screen_height);
 
     protected:
@@ -88,12 +112,17 @@ class TargetReticle : public Renderable {
         virtual void render(void);
 
     private:
+        /// The ending of the resource names used to acquire images for
+        /// animation. Currently set to 'TGA'
         static const std::string FRAME_RESOURCE_END_NAME;
+
+        /// The initial index of the image to retrieve when rendering.
         static const unsigned int INITIAL_PHASE;
 
+        /// Base name of the resources used to acquire images for animation.
         std::string base_name;
 
-        /// The frame/phase of the reticle animation.
+        /// The frame/phase of the reticle animation
         unsigned int phase;
 
         /// The current screen height as advised through resize()
@@ -102,6 +131,17 @@ class TargetReticle : public Renderable {
         /// The current screen width as advised through resize()
         GLuint scr_height;
 
+        /// The offset in the horizontal direction, measured from the centre
+        /// of the HUD in the sense of positive being to the left, to place the
+        /// bottom left hand corner of the animation frame.
+        GLuint x_offset;
+
+        /// The offset in the vertical direction, measured from the centre
+        /// of the HUD in the sense of positive going downwards, to place the
+        /// bottom left hand corner of the animation frame.
+        GLuint y_offset;
+
+        /// The maximum number of frames to render
         unsigned int max_frames;
 
         /// Storage for the sequence of frames to animate the reticle

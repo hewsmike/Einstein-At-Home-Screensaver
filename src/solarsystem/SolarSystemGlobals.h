@@ -70,6 +70,7 @@ class SolarSystemGlobals {
         static const GLfloat HALF_CIRCLE_DEG;
         static const GLfloat QUARTER_CIRCLE_DEG;
         static const GLfloat MINUTES_PER_HOUR;
+        static const GLfloat HOURS_PER_DAY;
         static const GLfloat SECONDS_PER_MINUTE;
         static const GLfloat MINUTES_PER_DEGREE;
         static const GLfloat DEGREES_PER_HOUR;
@@ -131,18 +132,6 @@ class SolarSystemGlobals {
 
         /// The current quality level.
         static SolarSystemGlobals::render_quality qual;
-
-//        class ObsComp {
-//            public:
-//                bool operator()(SSGObserver* s1, SSGObserver* s2) {
-//                    if(s1 < s2) {
-//                        return true;
-//                        }
-//                    else {
-//                        return false;
-//                        }
-//                    }
-//            };
 
         /// The set of observers to inform of any
         /// change to the rendering quality setting.

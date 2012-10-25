@@ -31,7 +31,8 @@
 
 /**
  * \brief A wrapper for holding a listing of pointers to heap based Renderable
- *        objects.
+ *        objects. Semantics of storage and retrieval of pointers assume a
+ *        linear container.
  *
  * \author Mike Hewson\n
  */
@@ -58,6 +59,26 @@ class RenderListing {
          *  resources and the heap allocation itself.
          */
         void clear(void);
+
+        /**
+         * \brief Retrieve a pointer by index ( assumes knowledge of the
+         *        ordering of insertion )
+         *
+         * \param index - the index into the underlying container. Bounds
+         *                checking occurs with NULL returned for out of range,
+         *                thus including the case where the container is empty.
+         *
+         * \return A pointer to the Renderable object stored at the given
+         *         index, MAY BE NULL.
+         */
+        const Renderable* at(unsigned int index) const;
+
+        /**
+         * \brief Obtain the number of pointer entries
+         *
+         * \return the number of pointer entries in the listing
+         */
+        unsigned int size(void) const;
 
     private:
         /// Storage for the heap allocation pointers.
