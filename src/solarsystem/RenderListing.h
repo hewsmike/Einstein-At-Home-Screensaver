@@ -37,7 +37,7 @@
  * \author Mike Hewson\n
  */
 
-class RenderListing {
+template<class T> class RenderListing {
     public:
         /**
          * \brief Constructor.
@@ -52,7 +52,7 @@ class RenderListing {
         /**
          * \brief Add a pointer to a heap based Renderable object.
          */
-        void add(Renderable* renderable_ptr);
+        void add(T* renderable_ptr);
 
         /**
          * \brief Empty the pointer listing, while freeing any OpenGL
@@ -71,7 +71,7 @@ class RenderListing {
          * \return A pointer to the Renderable object stored at the given
          *         index, MAY BE NULL.
          */
-        const Renderable* at(unsigned int index) const;
+        const T* at(unsigned int index) const;
 
         /**
          * \brief Obtain the number of pointer entries
@@ -82,7 +82,7 @@ class RenderListing {
 
     private:
         /// Storage for the heap allocation pointers.
-        std::vector<Renderable*> r_ptrs;
+        std::vector<T*> r_ptrs;
     };
 
 /**

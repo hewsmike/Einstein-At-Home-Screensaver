@@ -325,7 +325,7 @@ class Simulation : public Renderable {
         Globe earth;
         GridGlobe e_sphere;
         Globe sun;
-        TargetReticle target;
+        // TargetReticle target;
 
         /// The craft instance.
         Craft flyboy;

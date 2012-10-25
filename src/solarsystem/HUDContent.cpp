@@ -26,6 +26,7 @@ HUDContent::HUDContent(GLuint horizontalMargin, GLuint verticalMargin) :
     }
 
 HUDContent::~HUDContent() {
+    std::cout << "HUDContent::~HUDContent()" << std::endl;
     }
 
 GLuint HUDContent::horzMargin(void) const {

@@ -42,7 +42,7 @@ const GLfloat SolarSystemGlobals::FULL_CIRCLE_DEG(360.0f);
 const GLfloat SolarSystemGlobals::HALF_CIRCLE_DEG(FULL_CIRCLE_DEG/2);
 const GLfloat SolarSystemGlobals::QUARTER_CIRCLE_DEG(FULL_CIRCLE_DEG/4);
 const GLfloat SolarSystemGlobals::MINUTES_PER_HOUR(60.0f);
-const GLFloat SolarSystemGlobals::HOURS_PER_DAY(24.0f);
+const GLfloat SolarSystemGlobals::HOURS_PER_DAY(24.0f);
 const GLfloat SolarSystemGlobals::SECONDS_PER_MINUTE(60.0f);
 const GLfloat SolarSystemGlobals::MINUTES_PER_DEGREE(60.0f);
 const GLfloat SolarSystemGlobals::DEGREES_PER_HOUR(FULL_CIRCLE_DEG/HOURS_PER_DAY);

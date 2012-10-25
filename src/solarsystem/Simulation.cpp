@@ -142,18 +142,18 @@ Simulation::Simulation(void) : cs(CONSTELLATIONS_RADIUS),
                                    SUN_STACKS,
                                    SUN_SLICES,
                                    SUN_TEXTURE_OFFSET),
-                               target(TARGET_RETICLE_RESOURCE_NAME_BASE,
-                                      TARGET_RETICLE_SIZE/2,
-                                      TARGET_RETICLE_SIZE/2,
-                                      screen_width,
-                                      screen_height,
-                                      TARGET_RETICLE_FRAMES),
                                overlay(NULL),
                                north_panel(&overlay, HUDFlowLayout::VERTICAL),
                                south_panel(&overlay, HUDFlowLayout::HORIZONTAL),
                                east_panel(&overlay, HUDFlowLayout::VERTICAL),
                                west_panel(&overlay, HUDFlowLayout::VERTICAL) {
     // Starting values of simulation parameters.
+//    target(TARGET_RETICLE_RESOURCE_NAME_BASE,
+//                                      TARGET_RETICLE_SIZE/2,
+//                                      TARGET_RETICLE_SIZE/2,
+//                                      screen_width,
+//                                      screen_height,
+//                                      TARGET_RETICLE_FRAMES),
     min60 = 0;
     hour24 = 0;
     day366 = 0;
@@ -238,21 +238,26 @@ void Simulation::step(void) {
         // Yes, the autopilot is operating so check for any
         // content change of the tour's descriptive text.
         if(pilot.hasDescriptionChanged() == true) {
-            target.hide();
+            std::cout << "blather funk1" << std::endl;
+            //target.hide();
 
             text_lines.clear();
+            std::cout << "blather funk1.05" << std::endl;
             lookout_images.clear();
+            std::cout << "blather funk1.1" << std::endl;
             // Clean up any prior panel contents.
             north_panel.erase();
             west_panel.erase();
             north_panel.setLoad(HUDFlowLayout::FIRST);
             west_panel.setLoad(HUDFlowLayout::FIRST);
 
+            std::cout << "blather funk1.4" << std::endl;
+
             // Then put new content lines, if any, into the panel.
             // Derived according to the current position in the tour.
             const std::vector<std::string>& messages = pilot.getDescription();
             if(messages.size() != 0) {
-                target.show();
+                //target.show();
                 for(std::vector<std::string>::const_iterator message = messages.begin();
                     message != messages.end();
                     ++message) {
@@ -262,6 +267,7 @@ void Simulation::step(void) {
                     north_panel.addContent(line);
                     }
                 }
+            std::cout << "blather funk1.6" << std::endl;
 
             // Then put new image(s), if any, into the west panel.
             // Derived according to the current position in the tour
@@ -278,19 +284,20 @@ void Simulation::step(void) {
 
             west_panel.activate();
             north_panel.activate();
+            std::cout << "blather funk2" << std::endl;
             }
         }
 
     // The time increments are minute granular.
     ++min60;
     // Have we rolled over to the next hour?
-    if(min60 = SolarSystemGlobals::MINUTES_PER_HOUR) {
+    if(min60 == SolarSystemGlobals::MINUTES_PER_HOUR) {
         // Yes, so zero minutes at the start of a fresh hour.
         min60 = 0;
         // Roll the hour forward.
         ++hour24;
         // Have we rolled over to another day?
-        if(hour24 = SolarSystemGlobals::HOURS_PER_DAY) {
+        if(hour24 == SolarSystemGlobals::HOURS_PER_DAY) {
             // Yes, so zero hours at the start of a fresh day.
             hour24 = 0;
             }
@@ -342,7 +349,7 @@ void Simulation::resize(GLuint width, GLuint height) {
     // TODO - if resize denied then inactivate HUD ?? Complex ....
     overlay.requestResize(width, height);
 
-    target.resize(screen_width, screen_height);
+    //target.resize(screen_width, screen_height);
     }
 
 void Simulation::setFont(content element, OGLFT_ft* font) {
@@ -436,7 +443,7 @@ void Simulation::release(void) {
     earth.inactivate();
     e_sphere.inactivate();
     sun.inactivate();
-    target.inactivate();
+    //target.inactivate();
 
     // Must inactivate the layout first !!
     overlay.inactivate();
@@ -563,7 +570,7 @@ void Simulation::render(void) {
 
         // Finally draw the HUD.
         overlay.draw();
-        target.draw();
+        //target.draw();
 
         // Restore the projection and modelview stacks.
         glMatrixMode(GL_PROJECTION);
@@ -2839,7 +2846,7 @@ void Simulation::cycle(Simulation::content ct) {
                 flyboy.manouevre(Craft::STOP_TRANSLATION);
                 flyboy.setViewState(pilot.viewState());
                 pilot.inactivate();
-                target.inactivate();
+                //target.inactivate();
 
                 // Eliminate any remaining informative
                 // text from the HUD.
@@ -2859,12 +2866,12 @@ void Simulation::cycle(Simulation::content ct) {
                 pilot.activate(ps_EAH, current);
 
                 // Activate the target reticle but don't show it yet.
-                target.activate();
-                target.hide();
+                //target.activate();
+                //target.hide();
                 }
             break;
         case Simulation::TARGET_RETICLE:
-            target.cycleActivation();
+            //target.cycleActivation();
             break;
         default:
             // Ought not get here !!
