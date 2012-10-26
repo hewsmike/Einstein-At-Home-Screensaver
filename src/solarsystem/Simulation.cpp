@@ -238,7 +238,7 @@ void Simulation::step(void) {
         // Yes, the autopilot is operating so check for any
         // content change of the tour's descriptive text.
         if(pilot.hasDescriptionChanged() == true) {
-            //target.hide();
+            target.hide();
 
             text_lines.clear();
             lookout_images.clear();
@@ -252,7 +252,7 @@ void Simulation::step(void) {
             // Derived according to the current position in the tour.
             const std::vector<std::string>& messages = pilot.getDescription();
             if(messages.size() != 0) {
-                //target.show();
+                target.show();
                 for(std::vector<std::string>::const_iterator message = messages.begin();
                     message != messages.end();
                     ++message) {
@@ -342,7 +342,7 @@ void Simulation::resize(GLuint width, GLuint height) {
     // TODO - if resize denied then inactivate HUD ?? Complex ....
     overlay.requestResize(width, height);
 
-    //target.resize(screen_width, screen_height);
+    target.resize(screen_width, screen_height);
     }
 
 void Simulation::setFont(content element, OGLFT_ft* font) {
@@ -436,7 +436,7 @@ void Simulation::release(void) {
     earth.inactivate();
     e_sphere.inactivate();
     sun.inactivate();
-    //target.inactivate();
+    target.inactivate();
 
     // Must inactivate the layout first !!
     overlay.inactivate();
@@ -563,7 +563,7 @@ void Simulation::render(void) {
 
         // Finally draw the HUD.
         overlay.draw();
-        //target.draw();
+        target.draw();
 
         // Restore the projection and modelview stacks.
         glMatrixMode(GL_PROJECTION);
@@ -2839,7 +2839,7 @@ void Simulation::cycle(Simulation::content ct) {
                 flyboy.manouevre(Craft::STOP_TRANSLATION);
                 flyboy.setViewState(pilot.viewState());
                 pilot.inactivate();
-                //target.inactivate();
+                target.inactivate();
 
                 // Eliminate any remaining informative
                 // text from the HUD.
@@ -2859,12 +2859,12 @@ void Simulation::cycle(Simulation::content ct) {
                 pilot.activate(ps_EAH, current);
 
                 // Activate the target reticle but don't show it yet.
-                //target.activate();
-                //target.hide();
+                target.activate();
+                target.hide();
                 }
             break;
         case Simulation::TARGET_RETICLE:
-            //target.cycleActivation();
+            target.cycleActivation();
             break;
         default:
             // Ought not get here !!

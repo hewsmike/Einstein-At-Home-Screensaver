@@ -42,7 +42,7 @@ TargetReticle::TargetReticle(std::string resource_base_name,
     }
 
 TargetReticle::~TargetReticle() {
-    frames.clear();
+    release();
     }
 
 void TargetReticle::reset(void) {

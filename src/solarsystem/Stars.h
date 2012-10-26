@@ -81,6 +81,7 @@ template<class T> class Stars : public Renderable {
          * \brief Destructor, virtual
          */
         virtual ~Stars() {
+            release();
             }
 
         void add(T star)  {

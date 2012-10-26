@@ -46,6 +46,10 @@
  * continues with said resources. This class does not deal with any specific OpenGL
  * mechanisms.
  *
+ *      Having said that, it is VERY preferable if any most-derived class that
+ * contains an actual implementation of release(), call that in it's
+ * destructor to ensure release of OpenGL resources.
+ *
  *      Addition of show/hide feature which enables control of drawing without
  * loading/unloading of resources. Use if you want persistent resource acquisition
  * but optional rendering. Default upon construction is to show.

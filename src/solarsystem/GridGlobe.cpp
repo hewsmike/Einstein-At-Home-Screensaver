@@ -75,6 +75,7 @@ GridGlobe::GridGlobe(vec_t rad, GLuint slices, GLuint stacks, GridGlobe::textFac
     }
 
 GridGlobe::~GridGlobe() {
+    release();
     }
 
 void GridGlobe::cycleActivation(void) {
