@@ -32,7 +32,8 @@ Renderable::Renderable() : activity(Renderable::INACTIVE),
 
 Renderable::~Renderable() {
     std::cout << "Renderable::~Renderable()" << std::endl;
-    inactivate();
+    // WOWOWOWOWO this results in a virtual call !! :
+    // inactivate();
     }
 
 void Renderable::activate(void) {

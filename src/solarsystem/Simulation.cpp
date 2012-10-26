@@ -238,20 +238,15 @@ void Simulation::step(void) {
         // Yes, the autopilot is operating so check for any
         // content change of the tour's descriptive text.
         if(pilot.hasDescriptionChanged() == true) {
-            std::cout << "blather funk1" << std::endl;
             //target.hide();
 
             text_lines.clear();
-            std::cout << "blather funk1.05" << std::endl;
             lookout_images.clear();
-            std::cout << "blather funk1.1" << std::endl;
             // Clean up any prior panel contents.
             north_panel.erase();
             west_panel.erase();
             north_panel.setLoad(HUDFlowLayout::FIRST);
             west_panel.setLoad(HUDFlowLayout::FIRST);
-
-            std::cout << "blather funk1.4" << std::endl;
 
             // Then put new content lines, if any, into the panel.
             // Derived according to the current position in the tour.
@@ -267,7 +262,6 @@ void Simulation::step(void) {
                     north_panel.addContent(line);
                     }
                 }
-            std::cout << "blather funk1.6" << std::endl;
 
             // Then put new image(s), if any, into the west panel.
             // Derived according to the current position in the tour
@@ -284,7 +278,6 @@ void Simulation::step(void) {
 
             west_panel.activate();
             north_panel.activate();
-            std::cout << "blather funk2" << std::endl;
             }
         }
 
