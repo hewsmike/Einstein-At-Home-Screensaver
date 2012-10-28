@@ -60,7 +60,6 @@ HUDImage::HUDImage(std::string resourceName,
 
 HUDImage::~HUDImage() {
     std::cout << "HUDImage::~HUDImage()" << std::endl;
-    release();
     }
 
 void HUDImage::prepare(SolarSystemGlobals::render_quality rq) {
@@ -85,6 +84,7 @@ void HUDImage::prepare(SolarSystemGlobals::render_quality rq) {
     }
 
 void HUDImage::release(void) {
+    std::cout << "HUDImage::release() 1" << std::endl;
     // Policy is to set size to zero when rendering is not implied.
 
     // Discard server side resources.

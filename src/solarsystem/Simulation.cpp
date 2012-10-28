@@ -142,18 +142,19 @@ Simulation::Simulation(void) : cs(CONSTELLATIONS_RADIUS),
                                    SUN_STACKS,
                                    SUN_SLICES,
                                    SUN_TEXTURE_OFFSET),
+                               target(TARGET_RETICLE_RESOURCE_NAME_BASE,
+                                      TARGET_RETICLE_SIZE/2,
+                                      TARGET_RETICLE_SIZE/2,
+                                      screen_width,
+                                      screen_height,
+                                      TARGET_RETICLE_FRAMES),
                                overlay(NULL),
                                north_panel(&overlay, HUDFlowLayout::VERTICAL),
                                south_panel(&overlay, HUDFlowLayout::HORIZONTAL),
                                east_panel(&overlay, HUDFlowLayout::VERTICAL),
                                west_panel(&overlay, HUDFlowLayout::VERTICAL) {
     // Starting values of simulation parameters.
-//    target(TARGET_RETICLE_RESOURCE_NAME_BASE,
-//                                      TARGET_RETICLE_SIZE/2,
-//                                      TARGET_RETICLE_SIZE/2,
-//                                      screen_width,
-//                                      screen_height,
-//                                      TARGET_RETICLE_FRAMES),
+
     min60 = 0;
     hour24 = 0;
     day366 = 0;
@@ -240,8 +241,11 @@ void Simulation::step(void) {
         if(pilot.hasDescriptionChanged() == true) {
             target.hide();
 
+            std::cout << "Simulation::step() 1" << std::endl;
             text_lines.clear();
+            std::cout << "Simulation::step() 2" << std::endl;
             lookout_images.clear();
+            std::cout << "Simulation::step() 3" << std::endl;
             // Clean up any prior panel contents.
             north_panel.erase();
             west_panel.erase();

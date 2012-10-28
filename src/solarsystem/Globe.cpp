@@ -64,7 +64,6 @@ Globe::Globe(std::string name,
     }
 
 Globe::~Globe() {
-    release();
     }
 
 void Globe::loadTexture(void) {

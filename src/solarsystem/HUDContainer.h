@@ -1,22 +1,22 @@
 /***************************************************************************
- *   Copyright (C) 2012 by Mike Hewson                                     *
- *   hewsmike[AT]iinet.net.au                                              *
- *                                                                         *
- *   This file is part of Einstein@Home.                                   *
- *                                                                         *
- *   Einstein@Home is free software: you can redistribute it and/or modify *
- *   it under the terms of the GNU General Public License as published     *
- *   by the Free Software Foundation, version 2 of the License.            *
- *                                                                         *
- *   Einstein@Home is distributed in the hope that it will be useful,      *
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the          *
- *   GNU General Public License for more details.                          *
- *                                                                         *
- *   You should have received a copy of the GNU General Public License     *
- *   along with Einstein@Home. If not, see <http://www.gnu.org/licenses/>. *
- *                                                                         *
- ***************************************************************************/
+* Copyright (C) 2012 by Mike Hewson *
+* hewsmike[AT]iinet.net.au *
+* *
+* This file is part of Einstein@Home. *
+* *
+* Einstein@Home is free software: you can redistribute it and/or modify *
+* it under the terms of the GNU General Public License as published *
+* by the Free Software Foundation, version 2 of the License. *
+* *
+* Einstein@Home is distributed in the hope that it will be useful, *
+* but WITHOUT ANY WARRANTY; without even the implied warranty of *
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the *
+* GNU General Public License for more details. *
+* *
+* You should have received a copy of the GNU General Public License *
+* along with Einstein@Home. If not, see <http://www.gnu.org/licenses/>. *
+* *
+***************************************************************************/
 
 #ifndef HUD_CONTAINER_H_
 #define HUD_CONTAINER_H_
@@ -27,26 +27,26 @@
 #include "HUDItem.h"
 
 /**
- * \addtogroup solarsystem Solarsystem
- * @{
- */
+* \addtogroup solarsystem Solarsystem
+* @{
+*/
 
 /**
- * \brief Base container type for display of HUD content.
- *
- *      The key design feature here is that a HUDContainer
- * may be one/both of container and contained. That is, any
- * HUDContainer object may contain another HUDContainer
- * object.
- *
- *      Any contained object(s) will be activated for rendering
- * when the container itself is activated, but only those
- * present within at such time of activation.
- *
- * \see HUDItem
- *
- * \author Mike Hewson\n
- */
+* \brief Base container type for display of HUD content.
+*
+* The key design feature here is that a HUDContainer
+* may be one/both of container and contained. That is, any
+* HUDContainer object may contain another HUDContainer
+* object.
+*
+* Any contained object(s) will be activated for rendering
+* when the container itself is activated, but only those
+* present within at such time of activation.
+*
+* \see HUDItem
+*
+* \author Mike Hewson\n
+*/
 
 class HUDContainer : public HUDItem {
     public:
@@ -67,8 +67,8 @@ class HUDContainer : public HUDItem {
          * \param newHeight : the desired height
          *
          * \return bool : whether the resize occured
-         *                - true if a resize was allowed
-         *                - false if below minimum was requested
+         * - true if a resize was allowed
+         * - false if below minimum was requested
          */
         bool requestResize(GLuint newWidth, GLuint newHeight);
 
@@ -82,7 +82,7 @@ class HUDContainer : public HUDItem {
 
         /**
          * \brief Re-evaluate this container's sizing and contained items'
-         *        positions. Triggered by a change within the container.
+         * positions. Triggered by a change within the container.
          */
         void adjust(void);
 
@@ -132,12 +132,12 @@ class HUDContainer : public HUDItem {
         /**
          * \brief Add an item to this container.
          *
-         *      IF this does not create a FATAL error when executing,
+         * IF this does not create a FATAL error when executing,
          * then on completion :
-         *    - the given pointer was not NULL, and
-         *    - the item was inserted, and
-         *    - any existing item with the same handle was deleted, and
-         *    - this container's minimum dimensions were adjusted
+         * - the given pointer was not NULL, and
+         * - the item was inserted, and
+         * - any existing item with the same handle was deleted, and
+         * - this container's minimum dimensions were adjusted
          *
          * \param handle : an identifier for the item
          * \param obj : the item's pointer
@@ -147,19 +147,19 @@ class HUDContainer : public HUDItem {
         /**
          * \brief Re-assess the minimal width and height.
          *
-         *      Pure virtual as this depends upon the container's
+         * Pure virtual as this depends upon the container's
          * internal layout, and a subclass must enact this.
          *
          * \return std::pair composed of ( in order )
-         *          - the minimum width
-         *          - the minimum height
+         * - the minimum width
+         * - the minimum height
          */
         virtual std::pair<GLuint, GLuint> reassessMinimumDimensions(void) = 0;
 
         /**
          * \brief Determine and set the base positions of each item.
          *
-         *      Pure virtual as only a subclass will know how to do this.
+         * Pure virtual as only a subclass will know how to do this.
          */
         virtual void allocateItemBases(void) = 0;
 
@@ -170,6 +170,8 @@ class HUDContainer : public HUDItem {
          * \param newHeight : the desired height
          */
         void setDimensions(GLuint newWidth, GLuint newHeight);
+
+        const std::map<int, HUDItem*>& getMap(void) const;
 
         /// These three routines below satisfy the Renderable interface.
 
@@ -194,7 +196,7 @@ class HUDContainer : public HUDItem {
     };
 
 /**
- * @}
- */
+* @}
+*/
 
 #endif /* HUD_CONTAINER_H_ */

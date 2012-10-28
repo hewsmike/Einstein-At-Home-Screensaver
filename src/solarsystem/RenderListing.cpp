@@ -24,7 +24,9 @@ RenderListing::RenderListing() {
     }
 
 RenderListing::~RenderListing() {
+    std::cout << "RenderListing::~RenderListing() 1" << std::endl;
     clear();
+    std::cout << "RenderListing::~RenderListing() 2" << std::endl;
     }
 
 void RenderListing::add(Renderable* renderable_ptr) {
@@ -40,11 +42,12 @@ void RenderListing::clear(void) {
         rp != r_ptrs.end();
         ++rp) {
         std::cout << "RenderListing::clear() 1" << std::endl;
-        // Free the heap memory that was allocated, this
-        // will also call the destructor for the Renderable
-        // object that, by design, releases OpenGL resources.
-        delete (*rp);
+        // Releases OpenGL resources.
+        (*rp)->inactivate();
         std::cout << "RenderListing::clear() 2" << std::endl;
+        // Free the heap memory that was allocated.
+        delete (*rp);
+        std::cout << "RenderListing::clear() 3" << std::endl;
         }
     // Finally empty the container using a call to std::vector.clear() that
     // calls the destructor for each item ( being pointers in this case ) and

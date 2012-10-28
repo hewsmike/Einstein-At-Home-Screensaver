@@ -168,21 +168,23 @@ void HUDFlowLayout::allocateItemBases(void) {
             }
 
         // Then contents are placed in the order of their insertion.
-        for(GLuint count = 0; count < itemCount(); ++count) {
+        const std::map<int, HUDItem*>& container = getMap();
+        for(std::map<int, HUDItem*>::const_iterator item = container.begin();
+            item != container.end(); ++item) {
             // Place the current content.
 
             // Shift to next insert position by the dimensions of this content plus any gap,
             // accounting for the flow axis and direction of load.
             switch(ax) {
                 case HORIZONTAL:
-                    getItem(count)->reBase(newHorz,
-                                           newVert + setSideGap(secondary_just, this->height() - getItem(count)->minHeight()));
-                    newHorz += flip*(getItem(count)->minWidth() + item_gap);
+                    (*item).second->reBase(newHorz,
+                                           newVert + setSideGap(secondary_just, this->height() - (*item).second->minHeight()));
+                    newHorz += flip*((*item).second->minWidth() + item_gap);
                     break;
                 case VERTICAL:
-                    getItem(count)->reBase(newHorz + setSideGap(secondary_just, this->width() - getItem(count)->minWidth()),
+                    (*item).second->reBase(newHorz + setSideGap(secondary_just, this->width() - (*item).second->minWidth()),
                                            newVert);
-                    newVert += flip*(getItem(count)->minHeight() + item_gap);
+                    newVert += flip*((*item).second->minHeight() + item_gap);
                     break;
                 default:
                     // Shouldn't ever get here!!
