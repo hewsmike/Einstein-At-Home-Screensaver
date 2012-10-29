@@ -182,8 +182,10 @@ void HUDFlowLayout::allocateItemBases(void) {
                     newHorz += flip*((*item).second->minWidth() + item_gap);
                     break;
                 case VERTICAL:
-                    (*item).second->reBase(newHorz + setSideGap(secondary_just, this->width() - (*item).second->minWidth()),
-                                           newVert);
+                    GLuint temp_minWidth = (*item).second->minWidth();
+                    GLuint temp_horz = newHorz + setSideGap(secondary_just, this->width() - temp_minWidth);
+
+                    (*item).second->reBase(temp_horz, newVert);
                     newVert += flip*((*item).second->minHeight() + item_gap);
                     break;
                 default:
