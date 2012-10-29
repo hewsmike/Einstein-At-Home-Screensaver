@@ -148,7 +148,7 @@ void HUDContainer::setDimensions(GLuint newWidth, GLuint newHeight) {
     ht = newHeight;
     }
 
-const std::map<int, HUDItem*>& HUDContainer::getMap(void) const {
+std::map<int, HUDItem*>& HUDContainer::getMap(void) {
     return container;
     }
 

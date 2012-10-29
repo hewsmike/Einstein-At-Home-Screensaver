@@ -78,7 +78,7 @@ class HUDContainer : public HUDItem {
          * \param newHorz - the desired horizontal coordinate
          * \param newVert - the desired vertical coordinate
          */
-        void reBase(GLuint newHorz, GLuint newVert);
+        virtual void reBase(GLuint newHorz, GLuint newVert);
 
         /**
          * \brief Re-evaluate this container's sizing and contained items'
@@ -171,7 +171,7 @@ class HUDContainer : public HUDItem {
          */
         void setDimensions(GLuint newWidth, GLuint newHeight);
 
-        const std::map<int, HUDItem*>& getMap(void) const;
+        std::map<int, HUDItem*>& getMap(void);
 
         /// These three routines below satisfy the Renderable interface.
 

@@ -97,7 +97,7 @@ class HUDItem : public Renderable {
          * \param newHorz - the desired horizontal coordinate
          * \param newVert - the desired vertical coordinate
          */
-        void virtual reBase(GLuint newHorz, GLuint newVert);
+        virtual void reBase(GLuint newHorz, GLuint newVert);
 
         /**
          * \brief Set the enclosing container.
