@@ -169,7 +169,6 @@ void HUDFlowLayout::allocateItemBases(void) {
 
         // Then contents are placed in the order of their insertion.
         std::map<int, HUDItem*>& container = getMap();
-        /// TODO Constant iterator here ... the map contains HUDItem pointers
         for(std::map<int, HUDItem*>::iterator item = container.begin();
             item != container.end(); ++item) {
             // Place the current content.
@@ -186,8 +185,6 @@ void HUDFlowLayout::allocateItemBases(void) {
                     {
                     GLuint temp_minWidth = (*item).second->minWidth();
                     GLuint temp_horz = newHorz + setSideGap(secondary_just, this->width() - temp_minWidth);
-
-                    /// TODO So why are you attempting to alter an HUDItem here ???
 
                     (*item).second->reBase(temp_horz, newVert);
                     newVert += flip*((*item).second->minHeight() + item_gap);
