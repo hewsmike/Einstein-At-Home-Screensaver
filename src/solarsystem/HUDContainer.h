@@ -188,7 +188,7 @@ class HUDContainer : public HUDItem {
         /// Associative array b/w item pointers and integral labels.
         std::map<int, HUDItem*> container;
 
-        /// Current actual dimensions which can be used to calculate the
+        /// Current ACTUAL dimensions which can be used to calculate the
         /// margin(s) above minima, and are thus available to distribute
         /// b/w contents as justification.
         GLuint wd;

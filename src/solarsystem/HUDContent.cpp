@@ -21,6 +21,7 @@
 #include "HUDContent.h"
 
 HUDContent::HUDContent(GLuint horizontalMargin, GLuint verticalMargin) :
+                        HUDItem(),
                         hz_marg(horizontalMargin),
                         vt_marg(verticalMargin) {
     }

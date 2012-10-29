@@ -51,6 +51,10 @@ void HUDFlowLayout::addContent(HUDContent* content) {
         }
     }
 
+void HUDFlowLayout::reBase(GLuint newHorz, GLuint newVert) {
+    HUDContainer::reBase(GLuint newHorz, GLuint newVert);
+    }
+
 void HUDFlowLayout::setPrimaryJustification(primaryJustification justification) {
     primary_just = justification;
     allocateItemBases();

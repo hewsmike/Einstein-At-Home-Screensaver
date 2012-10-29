@@ -34,7 +34,6 @@ HUDItem::HUDItem(void) {
     }
 
 HUDItem::~HUDItem() {
-    std::cout << "HUDItem::~HUDItem()" << std::endl;
     }
 
 GLuint HUDItem::minWidth(void) const {
