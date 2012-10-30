@@ -25,7 +25,7 @@
 #include "ErrorHandler.h"
 
 HUDContainer::HUDContainer(HUDContainer* enclosing = NULL) :
-                HUDItem();
+                HUDItem(),
                 wd(0),
                 ht(0) {
     }

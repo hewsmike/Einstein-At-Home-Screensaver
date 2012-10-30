@@ -21,6 +21,8 @@
 #include "HUDFlowLayout.h"
 
 #include "ErrorHandler.h"
+#include "HUDTextLine.h"
+#include "HUDImage.h"
 
 #include <iostream>
 
@@ -52,7 +54,7 @@ void HUDFlowLayout::addContent(HUDContent* content) {
     }
 
 void HUDFlowLayout::reBase(GLuint newHorz, GLuint newVert) {
-    HUDContainer::reBase(GLuint newHorz, GLuint newVert);
+    HUDContainer::reBase(newHorz, newVert);
     }
 
 void HUDFlowLayout::setPrimaryJustification(primaryJustification justification) {
@@ -190,7 +192,31 @@ void HUDFlowLayout::allocateItemBases(void) {
                     GLuint temp_minWidth = (*item).second->minWidth();
                     GLuint temp_horz = newHorz + setSideGap(secondary_just, this->width() - temp_minWidth);
 
-                    (*item).second->reBase(temp_horz, newVert);
+                    HUDItem* ptr = (*item).second;
+                    if(ptr == NULL) {
+                        std::cout << "ptr is a NULL flubber !!" << std::endl;
+                        }
+                    else {
+                        std::cout << "ptr is a not a NULL flubber !!" << std::endl;
+                        }
+
+                    HUDTextLine* htl_ptr = dynamic_cast<HUDTextLine*>(ptr);
+                    if(htl_ptr != NULL) {
+                        std::cout << "ptr has dynamic type HUDTextLine" << std::endl;
+                        }
+                    else {
+                        std::cout << "htl_ptr is a NULL flubber !!" << std::endl;
+                        }
+
+                    HUDImage* hi_ptr = dynamic_cast<HUDImage*>(ptr);
+                    if(hi_ptr != NULL) {
+                        std::cout << "ptr has dynamic type HUDImage" << std::endl;
+                        }
+                    else {
+                        std::cout << "hi_ptr is a NULL flubber !!" << std::endl;
+                        }
+
+                    ptr->reBase(temp_horz, newVert);
                     newVert += flip*((*item).second->minHeight() + item_gap);
                     }
                     break;

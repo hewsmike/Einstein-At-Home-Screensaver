@@ -38,17 +38,29 @@ void RenderListing::add(Renderable* renderable_ptr) {
 
 void RenderListing::clear(void) {
     // Go through all elements currently in the container.
-    for(std::vector<Renderable*>::iterator rp = r_ptrs.begin();
-        rp != r_ptrs.end();
-        ++rp) {
+    while(r_ptrs.size() != 0) {
         std::cout << "RenderListing::clear() 1" << std::endl;
-        // Releases OpenGL resources.
-        (*rp)->inactivate();
+        Renderable* r_ptr = r_ptrs.at(r_ptrs.size() - 1);
         std::cout << "RenderListing::clear() 2" << std::endl;
-        // Free the heap memory that was allocated.
-        delete (*rp);
+        r_ptr->inactivate();
         std::cout << "RenderListing::clear() 3" << std::endl;
+        delete(r_ptr);
+        std::cout << "RenderListing::clear() 4" << std::endl;
+        r_ptrs.pop_back();
+        std::cout << "RenderListing::clear() 5" << std::endl;
         }
+//    for(std::vector<Renderable*>::iterator rp = r_ptrs.begin();
+//        rp != r_ptrs.end();
+//        ++rp) {
+//        std::cout << "RenderListing::clear() 1" << std::endl;
+//        // Releases OpenGL resources.
+//        (*rp)->inactivate();
+//        std::cout << "RenderListing::clear() 2" << std::endl;
+//        // Free the heap memory that was allocated.
+//        delete (*rp);
+//        std::cout << "RenderListing::clear() 3" << std::endl;
+//
+//        }
     // Finally empty the container using a call to std::vector.clear() that
     // calls the destructor for each item ( being pointers in this case ) and
     // then finally sets the vector's size to zero. NB A pointer's destructor
