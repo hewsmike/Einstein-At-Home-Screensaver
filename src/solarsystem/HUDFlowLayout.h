@@ -116,8 +116,6 @@ class HUDFlowLayout : public HUDContainer {
          */
         void addContent(HUDContent* content);
 
-        virtual void reBase(GLuint newHorz, GLuint newVert);
-
         /**
          * \brief Set the justification along the primary flow axis.
          *
