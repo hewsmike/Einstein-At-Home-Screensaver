@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2012 by Mike Hewson                                     *
- *   hewsmike@iinet.net.au                                                 *
+ *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
  *                                                                         *
@@ -17,7 +17,6 @@
  *   along with Einstein@Home. If not, see <http://www.gnu.org/licenses/>. *
  *                                                                         *
  ***************************************************************************/
-
 #ifndef HUD_FLOW_LAYOUT_H_
 #define HUD_FLOW_LAYOUT_H_
 
