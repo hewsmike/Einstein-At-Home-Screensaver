@@ -42,6 +42,8 @@ HUDTextLine::HUDTextLine(GLuint length, OGLFT_ft* font,
     }
 
 HUDTextLine::~HUDTextLine() {
+    std::cout << "HUDTextLine::~HUDTextLine() - call release()" << std::endl;
+    release();
     }
 
 GLuint HUDTextLine::maxLength(void) const {

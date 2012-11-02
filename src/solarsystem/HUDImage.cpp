@@ -59,6 +59,8 @@ HUDImage::HUDImage(std::string resourceName,
     }
 
 HUDImage::~HUDImage() {
+    std::cout << "HUDImage::~HUDImage() - call release()" << std::endl;
+    release();
     }
 
 void HUDImage::prepare(SolarSystemGlobals::render_quality rq) {

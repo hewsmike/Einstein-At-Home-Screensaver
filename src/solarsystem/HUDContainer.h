@@ -132,17 +132,25 @@ class HUDContainer : public HUDItem {
         /**
          * \brief Add an item to this container.
          *
-         * IF this does not create a FATAL error when executing,
-         * then on completion :
-         * - the given pointer was not NULL, and
+         * IF the given pointer was not NULL, then
          * - the item was inserted, and
-         * - any existing item with the same handle was deleted, and
+         * - any existing item with the same handle was removed, and
          * - this container's minimum dimensions were adjusted
          *
          * \param handle : an identifier for the item
          * \param obj : the item's pointer
          */
         void addItem(int handle, HUDItem* item);
+
+        /**
+         * \brief Remove an item from this container.
+         *
+         * Any existing item with the same handle is removed, and
+         * this container's minimum dimensions are adjusted
+         *
+         * \param handle : an identifier for the item
+         */
+        void removeItem(int handle);
 
         /**
          * \brief Re-assess the minimal width and height.

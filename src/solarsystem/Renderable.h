@@ -46,8 +46,8 @@
  * continues with said resources. This class does not deal with any specific OpenGL
  * mechanisms.
  *
- *      Having said that, it is VERY preferable if any most-derived class that
- * contains an actual implementation of release(), call that in it's
+ *      Having said that, it is IMPERATIVE that any most-derived class
+ * containing an actual implementation of release(), call release in it's
  * destructor to ensure release of OpenGL resources.
  *
  *      Addition of show/hide feature which enables control of drawing without

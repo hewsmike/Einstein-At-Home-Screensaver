@@ -110,19 +110,28 @@ void HUDContainer::addItem(int handle, HUDItem* item) {
     if(item == NULL) {
         // A significant error & ought not go un-managed.
         ErrorHandler::record("HUDContainer::addObject() - NULL passed for object!",
-                             ErrorHandler::FATAL);
+                             ErrorHandler::WARN);
         }
+    else {
+        // If the given handle is not present in the map, nothing happens.
+        container.erase(handle);
 
+        // Then put in a new key/value combo using pair semantics.
+        container.insert(std::pair<int, HUDItem*>(handle, item));
+
+        // Allow this container to be the enclosing one for this included item.
+        item->setEnclosingContainer(this);
+
+        // Adjust container to account for this addition.
+        adjust();
+        }
+    }
+
+void HUDContainer::removeItem(int handle) {
     // If the given handle is not present in the map, nothing happens.
     container.erase(handle);
 
-    // Then put in a new key/value combo using pair semantics.
-    container.insert(std::pair<int, HUDItem*>(handle, item));
-
-    // Allow this container to be the enclosing one for this included item.
-    item->setEnclosingContainer(this);
-
-    // Adjust container to account for this addition.
+    // Adjust container to account for this removal.
     adjust();
     }
 
