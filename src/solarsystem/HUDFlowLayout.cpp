@@ -26,8 +26,8 @@
 
 #include <iostream>
 
-HUDFlowLayout::HUDFlowLayout(HUDContainer* enclosing, Axis axis) :
-                HUDContainer(enclosing),
+HUDFlowLayout::HUDFlowLayout(HUDContainer* enclosing, Axis axis, HUDContainer::Mode mode) :
+                HUDContainer(enclosing, mode),
                 ax(axis) {
     gap_count = 0;
     total_white_space = 0;

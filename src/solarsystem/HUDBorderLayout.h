@@ -70,7 +70,7 @@ class HUDBorderLayout : public HUDContainer {
         /**
         * \brief Constructor
         */
-        HUDBorderLayout(HUDContainer* enclosing);
+        HUDBorderLayout(HUDContainer* enclosing, HUDContainer::Mode mode);
 
         /**
          * \brief Destructor

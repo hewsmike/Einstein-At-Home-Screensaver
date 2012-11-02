@@ -50,10 +50,12 @@
 
 class HUDContainer : public HUDItem {
     public:
+        enum Mode{RETAIN, DESTROY};
+
         /**
          * \brief Constructor
          */
-        HUDContainer(HUDContainer* enclosing);
+        HUDContainer(HUDContainer* enclosing, Mode mode);
 
         /**
          * \brief Destructor
@@ -119,7 +121,6 @@ class HUDContainer : public HUDItem {
          */
         bool isEmpty(void) const;
 
-    protected:
         /**
          * \brief Get a pointer to a contained item
          *
@@ -127,7 +128,7 @@ class HUDContainer : public HUDItem {
          *
          * \return HUDItem* : a pointer to the item ( NULL if not present )
          */
-        HUDItem* getItem(int handle) const;
+        HUDItem* getItem(int handle);
 
         /**
          * \brief Add an item to this container.
@@ -152,6 +153,7 @@ class HUDContainer : public HUDItem {
          */
         void removeItem(int handle);
 
+    protected:
         /**
          * \brief Re-assess the minimal width and height.
          *
@@ -179,8 +181,6 @@ class HUDContainer : public HUDItem {
          */
         void setDimensions(GLuint newWidth, GLuint newHeight);
 
-        std::map<int, HUDItem*>& getMap(void);
-
         /// These three routines below satisfy the Renderable interface.
 
         /// Provide OpenGL code to prepare for rendering.
@@ -201,6 +201,8 @@ class HUDContainer : public HUDItem {
         /// b/w contents as justification.
         GLuint wd;
         GLuint ht;
+
+        Mode mode_type;
     };
 
 /**

@@ -26,8 +26,8 @@
 
 #include "ErrorHandler.h"
 
-HUDBorderLayout::HUDBorderLayout(HUDContainer* enclosing) :
-                    HUDContainer(enclosing) {
+HUDBorderLayout::HUDBorderLayout(HUDContainer* enclosing, HUDContainer::Mode mode) :
+                    HUDContainer(enclosing, mode) {
     }
 
 HUDBorderLayout::~HUDBorderLayout() {

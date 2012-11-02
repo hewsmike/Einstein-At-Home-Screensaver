@@ -24,10 +24,11 @@
 
 #include "ErrorHandler.h"
 
-HUDContainer::HUDContainer(HUDContainer* enclosing = NULL) :
+HUDContainer::HUDContainer(HUDContainer* enclosing = NULL, Mode mode) :
                 HUDItem(),
                 wd(0),
-                ht(0) {
+                ht(0),
+                mode_type(mode) {
     }
 
 HUDContainer::~HUDContainer() {
@@ -75,6 +76,15 @@ bool HUDContainer::isEmpty(void) const {
     }
 
 void HUDContainer::erase(void) {
+    if(mode_type == DESTROY) {
+        for(std::map<int, HUDItem*>::iterator elem = container.begin();
+            elem != container.end;
+            ++elem) {
+            removeItem(*elem.first);
+            }
+        }
+
+    /// TODO - redundant call ??
     container.clear();
     }
 
@@ -128,6 +138,13 @@ void HUDContainer::addItem(int handle, HUDItem* item) {
     }
 
 void HUDContainer::removeItem(int handle) {
+    if(mode_type == DESTROY) {
+        HUDItem* temp = getItem(handle);
+        if(temp != NULL) {
+            delete temp;
+            }
+        }
+
     // If the given handle is not present in the map, nothing happens.
     container.erase(handle);
 
@@ -135,7 +152,7 @@ void HUDContainer::removeItem(int handle) {
     adjust();
     }
 
-HUDItem* HUDContainer::getItem(int handle) const {
+HUDItem* HUDContainer::getItem(int handle) {
     // Default return value indicates nothing found.
     HUDItem* ret_val = NULL;
 
@@ -156,10 +173,6 @@ void HUDContainer::setDimensions(GLuint newWidth, GLuint newHeight) {
     // Set the new dimensions.
     wd = newWidth;
     ht = newHeight;
-    }
-
-std::map<int, HUDItem*>& HUDContainer::getMap(void) {
-    return container;
     }
 
 void HUDContainer::prepare(SolarSystemGlobals::render_quality rq) {

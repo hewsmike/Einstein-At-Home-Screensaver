@@ -149,10 +149,24 @@ Simulation::Simulation(void) : cs(CONSTELLATIONS_RADIUS),
                                       screen_height,
                                       TARGET_RETICLE_FRAMES),
                                overlay(NULL),
-                               north_panel(&overlay, HUDFlowLayout::VERTICAL),
-                               south_panel(&overlay, HUDFlowLayout::HORIZONTAL),
-                               east_panel(&overlay, HUDFlowLayout::VERTICAL),
-                               west_panel(&overlay, HUDFlowLayout::VERTICAL) {
+                               north_panel(&overlay,
+                                           HUDFlowLayout::VERTICAL,
+                                           HUDContainer::RETAIN),
+                               south_panel(&overlay,
+                                           HUDFlowLayout::HORIZONTAL,
+                                           HUDContainer::RETAIN),
+                               east_panel(&overlay,
+                                          HUDFlowLayout::VERTICAL,
+                                          HUDContainer::RETAIN),
+                               west_panel(&overlay,
+                                          HUDFlowLayout::VERTICAL,
+                                          HUDContainer::RETAIN),
+                               text_lines(&overlay,
+                                          HUDFlowLayout::VERTICAL,
+                                          HUDContainer::DESTROY),
+                               lookout_images(&overlay,
+                                              HUDFlowLayout::VERTICAL,
+                                              HUDContainer::DESTROY) {
     // Starting values of simulation parameters.
 
     min60 = 0;
@@ -247,13 +261,11 @@ void Simulation::step(void) {
             lookout_images.clear();
             std::cout << "Simulation::step() 3" << std::endl;
             // Clean up any prior panel contents.
-            north_panel.erase();
-            west_panel.erase();
-            north_panel.setLoad(HUDFlowLayout::FIRST);
-            west_panel.setLoad(HUDFlowLayout::FIRST);
 
             // Then put new content lines, if any, into the panel.
             // Derived according to the current position in the tour.
+            text_lines.erase();
+            text_lines.setLoad(HUDFlowLayout::FIRST);
             const std::vector<std::string>& messages = pilot.getDescription();
             if(messages.size() != 0) {
                 target.show();
@@ -262,26 +274,24 @@ void Simulation::step(void) {
                     ++message) {
                     /// TODO - currently entering in reverse order ( see HUDFlowLayout::allocateItemBases() LAST case ).
                     HUDTextLine* line = new HUDTextLine(message->size(), overlay.getFont(), *message, 0, 2);
-                    text_lines.add(line);
-                    north_panel.addContent(line);
+                    text_lines.addItem(line);
                     }
                 }
+            text_lines.activate();
 
             // Then put new image(s), if any, into the west panel.
             // Derived according to the current position in the tour
             // and are currently the pulse profile plots.
-            lookout_images.clear();
+            lookout_images.erase();
+            lookout_images.setLoad(HUDFlowLayout::FIRST);
             const std::vector<std::string>& image_names = pilot.getImageResourceNames();
             for(std::vector<std::string>::const_iterator image_name = image_names.begin();
                 image_name != image_names.end();
                 ++image_name) {
                 HUDImage* profile = new HUDImage(*image_name, 10, 10);
-                lookout_images.add(profile);
-                west_panel.addContent(profile);
+                lookout_images.addItem(profile);
                 }
-
-            west_panel.activate();
-            north_panel.activate();
+            lookout_images.activate();
             }
         }
 
@@ -472,8 +482,8 @@ void Simulation::release(void) {
     if(version_text != NULL) {
         delete version_text;
         }
-    text_lines.clear();
-    lookout_images.clear();
+    text_lines.erase();
+    lookout_images.erase();
     }
 
 void Simulation::render(void) {
@@ -2839,18 +2849,25 @@ void Simulation::cycle(Simulation::content ct) {
         case Simulation::AUTOPILOT:
             if(pilot.isActive() == true) {
                 // When returning to user control ...
+                text_lines.erase();
+                lookout_images.erase();
+
+                overlay.setPanel(HUDBorderLayout::NORTH, &north_panel);
+                overlay.setPanel(HUDBorderLayout::WEST, &west_panel);
+
                 flyboy.manouevre(Craft::STOP_ROTATION);
                 flyboy.manouevre(Craft::STOP_TRANSLATION);
                 flyboy.setViewState(pilot.viewState());
                 pilot.inactivate();
                 target.inactivate();
-
-                // Eliminate any remaining informative
-                // text from the HUD.
-                north_panel.erase();
                 }
             else {
                 // When enabling autopilot ....
+                overlay.setPanel(HUDBorderLayout::NORTH, &text_lines);
+                overlay.setPanel(HUDBorderLayout::WEST, &lookout_images);
+                text_lines.erase();
+                lookout_images.erase();
+
                 // flyboy.manouevre(Craft::STOP_ROTATION);
                 // flyboy.manouevre(Craft::STOP_TRANSLATION);
                 /// TODO Choice between Traversable objects ....

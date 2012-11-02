@@ -354,10 +354,6 @@ class Simulation : public Renderable {
         /// for pulse profiles to display on the HUD.
         std::map<std::string, HUDItem*> pulse_profiles;
 
-        RenderListing text_lines;
-
-        RenderListing lookout_images;
-
         /// Pointer to the scrolling marquee text.
         HUDTextLineScroll* version_text;
 
@@ -367,6 +363,10 @@ class Simulation : public Renderable {
         HUDFlowLayout south_panel;
         HUDFlowLayout east_panel;
         HUDFlowLayout west_panel;
+
+        /// Containers for touring information
+        HUDFlowLayout text_lines;
+        HUDFlowLayout lookout_images;
 
         /**
          * \brief Add an image as named by a Resource to a panel.
