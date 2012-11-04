@@ -154,6 +154,8 @@ class HUDContainer : public HUDItem {
         void removeItem(int handle);
 
     protected:
+        std::map<int, HUDItem*>& getMap(void);
+
         /**
          * \brief Re-assess the minimal width and height.
          *

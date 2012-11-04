@@ -24,7 +24,7 @@
 
 #include "ErrorHandler.h"
 
-HUDContainer::HUDContainer(HUDContainer* enclosing = NULL, Mode mode) :
+HUDContainer::HUDContainer(HUDContainer* enclosing = NULL, Mode mode = RETAIN) :
                 HUDItem(),
                 wd(0),
                 ht(0),
@@ -78,9 +78,9 @@ bool HUDContainer::isEmpty(void) const {
 void HUDContainer::erase(void) {
     if(mode_type == DESTROY) {
         for(std::map<int, HUDItem*>::iterator elem = container.begin();
-            elem != container.end;
+            elem != container.end();
             ++elem) {
-            removeItem(*elem.first);
+            removeItem((*elem).first);
             }
         }
 
@@ -107,7 +107,6 @@ void HUDContainer::adjust() {
 
     // Rebase the contained items.
     allocateItemBases();
-
     // Notify any possible containing object of this size change.
     HUDContainer* outer = getEnclosingContainer();
     if(outer !=NULL) {
@@ -144,12 +143,12 @@ void HUDContainer::removeItem(int handle) {
             delete temp;
             }
         }
-
     // If the given handle is not present in the map, nothing happens.
     container.erase(handle);
+    }
 
-    // Adjust container to account for this removal.
-    adjust();
+std::map<int, HUDItem*>& HUDContainer::getMap(void) {
+    return container;
     }
 
 HUDItem* HUDContainer::getItem(int handle) {

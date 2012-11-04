@@ -148,7 +148,7 @@ Simulation::Simulation(void) : cs(CONSTELLATIONS_RADIUS),
                                       screen_width,
                                       screen_height,
                                       TARGET_RETICLE_FRAMES),
-                               overlay(NULL),
+                               overlay(NULL, HUDContainer::RETAIN),
                                north_panel(&overlay,
                                            HUDFlowLayout::VERTICAL,
                                            HUDContainer::RETAIN),
@@ -238,8 +238,8 @@ Simulation::~Simulation() {
     if(version_text != NULL) {
         delete version_text;
         }
-    text_lines.clear();
-    lookout_images.clear();
+    text_lines.erase();
+    lookout_images.erase();
     }
 
 void Simulation::step(void) {
@@ -255,26 +255,25 @@ void Simulation::step(void) {
         if(pilot.hasDescriptionChanged() == true) {
             target.hide();
 
-            std::cout << "Simulation::step() 1" << std::endl;
-            text_lines.clear();
-            std::cout << "Simulation::step() 2" << std::endl;
-            lookout_images.clear();
-            std::cout << "Simulation::step() 3" << std::endl;
+
             // Clean up any prior panel contents.
 
             // Then put new content lines, if any, into the panel.
             // Derived according to the current position in the tour.
             text_lines.erase();
+
             text_lines.setLoad(HUDFlowLayout::FIRST);
             const std::vector<std::string>& messages = pilot.getDescription();
             if(messages.size() != 0) {
                 target.show();
+                int line_count = 0;
                 for(std::vector<std::string>::const_iterator message = messages.begin();
                     message != messages.end();
                     ++message) {
                     /// TODO - currently entering in reverse order ( see HUDFlowLayout::allocateItemBases() LAST case ).
                     HUDTextLine* line = new HUDTextLine(message->size(), overlay.getFont(), *message, 0, 2);
-                    text_lines.addItem(line);
+                    text_lines.addItem(line_count, line);
+                    ++line_count;
                     }
                 }
             text_lines.activate();
@@ -285,11 +284,13 @@ void Simulation::step(void) {
             lookout_images.erase();
             lookout_images.setLoad(HUDFlowLayout::FIRST);
             const std::vector<std::string>& image_names = pilot.getImageResourceNames();
+            int image_count = 0;
             for(std::vector<std::string>::const_iterator image_name = image_names.begin();
                 image_name != image_names.end();
                 ++image_name) {
                 HUDImage* profile = new HUDImage(*image_name, 10, 10);
-                lookout_images.addItem(profile);
+                lookout_images.addItem(image_count, profile);
+                ++image_count;
                 }
             lookout_images.activate();
             }

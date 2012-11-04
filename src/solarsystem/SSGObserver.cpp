@@ -27,7 +27,6 @@ SSGObserver::SSGObserver() {
     }
 
 SSGObserver::~SSGObserver() {
-    std::cout << "SSGObserver::~SSGObserver()" << std::endl;
     /// Automatically detach on destruction.
     detach();
     }

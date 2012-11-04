@@ -31,7 +31,6 @@ Renderable::Renderable() : activity(Renderable::INACTIVE),
     }
 
 Renderable::~Renderable() {
-    std::cout << "Renderable::~Renderable()" << std::endl;
     }
 
 void Renderable::activate(void) {

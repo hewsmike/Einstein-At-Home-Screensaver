@@ -144,7 +144,6 @@ class TargetReticle : public Renderable {
         /// The maximum number of frames to render
         unsigned int max_frames;
 
-        /// Storage for the sequence of frames to animate the reticle
         RenderListing frames;
     };
 

@@ -76,13 +76,14 @@ std::pair<GLuint, GLuint> HUDFlowLayout::reassessMinimumDimensions(void) {
     GLuint layoutMinWidth = 0;
     GLuint layoutMinHeight = 0;
 
-    // How many items are contained?
-    GLuint num_items = itemCount();
+    std::map<int, HUDItem*>& map = getMap();
 
     // Go through and access each one.
-    for(GLuint count = 0; count < num_items; ++count) {
+    for(std::map<int, HUDItem*>::iterator item = map.begin();
+        item != map.end();
+        ++item) {
         // Examine this item.
-        HUDItem* current = getItem(count);
+        HUDItem* current = (*item).second;
 
         switch(ax) {
             case HORIZONTAL:
@@ -189,31 +190,9 @@ void HUDFlowLayout::allocateItemBases(void) {
                     GLuint temp_horz = newHorz + setSideGap(secondary_just, this->width() - temp_minWidth);
 
                     HUDItem* ptr = (*item).second;
-                    if(ptr == NULL) {
-                        std::cout << "ptr is a NULL flubber !!" << std::endl;
-                        }
-                    else {
-                        std::cout << "ptr is a not a NULL flubber !!" << std::endl;
-                        }
-
-                    HUDTextLine* htl_ptr = dynamic_cast<HUDTextLine*>(ptr);
-                    if(htl_ptr != NULL) {
-                        std::cout << "ptr has dynamic type HUDTextLine" << std::endl;
-                        }
-                    else {
-                        std::cout << "htl_ptr is a NULL flubber !!" << std::endl;
-                        }
-
-                    HUDImage* hi_ptr = dynamic_cast<HUDImage*>(ptr);
-                    if(hi_ptr != NULL) {
-                        std::cout << "ptr has dynamic type HUDImage" << std::endl;
-                        }
-                    else {
-                        std::cout << "hi_ptr is a NULL flubber !!" << std::endl;
-                        }
 
                     ptr->reBase(temp_horz, newVert);
-                    newVert += flip*((*item).second->minHeight() + item_gap);
+                    newVert += flip*(ptr->minHeight() + item_gap);
                     }
                     break;
                 default:

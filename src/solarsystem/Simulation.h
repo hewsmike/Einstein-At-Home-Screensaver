@@ -46,7 +46,6 @@
 #include "PulsarEAH.h"
 #include "PulsarsEAH.h"
 #include "Renderable.h"
-#include "RenderListing.h"
 #include "SolarSystemGlobals.h"
 #include "Sphere.h"
 #include "Stars.h"
