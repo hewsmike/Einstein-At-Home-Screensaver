@@ -75,7 +75,6 @@ GridGlobe::GridGlobe(vec_t rad, GLuint slices, GLuint stacks, GridGlobe::textFac
     }
 
 GridGlobe::~GridGlobe() {
-    std::cout << "GridGlobe::~GridGlobe() - call release()" << std::endl;
     release();
     }
 

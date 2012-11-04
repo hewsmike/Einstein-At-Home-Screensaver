@@ -2178,7 +2178,6 @@ Constellations::Constellations(vec_t rad) : radius(rad) {
     }
 
 Constellations::~Constellations() {
-    std::cout << "Constellations::~Constellations() - call release()" << std::endl;
     release();
     }
 

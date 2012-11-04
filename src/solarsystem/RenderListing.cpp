@@ -24,9 +24,7 @@ RenderListing::RenderListing() {
     }
 
 RenderListing::~RenderListing() {
-    std::cout << "RenderListing::~RenderListing() 1" << std::endl;
     clear();
-    std::cout << "RenderListing::~RenderListing() 2" << std::endl;
     }
 
 void RenderListing::add(Renderable* renderable_ptr) {
@@ -39,15 +37,10 @@ void RenderListing::add(Renderable* renderable_ptr) {
 void RenderListing::clear(void) {
     // Go through all elements currently in the container.
     while(r_ptrs.size() != 0) {
-        std::cout << "RenderListing::clear() 1" << std::endl;
         Renderable* r_ptr = r_ptrs.at(r_ptrs.size() - 1);
-        std::cout << "RenderListing::clear() 2" << std::endl;
         r_ptr->inactivate();
-        std::cout << "RenderListing::clear() 3" << std::endl;
         delete(r_ptr);
-        std::cout << "RenderListing::clear() 4" << std::endl;
         r_ptrs.pop_back();
-        std::cout << "RenderListing::clear() 5" << std::endl;
         }
 // for(std::vector<Renderable*>::iterator rp = r_ptrs.begin();
 // rp != r_ptrs.end();

@@ -42,7 +42,6 @@ TargetReticle::TargetReticle(std::string resource_base_name,
     }
 
 TargetReticle::~TargetReticle() {
-    std::cout << "TargetReticle::~TargetReticle() - call release()" << std::endl;
     release();
     }
 
