@@ -157,6 +157,10 @@ class Renderable : public SSGObserver {
         virtual void render(void) = 0;
 
     private:
+        /// I don't want any copying or assignment.
+        Renderable(const Renderable&);
+        Renderable& operator=(const Renderable&);
+
         /// Indicates whether object is activated.
         activity_state activity;
 
