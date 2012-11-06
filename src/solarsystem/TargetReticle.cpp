@@ -54,8 +54,8 @@ void TargetReticle::reset(void) {
 void TargetReticle::resize(GLuint screen_width, GLuint screen_height) {
     scr_width = screen_width;
     scr_height = screen_height;
-    x_offset = scr_width/2 - RETICLE_WIDTH/2;
-    y_offset = scr_height/2 - RETICLE_HEIGHT/2;
+    x_offset = scr_width/2 - RETICLE_WIDTH/2 + 1;
+    y_offset = scr_height/2 - RETICLE_HEIGHT/2 + 1;
     }
 
 void TargetReticle::prepare(SolarSystemGlobals::render_quality rq) {
