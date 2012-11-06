@@ -28,7 +28,8 @@
  */
 
 /**
- * \brief A virtual base class for observers of the SolarSystemGlobals object.
+ * \brief A virtual base class for observers of the static SolarSystemGlobals
+ *        object.
  *
  * \author Mike Hewson\n
  */

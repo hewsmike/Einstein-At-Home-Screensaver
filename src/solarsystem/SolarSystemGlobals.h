@@ -80,16 +80,6 @@ class SolarSystemGlobals {
         static const GLuint MIN_SCREEN_HEIGHT;
 
         /**
-         * \brief Constructor.
-         */
-        SolarSystemGlobals();
-
-        /**
-         * \brief Destructor.
-         */
-        ~SolarSystemGlobals();
-
-        /**
          * \brief Obtain the current render level setting
          *
          * \return : the current render level setting
@@ -120,6 +110,11 @@ class SolarSystemGlobals {
         static void setRenderLevel(SolarSystemGlobals::render_quality rq);
 
     private:
+        /// Prevent direct construction, copying and assignment.
+        SolarSystemGlobals();
+        SolarSystemGlobals(const SolarSystemGlobals& other);
+        SolarSystemGlobals& operator=(const SolarSystemGlobals& other);
+
         /// If needed, what is the preferred OpenGL compatibility mode?
         static const GLuint PREFERRED_OGL_COMPATIBILITY_MODE_MAJOR;
         static const GLuint PREFERRED_OGL_COMPATIBILITY_MODE_MINOR;
