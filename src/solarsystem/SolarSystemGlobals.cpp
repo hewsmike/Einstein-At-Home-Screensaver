@@ -69,10 +69,10 @@ void SolarSystemGlobals::setRenderLevel(SolarSystemGlobals::render_quality rq) {
         qual = rq;
         // Now call back each observer to let
         // them know of the quality change.
-        for(std::set<SSGObserver*>::const_iterator ob = SolarSystemGlobals::quality_observers.begin();
+        for(std::set<RenderQualityObserver*>::const_iterator ob = SolarSystemGlobals::quality_observers.begin();
             ob != SolarSystemGlobals::quality_observers.end();
             ++ob) {
-            (*ob)->SSGUpdate();
+            (*ob)->RenderQualityUpdate();
             }
         }
     }
@@ -81,7 +81,7 @@ SolarSystemGlobals::render_quality SolarSystemGlobals::getRenderLevel(void) {
     return qual;
     }
 
-void SolarSystemGlobals::registerRenderQualityObserver(SSGObserver* observer) {
+void SolarSystemGlobals::registerRenderQualityObserver(RenderQualityObserver* observer) {
     // Bar null pointers.
     if(observer != NULL) {
         // Using std::set semantics will ensure no repeated entries.
@@ -89,7 +89,7 @@ void SolarSystemGlobals::registerRenderQualityObserver(SSGObserver* observer) {
         }
     }
 
-void SolarSystemGlobals::unRegisterRenderQualityObserver(SSGObserver* observer) {
+void SolarSystemGlobals::unRegisterRenderQualityObserver(RenderQualityObserver* observer) {
     // Bar null pointers.
     if(observer != NULL) {
         // Using std::set semantics will ensure removal only if present.

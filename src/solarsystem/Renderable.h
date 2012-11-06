@@ -27,7 +27,7 @@
 
 #include <oglft/OGLFT.h>
 
-#include "SSGObserver.h"
+#include "RenderQualityObserver.h"
 #include "SolarSystemGlobals.h"
 
 /**
@@ -57,7 +57,7 @@
  * \author Mike Hewson\n
  */
 
-class Renderable : public SSGObserver {
+class Renderable : public RenderQualityObserver {
     public:
         // Visibility ie. to be rendered at all?
         enum activity_state {INACTIVE, ACTIVE};
@@ -122,7 +122,7 @@ class Renderable : public SSGObserver {
          *
          *      Satisfies SSGObserver interface.
          */
-        virtual void SSGUpdate(void);
+        virtual void RenderQualityUpdate(void);
 
         /**
          * \brief Sets the font.

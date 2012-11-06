@@ -18,33 +18,33 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "SSGObserver.h"
+#include "RenderQualityObserver.h"
 #include "SolarSystemGlobals.h"
 
-SSGObserver::SSGObserver() {
+SSGObserver::RenderQualityObserver() {
     /// Automatically attach on construction.
     attach();
     }
 
-SSGObserver::~SSGObserver() {
+SSGObserver::~RenderQualityObserver() {
     /// Automatically detach on destruction.
     detach();
     }
 
-void SSGObserver::attach(void) {
+void RenderQualityObserver::attach(void) {
     SolarSystemGlobals::registerRenderQualityObserver(this);
     attach_flag = true;
     }
 
-void SSGObserver::detach(void) {
+void RenderQualityObserver::detach(void) {
     SolarSystemGlobals::unRegisterRenderQualityObserver(this);
     attach_flag = false;
     }
 
-bool SSGObserver::isAttached(void) const {
+bool RenderQualityObserver::isAttached(void) const {
     return attach_flag;
     }
 
-void SSGObserver::SSGUpdate(void) {
+void RenderQualityObserver::RenderQualityUpdate(void) {
     // Does nothing, override in derived class otherwise.
     }

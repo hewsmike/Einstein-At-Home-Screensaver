@@ -17,8 +17,8 @@
  *   along with Einstein@Home. If not, see <http://www.gnu.org/licenses/>. *
  *                                                                         *
  ***************************************************************************/
-#ifndef SSG_OBSERVER_H_
-#define SSG_OBSERVER_H_
+#ifndef RENDER_QUALITY_OBSERVER_H_
+#define RENDER_QUALITY_OBSERVER_H_
 
 #include "framework.h"
 
@@ -29,22 +29,22 @@
 
 /**
  * \brief A virtual base class for observers of the static SolarSystemGlobals
- *        object.
+ *        object, that are interested in changes in render quality.
  *
  * \author Mike Hewson\n
  */
 
-class SSGObserver {
+class RenderQualityObserver {
     public:
         /**
          * \brief Constructor
          */
-        SSGObserver();
+        RenderQualityObserver();
 
         /**
          * \brief Destructor
          */
-        virtual ~SSGObserver();
+        virtual ~RenderQualityObserver();
 
         /**
          * \brief Attach to the static SolarSystemGlobals instance.
@@ -71,7 +71,7 @@ class SSGObserver {
          * quality setting. Default is to do nothing, but a derived class
          * may re-define this behaviour.
          */
-        virtual void SSGUpdate(void);
+        virtual void RenderQualityUpdate(void);
 
     private:
         bool attach_flag;
@@ -81,4 +81,4 @@ class SSGObserver {
  * @}
  */
 
-#endif // SSG_OBSERVER_H_
+#endif // RENDER_QUALITY_OBSERVER_H_

@@ -29,7 +29,7 @@
 #include <oglft/OGLFT.h>
 
 #include "AbstractGraphicsEngine.h"
-#include "SSGObserver.h"
+#include "RenderQualityObserver.h"
 #include "Resource.h"
 
 // SIN and COS take arguments in DEGREES
@@ -87,20 +87,20 @@ class SolarSystemGlobals {
         static render_quality getRenderLevel(void);
 
         /**
-         * \brief Register an SSGObserver object to be informed
+         * \brief Register a RenderQualityObserver object to be informed
          *        when the render quality is changes
          *
-         * \param observer - pointer to the SSGObserver object to register
+         * \param observer - pointer to the RenderQualityObserver object to register
          */
-        static void registerRenderQualityObserver(SSGObserver* observer);
+        static void registerRenderQualityObserver(RenderQualityObserver* observer);
 
         /**
-         * \brief Unregister an SSGObserver object for callback
+         * \brief Unregister a RenderQualityObserver object for callback
          *        when there is a change in render quality
          *
          * \param observer - pointer to the SSGObserver object to unregister
          */
-        static void unRegisterRenderQualityObserver(SSGObserver* observer);
+        static void unRegisterRenderQualityObserver(RenderQualityObserver* observer);
 
         /**
          * \brief Set the current render level setting
@@ -130,7 +130,7 @@ class SolarSystemGlobals {
 
         /// The set of observers to inform of any
         /// change to the rendering quality setting.
-        static std::set<SSGObserver*> quality_observers;
+        static std::set<RenderQualityObserver*> quality_observers;
     };
 
 /**
