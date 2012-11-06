@@ -116,6 +116,9 @@ class TargetReticle : public Renderable {
         /// animation. Currently set to 'TGA'
         static const std::string FRAME_RESOURCE_END_NAME;
 
+        static const GLuint RETICLE_WIDTH;
+        static const GLuint RETICLE_HEIGHT;
+
         /// The initial index of the image to retrieve when rendering.
         static const unsigned int INITIAL_PHASE;
 

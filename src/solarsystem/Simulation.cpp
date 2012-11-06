@@ -254,8 +254,6 @@ void Simulation::step(void) {
         // content change of the tour's descriptive text.
         if(pilot.hasDescriptionChanged() == true) {
             target.hide();
-
-
             // Clean up any prior panel contents.
 
             // Then put new content lines, if any, into the panel.

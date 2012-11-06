@@ -42,18 +42,7 @@ void RenderListing::clear(void) {
         delete(r_ptr);
         r_ptrs.pop_back();
         }
-// for(std::vector<Renderable*>::iterator rp = r_ptrs.begin();
-// rp != r_ptrs.end();
-// ++rp) {
-// std::cout << "RenderListing::clear() 1" << std::endl;
-// // Releases OpenGL resources.
-// (*rp)->inactivate();
-// std::cout << "RenderListing::clear() 2" << std::endl;
-// // Free the heap memory that was allocated.
-// delete (*rp);
-// std::cout << "RenderListing::clear() 3" << std::endl;
-//
-// }
+
     // Finally empty the container using a call to std::vector.clear() that
     // calls the destructor for each item ( being pointers in this case ) and
     // then finally sets the vector's size to zero. NB A pointer's destructor
@@ -61,7 +50,7 @@ void RenderListing::clear(void) {
     r_ptrs.clear();
     }
 
-const Renderable* RenderListing::at(GLuint index) const {
+Renderable* RenderListing::at(GLuint index) const {
     // Assume out of range index.
     Renderable* ret_val = NULL;
 

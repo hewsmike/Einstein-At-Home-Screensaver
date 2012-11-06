@@ -45,19 +45,14 @@ void Renderable::activate(void) {
     }
 
 void Renderable::inactivate(void) {
-    std::cout << "Renderable::inactivate() 1" << std::endl;
     // Release resources as we have decided not to show it.
     release();
 
-    std::cout << "Renderable::inactivate() 2" << std::endl;
     // Unregister any callback triggered by global rendering level alteration.
     detach();
 
-    std::cout << "Renderable::inactivate() 3" << std::endl;
     // Mark as inactive.
     activity = Renderable::INACTIVE;
-
-    std::cout << "Renderable::inactivate() 4" << std::endl;
     }
 
 Renderable::activity_state Renderable::isActivated(void) const {

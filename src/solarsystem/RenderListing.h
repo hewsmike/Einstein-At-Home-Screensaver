@@ -72,7 +72,7 @@ class RenderListing {
          * \return A pointer to the Renderable object stored at the given
          * index, MAY BE NULL.
          */
-        const Renderable* at(unsigned int index) const;
+        Renderable* at(unsigned int index) const;
 
         /**
          * \brief Obtain the number of pointer entries

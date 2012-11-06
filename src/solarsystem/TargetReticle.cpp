@@ -26,6 +26,8 @@
 
 const string TargetReticle::FRAME_RESOURCE_END_NAME("TGA");
 const unsigned int TargetReticle::INITIAL_PHASE(0);
+const GLuint TargetReticle::RETICLE_WIDTH(64);
+const GLuint TargetReticle::RETICLE_HEIGHT(64);
 
 TargetReticle::TargetReticle(std::string resource_base_name,
                              GLuint screen_width,
@@ -52,6 +54,8 @@ void TargetReticle::reset(void) {
 void TargetReticle::resize(GLuint screen_width, GLuint screen_height) {
     scr_width = screen_width;
     scr_height = screen_height;
+    x_offset = scr_width/2 - RETICLE_WIDTH/2;
+    y_offset = scr_height/2 - RETICLE_HEIGHT/2;
     }
 
 void TargetReticle::prepare(SolarSystemGlobals::render_quality rq) {
@@ -66,7 +70,9 @@ void TargetReticle::prepare(SolarSystemGlobals::render_quality rq) {
         frame_name.precision(1);
         frame_name << fc;
         frame_name << FRAME_RESOURCE_END_NAME;
-        frames.add(new HUDImage(frame_name.str(), 0, 0));
+        Renderable* frame = new HUDImage(frame_name.str(), 0, 0);
+        frame->activate();
+        frames.add(frame);
         }
     }
 
@@ -77,5 +83,7 @@ void TargetReticle::release(void) {
 void TargetReticle::render(void) {
     // Position
     phase = (phase + 1) % max_frames;
-
+    HUDImage* frame = static_cast<HUDImage*>(frames.at(phase));
+    frame->reBase(x_offset, y_offset);
+    frame->draw();
     }
