@@ -28,6 +28,7 @@
 #include <oglft/OGLFT.h>
 
 #include "RenderQualityObserver.h"
+#include "ResizeObserver.h"
 #include "SolarSystemGlobals.h"
 
 /**
@@ -57,7 +58,7 @@
  * \author Mike Hewson\n
  */
 
-class Renderable : public RenderQualityObserver {
+class Renderable : public RenderQualityObserver, public ResizeObserver {
     public:
         // Visibility ie. to be rendered at all?
         enum activity_state {INACTIVE, ACTIVE};
@@ -120,9 +121,9 @@ class Renderable : public RenderQualityObserver {
          * \brief Receives any rendering quality level change from the
          *        static SolarSystemGlobals instance.
          *
-         *      Satisfies SSGObserver interface.
+         *      Satisfies RenderQualityObserver interface.
          */
-        virtual void RenderQualityUpdate(void);
+        virtual void renderQualityUpdate(void);
 
         /**
          * \brief Sets the font.

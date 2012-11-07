@@ -18,33 +18,33 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "RenderQualityObserver.h"
+#include "ResizeObserver.h"
 #include "SolarSystemGlobals.h"
 
-SSGObserver::RenderQualityObserver() {
+ResizeObserver::ResizeObserver() {
     /// Automatically attach on construction.
-    attachRender();
+    attachResize();
     }
 
-SSGObserver::~RenderQualityObserver() {
+ResizeObserver::~ResizeObserver() {
     /// Automatically detach on destruction.
-    detachRender();
+    detachResize();
     }
 
-void RenderQualityObserver::attachRender(void) {
-    SolarSystemGlobals::registerRenderQualityObserver(this);
+void ResizeObserver::attachResize(void) {
+    SolarSystemGlobals::registerResizeObserver(this);
     attach_flag = true;
     }
 
-void RenderQualityObserver::detachRender(void) {
-    SolarSystemGlobals::unRegisterRenderQualityObserver(this);
+void ResizeObserver::detachResize(void) {
+    SolarSystemGlobals::unRegisterResizeObserver(this);
     attach_flag = false;
     }
 
-bool RenderQualityObserver::isAttachedRender(void) const {
+bool ResizeObserver::isAttachedResize(void) const {
     return attach_flag;
     }
 
-void RenderQualityObserver::renderQualityUpdate(void) {
+void ResizeObserver::resizeUpdate(void) {
     // Does nothing, override in derived class otherwise.
     }

@@ -17,8 +17,8 @@
  *   along with Einstein@Home. If not, see <http://www.gnu.org/licenses/>. *
  *                                                                         *
  ***************************************************************************/
-#ifndef RENDER_QUALITY_OBSERVER_H_
-#define RENDER_QUALITY_OBSERVER_H_
+#ifndef RESIZE_OBSERVER_H_
+#define RESIZE_OBSERVER_H_
 
 #include "framework.h"
 
@@ -28,33 +28,33 @@
  */
 
 /**
- * \brief A virtual base class for observers of the static SolarSystemGlobals
- *        object, that are interested in changes in render quality.
+ * \brief A virtual base class for resize observers of the static
+ *        SolarSystemGlobals object.
  *
  * \author Mike Hewson\n
  */
 
-class RenderQualityObserver {
+class ResizeObserver {
     public:
         /**
          * \brief Constructor
          */
-        RenderQualityObserver();
+        ResizeObserver();
 
         /**
          * \brief Destructor
          */
-        virtual ~RenderQualityObserver();
+        virtual ~ResizeObserver();
 
         /**
          * \brief Attach to the static SolarSystemGlobals instance.
          */
-        void attachRender(void);
+        void attachResize(void);
 
         /**
          * \brief Detach from the static SolarSystemGlobals instance.
          */
-        void detachRender(void);
+        void detachResize(void);
 
         /**
          * \brief Query attachment to the static SolarSystemGlobals instance.
@@ -62,16 +62,16 @@ class RenderQualityObserver {
          * \return a boolean indicating - true, if attached
          *                              - false, if not attached
          */
-        bool isAttachedRender(void) const;
+        bool isAttachedResize(void) const;
 
         /**
          * \brief Callback target for the static SolarSystemGlobals instance.
          *
-         *      This routine is called when there is a change in the render
-         * quality setting. Default is to do nothing, but a derived class
-         * may re-define this behaviour.
+         *      This routine is called when there is a change in the window
+         * size. Default is to do nothing, but a derived class may re-define
+         * this behaviour.
          */
-        virtual void renderQualityUpdate(void);
+        virtual void resizeUpdate(void);
 
     private:
         bool attach_flag;
@@ -81,4 +81,4 @@ class RenderQualityObserver {
  * @}
  */
 
-#endif // RENDER_QUALITY_OBSERVER_H_
+#endif // RESIZE_OBSERVER_H_

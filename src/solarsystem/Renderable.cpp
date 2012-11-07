@@ -38,7 +38,7 @@ void Renderable::activate(void) {
     prepare(quality);
 
     // Register for callback should the global rendering level alter.
-    attach();
+    attachRender();
 
     // Mark as active.
     activity = Renderable::ACTIVE;
@@ -49,7 +49,9 @@ void Renderable::inactivate(void) {
     release();
 
     // Unregister any callback triggered by global rendering level alteration.
-    detach();
+    detachRender();
+
+    //
 
     // Mark as inactive.
     activity = Renderable::INACTIVE;
@@ -88,7 +90,7 @@ void Renderable::draw(void) {
         }
     }
 
-void Renderable::RenderQualityUpdate(void) {
+void Renderable::renderQualityUpdate(void) {
     // Store the new rendering level.
     quality = SolarSystemGlobals::getRenderLevel();
 

@@ -56,7 +56,9 @@ const GLuint SolarSystemGlobals::ALPHA_CHANNEL(NO_ALPHA_CHANNEL + 1);
 
 std::set<SSGObserver*> SolarSystemGlobals::quality_observers;
 
-SolarSystemGlobals::SolarSystemGlobals() {
+SolarSystemGlobals::SolarSystemGlobals() :
+                        width(0),
+                        height(0) {
     }
 
 SolarSystemGlobals::~SolarSystemGlobals() {
@@ -69,7 +71,7 @@ void SolarSystemGlobals::setRenderLevel(SolarSystemGlobals::render_quality rq) {
         qual = rq;
         // Now call back each observer to let
         // them know of the quality change.
-        for(std::set<RenderQualityObserver*>::const_iterator ob = SolarSystemGlobals::quality_observers.begin();
+        for(std::set<RenderQualityObserver*>::const_iterator ob = quality_observers.begin();
             ob != SolarSystemGlobals::quality_observers.end();
             ++ob) {
             (*ob)->RenderQualityUpdate();
@@ -85,7 +87,7 @@ void SolarSystemGlobals::registerRenderQualityObserver(RenderQualityObserver* ob
     // Bar null pointers.
     if(observer != NULL) {
         // Using std::set semantics will ensure no repeated entries.
-        SolarSystemGlobals::quality_observers.insert(observer);
+        quality_observers.insert(observer);
         }
     }
 
@@ -93,6 +95,39 @@ void SolarSystemGlobals::unRegisterRenderQualityObserver(RenderQualityObserver* 
     // Bar null pointers.
     if(observer != NULL) {
         // Using std::set semantics will ensure removal only if present.
-        SolarSystemGlobals::quality_observers.erase(observer);
+        quality_observers.erase(observer);
+        }
+    }
+
+void SolarSystemGlobals::setWindowSize(GLuint newWidth, GLuint newHeight) {
+    // Store the new window dimensions.
+    width = newWidth;
+    height = newHeight;
+
+    // Now call back each observer to let them know of the dimension change.
+    for(std::set<ResizeObserver*>::const_iterator ob = resize_observers.begin();
+        ob != resize_observers.end();
+        ++ob) {
+        (*ob)->ResizeUpdate();
+        }
+    }
+
+std::pair<GLuint, GLuint> SolarSystemGlobals::getWindowSize(void) {
+    return std::pair<GLuint, GLuint>(width, height);
+    }
+
+void SolarSystemGlobals::registerResizeObserver(ResizeObserver* observer) {
+    // Bar null pointers.
+    if(observer != NULL) {
+        // Using std::set semantics will ensure no repeated entries.
+        resize_observers.insert(observer);
+        }
+    }
+
+void SolarSystemGlobals::unRegisterResizeObserver(ResizeObserver* observer) {
+    // Bar null pointers.
+    if(observer != NULL) {
+        // Using std::set semantics will ensure removal only if present.
+        resize_observers.erase(observer);
         }
     }

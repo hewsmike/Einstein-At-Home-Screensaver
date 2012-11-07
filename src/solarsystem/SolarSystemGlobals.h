@@ -25,6 +25,7 @@
 
 #include <string>
 #include <set>
+#include <utility>
 
 #include <oglft/OGLFT.h>
 
@@ -98,7 +99,7 @@ class SolarSystemGlobals {
          * \brief Unregister a RenderQualityObserver object for callback
          *        when there is a change in render quality
          *
-         * \param observer - pointer to the SSGObserver object to unregister
+         * \param observer - pointer to the RenderQualityObserver object to unregister
          */
         static void unRegisterRenderQualityObserver(RenderQualityObserver* observer);
 
@@ -108,6 +109,39 @@ class SolarSystemGlobals {
          * \param rq - the desired render level setting
          */
         static void setRenderLevel(SolarSystemGlobals::render_quality rq);
+
+        /**
+         * \brief Obtain the current window size
+         *
+         * \return : the current window size
+         */
+        static std::pair<GLuint, GLuint> getWindowSize(void);
+
+        /**
+         * \brief Register a ResizeObserver object to be informed
+         *        when the screen size changes
+         *
+         * \param observer - pointer to the ResizeObserver object to register
+         */
+        static void registerResizeObserver(ResizeObserver* observer);
+
+        /**
+         * \brief Unregister a ResizeObserver object for callback
+         *        when there is a change in window size
+         *
+         * \param observer - pointer to the ResizeObserver object to unregister
+         */
+        static void unRegisterRenderQualityObserver(RenderQualityObserver* observer);
+
+        /**
+         * \brief Set the current window dimensions. NB That this merely stores
+         *        new values for broadcast to observers, and does not enact any
+         *        OS or context changes per se.
+         *
+         * \param rq - the desired window dimensions.
+         */
+        static void setWindowSize(GLuint newWidth, GLuint newHeight);
+
 
     private:
         /// Prevent direct construction, copying and assignment.
@@ -131,6 +165,14 @@ class SolarSystemGlobals {
         /// The set of observers to inform of any
         /// change to the rendering quality setting.
         static std::set<RenderQualityObserver*> quality_observers;
+
+        /// The current window dimensions.
+        GLuint width;
+        GLuint height;
+
+        /// The set of observers to inform of any
+        /// change to the window size.
+        static std::set<ResizeObserver*> resize_observers;
     };
 
 /**
