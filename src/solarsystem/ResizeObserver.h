@@ -31,6 +31,26 @@
  * \brief A virtual base class for resize observers of the static
  *        SolarSystemGlobals object.
  *
+ *      The essential reason for this class is that on Windows platforms
+ * the OpenGL context is destroyed, and a new one created, when a window
+ * is resized. Thus for some objects who haved acquired persistent OpenGL
+ * server assets eg. a buffer object on the video card memory, these are lost
+ * and need to be re-acquired. While this a superclass of the Renderable type,
+ * not all Renderable derived types use persistent OpenGL server assets, and
+ * thus only some will need to be informed of a change in window dimensions.
+ *      The default behaviour on resize is to do nothing, and may be over-ridden
+ * by a virtual function in a derived class to suit. This ought be the class
+ * that provides the actual definitions of prepare/render/release as per the
+ * Renderable interface, or at least a class derived from such.
+ *      For instance the HUDImage class has a non-trivial content for the
+ * resizeUpdate() member on Windows machines ( by conditional compilation ).
+ *      Of course one could do other things upon a resize signal, regardless
+ * of the target operating system.
+ *
+ * \see HUDImage
+ * \see Renderable
+ * \see SolarSystemGlobals
+ *
  * \author Mike Hewson\n
  */
 
@@ -69,7 +89,7 @@ class ResizeObserver {
          *
          *      This routine is called when there is a change in the window
          * size. Default is to do nothing, but a derived class may re-define
-         * this behaviour.
+         * this behaviour to suit.
          */
         virtual void resizeUpdate(GLuint width, GLuint height);
 

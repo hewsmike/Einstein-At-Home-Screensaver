@@ -66,6 +66,8 @@ void HUDImage::resizeUpdate(GLuint width, GLuint height) {
     // We need do nothing for non-Windows executables.
 #ifdef WIN_OGL_WORKAROUND
     // For Windows builds only, re-acquire assets in the server.
+    // Not especially interested in the actual dimensions here,
+    // merely that they have changed and the OpenGL context was lost.
     release();
     prepare();
 #endif
