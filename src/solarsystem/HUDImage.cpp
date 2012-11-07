@@ -62,6 +62,15 @@ HUDImage::~HUDImage() {
     release();
     }
 
+void HUDImage::resizeUpdate(GLuint width, GLuint height) {
+    // We need do nothing for non-Windows executables.
+#ifdef WIN_OGL_WORKAROUND
+    // For Windows builds only, re-acquire assets in the server.
+    release();
+    prepare();
+#endif
+    }
+
 void HUDImage::prepare(SolarSystemGlobals::render_quality rq) {
     // Policy is to set size when rendering is implied.
 

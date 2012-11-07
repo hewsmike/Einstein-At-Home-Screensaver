@@ -108,7 +108,7 @@ void SolarSystemGlobals::setWindowSize(GLuint newWidth, GLuint newHeight) {
     for(std::set<ResizeObserver*>::const_iterator ob = resize_observers.begin();
         ob != resize_observers.end();
         ++ob) {
-        (*ob)->ResizeUpdate();
+        (*ob)->ResizeUpdate(width, height);
         }
     }
 
