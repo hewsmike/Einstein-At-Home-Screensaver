@@ -49,10 +49,6 @@ HUDImage::HUDImage(std::string resourceName,
                         image_resource_name(resourceName),
                         image_width(0),
                         image_height(0) {
-    // Ensure one has a texture ( pixel map ) available
-    // to paste on the surface.
-    loadTexture();
-
     // Call base class to set minima for the given image content.
     setMinimumDimensions(image_width + 2*horzMargin(),
                          image_height + 2*vertMargin());
@@ -62,21 +58,12 @@ HUDImage::~HUDImage() {
     release();
     }
 
-void HUDImage::resizeUpdate(GLuint width, GLuint height) {
-    // We need do nothing for non-Windows executables.
-//#ifdef WIN_OGL_WORKAROUND
-  //  #pragma message("Yup, we've put in the Win32 resizeUpdate behaviour ... ")
-    // For Windows builds only, re-acquire assets in the server.
-    // Not especially interested in the actual dimensions here,
-    // merely that they have changed and the OpenGL context was lost.
-    std::cout << "HUDImage::resizeUpdate()" << std::endl;
-    inactivate();
-    activate();
-//#endif
-    }
-
 void HUDImage::prepare(SolarSystemGlobals::render_quality rq) {
     // Policy is to set size when rendering is implied.
+
+    // Ensure one has a texture ( pixel map ) available
+    // to paste on the surface.
+    loadTexture();
 
     // Create vertex data knowing the image's position.
     createVertexData();

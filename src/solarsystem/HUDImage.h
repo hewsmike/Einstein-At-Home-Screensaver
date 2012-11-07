@@ -67,15 +67,6 @@ class HUDImage : public HUDContent {
          */
         virtual ~HUDImage();
 
-        /**
-         * \brief Callback target for the static SolarSystemGlobals instance.
-         *
-         *      This routine is called when there is a change in the window
-         * size. We need to trigger reacquisition of server side resources on
-         * Windows systems if the window is resized.
-         */
-        virtual void resizeUpdate(GLuint width, GLuint height);
-
     protected:
         /// These three routines below satisfy the Renderable interface.
 

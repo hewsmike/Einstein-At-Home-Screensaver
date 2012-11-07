@@ -29,6 +29,19 @@ HUDContent::HUDContent(GLuint horizontalMargin, GLuint verticalMargin) :
 HUDContent::~HUDContent() {
     }
 
+void HUDContent::resizeUpdate(GLuint width, GLuint height) {
+    // We need do nothing for non-Windows executables.
+//#ifdef WIN_OGL_WORKAROUND
+  //  #pragma message("Yup, we've put in the Win32 resizeUpdate behaviour ... ")
+    // For Windows builds only, re-acquire assets in the server.
+    // Not especially interested in the actual dimensions here,
+    // merely that they have changed and the OpenGL context was lost.
+    std::cout << "HUDImage::resizeUpdate()" << std::endl;
+    inactivate();
+    activate();
+//#endif
+    }
+
 GLuint HUDContent::horzMargin(void) const {
     return hz_marg;
     }

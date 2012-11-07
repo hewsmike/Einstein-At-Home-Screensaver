@@ -28,6 +28,7 @@
 #include <oglft/OGLFT.h>
 
 #include "HUDContent.h"
+#include "Simulation.h"
 #include "SolarSystemGlobals.h"
 
 /**
@@ -49,14 +50,14 @@ class HUDTextLine : public HUDContent {
          * \brief Constructor
          *
          * \param length : the maximum length in characters to be displayed
-         * \param font : pointer to an OGLFT font instance
+         * \param element : the scene element type as per Simulation class
          * \param text : a string containing the desired text
          * \param horizontalMargin : the horizontal pixel margin to be applied
          *                           either side of the enclosed content
          * \param verticalMargin : the vertical pixel margin to be applied
          *                         above and below the enclosed content
          */
-        HUDTextLine(GLuint length, OGLFT_ft* font,
+        HUDTextLine(GLuint length, Simulation::content element,
                     const std::string& text,
                     GLuint horizontalMargin, GLuint verticalMargin);
 

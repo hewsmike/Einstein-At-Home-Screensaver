@@ -145,6 +145,15 @@ class Simulation : public Renderable {
         void setFont(content element, OGLFT_ft* font);
 
         /**
+         * \brief Get the font for a given scene element.
+         *
+         * \param element : one of the scene elements
+         *
+         * \return pointer to the desired OGLFT font
+         */
+        OGLFT* getFont(content element) const;
+
+        /**
          * \brief Obtain the current viewpoints camera state
          *
          * \return the camera state

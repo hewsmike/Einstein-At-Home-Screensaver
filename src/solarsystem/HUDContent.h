@@ -54,6 +54,15 @@ class HUDContent : public HUDItem {
         virtual ~HUDContent();
 
         /**
+         * \brief Callback target for the static SolarSystemGlobals instance.
+         *
+         *      This routine is called when there is a change in the window
+         * size. We need to trigger reacquisition of server side resources on
+         * Windows systems if the window is resized.
+         */
+        void resizeUpdate(GLuint width, GLuint height);
+
+        /**
          * \brief Get the size of the fixed horizontal margin
          *
          * \return the horizontal margin
