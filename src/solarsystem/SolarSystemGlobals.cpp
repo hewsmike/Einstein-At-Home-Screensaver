@@ -54,11 +54,13 @@ const GLuint SolarSystemGlobals::MIN_SCREEN_HEIGHT(600);
 const GLuint SolarSystemGlobals::NO_ALPHA_CHANNEL(3);
 const GLuint SolarSystemGlobals::ALPHA_CHANNEL(NO_ALPHA_CHANNEL + 1);
 
-std::set<SSGObserver*> SolarSystemGlobals::quality_observers;
+GLuint SolarSystemGlobals::width(0);
+GLuint SolarSystemGlobals::height(0);
 
-SolarSystemGlobals::SolarSystemGlobals() :
-                        width(0),
-                        height(0) {
+std::set<RenderQualityObserver*> SolarSystemGlobals::quality_observers;
+std::set<ResizeObserver*> SolarSystemGlobals::resize_observers;
+
+SolarSystemGlobals::SolarSystemGlobals() {
     }
 
 SolarSystemGlobals::~SolarSystemGlobals() {
@@ -74,7 +76,7 @@ void SolarSystemGlobals::setRenderLevel(SolarSystemGlobals::render_quality rq) {
         for(std::set<RenderQualityObserver*>::const_iterator ob = quality_observers.begin();
             ob != SolarSystemGlobals::quality_observers.end();
             ++ob) {
-            (*ob)->RenderQualityUpdate();
+            (*ob)->renderQualityUpdate();
             }
         }
     }
@@ -108,7 +110,7 @@ void SolarSystemGlobals::setWindowSize(GLuint newWidth, GLuint newHeight) {
     for(std::set<ResizeObserver*>::const_iterator ob = resize_observers.begin();
         ob != resize_observers.end();
         ++ob) {
-        (*ob)->ResizeUpdate(width, height);
+        (*ob)->resizeUpdate(width, height);
         }
     }
 

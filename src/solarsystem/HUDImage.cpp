@@ -64,13 +64,15 @@ HUDImage::~HUDImage() {
 
 void HUDImage::resizeUpdate(GLuint width, GLuint height) {
     // We need do nothing for non-Windows executables.
-#ifdef WIN_OGL_WORKAROUND
+//#ifdef WIN_OGL_WORKAROUND
+  //  #pragma message("Yup, we've put in the Win32 resizeUpdate behaviour ... ")
     // For Windows builds only, re-acquire assets in the server.
     // Not especially interested in the actual dimensions here,
     // merely that they have changed and the OpenGL context was lost.
-    release();
-    prepare();
-#endif
+    std::cout << "HUDImage::resizeUpdate()" << std::endl;
+    inactivate();
+    activate();
+//#endif
     }
 
 void HUDImage::prepare(SolarSystemGlobals::render_quality rq) {

@@ -36,7 +36,7 @@
 
 #include "AbstractGraphicsEngine.h"
 #include "Craft.h"
-#include "SSGObserver.h"
+#include "RenderQualityObserver.h"
 #include "Simulation.h"
 
 /**
@@ -55,7 +55,7 @@
  * of this engine.
  *
  */
-class SolarSystem : public AbstractGraphicsEngine, public SSGObserver {
+class SolarSystem : public AbstractGraphicsEngine, public RenderQualityObserver {
     public:
         // How many times the celestial sphere radius do we look at?
         static const int FAR_LOOK_RATIO;
@@ -120,9 +120,9 @@ class SolarSystem : public AbstractGraphicsEngine, public SSGObserver {
          * \brief Receives any rendering quality level change from the
          *        static SolarSystemGlobals instance.
          *
-         *      Satisfies SSGObserver interface.
+         *      Satisfies RenderQualityObserver interface.
          */
-        virtual void SSGUpdate(void);
+        virtual void renderUpdate(void);
 
     protected:
         /**

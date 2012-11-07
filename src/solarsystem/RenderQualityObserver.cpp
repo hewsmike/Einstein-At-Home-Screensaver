@@ -21,12 +21,12 @@
 #include "RenderQualityObserver.h"
 #include "SolarSystemGlobals.h"
 
-SSGObserver::RenderQualityObserver() {
+RenderQualityObserver::RenderQualityObserver() {
     /// Automatically attach on construction.
     attachRender();
     }
 
-SSGObserver::~RenderQualityObserver() {
+RenderQualityObserver::~RenderQualityObserver() {
     /// Automatically detach on destruction.
     detachRender();
     }

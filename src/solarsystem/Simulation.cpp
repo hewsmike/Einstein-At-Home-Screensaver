@@ -351,6 +351,7 @@ void Simulation::resize(GLuint width, GLuint height) {
         << "\theight = " << height;
     ErrorHandler::record(msg.str(), ErrorHandler::INFORM);
 
+    SolarSystemGlobals::setWindowSize(width, height);
     // Now tell the HUD of such settings.
     // TODO - if resize denied then inactivate HUD ?? Complex ....
     overlay.requestResize(width, height);

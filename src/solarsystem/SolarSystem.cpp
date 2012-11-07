@@ -411,7 +411,7 @@ void SolarSystem::keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey k
 void SolarSystem::refreshLocalBOINCInformation() {
     }
 
-void SolarSystem::SSGUpdate(void) {
+void SolarSystem::renderUpdate(void) {
     switch(SolarSystemGlobals::getRenderLevel()) {
         case SolarSystemGlobals::RENDER_LOWEST:
             glDisable(GL_FOG);

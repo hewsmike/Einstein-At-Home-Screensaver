@@ -35,6 +35,17 @@ std::list<Event> Events::event_queue;
 
 std::auto_ptr<Events> Events::p_instance;
 
+Events::Events(void) {
+    }
+
+Events::Events(const Events& other) {
+    }
+
+Events& Events::operator=(const Events& other) {
+    // Skip self assignment check as no allocation.
+    return *this;
+    }
+
 Events* Events::Instance(GLuint render_interval) {
     // If we have no instance, then make one and initialise it.
     if(Events::p_instance.get() == NULL) {

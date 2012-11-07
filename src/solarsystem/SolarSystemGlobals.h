@@ -31,6 +31,7 @@
 
 #include "AbstractGraphicsEngine.h"
 #include "RenderQualityObserver.h"
+#include "ResizeObserver.h"
 #include "Resource.h"
 
 // SIN and COS take arguments in DEGREES
@@ -79,6 +80,8 @@ class SolarSystemGlobals {
         /// Minimum accepted screen/window dimensions
         static const GLuint MIN_SCREEN_WIDTH;
         static const GLuint MIN_SCREEN_HEIGHT;
+
+        virtual ~SolarSystemGlobals();
 
         /**
          * \brief Obtain the current render level setting
@@ -131,7 +134,7 @@ class SolarSystemGlobals {
          *
          * \param observer - pointer to the ResizeObserver object to unregister
          */
-        static void unRegisterRenderQualityObserver(RenderQualityObserver* observer);
+        static void unRegisterResizeObserver(ResizeObserver* observer);
 
         /**
          * \brief Set the current window dimensions. NB That this merely stores
@@ -167,8 +170,8 @@ class SolarSystemGlobals {
         static std::set<RenderQualityObserver*> quality_observers;
 
         /// The current window dimensions.
-        GLuint width;
-        GLuint height;
+        static GLuint width;
+        static GLuint height;
 
         /// The set of observers to inform of any
         /// change to the window size.
