@@ -24,7 +24,7 @@
 #include <vector>
 
 #include "HUDImage.h"
-#include "Renderable.h"
+#include "HUDContent.h"
 #include "RenderListing.h"
 
 /**
@@ -38,7 +38,7 @@
  * \author Mike Hewson\n
  */
 
-class TargetReticle : public Renderable {
+class TargetReticle : public HUDContent {
     public:
         /**
          * \brief Constructor.
@@ -133,16 +133,6 @@ class TargetReticle : public Renderable {
 
         /// The current screen width as advised through resize()
         GLuint scr_height;
-
-        /// The offset in the horizontal direction, measured from the centre
-        /// of the HUD in the sense of positive being to the left, to place the
-        /// bottom left hand corner of the animation frame.
-        GLuint x_offset;
-
-        /// The offset in the vertical direction, measured from the centre
-        /// of the HUD in the sense of positive going downwards, to place the
-        /// bottom left hand corner of the animation frame.
-        GLuint y_offset;
 
         /// The maximum number of frames to render
         unsigned int max_frames;

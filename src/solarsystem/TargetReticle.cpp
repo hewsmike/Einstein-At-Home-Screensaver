@@ -35,9 +35,8 @@ TargetReticle::TargetReticle(std::string resource_base_name,
                              GLuint centre_offset_x,
                              GLuint centre_offset_y,
                              unsigned int frame_count) :
+                                HUDContent(0,0),
                                 base_name(resource_base_name),
-                                x_offset(centre_offset_x),
-                                y_offset(centre_offset_y),
                                 max_frames(frame_count) {
     resize(screen_width, screen_height);
     reset();
@@ -54,8 +53,7 @@ void TargetReticle::reset(void) {
 void TargetReticle::resize(GLuint screen_width, GLuint screen_height) {
     scr_width = screen_width;
     scr_height = screen_height;
-    x_offset = scr_width/2 - RETICLE_WIDTH/2 + 1;
-    y_offset = scr_height/2 - RETICLE_HEIGHT/2 + 1;
+    reBase(scr_width/2 - RETICLE_WIDTH/2 + 1, scr_height/2 - RETICLE_HEIGHT/2 + 1);
     }
 
 void TargetReticle::prepare(SolarSystemGlobals::render_quality rq) {
@@ -70,7 +68,8 @@ void TargetReticle::prepare(SolarSystemGlobals::render_quality rq) {
         frame_name.precision(1);
         frame_name << fc;
         frame_name << FRAME_RESOURCE_END_NAME;
-        Renderable* frame = new HUDImage(frame_name.str(), 0, 0);
+        HUDContent* frame = new HUDImage(frame_name.str(), 0, 0);
+        frame->reBase(this->horzBase(), this->vertBase());
         frame->activate();
         frames.add(frame);
         }
@@ -84,6 +83,5 @@ void TargetReticle::render(void) {
     // Position
     phase = (phase + 1) % max_frames;
     HUDImage* frame = static_cast<HUDImage*>(frames.at(phase));
-    frame->reBase(x_offset, y_offset);
     frame->draw();
     }
