@@ -91,7 +91,7 @@ class ResizeObserver {
          * size. Default is to do nothing, but a derived class may re-define
          * this behaviour to suit.
          */
-        virtual void resizeUpdate(GLuint width, GLuint height);
+        virtual void resizeUpdate(GLuint width, GLuint height) = 0;
 
     private:
         bool attach_flag;

@@ -44,7 +44,7 @@ class HUDTextLineScroll : public HUDTextLine {
          * \brief Constructor
          *
          * \param length : the maximum length of displayed characters
-         * \param font : pointer to an OGLFT font instance
+         * \param element : the scene element type as per Simulation class
          * \param text : a string containing the desired text
          * \param horizontalMargin : the horizontal pixel margin to be applied
          *                           either side of the enclosed content
@@ -53,7 +53,7 @@ class HUDTextLineScroll : public HUDTextLine {
          * \param direction : the direction in which to scroll the text
          * \param scroll_interval : the number of frames between transitions
          */
-        HUDTextLineScroll(GLuint length, OGLFT_ft* font,
+        HUDTextLineScroll(GLuint length, SolarSystemGlobals::content element,
                           const std::string& text,
                           GLuint horizontalMargin, GLuint verticalMargin,
                           mode direction, GLuint scroll_interval);

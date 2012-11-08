@@ -44,7 +44,3 @@ void ResizeObserver::detachResize(void) {
 bool ResizeObserver::isAttachedResize(void) const {
     return attach_flag;
     }
-
-void ResizeObserver::resizeUpdate(GLuint width, GLuint height) {
-    // Does nothing, override in derived class otherwise.
-    }

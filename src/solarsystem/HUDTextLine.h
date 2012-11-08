@@ -28,7 +28,6 @@
 #include <oglft/OGLFT.h>
 
 #include "HUDContent.h"
-#include "Simulation.h"
 #include "SolarSystemGlobals.h"
 
 /**
@@ -57,7 +56,7 @@ class HUDTextLine : public HUDContent {
          * \param verticalMargin : the vertical pixel margin to be applied
          *                         above and below the enclosed content
          */
-        HUDTextLine(GLuint length, Simulation::content element,
+        HUDTextLine(GLuint length, SolarSystemGlobals::content element,
                     const std::string& text,
                     GLuint horizontalMargin, GLuint verticalMargin);
 
@@ -114,6 +113,8 @@ class HUDTextLine : public HUDContent {
 
         // The text itself.
         std::string txt;
+
+        SolarSystemGlobals::content scene_element;
     };
 
 /**

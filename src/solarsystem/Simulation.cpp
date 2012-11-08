@@ -28,6 +28,8 @@
 #include <string>
 #include <vector>
 
+#include "SunOrbit.h"
+
 const std::string Simulation::EARTH_NAME("Earth");
 const std::string Simulation::EARTH_IMAGE_RESOURCE("EarthTGA");
 const GLuint Simulation::EARTH_STACKS(37);
@@ -269,7 +271,9 @@ void Simulation::step(void) {
                     message != messages.end();
                     ++message) {
                     /// TODO - currently entering in reverse order ( see HUDFlowLayout::allocateItemBases() LAST case ).
-                    HUDTextLine* line = new HUDTextLine(message->size(), overlay.getFont(), *message, 0, 2);
+                    HUDTextLine* line = new HUDTextLine(message->size(),
+                                                        SolarSystemGlobals::HUDOVER,
+                                                        *message, 0, 2);
                     text_lines.addItem(line_count, line);
                     ++line_count;
                     }
@@ -355,16 +359,6 @@ void Simulation::resize(GLuint width, GLuint height) {
     // Now tell the HUD of such settings.
     // TODO - if resize denied then inactivate HUD ?? Complex ....
     overlay.requestResize(width, height);
-
-    target.resize(screen_width, screen_height);
-    }
-
-void Simulation::setFont(content element, OGLFT_ft* font) {
-    fonts[element] = font;
-    }
-
-OGLFT* Simulation::getFont(content element) const {
-    return fonts[element];
     }
 
 CameraState Simulation::viewPoint(void) {
@@ -384,18 +378,18 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
 
     // Activate 3D scene objects, while nominating any fonts
     // prior to activation of their respective objects..
-    cs.setFont(fonts[CONSTELLATIONS]);
+    cs.setFont(SolarSystemGlobals::getFont(SolarSystemGlobals::CONSTELLATIONS));
     cs.activate();
     ps.activate();
     ps_EAH.activate();
     sn.activate();
-    c_sphere.setFont(fonts[SKY_GRID]);
+    c_sphere.setFont(SolarSystemGlobals::getFont(SolarSystemGlobals::SKY_GRID));
     c_sphere.activate();
     earth.activate();
-    e_sphere.setFont(fonts[EARTH_GRID]);
+    e_sphere.setFont(SolarSystemGlobals::getFont(SolarSystemGlobals::EARTH_GRID));
     e_sphere.activate();
     sun.activate();
-    overlay.setFont(fonts[HUDOVER]);
+    overlay.setFont(SolarSystemGlobals::getFont(SolarSystemGlobals::HUDOVER));
 
     // Now to arrange the HUD components.
 
@@ -427,7 +421,7 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
     //loadImageToPanel(aei_image, &east_panel, "aeiTGA", 5, 5);
     //loadImageToPanel(opencl_image, &east_panel, "openclTGA", 5, 5);
     // LoadImageToPanel(boinc_image, &south_panel, "boincTGA", 5, 5);
-    version_text = new HUDTextLineScroll(70, overlay.getFont(),
+    version_text = new HUDTextLineScroll(70, SolarSystemGlobals::HUDOVER,
                                          "                  http://einstein.phys.uwm.edu",
                                          35, 10, HUDTextLineScroll::LEFT, 10);
     if(version_text == NULL) {
@@ -2819,38 +2813,38 @@ void Simulation::loadSupernovae(void) {
     sn.add(Supernova(264.900000f , -29.18333f ));
     }
 
-void Simulation::cycle(Simulation::content ct) {
+void Simulation::cycle(SolarSystemGlobals::content ct) {
     // Which scene element to toggle?
     switch(ct) {
-        case Simulation::AXES:
+        case SolarSystemGlobals::AXES:
          // We don't cycle the axes ... yet
             break;
-        case Simulation::CONSTELLATIONS:
+        case SolarSystemGlobals::CONSTELLATIONS:
             cs.cycleActivation();
             break;
-        case Simulation::EARTH:
+        case SolarSystemGlobals::EARTH:
             // We don't cycle the Earth ... yet
             break;
-        case Simulation::EARTH_GRID:
+        case SolarSystemGlobals::EARTH_GRID:
             e_sphere.cycleActivation();
             break;
-        case Simulation::SUN:
+        case SolarSystemGlobals::SUN:
             // We don't cycle the Sun ... yet
             break;
-        case Simulation::SKY_GRID:
+        case SolarSystemGlobals::SKY_GRID:
             c_sphere.cycleActivation();
             break;
-        case Simulation::PULSARS:
+        case SolarSystemGlobals::PULSARS:
             ps.cycleActivation();
             break;
-        case Simulation::SUPERNOVAE:
+        case SolarSystemGlobals::SUPERNOVAE:
             sn.cycleActivation();
             break;
-        case Simulation::HUDOVER:
+        case SolarSystemGlobals::HUDOVER:
             // TODO : still buggy .....
             // overlay.cycleActivation();
             break;
-        case Simulation::AUTOPILOT:
+        case SolarSystemGlobals::AUTOPILOT:
             if(pilot.isActive() == true) {
                 // When returning to user control ...
                 text_lines.erase();
@@ -2888,7 +2882,7 @@ void Simulation::cycle(Simulation::content ct) {
                 target.hide();
                 }
             break;
-        case Simulation::TARGET_RETICLE:
+        case SolarSystemGlobals::TARGET_RETICLE:
             target.cycleActivation();
             break;
         default:

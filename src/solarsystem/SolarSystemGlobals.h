@@ -58,6 +58,19 @@ typedef OGLFT::TranslucentTexture OGLFT_ft;
 
 class SolarSystemGlobals {
     public:
+        /// Enumerants for the scene elements
+        enum content {AXES,
+                      CONSTELLATIONS,
+                      EARTH,
+                      EARTH_GRID,
+                      SUN,
+                      SKY_GRID,
+                      PULSARS,
+                      SUPERNOVAE,
+                      HUDOVER,
+                      AUTOPILOT,
+                      TARGET_RETICLE};
+
         // Levels of rendering quality.
         enum render_quality {RENDER_LOWEST, RENDER_MEDIUM, RENDER_HIGHEST};
 
@@ -145,6 +158,22 @@ class SolarSystemGlobals {
          */
         static void setWindowSize(GLuint newWidth, GLuint newHeight);
 
+        /**
+         * \brief Set the font for a given scene element.
+         *
+         * \param element : one of the scene elements
+         * \param font : a pointer to the desired OGLFT font
+         */
+        static void setFont(SolarSystemGlobals::content element, OGLFT_ft* font);
+
+        /**
+         * \brief Get the font for a given scene element.
+         *
+         * \param element : one of the scene elements
+         *
+         * \return pointer to the desired OGLFT font
+         */
+        static OGLFT_ft* getFont(SolarSystemGlobals::content element);
 
     private:
         /// Prevent direct construction, copying and assignment.
@@ -176,6 +205,10 @@ class SolarSystemGlobals {
         /// The set of observers to inform of any
         /// change to the window size.
         static std::set<ResizeObserver*> resize_observers;
+
+        /// An associative array of font pointers to
+        /// store choices for each scene element.
+        static std::map<SolarSystemGlobals::content, OGLFT_ft*> fonts;
     };
 
 /**

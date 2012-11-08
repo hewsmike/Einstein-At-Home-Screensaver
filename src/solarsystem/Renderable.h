@@ -58,7 +58,7 @@
  * \author Mike Hewson\n
  */
 
-class Renderable : public RenderQualityObserver, public ResizeObserver {
+class Renderable : public RenderQualityObserver {
     public:
         // Visibility ie. to be rendered at all?
         enum activity_state {INACTIVE, ACTIVE};

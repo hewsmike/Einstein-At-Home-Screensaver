@@ -21,6 +21,7 @@
 #include "SolarSystem.h"
 
 #include "ErrorHandler.h"
+#include "SolarSystemGlobals.h"
 
 const int SolarSystem::FAR_LOOK_RATIO(1000);
 const GLdouble SolarSystem::FOV_ANGLE(45.0f);
@@ -164,10 +165,10 @@ void SolarSystem::initialize(const int width, const int height, const Resource* 
         }
 
     // Some Simulation components need to have a font before activation.
-    sim.setFont(Simulation::CONSTELLATIONS, constellationFont);
-    sim.setFont(Simulation::SKY_GRID, skygridFont);
-    sim.setFont(Simulation::EARTH_GRID, earthgridFont);
-    sim.setFont(Simulation::HUDOVER, HUDFont);
+    SolarSystemGlobals::setFont(SolarSystemGlobals::CONSTELLATIONS, constellationFont);
+    SolarSystemGlobals::setFont(SolarSystemGlobals::SKY_GRID, skygridFont);
+    SolarSystemGlobals::setFont(SolarSystemGlobals::EARTH_GRID, earthgridFont);
+    SolarSystemGlobals::setFont(SolarSystemGlobals::HUDOVER, HUDFont);
 
     // more font setup and optimizations
    glPixelStorei( GL_UNPACK_ALIGNMENT, 1 );
@@ -344,26 +345,26 @@ void SolarSystem::keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey k
             break;
         case KeyF4:
             // TODO - cycle the HUD
-            // sim.cycle(Simulation::HUDOVER);
+            // sim.cycle(SolarSystemGlobals::HUDOVER);
             break;
         case KeyF5:
-            sim.cycle(Simulation::CONSTELLATIONS);
+            sim.cycle(SolarSystemGlobals::CONSTELLATIONS);
             break;
         case KeyF6:
-            sim.cycle(Simulation::PULSARS);
+            sim.cycle(SolarSystemGlobals::PULSARS);
             break;
         case KeyF7:
-            sim.cycle(Simulation::SUPERNOVAE);
+            sim.cycle(SolarSystemGlobals::SUPERNOVAE);
             break;
         case KeyF8:
-            sim.cycle(Simulation::SKY_GRID);
+            sim.cycle(SolarSystemGlobals::SKY_GRID);
             break;
         case KeyF9:
-            sim.cycle(Simulation::EARTH_GRID);
+            sim.cycle(SolarSystemGlobals::EARTH_GRID);
             break;
         case KeyF12:
             // Toggle the state of the autopilot
-            sim.cycle(Simulation::AUTOPILOT);
+            sim.cycle(SolarSystemGlobals::AUTOPILOT);
             break;
         case KeySpace:
             // Whoa! Stop everything happening ...

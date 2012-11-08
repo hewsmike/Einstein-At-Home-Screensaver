@@ -33,28 +33,26 @@
 #include "CameraState.h"
 #include "Constellations.h"
 #include "Craft.h"
-#include "ErrorHandler.h"
+//#include "ErrorHandler.h"
 #include "Globe.h"
 #include "GridGlobe.h"
 #include "HUDBorderLayout.h"
-#include "HUDContent.h"
+//#include "HUDContent.h"
 #include "HUDFlowLayout.h"
 #include "HUDImage.h"
-#include "HUDTextLine.h"
 #include "HUDTextLineScroll.h"
 #include "Pulsar.h"
 #include "PulsarEAH.h"
 #include "PulsarsEAH.h"
 #include "Renderable.h"
 #include "SolarSystemGlobals.h"
-#include "Sphere.h"
+//#include "Sphere.h"
 #include "Stars.h"
-#include "SunOrbit.h"
 #include "Supernova.h"
 #include "TargetReticle.h"
 #include "UTC.h"
 #include "Vector3D.h"
-#include "VectorSP.h"
+//#include "VectorSP.h"
 
 /**
  * \addtogroup solarsystem Solarsystem
@@ -92,18 +90,7 @@
 
 class Simulation : public Renderable {
     public:
-        /// Enumerants for the scene elements
-        enum content {AXES,
-                      CONSTELLATIONS,
-                      EARTH,
-                      EARTH_GRID,
-                      SUN,
-                      SKY_GRID,
-                      PULSARS,
-                      SUPERNOVAE,
-                      HUDOVER,
-                      AUTOPILOT,
-                      TARGET_RETICLE};
+
 
         /**
          * \brief Constructor
@@ -137,23 +124,6 @@ class Simulation : public Renderable {
         void resize(GLuint width, GLuint height);
 
         /**
-         * \brief Set the font for a given scene element.
-         *
-         * \param element : one of the scene elements
-         * \param font : a pointer to the desired OGLFT font
-         */
-        void setFont(content element, OGLFT_ft* font);
-
-        /**
-         * \brief Get the font for a given scene element.
-         *
-         * \param element : one of the scene elements
-         *
-         * \return pointer to the desired OGLFT font
-         */
-        OGLFT* getFont(content element) const;
-
-        /**
          * \brief Obtain the current viewpoints camera state
          *
          * \return the camera state
@@ -165,9 +135,9 @@ class Simulation : public Renderable {
          *
          * \param ct : the desired scene element
          */
-        void cycle(Simulation::content ct);
+        void cycle(SolarSystemGlobals::content ct);
 
-        protected:
+    protected:
         /// These three routines below satisfy the Renderable interface.
 
         /// Provide OpenGL code to prepare for rendering.
@@ -343,10 +313,6 @@ class Simulation : public Renderable {
 
         /// The realtime clock instance.
         UTC clock;
-
-        /// An associative array of font pointers to
-        /// store choices for each scene element.
-        std::map<content, OGLFT_ft*> fonts;
 
         /// Pointers to logo type images used on the HUD.
         HUDImage* aei_image;

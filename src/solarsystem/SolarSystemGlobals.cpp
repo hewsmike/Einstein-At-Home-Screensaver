@@ -59,11 +59,20 @@ GLuint SolarSystemGlobals::height(0);
 
 std::set<RenderQualityObserver*> SolarSystemGlobals::quality_observers;
 std::set<ResizeObserver*> SolarSystemGlobals::resize_observers;
+std::map<SolarSystemGlobals::content, OGLFT_ft*> SolarSystemGlobals::fonts;
 
 SolarSystemGlobals::SolarSystemGlobals() {
     }
 
 SolarSystemGlobals::~SolarSystemGlobals() {
+    }
+
+void SolarSystemGlobals::setFont(SolarSystemGlobals::content element, OGLFT_ft* font) {
+    fonts[element] = font;
+    }
+
+OGLFT_ft* SolarSystemGlobals::getFont(SolarSystemGlobals::content element) {
+    return fonts[element];
     }
 
 void SolarSystemGlobals::setRenderLevel(SolarSystemGlobals::render_quality rq) {

@@ -37,8 +37,8 @@ void HUDContent::resizeUpdate(GLuint width, GLuint height) {
     // Not especially interested in the actual dimensions here,
     // merely that they have changed and the OpenGL context was lost.
     std::cout << "HUDImage::resizeUpdate()" << std::endl;
-    inactivate();
-    activate();
+    // inactivate();
+    // activate();
 //#endif
     }
 
