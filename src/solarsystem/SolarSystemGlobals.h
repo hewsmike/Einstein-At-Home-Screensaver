@@ -31,7 +31,6 @@
 
 #include "AbstractGraphicsEngine.h"
 #include "RenderQualityObserver.h"
-#include "ResizeObserver.h"
 #include "Resource.h"
 
 // SIN and COS take arguments in DEGREES
@@ -127,38 +126,6 @@ class SolarSystemGlobals {
         static void setRenderLevel(SolarSystemGlobals::render_quality rq);
 
         /**
-         * \brief Obtain the current window size
-         *
-         * \return : the current window size
-         */
-        static std::pair<GLuint, GLuint> getWindowSize(void);
-
-        /**
-         * \brief Register a ResizeObserver object to be informed
-         *        when the screen size changes
-         *
-         * \param observer - pointer to the ResizeObserver object to register
-         */
-        static void registerResizeObserver(ResizeObserver* observer);
-
-        /**
-         * \brief Unregister a ResizeObserver object for callback
-         *        when there is a change in window size
-         *
-         * \param observer - pointer to the ResizeObserver object to unregister
-         */
-        static void unRegisterResizeObserver(ResizeObserver* observer);
-
-        /**
-         * \brief Set the current window dimensions. NB That this merely stores
-         *        new values for broadcast to observers, and does not enact any
-         *        OS or context changes per se.
-         *
-         * \param rq - the desired window dimensions.
-         */
-        static void setWindowSize(GLuint newWidth, GLuint newHeight);
-
-        /**
          * \brief Set the font for a given scene element.
          *
          * \param element : one of the scene elements
@@ -201,10 +168,6 @@ class SolarSystemGlobals {
         /// The current window dimensions.
         static GLuint width;
         static GLuint height;
-
-        /// The set of observers to inform of any
-        /// change to the window size.
-        static std::set<ResizeObserver*> resize_observers;
 
         /// An associative array of font pointers to
         /// store choices for each scene element.

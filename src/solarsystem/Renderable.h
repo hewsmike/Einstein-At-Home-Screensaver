@@ -28,7 +28,6 @@
 #include <oglft/OGLFT.h>
 
 #include "RenderQualityObserver.h"
-#include "ResizeObserver.h"
 #include "SolarSystemGlobals.h"
 
 /**

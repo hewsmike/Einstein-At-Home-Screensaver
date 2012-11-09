@@ -23,14 +23,13 @@
 #include "HUDContainer.h"
 #include "SolarSystemGlobals.h"
 
-HUDTextLine::HUDTextLine(GLuint length, SolarSystemGlobals::content element,
+HUDTextLine::HUDTextLine(GLuint length,
                          const std::string& text,
                          GLuint horizontalMargin, GLuint verticalMargin) :
                            HUDContent(horizontalMargin, verticalMargin),
-                           scene_element(element),
                            len(length),
                            txt(text) {
-    lineFont = SolarSystemGlobals::getFont(scene_element);
+    lineFont = SolarSystemGlobals::getFont(SolarSystemGlobals::HUDOVER);
     // Initial setting of minimum dimensions are those of the initial text
     // content in combination with the given fixed margins.
     this->setMinimumDimensions(width() + 2*horzMargin(),
@@ -66,7 +65,7 @@ GLuint HUDTextLine::height(void) const {
     }
 
 void HUDTextLine::prepare(SolarSystemGlobals::render_quality rq) {
-    lineFont = SolarSystemGlobals::getFont(scene_element);
+    lineFont = SolarSystemGlobals::getFont(SolarSystemGlobals::HUDOVER);
 
     // Call base class to set minima for the given text content.
     this->setMinimumDimensions(width() + 2*horzMargin(),

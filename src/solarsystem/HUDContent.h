@@ -22,7 +22,6 @@
 #define HUD_CONTENT_H_
 
 #include "HUDItem.h"
-#include "ResizeObserver.h"
 
 /**
  * \addtogroup  solarsystem Solarsystem
@@ -38,7 +37,7 @@
  * \author Mike Hewson\n
  */
 
-class HUDContent : public HUDItem, public ResizeObserver {
+class HUDContent : public HUDItem {
     public:
         /**
          * \brief Constructor.
@@ -53,15 +52,6 @@ class HUDContent : public HUDItem, public ResizeObserver {
          * \brief Destructor
          */
         virtual ~HUDContent();
-
-        /**
-         * \brief Callback target for the static SolarSystemGlobals instance.
-         *
-         *      This routine is called when there is a change in the window
-         * size. We need to trigger reacquisition of server side resources on
-         * Windows systems if the window is resized.
-         */
-        virtual void resizeUpdate(GLuint width, GLuint height);
 
         /**
          * \brief Get the size of the fixed horizontal margin

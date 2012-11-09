@@ -54,6 +54,9 @@ void TargetReticle::resize(GLuint screen_width, GLuint screen_height) {
     scr_width = screen_width;
     scr_height = screen_height;
     reBase(scr_width/2 - RETICLE_WIDTH/2 + 1, scr_height/2 - RETICLE_HEIGHT/2 + 1);
+    for(unsigned int fc = 0; fc < frames.size(); ++fc) {
+        frames.at(fc)->reBase(this->horzBase(), this->vertBase());
+        }
     }
 
 void TargetReticle::prepare(SolarSystemGlobals::render_quality rq) {
@@ -68,7 +71,7 @@ void TargetReticle::prepare(SolarSystemGlobals::render_quality rq) {
         frame_name.precision(1);
         frame_name << fc;
         frame_name << FRAME_RESOURCE_END_NAME;
-        HUDContent* frame = new HUDImage(frame_name.str(), 0, 0);
+        HUDImage* frame = new HUDImage(frame_name.str(), 0, 0);
         frame->reBase(this->horzBase(), this->vertBase());
         frame->activate();
         frames.add(frame);

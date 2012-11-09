@@ -56,7 +56,7 @@ class HUDTextLine : public HUDContent {
          * \param verticalMargin : the vertical pixel margin to be applied
          *                         above and below the enclosed content
          */
-        HUDTextLine(GLuint length, SolarSystemGlobals::content element,
+        HUDTextLine(GLuint length,
                     const std::string& text,
                     GLuint horizontalMargin, GLuint verticalMargin);
 
@@ -113,8 +113,6 @@ class HUDTextLine : public HUDContent {
 
         // The text itself.
         std::string txt;
-
-        SolarSystemGlobals::content scene_element;
     };
 
 /**

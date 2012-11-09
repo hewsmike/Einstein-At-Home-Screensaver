@@ -33,11 +33,9 @@
 #include "CameraState.h"
 #include "Constellations.h"
 #include "Craft.h"
-//#include "ErrorHandler.h"
 #include "Globe.h"
 #include "GridGlobe.h"
 #include "HUDBorderLayout.h"
-//#include "HUDContent.h"
 #include "HUDFlowLayout.h"
 #include "HUDImage.h"
 #include "HUDTextLineScroll.h"
@@ -46,13 +44,11 @@
 #include "PulsarsEAH.h"
 #include "Renderable.h"
 #include "SolarSystemGlobals.h"
-//#include "Sphere.h"
 #include "Stars.h"
 #include "Supernova.h"
 #include "TargetReticle.h"
 #include "UTC.h"
 #include "Vector3D.h"
-//#include "VectorSP.h"
 
 /**
  * \addtogroup solarsystem Solarsystem
@@ -90,8 +86,6 @@
 
 class Simulation : public Renderable {
     public:
-
-
         /**
          * \brief Constructor
          */

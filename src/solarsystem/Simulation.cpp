@@ -272,7 +272,6 @@ void Simulation::step(void) {
                     ++message) {
                     /// TODO - currently entering in reverse order ( see HUDFlowLayout::allocateItemBases() LAST case ).
                     HUDTextLine* line = new HUDTextLine(message->size(),
-                                                        SolarSystemGlobals::HUDOVER,
                                                         *message, 0, 2);
                     text_lines.addItem(line_count, line);
                     ++line_count;
@@ -355,10 +354,14 @@ void Simulation::resize(GLuint width, GLuint height) {
         << "\theight = " << height;
     ErrorHandler::record(msg.str(), ErrorHandler::INFORM);
 
-    SolarSystemGlobals::setWindowSize(width, height);
+    target.resize(width, height);
     // Now tell the HUD of such settings.
     // TODO - if resize denied then inactivate HUD ?? Complex ....
     overlay.requestResize(width, height);
+
+    text_lines.inactivate();
+    text_lines.activate();
+
     }
 
 CameraState Simulation::viewPoint(void) {
@@ -421,7 +424,7 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
     //loadImageToPanel(aei_image, &east_panel, "aeiTGA", 5, 5);
     //loadImageToPanel(opencl_image, &east_panel, "openclTGA", 5, 5);
     // LoadImageToPanel(boinc_image, &south_panel, "boincTGA", 5, 5);
-    version_text = new HUDTextLineScroll(70, SolarSystemGlobals::HUDOVER,
+    version_text = new HUDTextLineScroll(70,
                                          "                  http://einstein.phys.uwm.edu",
                                          35, 10, HUDTextLineScroll::LEFT, 10);
     if(version_text == NULL) {

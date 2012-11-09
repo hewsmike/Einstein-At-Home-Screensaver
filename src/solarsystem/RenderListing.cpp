@@ -27,7 +27,7 @@ RenderListing::~RenderListing() {
     clear();
     }
 
-void RenderListing::add(Renderable* renderable_ptr) {
+void RenderListing::add(HUDItem* renderable_ptr) {
     // Prevent a NULL sneaking in.
     if(renderable_ptr != NULL) {
         r_ptrs.push_back(renderable_ptr);
@@ -37,7 +37,7 @@ void RenderListing::add(Renderable* renderable_ptr) {
 void RenderListing::clear(void) {
     // Go through all elements currently in the container.
     while(r_ptrs.size() != 0) {
-        Renderable* r_ptr = r_ptrs.at(r_ptrs.size() - 1);
+        HUDItem* r_ptr = r_ptrs.at(r_ptrs.size() - 1);
         r_ptr->inactivate();
         delete(r_ptr);
         r_ptrs.pop_back();
@@ -50,9 +50,9 @@ void RenderListing::clear(void) {
     r_ptrs.clear();
     }
 
-Renderable* RenderListing::at(GLuint index) const {
+HUDItem* RenderListing::at(GLuint index) const {
     // Assume out of range index.
-    Renderable* ret_val = NULL;
+    HUDItem* ret_val = NULL;
 
     // If container non-empty and index in range then ...
     if((size() != 0) && (index < size())) {

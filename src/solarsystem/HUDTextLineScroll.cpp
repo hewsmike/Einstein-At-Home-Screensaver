@@ -22,11 +22,11 @@
 
 #include "ErrorHandler.h"
 
-HUDTextLineScroll::HUDTextLineScroll(GLuint length, SolarSystemGlobals::content element,
+HUDTextLineScroll::HUDTextLineScroll(GLuint length,
                                      const std::string& text,
                                      GLuint horizontalMargin, GLuint verticalMargin,
                                      mode direction = NONE, GLuint scroll_interval = 10) :
-                                        HUDTextLine(length, element, text, horizontalMargin, verticalMargin),
+                                        HUDTextLine(length, text, horizontalMargin, verticalMargin),
                                         dir(direction), interval(scroll_interval), frame_count(0) {
     }
 

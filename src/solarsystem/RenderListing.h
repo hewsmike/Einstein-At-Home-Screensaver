@@ -23,7 +23,7 @@
 
 #include <vector>
 
-#include "Renderable.h"
+#include "HUDItem.h"
 
 /**
  * \addtogroup solarsystem Solarsystem
@@ -53,7 +53,7 @@ class RenderListing {
         /**
          * \brief Add a pointer to a heap based Renderable object.
          */
-        void add(Renderable* renderable_ptr);
+        void add(HUDItem* renderable_ptr);
 
         /**
          * \brief Empty the pointer listing, while freeing any OpenGL
@@ -72,7 +72,7 @@ class RenderListing {
          * \return A pointer to the Renderable object stored at the given
          * index, MAY BE NULL.
          */
-        Renderable* at(unsigned int index) const;
+        HUDItem* at(unsigned int index) const;
 
         /**
          * \brief Obtain the number of pointer entries
@@ -83,7 +83,7 @@ class RenderListing {
 
     private:
         /// Storage for the heap allocation pointers.
-        std::vector<Renderable*> r_ptrs;
+        std::vector<HUDItem*> r_ptrs;
     };
 
 /**

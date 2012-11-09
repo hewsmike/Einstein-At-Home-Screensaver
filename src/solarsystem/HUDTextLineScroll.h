@@ -53,7 +53,7 @@ class HUDTextLineScroll : public HUDTextLine {
          * \param direction : the direction in which to scroll the text
          * \param scroll_interval : the number of frames between transitions
          */
-        HUDTextLineScroll(GLuint length, SolarSystemGlobals::content element,
+        HUDTextLineScroll(GLuint length,
                           const std::string& text,
                           GLuint horizontalMargin, GLuint verticalMargin,
                           mode direction, GLuint scroll_interval);
