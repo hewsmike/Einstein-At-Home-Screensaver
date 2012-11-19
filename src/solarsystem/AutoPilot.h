@@ -67,6 +67,11 @@ class AutoPilot {
         virtual ~AutoPilot();
 
         /**
+         * \brief Evolve the autopilot by one notional time step.
+         */
+        void step(void);
+
+        /**
          * \brief Activate the autopilot
          *
          * \param trav : a Traversable object to query
@@ -90,8 +95,6 @@ class AutoPilot {
 
         /**
          * \brief Obtain the current view state for rendering.
-         *        Also moves the camera viewpoint along a notional
-         *        amount.
          *
          * \return a camera state for animation
          *

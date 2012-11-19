@@ -73,7 +73,7 @@ bool AutoPilot::isActive(void) const {
     return active_flag;
     }
 
-CameraState AutoPilot::viewState(void) {
+void AutoPilot::step(void) {
     // Counter for pausing at LookOuts.
     static GLuint count_down = PAUSE_FRAME_COUNT;
     // Flag to indicate if we are pausing or not.
@@ -154,10 +154,10 @@ CameraState AutoPilot::viewState(void) {
                 }
             }
         }
-
-    // Update the camera state according to the current lambda value.
     view = current_path.value(lambda);
+    }
 
+CameraState AutoPilot::viewState(void) {
     return view;
     }
 
