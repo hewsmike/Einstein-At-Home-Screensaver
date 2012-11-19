@@ -44,6 +44,8 @@ AutoPilot::~AutoPilot() {
 
 void AutoPilot::activate(const Traversable& trav, const CameraState& cam) {
     ErrorHandler::record("AutoPilot::activate() : ", ErrorHandler::INFORM);
+    lambda = Path::LAMBDA_LOWER_BOUND;
+
     view = cam;
 
     getTraverse(trav, view);
@@ -89,6 +91,7 @@ void AutoPilot::step(void) {
             // Then pause movement and (re-)set the pause counter.
             pause_flag = true;
             count_down = PAUSE_FRAME_COUNT;
+            lambda = Path::LAMBDA_LOWER_BOUND;
             }
         }
     else {
@@ -103,6 +106,7 @@ void AutoPilot::step(void) {
             set_delta_lambda();
             // Unpause movement.
             pause_flag = false;
+            lambda = Path::LAMBDA_LOWER_BOUND;
             }
         }
 
@@ -174,9 +178,6 @@ bool AutoPilot::hasDescriptionChanged(void) const {
     }
 
 void AutoPilot::set_delta_lambda(void) {
-    // Note that a delta lambda of zero implies no movement !!
-    lambda = Path::LAMBDA_LOWER_BOUND;
-
     // Select longest curve component of current path to avoid high rates of camera state change.
     float position_path_length = current_path.curveLength(Path::POSITION);
     float focus_path_length = current_path.curveLength(Path::FOCUS);
@@ -184,6 +185,7 @@ void AutoPilot::set_delta_lambda(void) {
 
     float longest_path_length = std::max(std::max(position_path_length, focus_path_length), orientation_path_length);
 
+    // Note that a delta lambda of zero implies no movement !!
     current_delta_lambda = 0.0f;
 
     // Need care with rounding at values near zero.
