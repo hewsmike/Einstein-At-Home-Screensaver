@@ -252,8 +252,10 @@ void Simulation::step(void) {
         flyboy.step(day366);
         }
     else {
-        // Yes, the autopilot is operating so check for any
-        // content change of the tour's descriptive text.
+        // Yes, the autopilot is operating, so evolve it and ...
+        pilot.step();
+
+        // ... check for any content change of the tour's descriptive text.
         if(pilot.hasDescriptionChanged() == true) {
             target.hide();
             // Clean up any prior panel contents.
@@ -2869,15 +2871,15 @@ void Simulation::cycle(SolarSystemGlobals::content ct) {
                 text_lines.erase();
                 lookout_images.erase();
 
-                // flyboy.manouevre(Craft::STOP_ROTATION);
-                // flyboy.manouevre(Craft::STOP_TRANSLATION);
+                flyboy.manouevre(Craft::STOP_ROTATION);
+                flyboy.manouevre(Craft::STOP_TRANSLATION);
                 /// TODO Choice between Traversable objects ....
                 CameraState current = flyboy.viewState();
 
                 // When obtained from our craft the focus vector is unit vector
                 // and also craft based. Thus prefer a distant focus point to
                 // reduce possible high initial slew rate.
-                //current.setFocus(current.position() + SolarSystemGlobals::CELESTIAL_SPHERE_RADIUS*current.focus());
+                current.setFocus(current.position() + SolarSystemGlobals::CELESTIAL_SPHERE_RADIUS*current.focus());
                 pilot.activate(ps_EAH, current);
 
                 // Activate the target reticle but don't show it yet.

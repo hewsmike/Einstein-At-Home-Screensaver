@@ -302,9 +302,6 @@ class Simulation : public Renderable {
         /// The craft instance.
         Craft flyboy;
 
-        /// The current viewpoint for rendering.
-        CameraState autopilot_view;
-
         /// The realtime clock instance.
         UTC clock;
 
