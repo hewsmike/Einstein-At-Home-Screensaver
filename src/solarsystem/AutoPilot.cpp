@@ -91,7 +91,6 @@ void AutoPilot::step(void) {
             // Then pause movement and (re-)set the pause counter.
             pause_flag = true;
             count_down = PAUSE_FRAME_COUNT;
-            lambda = Path::LAMBDA_LOWER_BOUND;
             }
         }
     else {
