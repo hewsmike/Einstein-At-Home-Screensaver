@@ -34,8 +34,8 @@ Renderable::~Renderable() {
     }
 
 void Renderable::reAcquire(void) {
-    inactivate();
-    activate();
+    release();
+    prepare(quality);
     }
 
 void Renderable::activate(void) {
@@ -55,8 +55,6 @@ void Renderable::inactivate(void) {
 
     // Unregister any callback triggered by global rendering level alteration.
     detachRender();
-
-    //
 
     // Mark as inactive.
     activity = Renderable::INACTIVE;

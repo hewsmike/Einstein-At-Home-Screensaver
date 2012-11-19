@@ -33,6 +33,18 @@ HUDBorderLayout::HUDBorderLayout(HUDContainer* enclosing, HUDContainer::Mode mod
 HUDBorderLayout::~HUDBorderLayout() {
     }
 
+bool HUDBorderLayout::requestResize(GLuint newWidth, GLuint newHeight) {
+    HUDContainer::requestResize(newWidth, newHeight);
+    /// TODO Test if on windows, maybe compile level define ... ?
+    if(true) {
+        // This triggers release/prepare behaviours for a HUDContainer
+        // type which means that each of the items within will undergo
+        // their release/prepare behaviours.
+        release();
+        prepare();
+        }
+    }
+
 void HUDBorderLayout::setPanel(enum BorderPanel panel, HUDContainer* container) {
     // Don't store a NULL pointer!!
     if(container != NULL) {

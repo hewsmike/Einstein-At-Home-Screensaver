@@ -144,6 +144,10 @@ void HUDImage::render(void) {
     }
 
 void HUDImage::loadTexture() {
+    std::stringstream msg;
+    msg << "HUDImage::loadTexture() - acquiring texture resource : ";
+    msg << image_resource_name;
+    ErrorHandler::record(msg.str(), ErrorHandler::INFORM);
     // Get an OpenGL texture object.
     texture.acquire();
 
@@ -260,6 +264,12 @@ void HUDImage::createVertexData(void) {
 void HUDImage::loadVertexBuffer(void) {
     // Get an OpenGL buffer object.
     buff_obj_points.acquire();
+    if(buff_obj_points.ID == OGL_ID::NO_ID) {
+        std::stringstream msg;
+        msg << "HUDImage::loadVertexBuffer() - can't acquire buffer handle : "
+            << image_resource_name;
+        ErrorHandler::record(msg.str(), ErrorHandler::WARN);
+        }
 
     // Make our buffer identifier OpenGL's current one.
     glBindBuffer(GL_ARRAY_BUFFER, buff_obj_points.ID());
@@ -281,7 +291,10 @@ void HUDImage::loadVertexBuffer(void) {
     // Check for failure, as we don't want to dereference a NULL later on,
     // ... MAKE IT A FATAL ERROR.
     if(buffer_ptr == NULL) {
-        ErrorHandler::record("HUDImage::loadVertexBuffer() - can't acquire buffer pointer", ErrorHandler::FATAL);
+        std::stringstream msg;
+        msg << "HUDImage::loadVertexBuffer() - can't acquire buffer pointer : "
+            << image_resource_name;
+        ErrorHandler::record(msg.str(), ErrorHandler::WARN);
         }
 
     for(std::vector<Vertex>::const_iterator vt = verts.begin();

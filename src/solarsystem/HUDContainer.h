@@ -72,7 +72,7 @@ class HUDContainer : public HUDItem {
          * - true if a resize was allowed
          * - false if below minimum was requested
          */
-        bool requestResize(GLuint newWidth, GLuint newHeight);
+        virtual bool requestResize(GLuint newWidth, GLuint newHeight);
 
         /**
          * \brief Set the lower left corner window coordinates

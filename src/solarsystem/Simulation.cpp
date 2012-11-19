@@ -360,10 +360,6 @@ void Simulation::resize(GLuint width, GLuint height) {
     // Now tell the HUD of such settings.
     // TODO - if resize denied then inactivate HUD ?? Complex ....
     overlay.requestResize(width, height);
-
-    text_lines.inactivate();
-    text_lines.activate();
-
     }
 
 CameraState Simulation::viewPoint(void) {

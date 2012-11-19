@@ -77,6 +77,8 @@ class HUDBorderLayout : public HUDContainer {
          */
         virtual ~HUDBorderLayout();
 
+        virtual bool requestResize(GLuint newWidth, GLuint newHeight);
+
         /**
          * \brief Set the relevant panel to a given container
          *
