@@ -33,6 +33,11 @@ Renderable::Renderable() : activity(Renderable::INACTIVE),
 Renderable::~Renderable() {
     }
 
+void Renderable::reAcquire(void) {
+    inactivate();
+    activate();
+    }
+
 void Renderable::activate(void) {
     // Prepare resources as we have decided to show it.
     prepare(quality);

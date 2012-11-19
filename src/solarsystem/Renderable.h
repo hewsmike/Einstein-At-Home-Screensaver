@@ -65,6 +65,8 @@ class Renderable : public RenderQualityObserver {
         /// Virtual destructor
         virtual ~Renderable();
 
+        void reAcquire(void);
+
         /**
          * \brief Invoke display of the object within the scene according to
          *        it's activation and show state.
