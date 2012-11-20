@@ -42,8 +42,7 @@ bool HUDBorderLayout::requestResize(GLuint newWidth, GLuint newHeight) {
         std::stringstream msg;
         msg << "HUDBorderLayout::requestResize() - reacquiring resources : ";
         ErrorHandler::record(msg.str(), ErrorHandler::INFORM);
-        this->inactivate();
-        this->activate();
+        this->reAcquire();
         }
     HUDContainer::requestResize(newWidth, newHeight);
 

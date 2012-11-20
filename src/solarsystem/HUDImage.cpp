@@ -60,6 +60,9 @@ HUDImage::~HUDImage() {
 
 void HUDImage::prepare(SolarSystemGlobals::render_quality rq) {
     // Policy is to set size when rendering is implied.
+    std::stringstream msg;
+    msg << "HUDImage::prepare() ";
+    ErrorHandler::record(msg.str(), ErrorHandler::INFORM);
 
     // Ensure one has a texture ( pixel map ) available
     // to paste on the surface.
@@ -144,7 +147,6 @@ void HUDImage::render(void) {
     }
 
 void HUDImage::loadTexture() {
-
     // Get an OpenGL texture object.
     texture.acquire();
 

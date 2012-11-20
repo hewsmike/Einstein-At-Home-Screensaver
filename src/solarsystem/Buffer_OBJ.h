@@ -60,17 +60,17 @@ class Buffer_OBJ : public OGL_ID {
        * \brief Releases the buffer object resources.
        */
       virtual void release(void);
-      
+
       /**
        * \brief Write data to the buffer with the given characteristics.
-		 *
-		 * 	It is the caller's responsibility to ensure that the given
-		 *	parameters are sensible. So beware the combination of enumerants,
-		 * the validity of the data pointer and the size. If no buffer identifier
-		 * is allocated by OpenGL then get one.
+	   *
+	   * 	It is the caller's responsibility to ensure that the given
+	   * parameters are sensible. So beware the combination of enumerants,
+	   * the validity of the data pointer and the size. If no buffer identifier
+	   * is allocated by OpenGL then get one.
        *
        * \param target - one of the accepted OpenGL enumerants for buffer objects,
-		 *						 typically either GL_ARRAY_BUFFER or GL_ELEMENT_ARRAY_BUFFER
+	   *				 typically either GL_ARRAY_BUFFER or GL_ELEMENT_ARRAY_BUFFER
        * \param usage - one of the accepted OpenGL enumerants, say
        *                GL_STATIC_DRAW.
        * \param size - the amount of data to transfer to the server buffer.
