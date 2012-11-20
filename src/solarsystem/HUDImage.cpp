@@ -144,12 +144,15 @@ void HUDImage::render(void) {
     }
 
 void HUDImage::loadTexture() {
-    std::stringstream msg;
-    msg << "HUDImage::loadTexture() - acquiring texture resource : ";
-    msg << image_resource_name;
-    ErrorHandler::record(msg.str(), ErrorHandler::INFORM);
+
     // Get an OpenGL texture object.
     texture.acquire();
+
+    std::stringstream msg;
+    msg << "HUDImage::loadTexture() - acquiring texture resource : "
+        << image_resource_name << " with texture ID : "
+        << texture.ID();
+    ErrorHandler::record(msg.str(), ErrorHandler::INFORM);
 
     // Make our texture object OpenGL's current one.
     glBindTexture(GL_TEXTURE_2D, texture.ID());
@@ -161,7 +164,7 @@ void HUDImage::loadTexture() {
     // This implicitly operates on the GL_TEXTURE_2D target.
     GLFWimage gli;
     int texture_load_success = GL_FALSE;
-    if(textureResource != GL_FALSE) {
+    if(textureResource != NULL) {
         int resource_load_success = glfwReadMemoryImage(&(textureResource->data()->front()),
                                                         textureResource->data()->size(),
                                                         &gli, 0);
@@ -264,7 +267,7 @@ void HUDImage::createVertexData(void) {
 void HUDImage::loadVertexBuffer(void) {
     // Get an OpenGL buffer object.
     buff_obj_points.acquire();
-    if(buff_obj_points.ID == OGL_ID::NO_ID) {
+    if(buff_obj_points.ID() == OGL_ID::NO_ID) {
         std::stringstream msg;
         msg << "HUDImage::loadVertexBuffer() - can't acquire buffer handle : "
             << image_resource_name;

@@ -34,15 +34,20 @@ HUDBorderLayout::~HUDBorderLayout() {
     }
 
 bool HUDBorderLayout::requestResize(GLuint newWidth, GLuint newHeight) {
-    HUDContainer::requestResize(newWidth, newHeight);
     /// TODO Test if on windows, maybe compile level define ... ?
     if(true) {
         // This triggers release/prepare behaviours for a HUDContainer
         // type which means that each of the items within will undergo
         // their release/prepare behaviours.
-        release();
-        prepare();
+        std::stringstream msg;
+        msg << "HUDBorderLayout::requestResize() - reacquiring resources : ";
+        ErrorHandler::record(msg.str(), ErrorHandler::INFORM);
+        this->inactivate();
+        this->activate();
         }
+    HUDContainer::requestResize(newWidth, newHeight);
+
+    return true;
     }
 
 void HUDBorderLayout::setPanel(enum BorderPanel panel, HUDContainer* container) {
