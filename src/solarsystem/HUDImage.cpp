@@ -61,7 +61,16 @@ HUDImage::~HUDImage() {
 void HUDImage::prepare(SolarSystemGlobals::render_quality rq) {
     // Policy is to set size when rendering is implied.
     std::stringstream msg;
-    msg << "HUDImage::prepare() ";
+    msg << "HUDImage::prepare() - showflag : ";
+    if(this->isShown() == true) {
+        msg << "true, ";
+        }
+    else {
+        msg << "false, ";
+        }
+    msg << "texture.ID = " << texture.ID();
+    msg << ", buff_obj_points.ID = " << buff_obj_points.ID();
+    msg << ", image_resource_name = " << image_resource_name;
     ErrorHandler::record(msg.str(), ErrorHandler::INFORM);
 
     // Ensure one has a texture ( pixel map ) available

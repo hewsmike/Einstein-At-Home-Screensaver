@@ -162,13 +162,7 @@ Simulation::Simulation(void) : cs(CONSTELLATIONS_RADIUS),
                                           HUDContainer::RETAIN),
                                west_panel(&overlay,
                                           HUDFlowLayout::VERTICAL,
-                                          HUDContainer::RETAIN),
-                               text_lines(&overlay,
-                                          HUDFlowLayout::VERTICAL,
-                                          HUDContainer::DESTROY),
-                               lookout_images(&overlay,
-                                              HUDFlowLayout::VERTICAL,
-                                              HUDContainer::DESTROY) {
+                                          HUDContainer::RETAIN) {
     // Starting values of simulation parameters.
 
     min60 = 0;
@@ -240,8 +234,6 @@ Simulation::~Simulation() {
     if(version_text != NULL) {
         delete version_text;
         }
-    text_lines.erase();
-    lookout_images.erase();
     }
 
 void Simulation::step(void) {
@@ -262,9 +254,9 @@ void Simulation::step(void) {
 
             // Then put new content lines, if any, into the panel.
             // Derived according to the current position in the tour.
-            text_lines.erase();
+            north_panel.erase();
 
-            text_lines.setLoad(HUDFlowLayout::FIRST);
+            north_panel.setLoad(HUDFlowLayout::FIRST);
             const std::vector<std::string>& messages = pilot.getDescription();
             if(messages.size() != 0) {
                 target.show();
@@ -275,27 +267,27 @@ void Simulation::step(void) {
                     /// TODO - currently entering in reverse order ( see HUDFlowLayout::allocateItemBases() LAST case ).
                     HUDTextLine* line = new HUDTextLine(message->size(),
                                                         *message, 0, 2);
-                    text_lines.addItem(line_count, line);
+                    north_panel.addItem(line_count, line);
                     ++line_count;
                     }
                 }
-            text_lines.activate();
+            north_panel.activate();
 
             // Then put new image(s), if any, into the west panel.
             // Derived according to the current position in the tour
             // and are currently the pulse profile plots.
-            lookout_images.erase();
-            lookout_images.setLoad(HUDFlowLayout::FIRST);
+            west_panel.erase();
+            west_panel.setLoad(HUDFlowLayout::FIRST);
             const std::vector<std::string>& image_names = pilot.getImageResourceNames();
             int image_count = 0;
             for(std::vector<std::string>::const_iterator image_name = image_names.begin();
                 image_name != image_names.end();
                 ++image_name) {
                 HUDImage* profile = new HUDImage(*image_name, 10, 10);
-                lookout_images.addItem(image_count, profile);
+                west_panel.addItem(image_count, profile);
                 ++image_count;
                 }
-            lookout_images.activate();
+            west_panel.activate();
             }
         }
 
@@ -481,8 +473,6 @@ void Simulation::release(void) {
     if(version_text != NULL) {
         delete version_text;
         }
-    text_lines.erase();
-    lookout_images.erase();
     }
 
 void Simulation::render(void) {
@@ -2848,11 +2838,8 @@ void Simulation::cycle(SolarSystemGlobals::content ct) {
         case SolarSystemGlobals::AUTOPILOT:
             if(pilot.isActive() == true) {
                 // When returning to user control ...
-                text_lines.erase();
-                lookout_images.erase();
-
-                overlay.setPanel(HUDBorderLayout::NORTH, &north_panel);
-                overlay.setPanel(HUDBorderLayout::WEST, &west_panel);
+                north_panel.erase();
+                west_panel.erase();
 
                 flyboy.manouevre(Craft::STOP_ROTATION);
                 flyboy.manouevre(Craft::STOP_TRANSLATION);
@@ -2862,10 +2849,8 @@ void Simulation::cycle(SolarSystemGlobals::content ct) {
                 }
             else {
                 // When enabling autopilot ....
-                overlay.setPanel(HUDBorderLayout::NORTH, &text_lines);
-                overlay.setPanel(HUDBorderLayout::WEST, &lookout_images);
-                text_lines.erase();
-                lookout_images.erase();
+                north_panel.erase();
+                west_panel.erase();
 
                 flyboy.manouevre(Craft::STOP_ROTATION);
                 flyboy.manouevre(Craft::STOP_TRANSLATION);

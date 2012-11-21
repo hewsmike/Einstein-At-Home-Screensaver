@@ -329,10 +329,6 @@ class Simulation : public Renderable {
         HUDFlowLayout east_panel;
         HUDFlowLayout west_panel;
 
-        /// Containers for touring information
-        HUDFlowLayout text_lines;
-        HUDFlowLayout lookout_images;
-
         /**
          * \brief Add an image as named by a Resource to a panel.
          *

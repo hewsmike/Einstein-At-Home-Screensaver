@@ -23,6 +23,8 @@
 #include <iostream>
 
 #include "ErrorHandler.h"
+#include "HUDImage.h"
+#include "HUDTextLine.h"
 
 HUDContainer::HUDContainer(HUDContainer* enclosing = NULL, Mode mode = RETAIN) :
                 HUDItem(),
@@ -184,6 +186,18 @@ void HUDContainer::prepare(SolarSystemGlobals::render_quality rq) {
         ++obj) {
         // Mechanics of Renderable class ensures that activation
         // implies preparation.
+        if(dynamic_cast<HUDImage*>(obj->second) != NULL) {
+            ErrorHandler::record("HUDContainer::prepare() - dynamic cast indicates HUDItem is a : HUDImage",
+                                  ErrorHandler::INFORM);
+            }
+        if(dynamic_cast<HUDTextLine*>(obj->second) != NULL) {
+            ErrorHandler::record("HUDContainer::prepare() - dynamic cast indicates HUDItem is a : HUDTextLine",
+                                  ErrorHandler::INFORM);
+            }
+        if(dynamic_cast<HUDContainer*>(obj->second) != NULL) {
+            ErrorHandler::record("HUDContainer::prepare() - dynamic cast indicates HUDItem is a : HUDContainer",
+                                  ErrorHandler::INFORM);
+            }
 
         // Check on nullity ie. assume the iterator is valid, but
         // does it dereference to a NULL pointer ?
