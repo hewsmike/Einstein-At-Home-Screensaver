@@ -317,7 +317,8 @@ void Simulation::resize(GLuint width, GLuint height) {
     overlay.requestResize(width, height);
 
     // If the autopilot is running
-    if(false) {
+    if(pilot.isActive() == true) {
+        target.hide();
         loadLookoutDataToPanels();
         }
     }
@@ -3069,6 +3070,7 @@ void Simulation::loadLookoutDataToPanels(void) {
             ++line_count;
             }
         }
+    north_panel.activate();
 
     // Then put new image(s), if any, into the west panel.
     west_panel.erase();
@@ -3082,4 +3084,5 @@ void Simulation::loadLookoutDataToPanels(void) {
         west_panel.addItem(image_count, profile);
         ++image_count;
         }
+    west_panel.activate();
     }
