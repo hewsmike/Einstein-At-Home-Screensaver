@@ -351,6 +351,8 @@ class Simulation : public Renderable {
         std::vector<std::string> tokenise(std::string input, char delimiter) const;
 
         std::vector<std::string> parseLine(std::string input) const;
+
+        void loadLookoutDataToPanels(void);
     };
 
 /**

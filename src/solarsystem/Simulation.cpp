@@ -250,44 +250,7 @@ void Simulation::step(void) {
         // ... check for any content change of the tour's descriptive text.
         if(pilot.hasDescriptionChanged() == true) {
             target.hide();
-            // Clean up any prior panel contents.
-
-            // Then put new content lines, if any, into the panel.
-            // Derived according to the current position in the tour.
-            north_panel.erase();
-
-            north_panel.setLoad(HUDFlowLayout::FIRST);
-            const std::vector<std::string>& messages = pilot.getDescription();
-            if(messages.size() != 0) {
-                target.show();
-                int line_count = 0;
-                for(std::vector<std::string>::const_iterator message = messages.begin();
-                    message != messages.end();
-                    ++message) {
-                    /// TODO - currently entering in reverse order ( see HUDFlowLayout::allocateItemBases() LAST case ).
-                    HUDTextLine* line = new HUDTextLine(message->size(),
-                                                        *message, 0, 2);
-                    north_panel.addItem(line_count, line);
-                    ++line_count;
-                    }
-                }
-            north_panel.activate();
-
-            // Then put new image(s), if any, into the west panel.
-            // Derived according to the current position in the tour
-            // and are currently the pulse profile plots.
-            west_panel.erase();
-            west_panel.setLoad(HUDFlowLayout::FIRST);
-            const std::vector<std::string>& image_names = pilot.getImageResourceNames();
-            int image_count = 0;
-            for(std::vector<std::string>::const_iterator image_name = image_names.begin();
-                image_name != image_names.end();
-                ++image_name) {
-                HUDImage* profile = new HUDImage(*image_name, 10, 10);
-                west_panel.addItem(image_count, profile);
-                ++image_count;
-                }
-            west_panel.activate();
+            loadLookoutDataToPanels();
             }
         }
 
@@ -352,6 +315,11 @@ void Simulation::resize(GLuint width, GLuint height) {
     // Now tell the HUD of such settings.
     // TODO - if resize denied then inactivate HUD ?? Complex ....
     overlay.requestResize(width, height);
+
+    // If the autopilot is running
+    if(false) {
+        loadLookoutDataToPanels();
+        }
     }
 
 CameraState Simulation::viewPoint(void) {
@@ -3080,4 +3048,38 @@ std::vector<std::string> Simulation::parseLine(std::string input) const {
     ret_val.push_back(splits.at(splits.size() - 1));
 
     return ret_val;
+    }
+
+void Simulation::loadLookoutDataToPanels(void) {
+    // Derive content according to the current position in the tour.
+    // First put new content text, if any, into the north panel.
+    north_panel.erase();
+    north_panel.setLoad(HUDFlowLayout::FIRST);
+    const std::vector<std::string>& messages = pilot.getDescription();
+    if(messages.size() != 0) {
+        target.show();
+        int line_count = 0;
+        for(std::vector<std::string>::const_iterator message = messages.begin();
+            message != messages.end();
+            ++message) {
+            /// TODO - currently entering in reverse order ( see HUDFlowLayout::allocateItemBases() LAST case ).
+            HUDTextLine* line = new HUDTextLine(message->size(),
+                                                *message, 0, 2);
+            north_panel.addItem(line_count, line);
+            ++line_count;
+            }
+        }
+
+    // Then put new image(s), if any, into the west panel.
+    west_panel.erase();
+    west_panel.setLoad(HUDFlowLayout::FIRST);
+    const std::vector<std::string>& image_names = pilot.getImageResourceNames();
+    int image_count = 0;
+    for(std::vector<std::string>::const_iterator image_name = image_names.begin();
+        image_name != image_names.end();
+        ++image_name) {
+        HUDImage* profile = new HUDImage(*image_name, 10, 10);
+        west_panel.addItem(image_count, profile);
+        ++image_count;
+        }
     }
