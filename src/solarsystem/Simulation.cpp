@@ -28,6 +28,7 @@
 #include <string>
 #include <vector>
 
+#include "Line.h"
 #include "SunOrbit.h"
 
 const std::string Simulation::EARTH_NAME("Earth");
@@ -71,14 +72,17 @@ const GLfloat Simulation::SKYGRID_MAIN_WIDTH(0.5f);
 const GLfloat Simulation::SKYGRID_MAIN_RED(0.12f);
 const GLfloat Simulation::SKYGRID_MAIN_GREEN(0.17f);
 const GLfloat Simulation::SKYGRID_MAIN_BLUE(0.12f);
+const GLfloat Simulation::SKYGRID_MAIN_ALPHA(1.0f);
 const GLfloat Simulation::SKYGRID_CELESTIAL_EQUATOR_WIDTH(1.0f);
 const GLfloat Simulation::SKYGRID_CELESTIAL_EQUATOR_RED(0.24f);
 const GLfloat Simulation::SKYGRID_CELESTIAL_EQUATOR_GREEN(0.34f);
 const GLfloat Simulation::SKYGRID_CELESTIAL_EQUATOR_BLUE(0.24f);
+const GLfloat Simulation::SKYGRID_CELESTIAL_EQUATOR_ALPHA(1.0f);
 const GLfloat Simulation::SKYGRID_PRIME_MERIDIAN_WIDTH(1.0f);
 const GLfloat Simulation::SKYGRID_PRIME_MERIDIAN_RED(0.36f);
 const GLfloat Simulation::SKYGRID_PRIME_MERIDIAN_GREEN(0.51f);
 const GLfloat Simulation::SKYGRID_PRIME_MERIDIAN_BLUE(0.36f);
+const GLfloat Simulation::SKYGRID_PRIME_MERIDIAN_ALPHA(1.0f);
 
 const GLuint Simulation::EARTHGRID_RADIUS(SolarSystemGlobals::EARTH_RADIUS + 2);
 const GLuint Simulation::EARTHGRID_STACKS(19);
@@ -87,14 +91,17 @@ const GLfloat Simulation::EARTHGRID_MAIN_WIDTH(0.5f);
 const GLfloat Simulation::EARTHGRID_MAIN_RED(0.95f);
 const GLfloat Simulation::EARTHGRID_MAIN_GREEN(0.74f);
 const GLfloat Simulation::EARTHGRID_MAIN_BLUE(0.00f);
+const GLfloat Simulation::EARTHGRID_MAIN_ALPHA(1.0f);
 const GLfloat Simulation::EARTHGRID_CELESTIAL_EQUATOR_WIDTH(1.0f);
 const GLfloat Simulation::EARTHGRID_CELESTIAL_EQUATOR_RED(0.77f);
 const GLfloat Simulation::EARTHGRID_CELESTIAL_EQUATOR_GREEN(0.00f);
 const GLfloat Simulation::EARTHGRID_CELESTIAL_EQUATOR_BLUE(0.28f);
+const GLfloat Simulation::EARTHGRID_CELESTIAL_EQUATOR_ALPHA(1.0f);
 const GLfloat Simulation::EARTHGRID_PRIME_MERIDIAN_WIDTH(1.0f);
 const GLfloat Simulation::EARTHGRID_PRIME_MERIDIAN_RED(1.00f);
 const GLfloat Simulation::EARTHGRID_PRIME_MERIDIAN_GREEN(0.20f);
 const GLfloat Simulation::EARTHGRID_PRIME_MERIDIAN_BLUE(0.80f);
+const GLfloat Simulation::EARTHGRID_PRIME_MERIDIAN_ALPHA(1.0f);
 
 const GLint Simulation::HUD_LEFT_CLIP(0);
 const GLint Simulation::HUD_BOTTOM_CLIP(0);
@@ -184,20 +191,38 @@ Simulation::Simulation(void) : cs(CONSTELLATIONS_RADIUS),
     version_text = NULL;
 
     // Line rendering detail for celestial coordinate grids.
-    c_sphere.setLine(GridGlobe::MAIN, SKYGRID_MAIN_WIDTH,
-                     SKYGRID_MAIN_RED, SKYGRID_MAIN_GREEN, SKYGRID_MAIN_BLUE);
-    c_sphere.setLine(GridGlobe::EQUATOR, SKYGRID_CELESTIAL_EQUATOR_WIDTH,
-                     SKYGRID_CELESTIAL_EQUATOR_RED, SKYGRID_CELESTIAL_EQUATOR_GREEN, SKYGRID_CELESTIAL_EQUATOR_BLUE);
-    c_sphere.setLine(GridGlobe::PRIME_MERIDIAN, SKYGRID_PRIME_MERIDIAN_WIDTH,
-                     SKYGRID_PRIME_MERIDIAN_RED, SKYGRID_PRIME_MERIDIAN_GREEN, SKYGRID_PRIME_MERIDIAN_BLUE);
+    c_sphere.setLine(GridGlobe::MAIN, Line(SKYGRID_MAIN_WIDTH,
+                                           SKYGRID_MAIN_RED,
+                                           SKYGRID_MAIN_GREEN,
+                                           SKYGRID_MAIN_BLUE,
+                                           SKYGRID_MAIN_ALPHA);
+    c_sphere.setLine(GridGlobe::EQUATOR, Line(SKYGRID_CELESTIAL_EQUATOR_WIDTH,
+                                         SKYGRID_CELESTIAL_EQUATOR_RED,
+                                         SKYGRID_CELESTIAL_EQUATOR_GREEN,
+                                         SKYGRID_CELESTIAL_EQUATOR_BLUE,
+                                         SKYGRID_CELESTIAL_EQUATOR_ALPHA));
+    c_sphere.setLine(GridGlobe::PRIME_MERIDIAN, Line(SKYGRID_PRIME_MERIDIAN_WIDTH,
+                                                     SKYGRID_PRIME_MERIDIAN_RED,
+                                                     SKYGRID_PRIME_MERIDIAN_GREEN,
+                                                     SKYGRID_PRIME_MERIDIAN_BLUE,
+                                                     SKYGRID_PRIME_MERIDIAN_ALPHA);
 
     // Line rendering detail for terrestrial coordinate grids.
-    e_sphere.setLine(GridGlobe::MAIN, EARTHGRID_MAIN_WIDTH,
-                     EARTHGRID_MAIN_RED, EARTHGRID_MAIN_GREEN, EARTHGRID_MAIN_BLUE);
-    e_sphere.setLine(GridGlobe::EQUATOR, EARTHGRID_CELESTIAL_EQUATOR_WIDTH,
-                     EARTHGRID_CELESTIAL_EQUATOR_RED, EARTHGRID_CELESTIAL_EQUATOR_GREEN, EARTHGRID_CELESTIAL_EQUATOR_BLUE);
-    e_sphere.setLine(GridGlobe::PRIME_MERIDIAN, EARTHGRID_PRIME_MERIDIAN_WIDTH,
-                     EARTHGRID_PRIME_MERIDIAN_RED, EARTHGRID_PRIME_MERIDIAN_GREEN, EARTHGRID_PRIME_MERIDIAN_BLUE);
+    e_sphere.setLine(GridGlobe::MAIN, Line(EARTHGRID_MAIN_WIDTH,
+                                           EARTHGRID_MAIN_RED,
+                                           EARTHGRID_MAIN_GREEN,
+                                           EARTHGRID_MAIN_BLUE,
+                                           EARTHGRID_MAIN_ALPHA);
+    e_sphere.setLine(GridGlobe::EQUATOR, Line(EARTHGRID_CELESTIAL_EQUATOR_WIDTH,
+                                              EARTHGRID_CELESTIAL_EQUATOR_RED,
+                                              EARTHGRID_CELESTIAL_EQUATOR_GREEN,
+                                              EARTHGRID_CELESTIAL_EQUATOR_BLUE,
+                                              EARTHGRID_CELESTIAL_EQUATOR_ALPHA);
+    e_sphere.setLine(GridGlobe::PRIME_MERIDIAN, Line(EARTHGRID_PRIME_MERIDIAN_WIDTH,
+                                                     EARTHGRID_PRIME_MERIDIAN_RED,
+                                                     EARTHGRID_PRIME_MERIDIAN_GREEN,
+                                                     EARTHGRID_PRIME_MERIDIAN_BLUE,
+                                                     EARTHGRID_PRIME_MERIDIAN_ALPHA);
 
     // Get the pulsar and supernovae data.
     loadPulsars();

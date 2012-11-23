@@ -204,14 +204,17 @@ class Simulation : public Renderable {
         static const GLfloat SKYGRID_MAIN_RED;
         static const GLfloat SKYGRID_MAIN_GREEN;
         static const GLfloat SKYGRID_MAIN_BLUE;
+        static const GLfloat SKYGRID_MAIN_ALPHA;
         static const GLfloat SKYGRID_CELESTIAL_EQUATOR_WIDTH;
         static const GLfloat SKYGRID_CELESTIAL_EQUATOR_RED;
         static const GLfloat SKYGRID_CELESTIAL_EQUATOR_GREEN;
         static const GLfloat SKYGRID_CELESTIAL_EQUATOR_BLUE;
+        static const GLfloat SKYGRID_CELESTIAL_EQUATOR_ALPHA;
         static const GLfloat SKYGRID_PRIME_MERIDIAN_WIDTH;
         static const GLfloat SKYGRID_PRIME_MERIDIAN_RED;
         static const GLfloat SKYGRID_PRIME_MERIDIAN_GREEN;
         static const GLfloat SKYGRID_PRIME_MERIDIAN_BLUE;
+        static const GLfloat SKYGRID_PRIME_MERIDIAN_ALPHA;
 
         /// Earth coordinate grid rendering parameters.
         static const GLuint EARTHGRID_RADIUS;
@@ -221,14 +224,17 @@ class Simulation : public Renderable {
         static const GLfloat EARTHGRID_MAIN_RED;
         static const GLfloat EARTHGRID_MAIN_GREEN;
         static const GLfloat EARTHGRID_MAIN_BLUE;
+        static const GLfloat EARTHGRID_MAIN_ALPHA;
         static const GLfloat EARTHGRID_CELESTIAL_EQUATOR_WIDTH;
         static const GLfloat EARTHGRID_CELESTIAL_EQUATOR_RED;
         static const GLfloat EARTHGRID_CELESTIAL_EQUATOR_GREEN;
         static const GLfloat EARTHGRID_CELESTIAL_EQUATOR_BLUE;
+        static const GLfloat EARTHGRID_CELESTIAL_EQUATOR_ALPHA;
         static const GLfloat EARTHGRID_PRIME_MERIDIAN_WIDTH;
         static const GLfloat EARTHGRID_PRIME_MERIDIAN_RED;
         static const GLfloat EARTHGRID_PRIME_MERIDIAN_GREEN;
         static const GLfloat EARTHGRID_PRIME_MERIDIAN_BLUE;
+        static const GLfloat EARTHGRID_PRIME_MERIDIAN_ALPHA;
 
         /// HUD orthographic clipping bounds.
         static const GLint HUD_LEFT_CLIP;

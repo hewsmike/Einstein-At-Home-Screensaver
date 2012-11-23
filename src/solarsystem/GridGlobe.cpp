@@ -98,29 +98,16 @@ void GridGlobe::cycleActivation(void) {
         }
     }
 
-void GridGlobe::setLine(lineType type,
-                        GLfloat width,
-                        GLfloat red,
-                        GLfloat green,
-                        GLfloat blue) {
+void GridGlobe::setLine(lineType type, Line line) {
     switch(type) {
         case MAIN:
-            main.width = width;
-            main.red = red;
-            main.green = green;
-            main.blue = blue;
+            main = line;
             break;
         case EQUATOR:
-            equator.width = width;
-            equator.red = red;
-            equator.green = green;
-            equator.blue = blue;
+            equator = line;
             break;
         case PRIME_MERIDIAN:
-            prime_meridian.width = width;
-            prime_meridian.red = red;
-            prime_meridian.green = green;
-            prime_meridian.blue = blue;
+            prime_meridian = line;
             break;
         default:
             ErrorHandler::record("GridGlobe::setLine() - bad switch case reached (default)", ErrorHandler::INFORM);
@@ -179,8 +166,8 @@ void GridGlobe::render(void) {
         glVertexPointer(COORDS_PER_VERTEX, GL_FLOAT, ARRAY_STRIDE, BUFFER_OFFSET(BYTE_OFFSET));
 
         // Do the grid. Start by setting the line width and colour.
-        glLineWidth(main.width);
-        glColor3f(main.red, main.green, main.blue);
+        glLineWidth(main.width());
+        glColor3f(main.red(), main.green(), main.blue());
 
         // Bind the grid index array.
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buff_obj_grid_links.ID());
@@ -189,8 +176,8 @@ void GridGlobe::render(void) {
         glDrawElements(GL_LINES, grid_links * VERTICES_PER_LINK, GL_UNSIGNED_INT, BUFFER_OFFSET(ARRAY_START));
 
         // Do the prime meridian. Start by setting the line width and colour.
-        glLineWidth(prime_meridian.width);
-        glColor3f(prime_meridian.red, prime_meridian.green, prime_meridian.blue);
+        glLineWidth(prime_meridian.width());
+        glColor3f(prime_meridian.red(), prime_meridian.green(), prime_meridian.blue());
 
         // Bind the prime meridian index array.
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buff_obj_prime_meridian_links.ID());
@@ -201,8 +188,8 @@ void GridGlobe::render(void) {
         // Only draw an equatorial circle if there is one.
         if(hasEquator) {
             // Do the celestial equator. Start by setting the line width and colour.
-            glLineWidth(equator.width);
-            glColor3f(equator.red, equator.green, equator.blue);
+            glLineWidth(equator.width());
+            glColor3f(equator.red(), equator.green(), equator.blue());
 
             // Bind the celestial equator index array.
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buff_obj_celestial_equator_links.ID());

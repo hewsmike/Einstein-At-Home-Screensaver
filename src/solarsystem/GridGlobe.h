@@ -22,6 +22,7 @@
 #define GRID_GLOBE_H_
 
 #include "Buffer_OBJ.h"
+#include "Line.h"
 #include "Renderable.h"
 #include "SolarSystemGlobals.h"
 #include "Sphere.h"
@@ -33,8 +34,8 @@
  */
 
 /**
- * \brief A renderable object of spherical shape with grid
- *        features, primarily used as for coordinate display.
+ * \brief This class defines a renderable object of spherical shape with
+ *        grid features, primarily used as for coordinate display.
  *
  * \author Mike Hewson\n
  */
@@ -76,11 +77,7 @@ class GridGlobe : public Renderable {
          * \param green : the green RGB compononet of the line.
          * \param blue : the blue RGB compononet of the line.
          */
-        void setLine(lineType type,
-                     GLfloat width,
-                     GLfloat red,
-                     GLfloat green,
-                     GLfloat blue);
+        void setLine(lineType type, Line line);
 
     private:
         /// Cyclic rendering states
@@ -113,13 +110,6 @@ class GridGlobe : public Renderable {
             vec_t x_pos;
             vec_t y_pos;
             vec_t z_pos;
-            };
-
-        struct Line {
-            GLfloat width;
-            GLfloat red;
-            GLfloat green;
-            GLfloat blue;
             };
 
         Line main;
