@@ -253,14 +253,15 @@ class Simulation : public Renderable {
 
         /**
          * \brief Load a list of general pulsar data
-         *
-         * \return a boolean indicating true if pulsars were
-         *         successfully loaded, false otherwise.
          */
         void loadPulsars(void);
 
         /**
          * \brief Load a list of E@H assisted pulsar data
+         *
+         * \return boolean indicating the success of the load
+         *                 false : load succeeded
+         *                 true : load failed
          */
         bool loadPulsarsEAH(void);
 
@@ -342,16 +343,60 @@ class Simulation : public Renderable {
                               std::string resource_name, GLuint margin_width,
                               GLuint margin_height);
 
+        /**
+         * \brief Obtain the file name containing pulsar data
+         *
+         * \return the file's name
+         */
         std::string getEAHPulsarDataFileName(void);
 
+        /**
+         * \brief Convert a string representing right ascensions to a number
+         *
+         * \param right_ascension : string in an expected format for right ascension,
+         *                          currently determined by the 'EatH_mastercat_****.txt'
+         *                          file.
+         * \param result : pointer to write the result to
+         * \return boolean indicating success of conversion
+         *                 false - no conversion ( string has bad format )
+         *                 true - conversion succeeded
+         */
         bool str2ra(std::string right_ascension, float* result) const;
 
+        /**
+         * \brief Convert a string representing declination to a number
+         *
+         * \param declination : string in an expected format for declination,
+         *                      currently determined by the 'EatH_mastercat_****.txt'
+         *                      file.
+         * \param result : pointer to write the result to
+         * \return boolean indicating success of conversion
+         *                 false - no conversion ( string has bad format )
+         *                 true - conversion succeeded
+         */
         bool str2dec(std::string declination, float* result) const;
 
+        /**
+         * \brief Convert a string to a sequence of strings as per delimiter
+         *
+         * \param input : the string to be tokenised
+         * \param delimiter : the character to use to separate the tokens
+         * \return an array of tokens/strings
+         */
         std::vector<std::string> tokenise(std::string input, char delimiter) const;
 
+        /**
+         * \brief Take a line of input from the 'EatH_mastercat_****.txt' and
+         *        separate into data fields
+         *
+         * \param input : the line to be broken up
+         * \return an array of data fields
+         */
         std::vector<std::string> parseLine(std::string input) const;
 
+        /**
+         * \brief Insert the data from the current Lookout and place on HUD panels
+         */
         void loadLookoutDataToPanels(void);
     };
 

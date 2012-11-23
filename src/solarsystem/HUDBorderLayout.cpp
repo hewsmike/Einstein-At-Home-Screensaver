@@ -36,12 +36,6 @@ HUDBorderLayout::~HUDBorderLayout() {
 bool HUDBorderLayout::requestResize(GLuint newWidth, GLuint newHeight) {
     /// TODO Test if on windows, maybe compile level define ... ?
     if(true) {
-        // This triggers release/prepare behaviours for a HUDContainer
-        // type which means that each of the items within will undergo
-        // their release/prepare behaviours.
-        std::stringstream msg;
-        msg << "HUDBorderLayout::requestResize() - reacquiring resources : ";
-        ErrorHandler::record(msg.str(), ErrorHandler::INFORM);
         this->reAcquire();
         }
     HUDContainer::requestResize(newWidth, newHeight);

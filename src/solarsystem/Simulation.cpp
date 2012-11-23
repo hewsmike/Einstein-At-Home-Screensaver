@@ -164,7 +164,6 @@ Simulation::Simulation(void) : cs(CONSTELLATIONS_RADIUS),
                                           HUDFlowLayout::VERTICAL,
                                           HUDContainer::RETAIN) {
     // Starting values of simulation parameters.
-
     min60 = 0;
     hour24 = 0;
     day366 = 0;
@@ -316,7 +315,8 @@ void Simulation::resize(GLuint width, GLuint height) {
     // TODO - if resize denied then inactivate HUD ?? Complex ....
     overlay.requestResize(width, height);
 
-    // If the autopilot is running
+    // If the autopilot is running, need refresh due to change
+    // of context on Windows machines.
     if(pilot.isActive() == true) {
         target.hide();
         loadLookoutDataToPanels();
