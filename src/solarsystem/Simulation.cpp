@@ -195,7 +195,7 @@ Simulation::Simulation(void) : cs(CONSTELLATIONS_RADIUS),
                                            SKYGRID_MAIN_RED,
                                            SKYGRID_MAIN_GREEN,
                                            SKYGRID_MAIN_BLUE,
-                                           SKYGRID_MAIN_ALPHA);
+                                           SKYGRID_MAIN_ALPHA));
     c_sphere.setLine(GridGlobe::EQUATOR, Line(SKYGRID_CELESTIAL_EQUATOR_WIDTH,
                                          SKYGRID_CELESTIAL_EQUATOR_RED,
                                          SKYGRID_CELESTIAL_EQUATOR_GREEN,
@@ -205,24 +205,24 @@ Simulation::Simulation(void) : cs(CONSTELLATIONS_RADIUS),
                                                      SKYGRID_PRIME_MERIDIAN_RED,
                                                      SKYGRID_PRIME_MERIDIAN_GREEN,
                                                      SKYGRID_PRIME_MERIDIAN_BLUE,
-                                                     SKYGRID_PRIME_MERIDIAN_ALPHA);
+                                                     SKYGRID_PRIME_MERIDIAN_ALPHA));
 
     // Line rendering detail for terrestrial coordinate grids.
     e_sphere.setLine(GridGlobe::MAIN, Line(EARTHGRID_MAIN_WIDTH,
                                            EARTHGRID_MAIN_RED,
                                            EARTHGRID_MAIN_GREEN,
                                            EARTHGRID_MAIN_BLUE,
-                                           EARTHGRID_MAIN_ALPHA);
+                                           EARTHGRID_MAIN_ALPHA));
     e_sphere.setLine(GridGlobe::EQUATOR, Line(EARTHGRID_CELESTIAL_EQUATOR_WIDTH,
                                               EARTHGRID_CELESTIAL_EQUATOR_RED,
                                               EARTHGRID_CELESTIAL_EQUATOR_GREEN,
                                               EARTHGRID_CELESTIAL_EQUATOR_BLUE,
-                                              EARTHGRID_CELESTIAL_EQUATOR_ALPHA);
+                                              EARTHGRID_CELESTIAL_EQUATOR_ALPHA));
     e_sphere.setLine(GridGlobe::PRIME_MERIDIAN, Line(EARTHGRID_PRIME_MERIDIAN_WIDTH,
                                                      EARTHGRID_PRIME_MERIDIAN_RED,
                                                      EARTHGRID_PRIME_MERIDIAN_GREEN,
                                                      EARTHGRID_PRIME_MERIDIAN_BLUE,
-                                                     EARTHGRID_PRIME_MERIDIAN_ALPHA);
+                                                     EARTHGRID_PRIME_MERIDIAN_ALPHA));
 
     // Get the pulsar and supernovae data.
     loadPulsars();
@@ -300,9 +300,9 @@ void Simulation::step(void) {
     // This is a fudge for demo purposes, and makes the
     // Sun orbit far quicker and out of sync with Earth
     // rotations. Time increment in 1/20th's of a day.
-    day366 += 0.05f;
+    day366 += 0.25f;
     // Have we rolled over to another year ?
-    if(day366 >= SunOrbit::DAYS_PER_YEAR) {
+    if(day366 > SunOrbit::DAYS_PER_YEAR) {
         // Yup, reset the day count to zero
         // for a fresh year.
         day366 = 0.0f;
@@ -482,17 +482,17 @@ void Simulation::render(void) {
     // glEnable(GL_LIGHTING);
 
     // The Earth requires rotation and lighting.
-    //GLfloat sunlight_position[] = {sun_pos.x(),
-                                  //sun_pos.y(),
-                                  //sun_pos.z(),
-                                  //AT_INFINITY};
+    GLfloat sunlight_position[] = {sun_pos.x(),
+                                   sun_pos.y(),
+                                   sun_pos.z(),
+                                   AT_INFINITY};
 
     glPushMatrix();
         // The light is coming from the Sun's direction.
-        // glLightfv(GL_LIGHT0, GL_POSITION, sunlight_position);
+        glLightfv(GL_LIGHT0, GL_POSITION, sunlight_position);
 
         // Turn the light on.
-        // glEnable(GL_LIGHT0);
+        glEnable(GL_LIGHT0);
 
         // Render the Earth, suitably transformed.
         glRotatef(earth_hour_angle, 0, 0, 1);
@@ -500,7 +500,7 @@ void Simulation::render(void) {
         e_sphere.draw();
 
         // Turn the light off.
-        // glDisable(GL_LIGHT0);
+        glDisable(GL_LIGHT0);
     glPopMatrix();
 
     // The Sun requires positioning and lighting.

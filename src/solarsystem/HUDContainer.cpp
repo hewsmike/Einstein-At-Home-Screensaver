@@ -189,8 +189,6 @@ void HUDContainer::prepare(SolarSystemGlobals::render_quality rq) {
         // Check on nullity ie. assume the iterator is valid, but
         // does it dereference to a NULL pointer ?
         if(obj->second != NULL) {
-            ErrorHandler::record("HUDContainer::prepare() - activating contained object!",
-                                  ErrorHandler::INFORM);
             obj->second->activate();
             }
         else {
