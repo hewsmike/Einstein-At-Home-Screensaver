@@ -44,16 +44,16 @@ SunOrbit::~SunOrbit() {
 
 Vector3D SunOrbit::getPosition(GLfloat days) {
     // Well to start with : on Mar 21st the Sun is at the vernal equinox.
-    GLfloat days_since_vernal_equinox = days - VERNAL_EQUINOX_DAY;
+    days = days - VERNAL_EQUINOX_DAY;
 
     // Bring into the 'principal value' domain.
-    days_since_vernal_equinox = moduloDays(days_since_vernal_equinox, DAYS_PER_YEAR);
+    days = moduloDays(days, DAYS_PER_YEAR);
 
     // OK, now get an angle in the ecliptic plane between a vector to the
     // vernal equinox and a vector to the position of the Sun on the given
     // day. Positive going anti-clockwise when looking down on that plane
     // from the northern side.
-    GLfloat theta = (days_since_vernal_equinox/DAYS_PER_YEAR)*SolarSystemGlobals::FULL_CIRCLE_DEG;
+    GLfloat theta = (days/DAYS_PER_YEAR)*SolarSystemGlobals::FULL_CIRCLE_DEG;
 
     // Just modelling a circle but tilted with respect to the celestial equator.
     return SUN_ORBIT_RADIUS * Vector3D(COS(theta),
@@ -62,23 +62,23 @@ Vector3D SunOrbit::getPosition(GLfloat days) {
     }
 
 GLfloat SunOrbit::getRotation(GLfloat days) {
-    // 'Unrotated' is for the Sun quite arbitrary ( not a rigid body and
-    // without constant features ) ...
-    GLfloat days_since_unrotated = moduloDays(days, DAYS_PER_ROTATION);
+    // Rotation for the Sun, for our purposes, is quite arbitrary
+    // ( not a rigid body and without constant features ) ...
+    days = moduloDays(days, DAYS_PER_ROTATION);
 
-    return (days_since_unrotated/DAYS_PER_ROTATION)*SolarSystemGlobals::FULL_CIRCLE_DEG;;
+    return (days/DAYS_PER_ROTATION)*SolarSystemGlobals::FULL_CIRCLE_DEG;
     }
 
 GLfloat SunOrbit::moduloDays(GLfloat day, GLfloat days_per_cycle) {
     GLfloat ret_val = 0;
 
     // Note : the lower range boundary is included.
-    if(day < 0) {
+    if(day <= 0) {
         ret_val = day + days_per_cycle;
         }
 
     // Note : the upper range boundary is excluded.
-    if(day >= days_per_cycle) {
+    if(day > days_per_cycle) {
         ret_val = day - days_per_cycle;
         }
 

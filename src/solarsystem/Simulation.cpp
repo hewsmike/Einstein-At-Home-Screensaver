@@ -278,6 +278,7 @@ void Simulation::step(void) {
             }
         }
 
+    /// TODO - demo code only, needs proper ephemeris model.
     // The time increments are minute granular.
     ++min60;
     // Have we rolled over to the next hour?
@@ -300,9 +301,9 @@ void Simulation::step(void) {
     // This is a fudge for demo purposes, and makes the
     // Sun orbit far quicker and out of sync with Earth
     // rotations. Time increment in 1/20th's of a day.
-    day366 += 0.25f;
+    day366 += 0.05f;
     // Have we rolled over to another year ?
-    if(day366 > SunOrbit::DAYS_PER_YEAR) {
+    if(day366 >= SunOrbit::DAYS_PER_YEAR) {
         // Yup, reset the day count to zero
         // for a fresh year.
         day366 = 0.0f;
