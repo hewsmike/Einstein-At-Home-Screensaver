@@ -47,7 +47,7 @@ Vector3D SunOrbit::getPosition(GLfloat days) {
     days = days - VERNAL_EQUINOX_DAY;
 
     // Bring into the 'principal value' domain.
-    days = moduloDays(days, DAYS_PER_YEAR);
+    // days = moduloDays(days, DAYS_PER_YEAR);
 
     // OK, now get an angle in the ecliptic plane between a vector to the
     // vernal equinox and a vector to the position of the Sun on the given
