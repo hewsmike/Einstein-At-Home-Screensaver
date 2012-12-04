@@ -46,9 +46,6 @@ Vector3D SunOrbit::getPosition(GLfloat days) {
     // Well to start with : on Mar 21st the Sun is at the vernal equinox.
     days = days - VERNAL_EQUINOX_DAY;
 
-    // Bring into the 'principal value' domain.
-    // days = moduloDays(days, DAYS_PER_YEAR);
-
     // OK, now get an angle in the ecliptic plane between a vector to the
     // vernal equinox and a vector to the position of the Sun on the given
     // day. Positive going anti-clockwise when looking down on that plane
@@ -64,23 +61,6 @@ Vector3D SunOrbit::getPosition(GLfloat days) {
 GLfloat SunOrbit::getRotation(GLfloat days) {
     // Rotation for the Sun, for our purposes, is quite arbitrary
     // ( not a rigid body and without constant features ) ...
-    days = moduloDays(days, DAYS_PER_ROTATION);
 
     return (days/DAYS_PER_ROTATION)*SolarSystemGlobals::FULL_CIRCLE_DEG;
-    }
-
-GLfloat SunOrbit::moduloDays(GLfloat day, GLfloat days_per_cycle) {
-    GLfloat ret_val = 0;
-
-    // Note : the lower range boundary is included.
-    if(day <= 0) {
-        ret_val = day + days_per_cycle;
-        }
-
-    // Note : the upper range boundary is excluded.
-    if(day > days_per_cycle) {
-        ret_val = day - days_per_cycle;
-        }
-
-    return ret_val;
     }
