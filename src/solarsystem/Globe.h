@@ -62,11 +62,11 @@ class Globe : public Renderable {
          *        ( eg. Greenwich meridian on Earth )
          */
         Globe(std::string name,
-            std::string resource_name,
-            GLfloat radius,
-            GLuint stacks,
-            GLuint slices,
-            GLfloat zero_longitude_offset);
+              std::string resource_name,
+              GLfloat radius,
+              GLuint stacks,
+              GLuint slices,
+              GLfloat zero_longitude_offset);
 
         /**
          * \brief Destructor
@@ -97,7 +97,6 @@ class Globe : public Renderable {
 
         /// Whether adjacent latitudes have a longitude offset.
         static const bool STAGGERING;
-
 
         static const bool STITCHING;
 

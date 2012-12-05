@@ -37,6 +37,13 @@ const GLuint Simulation::EARTH_STACKS(37);
 const GLuint Simulation::EARTH_SLICES(72);
 const GLfloat Simulation::EARTH_TEXTURE_OFFSET(+0.5f);
 
+const std::string EARTH_SHADOW_NAME("Terminator");
+const std::string EARTH_SHADOW_IMAGE_RESOURCE("TerminatorTGA");
+const GLfloat EARTH_SHADOW_RADIUS(SolarSystemGlobals::EARTH_RADIUS*1.05);
+const GLuint EARTH_SHADOW_STACKS(EARTH_SHADOW_STACKS);
+const GLuint EARTH_SHADOW_SLICES(EARTH_SHADOW_SLICES);
+const GLfloat EARTH_SHADOW_TEXTURE_OFFSET(0.0f);
+
 const std::string Simulation::SUN_NAME("Sun");
 const std::string Simulation::SUN_IMAGE_RESOURCE("SunTGA");
 const GLuint Simulation::SUN_STACKS(37);
@@ -84,7 +91,7 @@ const GLfloat Simulation::SKYGRID_PRIME_MERIDIAN_GREEN(0.51f);
 const GLfloat Simulation::SKYGRID_PRIME_MERIDIAN_BLUE(0.36f);
 const GLfloat Simulation::SKYGRID_PRIME_MERIDIAN_ALPHA(1.0f);
 
-const GLuint Simulation::EARTHGRID_RADIUS(SolarSystemGlobals::EARTH_RADIUS + 2);
+const GLuint Simulation::EARTHGRID_RADIUS(SolarSystemGlobals::EARTH_RADIUS*1.10);
 const GLuint Simulation::EARTHGRID_STACKS(19);
 const GLuint Simulation::EARTHGRID_SLICES(24);
 const GLfloat Simulation::EARTHGRID_MAIN_WIDTH(0.5f);
@@ -141,10 +148,16 @@ Simulation::Simulation(void) : cs(CONSTELLATIONS_RADIUS),
                                      EARTH_STACKS,
                                      EARTH_SLICES,
                                      EARTH_TEXTURE_OFFSET),
-                               e_sphere(EARTHGRID_RADIUS,
-                                        EARTHGRID_SLICES,
-                                        EARTHGRID_STACKS,
-                                        GridGlobe::OUTSIDE),
+                               earth_shadow(EARTH_SHADOW_NAME,
+                                            EARTH_SHADOW_IMAGE_RESOURCE,
+                                            EARTH_SHADOW_RADIUS,
+                                            EARTH_SHADOW_STACKS,
+                                            EARTH_SHADOW_SLICES,
+                                            EARTH_SHADOW_TEXTURE_OFFSET),
+                               earth_grid(EARTHGRID_RADIUS,
+                                          EARTHGRID_SLICES,
+                                          EARTHGRID_STACKS,
+                                          GridGlobe::OUTSIDE),
                                sun(SUN_NAME,
                                    SUN_IMAGE_RESOURCE,
                                    SolarSystemGlobals::SUN_RADIUS,
@@ -374,8 +387,9 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
     c_sphere.setFont(SolarSystemGlobals::getFont(SolarSystemGlobals::SKY_GRID));
     c_sphere.activate();
     earth.activate();
-    e_sphere.setFont(SolarSystemGlobals::getFont(SolarSystemGlobals::EARTH_GRID));
-    e_sphere.activate();
+    earth_shadow.activate();
+    earth_grid.setFont(SolarSystemGlobals::getFont(SolarSystemGlobals::EARTH_GRID));
+    earth_grid.activate();
     sun.activate();
     overlay.setFont(SolarSystemGlobals::getFont(SolarSystemGlobals::HUDOVER));
 
@@ -434,7 +448,8 @@ void Simulation::release(void) {
     sn.inactivate();
     c_sphere.inactivate();
     earth.inactivate();
-    e_sphere.inactivate();
+    earth_shadow.inactivate();
+    earth_grid.inactivate();
     sun.inactivate();
     target.inactivate();
 
@@ -498,7 +513,8 @@ void Simulation::render(void) {
         // Render the Earth, suitably transformed.
         glRotatef(earth_hour_angle, 0, 0, 1);
         earth.draw();
-        e_sphere.draw();
+        earth_shadow.draw();
+        earth_grid.draw();
 
         // Turn the light off.
         glDisable(GL_LIGHT0);

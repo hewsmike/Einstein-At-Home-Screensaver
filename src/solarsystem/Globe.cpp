@@ -210,9 +210,9 @@ void Globe::render(void) {
 
     // This is one actual rendering call that all preparations have been aiming at.
     glDrawElements(GL_TRIANGLE_FAN,
-                  verts_per_lat + 1,            // The pole, and one stack's worth of vertices
-                  GL_UNSIGNED_INT,
-                  BUFFER_OFFSET(ARRAY_START));
+                   verts_per_lat + 1,            // The pole, and one stack's worth of vertices
+                   GL_UNSIGNED_INT,
+                   BUFFER_OFFSET(ARRAY_START));
 
     // Make the waist index buffer identifier OpenGL's current one.
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, waist_indices.ID());

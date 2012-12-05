@@ -45,7 +45,10 @@
  * distinct values of latitude ( counting each pole as one ) are desired,
  * and slices as to how many distinct values of longitude. I recommend an
  * odd number of stacks so that one will have points on the equator. The
- * radius being the common distance of all vertices from the origin.
+ * radius being the common distance of all points from the origin.
+ *
+ *      Each vertex ( in the OpenGL sense ) is given a unit normal in the
+ * radial direction.
  *
  *      Staggering refers to whether or not the longitude values b/w
  * consecutive latitudes are identical ( non-staggered ) or mid-way

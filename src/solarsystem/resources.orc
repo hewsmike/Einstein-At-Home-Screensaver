@@ -9,6 +9,7 @@ AppIconBMP|EaH.bmp.res
 # For within 3D animation textures.
 EarthTGA|earthmap.tga.res
 SunTGA|sunmap.tga.res
+TerminatorTGA|terminator.tga.res
 
 # For HUD images.
 aeiTGA|aei.tga.res

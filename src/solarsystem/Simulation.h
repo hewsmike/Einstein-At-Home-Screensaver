@@ -162,6 +162,14 @@ class Simulation : public Renderable {
         static const GLuint EARTH_SLICES;
         static const GLfloat EARTH_TEXTURE_OFFSET;
 
+        /// Earth shadow rendering parameters.
+        static const std::string EARTH_SHADOW_NAME;
+        static const std::string EARTH_SHADOW_IMAGE_RESOURCE;
+        static const GLfloat EARTH_SHADOW_RADIUS;
+        static const GLuint EARTH_SHADOW_STACKS;
+        static const GLuint EARTH_SHADOW_SLICES;
+        static const GLfloat EARTH_SHADOW_TEXTURE_OFFSET;
+
         /// Sun rendering parameters.
         static const std::string SUN_NAME;
         static const std::string SUN_IMAGE_RESOURCE;
@@ -302,7 +310,8 @@ class Simulation : public Renderable {
         Stars<Supernova> sn;
         GridGlobe c_sphere;
         Globe earth;
-        GridGlobe e_sphere;
+        Globe earth_shadow;
+        GridGlobe earth_grid;
         Globe sun;
         TargetReticle target;
 

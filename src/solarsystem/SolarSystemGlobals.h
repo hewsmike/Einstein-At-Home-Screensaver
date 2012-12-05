@@ -75,9 +75,9 @@ class SolarSystemGlobals {
 
         // Arbitrary distance units here.
         // How far away is the distant sky, plus sizes of the globes.
-        static const GLuint CELESTIAL_SPHERE_RADIUS;
-        static const GLuint EARTH_RADIUS;
-        static const GLuint SUN_RADIUS;
+        static const GLfloat CELESTIAL_SPHERE_RADIUS;
+        static const GLfloat EARTH_RADIUS;
+        static const GLfloat SUN_RADIUS;
 
         /// Useful degree measures of arc.
         static const GLfloat FULL_CIRCLE_DEG;
