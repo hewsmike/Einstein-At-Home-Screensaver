@@ -37,12 +37,12 @@ const GLuint Simulation::EARTH_STACKS(37);
 const GLuint Simulation::EARTH_SLICES(72);
 const GLfloat Simulation::EARTH_TEXTURE_OFFSET(+0.5f);
 
-const std::string EARTH_SHADOW_NAME("Terminator");
-const std::string EARTH_SHADOW_IMAGE_RESOURCE("TerminatorTGA");
-const GLfloat EARTH_SHADOW_RADIUS(SolarSystemGlobals::EARTH_RADIUS*1.05);
-const GLuint EARTH_SHADOW_STACKS(EARTH_SHADOW_STACKS);
-const GLuint EARTH_SHADOW_SLICES(EARTH_SHADOW_SLICES);
-const GLfloat EARTH_SHADOW_TEXTURE_OFFSET(0.0f);
+const std::string Simulation::EARTH_SHADOW_NAME("Terminator");
+const std::string Simulation::EARTH_SHADOW_IMAGE_RESOURCE("TerminatorTGA");
+const GLfloat Simulation::EARTH_SHADOW_RADIUS(SolarSystemGlobals::EARTH_RADIUS*1.25);
+const GLuint Simulation::EARTH_SHADOW_STACKS(EARTH_SHADOW_STACKS);
+const GLuint Simulation::EARTH_SHADOW_SLICES(EARTH_SHADOW_SLICES);
+const GLfloat Simulation::EARTH_SHADOW_TEXTURE_OFFSET(0.0f);
 
 const std::string Simulation::SUN_NAME("Sun");
 const std::string Simulation::SUN_IMAGE_RESOURCE("SunTGA");
@@ -221,21 +221,21 @@ Simulation::Simulation(void) : cs(CONSTELLATIONS_RADIUS),
                                                      SKYGRID_PRIME_MERIDIAN_ALPHA));
 
     // Line rendering detail for terrestrial coordinate grids.
-    e_sphere.setLine(GridGlobe::MAIN, Line(EARTHGRID_MAIN_WIDTH,
-                                           EARTHGRID_MAIN_RED,
-                                           EARTHGRID_MAIN_GREEN,
-                                           EARTHGRID_MAIN_BLUE,
-                                           EARTHGRID_MAIN_ALPHA));
-    e_sphere.setLine(GridGlobe::EQUATOR, Line(EARTHGRID_CELESTIAL_EQUATOR_WIDTH,
-                                              EARTHGRID_CELESTIAL_EQUATOR_RED,
-                                              EARTHGRID_CELESTIAL_EQUATOR_GREEN,
-                                              EARTHGRID_CELESTIAL_EQUATOR_BLUE,
-                                              EARTHGRID_CELESTIAL_EQUATOR_ALPHA));
-    e_sphere.setLine(GridGlobe::PRIME_MERIDIAN, Line(EARTHGRID_PRIME_MERIDIAN_WIDTH,
-                                                     EARTHGRID_PRIME_MERIDIAN_RED,
-                                                     EARTHGRID_PRIME_MERIDIAN_GREEN,
-                                                     EARTHGRID_PRIME_MERIDIAN_BLUE,
-                                                     EARTHGRID_PRIME_MERIDIAN_ALPHA));
+    earth_grid.setLine(GridGlobe::MAIN, Line(EARTHGRID_MAIN_WIDTH,
+                                             EARTHGRID_MAIN_RED,
+                                             EARTHGRID_MAIN_GREEN,
+                                             EARTHGRID_MAIN_BLUE,
+                                             EARTHGRID_MAIN_ALPHA));
+    earth_grid.setLine(GridGlobe::EQUATOR, Line(EARTHGRID_CELESTIAL_EQUATOR_WIDTH,
+                                                EARTHGRID_CELESTIAL_EQUATOR_RED,
+                                                EARTHGRID_CELESTIAL_EQUATOR_GREEN,
+                                                EARTHGRID_CELESTIAL_EQUATOR_BLUE,
+                                                EARTHGRID_CELESTIAL_EQUATOR_ALPHA));
+    earth_grid.setLine(GridGlobe::PRIME_MERIDIAN, Line(EARTHGRID_PRIME_MERIDIAN_WIDTH,
+                                                       EARTHGRID_PRIME_MERIDIAN_RED,
+                                                       EARTHGRID_PRIME_MERIDIAN_GREEN,
+                                                       EARTHGRID_PRIME_MERIDIAN_BLUE,
+                                                       EARTHGRID_PRIME_MERIDIAN_ALPHA));
 
     // Get the pulsar and supernovae data.
     loadPulsars();
@@ -512,9 +512,9 @@ void Simulation::render(void) {
 
         // Render the Earth, suitably transformed.
         glRotatef(earth_hour_angle, 0, 0, 1);
-        earth.draw();
+        // earth.draw();
         earth_shadow.draw();
-        earth_grid.draw();
+        // earth_grid.draw();
 
         // Turn the light off.
         glDisable(GL_LIGHT0);
@@ -2828,7 +2828,7 @@ void Simulation::cycle(SolarSystemGlobals::content ct) {
             // We don't cycle the Earth ... yet
             break;
         case SolarSystemGlobals::EARTH_GRID:
-            e_sphere.cycleActivation();
+            earth_grid.cycleActivation();
             break;
         case SolarSystemGlobals::SUN:
             // We don't cycle the Sun ... yet

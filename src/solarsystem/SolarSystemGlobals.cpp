@@ -29,11 +29,11 @@
 
 #include "ErrorHandler.h"
 
-const GLuint SolarSystemGlobals::CELESTIAL_SPHERE_RADIUS(10000);
+const GLfloat SolarSystemGlobals::CELESTIAL_SPHERE_RADIUS(10000);
 
-const GLuint SolarSystemGlobals::EARTH_RADIUS(100);
+const GLfloat SolarSystemGlobals::EARTH_RADIUS(100);
 
-const GLuint SolarSystemGlobals::SUN_RADIUS(800);
+const GLfloat SolarSystemGlobals::SUN_RADIUS(800);
 
 // Default rendering quality is the lowest.
 SolarSystemGlobals::render_quality SolarSystemGlobals::qual(RENDER_LOWEST);
