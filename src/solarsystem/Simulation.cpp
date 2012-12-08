@@ -39,9 +39,9 @@ const GLfloat Simulation::EARTH_TEXTURE_OFFSET(+0.5f);
 
 const std::string Simulation::EARTH_SHADOW_NAME("Terminator");
 const std::string Simulation::EARTH_SHADOW_IMAGE_RESOURCE("TerminatorTGA");
-const GLfloat Simulation::EARTH_SHADOW_RADIUS(SolarSystemGlobals::EARTH_RADIUS*1.25);
-const GLuint Simulation::EARTH_SHADOW_STACKS(EARTH_SHADOW_STACKS);
-const GLuint Simulation::EARTH_SHADOW_SLICES(EARTH_SHADOW_SLICES);
+const GLfloat Simulation::EARTH_SHADOW_RADIUS(SolarSystemGlobals::EARTH_RADIUS + 2);
+const GLuint Simulation::EARTH_SHADOW_STACKS(EARTH_STACKS);
+const GLuint Simulation::EARTH_SHADOW_SLICES(EARTH_SLICES);
 const GLfloat Simulation::EARTH_SHADOW_TEXTURE_OFFSET(0.0f);
 
 const std::string Simulation::SUN_NAME("Sun");
@@ -512,9 +512,8 @@ void Simulation::render(void) {
 
         // Render the Earth, suitably transformed.
         glRotatef(earth_hour_angle, 0, 0, 1);
-        // earth.draw();
-        earth_shadow.draw();
-        // earth_grid.draw();
+        earth.draw();
+        earth_grid.draw();
 
         // Turn the light off.
         glDisable(GL_LIGHT0);
@@ -525,6 +524,12 @@ void Simulation::render(void) {
                                    //flyboy.get_platform().position().y(),
                                    //flyboy.get_platform().position().z(),
                                    //AT_INFINITY};
+
+    glPushMatrix();
+        glRotatef(SunOrbit::ECLIPTIC_ANGLE_DEG, 1, 0, 0);
+        glRotatef((day366/SunOrbit::DAYS_PER_YEAR)*SolarSystemGlobals::FULL_CIRCLE_DEG, 0, 0, 1);
+        earth_shadow.draw();
+    glPopMatrix();
 
     glPushMatrix();
         // The light is coming from our eye direction.
