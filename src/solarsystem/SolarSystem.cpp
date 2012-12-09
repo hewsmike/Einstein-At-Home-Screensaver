@@ -212,29 +212,6 @@ void SolarSystem::initialize(const int width, const int height, const Resource* 
             break;
         }
 
-    //// Set up lighting.
-    GLfloat mat_specular[] = {1.0, 1.0, 1.0, 1.0};
-    GLfloat mat_shininess[] = {50.0};
-    // GLfloat lmodel_ambient[] = {0.1, 0.1, 0.1, 1.0};
-    // glLightModelfv(GL_LIGHT_MODEL_AMBIENT, lmodel_ambient);
-    glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
-    glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
-
-    glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
-    glMaterialfv(GL_BACK, GL_SPECULAR, mat_specular);
-    glMaterialfv(GL_BACK, GL_SHININESS, mat_shininess);
-
-    // LIGHT0 is from the Sun towards the Earth.
-    GLfloat white_light[] = {1.0, 1.0, 1.0, 1.0};
-    // GLfloat ambient[] = {0.0, 0.0, 0.0, 1.0};
-    glLightfv(GL_LIGHT0, GL_AMBIENT, white_light);
-    glLightfv(GL_LIGHT0, GL_DIFFUSE, white_light);
-    glLightfv(GL_LIGHT0, GL_SPECULAR, white_light);
-
-    // LIGHT1 is from our viewpoint towards the Sun.
-    glLightfv(GL_LIGHT1, GL_DIFFUSE, white_light);
-    glLightfv(GL_LIGHT1, GL_SPECULAR, white_light);
-
     glDisable(GL_CLIP_PLANE0);
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
     sim.activate();

@@ -177,9 +177,6 @@ class Simulation : public Renderable {
         static const GLuint SUN_SLICES;
         static const GLfloat SUN_TEXTURE_OFFSET;
 
-        /// Lighting constant.
-        static const GLfloat AT_INFINITY;
-
         /// Constellation rendering parameters.
         static const GLuint CONSTELLATIONS_RADIUS;
 

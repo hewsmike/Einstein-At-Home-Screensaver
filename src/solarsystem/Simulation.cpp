@@ -50,8 +50,6 @@ const GLuint Simulation::SUN_STACKS(37);
 const GLuint Simulation::SUN_SLICES(72);
 const GLfloat Simulation::SUN_TEXTURE_OFFSET(0.0f);
 
-const GLfloat Simulation::AT_INFINITY(0.0f);
-
 const GLuint Simulation::CONSTELLATIONS_RADIUS(SolarSystemGlobals::CELESTIAL_SPHERE_RADIUS);
 
 const GLuint Simulation::PULSARS_RADIUS(SolarSystemGlobals::CELESTIAL_SPHERE_RADIUS - 25);
@@ -493,51 +491,21 @@ void Simulation::render(void) {
     sn.draw();
     c_sphere.draw();
 
-    // For calculational efficiency/simplicity lights are of directional type
-    // ie. shining from 'infinity' in the given direction.
-    // glEnable(GL_LIGHTING);
-
-    // The Earth requires rotation and lighting.
-    GLfloat sunlight_position[] = {sun_pos.x(),
-                                   sun_pos.y(),
-                                   sun_pos.z(),
-                                   AT_INFINITY};
-
     glPushMatrix();
-        // The light is coming from the Sun's direction.
-        glLightfv(GL_LIGHT0, GL_POSITION, sunlight_position);
-
-        // Turn the light on.
-        glEnable(GL_LIGHT0);
-
         // Render the Earth, suitably transformed.
         glRotatef(earth_hour_angle, 0, 0, 1);
         earth.draw();
         earth_grid.draw();
-
-        // Turn the light off.
-        glDisable(GL_LIGHT0);
     glPopMatrix();
-
-    // The Sun requires positioning and lighting.
-    //GLfloat viewpoint_position[] = {flyboy.get_platform().position().x(),
-                                   //flyboy.get_platform().position().y(),
-                                   //flyboy.get_platform().position().z(),
-                                   //AT_INFINITY};
 
     glPushMatrix();
         glRotatef(SunOrbit::ECLIPTIC_ANGLE_DEG, 1, 0, 0);
         glRotatef((day366/SunOrbit::DAYS_PER_YEAR)*SolarSystemGlobals::FULL_CIRCLE_DEG, 0, 0, 1);
+
         earth_shadow.draw();
     glPopMatrix();
 
     glPushMatrix();
-        // The light is coming from our eye direction.
-        // glLightfv(GL_LIGHT1, GL_POSITION, viewpoint_position);
-
-        // Turn the light on.
-        // glEnable(GL_LIGHT1);
-
         // Render the Sun, suitably transformed.
         glTranslatef(sun_pos.x(),
                      sun_pos.y(),
@@ -548,12 +516,7 @@ void Simulation::render(void) {
         glRotatef(sun_rot_angle, 0, 0, 1);
 
         sun.draw();
-
-        // Turn the light off.
-        // glDisable(GL_LIGHT1);
     glPopMatrix();
-
-    // glDisable(GL_LIGHTING);
 
     // We only draw the HUD if the screen/window is of sufficient dimensions.
     // Constraint used is the current minimum size of the outermost HUD container,
