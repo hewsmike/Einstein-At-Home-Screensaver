@@ -155,6 +155,12 @@ class Globe : public Renderable {
         /// The number of vertices per latitude/stack
         GLuint verts_per_lat;
 
+        GLuint num_slices;
+
+        GLuint num_stacks;
+
+        GLuint last_vertex_index;
+
         /**
          * \brief Load a pixel map into a server-side texture
          *        with mipmap generation.

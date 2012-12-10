@@ -60,7 +60,9 @@ Globe::Globe(std::string name,
                  image_resource_name(resource_name),
                  zlo(zero_longitude_offset),
                  sp(radius, slices, stacks, STAGGERING, STITCHING),
-                 verts_per_lat(slices + 1) {
+                 verts_per_lat(slices + 1),
+                 num_slices(slices),
+                 num_stacks(stacks) {
     }
 
 Globe::~Globe() {
@@ -209,15 +211,15 @@ void Globe::render(void) {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, north_cap_indices.ID());
 
     // This is one actual rendering call that all preparations have been aiming at.
-    glDrawElements(GL_TRIANGLE_FAN,
-                   verts_per_lat + 1,            // The pole, and one stack's worth of vertices
+    glDrawElements(GL_QUAD_STRIP,
+                   verts_per_lat*2,            // The pole and peri-polar stack's worth of vertices
                    GL_UNSIGNED_INT,
                    BUFFER_OFFSET(ARRAY_START));
 
     // Make the waist index buffer identifier OpenGL's current one.
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, waist_indices.ID());
 
-    for(GLuint stack = 1; stack < sp.stacks() - 2; ++stack) {
+    for(GLuint stack = 1; stack < num_stacks - 2; ++stack) {
         // Herewith the number of bytes into the index buffer
         // to begin this strip for this stack.
         GLuint strip_index_start = ARRAY_START +           // Start at the beginning
@@ -236,8 +238,8 @@ void Globe::render(void) {
     // Make our southern index buffer identifier OpenGL's current one.
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, south_cap_indices.ID());
 
-    glDrawElements(GL_TRIANGLE_FAN,
-                   verts_per_lat + 1,            // The pole, and one stack's worth of vertices
+    glDrawElements(GL_QUAD_STRIP,
+                   verts_per_lat*2,            // The pole and peri-polar stack's worth of vertices
                    GL_UNSIGNED_INT,
                    BUFFER_OFFSET(ARRAY_START));
 
@@ -263,15 +265,51 @@ void Globe::loadVertexBuffer(void) {
     // Get an OpenGL buffer object.
     vertex_buffer.acquire();
 
-    // What size allocation are we after? There are two pole vertices, and
-    // a number of vertices at each stack of latitude.
-    GLsizeiptr buffer_size = sizeof(Vert) * sp.vertices().size();
+    // What size allocation are we after? There are two pole vertices,
+    // but for proper texture rendering each pole point has a number
+    // of ( near ) duplicates only differing in longitudal/horizontal
+    // texture coordinate values.
+    GLuint num_buffer_vertices = 2*(verts_per_lat);
 
-    Vert* buffer_base_ptr = new Vert[sp.vertices().size()];
+    // plus the number of vertices at each stack of non-polar latitude.
+    num_buffer_vertices += sp.vertices().size() - 2;
+
+    // Calculate & keep index of the last vertex.
+    last_vertex_index = num_buffer_vertices - 1;
+
+    // Total size of buffer, in bytes, containing all of the required vertices.
+    GLsizeiptr buffer_size = sizeof(Vert) * (num_buffer_vertices);
+
+    // Allocate temporary heap buffer of correct size.
+    Vert* buffer_base_ptr = new Vert[num_buffer_vertices];
     Vert* buffer_ptr = buffer_base_ptr;
 
-    for(std::vector<Vertex>::const_iterator vt = sp.vertices().begin();
-        vt != sp.vertices().end();
+     // What is the step in the longitudinal texture co-ordinate?
+    polar_s_texture_step = 1.0f/num_slices;
+
+    // Create new northern polar vertices. Get the north polar
+    // vertex as constructed by the Sphere class instance.
+    Vertex north = sp.vertices().at(0);
+
+    // Step along in longitude across the polar region, including
+    // a 'stitch' vertex at the end.
+    for(GLuint slice = 0; slice < verts_per_lat; ++slice) {
+        // Set the vertex's longitudinal texture co-ordinate as
+        // appropriate for a step in longitude. Keep all other
+        // vertex attributes as per the north pole ( these are
+        // the afore-mentioned near duplicates ).
+        north.texture_co_ords.first = polar_s_texture_step*slice;
+
+        // Transfer the vertex data to the buffer.
+        vertex2buffer(north, buffer_ptr);
+        // Update the buffer pointer.
+        ++buffer_ptr;
+        }
+
+    // Intermediate vertices, directly copied from
+    // non-polar vertices constructed by Sphere class instance.
+    for(std::vector<Vertex>::const_iterator vt = sp.vertices().begin() + 1;
+        vt != sp.vertices().end() - 1;
         ++vt) {
         // Transfer the vertex data to the buffer.
         vertex2buffer(*vt, buffer_ptr);
@@ -279,7 +317,27 @@ void Globe::loadVertexBuffer(void) {
         ++buffer_ptr;
         }
 
+    // Create new southern polar vertices. Get the south polar
+    // vertex as constructed by the Sphere class instance.
+    Vertex south = sp.vertices().at(sp.vertices.size() - 1);
+
+    // Step along in longitude across the polar region, including
+    // a 'stitch' vertex at the end.
+    for(GLuint slice = 0; slice < verts_per_lat; ++slice) {
+        // Set the vertex's longitudinal texture co-ordinate as
+        // appropriate for a step in longitude. Keep all other
+        // vertex attributes as per the south pole ( these are
+        // the afore-mentioned near duplicates ).
+        south.texture_co_ords.first = polar_s_texture_step*slice;
+        // Transfer the vertex data to the buffer.
+        vertex2buffer(south, buffer_ptr);
+        // Update the buffer pointer.
+        ++buffer_ptr;
+        }
+
+    // Now load the server side buffer with our heap contents.
     vertex_buffer.loadBuffer(GL_ARRAY_BUFFER, GL_STATIC_DRAW, buffer_size, buffer_base_ptr);
+    // Delete the temporary heap Vertex array.
     delete[] buffer_base_ptr;
     }
 
@@ -287,26 +345,29 @@ void Globe::loadWaistIndexBuffer(void) {
     // Get a valid buffer object ( server-side ) identifier.
     waist_indices.acquire();
 
-    // What size allocation are we after?
-    GLsizeiptr waist_size = sizeof(GLuint) *           // Size of base data type
-                            verts_per_lat *            // Number of vertices per stack
-                            (sp.stacks() - 3) *        // Number of non-polar stacks less one
-                            2;                         // Two stacks involved per GL_TRIANGLE_STRIP.
+    // What size byte allocation are we after for this array of indices? For
+    // each vertex we have sizeof(GLuint) worth. What is the vertex count ?
+    //      - two vertices per longitude value including stitching line.
+    GLuint num_waist_indices = verts_per_lat *          // Number of vertices per stack
+                               (num_stacks - 3) *       // Number of non-polar stacks less one
+                               2;                       // Two stacks involved per GL_TRIANGLE_STRIP.
 
-    GLuint* buffer_base_ptr = new GLuint[verts_per_lat * (sp.stacks() - 3) * 2];
+
+    GLsizeiptr waist_size = sizeof(GLuint) *           // Size of base data type
+                            num_waist_indices;         // total number of vertices
+
+    GLuint* buffer_base_ptr = new GLuint[num_waist_indices];
     GLuint* buffer_ptr = buffer_base_ptr;
 
-    // The indices of points are obtained by interrogating the sphere object.
-    // Vertices are suitably listed for use within a GL_TRIANGLE_STRIP.
-    for(std::vector<std::vector<GLuint> >::const_iterator stack = sp.stackIndices().begin() + 1;
-        stack <= sp.stackIndices().end() - 3;
-        ++stack) {
+    // Each set of vertices are to be suitably listed for use within
+    // a GL_TRIANGLE_STRIP.
+    for(GLuint stack = 1; stack < num_stacks - 2; ++stack) {
         for(GLuint slice = 0; slice < stack->size(); ++slice) {
             // Interleave this vertex with ...
-            *buffer_ptr = (*stack)[slice];
+            *buffer_ptr = stack*verts_per_lat + slice;
             ++buffer_ptr;
             // ... the corresponding vertex on the next stack.
-            *buffer_ptr = (*(stack + 1))[slice];
+            *buffer_ptr = (stack + 1)*verts_per_lat + slice;
             ++buffer_ptr;
             }
         }
@@ -320,48 +381,47 @@ void Globe::loadPolarIndexBuffer(Buffer_OBJ& polar_buffer, enum pole po) {
     polar_buffer.acquire();
 
     // What size byte allocation are we after for this array of indices? For
-    // each point we have sizeof(GLuint) worth. What is the point count ?
-    //      - one for the pole (+1) , plus
-    //      - one for each vertex within the stack just adjacent the pole.
-    GLsizeiptr polar_size = sizeof(GLuint) * (1 + verts_per_lat);
+    // each vertex we have sizeof(GLuint) worth. What is the vertex count ?
+    //      - two vertices per longitude value including stitching line.
+    GLuint num_polar_indices = 2*verts_per_lat;
 
-    GLuint* buffer_base_ptr = new GLuint[1 + verts_per_lat];
+    // Total size of buffer, in bytes, containing all of the required indices.
+    GLsizeiptr polar_size = sizeof(GLuint)*num_polar_indices;
+
+    // Temporary heap buffer of correct size.
+    GLuint* buffer_base_ptr = new GLuint[num_polar_indices];
     GLuint* buffer_ptr = buffer_base_ptr;
 
     // Index of point on sphere which begins a sequence of
-    // points for later use within a GL_TRIANGLE_FAN pattern.
+    // points for later use within a GL_QUAD_STRIP pattern.
     // Default starting index is zero for the north pole,.
     GLuint pole_index = 0;
-    GLuint peri_polar_index = pole_index + 1;
+    GLuint peri_polar_index = pole_index + verts_per_lat;
     GLuint delta = 1;
     if(po == SOUTH) {
         // The south polar index is however many vertex entries there
         // are for the entire sphere minus one.
-        pole_index = sp.vertices().size() - 1;
-        peri_polar_index = pole_index - 1;
+        pole_index = last_vertex_index;
+        peri_polar_index = pole_index - verts_per_lat;
         delta = -1;
         }
 
-    // First entry in buffer is the polar point's index.
-    *buffer_ptr = pole_index;
-    // Move to next buffer position.
-    ++buffer_ptr;
-
     // The indices of points on sphere at a latitude just one stack nearby
     // the pole, listed in sequence suitable for later use within
-    // GL_TRIANGLE_FAN pattern. The way this 'winds around' makes the convex side
-    // the 'outside' for OpenGL purposes, and the southern cap is necessarily of
-    // the opposite sense to the northern cap.
+    // GL_QUAD_STRIP pattern. The way this 'winds around' makes the convex
+    // side the 'outside' for OpenGL purposes, and the southern cap is
+    // necessarily of the opposite sense to the northern cap.
+    for(GLuint i = 0; i < verts_per_lat; ++i) {
+        *buffer_ptr = pole_index + delta*i;
+        ++buffer_ptr;
 
-    for(GLuint i = 0; i < verts_per_lat - 1; i++) {
         *buffer_ptr = peri_polar_index + delta*i;
-        // Move to next buffer position.
         ++buffer_ptr;
         }
 
-    *buffer_ptr = peri_polar_index;
-
+    // Now load the server side buffer with our heap contents.
     polar_buffer.loadBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW, polar_size, buffer_base_ptr);
+    // Delete the temporary heap indicial array.
     delete[] buffer_base_ptr;
     }
 

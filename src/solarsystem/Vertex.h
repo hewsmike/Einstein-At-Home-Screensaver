@@ -78,21 +78,21 @@ class Vertex {
          *
          * \return A position vector to the vertex
          */
-        const Vector3D& position(void) const;
+        Vector3D& position(void) const;
 
         /**
          * \brief Obtains the normal to the vertex
          *
          * \return A vector normal to the vertex
          */
-        const Vector3D& normal(void) const;
+        Vector3D& normal(void) const;
 
         /**
          * \brief Obtains texture coordinates of the vertex
          *
          * \return A pair of texture co-ordinates
          */
-        const std::pair<GLfloat, GLfloat>& texture_co_ords(void) const;
+        std::pair<GLfloat, GLfloat>& texture_co_ords(void) const;
 
     private:
         /// Position in 3D space.
