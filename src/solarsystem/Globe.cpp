@@ -285,11 +285,17 @@ void Globe::loadVertexBuffer(void) {
     Vert* buffer_ptr = buffer_base_ptr;
 
      // What is the step in the longitudinal texture co-ordinate?
-    polar_s_texture_step = 1.0f/num_slices;
+    vec_t polar_s_texture_step = 1.0f/num_slices;
 
     // Create new northern polar vertices. Get the north polar
     // vertex as constructed by the Sphere class instance.
     Vertex north = sp.vertices().at(0);
+    Vector3D north_norm = Vector3D(north.normal().x(), north.normal().y(), north.normal().z());
+
+    Vector3D north_position =Vector3D(north.position().x(), north.position().y(), north.position().z());
+
+    std::pair<vec_t, vec_t> north_texture;
+    north_texture.second = north.texture_co_ords().second;
 
     // Step along in longitude across the polar region, including
     // a 'stitch' vertex at the end.
@@ -298,10 +304,12 @@ void Globe::loadVertexBuffer(void) {
         // appropriate for a step in longitude. Keep all other
         // vertex attributes as per the north pole ( these are
         // the afore-mentioned near duplicates ).
-        north.texture_co_ords.first = polar_s_texture_step*slice;
+        north_texture.first = polar_s_texture_step*slice;
+
+        Vertex current = Vertex(north_position, north_norm, north_texture);
 
         // Transfer the vertex data to the buffer.
-        vertex2buffer(north, buffer_ptr);
+        vertex2buffer(current, buffer_ptr);
         // Update the buffer pointer.
         ++buffer_ptr;
         }
@@ -319,7 +327,13 @@ void Globe::loadVertexBuffer(void) {
 
     // Create new southern polar vertices. Get the south polar
     // vertex as constructed by the Sphere class instance.
-    Vertex south = sp.vertices().at(sp.vertices.size() - 1);
+    Vertex south = sp.vertices().at(sp.vertices().size() - 1);
+    Vector3D south_norm = Vector3D(south.normal().x(), south.normal().y(), south.normal().z());
+
+    Vector3D south_position =Vector3D(south.position().x(), south.position().y(), south.position().z());
+
+    std::pair<vec_t, vec_t> south_texture;
+    south_texture.second = south.texture_co_ords().second;
 
     // Step along in longitude across the polar region, including
     // a 'stitch' vertex at the end.
@@ -328,7 +342,10 @@ void Globe::loadVertexBuffer(void) {
         // appropriate for a step in longitude. Keep all other
         // vertex attributes as per the south pole ( these are
         // the afore-mentioned near duplicates ).
-        south.texture_co_ords.first = polar_s_texture_step*slice;
+        south_texture.first = polar_s_texture_step*slice;
+
+        Vertex current = Vertex(south_position, south_norm, south_texture);
+
         // Transfer the vertex data to the buffer.
         vertex2buffer(south, buffer_ptr);
         // Update the buffer pointer.
@@ -362,7 +379,7 @@ void Globe::loadWaistIndexBuffer(void) {
     // Each set of vertices are to be suitably listed for use within
     // a GL_TRIANGLE_STRIP.
     for(GLuint stack = 1; stack < num_stacks - 2; ++stack) {
-        for(GLuint slice = 0; slice < stack->size(); ++slice) {
+        for(GLuint slice = 0; slice < verts_per_lat; ++slice) {
             // Interleave this vertex with ...
             *buffer_ptr = stack*verts_per_lat + slice;
             ++buffer_ptr;
@@ -401,9 +418,9 @@ void Globe::loadPolarIndexBuffer(Buffer_OBJ& polar_buffer, enum pole po) {
     if(po == SOUTH) {
         // The south polar index is however many vertex entries there
         // are for the entire sphere minus one.
-        pole_index = last_vertex_index;
-        peri_polar_index = pole_index - verts_per_lat;
-        delta = -1;
+        pole_index = last_vertex_index - verts_per_lat;
+        peri_polar_index = pole_index + verts_per_lat;
+        delta = +1;
         }
 
     // The indices of points on sphere at a latitude just one stack nearby
@@ -412,11 +429,20 @@ void Globe::loadPolarIndexBuffer(Buffer_OBJ& polar_buffer, enum pole po) {
     // side the 'outside' for OpenGL purposes, and the southern cap is
     // necessarily of the opposite sense to the northern cap.
     for(GLuint i = 0; i < verts_per_lat; ++i) {
-        *buffer_ptr = pole_index + delta*i;
-        ++buffer_ptr;
+        if(po == NORTH) {
+            *buffer_ptr = pole_index + delta*i;
+            ++buffer_ptr;
 
-        *buffer_ptr = peri_polar_index + delta*i;
-        ++buffer_ptr;
+            *buffer_ptr = peri_polar_index + delta*i;
+            ++buffer_ptr;
+            }
+        if(po == SOUTH) {
+            *buffer_ptr = peri_polar_index + delta*i;
+            ++buffer_ptr;
+
+            *buffer_ptr = pole_index + delta*i;
+            ++buffer_ptr;
+            }
         }
 
     // Now load the server side buffer with our heap contents.

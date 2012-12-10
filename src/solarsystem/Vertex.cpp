@@ -37,14 +37,14 @@ Vertex::Vertex(const Vertex& other) {
 Vertex::~Vertex() {
     }
 
-Vector3D& Vertex::position(void) const {
+const Vector3D& Vertex::position(void) const {
     return pos;
     }
 
-Vector3D& Vertex::normal(void) const {
+const Vector3D& Vertex::normal(void) const {
     return norm;
     }
 
-std::pair<GLfloat, GLfloat>& Vertex::texture_co_ords(void) const {
+const std::pair<vec_t, vec_t>& Vertex::texture_co_ords(void) const {
     return text_cds;
     }
