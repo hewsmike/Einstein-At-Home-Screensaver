@@ -347,7 +347,7 @@ void Globe::loadVertexBuffer(void) {
         Vertex current = Vertex(south_position, south_norm, south_texture);
 
         // Transfer the vertex data to the buffer.
-        vertex2buffer(south, buffer_ptr);
+        vertex2buffer(current, buffer_ptr);
         // Update the buffer pointer.
         ++buffer_ptr;
         }
@@ -418,9 +418,9 @@ void Globe::loadPolarIndexBuffer(Buffer_OBJ& polar_buffer, enum pole po) {
     if(po == SOUTH) {
         // The south polar index is however many vertex entries there
         // are for the entire sphere minus one.
-        pole_index = last_vertex_index - verts_per_lat;
-        peri_polar_index = pole_index + verts_per_lat;
-        delta = +1;
+        pole_index = last_vertex_index;
+        peri_polar_index = pole_index - verts_per_lat;
+        delta = -1;
         }
 
     // The indices of points on sphere at a latitude just one stack nearby
@@ -429,20 +429,11 @@ void Globe::loadPolarIndexBuffer(Buffer_OBJ& polar_buffer, enum pole po) {
     // side the 'outside' for OpenGL purposes, and the southern cap is
     // necessarily of the opposite sense to the northern cap.
     for(GLuint i = 0; i < verts_per_lat; ++i) {
-        if(po == NORTH) {
-            *buffer_ptr = pole_index + delta*i;
-            ++buffer_ptr;
+        *buffer_ptr = pole_index + delta*i;
+        ++buffer_ptr;
 
-            *buffer_ptr = peri_polar_index + delta*i;
-            ++buffer_ptr;
-            }
-        if(po == SOUTH) {
-            *buffer_ptr = peri_polar_index + delta*i;
-            ++buffer_ptr;
-
-            *buffer_ptr = pole_index + delta*i;
-            ++buffer_ptr;
-            }
+        *buffer_ptr = peri_polar_index + delta*i;
+        ++buffer_ptr;
         }
 
     // Now load the server side buffer with our heap contents.
