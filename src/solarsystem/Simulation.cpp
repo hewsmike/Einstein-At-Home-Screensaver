@@ -39,7 +39,7 @@ const GLfloat Simulation::EARTH_TEXTURE_OFFSET(+0.5f);
 
 const std::string Simulation::EARTH_SHADOW_NAME("Terminator");
 const std::string Simulation::EARTH_SHADOW_IMAGE_RESOURCE("TerminatorTGA");
-const GLfloat Simulation::EARTH_SHADOW_RADIUS(SolarSystemGlobals::EARTH_RADIUS + 2);
+const GLfloat Simulation::EARTH_SHADOW_RADIUS(SolarSystemGlobals::EARTH_RADIUS + 2.5);
 const GLuint Simulation::EARTH_SHADOW_STACKS(EARTH_STACKS);
 const GLuint Simulation::EARTH_SHADOW_SLICES(EARTH_SLICES);
 const GLfloat Simulation::EARTH_SHADOW_TEXTURE_OFFSET(0.0f);
@@ -89,24 +89,24 @@ const GLfloat Simulation::SKYGRID_PRIME_MERIDIAN_GREEN(0.51f);
 const GLfloat Simulation::SKYGRID_PRIME_MERIDIAN_BLUE(0.36f);
 const GLfloat Simulation::SKYGRID_PRIME_MERIDIAN_ALPHA(1.0f);
 
-const GLuint Simulation::EARTHGRID_RADIUS(SolarSystemGlobals::EARTH_RADIUS*1.10);
+const GLuint Simulation::EARTHGRID_RADIUS(SolarSystemGlobals::EARTH_RADIUS + 1.5);
 const GLuint Simulation::EARTHGRID_STACKS(19);
 const GLuint Simulation::EARTHGRID_SLICES(24);
 const GLfloat Simulation::EARTHGRID_MAIN_WIDTH(0.5f);
 const GLfloat Simulation::EARTHGRID_MAIN_RED(0.95f);
 const GLfloat Simulation::EARTHGRID_MAIN_GREEN(0.74f);
 const GLfloat Simulation::EARTHGRID_MAIN_BLUE(0.00f);
-const GLfloat Simulation::EARTHGRID_MAIN_ALPHA(1.0f);
+const GLfloat Simulation::EARTHGRID_MAIN_ALPHA(0.15f);
 const GLfloat Simulation::EARTHGRID_CELESTIAL_EQUATOR_WIDTH(1.0f);
 const GLfloat Simulation::EARTHGRID_CELESTIAL_EQUATOR_RED(0.77f);
 const GLfloat Simulation::EARTHGRID_CELESTIAL_EQUATOR_GREEN(0.00f);
 const GLfloat Simulation::EARTHGRID_CELESTIAL_EQUATOR_BLUE(0.28f);
-const GLfloat Simulation::EARTHGRID_CELESTIAL_EQUATOR_ALPHA(1.0f);
+const GLfloat Simulation::EARTHGRID_CELESTIAL_EQUATOR_ALPHA(0.15f);
 const GLfloat Simulation::EARTHGRID_PRIME_MERIDIAN_WIDTH(1.0f);
 const GLfloat Simulation::EARTHGRID_PRIME_MERIDIAN_RED(1.00f);
 const GLfloat Simulation::EARTHGRID_PRIME_MERIDIAN_GREEN(0.20f);
 const GLfloat Simulation::EARTHGRID_PRIME_MERIDIAN_BLUE(0.80f);
-const GLfloat Simulation::EARTHGRID_PRIME_MERIDIAN_ALPHA(1.0f);
+const GLfloat Simulation::EARTHGRID_PRIME_MERIDIAN_ALPHA(0.15f);
 
 const GLint Simulation::HUD_LEFT_CLIP(0);
 const GLint Simulation::HUD_BOTTOM_CLIP(0);
