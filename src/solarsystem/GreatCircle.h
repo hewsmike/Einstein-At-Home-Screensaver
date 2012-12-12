@@ -23,11 +23,9 @@
 
 #include "framework.h"
 
-#include <string>
-#include <utility>
-#include <vector>
-
-#include :Line.h"
+#include "Buffer_OBJ.h"
+#include "Line.h"
+#include "Renderable.h"
 #include "Vector3D.h"
 
 /**
@@ -63,24 +61,15 @@ class GreatCircle public Renderable {
          *
          * \param radius : the radius of the great circle from the coordinate
          *                 origin.
+         * \param segments : the number of line segments to approximate a circle
          */
         GreatCircle(const Vector3D& normal, const Vector3D& zero_long,
-                    Line line, GLfloat radius);
+                    Line line, GLfloat radius, GLuint segments);
 
         /**
          * Destructor
          */
         virtual ~GreatCircle();
-
-        /**
-         * \brief Adds a descriptive comment to a position of longitude
-         *        upon the great circle.
-         *
-         * \param longitude : the angle from longitude zero to place the comment.
-         *
-         * \param description : the comment to place there.
-         */
-        void addComment(GLfloat longitude, std::string description);
 
     protected:
         /// These three routines below satisfy the Renderable interface.
@@ -95,6 +84,12 @@ class GreatCircle public Renderable {
         virtual void render(void);
 
     private:
+        struct Vert {
+            vec_t x_pos;
+            vec_t y_pos;
+            vec_t z_pos;
+            };
+
         /// Unit normal perpendicular to plane of great circle.
         Vector3D norm;
 
@@ -107,9 +102,19 @@ class GreatCircle public Renderable {
         /// Radius of the circle.
         GLfloat rad;
 
-        /// Optional commenting on great circle features,
-        /// eg. galactic centre or summer solstice.
-        std::vector<std::pair<GLfloat, std::string> > features;
+        /// The number of line segments to use in approximating to a circle.
+        GLuint segs;
+
+         /// The OpenGL buffer object wrapper for vertex data.
+        Buffer_OBJ buff_obj_points;
+
+        /// The OpenGL buffer object wrapper for grid vertex indices.
+        Buffer_OBJ buff_obj_indices;
+
+        /**
+         * \brief Load the vertex list into a server side buffer.
+         */
+        void loadVertexBuffer(void);
     };
 
 /**
