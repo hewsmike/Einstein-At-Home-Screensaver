@@ -54,8 +54,9 @@ class GreatCircle public Renderable {
          *
          * \param normal : vector perpendicular to the plane of the great circle.
          *
-         * \param zero_long : vector to the point on the great circle where
-         *                    the zero of coordinate longitude is deemed to lie.
+         * \param zero_long : vector directing to the point on the great circle
+         *                    where the zero of coordinate longitude is deemed
+         *                    to lie.
          *
          * \param line : rendering characteristics for the great circle.
          *
@@ -84,6 +85,11 @@ class GreatCircle public Renderable {
         virtual void render(void);
 
     private:
+        static const GLuint ARRAY_START;
+        static const GLsizei ARRAY_STRIDE;
+        static const GLuint BYTE_OFFSET;
+        static const GLuint COORDS_PER_VERTEX;
+
         struct Vert {
             vec_t x_pos;
             vec_t y_pos;

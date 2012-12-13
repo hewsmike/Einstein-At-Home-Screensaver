@@ -120,6 +120,14 @@ const GLuint Simulation::TARGET_RETICLE_SIZE(64);
 const GLuint Simulation::TARGET_RETICLE_FRAMES(4);
 const std::string Simulation::TARGET_RETICLE_RESOURCE_NAME_BASE("reticle");
 
+const VectorSP Simulation::ECLIPTIC_NORTH_POLE(270.0f, 66.5607f, 1.0f);
+const VectorSP Simulation::ECLIPTIC_LONG_ZERO(0.0f, 0.0f, 1.0f);
+const GLfloat Simulation::ECLIPTIC_LINE_WIDTH(2);
+const GLfloat Simulation::ECLIPTIC_LINE_RED(1.0f);
+const GLfloat Simulation::ECLIPTIC_LINE_GREEN(0.843f);
+const GLfloat Simulation::ECLIPTIC_LINE_BLUE(0.0f);
+const GLfloat Simulation::ECLIPTIC_LINE_ALPHA(0.9f);
+
 Simulation::Simulation(void) : cs(CONSTELLATIONS_RADIUS),
                                ps(PULSARS_RADIUS,
                                   PULSARS_MAG_SIZE,
@@ -168,6 +176,15 @@ Simulation::Simulation(void) : cs(CONSTELLATIONS_RADIUS),
                                       screen_width,
                                       screen_height,
                                       TARGET_RETICLE_FRAMES),
+                               ecliptic(ECLIPTIC_NORTH_POLE,
+                                        ECLIPTIC_LONG_ZERO,
+                                        Line(ECLIPTIC_LINE_WIDTH,
+                                             ECLIPTIC_LINE_RED,
+                                             ECLIPTIC_LINE_GREEN,
+                                             ECLIPTIC_LINE_BLUE,
+                                             ECLIPTIC_LINE_ALPHA),
+                                        Simulation::SKYGRID_RADIUS,
+                                        72),
                                overlay(NULL, HUDContainer::RETAIN),
                                north_panel(&overlay,
                                            HUDFlowLayout::VERTICAL,

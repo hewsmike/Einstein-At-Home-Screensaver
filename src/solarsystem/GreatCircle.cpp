@@ -22,6 +22,11 @@
 
 #include "SolarSystemGlobals.h"
 
+const GLuint GreatCircle::ARRAY_START(0);
+const GLsizei GreatCircle::ARRAY_STRIDE(0);
+const GLuint GreatCircle::BYTE_OFFSET(0);
+const GLuint GreatCircle::COORDS_PER_VERTEX(3);
+
 GreatCircle::GreatCircle(const Vector3D& normal, const Vector3D& zero_long,
                          Line line, GLfloat radius) :
                             norm(normal.unit()),
@@ -32,16 +37,39 @@ GreatCircle::GreatCircle(const Vector3D& normal, const Vector3D& zero_long,
     }
 
 GreatCircle::~GreatCircle() {
+    release();
     }
 
 void GreatCircle::prepare(SolarSystemGlobals::render_quality rq) {
-
+    loadVertexBuffer();
     }
 
 void GreatCircle::release(void) {
+    // Release the buffer object's resources.
+    buff_obj_points.release();
     }
 
 void GreatCircle::render(void) {
+    // Make our vertex buffer identifier OpenGL's current one.
+    glBindBuffer(GL_ARRAY_BUFFER, buff_obj_points.ID());
+
+    // We will use a vertex array within that buffer.
+    glEnableClientState(GL_VERTEX_ARRAY);
+
+    // The vertex array pointer points to the start of the buffer.
+    glVertexPointer(COORDS_PER_VERTEX, GL_FLOAT, ARRAY_STRIDE, BUFFER_OFFSET(BYTE_OFFSET));
+
+    glLineWidth(gc_line.width());
+    glColor3f(gc_line.red(), gc_line.green(), gc_line.blue());
+
+    // Finally we get to render the lines.
+    glDrawArrays(GL_LINES, ARRAY_START, segs);
+
+    // Stop using vertex arrays.
+    glDisableClientState(GL_VERTEX_ARRAY);
+
+    // Unbind the buffers.
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Buffer_OBJ::NO_ID);
     }
 
 void GreatCircle::loadVertexBuffer(void) {
@@ -55,28 +83,19 @@ void GreatCircle::loadVertexBuffer(void) {
     Vert* buffer_base_ptr = new Vert[segs];
     Vert* buffer_ptr = buffer_base_ptr;
 
-
+    Vector3D orthog = norm * z_long;
 
     // Store the vertex position data in the buffer.
     for(GLuint point = 0; point < segs; ++point) {
-        // Well to start with : on Mar 21st the Sun is at the vernal equinox.
-        days = days - VERNAL_EQUINOX_DAY;
+        // Positive going anti-clockwise when looking down on the
+        // plane along the tip to the base of the given normal.
+        GLfloat theta = (point/segs)*(SolarSystemGlobals::FULL_CIRCLE_DEG(360.0f);
 
-    // OK, now get an angle in the ecliptic plane between a vector to the
-    // vernal equinox and a vector to the position of the Sun on the given
-    // day. Positive going anti-clockwise when looking down on that plane
-    // from the northern side.
-    GLfloat theta = (point/SolarSystemGlobals::FULL_CIRCLE_DEG(360.0f)DAYS_PER_YEAR)*SolarSystemGlobals::FULL_CIRCLE_DEG;
+        Vector3D pt = rad * (COS(theta) * z_long + SIN(theta) * orthog);
 
-    // Just modelling a circle but tilted with respect to the celestial equator.
-        rad * Vector3D(COS(theta),
-                       SIN(theta) * COS(ECLIPTIC_ANGLE_DEG),
-                       SIN(theta) * SIN(ECLIPTIC_ANGLE_DEG));
-        Vector3D pt();
-        Vert vt = ;
-        buffer_ptr->x_pos = vt.x;
-        buffer_ptr->y_pos = vt.y;
-        buffer_ptr->z_pos = vt.z;
+        buffer_ptr->x_pos = pt.x();
+        buffer_ptr->y_pos = pt.y();
+        buffer_ptr->z_pos = pt.z();
         ++buffer_ptr;
         }
 

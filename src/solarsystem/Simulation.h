@@ -34,6 +34,7 @@
 #include "Constellations.h"
 #include "Craft.h"
 #include "Globe.h"
+#include "GreatCircle.h"
 #include "GridGlobe.h"
 #include "HUDBorderLayout.h"
 #include "HUDFlowLayout.h"
@@ -311,6 +312,7 @@ class Simulation : public Renderable {
         GridGlobe earth_grid;
         Globe sun;
         TargetReticle target;
+        GreatCircle ecliptic;
 
         /// The craft instance.
         Craft flyboy;
