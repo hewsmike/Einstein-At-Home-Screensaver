@@ -82,14 +82,14 @@ class Vector3D {
          *
          * \return The length of the vector
          */
-        vec_t len(void);
+        vec_t len(void) const;
 
         /**
          * \brief Obtain the null vector
          *
          * \return The null vector
          */
-        Vector3D nullv(void);
+        Vector3D nullv(void) const;
 
         /**
          * \brief Obtain a unit vector in the same direction as the vector
@@ -99,14 +99,14 @@ class Vector3D {
          *
          * \return The unit vector
          */
-        Vector3D unit(void);
+        Vector3D unit(void) const;
 
         /**
          * \brief Determine if the vector is null
          *
          * \return A boolean indicating true it is null, false otherwise
          */
-        bool isNullVector(void);
+        bool isNullVector(void) const;
 
         void print(void) const;
 

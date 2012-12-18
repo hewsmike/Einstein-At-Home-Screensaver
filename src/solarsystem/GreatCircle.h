@@ -47,7 +47,7 @@
  * \author Mike Hewson\n
  */
 
-class GreatCircle public Renderable {
+class GreatCircle : public Renderable {
     public:
         /**
          * \brief Constructor

@@ -49,12 +49,12 @@ Vector3D::Vector3D(const Vector3D& other) : x_comp(other.x()),
 Vector3D::~Vector3D() {
     }
 
-vec_t Vector3D::len(void) {
+vec_t Vector3D::len(void) const {
     // Square root of the dot product of the vector with itself.
     return sqrt(x_comp * x_comp + y_comp * y_comp + z_comp * z_comp);
     }
 
-Vector3D Vector3D::unit(void) {
+Vector3D Vector3D::unit(void) const {
     // Return the null vector ( courtesy of the no-argument constructor )
     // by default.
     Vector3D ret_val;
@@ -63,7 +63,7 @@ Vector3D Vector3D::unit(void) {
     vec_t mag = this->len();
 
     // Careful that I am not already the zero vector.
-    // TODO some tolerance level rather exact nullity ??
+    /// TODO some tolerance level rather exact nullity ??
     if (mag != Vector3D::NULL_LENGTH) {
         // OK, safe to divide each component by the length of the vector.
         // TODO - Consider if we might get machine infinity here? Maybe a
@@ -79,12 +79,12 @@ void Vector3D::print(void) const {
     std::cout << "x = " << x_comp << "\ty = " << y_comp << "\tz = " << z_comp << std::endl;
     }
 
-Vector3D Vector3D::nullv(void) {
+Vector3D Vector3D::nullv(void) const {
     // Return a vector with zero for all components.
     return Vector3D(NULL_X, NULL_Y, NULL_Z);
     }
 
-bool Vector3D::isNullVector(void) {
+bool Vector3D::isNullVector(void) const {
     // TODO - consider a tolerance level for nullity.
     return this->len() ? false : true;
     }

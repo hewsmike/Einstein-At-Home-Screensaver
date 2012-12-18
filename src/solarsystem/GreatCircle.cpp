@@ -28,12 +28,12 @@ const GLuint GreatCircle::BYTE_OFFSET(0);
 const GLuint GreatCircle::COORDS_PER_VERTEX(3);
 
 GreatCircle::GreatCircle(const Vector3D& normal, const Vector3D& zero_long,
-                         Line line, GLfloat radius) :
-                            norm(normal.unit()),
-                            z_long(zero_long.unit()),
+                         Line line, GLfloat radius, GLuint segments) :
                             gc_line(line),
                             rad(radius),
                             segs(segments) {
+    norm = normal.unit();
+    z_long = zero_long.unit();
     }
 
 GreatCircle::~GreatCircle() {
@@ -89,7 +89,7 @@ void GreatCircle::loadVertexBuffer(void) {
     for(GLuint point = 0; point < segs; ++point) {
         // Positive going anti-clockwise when looking down on the
         // plane along the tip to the base of the given normal.
-        GLfloat theta = (point/segs)*(SolarSystemGlobals::FULL_CIRCLE_DEG(360.0f);
+        GLfloat theta = (point/segs)*SolarSystemGlobals::FULL_CIRCLE_DEG;
 
         Vector3D pt = rad * (COS(theta) * z_long + SIN(theta) * orthog);
 
