@@ -162,7 +162,6 @@ if [ $# -eq 1 ]; then
             ;;
         "--distclean")
             TARGET=$TARGET_CLEAN
-            exit 0
             ;;
         *)
             log "Wrong argument given !!"
@@ -283,6 +282,17 @@ case $TARGET in
         cd win32
         ./build.sh --win32 $2 $3
         cd ..
+        ;;
+    $TARGET_CLEAN)
+        cd $ROOT/linux
+        ./build.sh --distclean
+        cd $ROOT/win32
+        ./build.sh --distclean
+        cd $ROOT/mac-sdk
+        ./build.sh --distclean
+        cd $ROOT/mac
+        ./build.sh --distclean
+        cd $ROOT
         ;;
     $TARGET_DOC)
         log "Building documentation ... "
