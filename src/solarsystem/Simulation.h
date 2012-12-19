@@ -263,6 +263,14 @@ class Simulation : public Renderable {
         /// The base name of the image resources used for reticle animation.
         static const std::string TARGET_RETICLE_RESOURCE_NAME_BASE;
 
+        static const VectorSP ECLIPTIC_NORTH_POLE;
+        static const VectorSP ECLIPTIC_LONG_ZERO;
+        static const GLfloat ECLIPTIC_LINE_WIDTH;
+        static const GLfloat ECLIPTIC_LINE_RED;
+        static const GLfloat ECLIPTIC_LINE_GREEN;
+        static const GLfloat ECLIPTIC_LINE_BLUE;
+        static const GLfloat ECLIPTIC_LINE_ALPHA;
+
         /**
          * \brief Load a list of general pulsar data
          */
