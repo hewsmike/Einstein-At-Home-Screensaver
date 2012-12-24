@@ -114,12 +114,19 @@ endif
 # mentions with respect to '-Wl, -Bstatic' and '-Wl, -Bdynamic'
 
 # Target specific.
+# Bear in mind the pkg-config facility for say, locating X11 flags and libs :
+# eg. use
+#   gcc [...] `pkg-config --cflags x11` [...]
+# and/or
+#   gcc [...] `pkg-config --libs x11` [...]
+# or somesuch. Build system dependent.
 ifeq ".$(SYSTEM)" ".linux"
     LIBS += -Wl,-Bstatic
     LIBS += -lframework -loglft -lglfw -lrt -L$(PRODUCT_INSTALL)/lib
     LIBS += $(shell $(PRODUCT_INSTALL)/bin/freetype-config --libs)
     LIBS += $(shell $(PRODUCT_INSTALL)/bin/xml2-config --libs)
     LIBS += -lboinc_api -lboinc
+    LIBS += -L/usr/X11/lib -lX11
     LIBS += -lXrandr -lXrender
     LIBS += -lstdc++
     LIBS += -L/usr/lib
