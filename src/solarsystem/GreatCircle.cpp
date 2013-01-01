@@ -20,6 +20,9 @@
 
 #include "GreatCircle.h"
 
+#include <sstream>
+
+#include "ErrorHandler.h"
 #include "SolarSystemGlobals.h"
 
 const GLuint GreatCircle::ARRAY_START(0);
@@ -60,10 +63,11 @@ void GreatCircle::render(void) {
     glVertexPointer(COORDS_PER_VERTEX, GL_FLOAT, ARRAY_STRIDE, BUFFER_OFFSET(BYTE_OFFSET));
 
     glLineWidth(gc_line.width());
-    glColor3f(gc_line.red(), gc_line.green(), gc_line.blue());
+
+    glColor4f(gc_line.red(), gc_line.green(), gc_line.blue(), gc_line.alpha());
 
     // Finally we get to render the lines.
-    glDrawArrays(GL_LINES, ARRAY_START, segs);
+    glDrawArrays(GL_LINE_LOOP, ARRAY_START, segs);
 
     // Stop using vertex arrays.
     glDisableClientState(GL_VERTEX_ARRAY);
@@ -89,7 +93,7 @@ void GreatCircle::loadVertexBuffer(void) {
     for(GLuint point = 0; point < segs; ++point) {
         // Positive going anti-clockwise when looking down on the
         // plane along the tip to the base of the given normal.
-        GLfloat theta = (point/segs)*SolarSystemGlobals::FULL_CIRCLE_DEG;
+        GLfloat theta = (point*SolarSystemGlobals::FULL_CIRCLE_DEG)/segs;
 
         Vector3D pt = rad * (COS(theta) * z_long + SIN(theta) * orthog);
 

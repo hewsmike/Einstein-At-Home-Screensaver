@@ -91,7 +91,7 @@ private:
 	 * This specific implementation shows the usual "Einstein@Home" logo combined
 	 * with "World Year of Physics 2005" as subtitle
 	 */
-	inline void renderLogo(void);
+	void renderLogo(void);
 
 	/**
 	 * \brief Render science run specific search information
@@ -99,13 +99,13 @@ private:
 	 * For this specific implementation this also includes the "BOINC Statistics"
 	 * as it is top-aligned to the "Search Information".
 	 */
-	inline void renderSearchInformation(void);
+	void renderSearchInformation(void);
 
-   void generateObservatories(void);
+    void generateObservatories(void);
 
 	/// Specialized BOINC client adapter instance for information retrieval
 	EinsteinS5R3Adapter m_EinsteinAdapter;
-};
+    };
 
 /**
  * @}

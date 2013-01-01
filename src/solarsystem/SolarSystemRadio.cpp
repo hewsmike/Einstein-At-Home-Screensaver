@@ -23,18 +23,18 @@
 SolarSystemRadio::SolarSystemRadio() :
 	SolarSystem(EinsteinS5R3Adapter::SharedMemoryIdentifier),
 	m_EinsteinAdapter(&m_BoincAdapter) {
-   }
+    }
 
 SolarSystemRadio::~SolarSystemRadio() {
-   }
+    }
 
 void SolarSystemRadio::initialize(const int width, const int height, const Resource *font, const bool recycle) {
 	SolarSystem::initialize(width, height, font, recycle);
-   }
+    }
 
 void SolarSystemRadio::resize(const int width, const int height) {
 	SolarSystem::resize(width, height);
-   }
+    }
 
 void SolarSystemRadio::refreshBOINCInformation(void) {
 	// call base class implementation
@@ -42,7 +42,7 @@ void SolarSystemRadio::refreshBOINCInformation(void) {
 
 	// update local/specific content
 	m_EinsteinAdapter.refresh();
-   }
+    }
 
 void SolarSystemRadio::renderSearchInformation(void) {
 	}

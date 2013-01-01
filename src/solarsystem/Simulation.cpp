@@ -126,7 +126,15 @@ const GLfloat Simulation::ECLIPTIC_LINE_WIDTH(2);
 const GLfloat Simulation::ECLIPTIC_LINE_RED(1.0f);
 const GLfloat Simulation::ECLIPTIC_LINE_GREEN(0.843f);
 const GLfloat Simulation::ECLIPTIC_LINE_BLUE(0.0f);
-const GLfloat Simulation::ECLIPTIC_LINE_ALPHA(0.9f);
+const GLfloat Simulation::ECLIPTIC_LINE_ALPHA(0.25f);
+
+const VectorSP Simulation::GALACTIC_NORTH_POLE(192.85f, 27.13f, 1.0f);
+const VectorSP Simulation::GALACTIC_LONG_ZERO(266.40f, -28.94f, 1.0f);
+const GLfloat Simulation::GALACTIC_LINE_WIDTH(2);
+const GLfloat Simulation::GALACTIC_LINE_RED(1.0f);
+const GLfloat Simulation::GALACTIC_LINE_GREEN(0.2f);
+const GLfloat Simulation::GALACTIC_LINE_BLUE(0.8f);
+const GLfloat Simulation::GALACTIC_LINE_ALPHA(0.25f);
 
 Simulation::Simulation(void) : cs(CONSTELLATIONS_RADIUS),
                                ps(PULSARS_RADIUS,
@@ -183,6 +191,15 @@ Simulation::Simulation(void) : cs(CONSTELLATIONS_RADIUS),
                                              ECLIPTIC_LINE_GREEN,
                                              ECLIPTIC_LINE_BLUE,
                                              ECLIPTIC_LINE_ALPHA),
+                                        Simulation::SKYGRID_RADIUS,
+                                        72),
+                               galactic(GALACTIC_NORTH_POLE,
+                                        GALACTIC_LONG_ZERO,
+                                        Line(GALACTIC_LINE_WIDTH,
+                                             GALACTIC_LINE_RED,
+                                             GALACTIC_LINE_GREEN,
+                                             GALACTIC_LINE_BLUE,
+                                             GALACTIC_LINE_ALPHA),
                                         Simulation::SKYGRID_RADIUS,
                                         72),
                                overlay(NULL, HUDContainer::RETAIN),
@@ -407,6 +424,8 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
     earth_grid.activate();
     sun.activate();
     overlay.setFont(SolarSystemGlobals::getFont(SolarSystemGlobals::HUDOVER));
+    ecliptic.activate();
+    galactic.activate();
 
     // Now to arrange the HUD components.
 
@@ -467,6 +486,8 @@ void Simulation::release(void) {
     earth_grid.inactivate();
     sun.inactivate();
     target.inactivate();
+    ecliptic.inactivate();
+    galactic.inactivate();
 
     // Must inactivate the layout first !!
     overlay.inactivate();
@@ -507,6 +528,8 @@ void Simulation::render(void) {
     ps_EAH.draw();
     sn.draw();
     c_sphere.draw();
+    ecliptic.draw();
+    galactic.draw();
 
     glPushMatrix();
         // Render the Earth, suitably transformed.

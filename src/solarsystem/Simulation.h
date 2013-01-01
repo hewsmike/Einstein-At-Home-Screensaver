@@ -271,6 +271,14 @@ class Simulation : public Renderable {
         static const GLfloat ECLIPTIC_LINE_BLUE;
         static const GLfloat ECLIPTIC_LINE_ALPHA;
 
+        static const VectorSP GALACTIC_NORTH_POLE;
+        static const VectorSP GALACTIC_LONG_ZERO;
+        static const GLfloat GALACTIC_LINE_WIDTH;
+        static const GLfloat GALACTIC_LINE_RED;
+        static const GLfloat GALACTIC_LINE_GREEN;
+        static const GLfloat GALACTIC_LINE_BLUE;
+        static const GLfloat GALACTIC_LINE_ALPHA;
+
         /**
          * \brief Load a list of general pulsar data
          */
@@ -321,6 +329,7 @@ class Simulation : public Renderable {
         Globe sun;
         TargetReticle target;
         GreatCircle ecliptic;
+        GreatCircle galactic;
 
         /// The craft instance.
         Craft flyboy;
