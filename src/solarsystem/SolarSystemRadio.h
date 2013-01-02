@@ -103,6 +103,9 @@ private:
 
     void generateObservatories(void);
 
+    /// The 3D scene objects to be rendered.
+    Simulation sim;
+
 	/// Specialized BOINC client adapter instance for information retrieval
 	EinsteinS5R3Adapter m_EinsteinAdapter;
     };

@@ -52,3 +52,7 @@ void SolarSystemRadio::generateObservatories(void) {
 
 void SolarSystemRadio::renderLogo(void) {
 	}
+
+Simulation& SolarSystemRadio::simulationInstance(void) {
+    return sim;
+    }

@@ -59,7 +59,7 @@ void SolarSystem::resize(const int width, const int height) {
 
     // Tell the underlying simulation that it's window
     // has been resized, and what it's dimensions are.
-    sim.resize(static_cast<GLuint>(width), static_cast<GLuint>(height));
+    simulationInstance().resize(static_cast<GLuint>(width), static_cast<GLuint>(height));
     }
 
 /**
@@ -214,7 +214,7 @@ void SolarSystem::initialize(const int width, const int height, const Resource* 
 
     glDisable(GL_CLIP_PLANE0);
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-    sim.activate();
+    simulationInstance().activate();
 
     // Setup dimensions. NB this is currently the only call to
     // invoke this !!
@@ -236,10 +236,10 @@ void SolarSystem::render(const double tOD) {
     glLoadIdentity();
 
     // Evolve the simulation.
-    sim.step();
+    simulationInstance().step();
 
     // Where are we etc .... in our virtual world?
-    const CameraState& cam = sim.viewPoint();
+    const CameraState& cam = simulationInstance().viewPoint();
 
     // Set up the camera position and orientation.
     gluLookAt(cam.position().x(),
@@ -253,7 +253,7 @@ void SolarSystem::render(const double tOD) {
               cam.orientation().z());
 
     // Render from the current viewpoint.
-    sim.draw();
+    simulationInstance().draw();
 
     // Check for and report any errors generated.
     ErrorHandler::check_OpenGL_Error();
@@ -281,37 +281,37 @@ void SolarSystem::mouseMoveEvent(const int deltaX, const int deltaY,
 void SolarSystem::keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey keyPressed) {
     switch(keyPressed) {
         case KeyC:
-            sim.moveRequest(Craft::REVERSE);
+            simulationInstance().moveRequest(Craft::REVERSE);
             break;
         case KeyD:
-            sim.moveRequest(Craft::STOP_TRANSLATION);
+            simulationInstance().moveRequest(Craft::STOP_TRANSLATION);
             break;
         case KeyE:
-            sim.moveRequest(Craft::FORWARD);
+            simulationInstance().moveRequest(Craft::FORWARD);
             break;
         case KeyF:
-            sim.moveRequest(Craft::RIGHTWARDS);
+            simulationInstance().moveRequest(Craft::RIGHTWARDS);
             break;
         case KeyG:
-            sim.moveRequest(Craft::GO_HOME);
+            simulationInstance().moveRequest(Craft::GO_HOME);
             break;
         case KeyK:
-            sim.moveRequest(Craft::ROLL_LEFT);
+            simulationInstance().moveRequest(Craft::ROLL_LEFT);
             break;
         case KeyL:
-            sim.moveRequest(Craft::STOP_ROTATION);
+            simulationInstance().moveRequest(Craft::STOP_ROTATION);
             break;
         case KeyO:
-            sim.moveRequest(Craft::PITCH_DOWN);
+            simulationInstance().moveRequest(Craft::PITCH_DOWN);
             break;
         case KeyR:
-            sim.moveRequest(Craft::UPWARDS);
+            simulationInstance().moveRequest(Craft::UPWARDS);
             break;
         case KeyS:
-            sim.moveRequest(Craft::LEFTWARDS);
+            simulationInstance().moveRequest(Craft::LEFTWARDS);
             break;
         case KeyV:
-            sim.moveRequest(Craft::DOWNWARDS);
+            simulationInstance().moveRequest(Craft::DOWNWARDS);
             break;
         case KeyF1:
             // TODO - future 'help' functionality
@@ -322,64 +322,64 @@ void SolarSystem::keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey k
             break;
         case KeyF4:
             // TODO - cycle the HUD
-            // sim.cycle(SolarSystemGlobals::HUDOVER);
+            // simulationInstance().cycle(SolarSystemGlobals::HUDOVER);
             break;
         case KeyF5:
-            sim.cycle(SolarSystemGlobals::CONSTELLATIONS);
+            simulationInstance().cycle(SolarSystemGlobals::CONSTELLATIONS);
             break;
         case KeyF6:
-            sim.cycle(SolarSystemGlobals::PULSARS);
+            simulationInstance().cycle(SolarSystemGlobals::PULSARS);
             break;
         case KeyF7:
-            sim.cycle(SolarSystemGlobals::SUPERNOVAE);
+            simulationInstance().cycle(SolarSystemGlobals::SUPERNOVAE);
             break;
         case KeyF8:
-            sim.cycle(SolarSystemGlobals::SKY_GRID);
+            simulationInstance().cycle(SolarSystemGlobals::SKY_GRID);
             break;
         case KeyF9:
-            sim.cycle(SolarSystemGlobals::EARTH_GRID);
+            simulationInstance().cycle(SolarSystemGlobals::EARTH_GRID);
             break;
         case KeyF12:
             // Toggle the state of the autopilot
-            sim.cycle(SolarSystemGlobals::AUTOPILOT);
+            simulationInstance().cycle(SolarSystemGlobals::AUTOPILOT);
             break;
         case KeySpace:
             // Whoa! Stop everything happening ...
-            sim.moveRequest(Craft::STOP_TRANSLATION);
-            sim.moveRequest(Craft::STOP_ROTATION);
+            simulationInstance().moveRequest(Craft::STOP_TRANSLATION);
+            simulationInstance().moveRequest(Craft::STOP_ROTATION);
             break;
         case KeyKP1:
-            sim.moveRequest(Craft::YAW_LEFT);
+            simulationInstance().moveRequest(Craft::YAW_LEFT);
             break;
         case KeyKP2:
-            sim.moveRequest(Craft::PITCH_UP);
+            simulationInstance().moveRequest(Craft::PITCH_UP);
             break;
         case KeyKP3:
-            sim.moveRequest(Craft::YAW_RIGHT);
+            simulationInstance().moveRequest(Craft::YAW_RIGHT);
             break;
         case KeyKP4:
-            sim.moveRequest(Craft::ROLL_LEFT);
+            simulationInstance().moveRequest(Craft::ROLL_LEFT);
             break;
         case KeyKP5:
-            sim.moveRequest(Craft::STOP_ROTATION);
+            simulationInstance().moveRequest(Craft::STOP_ROTATION);
             break;
         case KeyKP6:
-            sim.moveRequest(Craft::ROLL_RIGHT);
+            simulationInstance().moveRequest(Craft::ROLL_RIGHT);
             break;
         case KeyKP8:
-            sim.moveRequest(Craft::PITCH_DOWN);
+            simulationInstance().moveRequest(Craft::PITCH_DOWN);
             break;
         case KeyComma:
-            sim.moveRequest(Craft::YAW_LEFT);
+            simulationInstance().moveRequest(Craft::YAW_LEFT);
             break;
         case KeyPeriod:
-            sim.moveRequest(Craft::PITCH_UP);
+            simulationInstance().moveRequest(Craft::PITCH_UP);
             break;
         case KeyForwardSlash:
-            sim.moveRequest(Craft::YAW_RIGHT);
+            simulationInstance().moveRequest(Craft::YAW_RIGHT);
             break;
         case KeySemiColon:
-            sim.moveRequest(Craft::ROLL_RIGHT);
+            simulationInstance().moveRequest(Craft::ROLL_RIGHT);
             break;
         default:
             break;

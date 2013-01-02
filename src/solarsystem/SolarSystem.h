@@ -144,7 +144,7 @@ class SolarSystem : public AbstractGraphicsEngine, public RenderQualityObserver 
          * This abstract method is to be defined by derived classes implementing
          * the science run specific logo rendering.
          */
-        inline virtual void renderLogo() = 0;
+        virtual void renderLogo() = 0;
 
         /**
          * \brief Render science run specific search information
@@ -155,11 +155,13 @@ class SolarSystem : public AbstractGraphicsEngine, public RenderQualityObserver 
          * Note: for this engine this also includes the "BOINC Statistics"
          * as it is top-aligned to the "Search Information".
          */
-        inline virtual void renderSearchInformation() = 0;
+        virtual void renderSearchInformation() = 0;
 
         virtual void refreshLocalBOINCInformation(void);
 
         virtual void generateObservatories() = 0;
+
+        virtual Simulation& simulationInstance(void) = 0;
 
         /// Current window width (x-resolution)
         int m_CurrentWidth;
@@ -185,9 +187,6 @@ class SolarSystem : public AbstractGraphicsEngine, public RenderQualityObserver 
         static const GLdouble NEAR_CLIP;
         static const GLdouble FAR_CLIP;
         static const int FAR_LOOK_DISTANCE;
-
-        /// The 3D scene objects to be rendered.
-        Simulation sim;
     };
 
 /**

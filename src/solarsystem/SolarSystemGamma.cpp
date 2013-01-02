@@ -53,3 +53,7 @@ void SolarSystemGamma::generateObservatories(void) {
 
 void SolarSystemGamma::renderLogo(void) {
    }
+
+Simulation& SolarSystemGamma::simulationInstance(void) {
+    return sim;
+    }

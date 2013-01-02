@@ -51,3 +51,7 @@ void SolarSystemGravity::generateObservatories(void) {
 
 void SolarSystemGravity::renderLogo(void) {
 	}
+
+Simulation& SolarSystemGravity::simulationInstance(void) {
+    return sim;
+    }
