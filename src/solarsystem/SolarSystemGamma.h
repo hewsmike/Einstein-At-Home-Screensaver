@@ -21,6 +21,7 @@
 #ifndef SOLARSYSTEMGAMMA_H_
 #define SOLARSYSTEMGAMMA_H_
 
+#include "SimulationGamma.h"
 #include "SolarSystem.h"
 #include "EinsteinS5R3Adapter.h"
 
@@ -105,7 +106,7 @@ class SolarSystemGamma : public SolarSystem {
        inline void renderSearchInformation(void);
 
         /// The 3D scene objects to be rendered.
-        Simulation sim;
+        SimulationRadio sim;
 
         void generateObservatories(void);
 

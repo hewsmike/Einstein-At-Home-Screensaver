@@ -180,7 +180,7 @@ ifeq ".$(SYSTEM)" ".mac"
     OBJS += SetMacSSLevel.o
 endif
 
-# Product specific.
+# Product specific, all variants.
 OBJS += AcceleratedPlatform.o AutoPilot.o Buffer_OBJ.o CameraState.o
 OBJS += Constellation.o Constellations.o Craft.o Curve.o Globe.o
 OBJS += GridGlobe.o GreatCircle.o HUDBorderLayout.o HUDContainer.o HUDContent.o
@@ -191,6 +191,16 @@ OBJS += RenderListing.o RenderQualityObserver.o RotatablePlatform.o Simulation.o
 OBJS += SolarSystemGlobals.o Sphere.o Star.o SunOrbit.o
 OBJS += Supernova.o TargetReticle.o Texture_OBJ.o Traverse.o
 OBJS += Traversable.o UTC.o Vector3D.o VectorSP.o VelocityPlatform.o Vertex.o
+
+# Product variants.
+GRAV_OBJS = OBJS
+GRAV_OBJS += SimulationGravity.o
+
+RADIO_OBJS = OBJS
+RADIO_OBJS += SimulationRadio.o
+
+GAMMA_OBJS = OBJS
+GAMMA_OBJS += SimulationGamma.o
 
 # Rules for object builds from sources.
 
@@ -244,14 +254,14 @@ endif
 ###########################################################################
 # File based targets.
 # Required product executables.
-$(PRODUCT_LOWER)_Einstein_$(GRAV): $(DEPS) $(PRODUCT_SRC)/main.cpp $(TARGET_XTRA_DEPS) $(OBJS)
-	$(CXX) -g $(CPPFLAGS) $(LDFLAGS) $(PRODUCT_SRC)/main.cpp -o "graphics_app=einstein_RUNLABEL_VERSION_graphics_$(TARGET_APPEND)" $(OBJS) $(LIBS)
+$(PRODUCT_LOWER)_Einstein_$(GRAV): $(DEPS) $(PRODUCT_SRC)/main.cpp $(TARGET_XTRA_DEPS) $(GRAV_OBJS)
+	$(CXX) -g $(CPPFLAGS) $(LDFLAGS) $(PRODUCT_SRC)/main.cpp -o "graphics_app=einstein_RUNLABEL_VERSION_graphics_$(TARGET_APPEND)" $(GRAV_OBJS) $(LIBS)
 
-$(PRODUCT_LOWER)_Einstein_$(RADIO): $(DEPS) $(PRODUCT_SRC)/main.cpp $(TARGET_XTRA_DEPS) $(OBJS)
-	$(CXX) -g $(CPPFLAGS) $(LDFLAGS) $(PRODUCT_SRC)/main.cpp -o "graphics_app=einsteinbinary_RUNLABEL_VERSION_graphics_$(TARGET_APPEND)" $(OBJS) $(LIBS)
+$(PRODUCT_LOWER)_Einstein_$(RADIO): $(DEPS) $(PRODUCT_SRC)/main.cpp $(TARGET_XTRA_DEPS) $(RADIO_OBJS)
+	$(CXX) -g $(CPPFLAGS) $(LDFLAGS) $(PRODUCT_SRC)/main.cpp -o "graphics_app=einsteinbinary_RUNLABEL_VERSION_graphics_$(TARGET_APPEND)" $(RADIO_OBJS) $(LIBS)
 
-$(PRODUCT_LOWER)_Einstein_$(GAMMA): $(DEPS) $(PRODUCT_SRC)/main.cpp $(TARGET_XTRA_DEPS) $(OBJS)
-	$(CXX) -g $(CPPFLAGS) $(LDFLAGS) $(PRODUCT_SRC)/main.cpp -o "graphics_app=einsteingamma_RUNLABEL_VERSION_graphics_$(TARGET_APPEND)" $(OBJS) $(LIBS)
+$(PRODUCT_LOWER)_Einstein_$(GAMMA): $(DEPS) $(PRODUCT_SRC)/main.cpp $(TARGET_XTRA_DEPS) $(GAMMA_OBJS)
+	$(CXX) -g $(CPPFLAGS) $(LDFLAGS) $(PRODUCT_SRC)/main.cpp -o "graphics_app=einsteingamma_RUNLABEL_VERSION_graphics_$(TARGET_APPEND)" $(GAMMA_OBJS) $(LIBS)
 
 ###########################################################################
 # Target specific modules.

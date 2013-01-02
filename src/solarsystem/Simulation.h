@@ -57,7 +57,7 @@
  */
 
 /**
- * \brief %Solarsystem Container for scene renderable elements
+ * \brief %Solarsystem Container/manager for scene renderable elements
  *
  *      This class aggregates all the scene elements ( 3D + HUD )
  * that one wants in a given rendering frame. Preparation, rendering

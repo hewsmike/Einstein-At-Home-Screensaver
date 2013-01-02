@@ -21,6 +21,7 @@
 #ifndef SOLARSYSTEMS5R3_H_
 #define SOLARSYSTEMS5R3_H_
 
+#include "SimulationGravity.h"
 #include "SolarSystem.h"
 #include "EinsteinS5R3Adapter.h"
 
@@ -108,7 +109,7 @@ private:
     void generateObservatories(void);
 
     /// The 3D scene objects to be rendered.
-    Simulation sim;
+    SimulationGravity sim;
 
 	/// Specialized BOINC client adapter instance for information retrieval
 	EinsteinS5R3Adapter m_EinsteinAdapter;
