@@ -40,14 +40,14 @@
  * also positioned and rendered here.
  *
  */
-class SolarSystemS5R3 : public SolarSystem
+class SolarSystemGravity : public SolarSystem
 {
 public:
 	/// Default contructor
-	SolarSystemS5R3();
+	SolarSystemGravity();
 
 	/// Destructor
-	virtual ~SolarSystemS5R3();
+	virtual ~SolarSystemGravity();
 
 	/**
 	 * \brief This method is called to initialize the engine

@@ -36,7 +36,7 @@ AbstractGraphicsEngine* GraphicsEngineFactory::createInstance(
         case SolarSystem :
             switch(application) {
                 case EinsteinS5R3 :
-                    return new SolarSystemS5R3();
+                    return new SolarSystemGravity();
                     break;
                 case EinsteinRadio :
                     return new SolarSystemRadio();

@@ -17,25 +17,25 @@
  *   along with Einstein@Home. If not, see <http://www.gnu.org/licenses/>. *
  *                                                                         *
  ***************************************************************************/
-#include "SolarSystemS5R3.h"
+#include "SolarSystemGravity.h"
 
-SolarSystemS5R3::SolarSystemS5R3() :
+SolarSystemGravity::SolarSystemGravity() :
 	SolarSystem(EinsteinS5R3Adapter::SharedMemoryIdentifier),
 	m_EinsteinAdapter(&m_BoincAdapter) {
    }
 
-SolarSystemS5R3::~SolarSystemS5R3() {
+SolarSystemGravity::~SolarSystemGravity() {
    }
 
-void SolarSystemS5R3::initialize(const int width, const int height, const Resource *font, const bool recycle) {
+void SolarSystemGravity::initialize(const int width, const int height, const Resource *font, const bool recycle) {
 	SolarSystem::initialize(width, height, font, recycle);
    }
 
-void SolarSystemS5R3::resize(const int width, const int height) {
+void SolarSystemGravity::resize(const int width, const int height) {
 	SolarSystem::resize(width, height);
    }
 
-void SolarSystemS5R3::refreshBOINCInformation(void) {
+void SolarSystemGravity::refreshBOINCInformation(void) {
 	// call base class implementation
 	SolarSystem::refreshLocalBOINCInformation();
 
@@ -43,11 +43,11 @@ void SolarSystemS5R3::refreshBOINCInformation(void) {
 	m_EinsteinAdapter.refresh();
    }
 
-void SolarSystemS5R3::renderSearchInformation(void) {
+void SolarSystemGravity::renderSearchInformation(void) {
 	}
 
-void SolarSystemS5R3::generateObservatories(void) {
+void SolarSystemGravity::generateObservatories(void) {
 	}
 
-void SolarSystemS5R3::renderLogo(void) {
+void SolarSystemGravity::renderLogo(void) {
 	}

@@ -59,7 +59,7 @@ PRODUCT_SRC := $(PROJECT_ROOT)/src/$(PRODUCT_LOWER)
 PRODUCT_INSTALL := $(PROJECT_ROOT)/install
 
 # Product variants.
-GRAV := S5R3
+GRAV := Gravity
 RADIO := Radio
 GAMMA := Gamma
 
