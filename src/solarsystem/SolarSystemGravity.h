@@ -85,6 +85,9 @@ public:
 	 */
 	void refreshBOINCInformation(void);
 
+protected:
+    virtual Simulation& simulationInstance(void);
+
 private:
 	/**
 	 * \brief Render science run specific logo

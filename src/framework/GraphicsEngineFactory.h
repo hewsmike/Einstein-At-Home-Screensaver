@@ -22,7 +22,7 @@
 #define GRAPHICSENGINEFACTORY_H_
 
 #include "AbstractGraphicsEngine.h"
-#include "../solarsystem/SolarSystemS5R3.h"
+#include "../solarsystem/SolarSystemGravity.h"
 #include "../solarsystem/SolarSystemRadio.h"
 #include "../solarsystem/SolarSystemGamma.h"
 #include "../starsphere/StarsphereS5R3.h"

@@ -182,6 +182,10 @@ class SolarSystem : public AbstractGraphicsEngine, public RenderQualityObserver 
         OGLFT_ft* HUDFont;
 
     private:
+        void changeRenderQuality(void);
+
+        bool renderUpdateFlag;
+
         /// Overall rendering parameters.
         static const GLdouble FOV_ANGLE;
         static const GLdouble NEAR_CLIP;

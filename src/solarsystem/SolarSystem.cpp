@@ -35,6 +35,7 @@ SolarSystem::SolarSystem(string sharedMemoryAreaIdentifier) :
      * Parameters and State info
      */
     spaceFontResource = NULL;
+    renderUpdateFlag = false;
     }
 
 SolarSystem::~SolarSystem() {
@@ -260,6 +261,13 @@ void SolarSystem::render(const double tOD) {
 
     // Switch buffers.
     glfwSwapBuffers();
+
+    // Synchronise changes in render quality, affecting state machine
+    // major settings, only upon completion of a frame.
+    if(renderUpdateFlag == true) {
+        changeRenderQuality();
+        renderUpdateFlag = false;
+        }
     }
 
 void SolarSystem::mouseButtonEvent(const int positionX, const int positionY,
@@ -390,6 +398,12 @@ void SolarSystem::refreshLocalBOINCInformation() {
     }
 
 void SolarSystem::renderUpdate(void) {
+    // While this update signal is asynchronously received,
+    // store this for later use when a frame render is complete.
+    renderUpdateFlag = true;
+    }
+
+void SolarSystem::changeRenderQuality(void) {
     switch(SolarSystemGlobals::getRenderLevel()) {
         case SolarSystemGlobals::RENDER_LOWEST:
             glDisable(GL_FOG);
