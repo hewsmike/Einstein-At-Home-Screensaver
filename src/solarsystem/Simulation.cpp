@@ -226,10 +226,6 @@ Simulation::Simulation(void) : cs(CONSTELLATIONS_RADIUS),
     aei_image = NULL;
     aps_image = NULL;
     boinc_image = NULL;
-    geo_image = NULL;
-    ligo_image = NULL;
-    opencl_image = NULL;
-    virgo_image = NULL;
     wyp_image = NULL;
 
     // Pointer to scrolling marquee.
@@ -285,16 +281,6 @@ Simulation::~Simulation() {
     if(boinc_image != NULL) {
         delete boinc_image;
         }
-    if(geo_image != NULL) {
-        delete geo_image;
-        }
-    if(ligo_image != NULL) {
-        delete ligo_image;
-        }
-    if(opencl_image != NULL) {
-        delete opencl_image;
-        }
-    if(virgo_image != NULL) {
         delete virgo_image;
         }
     if(wyp_image != NULL) {
@@ -410,7 +396,7 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
     /// at this level.
 
     // Activate 3D scene objects, while nominating any fonts
-    // prior to activation of their respective objects..
+    // PRIOR to activation of their respective objects..
     cs.setFont(SolarSystemGlobals::getFont(SolarSystemGlobals::CONSTELLATIONS));
     cs.activate();
     ps.activate();
@@ -455,7 +441,6 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
     //loadImageToPanel(wyp_image, &west_panel, "wypTGA", 5, 5);
     //loadImageToPanel(aps_image, &west_panel, "apsTGA", 5, 5);
     //loadImageToPanel(aei_image, &east_panel, "aeiTGA", 5, 5);
-    //loadImageToPanel(opencl_image, &east_panel, "openclTGA", 5, 5);
     // LoadImageToPanel(boinc_image, &south_panel, "boincTGA", 5, 5);
     version_text = new HUDTextLineScroll(70,
                                          "                  http://einstein.phys.uwm.edu",
@@ -467,10 +452,6 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
 
     // Put the content into the panel.
     south_panel.addContent(version_text);
-
-    //loadImageToPanel(ligo_image, &west_panel, "ligoTGA", 5, 5);
-    //loadImageToPanel(geo_image, &east_panel, "geoTGA", 5, 5);
-    //loadImageToPanel(virgo_image, &south_panel, "virgoTGA", 5, 5);
 
     overlay.activate();
     }
@@ -501,16 +482,6 @@ void Simulation::release(void) {
     if(aps_image != NULL) {
         delete aps_image;
         }
-    if(geo_image != NULL) {
-        delete geo_image;
-        }
-    if(ligo_image != NULL) {
-        delete ligo_image;
-        }
-    if(opencl_image != NULL) {
-        delete opencl_image;
-        }
-    if(virgo_image != NULL) {
         delete virgo_image;
         }
     if(wyp_image != NULL) {
