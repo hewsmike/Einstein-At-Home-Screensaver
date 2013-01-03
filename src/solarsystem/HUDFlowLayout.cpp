@@ -125,7 +125,7 @@ void HUDFlowLayout::allocateItemBases(void) {
 
     // We only need to bother with this if there are items to render.
     if(itemCount() > 0) {
-        setGaps();
+        setPrimaryAxisGaps();
 
         // The settings apply for the case FIRST.
         GLuint newHorz = horzBase();
@@ -205,8 +205,8 @@ void HUDFlowLayout::allocateItemBases(void) {
         }
     }
 
-void HUDFlowLayout::setGaps(void) {
-    // Determine any available horizontal 'whitespace' b/w items. This is
+void HUDFlowLayout::setPrimaryAxisGaps(void) {
+    // Determine any available primary axis 'whitespace' b/w items. This is
     // the amount above the minimum required for display. By design this
     // whitespace ought be non-negative, but let's check to be sure.
     switch(this->ax) {
