@@ -109,11 +109,11 @@ class HUDFlowLayout : public HUDContainer {
         virtual ~HUDFlowLayout();
 
         /**
-         * \brief Add renderable content to this container.
+         * \brief Add content to this container, which maybe another container.
          *
          * \param content : a pointer to the desired content
          */
-        void addContent(HUDContent* content);
+        void addContent(HUDItem* item);
 
         /**
          * \brief Set the justification along the primary flow axis.

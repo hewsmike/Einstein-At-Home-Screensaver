@@ -41,11 +41,11 @@ HUDFlowLayout::HUDFlowLayout(HUDContainer* enclosing, Axis axis, HUDContainer::M
 HUDFlowLayout::~HUDFlowLayout() {
     }
 
-void HUDFlowLayout::addContent(HUDContent* content) {
+void HUDFlowLayout::addContent(HUDItem* item) {
     // Only add if NULL wasn't passed.
-    if(content != NULL) {
+    if(item != NULL) {
         // Just index these by their order of being added.
-        addItem(itemCount(), content);
+        HUDContainer::addItem(itemCount(), item);
         }
     else {
         ErrorHandler::record("HUDFlowLayout::addContent() - NULL passed for content",
