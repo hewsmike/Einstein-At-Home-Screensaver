@@ -41,8 +41,7 @@ void SolarSystemGravity::refreshBOINCInformation(void) {
 
 	// update local/specific content
 	m_EinsteinAdapter.refresh();
-   }
-	}
+   	}
 
 Simulation& SolarSystemGravity::simulationInstance(void) {
     return sim;

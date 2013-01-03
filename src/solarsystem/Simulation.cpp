@@ -281,17 +281,6 @@ Simulation::~Simulation() {
     if(boinc_image != NULL) {
         delete boinc_image;
         }
-    if(aei_image != NULL) {
-        delete aei_image;
-        }
-    if(aps_image != NULL) {
-        delete aps_image;
-        }
-    if(boinc_image != NULL) {
-        delete ligo_image;
-        }
-       delete virgo_image;
-        }
     if(wyp_image != NULL) {
         delete wyp_image;
         }
@@ -488,19 +477,8 @@ void Simulation::release(void) {
     if(aps_image != NULL) {
         delete aps_image;
         }
-    if(aps_image != NULL) {
-        delete aps_image;
-        }
-    if(aei_image != NULL) {
-        delete aei_image;
-        }
-    if(aps_image != NULL) {
-        delete aps_image;
-        }
     if(boinc_image != NULL) {
         delete boinc_image;
-        }
-          delete virgo_image;
         }
     if(wyp_image != NULL) {
         delete wyp_image;

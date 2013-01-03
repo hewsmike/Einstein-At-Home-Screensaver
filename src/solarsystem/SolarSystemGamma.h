@@ -90,7 +90,7 @@ class SolarSystemGamma : public SolarSystem {
 
     private:
         /// The 3D scene objects to be rendered.
-        SimulationRadio sim;
+        SimulationGamma sim;
 
         /// Specialized BOINC client adapter instance for information retrieval
         EinsteinS5R3Adapter m_EinsteinAdapter;
