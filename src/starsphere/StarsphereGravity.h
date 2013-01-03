@@ -18,13 +18,13 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef STARSPHERES5R3_H_
-#define STARSPHERES5R3_H_
+#ifndef StarsphereGravity_H_
+#define StarsphereGravity_H_
 
 #include <sstream>
 
 #include "Starsphere.h"
-#include "EinsteinS5R3Adapter.h"
+#include "EinsteinGravityAdapter.h"
 
 using namespace std;
 
@@ -47,14 +47,14 @@ using namespace std;
  * Max-Planck-Institute for Gravitational Physics\n
  * Hannover, Germany
  */
-class StarsphereS5R3 : public Starsphere
+class StarsphereGravity : public Starsphere
 {
 public:
 	/// Default contructor
-	StarsphereS5R3();
+	StarsphereGravity();
 
 	/// Destructor
-	virtual ~StarsphereS5R3();
+	virtual ~StarsphereGravity();
 
 	/**
 	 * \brief This method is called to initialize the engine
@@ -119,7 +119,7 @@ private:
 	void generateObservatories(const float dimFactor);
 
 	/// Specialized BOINC client adapter instance for information retrieval
-	EinsteinS5R3Adapter m_EinsteinAdapter;
+	EinsteinGravityAdapter m_EinsteinAdapter;
 
 	/// Local copy of the current WU's search parameter "Right-Ascension" (degrees)
 	string m_WUSkyPosRightAscension;
@@ -165,4 +165,4 @@ private:
  * @}
  */
 
-#endif /*STARSPHERES5R3_H_*/
+#endif /*StarsphereGravity_H_*/

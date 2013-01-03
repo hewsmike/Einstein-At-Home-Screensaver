@@ -35,7 +35,7 @@ AbstractGraphicsEngine* GraphicsEngineFactory::createInstance(
 #ifdef SOLARSYSTEM
         case SolarSystem :
             switch(application) {
-                case EinsteinS5R3 :
+                case EinsteinGravity :
                     return new SolarSystemGravity();
                     break;
                 case EinsteinRadio :
@@ -53,8 +53,8 @@ AbstractGraphicsEngine* GraphicsEngineFactory::createInstance(
 #ifdef STARSPHERE
         case Starsphere:
             switch(application) {
-                case EinsteinS5R3 :
-                    return new StarsphereS5R3();
+                case EinsteinGravity :
+                    return new StarsphereGravity();
                     break;
                 case EinsteinRadio :
                     return new StarsphereRadio();

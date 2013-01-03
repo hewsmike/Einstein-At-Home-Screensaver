@@ -39,7 +39,7 @@
 #include <util.h>
 
 #include "AbstractGraphicsEngine.h"
-#include "EinsteinS5R3Adapter.h"
+#include "EinsteinGravityAdapter.h"
 
 // SIN and COS take arguments in DEGREES
 #define PI 3.14159265
@@ -163,7 +163,7 @@ protected:
     * This abtract method is to be defined by derived classes implementing
     * the science run specific logo rendering.
     */
-   inline virtual void renderLogo() = 0;
+   virtual void renderLogo() = 0;
 
    /**
     * \brief Render science run specific search information
@@ -174,7 +174,7 @@ protected:
     * Note: for this engine this also includes the "BOINC Statistics"
     * as it is top-aligned to the "Search Information".
     */
-   inline virtual void renderSearchInformation() = 0;
+   virtual void renderSearchInformation() = 0;
 
    /**
     * \brief Render additional observatories
@@ -188,7 +188,7 @@ protected:
     *
     * \see StarsphereRadio::renderAdditionalObservatories()
     */
-   inline virtual void renderAdditionalObservatories();
+   virtual void renderAdditionalObservatories();
 
    /**
     * \brief This method has to be called in order to update the BOINC client information
@@ -250,7 +250,7 @@ protected:
     * \see Starsphere::Features
     * \see Starsphere::setFeature()
     */
-   inline bool isFeature(const Features feature);
+   bool isFeature(const Features feature);
 
    /**
     * \brief Computes the Right Ascension of the zenith at a given time (from

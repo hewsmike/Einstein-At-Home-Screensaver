@@ -18,22 +18,22 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "StarsphereS5R3.h"
+#include "StarsphereGravity.h"
 
 #include <time.h>
 
-StarsphereS5R3::StarsphereS5R3() :
-	Starsphere(EinsteinS5R3Adapter::SharedMemoryIdentifier),
+StarsphereGravity::StarsphereGravity() :
+	Starsphere(EinsteinGravityAdapter::SharedMemoryIdentifier),
 	m_EinsteinAdapter(&m_BoincAdapter)
 {
 	m_CurrentTime = "";
 }
 
-StarsphereS5R3::~StarsphereS5R3()
+StarsphereGravity::~StarsphereGravity()
 {
 }
 
-void StarsphereS5R3::initialize(const int width, const int height, const Resource *font, const bool recycle)
+void StarsphereGravity::initialize(const int width, const int height, const Resource *font, const bool recycle)
 {
 	Starsphere::initialize(width, height, font, recycle);
 
@@ -81,7 +81,7 @@ void StarsphereS5R3::initialize(const int width, const int height, const Resourc
 	generateObservatories(1.0);
 }
 
-void StarsphereS5R3::resize(const int width, const int height)
+void StarsphereGravity::resize(const int width, const int height)
 {
 	Starsphere::resize(width, height);
 
@@ -90,7 +90,7 @@ void StarsphereS5R3::resize(const int width, const int height)
 	m_XStartPosClock = width - 98;
 }
 
-void StarsphereS5R3::refreshBOINCInformation()
+void StarsphereGravity::refreshBOINCInformation()
 {
 	// call base class implementation
 	Starsphere::refreshLocalBOINCInformation();
@@ -150,7 +150,7 @@ void StarsphereS5R3::refreshBOINCInformation()
 	m_CurrentTime = string(cBuffer);
 }
 
-void StarsphereS5R3::renderSearchInformation()
+void StarsphereGravity::renderSearchInformation()
 {
 		// clock
 		m_FontLogo1->draw(m_XStartPosClock, m_YStartPosTop, m_CurrentTime.c_str());
@@ -170,13 +170,13 @@ void StarsphereS5R3::renderSearchInformation()
 		m_FontText->draw(m_XStartPosRight, m_Y4StartPosBottom, m_WUCPUTime.c_str());
 }
 
-void StarsphereS5R3::generateObservatories(float dimFactor)
+void StarsphereGravity::generateObservatories(float dimFactor)
 {
 	// we don't do anything special here, just call base class
 	Starsphere::generateObservatories(dimFactor);
 }
 
-void StarsphereS5R3::renderLogo()
+void StarsphereGravity::renderLogo()
 {
 	m_FontLogo1->draw(m_XStartPosLeft, m_YStartPosTop, "Einstein@Home");
 	m_FontLogo2->draw(m_XStartPosLeft, m_YStartPosTop - m_YOffsetLarge, "World Year of Physics 2005");

@@ -18,12 +18,12 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef SOLARSYSTEMRADIO_H_
-#define SOLARSYSTEMRADIO_H_
+#ifndef SOLARSYSTEM_RADIO_H_
+#define SOLARSYSTEM_RADIO_H_
 
 #include "SimulationRadio.h"
 #include "SolarSystem.h"
-#include "EinsteinS5R3Adapter.h"
+#include "EinsteinRadioAdapter.h"
 
 /**
  * \addtogroup solarsystem SolarSystem
@@ -93,11 +93,11 @@ class SolarSystemRadio : public SolarSystem {
         SimulationRadio sim;
 
         /// Specialized BOINC client adapter instance for information retrieval
-        EinsteinS5R3Adapter m_EinsteinAdapter;
+        EinsteinRadioAdapter m_EinsteinAdapter;
     };
 
 /**
  * @}
  */
 
-#endif /*SOLARSYSTEMRADIO_H_*/
+#endif /*SOLARSYSTEM_RADIO_H_*/

@@ -18,12 +18,12 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef SOLARSYSTEMGAMMA_H_
-#define SOLARSYSTEMGAMMA_H_
+#ifndef SOLARSYSTEM_GAMMA_H_
+#define SOLARSYSTEM_GAMMA_H_
 
 #include "SimulationGamma.h"
 #include "SolarSystem.h"
-#include "EinsteinS5R3Adapter.h"
+// #include "EinsteinGammaAdapter.h"
 
 /**
  * \addtogroup solarsystem SolarSystem
@@ -93,11 +93,11 @@ class SolarSystemGamma : public SolarSystem {
         SimulationGamma sim;
 
         /// Specialized BOINC client adapter instance for information retrieval
-        EinsteinS5R3Adapter m_EinsteinAdapter;
+        // EinsteinS5R3Adapter m_EinsteinAdapter;
     };
 
 /**
  * @}
  */
 
-#endif /*SOLARSYSTEMGAMMA_H_*/
+#endif /*SOLARSYSTEM_GAMMA_H_*/

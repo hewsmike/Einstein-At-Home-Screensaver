@@ -18,12 +18,12 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef SOLARSYSTEMS5R3_H_
-#define SOLARSYSTEMS5R3_H_
+#ifndef SOLARSYSTEM_GRAVITY_H_
+#define SOLARSYSTEM_GRAVITY_H_
 
 #include "SimulationGravity.h"
 #include "SolarSystem.h"
-#include "EinsteinS5R3Adapter.h"
+#include "EinsteinGravityAdapter.h"
 
 /**
  * \addtogroup solarsystem SolarSystem
@@ -93,11 +93,11 @@ class SolarSystemGravity : public SolarSystem {
         SimulationGravity sim;
 
         /// Specialized BOINC client adapter instance for information retrieval
-        EinsteinS5R3Adapter m_EinsteinAdapter;
+        EinsteinGravityAdapter m_EinsteinAdapter;
 };
 
 /**
  * @}
  */
 
-#endif /*SOLARSYSTEMS5R3_H_*/
+#endif /*SOLARSYSTEM_GRAVITY_H_*/

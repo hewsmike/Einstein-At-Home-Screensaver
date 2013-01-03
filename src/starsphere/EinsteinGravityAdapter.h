@@ -18,8 +18,8 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef EINSTEINS5R3ADAPTER_H_
-#define EINSTEINS5R3ADAPTER_H_
+#ifndef EINSTEIN_GRAVITY_ADAPTER_H_
+#define EINSTEIN_GRAVITY_ADAPTER_H_
 
 #include <string>
 
@@ -45,17 +45,17 @@ using namespace std;
  * Hannover, Germany
  */
 
-class EinsteinS5R3Adapter {
+class EinsteinGravityAdapter {
    public:
       /**
        * \brief Constructor
        *
        * \param boincClient Pointer to the parent BOINC client adapter instance
        */
-      EinsteinS5R3Adapter(BOINCClientAdapter* boincClient);
+      EinsteinGravityAdapter(BOINCClientAdapter* boincClient);
 
       /// Destructor
-      virtual ~EinsteinS5R3Adapter();
+      virtual ~EinsteinGravityAdapter();
 
       /**
        * \brief Refreshes dynamic data (e.g. search information)
@@ -129,4 +129,4 @@ class EinsteinS5R3Adapter {
  * @}
  */
 
-#endif /*EINSTEINS5R3ADAPTER_H_*/
+#endif /*EINSTEIN_GRAVITY_ADAPTER_H_*/
