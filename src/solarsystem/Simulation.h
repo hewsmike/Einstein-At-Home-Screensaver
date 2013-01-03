@@ -361,7 +361,7 @@ class Simulation : public Renderable {
         /// The realtime clock instance.
         UTC clock;
 
-        /// Pointers to logo images used on the
+        /// Pointers to logo type images used on the
         /// generic portion of the HUD.
         HUDImage* aei_image;
         HUDImage* aps_image;
