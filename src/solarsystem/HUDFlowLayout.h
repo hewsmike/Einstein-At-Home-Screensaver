@@ -171,7 +171,7 @@ class HUDFlowLayout : public HUDContainer {
         /** brief Determine how many of, and how wide are, the
          *         whitespace gaps as per the justification setting.
          */
-        void setPrimaryAxisGaps(void);
+        void setGaps(void);
 
         GLuint setSideGap(secondaryJustification just, GLuint gap_total);
 
