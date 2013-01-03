@@ -21,7 +21,7 @@
 #include "SolarSystemRadio.h"
 
 SolarSystemRadio::SolarSystemRadio() :
-	SolarSystem(EinsteinS5R3Adapter::SharedMemoryIdentifier),
+	SolarSystem(EinsteinRadioAdapter::SharedMemoryIdentifier),
 	m_EinsteinAdapter(&m_BoincAdapter) {
     }
 

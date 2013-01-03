@@ -20,7 +20,7 @@
 #include "SolarSystemGravity.h"
 
 SolarSystemGravity::SolarSystemGravity() :
-	SolarSystem(EinsteinS5R3Adapter::SharedMemoryIdentifier),
+	SolarSystem(EinsteinGravityAdapter::SharedMemoryIdentifier),
 	m_EinsteinAdapter(&m_BoincAdapter) {
    }
 

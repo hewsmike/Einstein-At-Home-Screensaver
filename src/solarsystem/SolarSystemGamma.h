@@ -23,7 +23,7 @@
 
 #include "SimulationGamma.h"
 #include "SolarSystem.h"
-// #include "EinsteinGammaAdapter.h"
+#include "EinsteinRadioAdapter.h"
 
 /**
  * \addtogroup solarsystem SolarSystem
@@ -93,7 +93,7 @@ class SolarSystemGamma : public SolarSystem {
         SimulationGamma sim;
 
         /// Specialized BOINC client adapter instance for information retrieval
-        // EinsteinS5R3Adapter m_EinsteinAdapter;
+        EinsteinRadioAdapter m_EinsteinAdapter;
     };
 
 /**

@@ -18,11 +18,11 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "EinsteinS5R3Adapter.h"
+#include "EinsteinGravityAdapter.h"
 
-const string EinsteinS5R3Adapter::SharedMemoryIdentifier = "EinsteinHS";
+const string EinsteinGravityAdapter::SharedMemoryIdentifier = "EinsteinHS";
 
-EinsteinS5R3Adapter::EinsteinS5R3Adapter(BOINCClientAdapter *boincClient)
+EinsteinGravityAdapter::EinsteinGravityAdapter(BOINCClientAdapter *boincClient)
 {
 	this->boincClient = boincClient;
 
@@ -32,17 +32,17 @@ EinsteinS5R3Adapter::EinsteinS5R3Adapter(BOINCClientAdapter *boincClient)
 	m_WUCPUTime = 0.0;
 }
 
-EinsteinS5R3Adapter::~EinsteinS5R3Adapter()
+EinsteinGravityAdapter::~EinsteinGravityAdapter()
 {
 }
 
-void EinsteinS5R3Adapter::refresh()
+void EinsteinGravityAdapter::refresh()
 {
 	boincClient->refresh();
 	parseApplicationInformation();
 }
 
-void EinsteinS5R3Adapter::parseApplicationInformation()
+void EinsteinGravityAdapter::parseApplicationInformation()
 {
 	// get updated application information
 	string info = boincClient->applicationInformation();
@@ -72,22 +72,22 @@ void EinsteinS5R3Adapter::parseApplicationInformation()
 	}
 }
 
-double EinsteinS5R3Adapter::wuSkyPosRightAscension() const
+double EinsteinGravityAdapter::wuSkyPosRightAscension() const
 {
 	return m_WUSkyPosRightAscension;
 }
 
-double EinsteinS5R3Adapter::wuSkyPosDeclination() const
+double EinsteinGravityAdapter::wuSkyPosDeclination() const
 {
 	return m_WUSkyPosDeclination;
 }
 
-double EinsteinS5R3Adapter::wuFractionDone() const
+double EinsteinGravityAdapter::wuFractionDone() const
 {
 	return m_WUFractionDone;
 }
 
-double EinsteinS5R3Adapter::wuCPUTime() const
+double EinsteinGravityAdapter::wuCPUTime() const
 {
 	return m_WUCPUTime;
 }
