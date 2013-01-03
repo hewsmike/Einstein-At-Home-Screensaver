@@ -144,6 +144,30 @@ class Simulation : public Renderable {
         /// Provide OpenGL code to render the object.
         virtual void render(void);
 
+        /**
+         * \brief Render science run specific logo
+         *
+         * This abstract method is to be defined by derived classes implementing
+         * the science run specific logo rendering.
+         */
+        virtual void renderLogo(void) = 0;
+
+        /**
+         * \brief Render science run specific search information
+         *
+         * This abstract method is to be defined by derived classes implementing
+         * the science run specific search information handling and rendering.
+         */
+        virtual void renderSearchInformation(void) = 0;
+
+        /**
+         * \brief Render science run specific observatories
+         *
+         * This abstract method is to be defined by derived classes implementing
+         * the science run specific observatories handling and rendering.
+         */
+        virtual void renderObservatories(void) = 0;
+
     private:
         /// Enumerants for EAH pulsar file parsing
         enum line_content {NAME,

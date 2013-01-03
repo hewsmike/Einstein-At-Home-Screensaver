@@ -25,3 +25,12 @@ SimulationRadio::SimulationRadio(void) {
 
 SimulationRadio::~SimulationRadio() {
     }
+
+void SimulationRadio::renderLogo(void) {
+    }
+
+void SimulationRadio::renderSearchInformation(void) {
+    }
+
+void SimulationRadio::renderObservatories(void) {
+    }

@@ -25,3 +25,12 @@ SimulationGamma::SimulationGamma(void) {
 
 SimulationGamma::~SimulationGamma() {
     }
+
+void SimulationGamma::renderLogo(void) {
+    }
+
+void SimulationGamma::renderSearchInformation(void) {
+    }
+
+void SimulationGamma::renderObservatories(void) {
+    }

@@ -536,6 +536,8 @@ void Simulation::render(void) {
         glRotatef(earth_hour_angle, 0, 0, 1);
         earth.draw();
         earth_grid.draw();
+        // Observatories are rendered with respect to Earth elements.
+        renderObservatories();
     glPopMatrix();
 
     glPushMatrix();

@@ -45,15 +45,6 @@ void SolarSystemGamma::refreshBOINCInformation(void) {
    m_EinsteinAdapter.refresh();
    }
 
-void SolarSystemGamma::renderSearchInformation(void) {
-   }
-
-void SolarSystemGamma::generateObservatories(void) {
-   }
-
-void SolarSystemGamma::renderLogo(void) {
-   }
-
 Simulation& SolarSystemGamma::simulationInstance(void) {
     return sim;
     }

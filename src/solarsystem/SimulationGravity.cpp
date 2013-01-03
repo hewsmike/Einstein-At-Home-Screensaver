@@ -25,3 +25,12 @@ SimulationGravity::SimulationGravity(void) {
 
 SimulationGravity::~SimulationGravity() {
     }
+
+void SimulationGravity::renderLogo(void) {
+    }
+
+void SimulationGravity::renderSearchInformation(void) {
+    }
+
+void SimulationGravity::renderObservatories(void) {
+    }

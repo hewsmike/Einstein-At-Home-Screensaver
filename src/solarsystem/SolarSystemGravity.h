@@ -41,78 +41,59 @@
  * also positioned and rendered here.
  *
  */
-class SolarSystemGravity : public SolarSystem
-{
-public:
-	/// Default contructor
-	SolarSystemGravity();
+class SolarSystemGravity : public SolarSystem {
+    public:
+        /// Default contructor
+        SolarSystemGravity();
 
-	/// Destructor
-	virtual ~SolarSystemGravity();
+        /// Destructor
+        virtual ~SolarSystemGravity();
 
-	/**
-	 * \brief This method is called to initialize the engine
-	 *
-	 * As this method overrides its parent's implementation, it calls SolarSystem::initialize()
-	 * first in order to "add" the specialized parts afterwards.
-	 *
-	 * \param width The current width of the display surface
-	 * \param height The current height of the display surface
-	 * \param font A pointer to a Resource object containing TTF font faces for text rendering
-	 * \param recycle This flag indicates whether we initialize (FALSE) or reinitialize (TRUE) the context
-	 */
-	virtual void initialize(const int width, const int height, const Resource *font, const bool recycle = false);
+        /**
+         * \brief This method is called to initialize the engine
+         *
+         * As this method overrides its parent's implementation, it calls SolarSystem::initialize()
+         * first in order to "add" the specialized parts afterwards.
+         *
+         * \param width The current width of the display surface
+         * \param height The current height of the display surface
+         * \param font A pointer to a Resource object containing TTF font faces for text rendering
+         * \param recycle This flag indicates whether we initialize (FALSE) or reinitialize (TRUE) the context
+         */
+        virtual void initialize(const int width, const int height, const Resource *font, const bool recycle = false);
 
-	/**
-	 * \brief This method is called when the windowing system encounters a window resize event
-	 *
-	 * As this method overrides its parent's implementation, it calls SolarSystem::resize()
-	 * first in order to "add" the specialized parts afterwards.
-	 *
-	 * \param width The new width of the display surface
-	 * \param height The new height of the display surface
-	 */
-	void resize(const int width, const int height);
+        /**
+         * \brief This method is called when the windowing system encounters a window resize event
+         *
+         * As this method overrides its parent's implementation, it calls SolarSystem::resize()
+         * first in order to "add" the specialized parts afterwards.
+         *
+         * \param width The new width of the display surface
+         * \param height The new height of the display surface
+         */
+        void resize(const int width, const int height);
 
-	/**
-	 * \brief This method is called when the BOINC client information should be updated
-	 *
-	 * This method implements AbstractGraphicsEngine::refreshBOINCInformation() and calls
-	 * SolarSystem::refreshLocalBOINCInformation() first and "adds" the sepcialized
-	 * parts afterwards.
-	 *
-	 * \see AbstractGraphicsEngine::refreshBOINCInformation()
-	 * \see SolarSystem::refreshLocalBOINCInformation()
-	 */
-	void refreshBOINCInformation(void);
+        /**
+         * \brief This method is called when the BOINC client information should be updated
+         *
+         * This method implements AbstractGraphicsEngine::refreshBOINCInformation() and calls
+         * SolarSystem::refreshLocalBOINCInformation() first and "adds" the sepcialized
+         * parts afterwards.
+         *
+         * \see AbstractGraphicsEngine::refreshBOINCInformation()
+         * \see SolarSystem::refreshLocalBOINCInformation()
+         */
+        void refreshBOINCInformation(void);
 
-protected:
-    virtual Simulation& simulationInstance(void);
+    protected:
+        virtual Simulation& simulationInstance(void);
 
-private:
-	/**
-	 * \brief Render science run specific logo
-	 *
-	 * This specific implementation shows the usual "Einstein@Home" logo combined
-	 * with "World Year of Physics 2005" as subtitle
-	 */
-	inline void renderLogo(void);
+    private:
+        /// The 3D scene objects to be rendered.
+        SimulationGravity sim;
 
-	/**
-	 * \brief Render science run specific search information
-	 *
-	 * For this specific implementation this also includes the "BOINC Statistics"
-	 * as it is top-aligned to the "Search Information".
-	 */
-	inline void renderSearchInformation(void);
-
-    void generateObservatories(void);
-
-    /// The 3D scene objects to be rendered.
-    SimulationGravity sim;
-
-	/// Specialized BOINC client adapter instance for information retrieval
-	EinsteinS5R3Adapter m_EinsteinAdapter;
+        /// Specialized BOINC client adapter instance for information retrieval
+        EinsteinS5R3Adapter m_EinsteinAdapter;
 };
 
 /**

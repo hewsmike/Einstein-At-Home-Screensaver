@@ -49,6 +49,14 @@ class SimulationGravity : public Simulation {
          */
         virtual ~SimulationGravity();
 
+    protected:
+        // Satisfy Simulation interface methods.
+        void renderLogo(void);
+
+        void renderSearchInformation(void);
+
+        void renderObservatories(void);
+
     private:
     };
 

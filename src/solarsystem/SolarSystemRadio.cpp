@@ -43,14 +43,6 @@ void SolarSystemRadio::refreshBOINCInformation(void) {
 	// update local/specific content
 	m_EinsteinAdapter.refresh();
     }
-
-void SolarSystemRadio::renderSearchInformation(void) {
-	}
-
-void SolarSystemRadio::generateObservatories(void) {
-	}
-
-void SolarSystemRadio::renderLogo(void) {
 	}
 
 Simulation& SolarSystemRadio::simulationInstance(void) {

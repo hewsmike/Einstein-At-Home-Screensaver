@@ -138,28 +138,7 @@ class SolarSystem : public AbstractGraphicsEngine, public RenderQualityObserver 
          */
         SolarSystem(string sharedMemoryIdentifier);
 
-        /**
-         * \brief Render science run specific logo
-         *
-         * This abstract method is to be defined by derived classes implementing
-         * the science run specific logo rendering.
-         */
-        virtual void renderLogo() = 0;
-
-        /**
-         * \brief Render science run specific search information
-         *
-         * This abstract method is to be defined by derived classes implementing
-         * the science run specific search information handling and rendering.
-         *
-         * Note: for this engine this also includes the "BOINC Statistics"
-         * as it is top-aligned to the "Search Information".
-         */
-        virtual void renderSearchInformation() = 0;
-
         virtual void refreshLocalBOINCInformation(void);
-
-        virtual void generateObservatories() = 0;
 
         virtual Simulation& simulationInstance(void) = 0;
 

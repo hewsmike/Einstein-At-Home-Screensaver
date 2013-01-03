@@ -49,6 +49,14 @@ class SimulationGamma : public Simulation {
          */
         virtual ~SimulationGamma();
 
+    protected:
+        // Satisfy Simulation interface methods.
+        void renderLogo(void);
+
+        void renderSearchInformation(void);
+
+        void renderObservatories(void);
+
     private:
     };
 

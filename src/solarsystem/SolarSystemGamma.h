@@ -89,26 +89,8 @@ class SolarSystemGamma : public SolarSystem {
         virtual Simulation& simulationInstance(void);
 
     private:
-       /**
-        * \brief Render science run specific logo
-        *
-        * This specific implementation shows the usual "Einstein@Home" logo combined
-        * with "World Year of Physics 2005" as subtitle
-        */
-       inline void renderLogo(void);
-
-       /**
-        * \brief Render science run specific search information
-        *
-        * For this specific implementation this also includes the "BOINC Statistics"
-        * as it is top-aligned to the "Search Information".
-        */
-       inline void renderSearchInformation(void);
-
         /// The 3D scene objects to be rendered.
         SimulationRadio sim;
-
-        void generateObservatories(void);
 
         /// Specialized BOINC client adapter instance for information retrieval
         EinsteinS5R3Adapter m_EinsteinAdapter;
