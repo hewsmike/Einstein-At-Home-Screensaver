@@ -37,6 +37,7 @@
 #include "GreatCircle.h"
 #include "GridGlobe.h"
 #include "HUDBorderLayout.h"
+#include "HUDContainer.h"
 #include "HUDFlowLayout.h"
 #include "HUDImage.h"
 #include "HUDTextLineScroll.h"
@@ -381,6 +382,10 @@ class Simulation : public Renderable {
         HUDFlowLayout south_panel;
         HUDFlowLayout east_panel;
         HUDFlowLayout west_panel;
+
+        HUDFlowLayout south_west_panel;
+        HUDFlowLayout south_centre_panel;
+        HUDFlowLayout south_east_panel;
 
         /**
          * \brief Add an image as named by a Resource to a panel.

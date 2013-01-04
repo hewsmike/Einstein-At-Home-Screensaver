@@ -214,7 +214,16 @@ Simulation::Simulation(void) : cs(CONSTELLATIONS_RADIUS),
                                           HUDContainer::RETAIN),
                                west_panel(&overlay,
                                           HUDFlowLayout::VERTICAL,
-                                          HUDContainer::RETAIN) {
+                                          HUDContainer::RETAIN),
+                               south_west_panel(&southpanel,
+                                                HUDFlowLayout::VERTICAL,
+                                                HUDContainer::RETAIN),
+                               south_centre_panel(&southpanel,
+                                                  HUDFlowLayout::VERTICAL,
+                                                  HUDContainer::RETAIN),
+                               south_east_panel(&southpanel,
+                                                HUDFlowLayout::VERTICAL,
+                                                HUDContainer::RETAIN) {
     // Starting values of simulation parameters.
     min60 = 0;
     hour24 = 0;
@@ -429,18 +438,30 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
     west_panel.setPrimaryJustification(HUDFlowLayout::CENTRE);
     west_panel.setSecondaryJustification(HUDFlowLayout::MIDDLE);
 
-    // Put the panels into the layout.
+    south_west_panel.setPrimaryJustification(HUDFlowLayout::END);
+    south_west_panel.setSecondaryJustification(HUDFlowLayout::PROXIMAL);
+    south_centre_panel.setPrimaryJustification(HUDFlowLayout::END);
+    south_centre_panel.setSecondaryJustification(HUDFlowLayout::MIDDLE);
+    south_east_panel.setPrimaryJustification(HUDFlowLayout::END);
+    south_east_panel.setSecondaryJustification(HUDFlowLayout::DISTAL);
+
+    // Put the panels into the border layout.
     overlay.setPanel(HUDBorderLayout::NORTH, &north_panel);
     overlay.setPanel(HUDBorderLayout::SOUTH, &south_panel);
     overlay.setPanel(HUDBorderLayout::EAST, &east_panel);
     overlay.setPanel(HUDBorderLayout::WEST, &west_panel);
 
+    // Within south panel put sub-panels.
+    south_panel.addContent(&south_east_panel);
+    south_panel.addContent(&south_centre_panel);
+    south_panel.addContent(&south_west_panel);
+
     // Create content and include into panels.
-    // loadImageToPanel(wyp_image, &west_panel, "wypTGA", 5, 5);
-    // loadImageToPanel(aps_image, &west_panel, "apsTGA", 5, 5);
+    loadImageToPanel(wyp_image, &south_west_panel, "wypTGA", 5, 5);
+    loadImageToPanel(aps_image, &south_east_panel, "apsTGA", 5, 5);
     // loadImageToPanel(aei_image, &east_panel, "aeiTGA", 5, 5);
     // loadImageToPanel(boinc_image, &south_panel, "boincTGA", 5, 5);
-    version_text = new HUDTextLineScroll(70,
+    version_text = new HUDTextLineScroll(50,
                                          "                  http://einstein.phys.uwm.edu",
                                          35, 10, HUDTextLineScroll::LEFT, 10);
     if(version_text == NULL) {
@@ -449,7 +470,7 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
         }
 
     // Put the content into the panel.
-    south_panel.addContent(version_text);
+    south_centre_panel.addContent(version_text);
 
     overlay.activate();
     }
