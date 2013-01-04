@@ -139,11 +139,11 @@ void HUDFlowLayout::allocateItemBases(void) {
             switch(ax) {
                 case HORIZONTAL :
                     secondary_axis_white_space = this->height() -
-                                                 (*item).second->height();
+                                                 (*item).second->minHeight();
                 break;
                 case VERTICAL :
                     secondary_axis_white_space = this->width() -
-                                                 (*item).second->width();
+                                                 (*item).second->minWidth();
                     break;
                 default:
                     // Shouldn't ever get here!!
@@ -179,15 +179,15 @@ void HUDFlowLayout::allocateItemBases(void) {
                 case HORIZONTAL :
                     (*item).second->reBase(this->horzBase() + primary_axis_coord,
                                            this->vertBase() + secondary_axis_coord);
-                    primary_axis_coord += (*item).second->width() + primary_axis_item_gap;
+                    primary_axis_coord += (*item).second->minWidth() + primary_axis_item_gap;
                     break;
                 case VERTICAL :
                     (*item).second->reBase(this->horzBase() + secondary_axis_coord,
-                                           this->vertBase +
-                                           this->height -
+                                           this->vertBase() +
+                                           this->minHeight() -
                                            primary_axis_coord -
-                                           (*item).second->height());
-                    primary_axis_coord += (*item).second->height() + primary_axis_item_gap;
+                                           (*item).second->minHeight());
+                    primary_axis_coord += (*item).second->minHeight() + primary_axis_item_gap;
                     break;
                 default:
                     // Shouldn't ever get here!!
@@ -230,7 +230,7 @@ void HUDFlowLayout::setPrimaryAxisGaps(void) {
 
     // For the items, what is the distribution of whitespace?
     // This depends upon the chosen primary justification style.
-    switch(primaryJustification) {
+    switch(primary_just) {
         case START:
             // There's only a single gap on the other side to the justification.
             primary_axis_gap_count = 1;
@@ -259,7 +259,7 @@ void HUDFlowLayout::setPrimaryAxisGaps(void) {
                 // With more than one item : one less gap than there are items.
                 primary_axis_gap_count = itemCount() - 1;
                 }
-            primary_axis_item_gap = primary_axis_total_white_space/gap_count;
+            primary_axis_item_gap = primary_axis_total_white_space/primary_axis_gap_count;
             primary_axis_start_offset = 0;
             break;
         case SPAN:

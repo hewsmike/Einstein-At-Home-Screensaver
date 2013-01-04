@@ -215,13 +215,13 @@ Simulation::Simulation(void) : cs(CONSTELLATIONS_RADIUS),
                                west_panel(&overlay,
                                           HUDFlowLayout::VERTICAL,
                                           HUDContainer::RETAIN),
-                               south_west_panel(&southpanel,
+                               south_west_panel(&south_panel,
                                                 HUDFlowLayout::VERTICAL,
                                                 HUDContainer::RETAIN),
-                               south_centre_panel(&southpanel,
+                               south_centre_panel(&south_panel,
                                                   HUDFlowLayout::VERTICAL,
                                                   HUDContainer::RETAIN),
-                               south_east_panel(&southpanel,
+                               south_east_panel(&south_panel,
                                                 HUDFlowLayout::VERTICAL,
                                                 HUDContainer::RETAIN) {
     // Starting values of simulation parameters.
@@ -431,8 +431,8 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
     // Set panel justifications.
     north_panel.setPrimaryJustification(HUDFlowLayout::START);
     north_panel.setSecondaryJustification(HUDFlowLayout::MIDDLE);
-    south_panel.setPrimaryJustification(HUDFlowLayout::CENTRE);
-    south_panel.setSecondaryJustification(HUDFlowLayout::MIDDLE);
+    south_panel.setPrimaryJustification(HUDFlowLayout::START_AND_END);
+    south_panel.setSecondaryJustification(HUDFlowLayout::END);
     east_panel.setPrimaryJustification(HUDFlowLayout::CENTRE);
     east_panel.setSecondaryJustification(HUDFlowLayout::MIDDLE);
     west_panel.setPrimaryJustification(HUDFlowLayout::CENTRE);
@@ -458,7 +458,7 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
 
     // Create content and include into panels.
     loadImageToPanel(wyp_image, &south_west_panel, "wypTGA", 5, 5);
-    loadImageToPanel(aps_image, &south_east_panel, "apsTGA", 5, 5);
+    // loadImageToPanel(aps_image, &south_east_panel, "apsTGA", 5, 5);
     // loadImageToPanel(aei_image, &east_panel, "aeiTGA", 5, 5);
     // loadImageToPanel(boinc_image, &south_panel, "boincTGA", 5, 5);
     version_text = new HUDTextLineScroll(50,
@@ -3095,7 +3095,6 @@ void Simulation::loadLookoutDataToPanels(void) {
     // Derive content according to the current position in the tour.
     // First put new content text, if any, into the north panel.
     north_panel.erase();
-    north_panel.setLoad(HUDFlowLayout::FIRST);
     const std::vector<std::string>& messages = pilot.getDescription();
     if(messages.size() != 0) {
         target.show();
@@ -3114,7 +3113,6 @@ void Simulation::loadLookoutDataToPanels(void) {
 
     // Then put new image(s), if any, into the west panel.
     west_panel.erase();
-    west_panel.setLoad(HUDFlowLayout::FIRST);
     const std::vector<std::string>& image_names = pilot.getImageResourceNames();
     int image_count = 0;
     for(std::vector<std::string>::const_iterator image_name = image_names.begin();
