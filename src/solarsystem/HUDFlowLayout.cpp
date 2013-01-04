@@ -29,13 +29,12 @@
 HUDFlowLayout::HUDFlowLayout(HUDContainer* enclosing, Axis axis, HUDContainer::Mode mode) :
                 HUDContainer(enclosing, mode),
                 ax(axis) {
-    gap_count = 0;
-    total_white_space = 0;
-    start_offset = 0;
-    item_gap = 0;
+    primary_axis_gap_count = 0;
+    primary_axis_total_white_space = 0;
+    primary_axis_start_offset = 0;
+    primary_axis_item_gap = 0;
     primary_just = CENTRE;
     secondary_just = MIDDLE;
-    load_dir = FIRST;
     }
 
 HUDFlowLayout::~HUDFlowLayout() {
@@ -121,197 +120,165 @@ std::pair<GLuint, GLuint> HUDFlowLayout::reassessMinimumDimensions(void) {
     }
 
 void HUDFlowLayout::allocateItemBases(void) {
-    /// TODO write cases to justify along the secondary axis.
-
-    // We only need to bother with this if there are items to render.
+    // We only need to bother with allocations
+    // if there are items to render.
     if(itemCount() > 0) {
+        // Determine the whitespace dispositions for the primary axis.
         setPrimaryAxisGaps();
 
-        // The settings apply for the case FIRST.
-        GLuint newHorz = horzBase();
-        GLuint newVert = vertBase();
-        GLint flip = 1;
-
-        // But if it is LAST ...
-        if(load_dir == LAST) {
-            /// TODO - this case is currently faulty.
-//            switch(ax) {
-//                case HORIZONTAL:
-//                    newHorz += width();
-//                    break;
-//                case VERTICAL:
-//                    // Default loading sense ( FIRST ) is from the top
-//                    // going downwards, so for LAST is from the bottom
-//                    // going upwards BUT we measure the vertical scale
-//                    // as zero at the bottom and increasing upwards.
-//                    newVert -= height();
-//                    break;
-//                default:
-//                    // Shouldn't ever get here!!
-//                    ErrorHandler::record("HUDFlowLayout::allocateItemBases() - bad switch case (load/last) reached (default)",
-//                                         ErrorHandler::FATAL);
-//                    break;
-//                }
-//            flip = -1;
-            }
-
-        // Offset added as per flow axis.
-        switch(ax) {
-            case HORIZONTAL:
-                newHorz += flip*start_offset;
-                break;
-            case VERTICAL:
-                newVert += flip*start_offset;
-                break;
-            default:
-                // Shouldn't ever get here!!
-                ErrorHandler::record("HUDFlowLayout::allocateItemBases() - bad switch case (offset) reached (default)",
-                                     ErrorHandler::FATAL);
-                break;
-            }
+        // Initial settings for placement of any items.
+        GLuint primary_axis_coord = primary_axis_start_offset;
+        GLuint secondary_axis_coord = 0;
 
         // Then contents are placed in the order of their insertion.
         std::map<int, HUDItem*>& container = getMap();
         for(std::map<int, HUDItem*>::iterator item = container.begin();
             item != container.end(); ++item) {
-            // Place the current content.
-
-            // Shift to next insert position by the dimensions of this content plus any gap,
-            // accounting for the flow axis and direction of load.
+            // Determine offset in secondary axis for this item.
+            GLuint secondary_axis_white_space = 0;
             switch(ax) {
-                case HORIZONTAL:
-                    (*item).second->reBase(newHorz,
-                                           newVert + setSecondaryAxisGaps(secondary_just, this->height() - (*item).second->minHeight()));
-                    newHorz += flip*((*item).second->minWidth() + item_gap);
-                    break;
-                case VERTICAL:
-                    {
-                    GLuint temp_minWidth = (*item).second->minWidth();
-                    GLuint temp_horz = newHorz + setSecondaryAxisGaps(secondary_just, this->width() - temp_minWidth);
-
-                    HUDItem* ptr = (*item).second;
-
-                    ptr->reBase(temp_horz, newVert);
-                    newVert += flip*(ptr->minHeight() + item_gap);
-                    }
+                case HORIZONTAL :
+                    secondary_axis_white_space = this->height() -
+                                                 (*item).second->height();
+                break;
+                case VERTICAL :
+                    secondary_axis_white_space = this->width() -
+                                                 (*item).second->width();
                     break;
                 default:
                     // Shouldn't ever get here!!
-                    ErrorHandler::record("HUDFlowLayout::allocateItemBases() - bad switch case (axis) reached (default)",
+                    ErrorHandler::record("HUDFlowLayout::allocateItemBases() - bad switch (1) case ( axis ) reached (default)",
+                                     ErrorHandler::FATAL);
+                    break;
+                }
+
+            // For a given amount of secondary axis whitespace then
+            // how is that to be divided? That depends upon secondary
+            // axis justification.
+            switch(secondary_just) {
+                case PROXIMAL:
+                    secondary_axis_coord = 0;
+                    break;
+                case MIDDLE:
+                    secondary_axis_coord = secondary_axis_white_space/2;
+                    break;
+                case DISTAL:
+                    secondary_axis_coord = secondary_axis_white_space;
+                    break;
+                default:
+                    // Shouldn't ever get here!!
+                    ErrorHandler::record("HUDFlowLayout::allocateItemBases() - bad switch case ( secondary justification ) reached (default)",
+                                 ErrorHandler::FATAL);
+                    break;
+                }
+
+            // Place the current content, as per primary axis choice,
+            // followed by a shift to next insert position according to
+            // the dimensions of the current item's content plus any gap.
+            switch(ax) {
+                case HORIZONTAL :
+                    (*item).second->reBase(this->horzBase() + primary_axis_coord,
+                                           this->vertBase() + secondary_axis_coord);
+                    primary_axis_coord += (*item).second->width() + primary_axis_item_gap;
+                    break;
+                case VERTICAL :
+                    (*item).second->reBase(this->horzBase() + secondary_axis_coord,
+                                           this->vertBase +
+                                           this->height -
+                                           primary_axis_coord -
+                                           (*item).second->height());
+                    primary_axis_coord += (*item).second->height() + primary_axis_item_gap;
+                    break;
+                default:
+                    // Shouldn't ever get here!!
+                    ErrorHandler::record("HUDFlowLayout::allocateItemBases() - bad switch (2) case ( axis ) reached (default)",
                                          ErrorHandler::FATAL);
-                break;
+                    break;
                 }
             }
         }
     }
 
 void HUDFlowLayout::setPrimaryAxisGaps(void) {
-    // Determine any available horizontal 'whitespace' b/w items. This is
+    // Determine any available primary axis 'whitespace' b/w items. This is
     // the amount above the minimum required for display. By design this
     // whitespace ought be non-negative, but let's check to be sure.
     switch(this->ax) {
         case HORIZONTAL:
             if(width() >= minWidth()) {
-                total_white_space = width() - minWidth();
+                primary_axis_total_white_space = width() - minWidth();
                 }
             else  {
-                ErrorHandler::record("HUDFlowLayout::setGaps() - negative horizontal whitespace!!",
+                ErrorHandler::record("HUDFlowLayout::setPrimaryAxisGaps() - negative horizontal whitespace!!",
                                      ErrorHandler::FATAL);
                 }
             break;
         case VERTICAL:
             if(height() >= minHeight()) {
-                total_white_space = height() - minHeight();
+                primary_axis_total_white_space = height() - minHeight();
                 }
             else {
-                ErrorHandler::record("HUDFlowLayout::setGaps() - negative vertical whitespace!!",
+                ErrorHandler::record("HUDFlowLayout::setPrimaryAxisGaps() - negative vertical whitespace!!",
                                      ErrorHandler::FATAL);
                 }
             break;
         default :
-            ErrorHandler::record("HUDFlowLayout::setGaps() - bad switch case reached (default)",
+            ErrorHandler::record("HUDFlowLayout::setPrimaryAxisGaps() - bad switch case ( axis ) reached (default)",
                                   ErrorHandler::FATAL);
             break;
         }
 
     // For the items, what is the distribution of whitespace?
     // This depends upon the chosen primary justification style.
-    switch(getPrimaryJustification()) {
+    switch(primaryJustification) {
         case START:
             // There's only a single gap on the other side to the justification.
-            gap_count = 1;
-            item_gap = 0;
-            start_offset = 0;
+            primary_axis_gap_count = 1;
+            primary_axis_item_gap = 0;
+            primary_axis_start_offset = 0;
             break;
         case END:
             // There's only a single gap on the other side to the justification.
-            gap_count = 1;
-            item_gap = 0;
-            start_offset = total_white_space;
+            primary_axis_gap_count = 1;
+            primary_axis_item_gap = 0;
+            primary_axis_start_offset = primary_axis_total_white_space;
             break;
         case CENTRE:
             // We put all items in the centre and then have whitespace either side.
-            gap_count = 2;
-            item_gap = 0;
-            start_offset = total_white_space/2;
+            primary_axis_gap_count = 2;
+            primary_axis_item_gap = 0;
+            primary_axis_start_offset = primary_axis_total_white_space/2;
             break;
         case START_AND_END:
             // Whitespace is distributed between all items, but none at either end.
             if(itemCount() == 1) {
                 // With one item : like a START case.
-                gap_count = 1;
+                primary_axis_gap_count = 1;
                 }
             else {
                 // With more than one item : one less gap than there are items.
-                gap_count = itemCount() - 1;
+                primary_axis_gap_count = itemCount() - 1;
                 }
-            item_gap = total_white_space/gap_count;
-            start_offset = 0;
+            primary_axis_item_gap = primary_axis_total_white_space/gap_count;
+            primary_axis_start_offset = 0;
             break;
         case SPAN:
             // Whitespace is distributed between all items, and some at either end.
             if(itemCount() == 1) {
                 // With one item : like a CENTRE case.
-                gap_count = 1;
+                primary_axis_gap_count = 1;
                 }
             else {
                 // With more than one item : one more gap than there are items.
-                gap_count = itemCount() + 1;
+                primary_axis_gap_count = itemCount() + 1;
                 }
-            item_gap = total_white_space/gap_count;
-            start_offset = item_gap/2;
+            primary_axis_item_gap = primary_axis_total_white_space/primary_axis_gap_count;
+            primary_axis_start_offset = primary_axis_item_gap/2;
             break;
         default:
             // Shouldn't ever get here!!
-            ErrorHandler::record("HUDFlowLayout::setGaps() - bad switch case reached (default)",
+            ErrorHandler::record("HUDFlowLayout::setPrimaryAxisGaps() - bad switch case ( primary justification ) reached (default)",
                                  ErrorHandler::FATAL);
             break;
         }
-    }
-
-void HUDFlowLayout::setLoad(load end) {
-    load_dir = end;
-    }
-
-GLuint HUDFlowLayout::setSecondaryAxisGaps(secondaryJustification just, GLuint gap_total) {
-    GLuint ret_val = 0;
-
-    switch(just) {
-        case PROXIMAL:
-            ret_val = 0;
-            break;
-        case MIDDLE:
-            ret_val = gap_total/2;
-            break;
-        case DISTAL:
-            ret_val = gap_total;
-            break;
-        default:
-            // Shouldn't ever get here!!
-            ErrorHandler::record("HUDFlowLayout::allocateItemBases() - bad switch case (horz/sec-adjust) reached (default)",
-                                 ErrorHandler::FATAL);
-            break;
-        }
-
-    return ret_val;
     }

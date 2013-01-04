@@ -95,9 +95,6 @@ class HUDFlowLayout : public HUDContainer {
         /// Enumerant to specify the flow axis.
         enum Axis {HORIZONTAL, VERTICAL};
 
-        /// Enumerant to specify which end of the axis to load into.
-        enum load {FIRST, LAST};
-
         /**
          * \brief Constructor
          */
@@ -143,13 +140,6 @@ class HUDFlowLayout : public HUDContainer {
          */
         HUDFlowLayout::secondaryJustification getSecondaryJustification(void) const;
 
-        /**
-         * \brief Set which end of the primary axis to load into.
-         *
-         * \param the desired end
-         */
-        void setLoad(load end);
-
     protected:
         /**
          * \brief Determine the miminum dimensions as per the internal
@@ -173,18 +163,15 @@ class HUDFlowLayout : public HUDContainer {
          */
         void setPrimaryAxisGaps(void);
 
-        GLuint setSecondaryAxisGaps(secondaryJustification just, GLuint gap_total);
-
-        GLuint gap_count;
-        GLuint total_white_space;
-        GLint start_offset;
-        GLint item_gap;
+        GLuint primary_axis_gap_count;
+        GLuint primary_axis_total_white_space;
+        GLint primary_axis_start_offset;
+        GLint primary_axis_item_gap;
 
         /// The axis and justification settings.
         Axis ax;
         primaryJustification primary_just;
         secondaryJustification secondary_just;
-        load load_dir;
     };
 
 /**
