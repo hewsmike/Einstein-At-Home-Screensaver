@@ -77,7 +77,7 @@ class SolarSystemGravity : public SolarSystem {
          * \brief This method is called when the BOINC client information should be updated
          *
          * This method implements AbstractGraphicsEngine::refreshBOINCInformation() and calls
-         * SolarSystem::refreshLocalBOINCInformation() first and "adds" the sepcialized
+         * SolarSystem::refreshLocalBOINCInformation() first and "adds" the specialized
          * parts afterwards.
          *
          * \see AbstractGraphicsEngine::refreshBOINCInformation()
@@ -89,12 +89,12 @@ class SolarSystemGravity : public SolarSystem {
         virtual Simulation& simulationInstance(void);
 
     private:
-        /// The 3D scene objects to be rendered.
-        SimulationGravity sim;
-
         /// Specialized BOINC client adapter instance for information retrieval
         EinsteinGravityAdapter m_EinsteinAdapter;
-};
+
+        /// The 3D scene objects to be rendered.
+        SimulationGravity sim;
+    };
 
 /**
  * @}

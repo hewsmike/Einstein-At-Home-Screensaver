@@ -20,12 +20,12 @@
 
 #include "SimulationGravity.h"
 
-SimulationGravity::SimulationGravity(void) {
-    // adapter(BOINCClientAdapter* boincClient);
+SimulationGravity::SimulationGravity(EinsteinGravityAdapter* adapter) :
+                                     EG_adapter(adapter) {
     }
 
 SimulationGravity::~SimulationGravity() {
-     if(ligo_image != NULL) {
+    if(ligo_image != NULL) {
         delete ligo_image;
         }
     }

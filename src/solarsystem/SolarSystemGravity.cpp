@@ -21,8 +21,9 @@
 
 SolarSystemGravity::SolarSystemGravity() :
 	SolarSystem(EinsteinGravityAdapter::SharedMemoryIdentifier),
-	m_EinsteinAdapter(&m_BoincAdapter) {
-   }
+	m_EinsteinAdapter(&m_BoincAdapter),
+	sim(m_EinsteinAdapter) {
+    }
 
 SolarSystemGravity::~SolarSystemGravity() {
    }

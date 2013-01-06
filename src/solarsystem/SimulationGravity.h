@@ -23,8 +23,6 @@
 
 #include "Simulation.h"
 
-#include "EinsteinGravityAdapter.h"
-
 /**
  * \addtogroup solarsystem Solarsystem
  * @{
@@ -44,7 +42,7 @@ class SimulationGravity : public Simulation {
         /**
          * \brief Constructor
          */
-        SimulationGravity(void);
+        SimulationGravity(EinsteinGravityAdapter* adapter);
 
         /**
          * \brief Destructor
@@ -64,7 +62,7 @@ class SimulationGravity : public Simulation {
         /// specific portion of the HUD.
         HUDImage* ligo_image;
 
-        // EinsteinGravityAdapter adapter;
+        EinsteinGravityAdapter* EG_adapter;
     };
 
 /**
