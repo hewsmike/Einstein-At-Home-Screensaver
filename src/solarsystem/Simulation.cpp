@@ -217,6 +217,12 @@ Simulation::Simulation(void) : cs(CONSTELLATIONS_RADIUS),
                                west_panel(&overlay,
                                           HUDFlowLayout::VERTICAL,
                                           HUDContainer::RETAIN),
+                               north_west_panel(&north_panel,
+                                                HUDFlowLayout::VERTICAL,
+                                                HUDContainer::RETAIN),
+                               north_east_panel(&north_panel,
+                                                HUDFlowLayout::HORIZONTAL,
+                                                HUDContainer::RETAIN),
                                south_west_panel(&south_panel,
                                                 HUDFlowLayout::VERTICAL,
                                                 HUDContainer::RETAIN),
@@ -430,6 +436,10 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
     south_panel.erase();
     east_panel.erase();
     west_panel.erase();
+
+    north_east_panel.erase();
+    north_west_panel.erase();
+
     south_east_panel.erase();
     south_west_panel.erase();
     south_centre_panel.erase();
@@ -456,6 +466,10 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
     overlay.setPanel(HUDBorderLayout::SOUTH, &south_panel);
     overlay.setPanel(HUDBorderLayout::EAST, &east_panel);
     overlay.setPanel(HUDBorderLayout::WEST, &west_panel);
+
+    // Within north panel put sub-panels.
+    north_panel.addItem(&north_east_panel);
+    north_panel.addItem(&north_west_panel);
 
     // Within south panel put sub-panels.
     south_panel.addItem(&south_west_panel);
@@ -3109,7 +3123,7 @@ std::vector<std::string> Simulation::parseLine(std::string input) const {
 void Simulation::loadLookoutDataToPanels(void) {
     // Derive content according to the current position in the tour.
     // First put new content text, if any, into the north panel.
-    north_panel.erase();
+    north_west_panel.erase();
     const std::vector<std::string>& messages = pilot.getDescription();
     if(messages.size() != 0) {
         target.show();
@@ -3119,22 +3133,22 @@ void Simulation::loadLookoutDataToPanels(void) {
             ++message) {
             HUDTextLine* line = new HUDTextLine(message->size(),
                                                 *message, 0, 2);
-            north_panel.addItem(line);
+            north_west_panel.addItem(line);
             ++line_count;
             }
         }
-    north_panel.activate();
+    north_west_panel.activate();
 
     // Then put new image(s), if any, into the west panel.
-    west_panel.erase();
+    north_east_panel.erase();
     const std::vector<std::string>& image_names = pilot.getImageResourceNames();
     int image_count = 0;
     for(std::vector<std::string>::const_iterator image_name = image_names.begin();
         image_name != image_names.end();
         ++image_name) {
         HUDImage* profile = new HUDImage(*image_name, 10, 10);
-        west_panel.addItem(profile);
+        north_east_panel.addItem(profile);
         ++image_count;
         }
-    west_panel.activate();
+    north_east_panel.activate();
     }
