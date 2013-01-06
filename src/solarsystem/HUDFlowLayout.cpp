@@ -25,6 +25,7 @@
 #include "HUDImage.h"
 
 #include <iostream>
+#include <sstream>
 
 HUDFlowLayout::HUDFlowLayout(HUDContainer* enclosing, Axis axis, HUDContainer::Mode mode) :
                 HUDContainer(enclosing, mode),
@@ -40,7 +41,7 @@ HUDFlowLayout::HUDFlowLayout(HUDContainer* enclosing, Axis axis, HUDContainer::M
 HUDFlowLayout::~HUDFlowLayout() {
     }
 
-void HUDFlowLayout::addContent(HUDItem* item) {
+void HUDFlowLayout::addItem(HUDItem* item) {
     // Only add if NULL wasn't passed.
     if(item != NULL) {
         // Just index these by their order of being added.
@@ -139,11 +140,11 @@ void HUDFlowLayout::allocateItemBases(void) {
             switch(ax) {
                 case HORIZONTAL :
                     secondary_axis_white_space = this->height() -
-                                                 (*item).second->minHeight();
-                break;
+                                                 (*item).second->height();
+                    break;
                 case VERTICAL :
                     secondary_axis_white_space = this->width() -
-                                                 (*item).second->minWidth();
+                                                 (*item).second->width();
                     break;
                 default:
                     // Shouldn't ever get here!!
@@ -179,15 +180,15 @@ void HUDFlowLayout::allocateItemBases(void) {
                 case HORIZONTAL :
                     (*item).second->reBase(this->horzBase() + primary_axis_coord,
                                            this->vertBase() + secondary_axis_coord);
-                    primary_axis_coord += (*item).second->minWidth() + primary_axis_item_gap;
+                    primary_axis_coord += (*item).second->width() + primary_axis_item_gap;
                     break;
                 case VERTICAL :
                     (*item).second->reBase(this->horzBase() + secondary_axis_coord,
                                            this->vertBase() +
-                                           this->minHeight() -
+                                           this->height() -
                                            primary_axis_coord -
-                                           (*item).second->minHeight());
-                    primary_axis_coord += (*item).second->minHeight() + primary_axis_item_gap;
+                                           (*item).second->height());
+                    primary_axis_coord += (*item).second->height() + primary_axis_item_gap;
                     break;
                 default:
                     // Shouldn't ever get here!!
@@ -203,6 +204,10 @@ void HUDFlowLayout::setPrimaryAxisGaps(void) {
     // Determine any available primary axis 'whitespace' b/w items. This is
     // the amount above the minimum required for display. By design this
     // whitespace ought be non-negative, but let's check to be sure.
+    primary_axis_total_white_space = 0;
+    primary_axis_gap_count = 0;
+    primary_axis_item_gap = 0;
+    primary_axis_start_offset = 0;
     switch(this->ax) {
         case HORIZONTAL:
             if(width() >= minWidth()) {
@@ -230,6 +235,7 @@ void HUDFlowLayout::setPrimaryAxisGaps(void) {
 
     // For the items, what is the distribution of whitespace?
     // This depends upon the chosen primary justification style.
+    stringstream msg;
     switch(primary_just) {
         case START:
             // There's only a single gap on the other side to the justification.

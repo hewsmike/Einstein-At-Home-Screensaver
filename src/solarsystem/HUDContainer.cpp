@@ -28,8 +28,6 @@
 
 HUDContainer::HUDContainer(HUDContainer* enclosing = NULL, Mode mode = RETAIN) :
                 HUDItem(),
-                wd(0),
-                ht(0),
                 mode_type(mode) {
     }
 
@@ -63,14 +61,6 @@ void HUDContainer::reBase(GLuint newHorz, GLuint newVert) {
 
 GLuint HUDContainer::itemCount(void) const {
     return container.size();
-    }
-
-GLuint HUDContainer::width(void) const {
-    return wd;
-    }
-
-GLuint HUDContainer::height(void) const {
-    return ht;
     }
 
 bool HUDContainer::isEmpty(void) const {
@@ -124,7 +114,7 @@ void HUDContainer::addItem(int handle, HUDItem* item) {
                              ErrorHandler::WARN);
         }
     else {
-        // If the given handle is not present in the map, nothing happens.
+        // If the given handle is not present in the map, erase has no effect.
         container.erase(handle);
 
         // Then put in a new key/value combo using pair semantics.
@@ -170,11 +160,6 @@ HUDItem* HUDContainer::getItem(int handle) {
     return ret_val;
     }
 
-void HUDContainer::setDimensions(GLuint newWidth, GLuint newHeight) {
-    // Set the new dimensions.
-    wd = newWidth;
-    ht = newHeight;
-    }
 
 void HUDContainer::prepare(SolarSystemGlobals::render_quality rq) {
     // Policy is that when a container is activated, then all

@@ -21,15 +21,22 @@
 #include "SimulationGravity.h"
 
 SimulationGravity::SimulationGravity(void) {
+    // adapter(BOINCClientAdapter* boincClient);
     }
 
 SimulationGravity::~SimulationGravity() {
+     if(ligo_image != NULL) {
+        delete ligo_image;
+        }
     }
 
-void SimulationGravity::renderLogo(void) {
+void SimulationGravity::includeLogo(HUDFlowLayout* container) {
+    loadImageToPanel(ligo_image, container, "ligoTGA", 5, 5);
     }
 
-void SimulationGravity::renderSearchInformation(void) {
+void SimulationGravity::includeSearchInformation(HUDFlowLayout* container) {
+    HUDTextLine* line = new HUDTextLine(15,"HELLO -", 0, 2);
+    container->addItem(line);
     }
 
 void SimulationGravity::renderObservatories(void) {

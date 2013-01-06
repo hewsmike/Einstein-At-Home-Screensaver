@@ -26,10 +26,10 @@ SimulationRadio::SimulationRadio(void) {
 SimulationRadio::~SimulationRadio() {
     }
 
-void SimulationRadio::renderLogo(void) {
+void SimulationRadio::includeLogo(HUDFlowLayout* container) {
     }
 
-void SimulationRadio::renderSearchInformation(void) {
+void SimulationRadio::includeSearchInformation(HUDFlowLayout* container) {
     }
 
 void SimulationRadio::renderObservatories(void) {

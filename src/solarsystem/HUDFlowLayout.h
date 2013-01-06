@@ -110,7 +110,7 @@ class HUDFlowLayout : public HUDContainer {
          *
          * \param content : a pointer to the desired content
          */
-        void addContent(HUDItem* item);
+        void addItem(HUDItem* item);
 
         /**
          * \brief Set the justification along the primary flow axis.

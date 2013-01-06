@@ -151,7 +151,7 @@ class Simulation : public Renderable {
          * This abstract method is to be defined by derived classes implementing
          * the science run specific logo rendering.
          */
-        virtual void renderLogo(void) = 0;
+        virtual void includeLogo(HUDFlowLayout* container) = 0;
 
         /**
          * \brief Render science run specific search information
@@ -159,7 +159,7 @@ class Simulation : public Renderable {
          * This abstract method is to be defined by derived classes implementing
          * the science run specific search information handling and rendering.
          */
-        virtual void renderSearchInformation(void) = 0;
+        virtual void includeSearchInformation(HUDFlowLayout* container) = 0;
 
         /**
          * \brief Render science run specific observatories
@@ -168,6 +168,19 @@ class Simulation : public Renderable {
          * the science run specific observatories handling and rendering.
          */
         virtual void renderObservatories(void) = 0;
+
+        /**
+         * \brief Add an image as named by a Resource to a panel.
+         *
+         * \param hip : pointer to a HUDImage to store within.
+         * \param hfl : pointer to a container to load into.
+         * \param resource_name : the name of the resource to load image data from.
+         * \param margin_width : the horizontal margin to apply around the image.
+         * \param margin_height : the vertical margin to apply around the image.
+         */
+        void loadImageToPanel(HUDImage* hip, HUDFlowLayout* hfl,
+                              std::string resource_name, GLuint margin_width,
+                              GLuint margin_height);
 
     private:
         /// Enumerants for EAH pulsar file parsing
@@ -304,6 +317,9 @@ class Simulation : public Renderable {
         static const GLfloat GALACTIC_LINE_BLUE;
         static const GLfloat GALACTIC_LINE_ALPHA;
 
+        /// How many frames between refreshes of WU data.
+        static const GLuint WU_DETAILS_REFRESH_INTERVAL;
+
         /**
          * \brief Load a list of general pulsar data
          */
@@ -387,18 +403,8 @@ class Simulation : public Renderable {
         HUDFlowLayout south_centre_panel;
         HUDFlowLayout south_east_panel;
 
-        /**
-         * \brief Add an image as named by a Resource to a panel.
-         *
-         * \param hip : pointer to a HUDImage to store within.
-         * \param hfl : pointer to a layout to load into.
-         * \param resource_name : the name of the resource to load image data from.
-         * \param margin_width : the horizontal margin to apply around the image.
-         * \param margin_height : the vertical margin to apply around the image.
-         */
-        void loadImageToPanel(HUDImage* hip, HUDFlowLayout* hfl,
-                              std::string resource_name, GLuint margin_width,
-                              GLuint margin_height);
+        /// The index of the current rendered frame ( since program start ).
+        GLuint frame_number;
 
         /**
          * \brief Obtain the file name containing pulsar data

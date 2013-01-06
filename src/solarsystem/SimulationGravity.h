@@ -23,6 +23,8 @@
 
 #include "Simulation.h"
 
+#include "EinsteinGravityAdapter.h"
+
 /**
  * \addtogroup solarsystem Solarsystem
  * @{
@@ -51,13 +53,18 @@ class SimulationGravity : public Simulation {
 
     protected:
         // Satisfy Simulation interface methods.
-        void renderLogo(void);
+        void includeLogo(HUDFlowLayout* container);
 
-        void renderSearchInformation(void);
+        void includeSearchInformation(HUDFlowLayout* container);
 
         void renderObservatories(void);
 
     private:
+        /// Pointers to logo image used on the
+        /// specific portion of the HUD.
+        HUDImage* ligo_image;
+
+        // EinsteinGravityAdapter adapter;
     };
 
 /**

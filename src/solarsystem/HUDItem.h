@@ -62,6 +62,20 @@ class HUDItem : public Renderable {
         virtual ~HUDItem();
 
         /**
+         * \brief Obtain the container's current width
+         *
+         * \return the width
+         */
+        GLuint width(void) const;
+
+        /**
+         * \brief Obtain the container's current height
+         *
+         * \return the height
+         */
+        GLuint height(void) const;
+
+        /**
          * \brief Obtain the minimum width
          *
          * \return the minimum width
@@ -126,7 +140,21 @@ class HUDItem : public Renderable {
          */
         void setMinimumDimensions(GLuint minWidth, GLuint minHeight);
 
+        /**
+         * \brief Unconditionally set the size of this container.
+         *
+         * \param newWidth : the desired width
+         * \param newHeight : the desired height
+         */
+        void setDimensions(GLuint newWidth, GLuint newHeight);
+
     private:
+        /// Current ACTUAL dimensions which can be used to calculate the
+        /// margin(s) above minima, and are thus available to distribute
+        /// b/w contents as justification.
+        GLuint wd;
+        GLuint ht;
+
         /// Current minimum dimensions.
         GLuint wd_min;
         GLuint ht_min;

@@ -26,10 +26,10 @@ SimulationGamma::SimulationGamma(void) {
 SimulationGamma::~SimulationGamma() {
     }
 
-void SimulationGamma::renderLogo(void) {
+void SimulationGamma::includeLogo(HUDFlowLayout* container) {
     }
 
-void SimulationGamma::renderSearchInformation(void) {
+void SimulationGamma::includeSearchInformation(HUDFlowLayout* container) {
     }
 
 void SimulationGamma::renderObservatories(void) {

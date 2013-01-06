@@ -101,20 +101,6 @@ class HUDContainer : public HUDItem {
         GLuint itemCount(void) const;
 
         /**
-         * \brief Obtain the container's current width
-         *
-         * \return the width
-         */
-        GLuint width(void) const;
-
-        /**
-         * \brief Obtain the container's current height
-         *
-         * \return the height
-         */
-        GLuint height(void) const;
-
-        /**
          * \brief Query whether anything is contained within
          *
          * \return boolean : indicating true if empty, false otherwise
@@ -175,13 +161,7 @@ class HUDContainer : public HUDItem {
          */
         virtual void allocateItemBases(void) = 0;
 
-        /**
-         * \brief Unconditionally set the size of this container.
-         *
-         * \param newWidth : the desired width
-         * \param newHeight : the desired height
-         */
-        void setDimensions(GLuint newWidth, GLuint newHeight);
+
 
         /// These three routines below satisfy the Renderable interface.
 
@@ -197,12 +177,6 @@ class HUDContainer : public HUDItem {
     private:
         /// Associative array b/w item pointers and integral labels.
         std::map<int, HUDItem*> container;
-
-        /// Current ACTUAL dimensions which can be used to calculate the
-        /// margin(s) above minima, and are thus available to distribute
-        /// b/w contents as justification.
-        GLuint wd;
-        GLuint ht;
 
         Mode mode_type;
     };

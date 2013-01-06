@@ -26,7 +26,9 @@ HUDItem::HUDItem(void) {
     // A safe assignment, independent of screen/window size.
     hz_base = 0;
     vt_base = 0;
-    // Set minimum size to zero.
+    // Set sizes to zero.
+    wd = 0;
+    ht = 0;
     wd_min = 0;
     ht_min = 0;
     // Assume no enclosing container.
@@ -34,6 +36,14 @@ HUDItem::HUDItem(void) {
     }
 
 HUDItem::~HUDItem() {
+    }
+
+GLuint HUDItem::width(void) const {
+    return wd;
+    }
+
+GLuint HUDItem::height(void) const {
+    return ht;
     }
 
 GLuint HUDItem::minWidth(void) const {
@@ -58,8 +68,25 @@ void HUDItem::reBase(GLuint newHorz, GLuint newVert) {
     }
 
 void HUDItem::setMinimumDimensions(GLuint minWidth, GLuint minHeight) {
+    // Set minimum dimensions, adjust dimensions upwards if need be.
     wd_min = minWidth;
+    if(wd_min > wd) {
+        wd = wd_min;
+        }
     ht_min = minHeight;
+    if(ht_min > ht) {
+        ht = ht_min;
+        }
+    }
+
+void HUDItem::setDimensions(GLuint newWidth, GLuint newHeight) {
+    // Set the new dimensions, but only above minimum.
+    if(newWidth >= wd_min) {
+        wd = newWidth;
+        }
+    if(newHeight >= ht_min) {
+        ht = newHeight;
+        }
     }
 
 void HUDItem::setEnclosingContainer(HUDContainer* enclosing) {

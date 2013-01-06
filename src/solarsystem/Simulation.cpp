@@ -136,6 +136,8 @@ const GLfloat Simulation::GALACTIC_LINE_GREEN(0.2f);
 const GLfloat Simulation::GALACTIC_LINE_BLUE(0.8f);
 const GLfloat Simulation::GALACTIC_LINE_ALPHA(0.25f);
 
+const GLuint Simulation::WU_DETAILS_REFRESH_INTERVAL(100);
+
 Simulation::Simulation(void) : cs(CONSTELLATIONS_RADIUS),
                                ps(PULSARS_RADIUS,
                                   PULSARS_MAG_SIZE,
@@ -211,7 +213,7 @@ Simulation::Simulation(void) : cs(CONSTELLATIONS_RADIUS),
                                            HUDContainer::RETAIN),
                                east_panel(&overlay,
                                           HUDFlowLayout::VERTICAL,
-                                          HUDContainer::RETAIN),
+                                          HUDContainer::DESTROY),
                                west_panel(&overlay,
                                           HUDFlowLayout::VERTICAL,
                                           HUDContainer::RETAIN),
@@ -225,6 +227,7 @@ Simulation::Simulation(void) : cs(CONSTELLATIONS_RADIUS),
                                                 HUDFlowLayout::VERTICAL,
                                                 HUDContainer::RETAIN) {
     // Starting values of simulation parameters.
+    frame_number = 0;
     min60 = 0;
     hour24 = 0;
     day366 = 0;
@@ -427,12 +430,15 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
     south_panel.erase();
     east_panel.erase();
     west_panel.erase();
+    south_east_panel.erase();
+    south_west_panel.erase();
+    south_centre_panel.erase();
 
     // Set panel justifications.
     north_panel.setPrimaryJustification(HUDFlowLayout::START);
     north_panel.setSecondaryJustification(HUDFlowLayout::MIDDLE);
     south_panel.setPrimaryJustification(HUDFlowLayout::START_AND_END);
-    south_panel.setSecondaryJustification(HUDFlowLayout::END);
+    south_panel.setSecondaryJustification(HUDFlowLayout::PROXIMAL);
     east_panel.setPrimaryJustification(HUDFlowLayout::CENTRE);
     east_panel.setSecondaryJustification(HUDFlowLayout::MIDDLE);
     west_panel.setPrimaryJustification(HUDFlowLayout::CENTRE);
@@ -452,25 +458,26 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
     overlay.setPanel(HUDBorderLayout::WEST, &west_panel);
 
     // Within south panel put sub-panels.
-    south_panel.addContent(&south_east_panel);
-    south_panel.addContent(&south_centre_panel);
-    south_panel.addContent(&south_west_panel);
+    south_panel.addItem(&south_west_panel);
+    south_panel.addItem(&south_centre_panel);
+    south_panel.addItem(&south_east_panel);
 
-    // Create content and include into panels.
-    loadImageToPanel(wyp_image, &south_west_panel, "wypTGA", 5, 5);
-    // loadImageToPanel(aps_image, &south_east_panel, "apsTGA", 5, 5);
-    // loadImageToPanel(aei_image, &east_panel, "aeiTGA", 5, 5);
-    // loadImageToPanel(boinc_image, &south_panel, "boincTGA", 5, 5);
-    version_text = new HUDTextLineScroll(50,
-                                         "                  http://einstein.phys.uwm.edu",
-                                         35, 10, HUDTextLineScroll::LEFT, 10);
+    version_text = new HUDTextLineScroll(35,
+                                         "               http://einstein.phys.uwm.edu",
+                                         10, 10, HUDTextLineScroll::LEFT, 10);
     if(version_text == NULL) {
         std::string msg = "Simulation::prepare() - failed creation of HUDTextLineScroll instance on heap";
         ErrorHandler::record(msg, ErrorHandler::FATAL);
         }
+    south_centre_panel.addItem(version_text);
 
-    // Put the content into the panel.
-    south_centre_panel.addContent(version_text);
+    // Create content and include into panels.
+    loadImageToPanel(wyp_image, &south_west_panel, "wypTGA", 5, 5);
+    loadImageToPanel(aps_image, &south_centre_panel, "apsTGA", 5, 5);
+    loadImageToPanel(aei_image, &south_east_panel, "aeiTGA", 5, 5);
+    loadImageToPanel(boinc_image, &south_west_panel, "boincTGA", 5, 5);
+
+    includeLogo(&south_east_panel);
 
     overlay.activate();
     }
@@ -510,6 +517,14 @@ void Simulation::release(void) {
     }
 
 void Simulation::render(void) {
+    // One more frame, and maybe get new content for WU detail display.
+    ++frame_number;
+    if((frame_number % WU_DETAILS_REFRESH_INTERVAL) == 0) {
+        east_panel.erase();
+        includeSearchInformation(&east_panel);
+        east_panel.activate();
+        }
+
     // Invoke the draw method for each scene element.
     cs.draw();
     ps.draw();
@@ -2900,7 +2915,7 @@ void Simulation::loadImageToPanel(HUDImage* hip, HUDFlowLayout* hfl,
         }
 
     // Put the content into the panel.
-    hfl->addContent(hip);
+    hfl->addItem(hip);
     }
 
 std::string Simulation::getEAHPulsarDataFileName(void) {
@@ -3102,10 +3117,9 @@ void Simulation::loadLookoutDataToPanels(void) {
         for(std::vector<std::string>::const_iterator message = messages.begin();
             message != messages.end();
             ++message) {
-            /// TODO - currently entering in reverse order ( see HUDFlowLayout::allocateItemBases() LAST case ).
             HUDTextLine* line = new HUDTextLine(message->size(),
                                                 *message, 0, 2);
-            north_panel.addItem(line_count, line);
+            north_panel.addItem(line);
             ++line_count;
             }
         }
@@ -3119,7 +3133,7 @@ void Simulation::loadLookoutDataToPanels(void) {
         image_name != image_names.end();
         ++image_name) {
         HUDImage* profile = new HUDImage(*image_name, 10, 10);
-        west_panel.addItem(image_count, profile);
+        west_panel.addItem(profile);
         ++image_count;
         }
     west_panel.activate();
