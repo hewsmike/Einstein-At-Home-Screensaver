@@ -137,8 +137,10 @@ const GLfloat Simulation::GALACTIC_LINE_BLUE(0.8f);
 const GLfloat Simulation::GALACTIC_LINE_ALPHA(0.25f);
 
 const GLuint Simulation::WU_DETAILS_REFRESH_INTERVAL(100);
+const GLuint Simulation::USER_DETAILS_REFRESH_INTERVAL(10*WU_DETAILS_REFRESH_INTERVAL);
 
-Simulation::Simulation(void) : cs(CONSTELLATIONS_RADIUS),
+Simulation::Simulation(BOINCClientAdapter* boinc_adapter) :
+                               cs(CONSTELLATIONS_RADIUS),
                                ps(PULSARS_RADIUS,
                                   PULSARS_MAG_SIZE,
                                   PULSARS_RGB_RED,
@@ -231,7 +233,8 @@ Simulation::Simulation(void) : cs(CONSTELLATIONS_RADIUS),
                                                   HUDContainer::RETAIN),
                                south_east_panel(&south_panel,
                                                 HUDFlowLayout::VERTICAL,
-                                                HUDContainer::RETAIN) {
+                                                HUDContainer::RETAIN),
+                               BC_adapter(boinc_adapter) {
     // Starting values of simulation parameters.
     frame_number = 0;
     min60 = 0;
@@ -531,12 +534,18 @@ void Simulation::release(void) {
     }
 
 void Simulation::render(void) {
-    // One more frame, and maybe get new content for WU detail display.
+    // One more frame, maybe get new content WU detail display.
     ++frame_number;
     if((frame_number % WU_DETAILS_REFRESH_INTERVAL) == 0) {
-        east_panel.erase();
+        // Work unit detail goes on east side.
         includeSearchInformation(&east_panel);
         east_panel.activate();
+        }
+
+    if((frame_number % USER_DETAILS_REFRESH_INTERVAL) == 0) {
+        // User and host detail goes on west side.
+        includeUserInformation(&west_panel);
+        west_panel.activate();
         }
 
     // Invoke the draw method for each scene element.
@@ -3151,4 +3160,14 @@ void Simulation::loadLookoutDataToPanels(void) {
         ++image_count;
         }
     north_east_panel.activate();
+    }
+
+void Simulation::includeUserInformation(HUDFlowLayout* container) {
+    // First empty of any existing content.
+    container.erase();
+
+    // Include declination value
+    string user_name << "User name : "
+                     <<  BC_adapter->userName();
+    container->addItem(new HUDTextLine(user_name.size(), user_name, 0, 2););
     }

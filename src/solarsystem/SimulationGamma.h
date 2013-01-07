@@ -42,7 +42,7 @@ class SimulationGamma : public Simulation {
         /**
          * \brief Constructor
          */
-        SimulationGamma(void);
+        SimulationGamma(BOINCClientAdapter* boinc_adapter);
 
         /**
          * \brief Destructor

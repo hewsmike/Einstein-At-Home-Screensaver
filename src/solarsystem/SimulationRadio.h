@@ -42,7 +42,7 @@ class SimulationRadio : public Simulation {
         /**
          * \brief Constructor
          */
-        SimulationRadio(void);
+        SimulationRadio(BOINCClientAdapter* boinc_adapter);
 
         /**
          * \brief Destructor

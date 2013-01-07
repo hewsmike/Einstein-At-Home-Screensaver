@@ -91,7 +91,7 @@ class Simulation : public Renderable {
         /**
          * \brief Constructor
          */
-        Simulation(void);
+        Simulation(BOINCClientAdapter* boinc_adapter);
 
         /**
          * \brief Destructor
@@ -320,6 +320,9 @@ class Simulation : public Renderable {
         /// How many frames between refreshes of WU data.
         static const GLuint WU_DETAILS_REFRESH_INTERVAL;
 
+        /// How many frames between refreshes of user data.
+        static const GLuint USER_DETAILS_REFRESH_INTERVAL;
+
         /**
          * \brief Load a list of general pulsar data
          */
@@ -409,6 +412,8 @@ class Simulation : public Renderable {
         /// The index of the current rendered frame ( since program start ).
         GLuint frame_number;
 
+        BOINCClientAdapter* BC_adapter;
+
         /**
          * \brief Obtain the file name containing pulsar data
          *
@@ -464,6 +469,11 @@ class Simulation : public Renderable {
          * \brief Insert the data from the current Lookout and place on HUD panels
          */
         void loadLookoutDataToPanels(void);
+
+        /**
+         * \brief Render general user and host information
+         */
+        void includeUserInformation(HUDFlowLayout* container);
     };
 
 /**

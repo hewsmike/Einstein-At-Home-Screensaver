@@ -20,7 +20,8 @@
 
 #include "SimulationGamma.h"
 
-SimulationGamma::SimulationGamma(void) {
+SimulationGamma::SimulationGamma(BOINCClientAdapter* boinc_adapter) :
+                 Simulation(boinc_adapter) {
     }
 
 SimulationGamma::~SimulationGamma() {

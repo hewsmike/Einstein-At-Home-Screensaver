@@ -72,4 +72,3 @@ class SimulationGravity : public Simulation {
  */
 
 #endif /* SIMULATION_GRAVITY_H_*/
-

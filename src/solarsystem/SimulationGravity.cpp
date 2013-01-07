@@ -23,7 +23,8 @@
 #include <iomanip>
 #include <sstream>
 
-SimulationGravity::SimulationGravity(EinsteinGravityAdapter* adapter) :
+SimulationGravity::SimulationGravity(BOINCClientAdapter* boinc_adapter, EinsteinGravityAdapter* adapter) :
+                                     Simulation(boinc_adapter),
                                      EG_adapter(adapter) {
     }
 
@@ -47,8 +48,7 @@ void SimulationGravity::includeSearchInformation(HUDFlowLayout* container) {
     msg_dec << "Declination : ";
     msg_dec.setf(std::ios::showpos | ios::fixed);
     msg_dec << std::setw(5) << std::setprecision(2) << declination;
-    HUDTextLine* line = new HUDTextLine(15,"Declination : ", 0, 2);
-    container->addItem(line);
+    container->addItem(new HUDTextLine(15,msg_dec.str(), 0, 2));
     }
 
 void SimulationGravity::renderObservatories(void) {

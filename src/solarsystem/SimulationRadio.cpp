@@ -20,7 +20,8 @@
 
 #include "SimulationRadio.h"
 
-SimulationRadio::SimulationRadio(void) {
+SimulationRadio::SimulationRadioSimulation(BOINCClientAdapter* boinc_adapter) :
+                 Simulation(boinc_adapter) {
     }
 
 SimulationRadio::~SimulationRadio() {
