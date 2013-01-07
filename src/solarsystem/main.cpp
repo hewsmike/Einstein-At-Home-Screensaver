@@ -76,7 +76,7 @@ int main(int argc, char **argv) {
 #ifdef SCIENCE_APP
     scienceApplication = GraphicsEngineFactory::SCIENCE_APP;
 #else
-    scienceApplication = GraphicsEngineFactory::EinsteinS5R3;
+    scienceApplication = GraphicsEngineFactory::EinsteinGravity;
 #endif
 
     // prepare main objects
