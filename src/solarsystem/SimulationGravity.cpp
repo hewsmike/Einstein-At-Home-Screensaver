@@ -20,6 +20,9 @@
 
 #include "SimulationGravity.h"
 
+#include <iomanip>
+#include <sstream>
+
 SimulationGravity::SimulationGravity(EinsteinGravityAdapter* adapter) :
                                      EG_adapter(adapter) {
     }
@@ -35,7 +38,16 @@ void SimulationGravity::includeLogo(HUDFlowLayout* container) {
     }
 
 void SimulationGravity::includeSearchInformation(HUDFlowLayout* container) {
-    HUDTextLine* line = new HUDTextLine(15,"HELLO -", 0, 2);
+    // First empty of any existing content.
+    container.erase();
+
+    // Include declination value
+    double declination = EG_adapter->wuSkyPosDeclination();
+    stringstream msg_dec;
+    msg_dec << "Declination : ";
+    msg_dec.setf(std::ios::showpos | ios::fixed);
+    msg_dec << std::setw(5) << std::setprecision(2) << declination;
+    HUDTextLine* line = new HUDTextLine(15,"Declination : ", 0, 2);
     container->addItem(line);
     }
 

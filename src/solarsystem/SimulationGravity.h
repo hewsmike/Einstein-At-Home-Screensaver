@@ -23,6 +23,8 @@
 
 #include "Simulation.h"
 
+#include "EinsteinGravityAdapter.h"
+
 /**
  * \addtogroup solarsystem Solarsystem
  * @{
