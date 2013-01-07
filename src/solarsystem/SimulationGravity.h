@@ -44,7 +44,7 @@ class SimulationGravity : public Simulation {
         /**
          * \brief Constructor
          */
-        SimulationGravity(EinsteinGravityAdapter* adapter);
+        SimulationGravity(BOINCClientAdapter* boinc_adapter, EinsteinGravityAdapter* adapter);
 
         /**
          * \brief Destructor

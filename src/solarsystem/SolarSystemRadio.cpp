@@ -22,8 +22,9 @@
 
 SolarSystemRadio::SolarSystemRadio() :
 	SolarSystem(EinsteinRadioAdapter::SharedMemoryIdentifier),
-	m_EinsteinAdapter(&m_BoincAdapter) {
-    }
+	m_EinsteinAdapter(&m_BoincAdapter),
+	sim(&m_BoincAdapter, &m_EinsteinAdapter) {
+	}
 
 SolarSystemRadio::~SolarSystemRadio() {
     }

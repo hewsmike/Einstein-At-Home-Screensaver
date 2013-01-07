@@ -20,8 +20,9 @@
 
 #include "SimulationGamma.h"
 
-SimulationGamma::SimulationGamma(BOINCClientAdapter* boinc_adapter) :
-                 Simulation(boinc_adapter) {
+SimulationGamma::SimulationGamma(BOINCClientAdapter* boinc_adapter, EinsteinRadioAdapter* adapter) :
+                 Simulation(boinc_adapter),
+                 EG_adapter(adapter) {
     }
 
 SimulationGamma::~SimulationGamma() {

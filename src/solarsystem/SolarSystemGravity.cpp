@@ -22,7 +22,7 @@
 SolarSystemGravity::SolarSystemGravity() :
 	SolarSystem(EinsteinGravityAdapter::SharedMemoryIdentifier),
 	m_EinsteinAdapter(&m_BoincAdapter),
-	sim(m_BoincAdapter, m_EinsteinAdapter) {
+	sim(&m_BoincAdapter, &m_EinsteinAdapter) {
     }
 
 SolarSystemGravity::~SolarSystemGravity() {

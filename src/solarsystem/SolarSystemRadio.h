@@ -89,11 +89,11 @@ class SolarSystemRadio : public SolarSystem {
         virtual Simulation& simulationInstance(void);
 
     private:
-        /// The 3D scene objects to be rendered.
-        SimulationRadio sim;
-
         /// Specialized BOINC client adapter instance for information retrieval
         EinsteinRadioAdapter m_EinsteinAdapter;
+
+        /// The 3D scene objects to be rendered.
+        SimulationRadio sim;
     };
 
 /**

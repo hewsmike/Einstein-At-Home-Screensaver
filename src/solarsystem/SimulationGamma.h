@@ -23,6 +23,8 @@
 
 #include "Simulation.h"
 
+#include "EinsteinRadioAdapter.h"
+
 /**
  * \addtogroup solarsystem Solarsystem
  * @{
@@ -42,7 +44,7 @@ class SimulationGamma : public Simulation {
         /**
          * \brief Constructor
          */
-        SimulationGamma(BOINCClientAdapter* boinc_adapter);
+        SimulationGamma(BOINCClientAdapter* boinc_adapter, EinsteinRadioAdapter* adapter);
 
         /**
          * \brief Destructor
@@ -58,6 +60,7 @@ class SimulationGamma : public Simulation {
         void renderObservatories(void);
 
     private:
+        EinsteinRadioAdapter* EG_adapter;
     };
 
 /**

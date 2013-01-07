@@ -20,8 +20,9 @@
 
 #include "SimulationRadio.h"
 
-SimulationRadio::SimulationRadioSimulation(BOINCClientAdapter* boinc_adapter) :
-                 Simulation(boinc_adapter) {
+SimulationRadio::SimulationRadio(BOINCClientAdapter* boinc_adapter, EinsteinRadioAdapter* adapter) :
+                 Simulation(boinc_adapter),
+                 EG_adapter(adapter) {
     }
 
 SimulationRadio::~SimulationRadio() {

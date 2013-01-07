@@ -208,7 +208,7 @@ Simulation::Simulation(BOINCClientAdapter* boinc_adapter) :
                                         72),
                                overlay(NULL, HUDContainer::RETAIN),
                                north_panel(&overlay,
-                                           HUDFlowLayout::VERTICAL,
+                                           HUDFlowLayout::HORIZONTAL,
                                            HUDContainer::RETAIN),
                                south_panel(&overlay,
                                            HUDFlowLayout::HORIZONTAL,
@@ -221,10 +221,10 @@ Simulation::Simulation(BOINCClientAdapter* boinc_adapter) :
                                           HUDContainer::DESTROY),
                                north_west_panel(&north_panel,
                                                 HUDFlowLayout::VERTICAL,
-                                                HUDContainer::RETAIN),
+                                                HUDContainer::DESTROY),
                                north_east_panel(&north_panel,
                                                 HUDFlowLayout::HORIZONTAL,
-                                                HUDContainer::RETAIN),
+                                                HUDContainer::DESTROY),
                                south_west_panel(&south_panel,
                                                 HUDFlowLayout::VERTICAL,
                                                 HUDContainer::RETAIN),
@@ -453,9 +453,14 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
     south_panel.setPrimaryJustification(HUDFlowLayout::START_AND_END);
     south_panel.setSecondaryJustification(HUDFlowLayout::PROXIMAL);
     east_panel.setPrimaryJustification(HUDFlowLayout::CENTRE);
-    east_panel.setSecondaryJustification(HUDFlowLayout::MIDDLE);
+    east_panel.setSecondaryJustification(HUDFlowLayout::DISTAL);
     west_panel.setPrimaryJustification(HUDFlowLayout::CENTRE);
-    west_panel.setSecondaryJustification(HUDFlowLayout::MIDDLE);
+    west_panel.setSecondaryJustification(HUDFlowLayout::PROXIMAL);
+
+    north_west_panel.setPrimaryJustification(HUDFlowLayout::START);
+    north_west_panel.setSecondaryJustification(HUDFlowLayout::PROXIMAL);
+    north_east_panel.setPrimaryJustification(HUDFlowLayout::END);
+    north_east_panel.setSecondaryJustification(HUDFlowLayout::DISTAL);
 
     south_west_panel.setPrimaryJustification(HUDFlowLayout::END);
     south_west_panel.setSecondaryJustification(HUDFlowLayout::PROXIMAL);
@@ -535,7 +540,6 @@ void Simulation::release(void) {
 
 void Simulation::render(void) {
     // One more frame, maybe get new content WU detail display.
-    ++frame_number;
     if((frame_number % WU_DETAILS_REFRESH_INTERVAL) == 0) {
         // Work unit detail goes on east side.
         includeSearchInformation(&east_panel);
@@ -547,6 +551,7 @@ void Simulation::render(void) {
         includeUserInformation(&west_panel);
         west_panel.activate();
         }
+    ++frame_number;
 
     // Invoke the draw method for each scene element.
     cs.draw();
@@ -3140,34 +3145,38 @@ void Simulation::loadLookoutDataToPanels(void) {
         for(std::vector<std::string>::const_iterator message = messages.begin();
             message != messages.end();
             ++message) {
-            HUDTextLine* line = new HUDTextLine(message->size(),
-                                                *message, 0, 2);
-            north_west_panel.addItem(line);
+            ErrorHandler::record("Simulation::loadLookoutDataToPanels()", ErrorHandler::INFORM);
+            north_west_panel.addItem(new HUDTextLine(message->size(), *message, 0, 2));
             ++line_count;
             }
         }
     north_west_panel.activate();
 
     // Then put new image(s), if any, into the west panel.
-    north_east_panel.erase();
-    const std::vector<std::string>& image_names = pilot.getImageResourceNames();
-    int image_count = 0;
-    for(std::vector<std::string>::const_iterator image_name = image_names.begin();
-        image_name != image_names.end();
-        ++image_name) {
-        HUDImage* profile = new HUDImage(*image_name, 10, 10);
-        north_east_panel.addItem(profile);
-        ++image_count;
-        }
-    north_east_panel.activate();
+//    north_east_panel.erase();
+//    const std::vector<std::string>& image_names = pilot.getImageResourceNames();
+//    int image_count = 0;
+//    for(std::vector<std::string>::const_iterator image_name = image_names.begin();
+//        image_name != image_names.end();
+//        ++image_name) {
+//        north_east_panel.addItem(new HUDImage(*image_name, 10, 10));
+//        ++image_count;
+//        }
+//    north_east_panel.activate();
+    north_panel.activate();
     }
 
 void Simulation::includeUserInformation(HUDFlowLayout* container) {
     // First empty of any existing content.
-    container.erase();
+    container->erase();
 
-    // Include declination value
-    string user_name << "User name : "
-                     <<  BC_adapter->userName();
-    container->addItem(new HUDTextLine(user_name.size(), user_name, 0, 2););
+    // Name of user.
+    // string user_name = "User name : " + BC_adapter->userName();
+    string user_name = "User name : Mike Hewson";
+    container->addItem(new HUDTextLine(user_name.size(), user_name, 0, 2));
+
+    // Name of user's team.
+    // string team_name = "User name : " + BC_adapter->teamName();
+    string team_name = "Team name : BOINC Australia";
+    container->addItem(new HUDTextLine(team_name.size(), team_name, 0, 2));
     }

@@ -40,10 +40,11 @@ void SimulationGravity::includeLogo(HUDFlowLayout* container) {
 
 void SimulationGravity::includeSearchInformation(HUDFlowLayout* container) {
     // First empty of any existing content.
-    container.erase();
+    container->erase();
 
     // Include declination value
-    double declination = EG_adapter->wuSkyPosDeclination();
+    // double declination = EG_adapter->wuSkyPosDeclination();
+    double declination = 0.0f;
     stringstream msg_dec;
     msg_dec << "Declination : ";
     msg_dec.setf(std::ios::showpos | ios::fixed);
