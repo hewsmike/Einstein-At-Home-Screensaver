@@ -30,9 +30,10 @@
 
 #include "BOINCClientAdapter.h"
 
+#include "SolarSystemGlobals.h"
+
 using namespace std;
 
-#define PI 3.14159265
 #define POWERSPECTRUM_BINS 40
 #define POWERSPECTRUM_BIN_BYTES 80
 

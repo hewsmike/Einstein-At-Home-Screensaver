@@ -3167,16 +3167,33 @@ void Simulation::loadLookoutDataToPanels(void) {
     }
 
 void Simulation::includeUserInformation(HUDFlowLayout* container) {
+    // Refresh our BOINC data.
+    BC_adapter->refresh();
+
     // First empty of any existing content.
     container->erase();
 
     // Name of user.
-    // string user_name = "User name : " + BC_adapter->userName();
-    string user_name = "User name : Mike Hewson";
+    string user_name = "User name : " + BC_adapter->userName();
     container->addItem(new HUDTextLine(user_name.size(), user_name, 0, 2));
 
     // Name of user's team.
-    // string team_name = "User name : " + BC_adapter->teamName();
-    string team_name = "Team name : BOINC Australia";
+    string team_name = "User name : " + BC_adapter->teamName();
     container->addItem(new HUDTextLine(team_name.size(), team_name, 0, 2));
+
+    // Total user credit.
+    string user_credit = "User credit : " + BC_adapter->userCredit();
+    container->addItem(new HUDTextLine(user_credit.size(), user_credit, 0, 2));
+
+    // User RAC.
+    string user_RAC = "User RAC : " + BC_adapter->userRACredit();
+    container->addItem(new HUDTextLine(user_RAC.size(), user_RAC, 0, 2));
+
+    // Total host credit.
+    string host_credit = "Host credit : " + BC_adapter->hostCredit();
+    container->addItem(new HUDTextLine(host_credit.size(), host_credit, 0, 2));
+
+    // Host RAC.
+    string host_RAC = "Host RAC : " + BC_adapter->hostRACredit();
+    container->addItem(new HUDTextLine(host_RAC.size(), host_RAC, 0, 2));
     }

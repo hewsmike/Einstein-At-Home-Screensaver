@@ -25,9 +25,9 @@
 
 #include "BOINCClientAdapter.h"
 
-using namespace std;
+#include "SolarSystemGlobals.h"
 
-#define PI 3.14159265
+using namespace std;
 
 /**
  * \addtogroup solarsystem SolarSystem

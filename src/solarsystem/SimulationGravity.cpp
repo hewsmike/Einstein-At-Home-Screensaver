@@ -39,17 +39,45 @@ void SimulationGravity::includeLogo(HUDFlowLayout* container) {
     }
 
 void SimulationGravity::includeSearchInformation(HUDFlowLayout* container) {
+    // Refresh our BOINC data.
+    EG_adapter->refresh()
+
     // First empty of any existing content.
     container->erase();
 
-    // Include declination value
-    // double declination = EG_adapter->wuSkyPosDeclination();
-    double declination = 0.0f;
+    // Right ascension.
+    double right_ascension = EG_adapter->wuSkyPosRightAscension();
+    stringstream msg_RA;
+    msg_RA << "Right ascension : ";
+    msg_RA.setf(std::ios::showpos | ios::fixed);
+    msg_RA << std::setw(6) << std::setprecision(2) << right_ascension;
+    container->addItem(new HUDTextLine(msg_RA.str().size(), msg_RA.str(), 0, 2));
+
+    // Declination.
+    double declination = EG_adapter->wuSkyPosDeclination();
     stringstream msg_dec;
     msg_dec << "Declination : ";
     msg_dec.setf(std::ios::showpos | ios::fixed);
     msg_dec << std::setw(5) << std::setprecision(2) << declination;
-    container->addItem(new HUDTextLine(15,msg_dec.str(), 0, 2));
+    container->addItem(new HUDTextLine(msg_dec.str().size(), msg_dec.str(), 0, 2));
+
+    // Fraction completed.
+    double fraction_complete = EG_adapter->wuFractionDone();
+    stringstream msg_fc;
+    msg_fc << "Fraction complete : ";
+    msg_fc.setf(std::ios::showpos | ios::fixed);
+    msg_fc << std::setw(6) << std::setprecision(2)
+           << fraction_complete << " %" ;
+    container->addItem(new HUDTextLine(msg_fc.str().size(), msg_fc.str(), 0, 2));
+
+    // CPU time.
+    double CPU_time = EG_adapter->wuCPUTime();
+    stringstream msg_cpu;
+    msg_cpu << "CPU time : ";
+    msg_cpu.setf(std::ios::showpos | ios::fixed);
+    msg_cpu << std::setw(8) << std::setprecision(0)
+            << CPU_time << " s" ;
+    container->addItem(new HUDTextLine(msg_cpu.str().size(), msg_cpu.str(), 0, 2));
     }
 
 void SimulationGravity::renderObservatories(void) {
