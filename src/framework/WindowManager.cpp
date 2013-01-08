@@ -47,11 +47,15 @@ WindowManager::~WindowManager() {
     }
 
 bool WindowManager::initialize(const int width, const int height, const int frameRate) {
+    // Can the GLFW system be initialised ?
     if(glfwInit() == GL_FALSE) {
+        // No it can't and that's fatal.
         ErrorHandler::record("WindowManager::initialize() : Window system could not be initalized - GLFW init fail", ErrorHandler::FATAL);
         return false;
         }
     else {
+        // Yes it can be, and now is, initialised.
+        // Emit GLFW version info.
         int major = 0;
         int minor = 0;
         int revision = 0;
@@ -67,6 +71,8 @@ bool WindowManager::initialize(const int width, const int height, const int fram
         ErrorHandler::record(msg.str(), ErrorHandler::INFORM);
         }
 
+    // GLFW is up and running by now, put callback in
+    // place for GLFW cleanup on normal program exit.
     atexit(glfwTerminate);
 
     // Retrieve current video hardware settings for the user's desktop.
@@ -734,7 +740,7 @@ void WindowManager::toggleFullscreen(void) {
 
 void WindowManager::setScreensaverMode(const bool enabled) {
     m_ScreensaverMode = enabled;
-   }
+    }
 
 void WindowManager::getVideoModes(void) {
     // Yes, 100 is rather silly, but will likely retrieve all

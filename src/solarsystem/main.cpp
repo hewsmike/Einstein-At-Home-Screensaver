@@ -52,7 +52,7 @@ extern "C" {
 #endif
 
 int main(int argc, char **argv) {
-    // print version info
+    // Print version info if the command line requests it.
     if(argc == 2) {
         string param(argv[1]);
         if(param == "--version" || param == "-v") {
@@ -63,25 +63,27 @@ int main(int argc, char **argv) {
             }
         }
 
-    // enable BOINC diagnostics
-    // TODO: we might want to optimize this for glibc- and mingw-based stacktraces!
+    // Enable BOINC diagnostics
+    /// TODO: we might want to optimize this for glibc- and mingw-based stacktraces!
     boinc_init_graphics_diagnostics(BOINC_DIAG_DEFAULTS);
 
 #ifdef __APPLE__
+    // Supply an icon for Mac's.
     setMacIcon(argv[0], MacAppIconData, sizeof(MacAppIconData));
 #endif
 
-    // choose application to be build/used
+    // Choose application type to be built/used.
     GraphicsEngineFactory::Applications scienceApplication;
 #ifdef SCIENCE_APP
+    // The SCIENCE_APP symbol is defined in the makefile
+    // that produces the build for this product.
     scienceApplication = GraphicsEngineFactory::SCIENCE_APP;
 #else
+    // So if SCIENCE_APP was not given, this is the default.
     scienceApplication = GraphicsEngineFactory::EinsteinGravity;
 #endif
 
-    // prepare main objects
-    WindowManager window;
-    ResourceFactory factory;
+    // Make an ABstractGraphicsEngine on the heap.
     // Edit this call for different build sources ie. swap 'Solarsystem' for whatever
     AbstractGraphicsEngine* graphics = GraphicsEngineFactory::createInstance(GraphicsEngineFactory::SolarSystem,
                                                                              scienceApplication);
@@ -89,13 +91,16 @@ int main(int argc, char **argv) {
         ErrorHandler::record("SolarSystem::main() : Requested graphics engine could not be found/instantiated!", ErrorHandler::FATAL);
         }
 
-    // initialize window manager
+    // Instantiate and initialize our window manager.
+    WindowManager window;
     if(window.initialize() != true) {
+        // Failure to do that, so destroy the AbstractGraphicsEngine.
         delete graphics;
+        // Emit a message, then exit.
         ErrorHandler::record("SolarSystem::main() : Window manager could not be initialized!", ErrorHandler::FATAL);
         }
 
-    // Find out the OpenGL version.
+    // Discover and record the OpenGL version.
     GLuint major = 0;
     GLuint minor = 0;
     window.getOGLVersion(&major, &minor);
@@ -104,7 +109,7 @@ int main(int argc, char **argv) {
          << major << '.' << minor;
     ErrorHandler::record(msg1.str(), ErrorHandler::INFORM);
 
-    // Find out the OpenGL vendor.
+    // Discover and record the OpenGL vendor.
     const GLubyte* vendor = glGetString(GL_VENDOR);
     if(vendor != NULL) {
         std::stringstream msg2;
@@ -118,7 +123,7 @@ int main(int argc, char **argv) {
         ErrorHandler::record("SolarSystem::main() : I got a null for GL_VENDOR", ErrorHandler::WARN);
         }
 
-    // Find out the OpenGL renderer.
+    // Discover and record the OpenGL renderer.
     const GLubyte* renderer = glGetString(GL_RENDERER);
     if(renderer != NULL) {
         std::stringstream msg3;
@@ -132,21 +137,27 @@ int main(int argc, char **argv) {
         ErrorHandler::record("SolarSystem::main() : I got a null for GL_RENDERER", ErrorHandler::WARN);
         }
 
-    // create font and icon resource instances
+    // Using a ResourceFactory, create font and icon resource instances
+    ResourceFactory factory;
     const Resource* fontResource = factory.createInstance("FontSansSerif");
     const Resource* iconResource = factory.createInstance("AppIconBMP");
 
+    // Check if font resource is available.
     if(fontResource == NULL) {
+        // No, so that's a fatal. Exit with appropriate deletions and message.
         delete graphics;
         ErrorHandler::record("SolarSystem::main() : Font resource is NULL!", ErrorHandler::FATAL);
         }
 
+    // Given that you have a font resource, is the size meaningful?
     if(fontResource->data()->size() <= 0) {
+        // No, so that's also a fatal. Exit with appropriate deletions and message.
         delete graphics;
         delete fontResource;
         ErrorHandler::record("SolarSystem::main() : Font resource could not be loaded!", ErrorHandler::FATAL);
         }
 
+    // Check for an icon resource, but this is not fatal in the lack.
     if(iconResource != NULL && iconResource->data()->size() > 0) {
         window.setWindowIcon(&iconResource->data()->at(0), iconResource->data()->size());
         delete iconResource;
@@ -155,24 +166,29 @@ int main(int argc, char **argv) {
         ErrorHandler::record("SolarSystem::main() : Icon resource could not be loaded! Continuing anyway...", ErrorHandler::WARN);
         }
 
-    // register starsphere as event observer
+    // Register AbstractGraphicsEngine as event observer.
     window.registerEventObserver(graphics);
 
-    // Prepare for rendering by initialising chosen engine and get up to date BOINC information.
+    // Prepare for rendering by initialising chosen engine
+    // and get up to date BOINC information.
     graphics->initialize(window.windowWidth(), window.windowHeight(), fontResource);
     graphics->refreshBOINCInformation();
 
+    // Set the caption or window title.
+    /// TODO - when GLFW 3.x arrives, put in a window icon as well.
     window.setWindowCaption("Einstein@Home");
 
-    // check optional command line parameters
+    // Check other optional command line parameters
     if(argc == 2) {
         string param(argv[1]);
         if(param == "--fullscreen") {
-            // set non-interactive mode (must do this first on Apple)
+            // Set non-interactive mode ie. 'screensaver'
+            // (must do this first on Apple).
             window.setScreensaverMode(true);
             }
         if(param == "--fullscreen" || param == "--demo") {
-            // switch to fullscreen (on windoze: after init!)
+            // Switch to fullscreen.
+            // (on windoze: after init!)
             window.toggleFullscreen();
 #ifdef __APPLE__
             SetMacSSLevel();

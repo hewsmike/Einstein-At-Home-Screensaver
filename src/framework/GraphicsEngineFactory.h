@@ -22,6 +22,8 @@
 #define GRAPHICSENGINEFACTORY_H_
 
 #include "AbstractGraphicsEngine.h"
+
+// Edit this lot with any changes to the target executable set.
 #include "../solarsystem/SolarSystemGravity.h"
 #include "../solarsystem/SolarSystemRadio.h"
 #include "../solarsystem/SolarSystemGamma.h"
@@ -47,13 +49,13 @@ class GraphicsEngineFactory {
         /// Destructor
         virtual ~GraphicsEngineFactory();
 
-        /// Identifiers of supported graphics engines
+        /// Identifiers ( arbitrary but distinct ) of supported graphics engines
         enum Engines {
             Starsphere = 1,
             SolarSystem = 50
             };
 
-        /// Identifiers of supported science applications
+        /// Identifiers ( arbitrary but distinct ) of supported science applications
         enum Applications {
             EinsteinGravity = 41,
             EinsteinRadio = 42,
