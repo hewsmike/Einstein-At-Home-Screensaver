@@ -27,8 +27,8 @@
 #include <iostream>
 #include <sstream>
 
-HUDFlowLayout::HUDFlowLayout(HUDContainer* enclosing, Axis axis, HUDContainer::Mode mode) :
-                HUDContainer(enclosing, mode),
+HUDFlowLayout::HUDFlowLayout(Axis axis, HUDContainer::Mode mode) :
+                HUDContainer(mode),
                 ax(axis) {
     primary_axis_gap_count = 0;
     primary_axis_total_white_space = 0;
@@ -139,12 +139,10 @@ void HUDFlowLayout::allocateItemBases(void) {
             GLuint secondary_axis_white_space = 0;
             switch(ax) {
                 case HORIZONTAL :
-                    secondary_axis_white_space = this->height() -
-                                                 (*item).second->height();
+                    secondary_axis_white_space = this->height() - (*item).second->height();
                     break;
                 case VERTICAL :
-                    secondary_axis_white_space = this->width() -
-                                                 (*item).second->width();
+                    secondary_axis_white_space = this->width() - (*item).second->width();
                     break;
                 default:
                     // Shouldn't ever get here!!

@@ -26,7 +26,7 @@
 #include "HUDImage.h"
 #include "HUDTextLine.h"
 
-HUDContainer::HUDContainer(HUDContainer* enclosing = NULL, Mode mode = RETAIN) :
+HUDContainer::HUDContainer(Mode mode = RETAIN) :
                 HUDItem(),
                 mode_type(mode) {
     }
@@ -159,7 +159,6 @@ HUDItem* HUDContainer::getItem(int handle) {
 
     return ret_val;
     }
-
 
 void HUDContainer::prepare(SolarSystemGlobals::render_quality rq) {
     // Policy is that when a container is activated, then all

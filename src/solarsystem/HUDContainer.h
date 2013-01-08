@@ -55,7 +55,7 @@ class HUDContainer : public HUDItem {
         /**
          * \brief Constructor
          */
-        HUDContainer(HUDContainer* enclosing, Mode mode);
+        HUDContainer(Mode mode);
 
         /**
          * \brief Destructor
@@ -160,8 +160,6 @@ class HUDContainer : public HUDItem {
          * Pure virtual as only a subclass will know how to do this.
          */
         virtual void allocateItemBases(void) = 0;
-
-
 
         /// These three routines below satisfy the Renderable interface.
 

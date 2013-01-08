@@ -40,7 +40,7 @@ void SimulationGravity::includeLogo(HUDFlowLayout* container) {
 
 void SimulationGravity::includeSearchInformation(HUDFlowLayout* container) {
     // Refresh our BOINC data.
-    EG_adapter->refresh()
+    EG_adapter->refresh();
 
     // First empty of any existing content.
     container->erase();
@@ -78,6 +78,8 @@ void SimulationGravity::includeSearchInformation(HUDFlowLayout* container) {
     msg_cpu << std::setw(8) << std::setprecision(0)
             << CPU_time << " s" ;
     container->addItem(new HUDTextLine(msg_cpu.str().size(), msg_cpu.str(), 0, 2));
+
+    container->activate();
     }
 
 void SimulationGravity::renderObservatories(void) {

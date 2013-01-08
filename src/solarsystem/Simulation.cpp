@@ -137,7 +137,7 @@ const GLfloat Simulation::GALACTIC_LINE_BLUE(0.8f);
 const GLfloat Simulation::GALACTIC_LINE_ALPHA(0.25f);
 
 const GLuint Simulation::WU_DETAILS_REFRESH_INTERVAL(100);
-const GLuint Simulation::USER_DETAILS_REFRESH_INTERVAL(10*WU_DETAILS_REFRESH_INTERVAL);
+const GLuint Simulation::USER_DETAILS_REFRESH_INTERVAL(100);
 
 Simulation::Simulation(BOINCClientAdapter* boinc_adapter) :
                                cs(CONSTELLATIONS_RADIUS),
@@ -206,33 +206,24 @@ Simulation::Simulation(BOINCClientAdapter* boinc_adapter) :
                                              GALACTIC_LINE_ALPHA),
                                         Simulation::SKYGRID_RADIUS,
                                         72),
-                               overlay(NULL, HUDContainer::RETAIN),
-                               north_panel(&overlay,
-                                           HUDFlowLayout::HORIZONTAL,
+                               overlay(HUDContainer::RETAIN),
+                               north_panel(HUDFlowLayout::VERTICAL,
+                                           HUDContainer::DESTROY),
+                               south_panel(HUDFlowLayout::HORIZONTAL,
                                            HUDContainer::RETAIN),
-                               south_panel(&overlay,
-                                           HUDFlowLayout::HORIZONTAL,
-                                           HUDContainer::RETAIN),
-                               east_panel(&overlay,
-                                          HUDFlowLayout::VERTICAL,
+                               east_panel(HUDFlowLayout::VERTICAL,
                                           HUDContainer::DESTROY),
-                               west_panel(&overlay,
-                                          HUDFlowLayout::VERTICAL,
+                               west_panel(HUDFlowLayout::VERTICAL,
                                           HUDContainer::DESTROY),
-                               north_west_panel(&north_panel,
-                                                HUDFlowLayout::VERTICAL,
+                               north_west_panel(HUDFlowLayout::VERTICAL,
                                                 HUDContainer::DESTROY),
-                               north_east_panel(&north_panel,
-                                                HUDFlowLayout::HORIZONTAL,
+                               north_east_panel(HUDFlowLayout::HORIZONTAL,
                                                 HUDContainer::DESTROY),
-                               south_west_panel(&south_panel,
-                                                HUDFlowLayout::VERTICAL,
+                               south_west_panel(HUDFlowLayout::VERTICAL,
                                                 HUDContainer::RETAIN),
-                               south_centre_panel(&south_panel,
-                                                  HUDFlowLayout::VERTICAL,
+                               south_centre_panel(HUDFlowLayout::VERTICAL,
                                                   HUDContainer::RETAIN),
-                               south_east_panel(&south_panel,
-                                                HUDFlowLayout::VERTICAL,
+                               south_east_panel(HUDFlowLayout::VERTICAL,
                                                 HUDContainer::RETAIN),
                                BC_adapter(boinc_adapter) {
     // Starting values of simulation parameters.
@@ -388,15 +379,15 @@ void Simulation::resize(GLuint width, GLuint height) {
 
     target.resize(width, height);
     // Now tell the HUD of such settings.
-    // TODO - if resize denied then inactivate HUD ?? Complex ....
+    /// TODO - if resize denied then inactivate HUD ?? Complex ....
     overlay.requestResize(width, height);
 
     // If the autopilot is running, need refresh due to change
     // of context on Windows machines.
-    if(pilot.isActive() == true) {
-        target.hide();
-        loadLookoutDataToPanels();
-        }
+    // if(pilot.isActive() == true) {
+        // target.hide();
+        // loadLookoutDataToPanels();
+        // }
     }
 
 CameraState Simulation::viewPoint(void) {
@@ -448,7 +439,7 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
     south_centre_panel.erase();
 
     // Set panel justifications.
-    north_panel.setPrimaryJustification(HUDFlowLayout::START);
+    north_panel.setPrimaryJustification(HUDFlowLayout::END);
     north_panel.setSecondaryJustification(HUDFlowLayout::MIDDLE);
     south_panel.setPrimaryJustification(HUDFlowLayout::START_AND_END);
     south_panel.setSecondaryJustification(HUDFlowLayout::PROXIMAL);
@@ -476,8 +467,8 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
     overlay.setPanel(HUDBorderLayout::WEST, &west_panel);
 
     // Within north panel put sub-panels.
-    north_panel.addItem(&north_east_panel);
-    north_panel.addItem(&north_west_panel);
+    // north_panel.addItem(&north_east_panel);
+    // north_panel.addItem(&north_west_panel);
 
     // Within south panel put sub-panels.
     south_panel.addItem(&south_west_panel);
@@ -539,14 +530,15 @@ void Simulation::release(void) {
     }
 
 void Simulation::render(void) {
+    stringstream msg;
     // One more frame, maybe get new content WU detail display.
-    if((frame_number % WU_DETAILS_REFRESH_INTERVAL) == 0) {
+    if((frame_number % WU_DETAILS_REFRESH_INTERVAL) == 1) {
         // Work unit detail goes on east side.
         includeSearchInformation(&east_panel);
-        east_panel.activate();
+        // east_panel.activate();
         }
 
-    if((frame_number % USER_DETAILS_REFRESH_INTERVAL) == 0) {
+    if((frame_number % USER_DETAILS_REFRESH_INTERVAL) == 1) {
         // User and host detail goes on west side.
         includeUserInformation(&west_panel);
         west_panel.activate();
@@ -3137,20 +3129,18 @@ std::vector<std::string> Simulation::parseLine(std::string input) const {
 void Simulation::loadLookoutDataToPanels(void) {
     // Derive content according to the current position in the tour.
     // First put new content text, if any, into the north panel.
-    north_west_panel.erase();
+    north_panel.erase();
     const std::vector<std::string>& messages = pilot.getDescription();
     if(messages.size() != 0) {
         target.show();
-        int line_count = 0;
         for(std::vector<std::string>::const_iterator message = messages.begin();
             message != messages.end();
             ++message) {
-            ErrorHandler::record("Simulation::loadLookoutDataToPanels()", ErrorHandler::INFORM);
-            north_west_panel.addItem(new HUDTextLine(message->size(), *message, 0, 2));
-            ++line_count;
+            HUDTextLine* current = new HUDTextLine(message->size(), *message, 0, 2);
+            north_panel.addItem(current);
             }
         }
-    north_west_panel.activate();
+    north_panel.activate();
 
     // Then put new image(s), if any, into the west panel.
 //    north_east_panel.erase();
@@ -3163,7 +3153,7 @@ void Simulation::loadLookoutDataToPanels(void) {
 //        ++image_count;
 //        }
 //    north_east_panel.activate();
-    north_panel.activate();
+    // north_panel.activate();
     }
 
 void Simulation::includeUserInformation(HUDFlowLayout* container) {
@@ -3174,26 +3164,32 @@ void Simulation::includeUserInformation(HUDFlowLayout* container) {
     container->erase();
 
     // Name of user.
-    string user_name = "User name : " + BC_adapter->userName();
-    container->addItem(new HUDTextLine(user_name.size(), user_name, 0, 2));
+    stringstream user_name;
+    user_name << "User name : " << BC_adapter->userName();
+    container->addItem(new HUDTextLine(user_name.str().size(), user_name.str(), 0, 2));
 
     // Name of user's team.
-    string team_name = "User name : " + BC_adapter->teamName();
-    container->addItem(new HUDTextLine(team_name.size(), team_name, 0, 2));
+    stringstream team_name;
+    team_name << "User name : " << BC_adapter->teamName();
+    container->addItem(new HUDTextLine(team_name.str().size(), team_name.str(), 0, 2));
 
     // Total user credit.
-    string user_credit = "User credit : " + BC_adapter->userCredit();
-    container->addItem(new HUDTextLine(user_credit.size(), user_credit, 0, 2));
+    stringstream user_credit;
+    user_credit << "User credit : " << BC_adapter->userCredit();
+    container->addItem(new HUDTextLine(user_credit.str().size(), user_credit.str(), 0, 2));
 
     // User RAC.
-    string user_RAC = "User RAC : " + BC_adapter->userRACredit();
-    container->addItem(new HUDTextLine(user_RAC.size(), user_RAC, 0, 2));
+    stringstream user_RAC;
+    user_RAC << "User RAC : " << BC_adapter->userRACredit();
+    container->addItem(new HUDTextLine(user_RAC.str().size(), user_RAC.str(), 0, 2));
 
     // Total host credit.
-    string host_credit = "Host credit : " + BC_adapter->hostCredit();
-    container->addItem(new HUDTextLine(host_credit.size(), host_credit, 0, 2));
+    stringstream host_credit;
+    host_credit << "Host credit : " << BC_adapter->hostCredit();
+    container->addItem(new HUDTextLine(host_credit.str().size(), host_credit.str(), 0, 2));
 
     // Host RAC.
-    string host_RAC = "Host RAC : " + BC_adapter->hostRACredit();
-    container->addItem(new HUDTextLine(host_RAC.size(), host_RAC, 0, 2));
+    stringstream host_RAC;
+    host_RAC << "Host RAC : " << BC_adapter->hostRACredit();
+    container->addItem(new HUDTextLine(host_RAC.str().size(), host_RAC.str(), 0, 2));
     }
