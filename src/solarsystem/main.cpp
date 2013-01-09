@@ -94,9 +94,9 @@ int main(int argc, char **argv) {
     // Instantiate and initialize our window manager.
     WindowManager window;
     if(window.initialize() != true) {
-        // Failure to do that, so destroy the AbstractGraphicsEngine.
+        // Failure, so destroy the AbstractGraphicsEngine and ...
         delete graphics;
-        // Emit a message, then exit.
+        // ... emit a message with exit.
         ErrorHandler::record("SolarSystem::main() : Window manager could not be initialized!", ErrorHandler::FATAL);
         }
 

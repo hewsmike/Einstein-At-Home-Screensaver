@@ -49,7 +49,7 @@ WindowManager::~WindowManager() {
 bool WindowManager::initialize(const int width, const int height, const int frameRate) {
     // Can the GLFW system be initialised ?
     if(glfwInit() == GL_FALSE) {
-        // No it can't and that's fatal.
+        // No it can't, and that's fatal.
         ErrorHandler::record("WindowManager::initialize() : Window system could not be initalized - GLFW init fail", ErrorHandler::FATAL);
         return false;
         }
@@ -71,24 +71,60 @@ bool WindowManager::initialize(const int width, const int height, const int fram
         ErrorHandler::record(msg.str(), ErrorHandler::INFORM);
         }
 
-    // GLFW is up and running by now, put callback in
-    // place for GLFW cleanup on normal program exit.
-    atexit(glfwTerminate);
+    // GLFW is up and running by now, and glfwInit() has put a callback in
+    // place for GLFW cleanup on normal program exit ie. atexit(glfwTerminate)
 
     // Retrieve current video hardware settings for the user's desktop.
     glfwGetDesktopMode(&current_desktop_mode);
 
     m_DesktopWidth = current_desktop_mode.Width;
+    stringstream msg_init_current_desktop_mode_width;
+    msg_init_current_desktop_mode_width << "WindowManager::initialize() : current desktop width = "
+                                        << m_DesktopWidth;
+    ErrorHandler::record(msg_init_current_desktop_mode_width.str(), ErrorHandler::INFORM);
+
+
     m_DesktopHeight = current_desktop_mode.Height;
+    stringstream msg_init_current_desktop_mode_height;
+    msg_init_current_desktop_mode_height << "WindowManager::initialize() : current desktop height = "
+                                         << m_DesktopHeight;
+    ErrorHandler::record(msg_init_current_desktop_mode_height.str(), ErrorHandler::INFORM);
+
+
     m_DesktopBitsPerPixel = current_desktop_mode.RedBits +
                             current_desktop_mode.GreenBits +
                             current_desktop_mode.BlueBits;
+    stringstream msg_init_current_desktop_bitsperpixel;
+    msg_init_current_desktop_mode_bitsperpixel << "WindowManager::initialize() : current desktop bits per pixel = "
+                                               << m_DesktopBitsPerPixel
+                                               << " ( red = "
+                                               << current_desktop_mode.RedBits
+                                               << ", green = "
+                                               << current_desktop_mode.GreenBits
+                                               << ", blue = "
+                                               << current_desktop_mode.BlueBits
+                                               << " )"
+    ErrorHandler::record(msg_init_current_desktop_mode_bitsperpixel.str(), ErrorHandler::INFORM);
 
     // get initial non-fullscreen resolution and frame rate from project preferences
     m_BoincAdapter->initialize();
     int preferredWidth = m_BoincAdapter->graphicsWindowWidth();
+    stringstream msg_init_prefwidth;
+    msg_init_prefwidth << "WindowManager::initialize() : BOINC preferred width = "
+                       << preferredWidth;
+    ErrorHandler::record(msg_init_prefwidth.str(), ErrorHandler::INFORM);
+
     int preferredHeight = m_BoincAdapter->graphicsWindowHeight();
+    stringstream msg_init_prefheight;
+    msg_init_prefheight << "WindowManager::initialize() : BOINC preferred height = "
+                        << preferredHeight;
+    ErrorHandler::record(msg_init_prefheight.str(), ErrorHandler::INFORM);
+
     int preferredFrameRate = m_BoincAdapter->graphicsFrameRate();
+    stringstream msg_init_pref_frame_rate;
+    msg_init_pref_frame_rate << "WindowManager::initialize() : BOINC preferred frame rate = "
+                             << preferredFrameRate;
+    ErrorHandler::record(msg_init_pref_frame_rate.str(), ErrorHandler::INFORM);
 
     // override optional given default values if preferred values are set
     m_WindowedWidth = (preferredWidth != 0) ? preferredWidth : width;
