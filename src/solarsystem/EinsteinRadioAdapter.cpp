@@ -29,7 +29,7 @@
 
 const string EinsteinRadioAdapter::SharedMemoryIdentifier = "EinsteinRadio";
 
-EinsteinRadioAdapter::EinsteinRadioAdapter(BOINCClientAdapter* p_boincClient) :
+EinsteinRadioAdapter::EinsteinRadioAdapter(BOINCClientAdapter* boincClient) :
     m_WUTemplatePowerSpectrum(POWERSPECTRUM_BINS, 0) {
     p_boincClient = boincClient;
     m_xmlReader = NULL;
@@ -55,7 +55,7 @@ void EinsteinRadioAdapter::refresh() {
 
 void EinsteinRadioAdapter::parseApplicationInformation() {
     // Get updated application information.
-    string info = boincClient->applicationInformation();
+    string info = p_boincClient->applicationInformation();
 
     // Do we have any data?
     if(info.length() > 0) {

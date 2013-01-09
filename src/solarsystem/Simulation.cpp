@@ -3128,8 +3128,8 @@ std::vector<std::string> Simulation::parseLine(std::string input) const {
 
 void Simulation::loadLookoutDataToPanels(void) {
     // Derive content according to the current position in the tour.
-    // First put new content text, if any, into the north panel.
-    north_panel.erase();
+    // First put new content text, if any, into the northwest panel.
+    north_west_panel.erase();
     const std::vector<std::string>& messages = pilot.getDescription();
     if(messages.size() != 0) {
         target.show();
@@ -3137,10 +3137,10 @@ void Simulation::loadLookoutDataToPanels(void) {
             message != messages.end();
             ++message) {
             HUDTextLine* current = new HUDTextLine(message->size(), *message, 0, 2);
-            north_panel.addItem(current);
+            north_west_panel.addItem(current);
             }
         }
-    north_panel.activate();
+    // north_panel.activate();
 
     // Then put new image(s), if any, into the west panel.
 //    north_east_panel.erase();

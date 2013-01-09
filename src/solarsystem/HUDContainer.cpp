@@ -110,7 +110,7 @@ void HUDContainer::addItem(int handle, HUDItem* item) {
     // Make sure a NULL pointer was not passed.
     if(item == NULL) {
         // A significant error & ought not go un-managed.
-        ErrorHandler::record("HUDContainer::addObject() - NULL passed for object!",
+        ErrorHandler::record("HUDContainer::additem() - NULL passed for object!",
                              ErrorHandler::WARN);
         }
     else {

@@ -48,7 +48,7 @@ void HUDFlowLayout::addItem(HUDItem* item) {
         HUDContainer::addItem(itemCount(), item);
         }
     else {
-        ErrorHandler::record("HUDFlowLayout::addContent() - NULL passed for content",
+        ErrorHandler::record("HUDFlowLayout::addItem() - NULL passed for content",
                              ErrorHandler::FATAL);
         }
     }

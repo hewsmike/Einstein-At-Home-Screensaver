@@ -93,12 +93,15 @@ int main(int argc, char **argv) {
 
     // Instantiate and initialize our window manager.
     WindowManager window;
+    // Register AbstractGraphicsEngine as event observer.
+    window.registerEventObserver(graphics);
     if(window.initialize() != true) {
         // Failure, so destroy the AbstractGraphicsEngine and ...
         delete graphics;
         // ... emit a message with exit.
         ErrorHandler::record("SolarSystem::main() : Window manager could not be initialized!", ErrorHandler::FATAL);
         }
+
 
     // Discover and record the OpenGL version.
     GLuint major = 0;
@@ -166,8 +169,7 @@ int main(int argc, char **argv) {
         ErrorHandler::record("SolarSystem::main() : Icon resource could not be loaded! Continuing anyway...", ErrorHandler::WARN);
         }
 
-    // Register AbstractGraphicsEngine as event observer.
-    window.registerEventObserver(graphics);
+
 
     // Prepare for rendering by initialising chosen engine
     // and get up to date BOINC information.

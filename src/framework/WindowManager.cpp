@@ -95,16 +95,16 @@ bool WindowManager::initialize(const int width, const int height, const int fram
                             current_desktop_mode.GreenBits +
                             current_desktop_mode.BlueBits;
     stringstream msg_init_current_desktop_bitsperpixel;
-    msg_init_current_desktop_mode_bitsperpixel << "WindowManager::initialize() : current desktop bits per pixel = "
-                                               << m_DesktopBitsPerPixel
-                                               << " ( red = "
-                                               << current_desktop_mode.RedBits
-                                               << ", green = "
-                                               << current_desktop_mode.GreenBits
-                                               << ", blue = "
-                                               << current_desktop_mode.BlueBits
-                                               << " )"
-    ErrorHandler::record(msg_init_current_desktop_mode_bitsperpixel.str(), ErrorHandler::INFORM);
+    msg_init_current_desktop_bitsperpixel << "WindowManager::initialize() : current desktop bits per pixel = "
+                                          << m_DesktopBitsPerPixel
+                                          << " ( red = "
+                                          << current_desktop_mode.RedBits
+                                          << ", green = "
+                                          << current_desktop_mode.GreenBits
+                                          << ", blue = "
+                                          << current_desktop_mode.BlueBits
+                                          << " )";
+    ErrorHandler::record(msg_init_current_desktop_bitsperpixel.str(), ErrorHandler::INFORM);
 
     // get initial non-fullscreen resolution and frame rate from project preferences
     m_BoincAdapter->initialize();
@@ -373,7 +373,8 @@ void WindowManager::eventLoop(void) {
                                                  GLFW_WINDOW);
 
                 if(window_open == GL_FALSE) {
-                    std::cerr << "WindowManager::eventLoop() : Could not resize window !" << std::endl;
+                    ErrorHandler::record("WindowManager::eventLoop() : Could not resize window !",
+                                         ErrorHandler::INFORM);
                     }
                 else {
                     // Need to re-initialise GLEW after we acquire a context to apply it to.
@@ -391,7 +392,11 @@ void WindowManager::eventLoop(void) {
                 // notify our observers (currently exactly one, hence front())
                 // (windoze needs to be reinitialized instead of just resized, oh well)
                 /// \todo Can we determine the host OS? On X11 a resize() is sufficient!
+                ErrorHandler::record("WindowManager::eventLoop() : test 1 !",
+                                     ErrorHandler::INFORM);
                 eventObservers.front()->initialize(m_CurrentWidth, m_CurrentHeight, 0, true);
+                ErrorHandler::record("WindowManager::eventLoop() : test 2 !",
+                                     ErrorHandler::INFORM);
                 resize_invoked = true;
                 }
 
