@@ -24,8 +24,8 @@
 
 #include "ErrorHandler.h"
 
-// Use minimum timing intervals in milliseconds for BOINC
-// and render callbacks.
+// Use minimum timing intervals in milliseconds
+// for BOINC and render callbacks.
 GLuint Events::BOINC_CALLBACK_INTERVAL(1000);
 GLuint Events::RENDER_CALLBACK_INTERVAL_MIN(TriggerTimer::TRIGGER_MIN);
 

@@ -657,7 +657,7 @@ void WindowManager::toggleFullscreen(void) {
             desiredWidth = m_WindowedWidth;
             desiredHeight = m_WindowedHeight;
 
-            // show cursor in fullscreen mode
+            // Show cursor in windowed mode.
             glfwEnable(GLFW_MOUSE_CURSOR);
             desiredMode = GLFW_WINDOW;
             }
@@ -675,7 +675,7 @@ void WindowManager::toggleFullscreen(void) {
             desiredWidth = m_DesktopWidth;
             desiredHeight = m_DesktopHeight;
 
-            // hide cursor
+            // Hide cursor in fullscreen mode.
             glfwDisable(GLFW_MOUSE_CURSOR);
             desiredMode = GLFW_FULLSCREEN;
             }
@@ -686,8 +686,9 @@ void WindowManager::toggleFullscreen(void) {
         }
 
     if(canTransition) {
-        // Reset video mode, noting that we retain the original discovered user's
-        // color depths, and previous best depth buffer granularity.
+        // Reset video mode, noting that we retain the originally
+        // discovered user's color depths, and previous best depth
+        // buffer granularity.
         int window_open = glfwOpenWindow(desiredWidth, desiredHeight,
                                          current_desktop_mode.RedBits,
                                          current_desktop_mode.GreenBits,

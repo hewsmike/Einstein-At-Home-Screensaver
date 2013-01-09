@@ -34,10 +34,10 @@
 #include "Resource.h"
 
 // SIN and COS take arguments in DEGREES
-// TODO - Make these static constants.
+/// TODO - Make these static constants.
 #define PI 3.14159265
 #define PI2 (2*PI)
-// TODO - Make these static ( inline ? ) functions.
+/// TODO - Make these into ( static ? inline ? ) functions.
 #define COS(X)   cos( (X) * PI2/360.0 )
 #define SIN(X)   sin( (X) * PI2/360.0 )
 

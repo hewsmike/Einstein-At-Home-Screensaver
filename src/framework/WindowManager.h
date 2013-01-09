@@ -230,7 +230,7 @@ class WindowManager {
         void tokeniseString(const std::string str, const char delimiter, std::vector<std::string>& store);
 
         /// Local BOINC adapter instance to read project preferences
-        BOINCClientAdapter *m_BoincAdapter;
+        BOINCClientAdapter* m_BoincAdapter;
 
         /// The render event interval (in ms) for invoking the render event observer
         float m_RenderEventInterval;

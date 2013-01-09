@@ -61,8 +61,8 @@ void SimulationGravity::includeSearchInformation(HUDFlowLayout* container) {
     msg_dec << std::setw(5) << std::setprecision(2) << declination;
     container->addItem(new HUDTextLine(msg_dec.str().size(), msg_dec.str(), 0, 2));
 
-    // Fraction completed.
-    double fraction_complete = EG_adapter->wuFractionDone();
+    // Fraction completed, as a percentage.
+    double fraction_complete = EG_adapter->wuFractionDone() * 100;
     stringstream msg_fc;
     msg_fc << "Fraction complete : ";
     msg_fc.setf(std::ios::showpos | ios::fixed);
