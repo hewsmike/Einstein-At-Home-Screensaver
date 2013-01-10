@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2012 by Mike Hewson                                     *
+ *   Copyright (C) 2013 by Mike Hewson                                     *
  *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
@@ -24,7 +24,9 @@
 const Vector3D AcceleratedPlatform::INITIAL_LINEAR_ACCELERATION(Vector3D::NULLV);
 const vec_t AcceleratedPlatform::NULL_RATE(0.0f);
 
-AcceleratedPlatform::AcceleratedPlatform(void) : acc(INITIAL_LINEAR_ACCELERATION) {
+AcceleratedPlatform::AcceleratedPlatform(void) {
+    // Set platform to fiducial state.
+    reset();
     }
 
 AcceleratedPlatform::~AcceleratedPlatform() {
@@ -88,16 +90,17 @@ void AcceleratedPlatform::reset(void) {
     }
 
 void AcceleratedPlatform::step(void) {
-    // Evolve in velocity as per current linear acceleration.
+    // Update velocity as per current linear acceleration.
     VelocityPlatform::setVelocity(VelocityPlatform::velocity() + acc);
 
-    // Call parent class to further state evolution in translation.
+    // Call parent class to further evolve in translation.
     VelocityPlatform::step();
 
-    // Confession here : while these operations don't actually commute,
-    // you have to pick some ordering to implement and I chose
-    // alphabetical. Commutation is approached in the limit of tiny
-    // rates. But hey, don't use this code to land the Space Shuttle ! :-)
+    // Confession here : while these rotation operations don't truly
+    // commute, you have to pick some ordering to implement this simply
+    // and so I chose alphabetical. Commutation is approached in the
+    // limit of tiny rates. But hey, don't use this code to land/dock the
+    // Space Shuttle ! :-)
     pitch(pitch_rate);
     roll(roll_rate);
     yaw(yaw_rate);

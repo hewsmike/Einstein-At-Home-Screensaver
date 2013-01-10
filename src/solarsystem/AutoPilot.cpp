@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2012 by Mike Hewson                                     *
+ *   Copyright (C) 2013 by Mike Hewson                                     *
  *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
@@ -20,9 +20,7 @@
 
 #include "AutoPilot.h"
 
-#include <sstream>
 #include <cmath>
-#include <iostream>
 
 #include "ErrorHandler.h"
 
@@ -37,13 +35,14 @@ AutoPilot::AutoPilot(void) {
     lambda = Path::LAMBDA_LOWER_BOUND;
     current_delta_lambda = 0.0f;
     active_flag = false;
+    description_change_flag = false;
     }
 
 AutoPilot::~AutoPilot() {
     }
 
 void AutoPilot::activate(const Traversable& trav, const CameraState& cam) {
-    ErrorHandler::record("AutoPilot::activate() : ", ErrorHandler::INFORM);
+    ErrorHandler::record("AutoPilot::activate()", ErrorHandler::INFORM);
     lambda = Path::LAMBDA_LOWER_BOUND;
 
     view = cam;
@@ -62,10 +61,11 @@ void AutoPilot::activate(const Traversable& trav, const CameraState& cam) {
     }
 
 void AutoPilot::inactivate(void) {
-    ErrorHandler::record("AutoPilot::inactivate() : ", ErrorHandler::INFORM);
+    ErrorHandler::record("AutoPilot::inactivate()", ErrorHandler::INFORM);
     // Save most recent view state.
     view = current_path.value(lambda);
 
+    // Clear the Traverse.
     current_traverse.clear();
 
     active_flag = false;
@@ -86,7 +86,8 @@ void AutoPilot::step(void) {
         // No, so increment along the current path.
         lambda += current_delta_lambda;
 
-        // Is it the end of the current path ??
+        // Is it the end of the current path ie. we have arrived
+        // at a Lookout ?
         if(lambda >= Path::LAMBDA_UPPER_BOUND) {
             // Then pause movement and (re-)set the pause counter.
             pause_flag = true;
@@ -97,7 +98,7 @@ void AutoPilot::step(void) {
         // Yes we are waiting, so one less frame to wait here.
         --count_down;
 
-        // End of pause interval ?
+        // End of pause interval ie. should we move on now ?
         if(count_down == 0) {
             // Yes, so move on to evolve the next available Path.
             current_path = current_traverse.getNextPath();
@@ -105,6 +106,7 @@ void AutoPilot::step(void) {
             set_delta_lambda();
             // Unpause movement.
             pause_flag = false;
+            // Start at the beginning of the new Path.
             lambda = Path::LAMBDA_LOWER_BOUND;
             }
         }
@@ -145,7 +147,7 @@ void AutoPilot::step(void) {
             }
         else {
             // No, we aren't in the EARLY part either, must be the MIDDLE.
-            // But have we just transitioned from the MIDDLE portion?
+            // But have we just transitioned to the MIDDLE portion?
             if(path_stage_flag == EARLY) {
                 // So set the stage as MIDDLE.
                 path_stage_flag = MIDDLE;
@@ -157,10 +159,12 @@ void AutoPilot::step(void) {
                 }
             }
         }
+    // Set the current CameraState to reflect our current position
+    // as per the current Path and lambda.
     view = current_path.value(lambda);
     }
 
-CameraState AutoPilot::viewState(void) {
+CameraState AutoPilot::viewState(void) const {
     return view;
     }
 
@@ -177,26 +181,30 @@ bool AutoPilot::hasDescriptionChanged(void) const {
     }
 
 void AutoPilot::set_delta_lambda(void) {
-    // Select longest curve component of current path to avoid high rates of camera state change.
+    // Select longest curve component of current path to avoid high rates
+    // of camera state change ( stutter and slew ).
     float position_path_length = current_path.curveLength(Path::POSITION);
     float focus_path_length = current_path.curveLength(Path::FOCUS);
     float orientation_path_length = current_path.curveLength(Path::ORIENTATION);
 
-    float longest_path_length = std::max(std::max(position_path_length, focus_path_length), orientation_path_length);
+    float longest_path_length = std::max(std::max(position_path_length,
+                                                  focus_path_length),
+                                         orientation_path_length);
 
     // Note that a delta lambda of zero implies no movement !!
     current_delta_lambda = 0.0f;
 
     // Need care with rounding at values near zero.
     if(longest_path_length < LEAST_PATH_LENGTH) {
-        // In effect, if a path has insufficient length then only one frame will be rendered for it.
+        // In effect, if a path has insufficient length then only
+        // one frame will be rendered for it.
         current_delta_lambda = Path::LAMBDA_UPPER_BOUND;
         }
     else {
         current_delta_lambda = LENGTH_PER_FRAME / longest_path_length;
         }
 
-    // Prevent overshoot.
+    // In any event prevent overshoot of lambda.
     if(current_delta_lambda > Path::LAMBDA_UPPER_BOUND) {
         current_delta_lambda = Path::LAMBDA_UPPER_BOUND;
         }
@@ -209,11 +217,14 @@ void AutoPilot::getTraverse(const Traversable& trav, const CameraState& cam) {
     // Construct a Lookout from the existing position and orientation
     // within the Simulation.
     LookOut first(cam.position(), cam.focus(), cam.orientation());
+
     // Use that as the initial Lookout in the Traverse being constructed.
     current_traverse.addLookout(first);
 
     // The remaining Lookouts come from our given Traversable object.
-    for(unsigned int way_point = 0; way_point < trav.numberOfWayPoints(); ++way_point) {
+    for(unsigned int way_point = 0;
+        way_point < trav.numberOfWayPoints();
+        ++way_point) {
         current_traverse.addLookout(trav.getView(way_point));
         }
     }

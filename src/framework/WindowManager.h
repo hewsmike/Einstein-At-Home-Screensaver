@@ -2,7 +2,7 @@
  *   Copyright (C) 2008 by Oliver Bock                                     *
  *   oliver.bock[AT]aei.mpg.de                                             *
  *                                                                         *
- *   As amended 2012 by Mike Hewson                                        *
+ *   As amended 2013 by Mike Hewson                                        *
  *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
@@ -41,14 +41,15 @@ using namespace std;
  */
 
 /**
- * \brief This class is responsible for the application's window and event management.
+ * \brief This class is responsible for the application's window and event
+ *        management.
  *
- *      %WindowManager provides an initialized OpenGL context needed by any given
- * \ref AbstractGraphicsEngine. In addition to that it serves as the main event
- * controller. That means it handles all window and user input events and
- * propagates them to all registered observers of type \ref AbstractGraphicsEngine.
- * This also includes all timer events required for rendering and information
- * retrieval control.
+ *      %WindowManager provides an initialized OpenGL context needed by any
+ * given \ref AbstractGraphicsEngine. In addition to that it serves as the main
+ * event controller. That means it handles all window and user input events and
+ * propagates them to all registered observers of type \ref
+ * AbstractGraphicsEngine. This also includes all timer events required for
+ * rendering and information retrieval control.
  *
  * \author Oliver Bock\n
  * Max-Planck-Institute for Gravitational Physics\n
@@ -78,15 +79,18 @@ class WindowManager {
          *
          * \return TRUE if successful, otherwise FALSE
          */
-        bool initialize(const int width = 800, const int height = 600, const int frameRate = 20);
+        bool initialize(const int width = 800,
+                        const int height = 600,
+                        const int frameRate = 20);
 
         /**
          * \brief Registers a new event observer.
          *
-         * All registered observers are notified in case one of the events
+         *      All registered observers are notified in case one of the events
          * specified in \ref EventCodes occurrs.
          *
-         * \param engine The pointer to the \ref AbstractGraphicsEngine instance to register.
+         * \param engine The pointer to the \ref AbstractGraphicsEngine instance
+         *        to register.
          *
          * \see AbstractGraphicsEngine::mouseButtonEvent()
          * \see AbstractGraphicsEngine::mouseMoveEvent()
@@ -97,15 +101,17 @@ class WindowManager {
         /**
          * \brief Unregisters an event observer.
          *
-         * \param engine The pointer to the \ref AbstractGraphicsEngine instance to unregister.
+         * \param engine The pointer to the \ref AbstractGraphicsEngine instance
+         *        to unregister.
          */
         void unregisterEventObserver(AbstractGraphicsEngine *engine);
 
         /**
          * \brief The main event loop.
          *
-         * Call this method to enter the main window's event loop. All subsequent application
-         * control is defined here. The method returns when the window is closed or destroyed.
+         *      Call this method to enter the main window's event loop. All
+         * subsequent application control is defined here. The method returns
+         * when the window is closed or destroyed.
          */
         void eventLoop(void);
 
@@ -145,8 +151,9 @@ class WindowManager {
         /**
          * \brief Set the main window's icon.
          *
-         * This method uses the provided raw data pointer to load a bitmap (BMP) image
-         * from memory which in turn is displayed as the main window's icon.
+         * This method uses the provided raw data pointer to load a bitmap
+         * (BMP) image from memory which in turn is displayed as the main
+         * window's icon.
          *
          * Note: The icon should have a size of 32x32 pixels!
          *

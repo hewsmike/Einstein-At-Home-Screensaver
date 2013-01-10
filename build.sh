@@ -4,7 +4,7 @@
 #   Copyright (C) 2008-2009 by Oliver Bock                                #
 #   oliver.bock[AT]aei.mpg.de                                             #
 #                                                                         #
-#   Copyright (C) 2012 by Mike Hewson  [ any & all errors are mine :-) ]  #
+#   Copyright (C) 2013 by Mike Hewson  [ any & all errors are mine :-) ]  #
 #   hewsmike[AT]iinet.net.au                                              #
 #                                                                         #
 #   This file is part of Einstein@Home.                                   #

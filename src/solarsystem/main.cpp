@@ -2,7 +2,7 @@
  *   Copyright (C) 2008 by Oliver Bock                                     *
  *   oliver.bock[AT]aei.mpg.de                                             *
  *                                                                         *
- *   As amended 2012 by Mike Hewson                                        *
+ *   As amended 2013 by Mike Hewson                                        *
  *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *

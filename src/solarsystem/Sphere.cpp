@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2012 by Mike Hewson                                     *
+ *   Copyright (C) 2013 by Mike Hewson                                     *
  *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *

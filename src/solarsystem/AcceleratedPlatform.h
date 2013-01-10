@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2012 by Mike Hewson                                     *
+ *   Copyright (C) 2013 by Mike Hewson                                     *
  *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
@@ -22,8 +22,9 @@
 #define ACCELERATED_PLATFORM_H_
 
 #include "CameraState.h"
-#include "VelocityPlatform.h"
 #include "RotatablePlatform.h"
+#include "Vector3D.h"
+#include "VelocityPlatform.h"
 
 /**
  * \addtogroup solarsystem Solarsystem
@@ -31,12 +32,17 @@
  */
 
 /**
- * \brief Fully accelerated Cartesian orthonormal vector set
+ * \brief Fully accelerated Cartesian orthonormal vector set.
  *
- *      This class comprises acceleration state data, accessors
- * and mutators thereof. HOWEVER this doesn't model angular
- * acceleration ( around centre of mass ), only linear ( of
- * centre of mass ) and CONSTANT angular rotation rates.
+ *      This class comprises acceleration state data, accessors and
+ * mutators thereof. However this doesn't model angular acceleration
+ * around centre of mass, only linear acceleration of centre of mass
+ * and constant angular rotation rates.
+ *
+ * \see CameraState
+ * \see RotatablePlatform
+ * \see Vector3D
+ * \see VelocityPlatform
  *
  * \author Mike Hewson\n
  */
@@ -44,98 +50,101 @@
 class AcceleratedPlatform : public VelocityPlatform, public RotatablePlatform {
     public:
         /**
-         * \brief Constructor
+         * \brief Constructor.
          */
         AcceleratedPlatform(void);
 
         /**
-         * \brief Destructor
+         * \brief Destructor.
          */
         virtual ~AcceleratedPlatform();
 
         /**
-         * \brief Get the acceleration
+         * \brief Obtain the linear acceleration.
          *
-         * \return a vector representing the acceleration
+         * \return a vector3D representing the acceleration.
          */
         Vector3D linearAcceleration(void) const;
 
         /**
-         * \brief Set the acceleration
+         * \brief Set the linear acceleration.
          *
-         * \param acceleration : a vector indicating the desired acceleration
+         * \param acceleration : a vector3D indicating the desired acceleration.
          */
         void setLinearAcceleration(const Vector3D& acceleration);
 
         /**
-         * \brief Get the current rate of change of pitch
+         * \brief Get the current rate of change of pitch angle.
          *
-         * \return the pitch rate
+         * \return The pitch rate ( radians per notional time unit ).
          */
         vec_t pitchRate(void) const;
 
         /**
-         * \brief Get the current rate of change of roll
+         * \brief Get the current rate of change of roll angle.
          *
-         * \return the roll rate
+         * \return The roll rate ( radians per notional time unit ).
          */
         vec_t rollRate(void) const;
 
         /**
-         * \brief Get the current rate of change of yaw
+         * \brief Get the current rate of change of yaw angle.
          *
-         * \return the yaw rate
+         * \return The yaw rate ( radians per notional time unit ).
          */
         vec_t yawRate(void) const;
 
         /**
-         * \brief Set the pitch rate
+         * \brief Set the pitch rate.
          *
-         * \param the pitch angular rate ( notional units )
+         * \param rate : the pitch angular rate
+         *               ( radians per notional time unit ).
          */
         void setPitchRate(vec_t rate);
 
         /**
-         * \brief Set the roll rate
+         * \brief Set the roll rate.
          *
-         * \param the roll angular rate ( notional units )
+         * \param rate : the roll angular rate
+         *               ( radians per notional time unit ).
          */
         void setRollRate(vec_t rate);
 
         /**
-         * \brief Set the yaw rate
+         * \brief Set the yaw rate.
          *
-         * \param the yaw angular rate ( notional units )
+         * \param rate : the yaw angular rate
+         *               ( radians per notional time unit ).
          */
         void setYawRate(vec_t rate);
 
         /**
-         * \brief Get the current view state information
+         * \brief Get the current view state information.
          *
-         * \return the view state in camera format
+         * \return The view in CameraState format.
          */
         CameraState viewState(void) const;
 
         /**
-         * \brief Set the current view state
+         * \brief Set the current view state.
          *
-         * \param the desired view state in camera format
+         * \param cam : the desired view in CameraState format.
          */
         void setViewState(const CameraState& cam);
 
         /**
          * \brief Reset the platform in acceleration, velocity,
-         *        position and rotation
+         *        position and rotation.
          */
         virtual void reset(void);
 
         /**
-         * \brief Evolve platform one unit step in time
+         * \brief Evolve platform one step ( notional units ) in time.
          */
         virtual void step(void);
 
     private:
-        /// Initial centre of mass acceleration.
+        /// Initial centre of mass linear acceleration.
         static const Vector3D INITIAL_LINEAR_ACCELERATION;
 
         /// Initial around centre of mass rotation.
