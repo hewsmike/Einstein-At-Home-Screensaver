@@ -23,8 +23,11 @@
 #include <iostream>
 
 #include "Craft.h"
+#include "OrthoNormalPlatform.h"
 
-CameraState::CameraState(void) : where(Craft::START_POSITION) {
+CameraState::CameraState(void) : where(Craft::START_POSITION),
+                                 look_at(OrthoNormalPlatform::INITIAL_LOOK),
+                                 up_dir(OrthoNormalPlatform::INITIAL_UP) {
     }
 
 CameraState::CameraState(const Vector3D& position,
@@ -35,7 +38,7 @@ CameraState::CameraState(const Vector3D& position,
                             up_dir(orientation) {
     }
 
-CameraState::CameraState(const CameraState& other){
+CameraState::CameraState(const CameraState& other) {
     where = other.position();
     look_at = other.focus();
     up_dir = other.orientation();
@@ -77,14 +80,4 @@ const Vector3D& CameraState::focus(void) const {
 
 const Vector3D& CameraState::orientation(void) const {
     return this->up_dir;
-    }
-
-void CameraState::print(void) const {
-    std::cout << "Position : ";
-    this->where.print();
-    std::cout << "Focus : ";
-    this->look_at.print();
-    std::cout << "Orientation : ";
-    this->up_dir.print();
-    std::cout << std::endl;
     }
