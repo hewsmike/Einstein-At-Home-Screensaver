@@ -28,6 +28,7 @@ SolarSystemGamma::SolarSystemGamma() :
    }
 
 SolarSystemGamma::~SolarSystemGamma() {
+    delete sim_instance;
    }
 
 void SolarSystemGamma::initialize(const int width, const int height, const Resource *font, const bool recycle) {

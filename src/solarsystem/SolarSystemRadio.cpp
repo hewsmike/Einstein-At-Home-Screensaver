@@ -27,6 +27,7 @@ SolarSystemRadio::SolarSystemRadio() :
 	}
 
 SolarSystemRadio::~SolarSystemRadio() {
+    delete sim_instance;
     }
 
 void SolarSystemRadio::initialize(const int width, const int height, const Resource *font, const bool recycle) {
