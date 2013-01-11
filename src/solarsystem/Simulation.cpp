@@ -208,7 +208,7 @@ Simulation::Simulation(BOINCClientAdapter* boinc_adapter) :
                                         72),
                                overlay(HUDContainer::RETAIN),
                                north_panel(HUDFlowLayout::VERTICAL,
-                                           HUDContainer::DESTROY),
+                                           HUDContainer::RETAIN),
                                south_panel(HUDFlowLayout::HORIZONTAL,
                                            HUDContainer::RETAIN),
                                east_panel(HUDFlowLayout::VERTICAL,
@@ -404,7 +404,8 @@ CameraState Simulation::viewPoint(void) {
 void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
     /// TODO - write cases per render_quality ... presently ignored
     /// at this level.
-
+    ErrorHandler::record("Simulation::prepare() : got this far 1.",
+                         ErrorHandler::INFORM);
     // Activate 3D scene objects, while nominating any fonts
     // P to activation of their respective objects..
     cs.setFont(SolarSystemGlobals::getFont(SolarSystemGlobals::CONSTELLATIONS));
@@ -423,20 +424,33 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
     ecliptic.activate();
     galactic.activate();
 
+    ErrorHandler::record("Simulation::prepare() : got this far 2.",
+                         ErrorHandler::INFORM);
+
     // Now to arrange the HUD components.
 
     // First empty the panels, as we may be recycling.
-    north_panel.erase();
-    south_panel.erase();
-    east_panel.erase();
-    west_panel.erase();
 
-    north_east_panel.erase();
-    north_west_panel.erase();
+
+    // north_east_panel.erase();
+    // north_west_panel.erase();
 
     south_east_panel.erase();
     south_west_panel.erase();
     south_centre_panel.erase();
+
+    ErrorHandler::record("Simulation::prepare() : got this far 2a.",
+                         ErrorHandler::INFORM);
+
+    north_panel.erase();
+    ErrorHandler::record("Simulation::prepare() : got this far 2b.",
+                         ErrorHandler::INFORM);
+    south_panel.erase();
+    east_panel.erase();
+    west_panel.erase();
+
+    ErrorHandler::record("Simulation::prepare() : got this far 3.",
+                         ErrorHandler::INFORM);
 
     // Set panel justifications.
     north_panel.setPrimaryJustification(HUDFlowLayout::END);
@@ -466,9 +480,13 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
     overlay.setPanel(HUDBorderLayout::EAST, &east_panel);
     overlay.setPanel(HUDBorderLayout::WEST, &west_panel);
 
+    ErrorHandler::record("Simulation::prepare() : got this far 4.",
+                         ErrorHandler::INFORM);
     // Within north panel put sub-panels.
     // north_panel.addItem(&north_east_panel);
     north_panel.addItem(&north_west_panel);
+    ErrorHandler::record("Simulation::prepare() : got this far 5.",
+                         ErrorHandler::INFORM);
 
     // Within south panel put sub-panels.
     south_panel.addItem(&south_west_panel);

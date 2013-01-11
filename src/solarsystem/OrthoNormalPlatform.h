@@ -56,6 +56,12 @@
 
 class OrthoNormalPlatform {
     public:
+        /// Initial 'look' vector
+        static const Vector3D INITIAL_LOOK;
+
+        /// Initial 'up' vector
+        static const Vector3D INITIAL_UP;
+
         /**
          * \brief Constructor
          */
@@ -108,12 +114,6 @@ class OrthoNormalPlatform {
         virtual void reset(void);
 
     private:
-        /// Initial 'look' vector
-        static const Vector3D INITIAL_LOOK;
-
-        /// Initial 'up' vector
-        static const Vector3D INITIAL_UP;
-
         /// The current 'look' vector.
         Vector3D look_dir;
 

@@ -24,7 +24,7 @@
 SolarSystemGamma::SolarSystemGamma() :
    SolarSystem(EinsteinRadioAdapter::SharedMemoryIdentifier),
    m_EinsteinAdapter(&m_BoincAdapter) {
-   sim_instance = new SolarSystemGamma(&m_BoincAdapter, &m_EinsteinAdapter);
+   sim_instance = new SimulationGamma(&m_BoincAdapter, &m_EinsteinAdapter);
    }
 
 SolarSystemGamma::~SolarSystemGamma() {

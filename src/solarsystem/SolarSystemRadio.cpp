@@ -23,7 +23,7 @@
 SolarSystemRadio::SolarSystemRadio() :
 	SolarSystem(EinsteinRadioAdapter::SharedMemoryIdentifier),
 	m_EinsteinAdapter(&m_BoincAdapter) {
-	sim_instance = new SolarSystemRadio(&m_BoincAdapter, &m_EinsteinAdapter);
+	sim_instance = new SimulationRadio(&m_BoincAdapter, &m_EinsteinAdapter);
 	}
 
 SolarSystemRadio::~SolarSystemRadio() {
