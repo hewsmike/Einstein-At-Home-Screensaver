@@ -468,7 +468,7 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
 
     // Within north panel put sub-panels.
     // north_panel.addItem(&north_east_panel);
-    // north_panel.addItem(&north_west_panel);
+    north_panel.addItem(&north_west_panel);
 
     // Within south panel put sub-panels.
     south_panel.addItem(&south_west_panel);

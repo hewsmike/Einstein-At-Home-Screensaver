@@ -83,6 +83,9 @@ int main(int argc, char **argv) {
     scienceApplication = GraphicsEngineFactory::EinsteinGravity;
 #endif
 
+    // Instantiate and initialize our window manager.
+    WindowManager window;
+
     // Make an ABstractGraphicsEngine on the heap.
     // Edit this call for different build sources ie. swap 'Solarsystem' for whatever
     AbstractGraphicsEngine* graphics = GraphicsEngineFactory::createInstance(GraphicsEngineFactory::SolarSystem,
@@ -91,10 +94,6 @@ int main(int argc, char **argv) {
         ErrorHandler::record("SolarSystem::main() : Requested graphics engine could not be found/instantiated!", ErrorHandler::FATAL);
         }
 
-    // Instantiate and initialize our window manager.
-    WindowManager window;
-    // Register AbstractGraphicsEngine as event observer.
-    window.registerEventObserver(graphics);
     if(window.initialize() != true) {
         // Failure, so destroy the AbstractGraphicsEngine and ...
         delete graphics;
@@ -102,6 +101,8 @@ int main(int argc, char **argv) {
         ErrorHandler::record("SolarSystem::main() : Window manager could not be initialized!", ErrorHandler::FATAL);
         }
 
+    // Register AbstractGraphicsEngine as event observer.
+    window.registerEventObserver(graphics);
 
     // Discover and record the OpenGL version.
     GLuint major = 0;
