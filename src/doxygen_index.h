@@ -11,7 +11,7 @@
  * - Refurbished visuals and extended features
  * - Generalized API for community-driven implementations
  * - %Resource embedding (e.g. fonts, images)
- * - Migration from GLUT to SDL
+ * - Migration to GLFW and GLEW
  * - Self-consistent build script (Linux, Mac OS X, Windows/MinGW)
  * - Full doxygen documentation
  *
