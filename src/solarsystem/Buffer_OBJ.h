@@ -24,7 +24,7 @@
 #include "OGL_ID.h"
 
 /// Not a pretty solution for a purist, but it gets the pointer type right.
-/// Used to represent an offset into an OpenGL buffer server side object.
+/// Used to represent an offset into an OpenGL buffer ( server side ) object.
 #define BUFFER_OFFSET(bytes)  ((GLubyte*)NULL + (bytes))
 
 /**
@@ -80,7 +80,8 @@ class Buffer_OBJ : public OGL_ID {
          *               to the server buffer.
          * \param data - a pointer to the data to be transferred.
          */
-        void loadBuffer(GLenum  target, GLenum  usage, GLsizeiptr size, const GLvoid* data);
+        void loadBuffer(GLenum  target, GLenum  usage,
+                        GLsizeiptr size, const GLvoid* data);
     };
 
 /**

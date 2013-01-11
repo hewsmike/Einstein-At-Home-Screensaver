@@ -38,7 +38,8 @@ void Buffer_OBJ::release(void) {
     glDeleteBuffers(1, &ident);
     }
 
-void Buffer_OBJ::loadBuffer(GLenum  target, GLenum  usage, GLsizeiptr size, const GLvoid* data) {
+void Buffer_OBJ::loadBuffer(GLenum  target, GLenum  usage,
+                            GLsizeiptr size, const GLvoid* data) {
 	// This implementation avoids both the poor performance and poor error
 	// reporting ( as disclosed in actual practice ) of glMapBuffer().
 
@@ -47,14 +48,14 @@ void Buffer_OBJ::loadBuffer(GLenum  target, GLenum  usage, GLsizeiptr size, cons
 		this->acquire();
 		}
 
-	// Bind the buffer ( type ) to our identifier.
+	// Bind the buffer ( of 'target' type ) to our identifier.
 	glBindBuffer(target, this->ID());
 
 	// Allocate space. NULL for third parameter means no data
 	// transfer for THIS OpenGL call. See note below.
 	glBufferData(target, size, NULL, usage);
 
-	// Then transfer without using glMapBuffer(). Also using glBufferSubData()
+	// Now transfer without using glMapBuffer(). Also using glBufferSubData()
 	// has the performance advantage of not requiring ( back end ) memory
 	// re-allocation with repeated loads. Memory is entirely re-allocated
 	// when glBufferData() is used for any subsequent re-loads. While this
