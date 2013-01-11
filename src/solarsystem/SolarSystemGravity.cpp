@@ -21,8 +21,8 @@
 
 SolarSystemGravity::SolarSystemGravity() :
 	SolarSystem(EinsteinGravityAdapter::SharedMemoryIdentifier),
-	m_EinsteinAdapter(&m_BoincAdapter),
-	sim(&m_BoincAdapter, &m_EinsteinAdapter) {
+	m_EinsteinAdapter(&m_BoincAdapter) {
+	sim_instance = new SimulationGravity(&m_BoincAdapter, &m_EinsteinAdapter);
     }
 
 SolarSystemGravity::~SolarSystemGravity() {
@@ -43,7 +43,3 @@ void SolarSystemGravity::refreshBOINCInformation(void) {
 	// update local/specific content
 	m_EinsteinAdapter.refresh();
    	}
-
-Simulation& SolarSystemGravity::simulationInstance(void) {
-    return sim;
-    }

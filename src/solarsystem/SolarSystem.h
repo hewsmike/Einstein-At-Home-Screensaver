@@ -140,7 +140,7 @@ class SolarSystem : public AbstractGraphicsEngine, public RenderQualityObserver 
 
         virtual void refreshLocalBOINCInformation(void);
 
-        virtual Simulation& simulationInstance(void) = 0;
+        Simulation* sim_instance;
 
         /// Current window width (x-resolution)
         int m_CurrentWidth;

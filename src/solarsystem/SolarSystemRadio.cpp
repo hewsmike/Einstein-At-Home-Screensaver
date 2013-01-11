@@ -22,8 +22,8 @@
 
 SolarSystemRadio::SolarSystemRadio() :
 	SolarSystem(EinsteinRadioAdapter::SharedMemoryIdentifier),
-	m_EinsteinAdapter(&m_BoincAdapter),
-	sim(&m_BoincAdapter, &m_EinsteinAdapter) {
+	m_EinsteinAdapter(&m_BoincAdapter) {
+	sim_instance = new SolarSystemRadio(&m_BoincAdapter, &m_EinsteinAdapter);
 	}
 
 SolarSystemRadio::~SolarSystemRadio() {
@@ -43,8 +43,4 @@ void SolarSystemRadio::refreshBOINCInformation(void) {
 
 	// update local/specific content
 	m_EinsteinAdapter.refresh();
-    }
-
-Simulation& SolarSystemRadio::simulationInstance(void) {
-    return sim;
     }

@@ -85,15 +85,9 @@ class SolarSystemGravity : public SolarSystem {
          */
         void refreshBOINCInformation(void);
 
-    protected:
-        virtual Simulation& simulationInstance(void);
-
     private:
         /// Specialized BOINC client adapter instance for information retrieval
         EinsteinGravityAdapter m_EinsteinAdapter;
-
-        /// The 3D scene objects to be rendered.
-        SimulationGravity sim;
     };
 
 /**

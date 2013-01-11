@@ -252,10 +252,10 @@ void SolarSystem::render(const double tOD) {
     glLoadIdentity();
 
     // Evolve the simulation.
-    simulationInstance().step();
+    sim_instance->step();
 
     // Where are we etc .... in our virtual world?
-    const CameraState& cam = simulationInstance().viewPoint();
+    const CameraState& cam = sim_instance->viewPoint();
 
     // Set up the camera position and orientation.
     gluLookAt(cam.position().x(),
@@ -269,7 +269,7 @@ void SolarSystem::render(const double tOD) {
               cam.orientation().z());
 
     // Render from the current viewpoint.
-    simulationInstance().draw();
+    sim_instance->draw;
 
     // Check for and report any errors generated.
     ErrorHandler::check_OpenGL_Error();

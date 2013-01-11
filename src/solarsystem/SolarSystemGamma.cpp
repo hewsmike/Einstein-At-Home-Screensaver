@@ -23,8 +23,8 @@
 
 SolarSystemGamma::SolarSystemGamma() :
    SolarSystem(EinsteinRadioAdapter::SharedMemoryIdentifier),
-   m_EinsteinAdapter(&m_BoincAdapter),
-   sim(&m_BoincAdapter, &m_EinsteinAdapter) {
+   m_EinsteinAdapter(&m_BoincAdapter) {
+   sim_instance = new SolarSystemGamma(&m_BoincAdapter, &m_EinsteinAdapter);
    }
 
 SolarSystemGamma::~SolarSystemGamma() {
@@ -45,7 +45,3 @@ void SolarSystemGamma::refreshBOINCInformation(void) {
    // update local/specific content
    m_EinsteinAdapter.refresh();
    }
-
-Simulation& SolarSystemGamma::simulationInstance(void) {
-    return sim;
-    }
