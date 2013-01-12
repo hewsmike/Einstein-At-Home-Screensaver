@@ -67,10 +67,10 @@ class Constellation {
         /**
          * \brief Add a star to the constellation.
          *
-         *      The order in which stars are added is important for later reference
-         * to them ie. when linkages are defined. Each star has a zero based
-         * index assigned. The first star entered has index 0, the second index 1
-         * ... etc
+         *      The order in which stars are added is important for later
+         * reference to them ie. when linkages are defined. Each star has a
+         * zero based index assigned. The first star entered has index 0, the
+         * second index 1 ... etc
          *
          * \param star : the star to add.
          */
@@ -148,8 +148,8 @@ class Constellation {
         const std::vector<std::string>& getDescription(void) const;
 
     private:
-        /// Flags in deducing whether or not right ascension values in
-        /// constellation span across a right ascension value of zero.
+        /// Flags used in deducing whether or not right ascension values in
+        /// the constellation span across a right ascension value of zero.
         /// Important for calculating the centroid and other metrics.
         /// Constellation has a star in first quadrant ( RA 0 to 6 hours ).
         bool first_quadrant;

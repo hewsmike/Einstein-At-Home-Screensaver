@@ -96,7 +96,7 @@ void Constellation::add_star(OrdStar star) {
     // of Aries, or the other quadrants.
     starpos_t right_ascension = star.right_ascension();
 
-    // As evaluated here, stars on either the first or fourth quadrant boundary
+    // Stars on either the first or fourth quadrant boundary
     // are deemed to be in the middle quadrants.
     if(right_ascension < FIRST_QUAD_UPPER) {
         first_quadrant = true;
@@ -155,9 +155,9 @@ std::pair<GLfloat, GLfloat> Constellation::centre(void) {
             // This star's right ascension.
             starpos_t ra = st->right_ascension();
 
-            // If this constellation spans the prime meridian, and
-            // the current right ascension is on the 'eastern side'
-            // of it then add a full circle's worth of angle to it.
+            // If this constellation spans the prime meridian, and the current
+            // right ascension is on the 'eastern side' of it then add a full
+            // circle's worth of angle to it.
             if(crosses_first_point_Aries &&
                (ra < SolarSystemGlobals::HALF_CIRCLE_DEG)) {
                 ra += SolarSystemGlobals::FULL_CIRCLE_DEG;
