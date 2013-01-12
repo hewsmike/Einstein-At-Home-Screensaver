@@ -27,26 +27,33 @@
 #include "HUDItem.h"
 
 /**
-* \addtogroup solarsystem Solarsystem
-* @{
-*/
+ * \addtogroup solarsystem Solarsystem
+ * @{
+ */
 
 /**
-* \brief Base container type for display of HUD content.
-*
-* The key design feature here is that a HUDContainer
-* may be one/both of container and contained. That is, any
-* HUDContainer object may contain another HUDContainer
-* object.
-*
-* Any contained object(s) will be activated for rendering
-* when the container itself is activated, but only those
-* present within at such time of activation.
-*
-* \see HUDItem
-*
-* \author Mike Hewson\n
-*/
+ * \brief Base container type for display of HUD content.
+ *
+ *      The key design feature here is that a HUDContainer may be one/both of
+ * container and contained. That is, any HUDContainer object may contain any
+ * HUDItem, thus specifically another HUDContainer object. Circular inclusion
+ * gives undefined behaviour ie. stick to directed acyclic graphs. What is
+ * stored is in fact pointers to HUDItems.
+ *      The RETAIN option ( default ) on construction is to indicate that it is
+ * not the  responsibility of the container to manage heap allocation of
+ * contained items.
+ *      The DESTROY option on construction is for the benefit of creating
+ * containers with temporary heap content that will be deleted from the heap
+ * when they are removed from the container. That is, it saves having to do such
+ * deletions separately. BEWARE using the destroy option for otherwise 'named'
+ * heap items as double deletion ( undefined behaviour ) may be risked.
+ *      Any contained object(s) will be activated for rendering when the container itself is activated, but only those
+ * present within at such time of activation.
+ *
+ * \see HUDItem
+ *
+ * \author Mike Hewson\n
+ */
 
 class HUDContainer : public HUDItem {
     public:

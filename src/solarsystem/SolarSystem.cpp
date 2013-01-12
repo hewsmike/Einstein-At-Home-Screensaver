@@ -87,8 +87,6 @@ void SolarSystem::initialize(const int width, const int height, const Resource* 
         // This is the recurrent call of this routine from WindowManager.
         // Seems that windoze also "resets" our OpenGL fonts, so
         // let's clean up before reinitializing them.
-        ErrorHandler::record("SolarSystem::initialize() : recycle = true",
-                             ErrorHandler::INFORM);
         if(skygridFont != NULL) {
             delete skygridFont;
             }
@@ -111,15 +109,11 @@ void SolarSystem::initialize(const int width, const int height, const Resource* 
                              ErrorHandler::WARN);
         }
     else {
-        ErrorHandler::record("SolarSystem::initialize() : font resource is known.",
-                             ErrorHandler::INFORM);
         // create font instance using font resource (base address + size)
         skygridFont = new OGLFT_ft(&spaceFontResource->data()->at(0),
                                    spaceFontResource->data()->size(),
                                    13, 78);
 
-        ErrorHandler::record("SolarSystem::initialize() : got this far 1.",
-                             ErrorHandler::INFORM);
         // Note short-circuit evaluation relevant in this if clause ie. right side
         // expression is evaluated only if left side expression is false. Matters
         // for pointer dereference so don't swap order of expressions here.
@@ -131,8 +125,6 @@ void SolarSystem::initialize(const int width, const int height, const Resource* 
         skygridFont->setBackgroundColor(0.0f, 0.0f, 0.0f, 0.0f);
         skygridFont->setForegroundColor(1.0f, 1.0f, 1.0f, 0.6f);
 
-        ErrorHandler::record("SolarSystem::initialize() : got this far 2.",
-                             ErrorHandler::INFORM);
         // create font instance using font resource (base address + size)
         earthgridFont = new OGLFT_ft(&spaceFontResource->data()->at(0),
                                      spaceFontResource->data()->size(),
@@ -164,8 +156,6 @@ void SolarSystem::initialize(const int width, const int height, const Resource* 
                                spaceFontResource->data()->size(),
                                18, 90);
 
-        ErrorHandler::record("SolarSystem::initialize() : got this far 3.",
-                             ErrorHandler::INFORM);
         // Short-circuit .....
         if(HUDFont == NULL || (HUDFont->isValid() == false)) {
             // TODO - better error path ?
@@ -226,11 +216,7 @@ void SolarSystem::initialize(const int width, const int height, const Resource* 
 
     glDisable(GL_CLIP_PLANE0);
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-    ErrorHandler::record("SolarSystem::initialize() : got this far 4.",
-                             ErrorHandler::INFORM);
     sim_instance->activate();
-    ErrorHandler::record("SolarSystem::initialize() : got this far 5.",
-                             ErrorHandler::INFORM);
 
     // Setup dimensions. NB this is currently the only call to
     // invoke this !!
