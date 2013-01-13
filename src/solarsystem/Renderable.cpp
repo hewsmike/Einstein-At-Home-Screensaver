@@ -60,14 +60,18 @@ void Renderable::inactivate(void) {
     activity = Renderable::INACTIVE;
     }
 
-Renderable::activity_state Renderable::isActivated(void) const {
-    return activity;
+bool Renderable::isActivated(void) const {
+    bool ret_val = false;
+    if(activity == ACTIVE) {
+        ret_val = true;
+        }
+    return ret_val;
     }
 
 void Renderable::cycleActivation(void) {
     // In this base class the activity state is simply toggled.
     // Re-define this in a derived class if you want other behaviours.
-    isActivated() ? inactivate() : activate();
+    this->isActivated() ? inactivate() : activate();
     }
 
 void Renderable::show(void) {
@@ -88,7 +92,7 @@ bool Renderable::isShown(void) const {
 
 void Renderable::draw(void) {
     // Only display if it is marked as to be shown, with resources acquired.
-    if((show_flag == true) && (activity == Renderable::ACTIVE)) {
+    if((show_flag == true) && (this->isActivated())) {
         render();
         }
     }
@@ -98,7 +102,7 @@ void Renderable::renderQualityUpdate(void) {
     quality = SolarSystemGlobals::getRenderLevel();
 
     // Provided the item is marked as active.
-    if(isActivated() == true) {
+    if(this->isActivated()) {
         // Then inactivate the item, thus releasing resources.
         inactivate();
 

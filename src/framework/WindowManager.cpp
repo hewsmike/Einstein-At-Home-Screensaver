@@ -392,14 +392,8 @@ void WindowManager::eventLoop(void) {
                 // notify our observers (currently exactly one, hence front())
                 // (windoze needs to be reinitialized instead of just resized, oh well)
                 /// \todo Can we determine the host OS? On X11 a resize() is sufficient!
-                ErrorHandler::record("WindowManager::eventLoop() : testing for Event observer .... ",
-                                     ErrorHandler::INFORM);
                 if(eventObservers.size() > 0) {
-                    ErrorHandler::record("WindowManager::eventLoop() : I have an Event observer.",
-                                         ErrorHandler::INFORM);
                     eventObservers.front()->initialize(m_CurrentWidth, m_CurrentHeight, 0, true);
-                    ErrorHandler::record("WindowManager::eventLoop() : I got this far.",
-                                         ErrorHandler::INFORM);
                     }
                 else {
                     ErrorHandler::record("WindowManager::eventLoop() : Oh dear, no registered Event observer. This is bad!",

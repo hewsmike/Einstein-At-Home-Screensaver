@@ -88,7 +88,7 @@ class Renderable : public RenderQualityObserver {
          *
          * \return The activation state.
          */
-        Renderable::activity_state isActivated() const;
+        bool isActivated() const;
 
         /**
          * \brief Cycles the activation state of the object.

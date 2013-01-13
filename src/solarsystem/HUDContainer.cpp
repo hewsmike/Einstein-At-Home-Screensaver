@@ -125,7 +125,7 @@ void HUDContainer::addItem(int handle, HUDItem* item) {
 
         // Policy is for an included item to acquire the
         // activation status of the container.
-        if(this->isActivated() == true) {
+        if(this->isActivated()) {
             item->activate();
             }
         else {

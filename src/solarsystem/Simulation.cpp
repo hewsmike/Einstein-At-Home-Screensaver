@@ -427,7 +427,7 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
 
     // First empty the panels, as we may be recycling.
 
-    north_east_panel.erase();
+    //north_east_panel.erase();
     north_west_panel.erase();
 
     south_east_panel.erase();
@@ -438,9 +438,6 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
     south_panel.erase();
     east_panel.erase();
     west_panel.erase();
-
-    ErrorHandler::record("Simulation::prepare() : got this far 3.",
-                         ErrorHandler::INFORM);
 
     // Set panel justifications.
     north_panel.setPrimaryJustification(HUDFlowLayout::END);
@@ -471,8 +468,8 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
     overlay.setPanel(HUDBorderLayout::WEST, &west_panel);
 
     // Within north panel put sub-panels.
-    north_panel.addItem(&north_east_panel);
     north_panel.addItem(&north_west_panel);
+    // north_panel.addItem(&north_west_panel);
 
     // Within south panel put sub-panels.
     south_panel.addItem(&south_west_panel);
@@ -3147,16 +3144,17 @@ void Simulation::loadLookoutDataToPanels(void) {
     north_west_panel.activate();
 
     // Then put new image(s), if any, into the west panel.
-    north_east_panel.erase();
-    const std::vector<std::string>& image_names = pilot.getImageResourceNames();
-    int image_count = 0;
-    for(std::vector<std::string>::const_iterator image_name = image_names.begin();
-        image_name != image_names.end();
-        ++image_name) {
-        north_east_panel.addItem(new HUDImage(*image_name, 10, 10));
-        ++image_count;
-        }
-    north_east_panel.activate();
+//    north_east_panel.erase();
+//    const std::vector<std::string>& image_names = pilot.getImageResourceNames();
+//    int image_count = 0;
+//    for(std::vector<std::string>::const_iterator image_name = image_names.begin();
+//        image_name != image_names.end();
+//        ++image_name) {
+//        north_east_panel.addItem(new HUDImage(*image_name, 10, 10));
+//        ++image_count;
+//        }
+//    north_east_panel.activate();
+    north_panel.activate();
     }
 
 void Simulation::includeUserInformation(HUDFlowLayout* container) {
