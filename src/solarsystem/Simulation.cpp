@@ -207,7 +207,7 @@ Simulation::Simulation(BOINCClientAdapter* boinc_adapter) :
                                         Simulation::SKYGRID_RADIUS,
                                         72),
                                overlay(HUDContainer::RETAIN),
-                               north_panel(HUDFlowLayout::VERTICAL,
+                               north_panel(HUDFlowLayout::HORIZONTAL,
                                            HUDContainer::RETAIN),
                                south_panel(HUDFlowLayout::HORIZONTAL,
                                            HUDContainer::RETAIN),
@@ -427,7 +427,7 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
 
     // First empty the panels, as we may be recycling.
 
-    //north_east_panel.erase();
+    north_east_panel.erase();
     north_west_panel.erase();
 
     south_east_panel.erase();
@@ -440,8 +440,8 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
     west_panel.erase();
 
     // Set panel justifications.
-    north_panel.setPrimaryJustification(HUDFlowLayout::END);
-    north_panel.setSecondaryJustification(HUDFlowLayout::MIDDLE);
+    north_panel.setPrimaryJustification(HUDFlowLayout::START_AND_END);
+    north_panel.setSecondaryJustification(HUDFlowLayout::DISTAL);
     south_panel.setPrimaryJustification(HUDFlowLayout::START_AND_END);
     south_panel.setSecondaryJustification(HUDFlowLayout::PROXIMAL);
     east_panel.setPrimaryJustification(HUDFlowLayout::CENTRE);
@@ -451,7 +451,7 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
 
     north_west_panel.setPrimaryJustification(HUDFlowLayout::START);
     north_west_panel.setSecondaryJustification(HUDFlowLayout::PROXIMAL);
-    north_east_panel.setPrimaryJustification(HUDFlowLayout::END);
+    north_east_panel.setPrimaryJustification(HUDFlowLayout::START);
     north_east_panel.setSecondaryJustification(HUDFlowLayout::DISTAL);
 
     south_west_panel.setPrimaryJustification(HUDFlowLayout::END);
@@ -466,10 +466,6 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
     overlay.setPanel(HUDBorderLayout::SOUTH, &south_panel);
     overlay.setPanel(HUDBorderLayout::EAST, &east_panel);
     overlay.setPanel(HUDBorderLayout::WEST, &west_panel);
-
-    // Within north panel put sub-panels.
-    north_panel.addItem(&north_west_panel);
-    // north_panel.addItem(&north_west_panel);
 
     // Within south panel put sub-panels.
     south_panel.addItem(&south_west_panel);
@@ -3128,6 +3124,8 @@ std::vector<std::string> Simulation::parseLine(std::string input) const {
     }
 
 void Simulation::loadLookoutDataToPanels(void) {
+    north_panel.erase();
+    north_panel.activate();
     // Derive content according to the current position in the tour.
     // First put new content text, if any, into the northwest panel.
     north_west_panel.erase();
@@ -3141,20 +3139,19 @@ void Simulation::loadLookoutDataToPanels(void) {
             north_west_panel.addItem(current);
             }
         }
-    north_west_panel.activate();
+    north_panel.addItem(&north_west_panel);
 
     // Then put new image(s), if any, into the west panel.
-//    north_east_panel.erase();
-//    const std::vector<std::string>& image_names = pilot.getImageResourceNames();
-//    int image_count = 0;
-//    for(std::vector<std::string>::const_iterator image_name = image_names.begin();
-//        image_name != image_names.end();
-//        ++image_name) {
-//        north_east_panel.addItem(new HUDImage(*image_name, 10, 10));
-//        ++image_count;
-//        }
-//    north_east_panel.activate();
-    north_panel.activate();
+    north_east_panel.erase();
+    const std::vector<std::string>& image_names = pilot.getImageResourceNames();
+    int image_count = 0;
+    for(std::vector<std::string>::const_iterator image_name = image_names.begin();
+        image_name != image_names.end();
+        ++image_name) {
+        north_east_panel.addItem(new HUDImage(*image_name, 10, 10));
+        ++image_count;
+        }
+    north_panel.addItem(&north_east_panel);
     }
 
 void Simulation::includeUserInformation(HUDFlowLayout* container) {
@@ -3171,7 +3168,7 @@ void Simulation::includeUserInformation(HUDFlowLayout* container) {
 
     // Name of user's team.
     stringstream team_name;
-    team_name << "User name : " << BC_adapter->teamName();
+    team_name << "User team : " << BC_adapter->teamName();
     container->addItem(new HUDTextLine(team_name.str().size(), team_name.str(), 0, 2));
 
     // Total user credit.

@@ -88,6 +88,8 @@ class HUDTextLine : public HUDContent {
          */
         GLuint height(void) const;
 
+        std::string text(void) const;
+
     protected:
         /// These three routines below satisfy the Renderable interface.
 
@@ -100,7 +102,7 @@ class HUDTextLine : public HUDContent {
         /// Provide OpenGL code to render the object.
         virtual void render(void);
 
-        std::string text(void) const;
+
 
         void setText(const std::string& text);
 

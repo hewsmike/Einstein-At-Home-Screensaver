@@ -21,6 +21,7 @@
 #include "HUDContainer.h"
 
 #include <iostream>
+#include <sstream>
 
 #include "ErrorHandler.h"
 #include "HUDImage.h"
@@ -179,6 +180,7 @@ void HUDContainer::prepare(SolarSystemGlobals::render_quality rq) {
         ++obj) {
         // Mechanics of Renderable class ensures that activation
         // implies preparation.
+
         // Check on nullity ie. assume the iterator is valid, but
         // does it dereference to a NULL pointer ?
         if(obj->second != NULL) {

@@ -20,6 +20,9 @@
 
 #include "HUDTextLine.h"
 
+#include <sstream>
+
+#include "ErrorHandler.h"
 #include "HUDContainer.h"
 #include "SolarSystemGlobals.h"
 
