@@ -30,7 +30,17 @@
  */
 
 /**
- * \brief Simulates the kinetic/dynamic behaviours of a spaceship.
+ * \brief Simulates the kinetic/dynamic behaviours of a spacecraft.
+ *
+ *      The spacecraft translates as if it is in an inertial frame ie. persists
+ * in a movement until otherwise instructed. Rotation commands act to alter the
+ * rotation rate around a given axis. Simulation boundaries are tested for and
+ * the craft movement is altered automatically to keep the craft within range
+ * and outside of the Sun and the Earth.
+ *
+ * \see AcceleratedPlatform
+ * \see CameraState
+ * \see Vector3D
  *
  * \author Mike Hewson\n
  */
@@ -54,53 +64,52 @@ class Craft {
                         YAW_RIGHT };
 
         /**
-         * \brief Constructor
+         * \brief Constructor.
          */
         Craft();
 
         /**
-         * \brief Destructor
+         * \brief Destructor.
          */
         ~Craft();
 
         /**
-         * \brief Manouevre the craft
+         * \brief Manouevre the craft.
          *
-         * \param movement : one of the allowable enumerants
+         * \param movement : one of the allowable enumerants.
          */
         void manouevre(Craft::movements movement);
 
         /**
-         * \brief Obtain the platform data
+         * \brief Obtain the platform data.
          *
-         * \return a constant reference to the platform
+         * \return a constant reference to the platform.
          */
         const AcceleratedPlatform& platform() const;
 
         /**
-         * \brief Evolve the craft's dynamics
+         * \brief Evolve the craft's dynamics.
          *
-         *      Update craft state variables by one notional time
-         * unit.
+         *      Update craft state variables by one notional time unit.
          *
          * \param dayOfYear : number of days since Jan 1st,
-         *        used to determine, if needed, position of
-         *        other simulated objects that mau be dynamically
-         *        relevant.
+         *                    used to determine, if needed, position of
+         *                    other simulated objects that may be dynamically
+         *                    relevant.
          */
         void step(GLfloat dayOfYear);
 
         /**
-         * \brief Obtain the view state of the craft in camera format
+         * \brief Obtain the view state of the craft in camera format.
          *
-         * \return the camera state
+         * \return the camera state.
          */
         CameraState viewState(void) const;
 
         /**
-         * \brief Set the view state of the craft in camera format
+         * \brief Set the view state of the craft in camera format.
          *
-         * \return camera : the desired camera state
+         * \return camera : the desired camera state.
          */
         void setViewState(const CameraState& camera);
 
@@ -142,9 +151,19 @@ class Craft {
          */
         void goHome(void);
 
-
+        /**
+         * \brief Decrease the pitch rate.
+         */
         void noseDown();
+
+        /**
+         * \brief Increase the pitch rate.
+         */
         void noseUp();
+
+        /**
+         * \brief Decrease the roll rate.
+         */
         void rollLeft();
         void rollRight();
         void stop(void);

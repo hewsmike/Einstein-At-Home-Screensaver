@@ -21,6 +21,7 @@
 #include "Craft.h"
 
 #include <iostream>
+#include <sstream>
 
 #include "ErrorHandler.h"
 #include "SolarSystemGlobals.h"
@@ -116,20 +117,20 @@ void Craft::step(GLfloat dayOfYear) {
 
     // Too far away from home ?
     if(state.position().len() > Craft::MAX_RANGE) {
-        // TODO turn him around to point homewards?
+        /// TODO turn him around to point homewards?
         // Give a little nudge to send it back in the direction of home.
-        // state.setVelocity(-Craft::REBOUND_SPEED*state.position().unit());
-        // std::cout << "Too far away from Earth - nudged back" << std::endl;
+        state.setVelocity(-Craft::REBOUND_SPEED*state.position().unit());
+        ErrorHandler::record("Too far away from Earth - nudged back", ErrorHandler::WARN);
         }
 
     // Too close to home ?
     if(state.position().len() < Craft::MIN_EARTH_RANGE) {
-        // TODO turn him around to point outwards?
+        /// TODO turn him around to point outwards?
         // Put him at the minimum distance.
-        // state.setPosition(Craft::MIN_EARTH_RANGE * state.position());
+        state.setPosition(Craft::MIN_EARTH_RANGE * state.position());
         // Give a little nudge to send it back away from home.
-        // state.setVelocity(+Craft::REBOUND_SPEED*state.position().unit());
-        /// std::cout << "Too close to Earth - nudged away" << std::endl;
+        state.setVelocity(+Craft::REBOUND_SPEED*state.position().unit());
+        ErrorHandler::record("Too close to Earth - nudged away", ErrorHandler::WARN);
         }
 
     // Where is the Sun ? That depends upon it's orbital position,
@@ -142,10 +143,10 @@ void Craft::step(GLfloat dayOfYear) {
     // Are we too close to the Sun ?
     if(sun_dist < Craft::MIN_SUN_RANGE) {
         // Put him at the minimum distance.
-        // state.setPosition(sun_pos + Craft::MIN_SUN_RANGE * sun_relative);
+        state.setPosition(sun_pos + Craft::MIN_SUN_RANGE * sun_relative);
         // Give a little nudge to send it back AWAY from the Sun.
-        ///state.setVelocity(+Craft::REBOUND_SPEED*sun_relative.unit());
-        ///std::cout << "Too close to Sun - nudged away" << std::endl;
+        state.setVelocity(+Craft::REBOUND_SPEED*sun_relative.unit());
+        ErrorHandler::record("Too close to Sun - nudged away", ErrorHandler::WARN);
         }
     }
 
@@ -176,7 +177,7 @@ void Craft::reverseThrust(void) {
     }
 
 void Craft::noseDown() {
-    // TODO - cap these rotation rates
+    /// TODO - cap these rotation rates
     state.setPitchRate(state.pitchRate() - Craft::PITCH_RATE_DELTA);
     }
 
@@ -212,13 +213,13 @@ void Craft::stop(void) {
 
 void Craft::rightThrust() {
     // Add to the current velocity vector a fraction of the 'cross' vector.
-    // That is : thrust is applied along the left-TO-right wing axis.
+    // That is : thrust is applied along the left-TO-right axis.
     vectorThrust(+Craft::LATERAL_THRUST_DELTA*state.cross());
     }
 
 void Craft::leftThrust() {
     // Add to the current velocity vector a fraction of the 'cross' vector.
-    // That is : thrust is applied along the right-TO-left wing axis.
+    // That is : thrust is applied along the right-TO-left axis.
     vectorThrust(-Craft::LATERAL_THRUST_DELTA*state.cross());
     }
 
@@ -242,7 +243,9 @@ void Craft::vectorThrust(Vector3D thrust) {
     if(new_vel.len() > Craft::MAX_SPEED) {
         // Yes, so cap speed along the line of the new velocity.
         new_vel = Craft::MAX_SPEED*new_vel.unit();
-        std::cout << "Speed capped at " << new_vel.len() << std::endl;
+        std::stringstream msg;
+        msg << "Speed capped at " << new_vel.len();
+        ErrorHandler::record(msg.str(), ErrorHandler::WARN);
         }
 
     state.setVelocity(new_vel);
