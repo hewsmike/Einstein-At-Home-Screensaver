@@ -440,7 +440,7 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
     west_panel.erase();
 
     // Set panel justifications.
-    north_panel.setPrimaryJustification(HUDFlowLayout::START_AND_END);
+    north_panel.setPrimaryJustification(HUDFlowLayout::START);
     north_panel.setSecondaryJustification(HUDFlowLayout::DISTAL);
     south_panel.setPrimaryJustification(HUDFlowLayout::START_AND_END);
     south_panel.setSecondaryJustification(HUDFlowLayout::PROXIMAL);
@@ -3135,8 +3135,7 @@ void Simulation::loadLookoutDataToPanels(void) {
         for(std::vector<std::string>::const_iterator message = messages.begin();
             message != messages.end();
             ++message) {
-            HUDTextLine* current = new HUDTextLine(message->size(), *message, 0, 2);
-            north_west_panel.addItem(current);
+            north_west_panel.addItem(new HUDTextLine(message->size(), *message, 0, 2));
             }
         }
     north_panel.addItem(&north_west_panel);
@@ -3144,12 +3143,10 @@ void Simulation::loadLookoutDataToPanels(void) {
     // Then put new image(s), if any, into the west panel.
     north_east_panel.erase();
     const std::vector<std::string>& image_names = pilot.getImageResourceNames();
-    int image_count = 0;
     for(std::vector<std::string>::const_iterator image_name = image_names.begin();
         image_name != image_names.end();
         ++image_name) {
         north_east_panel.addItem(new HUDImage(*image_name, 10, 10));
-        ++image_count;
         }
     north_panel.addItem(&north_east_panel);
     }
