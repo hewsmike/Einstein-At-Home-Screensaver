@@ -22,6 +22,7 @@
 
 #include <iostream>
 #include <sstream>
+#include <cmath>
 
 #include "ErrorHandler.h"
 #include "SolarSystemGlobals.h"
@@ -38,23 +39,20 @@ const vec_t Craft::REBOUND_SPEED(3.0f);
 const vec_t Craft::MAX_SPEED(50.0f);
 
 const vec_t Craft::INLINE_THRUST_DELTA(0.5f);
-
 const vec_t Craft::LATERAL_THRUST_DELTA(0.5f);
 const vec_t Craft::VERTICAL_THRUST_DELTA(0.5f);
+
 const vec_t Craft::RATE_FUDGE(0.2f);
 const vec_t Craft::PITCH_RATE_DELTA(RATE_FUDGE*(PI/360.0f));
 const vec_t Craft::ROLL_RATE_DELTA(RATE_FUDGE*(PI/360.0f));
 const vec_t Craft::YAW_RATE_DELTA(RATE_FUDGE*(PI/360.0f));
+const vec_t Craft::MAX_ROTATION_RATE(2.0f*(PI/360.0f));
 
 Craft::Craft() {
     goHome();
     }
 
 Craft::~Craft() {
-    }
-
-const AcceleratedPlatform& Craft::platform() const {
-    return state;
     }
 
 void Craft::manouevre(Craft::movements mov) {
@@ -108,6 +106,10 @@ void Craft::manouevre(Craft::movements mov) {
             ErrorHandler::record("Craft::manouevre() - bad switch case reached (default)", ErrorHandler::FATAL);
             break;
         }
+    }
+
+const AcceleratedPlatform& Craft::platform() const {
+    return state;
     }
 
 void Craft::step(GLfloat dayOfYear) {
@@ -164,6 +166,17 @@ void Craft::goHome(void) {
     state.setPosition(START_POSITION);
     }
 
+void Craft::stop(void) {
+    state.setVelocity(Vector3D(0.0f, 0.0f, 0.0f));
+    }
+
+void Craft::nullRotation(void) {
+    // Set all rotation rates to zero.
+    state.setPitchRate(0.0f);
+    state.setRollRate(0.0f);
+    state.setYawRate(0.0f);
+    }
+
 void Craft::forwardThrust(void) {
     // Add to the current velocity vector a fraction of the 'look' vector.
     // That is : thrust is applied along the aft-TO-fore axis.
@@ -171,56 +184,9 @@ void Craft::forwardThrust(void) {
     }
 
 void Craft::reverseThrust(void) {
-    // Subtract from the current velocity vector a fraction of the 'look' vector.
+    // Add to the current velocity vector a fraction of the 'look' vector.
     // That is : thrust is applied along the fore-TO-aft axis.
     vectorThrust(-Craft::INLINE_THRUST_DELTA*state.look());
-    }
-
-void Craft::noseDown() {
-    /// TODO - cap these rotation rates
-    state.setPitchRate(state.pitchRate() - Craft::PITCH_RATE_DELTA);
-    }
-
-void Craft::noseUp() {
-    state.setPitchRate(state.pitchRate() + Craft::PITCH_RATE_DELTA);
-    }
-
-void Craft::rollRight() {
-    state.setRollRate(state.rollRate() - Craft::ROLL_RATE_DELTA);
-    }
-
-void Craft::rollLeft() {
-    state.setRollRate(state.rollRate() + Craft::ROLL_RATE_DELTA);
-    }
-
-void Craft::yawRight() {
-    state.setYawRate(state.yawRate() - Craft::YAW_RATE_DELTA);
-    }
-
-void Craft::yawLeft() {
-    state.setYawRate(state.yawRate() + Craft::YAW_RATE_DELTA);
-    }
-
-void Craft::nullRotation(void) {
-    state.setPitchRate(0.0f);
-    state.setRollRate(0.0f);
-    state.setYawRate(0.0f);
-    }
-
-void Craft::stop(void) {
-    state.setVelocity(Vector3D(0.0f, 0.0f, 0.0f));
-    }
-
-void Craft::rightThrust() {
-    // Add to the current velocity vector a fraction of the 'cross' vector.
-    // That is : thrust is applied along the left-TO-right axis.
-    vectorThrust(+Craft::LATERAL_THRUST_DELTA*state.cross());
-    }
-
-void Craft::leftThrust() {
-    // Add to the current velocity vector a fraction of the 'cross' vector.
-    // That is : thrust is applied along the right-TO-left axis.
-    vectorThrust(-Craft::LATERAL_THRUST_DELTA*state.cross());
     }
 
 void Craft::upThrust() {
@@ -230,9 +196,76 @@ void Craft::upThrust() {
     }
 
 void Craft::downThrust() {
-    // Subtract from the current velocity vector a fraction of the 'up' vector.
+    // Add to the current velocity vector a fraction of the 'up' vector.
     // That is : thrust is applied along the ceiling-TO-floor axis.
     vectorThrust(-Craft::VERTICAL_THRUST_DELTA*state.up());
+    }
+
+void Craft::leftThrust() {
+    // Add to the current velocity vector a fraction of the 'cross' vector.
+    // That is : thrust is applied along the right-TO-left axis.
+    vectorThrust(-Craft::LATERAL_THRUST_DELTA*state.cross());
+    }
+
+void Craft::rightThrust() {
+    // Add to the current velocity vector a fraction of the 'cross' vector.
+    // That is : thrust is applied along the left-TO-right axis.
+    vectorThrust(+Craft::LATERAL_THRUST_DELTA*state.cross());
+    }
+
+void Craft::noseUp() {
+    // Evolve rate, but cap.
+    vec_t rate = state.pitchRate() + Craft::PITCH_RATE_DELTA;
+    if(rate > MAX_ROTATION_RATE) {
+        rate = MAX_ROTATION_RATE;
+        }
+    state.setPitchRate(rate);
+    }
+
+void Craft::noseDown() {
+    // Evolve rate, but cap.
+    vec_t rate = state.pitchRate() - Craft::PITCH_RATE_DELTA;
+    if(std::fabs(rate) > MAX_ROTATION_RATE) {
+        rate = -MAX_ROTATION_RATE;
+        }
+    state.setPitchRate(rate);
+    }
+
+void Craft::rollLeft() {
+    // Evolve rate, but cap.
+    vec_t rate = state.rollRate() + Craft::PITCH_RATE_DELTA;
+    if(rate > MAX_ROTATION_RATE) {
+        rate = MAX_ROTATION_RATE;
+        }
+    state.setRollRate(rate);
+    }
+
+void Craft::rollRight() {
+    // Evolve rate, but cap.
+    vec_t rate = state.rollRate() - Craft::PITCH_RATE_DELTA;
+    if(std::fabs(rate) > MAX_ROTATION_RATE) {
+        rate = -MAX_ROTATION_RATE;
+        }
+    state.setRollRate(rate);
+    }
+
+void Craft::yawLeft() {
+    // Evolve rate, but cap.
+    vec_t rate = state.yawRate() + Craft::YAW_RATE_DELTA;
+    if(rate > MAX_ROTATION_RATE) {
+        rate = MAX_ROTATION_RATE;
+        }
+    state.setYawRate(rate);
+    }
+
+void Craft::yawRight() {
+    state.setYawRate(state.yawRate() - Craft::YAW_RATE_DELTA);
+    // Evolve rate, but cap.
+    vec_t rate = state.yawRate() - Craft::YAW_RATE_DELTA;
+    if(std::fabs(rate) > MAX_ROTATION_RATE) {
+        rate = -MAX_ROTATION_RATE;
+        }
+    state.setYawRate(rate);
     }
 
 void Craft::vectorThrust(Vector3D thrust) {

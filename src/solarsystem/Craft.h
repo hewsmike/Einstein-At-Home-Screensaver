@@ -38,6 +38,10 @@
  * the craft movement is altered automatically to keep the craft within range
  * and outside of the Sun and the Earth.
  *
+ *      Positive pitch is deemed nose up about right-to-left axis, positive roll
+ * is deemed to the left about aft-to-fore axis and positive yaw is deemed to
+ * the left about ceiling-to-floor axis.
+ *
  * \see AcceleratedPlatform
  * \see CameraState
  * \see Vector3D
@@ -47,6 +51,10 @@
 
 class Craft {
     public:
+        /// The craft's initial position.
+        static const Vector3D START_POSITION;
+
+        /// Enumerants describing control choices.
         enum movements {GO_HOME,
                         STOP_TRANSLATION,
                         STOP_ROTATION,
@@ -90,32 +98,30 @@ class Craft {
         /**
          * \brief Evolve the craft's dynamics.
          *
-         *      Update craft state variables by one notional time unit.
+         *      Update craft state variables using one notional time unit.
          *
-         * \param dayOfYear : number of days since Jan 1st,
-         *                    used to determine, if needed, position of
-         *                    other simulated objects that may be dynamically
-         *                    relevant.
+         * \param dayOfYear : number of days since Jan 1st used to determine,
+         *                    if needed, the position of other simulated objects
+         *                    that may be dynamically relevant.
          */
         void step(GLfloat dayOfYear);
 
         /**
          * \brief Obtain the view state of the craft in camera format.
          *
-         * \return the camera state.
+         * \return the CameraState.
          */
         CameraState viewState(void) const;
 
         /**
          * \brief Set the view state of the craft in camera format.
          *
-         * \return camera : the desired camera state.
+         * \param camera : the desired CameraState.
          */
         void setViewState(const CameraState& camera);
 
-        static const Vector3D START_POSITION;
-
     private:
+        /// Initial radial distance from origin.
         static const vec_t START_RADIUS;
 
         /// Global bounds for craft position
@@ -126,30 +132,77 @@ class Craft {
         /// Top speed of craft in whatever nett direction
         static const vec_t MAX_SPEED;
 
-        /// Rates for about centre of mass craft rotations
+        /// Rates for about centre of mass craft rotations.
         static const vec_t PITCH_RATE_DELTA;
         static const vec_t ROLL_RATE_DELTA;
         static const vec_t YAW_RATE_DELTA;
         static const vec_t RATE_FUDGE;
+        static const vec_t MAX_ROTATION_RATE;
 
-        /// Speed setting post 'bounce' off objects
+        /// Speed setting post 'bounce' off objects.
         static const vec_t REBOUND_SPEED;
 
-        /// Speed change steps for the aft-to-forward craft axis
+        /// Speed change steps for the aft-to-forward craft axis.
         static const vec_t INLINE_THRUST_DELTA;
 
-        /// Speed change step for the left-to-right craft axis
+        /// Speed change step for the left-to-right craft axis.
         static const vec_t LATERAL_THRUST_DELTA;
 
-        /// Speed change step for the floor-to-ceiling craft axis
+        /// Speed change step for the floor-to-ceiling craft axis.
         static const vec_t VERTICAL_THRUST_DELTA;
 
+        /// Dynamic platform.
         AcceleratedPlatform state;
 
         /**
-         * \brief Return the craft to a 'home' state
+         * \brief Return the craft to a 'home' state.
          */
         void goHome(void);
+
+        /**
+         * \brief Cease translation.
+         */
+        void stop(void);
+
+        /**
+         * \brief Cease rotation.
+         */
+        void nullRotation(void);
+
+        /**
+         * \brief Apply thrust along aft-TO-fore axis.
+         */
+        void forwardThrust(void);
+
+        /**
+         * \brief Apply thrust along fore-TO-aft axis.
+         */
+        void reverseThrust(void);
+
+        /**
+         * \brief Apply thrust along floor-TO-ceiling axis.
+         */
+        void upThrust(void);
+
+        /**
+         * \brief Apply thrust along ceiling-TO-floor axis.
+         */
+        void downThrust(void);
+
+        /**
+         * \brief Apply thrust along right-TO-left axis.
+         */
+        void leftThrust(void);
+
+        /**
+         * \brief Apply thrust along left-TO-right axis.
+         */
+        void rightThrust(void);
+
+         /**
+         * \brief Increase the pitch rate.
+         */
+        void noseUp();
 
         /**
          * \brief Decrease the pitch rate.
@@ -157,26 +210,28 @@ class Craft {
         void noseDown();
 
         /**
-         * \brief Increase the pitch rate.
-         */
-        void noseUp();
-
-        /**
          * \brief Decrease the roll rate.
          */
         void rollLeft();
-        void rollRight();
-        void stop(void);
-        void reverseThrust(void);
-        void forwardThrust(void);
-        void yawLeft();
-        void yawRight();
-        void rightThrust(void);
-        void leftThrust(void);
-        void nullRotation(void);
-        void upThrust(void);
-        void downThrust(void);
 
+        /**
+         * \brief Increase the roll rate.
+         */
+        void rollRight();
+
+        /**
+         * \brief Decrease the yaw rate.
+         */
+        void yawLeft();
+
+        /**
+         * \brief Increase the yaw rate.
+         */
+        void yawRight();
+
+        /**
+         * \brief Apply thrust in a given direction and strength.
+         */
         void vectorThrust(Vector3D thrust);
     };
 
