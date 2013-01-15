@@ -27,7 +27,6 @@
 #include <string>
 
 #include "BOINCClientAdapter.h"
-#include "SolarSystemGlobals.h"
 
 using namespace std;
 
@@ -45,7 +44,6 @@ using namespace std;
  * progress.
  *
  * \see BOINCClientAdapter
- * \see SolarSystemGlobals
  *
  * \author Oliver Bock\n
  * Max-Planck-Institute for Gravitational Physics\n
