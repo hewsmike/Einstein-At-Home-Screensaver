@@ -27,7 +27,6 @@
 #include <string>
 
 #include "BOINCClientAdapter.h"
-
 #include "SolarSystemGlobals.h"
 
 using namespace std;
@@ -45,6 +44,9 @@ using namespace std;
  * for informational data about the current work unit eg. search details and
  * progress.
  *
+ * \see BOINCClientAdapter
+ * \see SolarSystemGlobals
+ *
  * \author Oliver Bock\n
  * Max-Planck-Institute for Gravitational Physics\n
  * Hannover, Germany
@@ -59,7 +61,9 @@ class EinsteinGravityAdapter {
          */
         EinsteinGravityAdapter(BOINCClientAdapter* boincClient);
 
-        /// Destructor
+        /**
+         * \brief Destructor.
+         */
         virtual ~EinsteinGravityAdapter();
 
         /**
@@ -110,18 +114,6 @@ class EinsteinGravityAdapter {
         static const string SharedMemoryIdentifier;
 
     private:
-
-        /**
-         * \brief Parses science application specific information into
-         *        local attributes.
-         *
-         *      The information is usually transferred via a shared memory area
-         * which is handled by the parent generic BOINC client adapter.
-         *
-         * \see boincClient
-         */
-        void parseApplicationInformation();
-
         /// Pointer to the (parent) BOINC client adapter
         BOINCClientAdapter* p_boincClient;
 
@@ -134,8 +126,20 @@ class EinsteinGravityAdapter {
         /// The completion fraction of the active work unit
         double m_WUFractionDone;
 
-        /// Amount of CPU time consumed for the work unit during the active session
+        /// Amount of CPU time consumed for the work unit during the active
+        /// session.
         double m_WUCPUTime;
+
+        /**
+         * \brief Parses science application specific information into
+         *        local attributes.
+         *
+         *      The information is usually transferred via a shared memory area
+         * which is handled by the parent generic BOINC client adapter.
+         *
+         * \see boincClient
+         */
+        void parseApplicationInformation();
     };
 
 /**
