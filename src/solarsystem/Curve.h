@@ -37,9 +37,9 @@
  * called 'rho', with an appropriate rule or function to determine the
  * position of points on the curve.
  *      A class invariant is that the 'start' and 'finish' vectors will
- * be referenced by parameter values of 0.0 and 1.0 respectively. This
+ * be referenced by rho values of 0.0 and 1.0 respectively. This
  * class will still evaluate for any rho value, that is outside of the
- * range [0.0, 1.0] as well.
+ * range [0.0, 1.0] as well ie. extrapolate the curve.
  *
  * \see Vector3D
  *
@@ -49,31 +49,31 @@
 class Curve {
    public:
         /**
-         * Constructor ( no argument )
+         * Constructor.
          */
         Curve(void);
 
 		/**
-         * \brief Constructor
+         * \brief Constructor.
 	     *
-	     * \param start : the vector to the begining
+	     * \param start : the vector to the begining point.
 	     *
-	     * \param finish : the vector to the end
+	     * \param finish : the vector to the end point.
 	     */
 		Curve(const Vector3D& start, const Vector3D& finish);
 
 		/**
-		 * \brief Destructor
+		 * \brief Destructor.
 		 */
 		virtual ~Curve();
 
 		/**
-		 * \brief The vector to the point parameterised by the given rho. In this
-		 * 		  base class a simple straight line is emulated.
+		 * \brief The vector to the point parameterised by the given rho. In
+		 *        this base class a simple straight line is emulated.
 		 *
 		 * \param rho : a value indicating the desired point.
 		 *
-		 * \return a vector indicating the point referred to by the given rho.
+		 * \return a Vector3D indicating the point referred to by the given rho.
 		 */
 		virtual Vector3D value(float rho) const;
 
@@ -81,7 +81,7 @@ class Curve {
 		 * \brief Obtain the length along the curve ( in notional units ) from
 		 *        the start to the finish point.
 		 *
-		 * \return the length along the curve
+		 * \return the length along the curve.
 		 */
 		virtual float length(void) const;
 
