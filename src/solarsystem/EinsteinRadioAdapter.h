@@ -21,8 +21,8 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef EINSTEINRADIOADAPTER_H_
-#define EINSTEINRADIOADAPTER_H_
+#ifndef EINSTEIN_RADIO_ADAPTER_H_
+#define EINSTEIN_RADIO_ADAPTER_H_
 
 #include <string>
 #include <sstream>
@@ -32,8 +32,6 @@
 #include <libxml/xmlreader.h>
 
 #include "BOINCClientAdapter.h"
-
-#include "SolarSystemGlobals.h"
 
 using namespace std;
 
@@ -52,6 +50,8 @@ using namespace std;
  *      This adapter class can be used to query the Einstein\@Home Radio Pulsar
  * application for informational data about the current work unit eg. search
  * details and progress.
+ *
+ * \see BOINCClientAdapter
  *
  * \author Oliver Bock\n
  * Max-Planck-Institute for Gravitational Physics\n
@@ -227,4 +227,4 @@ class EinsteinRadioAdapter {
  * @}
  */
 
-#endif /*EINSTEINRADIOADAPTER_H_*/
+#endif /*EINSTEIN_RADIO_ADAPTER_H_*/
