@@ -30,9 +30,7 @@
 
 /**
 * \brief This interface declares public methods to deal with OpenGL
-* display lists.
-*
-* It's a wrapper derived from the OGL_ID class.
+*       display lists. It's a wrapper.
 *
 * \see OGL_ID
 *
@@ -42,23 +40,23 @@
 class DisplayList : public OGL_ID {
     public:
         /**
-* \brief Constructor
-*/
+         * \brief Constructor
+         */
         DisplayList(void);
 
         /**
-* \brief Destructor
-*/
+         * \brief Destructor
+         */
         virtual ~DisplayList();
 
         /**
-* \brief Obtains the display list resources.
-*/
+         * \brief Obtains the display list resources.
+         */
         virtual void acquire(void);
 
         /**
-* \brief Releases the display list resources.
-*/
+         * \brief Releases the display list resources.
+         */
         virtual void release(void);
     };
 
