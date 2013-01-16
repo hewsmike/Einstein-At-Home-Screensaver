@@ -118,18 +118,21 @@ void Globe::loadTexture(void) {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
-        // You want to paste the image on, with no show-through of what's beneath.
+        // You want to paste the image on, with no show-through of what's
+        // beneath.
         glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 
         // Bless the texture as most important.
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_PRIORITY, 1.0f);
         }
     else {
-        // Nope, the loading into a texture object failed. This is not fatal, as
-        // with later rendering OpenGL will simply use the 'default' texture ie.
-        // nothing. The only visual result will be to see whatever background
-        // color(s) have been assigned ( or not ! ) to the polygon(s) in question.
-        ErrorHandler::record("Globe::loadTexture() - texture object NOT loaded ", ErrorHandler::WARN);
+        // Nope, the loading into a texture object failed. This is not fatal,
+        // as with later rendering OpenGL will simply use the 'default' texture
+        // ie. nothing. The only visual result will be to see whatever
+        // background color(s) have been assigned ( or not ! ) to the polygon(s)
+        // in question.
+        ErrorHandler::record("Globe::loadTexture() - texture object NOT loaded ",
+                             ErrorHandler::WARN);
         }
 
     // Unbind the texture from the state machine - but don't delete it!
@@ -137,7 +140,7 @@ void Globe::loadTexture(void) {
     }
 
 void Globe::prepare(SolarSystemGlobals::render_quality rq) {
-    // Preparations may depend upon the requested rendering quality level ?
+    // Preparations may depend upon the requested rendering quality level ??
     switch (rq) {
         case SolarSystemGlobals::RENDER_LOWEST :
         case SolarSystemGlobals::RENDER_MEDIUM :
@@ -153,12 +156,13 @@ void Globe::prepare(SolarSystemGlobals::render_quality rq) {
             loadPolarIndexBuffer(south_cap_indices, SOUTH);
 
             // Finally make sure one has a texture ( pixel map ) available
-            // to paste on the surface which approximates a sphere.
+            // to paste onto the surface which approximates a sphere.
             loadTexture();
             break;
         default :
             // Ought not get here !!
-            ErrorHandler::record("Globe::prepare() - bad switch case reached (default)", ErrorHandler::FATAL);
+            ErrorHandler::record("Globe::prepare() - bad switch case reached (default)",
+                                 ErrorHandler::FATAL);
             break;
         }
     }
@@ -186,7 +190,6 @@ void Globe::render(void) {
     // for the sake of efficiency.
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
-    // glPolygonMode(GL_FRONT, GL_FILL);
 
     // Make our texture identifier OpenGL's current one.
     glBindTexture(GL_TEXTURE_2D, texture.ID());
@@ -195,6 +198,7 @@ void Globe::render(void) {
     glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer.ID());
 
     // The untextured polygonal ( triangles ) color will be opaque and white.
+    // You'd only see that if texture application failed.
     glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
     // If all goes well we won't see the lines at the edge of the
@@ -206,13 +210,14 @@ void Globe::render(void) {
     // are all of the same floating point data type.
     glInterleavedArrays(GL_T2F_N3F_V3F, ARRAY_STRIDE, ARRAY_START);
 
-    // Draw north polar region
+    // Draw north polar region.
     // Make our northern index buffer identifier OpenGL's current one.
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, north_cap_indices.ID());
 
-    // This is one actual rendering call that all preparations have been aiming at.
+    // This is one actual rendering call that all preparations have been aiming
+    // at.
     glDrawElements(GL_QUAD_STRIP,
-                   verts_per_lat*2,            // The pole and peri-polar stack's worth of vertices
+                   verts_per_lat*2,
                    GL_UNSIGNED_INT,
                    BUFFER_OFFSET(ARRAY_START));
 
@@ -222,30 +227,32 @@ void Globe::render(void) {
     for(GLuint stack = 1; stack < num_stacks - 2; ++stack) {
         // Herewith the number of bytes into the index buffer
         // to begin this strip for this stack.
-        GLuint strip_index_start = ARRAY_START +           // Start at the beginning
-                                   sizeof(GLuint) *        // size of base type
-                                   (stack - 1) *           // number of non-polar stacks so far
-                                   verts_per_lat *         // indices per non-polar stack
-                                   2;                      // this stack and the next
+        GLuint strip_index_start = ARRAY_START +        // Start at the beginning
+                                   sizeof(GLuint) *     // size of base type
+                                   (stack - 1) *        // number of non-polar stacks so far
+                                   verts_per_lat *      // indices per non-polar stack
+                                   2;                   // this stack and the next
 
+        // Actual rendering call for this stack.
         glDrawElements(GL_TRIANGLE_STRIP,
                        verts_per_lat * 2,
                        GL_UNSIGNED_INT,
                        BUFFER_OFFSET(strip_index_start));
         }
 
-    // Draw south polar region
+    // Draw south polar region.
     // Make our southern index buffer identifier OpenGL's current one.
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, south_cap_indices.ID());
 
+    // Another actual rendering call that all preparations have been aiming
+    // at.
     glDrawElements(GL_QUAD_STRIP,
-                   verts_per_lat*2,            // The pole and peri-polar stack's worth of vertices
+                   verts_per_lat*2,
                    GL_UNSIGNED_INT,
                    BUFFER_OFFSET(ARRAY_START));
 
     // Unbind the buffers and the texture.
     glBindBuffer(GL_ARRAY_BUFFER, Buffer_OBJ::NO_ID);
-
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Buffer_OBJ::NO_ID);
     glBindTexture(GL_TEXTURE_2D, Texture_OBJ::NO_ID);
 
@@ -290,9 +297,13 @@ void Globe::loadVertexBuffer(void) {
     // Create new northern polar vertices. Get the north polar
     // vertex as constructed by the Sphere class instance.
     Vertex north = sp.vertices().at(0);
-    Vector3D north_norm = Vector3D(north.normal().x(), north.normal().y(), north.normal().z());
+    Vector3D north_norm = Vector3D(north.normal().x(),
+                                   north.normal().y(),
+                                   north.normal().z());
 
-    Vector3D north_position =Vector3D(north.position().x(), north.position().y(), north.position().z());
+    Vector3D north_position = Vector3D(north.position().x(),
+                                       north.position().y(),
+                                       north.position().z());
 
     std::pair<vec_t, vec_t> north_texture;
     north_texture.second = north.texture_co_ords().second;
@@ -328,9 +339,13 @@ void Globe::loadVertexBuffer(void) {
     // Create new southern polar vertices. Get the south polar
     // vertex as constructed by the Sphere class instance.
     Vertex south = sp.vertices().at(sp.vertices().size() - 1);
-    Vector3D south_norm = Vector3D(south.normal().x(), south.normal().y(), south.normal().z());
+    Vector3D south_norm = Vector3D(south.normal().x(),
+                                   south.normal().y(),
+                                   south.normal().z());
 
-    Vector3D south_position =Vector3D(south.position().x(), south.position().y(), south.position().z());
+    Vector3D south_position = Vector3D(south.position().x(),
+                                       south.position().y(),
+                                       south.position().z());
 
     std::pair<vec_t, vec_t> south_texture;
     south_texture.second = south.texture_co_ords().second;
@@ -353,7 +368,8 @@ void Globe::loadVertexBuffer(void) {
         }
 
     // Now load the server side buffer with our heap contents.
-    vertex_buffer.loadBuffer(GL_ARRAY_BUFFER, GL_STATIC_DRAW, buffer_size, buffer_base_ptr);
+    vertex_buffer.loadBuffer(GL_ARRAY_BUFFER, GL_STATIC_DRAW,
+                             buffer_size, buffer_base_ptr);
     // Delete the temporary heap Vertex array.
     delete[] buffer_base_ptr;
     }
@@ -362,16 +378,15 @@ void Globe::loadWaistIndexBuffer(void) {
     // Get a valid buffer object ( server-side ) identifier.
     waist_indices.acquire();
 
-    // What size byte allocation are we after for this array of indices? For
-    // each vertex we have sizeof(GLuint) worth. What is the vertex count ?
-    //      - two vertices per longitude value including stitching line.
-    GLuint num_waist_indices = verts_per_lat *          // Number of vertices per stack
-                               (num_stacks - 3) *       // Number of non-polar stacks less one
-                               2;                       // Two stacks involved per GL_TRIANGLE_STRIP.
+    // What size byte allocation are we after for this array of indices? What
+    // is the vertex count?
+    GLuint num_waist_indices = verts_per_lat *      // number of vertices per latitude band
+                               (num_stacks - 3) *   // all non-polar stacks bar one
+                               2;                   // this stack and the next
 
-
-    GLsizeiptr waist_size = sizeof(GLuint) *           // Size of base data type
-                            num_waist_indices;         // total number of vertices
+    // Size of base data type times the total number of vertices.
+    GLsizeiptr waist_size = sizeof(GLuint) *
+                            num_waist_indices;
 
     GLuint* buffer_base_ptr = new GLuint[num_waist_indices];
     GLuint* buffer_ptr = buffer_base_ptr;
@@ -389,7 +404,8 @@ void Globe::loadWaistIndexBuffer(void) {
             }
         }
 
-    waist_indices.loadBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW, waist_size, buffer_base_ptr);
+    waist_indices.loadBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW,
+                             waist_size, buffer_base_ptr);
     delete[] buffer_base_ptr;
     }
 
@@ -409,42 +425,50 @@ void Globe::loadPolarIndexBuffer(Buffer_OBJ& polar_buffer, enum pole po) {
     GLuint* buffer_base_ptr = new GLuint[num_polar_indices];
     GLuint* buffer_ptr = buffer_base_ptr;
 
-    // Index of point on sphere which begins a sequence of
-    // points for later use within a GL_QUAD_STRIP pattern.
-    // Default starting index is zero for the north pole,.
+    // Index of point on sphere which begins a sequence of points for later use
+    // within a GL_QUAD_STRIP pattern. Default starting index is zero for the
+    // north pole,.
     GLuint pole_index = 0;
+    // Next ( QUAD ) point not on the pole.
     GLuint peri_polar_index = pole_index + verts_per_lat;
+    // We increment vertex indices.
     GLuint delta = 1;
     if(po == SOUTH) {
-        // The south polar index is however many vertex entries there
-        // are for the entire sphere minus one.
+        // The south polar index is however many vertex entries there are for
+        // the entire sphere minus one.
         pole_index = last_vertex_index;
+        // Next ( QUAD ) point not on the pole.
         peri_polar_index = pole_index - verts_per_lat;
+        // We decrement vertex indices.
         delta = -1;
         }
 
-    // The indices of points on sphere at a latitude just one stack nearby
-    // the pole, listed in sequence suitable for later use within
-    // GL_QUAD_STRIP pattern. The way this 'winds around' makes the convex
-    // side the 'outside' for OpenGL purposes, and the southern cap is
-    // necessarily of the opposite sense to the northern cap.
+    // The indices of points on sphere at a latitude just one stack nearby the
+    // pole, listed in sequence suitable for later use within a GL_QUAD_STRIP
+    // pattern. The way this 'winds around' makes the convex side the 'outside'
+    // for OpenGL purposes, and the southern cap is necessarily of the opposite
+    // sense to the northern cap.
     for(GLuint i = 0; i < verts_per_lat; ++i) {
+        // Polar points, differing only in 'horizontal' texture value.
         *buffer_ptr = pole_index + delta*i;
         ++buffer_ptr;
 
+        // The peri-polar band.
         *buffer_ptr = peri_polar_index + delta*i;
         ++buffer_ptr;
         }
 
     // Now load the server side buffer with our heap contents.
-    polar_buffer.loadBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW, polar_size, buffer_base_ptr);
+    polar_buffer.loadBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW,
+                            polar_size, buffer_base_ptr);
     // Delete the temporary heap indicial array.
     delete[] buffer_base_ptr;
     }
 
 void Globe::vertex2buffer(const Vertex& vert, Vert* buffer) const {
-    // Texture co-ordinates, noting an adjustment to line
-    // the map up to the Greenwich meridian.
+    // Copy to a buffer in OpenGL GL_T2F_N3F_V3F interleaved array pattern.
+    // Texture co-ordinates are adjusted to line the map up to the
+    // 'Greenwich meridian'.
     buffer->text.s = vert.texture_co_ords().first - zlo;
     buffer->text.t = vert.texture_co_ords().second;
 

@@ -27,8 +27,8 @@
 #include "Buffer_OBJ.h"
 #include "Renderable.h"
 #include "ResourceFactory.h"
-#include "Sphere.h"
 #include "SolarSystemGlobals.h"
+#include "Sphere.h"
 #include "Texture_OBJ.h"
 
 /**
@@ -37,8 +37,15 @@
 */
 
 /**
-* \brief A renderable object of spherical shape with texture, to be
-*        instantiated in detail for the Earth, the Sun etc
+* \brief A Renderable entity of spherical shape with texture, to be
+*        instantiated in detail for the Earth, the Sun etc.
+*
+* \see Buffer_OBJ
+* \see Renderable
+* \see ResourceFactory
+* \see SolarSystemGlobals
+* \see Sphere
+* \see Texture_OBJ
 *
 * \author Mike Hewson\n
 */
@@ -46,20 +53,20 @@
 class Globe : public Renderable {
     public:
         /**
-         * \brief Constructor
+         * \brief Constructor.
          *
-         * \param name : the English label of the globe ( Earth, Sun .... )
-         * \param image_file_name : the OS path identifying the image file for
-         *        use as a texture
-         * \param radius : the radius of the globe
-         * \param stacks : the number of latitudinal values to use in
-         *        approximating a spherical surface
+         * \param name : the label of the globe ( Earth, Sun .... ).
+         * \param image_file_name : the resource name identifying the image for
+         *        use as a texture.
+         * \param radius : the radius of the globe.
+         * \param stacks : the number of latitudinal values ( including poles )
+         *        to use in approximating a spherical surface.
          * \param slices : the number of longitudinal values to use in
-         *        approximating a spherical surface
+         *        approximating a spherical surface.
          * \param zero_longitude_offset : displacement, expressed as an OpenGL
          *        horizontal texture coordinate value, into the pixel map where
-         *        the zero of 'geographical' longitude is deemed to lie
-         *        ( eg. Greenwich meridian on Earth )
+         *        the zero of longitude is deemed to lie eg. Greenwich meridian
+         *        on Earth.
          */
         Globe(std::string name,
               std::string resource_name,
@@ -98,25 +105,35 @@ class Globe : public Renderable {
         /// Whether adjacent latitudes have a longitude offset.
         static const bool STAGGERING;
 
+        /// Whether longitude zero is represented by two vertex lists with
+        /// differing horizontal texture coordinates ie. ensuring the right
+        /// edge of the texture map is identifed with the left edge for proper
+        /// wrapping of the image.
         static const bool STITCHING;
 
+        /// Structure for texture coordinates.
         struct Text {
             vec_t s;
             vec_t t;
             };
 
+        /// Structure for normal coordinates.
         struct Norm {
             vec_t x;
             vec_t y;
             vec_t z;
             };
 
+        /// Structure for position coordinates.
         struct Position {
             vec_t x;
             vec_t y;
             vec_t z;
             };
 
+        /// Structure combining the above three to represent vertex data, in
+        /// the correct manner for the OpenGL GL_T2F_N3F_V3F interleaved
+        /// array pattern.
         struct Vert {
             Text text;
             Norm norm;
@@ -142,7 +159,7 @@ class Globe : public Renderable {
         /// The buffer object for the southern polar cap.
         Buffer_OBJ south_cap_indices;
 
-        /// The geometric model approximating a sphere.
+        /// The underlying geometric model approximating a sphere.
         Sphere sp;
 
         /// An OpenGL buffer object ( in server-side memory ) holding
@@ -152,18 +169,21 @@ class Globe : public Renderable {
         /// An OpenGL texture object identifier
         Texture_OBJ texture;
 
-        /// The number of vertices per latitude/stack
+        /// The number of vertices per latitude/stack.
         GLuint verts_per_lat;
 
+        /// The number of longitude values used.
         GLuint num_slices;
 
+        /// The number of latitude values used, including one per pole.
         GLuint num_stacks;
 
+        /// Vertex index counter.
         GLuint last_vertex_index;
 
         /**
-         * \brief Load a pixel map into a server-side texture
-         *        with mipmap generation.
+         * \brief Load a pixel map into a server-side texture with mipmap
+         *        generation.
          */
         void loadTexture(void);
 
@@ -186,20 +206,29 @@ class Globe : public Renderable {
          * \brief Load an immediate peri-polar region's worth of
          *        indices into a server-side buffer.
          *
-         * \param buff : the buffer object to load
+         * \param buff : the buffer object to load.
          *
-         * \param po : which pole is adjacent
+         * \param po : which pole is adjacent ie. north or south.
          */
         void loadPolarIndexBuffer(Buffer_OBJ& buff, enum pole po);
 
         /**
-         * \brief Load the ( many latitudes worth of ) non-peri-polar
+         * \brief Load the ( typically many latitudes worth of ) non-peri-polar
          *        regions indices into a server-side buffer.
          */
         void loadWaistIndexBuffer(void);
 
         /**
          * \brief Load a single vertex's data into a server-side buffer.
+         *
+         *      This function exists so that no assumptions need be made about
+         * member ordering/padding within the Vertex class, when transferring
+         * data to the server buffer which does have specific ordering, padding
+         * and alignment requirements.
+         *
+         * \param vert : the Vertex to transfer data from.
+         *
+         * \param buffer : the buffer location to transfer data to.
          */
         void vertex2buffer(const Vertex& vert, Vert* buffer) const;
     };
