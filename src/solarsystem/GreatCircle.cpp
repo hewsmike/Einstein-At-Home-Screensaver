@@ -35,6 +35,7 @@ GreatCircle::GreatCircle(const Vector3D& normal, const Vector3D& zero_long,
                             gc_line(line),
                             rad(radius),
                             segs(segments) {
+    // Whatever is given only store unit vectors internally.
     norm = normal.unit();
     z_long = zero_long.unit();
     }
@@ -62,8 +63,10 @@ void GreatCircle::render(void) {
     // The vertex array pointer points to the start of the buffer.
     glVertexPointer(COORDS_PER_VERTEX, GL_FLOAT, ARRAY_STRIDE, BUFFER_OFFSET(BYTE_OFFSET));
 
+    // Set line width.
     glLineWidth(gc_line.width());
 
+    // Setline color.
     glColor4f(gc_line.red(), gc_line.green(), gc_line.blue(), gc_line.alpha());
 
     // Finally we get to render the lines.
@@ -87,6 +90,8 @@ void GreatCircle::loadVertexBuffer(void) {
     Vert* buffer_base_ptr = new Vert[segs];
     Vert* buffer_ptr = buffer_base_ptr;
 
+    // Vector orthogonal to the normal and that pointing to zero of longitiude,
+    // giving a second unit vector in the plane of the circle.
     Vector3D orthog = norm * z_long;
 
     // Store the vertex position data in the buffer.
@@ -95,14 +100,18 @@ void GreatCircle::loadVertexBuffer(void) {
         // plane along the tip to the base of the given normal.
         GLfloat theta = (point*SolarSystemGlobals::FULL_CIRCLE_DEG)/segs;
 
+        // Vector to a point on the great circle indicated by the angle theta.
         Vector3D pt = rad * (COS(theta) * z_long + SIN(theta) * orthog);
 
+        // Transfer position data to the temporary heap buffer.
         buffer_ptr->x_pos = pt.x();
         buffer_ptr->y_pos = pt.y();
         buffer_ptr->z_pos = pt.z();
+        // Increment to the next buffer position.
         ++buffer_ptr;
         }
 
+    // Shift the heap contents to the server side buffer.
     buff_obj_points.loadBuffer(GL_ARRAY_BUFFER, GL_STATIC_DRAW, buffer_size, buffer_base_ptr);
 
     delete[] buffer_base_ptr;

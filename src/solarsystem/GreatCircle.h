@@ -41,7 +41,9 @@
  * a sense of increase in the longitude value as follows : N x L is in the
  * direction of said increase.
  *
+ * \see Buffer_OBJ
  * \see Line
+ * \see Renderable
  * \see Vector3D
  *
  * \author Mike Hewson\n
@@ -85,11 +87,13 @@ class GreatCircle : public Renderable {
         virtual void render(void);
 
     private:
+        /// Parameters for buffer objects.
         static const GLuint ARRAY_START;
         static const GLsizei ARRAY_STRIDE;
         static const GLuint BYTE_OFFSET;
         static const GLuint COORDS_PER_VERTEX;
 
+        /// Structure for vertex position data.
         struct Vert {
             vec_t x_pos;
             vec_t y_pos;
@@ -114,7 +118,7 @@ class GreatCircle : public Renderable {
          /// The OpenGL buffer object wrapper for vertex data.
         Buffer_OBJ buff_obj_points;
 
-        /// The OpenGL buffer object wrapper for grid vertex indices.
+        /// The OpenGL buffer object wrapper for vertex indices.
         Buffer_OBJ buff_obj_indices;
 
         /**
