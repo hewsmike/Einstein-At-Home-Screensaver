@@ -379,25 +379,35 @@ void GridGlobe::loadCelestialEquatorIndexBuffer(void) {
     }
 
 void GridGlobe::createMarkerLists(void) {
+    // Erase any previous lists.
     clearMarkerLists();
 
+    // Symbols for hours and degrees.
     static const std::string HOUR_UNITS("h");
     static const std::string DEGREE_UNITS("o");
 
+    // Get the font for this item.
     OGLFT_ft* myFont = this->getFont();
 
+    // Overall scaling for the text.
     GLfloat text_scale_factor = radius/TEXT_RATIO;
 
+    // Angular displacement between longitude steps.
     GLfloat slice_step = SolarSystemGlobals::FULL_CIRCLE_DEG/slices;
 
+    // Angular displacement between latitude steps.
     GLfloat stack_step = SolarSystemGlobals::HALF_CIRCLE_DEG/(stacks - 1);
 
+    // Compile the OGLFT glyphs for units display.
     hour_glyph = myFont->compile(HOUR_UNITS.c_str());
     degree_glyph = myFont->compile(DEGREE_UNITS.c_str());
 
+    // Per longitude value.
     for(GLuint slice = 0; slice < slices; ++slice) {
+        // Calculate the right ascension.
         GLint right_asc = slice * slice_step;
 
+        //
         std::string ra_token = "";
         char ra_tens = '0' + (slice/10);
 

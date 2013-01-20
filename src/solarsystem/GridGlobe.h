@@ -37,6 +37,13 @@
  * \brief This class defines a renderable object of spherical shape with
  *        grid features, primarily used as for coordinate display.
  *
+ * \see Buffer_OBJ
+ * \see Line
+ * \see Renderable
+ * \see SolarSystemGlobals
+ * \see Sphere
+ * \see Vector3D
+ *
  * \author Mike Hewson\n
  */
 
@@ -46,7 +53,7 @@ class GridGlobe : public Renderable {
         enum lineType {MAIN, EQUATOR, PRIME_MERIDIAN};
 
         /// Which side will text be readable on?
-        enum textFacing{INSIDE, OUTSIDE};
+        enum textFacing {INSIDE, OUTSIDE};
 
         /**
          * \brief Constructor.
@@ -72,10 +79,7 @@ class GridGlobe : public Renderable {
          * \brief Set the rendering features of a given line feature
          *
          * \param type : the line feature to set the values of.
-         * \param width : the width of the line.
-         * \param red : the red RGB compononet of the line.
-         * \param green : the green RGB compononet of the line.
-         * \param blue : the blue RGB compononet of the line.
+         * \param line : the line features to render using
          */
         void setLine(lineType type, Line line);
 
@@ -96,16 +100,16 @@ class GridGlobe : public Renderable {
         /// Whether adjacent latitudes have a longitude offset.
         static const bool STAGGERING;
 
-        /// Whether a prime meridian longitude is reproduced,
-        /// possibly required for later texture mapping.
+        /// Whether a prime meridian longitude is reproduced.
         static const bool STITCHING;
 
-        ///
+        /// Scaling and positioning factors.
         static const GLfloat TEXT_RATIO;
         static const GLfloat TEXT_OTHER_RATIO;
         static const GLfloat TEXT_OFFSET;
         static const GLfloat TEXT_UNITS_RATIO;
 
+        /// Structure for vertex position data.
         struct Vert {
             vec_t x_pos;
             vec_t y_pos;
