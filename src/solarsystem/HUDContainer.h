@@ -57,12 +57,10 @@
 
 class HUDContainer : public HUDItem {
     public:
-        enum Mode{RETAIN, DESTROY};
-
         /**
          * \brief Constructor
          */
-        HUDContainer(Mode mode);
+        HUDContainer(void);
 
         /**
          * \brief Destructor
@@ -124,7 +122,7 @@ class HUDContainer : public HUDItem {
         HUDItem* getItem(int handle);
 
         /**
-         * \brief Add an item to this container.
+         * \brief Add a HUDItem to this container.
          *
          * IF the given pointer was not NULL, then
          * - the item was inserted, and
@@ -182,8 +180,6 @@ class HUDContainer : public HUDItem {
     private:
         /// Associative array b/w item pointers and integral labels.
         std::map<int, HUDItem*> container;
-
-        Mode mode_type;
     };
 
 /**

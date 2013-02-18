@@ -27,9 +27,8 @@
 #include "HUDImage.h"
 #include "HUDTextLine.h"
 
-HUDContainer::HUDContainer(Mode mode = RETAIN) :
-                HUDItem(),
-                mode_type(mode) {
+HUDContainer::HUDContainer(void) :
+                HUDItem() {
     }
 
 HUDContainer::~HUDContainer() {
@@ -69,15 +68,6 @@ bool HUDContainer::isEmpty(void) const {
     }
 
 void HUDContainer::erase(void) {
-    if(mode_type == DESTROY) {
-        for(std::map<int, HUDItem*>::iterator elem = container.begin();
-            elem != container.end();
-            ++elem) {
-            removeItem((*elem).first);
-            }
-        }
-
-    /// TODO - redundant call ??
     container.clear();
     }
 
@@ -139,12 +129,6 @@ void HUDContainer::addItem(int handle, HUDItem* item) {
     }
 
 void HUDContainer::removeItem(int handle) {
-    if(mode_type == DESTROY) {
-        HUDItem* temp = getItem(handle);
-        if(temp != NULL) {
-            delete temp;
-            }
-        }
     // If the given handle is not present in the map, nothing happens.
     container.erase(handle);
     }

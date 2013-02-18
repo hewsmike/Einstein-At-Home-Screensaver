@@ -399,11 +399,11 @@ class Simulation : public Renderable {
         HUDBorderLayout overlay;
         HUDFlowLayout north_panel;
         HUDFlowLayout south_panel;
-        HUDFlowLayout east_panel;
-        HUDFlowLayout west_panel;
+        HUDTempFlowLayout east_panel;
+        HUDTempFlowLayout west_panel;
 
-        HUDFlowLayout north_west_panel;
-        HUDFlowLayout north_east_panel;
+        HUDTempFlowLayout north_west_panel;
+        HUDTempFlowLayout north_east_panel;
 
         HUDFlowLayout south_west_panel;
         HUDFlowLayout south_centre_panel;
