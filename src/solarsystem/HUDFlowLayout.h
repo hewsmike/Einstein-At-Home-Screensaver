@@ -98,7 +98,7 @@ class HUDFlowLayout : public HUDContainer {
         /**
          * \brief Constructor
          */
-        HUDFlowLayout(Axis axis, HUDContainer::Mode mode);
+        HUDFlowLayout(Axis axis);
 
         /**
          * \brief Destructor

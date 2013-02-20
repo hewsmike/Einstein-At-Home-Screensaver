@@ -20,21 +20,15 @@
 
 #include "HUDTempFlowLayout.h"
 
-#include <iostream>
-#include <sstream>
-
-#include "ErrorHandler.h"
-#include "HUDImage.h"
-#include "HUDTextLine.h"
-
-HUDTempFlowLayout::HUDTempFlowLayout(void) :
-                HUDItem() {
+HUDTempFlowLayout::HUDTempFlowLayout(HUDFlowLayout::Axis axis) :
+                    HUDFlowLayout(axis) {
     }
 
 HUDTempFlowLayout::~HUDTempFlowLayout() {
     }
 
 void HUDTempFlowLayout::erase(void) {
+    HUDContainer::erase();
     }
 
 void HUDTempFlowLayout::addItem(int handle, HUDContent* item) {
@@ -42,5 +36,5 @@ void HUDTempFlowLayout::addItem(int handle, HUDContent* item) {
     }
 
 void HUDTempFlowLayout::removeItem(int handle) {
-
+    HUDContainer::removeItem(handle);
     }
