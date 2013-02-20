@@ -31,10 +31,6 @@ void HUDTempFlowLayout::erase(void) {
     HUDContainer::erase();
     }
 
-void HUDTempFlowLayout::addItem(int handle, HUDContent* item) {
-    HUDContainer::addItem(handle, item);
-    }
-
-void HUDTempFlowLayout::removeItem(int handle) {
-    HUDContainer::removeItem(handle);
+void HUDTempFlowLayout::addItem(HUDContent* item) {
+    HUDFlowLayout::addItem(item);
     }

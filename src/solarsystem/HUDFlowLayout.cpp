@@ -27,7 +27,7 @@
 #include <iostream>
 #include <sstream>
 
-HUDFlowLayout::HUDFlowLayout(Axis axis, HUDContainer::Mode mode) :
+HUDFlowLayout::HUDFlowLayout(Axis axis) :
                 ax(axis) {
     primary_axis_gap_count = 0;
     primary_axis_total_white_space = 0;

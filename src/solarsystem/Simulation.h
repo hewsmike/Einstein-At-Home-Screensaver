@@ -40,6 +40,7 @@
 #include "HUDContainer.h"
 #include "HUDFlowLayout.h"
 #include "HUDImage.h"
+#include "HUDTempFlowLayout.h"
 #include "HUDTextLineScroll.h"
 #include "Pulsar.h"
 #include "PulsarEAH.h"

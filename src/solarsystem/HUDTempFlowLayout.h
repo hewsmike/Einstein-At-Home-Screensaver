@@ -61,7 +61,7 @@ class HUDTempFlowLayout : public HUDFlowLayout {
          * \param handle : an identifier for the item
          * \param obj : the item's pointer
          */
-        void addItem(int handle, HUDContent* item);
+        void addItem(HUDContent* item);
 
         /**
          * \brief Empty the underlying container.

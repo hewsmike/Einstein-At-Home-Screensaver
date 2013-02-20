@@ -26,6 +26,7 @@
 #include <sstream>
 
 #include "ErrorHandler.h"
+#include "SolarSystemGlobals.h"
 
 const string EinsteinRadioAdapter::SharedMemoryIdentifier = "EinsteinRadio";
 
