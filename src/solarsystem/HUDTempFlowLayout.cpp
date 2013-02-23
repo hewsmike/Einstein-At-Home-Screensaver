@@ -20,6 +20,8 @@
 
 #include "HUDTempFlowLayout.h"
 
+#include <map>
+
 HUDTempFlowLayout::HUDTempFlowLayout(HUDFlowLayout::Axis axis) :
                     HUDFlowLayout(axis) {
     }
@@ -28,6 +30,16 @@ HUDTempFlowLayout::~HUDTempFlowLayout() {
     }
 
 void HUDTempFlowLayout::erase(void) {
+    std::map<int, HUDItem*>& container = this->getMap();
+    for(std::map<int, HUDItem*>::const_iterator pos = container.begin();
+        pos != container.end();
+        ++pos) {
+        HUDItem* item_ptr = pos->second;
+        if(item_ptr != NULL) {
+            delete item_ptr;
+            }
+        }
+
     HUDContainer::erase();
     }
 

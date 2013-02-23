@@ -128,11 +128,6 @@ void HUDContainer::addItem(int handle, HUDItem* item) {
         }
     }
 
-void HUDContainer::removeItem(int handle) {
-    // If the given handle is not present in the map, nothing happens.
-    container.erase(handle);
-    }
-
 std::map<int, HUDItem*>& HUDContainer::getMap(void) {
     return container;
     }

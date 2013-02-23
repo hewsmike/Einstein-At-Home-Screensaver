@@ -129,16 +129,6 @@ class HUDContainer : public HUDItem {
          */
         void addItem(int handle, HUDItem* item);
 
-        /**
-         * \brief Remove an item from this container.
-         *
-         * Any existing item with the same handle is removed, and
-         * this container's minimum dimensions are adjusted
-         *
-         * \param handle : an identifier for the item
-         */
-        void removeItem(int handle);
-
     protected:
         std::map<int, HUDItem*>& getMap(void);
 
