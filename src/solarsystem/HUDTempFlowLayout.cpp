@@ -34,13 +34,12 @@ void HUDTempFlowLayout::erase(void) {
     for(std::map<int, HUDItem*>::const_iterator pos = container.begin();
         pos != container.end();
         ++pos) {
-        HUDItem* item_ptr = pos->second;
+        HUDContent* item_ptr = static_cast<HUDContent*>(pos->second);
+        // container.erase(pos->first);
         if(item_ptr != NULL) {
             delete item_ptr;
             }
         }
-
-    HUDContainer::erase();
     }
 
 void HUDTempFlowLayout::addItem(HUDContent* item) {
