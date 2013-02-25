@@ -31,14 +31,15 @@ HUDTempFlowLayout::~HUDTempFlowLayout() {
 
 void HUDTempFlowLayout::erase(void) {
     std::map<int, HUDItem*>& container = this->getMap();
-    for(std::map<int, HUDItem*>::const_iterator pos = container.begin();
-        pos != container.end();
-        ++pos) {
-        HUDContent* item_ptr = static_cast<HUDContent*>(pos->second);
-        // container.erase(pos->first);
-        if(item_ptr != NULL) {
-            delete item_ptr;
-            }
+    while(container.empty() != true) {
+        // Get an iterator to the first container element.
+        std::map<int, HUDItem*>::const_iterator head = container.begin();
+        // Actual type is HUDContent or more derived.
+        // Free up heap resources used by this element. As destructor
+        // will also be called, then OpenGl resources will be released too.
+        delete pos->second;
+        // Remove element from the container.
+        container.erase(head->first);
         }
     }
 

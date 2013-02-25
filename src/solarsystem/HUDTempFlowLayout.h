@@ -55,16 +55,14 @@ class HUDTempFlowLayout : public HUDFlowLayout {
          *
          * IF the given pointer was not NULL, then
          * - the item was inserted, and
-         * - any existing item with the same handle was removed, and
          * - this container's minimum dimensions were adjusted
          *
-         * \param handle : an identifier for the item
-         * \param obj : the item's pointer
+         * \param item : a pointer to heap based HUDContent instance.
          */
         void addItem(HUDContent* item);
 
         /**
-         * \brief Empty the underlying container.
+         * \brief Empty the underlying container, while releasing heap memory.
          */
         void erase(void);
     protected:
