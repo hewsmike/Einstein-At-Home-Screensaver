@@ -37,7 +37,7 @@ void HUDTempFlowLayout::erase(void) {
         // Actual type is HUDContent or more derived.
         // Free up heap resources used by this element. As destructor
         // will also be called, then OpenGl resources will be released too.
-        delete pos->second;
+        delete head->second;
         // Remove element from the container.
         container.erase(head->first);
         }
