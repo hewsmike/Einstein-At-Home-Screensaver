@@ -135,6 +135,9 @@ void Globe::loadTexture(void) {
                              ErrorHandler::WARN);
         }
 
+    // Get rid of any heap resource allocation.
+    delete textureResource;
+
     // Unbind the texture from the state machine - but don't delete it!
     glBindTexture(GL_TEXTURE_2D, Texture_OBJ::NO_ID);
     }
