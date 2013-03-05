@@ -38,7 +38,7 @@ HUDLogoCycle::HUDLogoCycle(GLuint frames) :
 HUDLogoCycle::~HUDLogoCycle() {
     }
 
-void HUDLogoCycle::addLogo(HUDImage* logo) {
+void HUDLogoCycle::addItem(HUDImage* logo) {
     // Only add if NULL wasn't passed.
     if(logo != NULL) {
         // Just index these by their order of being added.
@@ -74,14 +74,6 @@ void HUDLogoCycle::setHorizontalJustification(HUDLogoCycle::horizontalJustificat
 void HUDLogoCycle::setVerticalJustification(HUDLogoCycle::verticalJustification justification) {
     vert_just = justification;
     allocateItemBases();
-    }
-
-HUDLogoCycle::primaryJustification HUDLogoCycle::getPrimaryJustification(void) const {
-    return primary_just;
-    }
-
-HUDLogoCycle::secondaryJustification HUDLogoCycle::getSecondaryJustification(void) const {
-    return secondary_just;
     }
 
 std::pair<GLuint, GLuint> HUDLogoCycle::reassessMinimumDimensions(void) {
@@ -125,13 +117,15 @@ void HUDLogoCycle::allocateItemBases(void) {
         for(std::map<int, HUDItem*>::iterator item = container.begin();
             item != container.end();
             ++item) {
+            HUDItem* logo = (*item).second;
+
             // Offsets for both axes to place this item.
             GLuint horz_gap = 0;
             GLuint vert_gap = 0;
 
             // How much whitespace do we have in each direction to play with?
-            GLuint horz_whitespace = this->minWidth() - item->minWidth();
-            GLuint vert_whitespace = this->minHeight() - item->minHeight();
+            GLuint horz_whitespace = this->minWidth() - logo->minWidth();
+            GLuint vert_whitespace = this->minHeight() - logo->minHeight();
 
             // For a given amount of horizontal axis whitespace then
             // how is that to be divided? That depends upon horizontal
@@ -171,9 +165,10 @@ void HUDLogoCycle::allocateItemBases(void) {
                     break;
                 }
 
-            HUDItem* logo = (*item).second;
+
             logo->reBase(this->horzBase() + horz_gap,
                          this->vertBase() + vert_gap);
+            }
         }
     }
 
@@ -181,9 +176,6 @@ void HUDLogoCycle::render(void) {
     // We only need to bother with allocations
     // if there are items to render.
     if(HUDContainer::itemCount() > 0) {
-        // Obtain access to the underlying container.
-        std::map<int, HUDItem*>& container = HUDContainer::getMap();
-
         // Find our current logo in the container.
         HUDItem* item = getItem(current_image_index);
         // Only access thru non-null pointer!

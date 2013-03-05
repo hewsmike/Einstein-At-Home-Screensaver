@@ -63,7 +63,7 @@ class HUDLogoCycle : public HUDContainer {
          */
         virtual ~HUDLogoCycle();
 
-        void addLogo(HUDImage* logo);
+        void addItem(HUDImage* logo);
 
         GLuint getFrameGap(void) const;
 
@@ -100,7 +100,7 @@ class HUDLogoCycle : public HUDContainer {
         virtual void render(void);
 
     private:
-        GLuint DEFAULT_FRAME_GAP;
+        static GLuint DEFAULT_FRAME_GAP;
 
         GLuint frame_gap;
         GLuint frame_count;

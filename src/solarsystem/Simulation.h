@@ -40,6 +40,7 @@
 #include "HUDContainer.h"
 #include "HUDFlowLayout.h"
 #include "HUDImage.h"
+#include "HUDLogoCycle.h"
 #include "HUDTempFlowLayout.h"
 #include "HUDTextLineScroll.h"
 #include "Pulsar.h"
@@ -179,7 +180,7 @@ class Simulation : public Renderable {
          * \param margin_width : the horizontal margin to apply around the image.
          * \param margin_height : the vertical margin to apply around the image.
          */
-        void loadImageToPanel(HUDImage* hip, HUDFlowLayout* hfl,
+        void loadImageToPanel(HUDImage* hip, HUDContainer* hfl,
                               std::string resource_name, GLuint margin_width,
                               GLuint margin_height);
 
@@ -408,7 +409,7 @@ class Simulation : public Renderable {
 
         HUDFlowLayout south_west_panel;
         HUDFlowLayout south_centre_panel;
-        HUDFlowLayout south_east_panel;
+        HUDLogoCycle south_east_panel;
 
         /// The index of the current rendered frame ( since program start ).
         GLuint frame_number;

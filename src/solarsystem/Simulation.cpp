@@ -449,8 +449,8 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
     south_west_panel.setSecondaryJustification(HUDFlowLayout::PROXIMAL);
     south_centre_panel.setPrimaryJustification(HUDFlowLayout::END);
     south_centre_panel.setSecondaryJustification(HUDFlowLayout::MIDDLE);
-    south_east_panel.setPrimaryJustification(HUDFlowLayout::END);
-    south_east_panel.setSecondaryJustification(HUDFlowLayout::DISTAL);
+    south_east_panel.setHorizontalJustification(HUDLogoCycle::RIGHT);
+    south_east_panel.setVerticalJustification(HUDLogoCycle::BOTTOM);
 
     // Put the panels into the border layout.
     overlay.setPanel(HUDBorderLayout::NORTH, &north_panel);
@@ -473,12 +473,12 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
     south_centre_panel.addItem(version_text);
 
     // Create content and include into panels.
-    loadImageToPanel(wyp_image, &south_west_panel, "wypTGA", 5, 5);
+    loadImageToPanel(wyp_image, &south_east_panel, "wypTGA", 5, 5);
     loadImageToPanel(aps_image, &south_centre_panel, "apsTGA", 5, 5);
     loadImageToPanel(aei_image, &south_east_panel, "aeiTGA", 5, 5);
-    loadImageToPanel(boinc_image, &south_west_panel, "boincTGA", 5, 5);
+    loadImageToPanel(boinc_image, &south_east_panel, "boincTGA", 5, 5);
 
-    includeLogo(&south_east_panel);
+    // includeLogo(&south_east_panel);
 
     overlay.activate();
     }
@@ -2911,7 +2911,7 @@ void Simulation::cycle(SolarSystemGlobals::content ct) {
         }
     }
 
-void Simulation::loadImageToPanel(HUDImage* hip, HUDFlowLayout* hfl,
+void Simulation::loadImageToPanel(HUDImage* hip, HUDContainer* hfl,
                                   std::string resource_name,
                                   GLuint margin_width, GLuint margin_height) {
     // Put an image into the content.
