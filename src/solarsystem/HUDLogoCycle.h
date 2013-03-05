@@ -23,6 +23,10 @@
 
 #include "HUDContainer.h"
 
+#include <utility>
+
+#include "HUDImage.h"
+
 /**
  * \addtogroup  solarsystem Solarsystem
  * @{
@@ -45,7 +49,7 @@ class HUDLogoCycle : public HUDContainer {
 
         /// Enumerants to specify the mode of justification
         /// along the horizontal axis.
-        enum horizontalJustification {LEFT, MIDDLE, RIGHT};
+        enum horizontalJustification {LEFT, CENTRE, RIGHT};
 
         /**
          * \brief Constructor.
@@ -63,11 +67,15 @@ class HUDLogoCycle : public HUDContainer {
 
         GLuint getFrameGap(void) const;
 
-        void setFrameGap(GLuint frame_gap);
+        void setFrameGap(GLuint gap);
 
-        void erase(void);
+        HUDLogoCycle::horizontalJustification getHorizontalJustification(void) const;
 
-        GLuint getLogoCount(void) const;
+        HUDLogoCycle::verticalJustification getVerticalJustification(void) const;
+
+        void setHorizontalJustification(HUDLogoCycle::horizontalJustification justification);
+
+        void setVerticalJustification(HUDLogoCycle::verticalJustification justification);
 
     protected:
         /**
@@ -86,13 +94,7 @@ class HUDLogoCycle : public HUDContainer {
          */
         virtual void allocateItemBases(void);
 
-        /// These three routines below satisfy the Renderable interface.
-
-        /// Provide OpenGL code to prepare for rendering.
-        virtual void prepare(SolarSystemGlobals::render_quality rq);
-
-        /// Provide OpenGL code to release any resources used.
-        virtual void release(void);
+        /// This routine satisfies the Renderable interface.
 
         /// Provide OpenGL code to render the object.
         virtual void render(void);
@@ -104,7 +106,6 @@ class HUDLogoCycle : public HUDContainer {
         GLuint frame_count;
 
         GLuint current_image_index;
-        GLuint total_image_count;
 
         verticalJustification vert_just;
         horizontalJustification horz_just;
