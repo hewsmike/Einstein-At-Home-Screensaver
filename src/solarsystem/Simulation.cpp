@@ -215,7 +215,7 @@ Simulation::Simulation(BOINCClientAdapter* boinc_adapter) :
                                north_east_panel(HUDFlowLayout::HORIZONTAL),
                                south_west_panel(HUDFlowLayout::VERTICAL),
                                south_centre_panel(HUDFlowLayout::VERTICAL),
-                               south_east_panel(HUDFlowLayout::VERTICAL),
+                               south_east_panel(),
                                BC_adapter(boinc_adapter) {
     // Starting values of simulation parameters.
     frame_number = 0;
@@ -473,12 +473,11 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
     south_centre_panel.addItem(version_text);
 
     // Create content and include into panels.
-    loadImageToPanel(wyp_image, &south_east_panel, "wypTGA", 5, 5);
-    loadImageToPanel(aps_image, &south_centre_panel, "apsTGA", 5, 5);
-    loadImageToPanel(aei_image, &south_east_panel, "aeiTGA", 5, 5);
-    loadImageToPanel(boinc_image, &south_east_panel, "boincTGA", 5, 5);
+    loadImageToPanel(boinc_image, &south_west_panel, "boincTGA", 5, 5);
 
-    // includeLogo(&south_east_panel);
+    south_east_panel.addItem(new HUDImage("aeiTGA", 5, 5));
+    south_east_panel.addItem(new HUDImage("wypTGA", 5, 5));
+    south_east_panel.addItem(new HUDImage("apsTGA", 5, 5));
 
     overlay.activate();
     }
@@ -2911,7 +2910,7 @@ void Simulation::cycle(SolarSystemGlobals::content ct) {
         }
     }
 
-void Simulation::loadImageToPanel(HUDImage* hip, HUDContainer* hfl,
+void Simulation::loadImageToPanel(HUDImage* hip, HUDFlowLayout* hfl,
                                   std::string resource_name,
                                   GLuint margin_width, GLuint margin_height) {
     // Put an image into the content.

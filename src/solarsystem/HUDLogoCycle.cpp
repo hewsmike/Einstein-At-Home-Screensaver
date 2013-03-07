@@ -21,6 +21,7 @@
 #include "HUDLogoCycle.h"
 
 #include <map>
+#include <sstream>
 #include <utility>
 
 #include "ErrorHandler.h"
@@ -29,6 +30,10 @@ GLuint HUDLogoCycle::DEFAULT_FRAME_GAP(100);
 
 HUDLogoCycle::HUDLogoCycle(GLuint frames) :
                 frame_gap(frames) {
+    stringstream msg;
+    msg << "HUDLogoCycle::HUDLogoCycle() - frame_gap = "
+        << frame_gap;
+    ErrorHandler::record(msg.str(), ErrorHandler::INFORM);
     vert_just = HUDLogoCycle::TOP;
     horz_just = HUDLogoCycle::RIGHT;
     current_image_index = 0;

@@ -180,7 +180,7 @@ class Simulation : public Renderable {
          * \param margin_width : the horizontal margin to apply around the image.
          * \param margin_height : the vertical margin to apply around the image.
          */
-        void loadImageToPanel(HUDImage* hip, HUDContainer* hfl,
+        void loadImageToPanel(HUDImage* hip, HUDFlowLayout* hfl,
                               std::string resource_name, GLuint margin_width,
                               GLuint margin_height);
 
