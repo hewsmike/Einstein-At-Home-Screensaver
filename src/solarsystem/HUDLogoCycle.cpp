@@ -41,6 +41,7 @@ HUDLogoCycle::HUDLogoCycle(GLuint frames) :
     }
 
 HUDLogoCycle::~HUDLogoCycle() {
+    erase();
     }
 
 void HUDLogoCycle::addItem(HUDImage* logo) {
@@ -52,6 +53,20 @@ void HUDLogoCycle::addItem(HUDImage* logo) {
     else {
         ErrorHandler::record("HUDLogoCycle::addLogo() - NULL passed for content",
                              ErrorHandler::FATAL);
+        }
+    }
+
+void HUDLogoCycle::erase(void) {
+    std::map<int, HUDItem*>& container = this->getMap();
+    while(container.empty() != true) {
+        // Get an iterator to the first container element.
+        std::map<int, HUDItem*>::const_iterator head = container.begin();
+        // Actual type is HUDImage or more derived.
+        // Free up heap resources used by this element. As destructor
+        // will also be called, then OpenGl resources will be released too.
+        delete head->second;
+        // Remove element from the container.
+        container.erase(head->first);
         }
     }
 
