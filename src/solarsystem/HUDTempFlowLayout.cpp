@@ -27,7 +27,7 @@ HUDTempFlowLayout::HUDTempFlowLayout(HUDFlowLayout::Axis axis) :
     }
 
 HUDTempFlowLayout::~HUDTempFlowLayout() {
-    erase();
+    // erase();
     }
 
 void HUDTempFlowLayout::erase(void) {
