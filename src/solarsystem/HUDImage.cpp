@@ -56,6 +56,10 @@ HUDImage::HUDImage(std::string resourceName,
 
 HUDImage::~HUDImage() {
     release();
+    std::stringstream msg;
+        msg << "HUDImage::~HUDImage() - released resources for : "
+            << image_resource_name;
+    ErrorHandler::record(msg.str(), ErrorHandler::INFORM);
     }
 
 void HUDImage::prepare(SolarSystemGlobals::render_quality rq) {
@@ -83,6 +87,10 @@ void HUDImage::prepare(SolarSystemGlobals::render_quality rq) {
     }
 
 void HUDImage::release(void) {
+    std::stringstream msg;
+        msg << "HUDImage::release() - releasing resources for : "
+            << image_resource_name;
+    ErrorHandler::record(msg.str(), ErrorHandler::INFORM);
     // Policy is to set size to zero when rendering is not implied.
 
     // Discard server side resources.
