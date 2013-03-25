@@ -374,7 +374,7 @@ void Simulation::resize(GLuint width, GLuint height) {
     overlay.requestResize(width, height);
 
     // If the autopilot is running, need refresh due to change
-    // of context on Windows machines.
+    // of context on Windows machines ? Unclear .....
     // if(pilot.isActive() == true) {
         // target.hide();
         // loadLookoutDataToPanels();

@@ -110,7 +110,7 @@ class ErrorHandler {
         /**
          * \brief Constructor ( private since this a static class )
          */
-         ErrorHandler(void);
+        ErrorHandler(void);
     };
 
 /**

@@ -103,7 +103,7 @@ void HUDImage::release(void) {
     // Release of image implies any enclosing container
     // ought be made aware of size change.
     HUDContainer* outer = getEnclosingContainer();
-    if(outer !=NULL) {
+    if(outer != NULL) {
         outer->adjust();
         }
     }
