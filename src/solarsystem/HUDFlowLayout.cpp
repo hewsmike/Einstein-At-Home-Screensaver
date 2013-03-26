@@ -28,13 +28,11 @@
 #include <sstream>
 
 HUDFlowLayout::HUDFlowLayout(Axis axis) :
-                ax(axis) {
+                HUDContainer(axis) {
     primary_axis_gap_count = 0;
     primary_axis_total_white_space = 0;
     primary_axis_start_offset = 0;
     primary_axis_item_gap = 0;
-    primary_just = CENTRE;
-    secondary_just = MIDDLE;
     }
 
 HUDFlowLayout::~HUDFlowLayout() {
@@ -52,24 +50,6 @@ void HUDFlowLayout::addItem(HUDItem* item) {
         }
     }
 
-void HUDFlowLayout::setPrimaryJustification(primaryJustification justification) {
-    primary_just = justification;
-    allocateItemBases();
-    }
-
-void HUDFlowLayout::setSecondaryJustification(secondaryJustification justification) {
-    secondary_just = justification;
-    allocateItemBases();
-    }
-
-HUDFlowLayout::primaryJustification HUDFlowLayout::getPrimaryJustification(void) const {
-    return primary_just;
-    }
-
-HUDFlowLayout::secondaryJustification HUDFlowLayout::getSecondaryJustification(void) const {
-    return secondary_just;
-    }
-
 std::pair<GLuint, GLuint> HUDFlowLayout::reassessMinimumDimensions(void) {
     // Assume an empty container.
     GLuint layoutMinWidth = 0;
@@ -84,8 +64,8 @@ std::pair<GLuint, GLuint> HUDFlowLayout::reassessMinimumDimensions(void) {
         // Examine this item.
         HUDItem* current = (*item).second;
 
-        switch(ax) {
-            case HORIZONTAL:
+        switch(getAxis()) {
+            case HUDContainer::HORIZONTAL:
                 {
                 // We add up all the minimum widths.
                 layoutMinWidth += current->minWidth();
@@ -97,7 +77,7 @@ std::pair<GLuint, GLuint> HUDFlowLayout::reassessMinimumDimensions(void) {
                     }
                 }
                 break;
-            case VERTICAL:
+            case HUDContainer::VERTICAL:
                 {
                 // We add up all the minimum heights.
                 layoutMinHeight += current->minHeight();
@@ -136,11 +116,11 @@ void HUDFlowLayout::allocateItemBases(void) {
             item != container.end(); ++item) {
             // Determine offset in secondary axis for this item.
             GLuint secondary_axis_white_space = 0;
-            switch(ax) {
-                case HORIZONTAL :
+            switch(getAxis()) {
+                case HUDContainer::HORIZONTAL :
                     secondary_axis_white_space = this->height() - (*item).second->height();
                     break;
-                case VERTICAL :
+                case HUDContainer::VERTICAL :
                     secondary_axis_white_space = this->width() - (*item).second->width();
                     break;
                 default:
@@ -153,14 +133,14 @@ void HUDFlowLayout::allocateItemBases(void) {
             // For a given amount of secondary axis whitespace then
             // how is that to be divided? That depends upon secondary
             // axis justification.
-            switch(secondary_just) {
-                case PROXIMAL:
+            switch(getSecondaryJustification()) {
+                case HUDContainer::PROXIMAL:
                     secondary_axis_coord = 0;
                     break;
-                case MIDDLE:
+                case HUDContainer::MIDDLE:
                     secondary_axis_coord = secondary_axis_white_space/2;
                     break;
-                case DISTAL:
+                case HUDContainer::DISTAL:
                     secondary_axis_coord = secondary_axis_white_space;
                     break;
                 default:
@@ -173,13 +153,13 @@ void HUDFlowLayout::allocateItemBases(void) {
             // Place the current content, as per primary axis choice,
             // followed by a shift to next insert position according to
             // the dimensions of the current item's content plus any gap.
-            switch(ax) {
-                case HORIZONTAL :
+            switch(getAxis()) {
+                case HUDContainer::HORIZONTAL :
                     (*item).second->reBase(this->horzBase() + primary_axis_coord,
                                            this->vertBase() + secondary_axis_coord);
                     primary_axis_coord += (*item).second->width() + primary_axis_item_gap;
                     break;
-                case VERTICAL :
+                case HUDContainer::VERTICAL :
                     (*item).second->reBase(this->horzBase() + secondary_axis_coord,
                                            this->vertBase() +
                                            this->height() -
@@ -205,8 +185,8 @@ void HUDFlowLayout::setPrimaryAxisGaps(void) {
     primary_axis_gap_count = 0;
     primary_axis_item_gap = 0;
     primary_axis_start_offset = 0;
-    switch(this->ax) {
-        case HORIZONTAL:
+    switch(getAxis()) {
+        case HUDContainer::HORIZONTAL:
             if(width() >= minWidth()) {
                 primary_axis_total_white_space = width() - minWidth();
                 }
@@ -215,7 +195,7 @@ void HUDFlowLayout::setPrimaryAxisGaps(void) {
                                      ErrorHandler::FATAL);
                 }
             break;
-        case VERTICAL:
+        case HUDContainer::VERTICAL:
             if(height() >= minHeight()) {
                 primary_axis_total_white_space = height() - minHeight();
                 }
@@ -233,26 +213,26 @@ void HUDFlowLayout::setPrimaryAxisGaps(void) {
     // For the items, what is the distribution of whitespace?
     // This depends upon the chosen primary justification style.
     stringstream msg;
-    switch(primary_just) {
-        case START:
+    switch(getPrimaryJustification()) {
+        case HUDContainer::START:
             // There's only a single gap on the other side to the justification.
             primary_axis_gap_count = 1;
             primary_axis_item_gap = 0;
             primary_axis_start_offset = 0;
             break;
-        case END:
+        case HUDContainer::END:
             // There's only a single gap on the other side to the justification.
             primary_axis_gap_count = 1;
             primary_axis_item_gap = 0;
             primary_axis_start_offset = primary_axis_total_white_space;
             break;
-        case CENTRE:
+        case HUDContainer::CENTRE:
             // We put all items in the centre and then have whitespace either side.
             primary_axis_gap_count = 2;
             primary_axis_item_gap = 0;
             primary_axis_start_offset = primary_axis_total_white_space/2;
             break;
-        case START_AND_END:
+        case HUDContainer::START_AND_END:
             // Whitespace is distributed between all items, but none at either end.
             if(itemCount() == 1) {
                 // With one item : like a START case.
@@ -265,7 +245,7 @@ void HUDFlowLayout::setPrimaryAxisGaps(void) {
             primary_axis_item_gap = primary_axis_total_white_space/primary_axis_gap_count;
             primary_axis_start_offset = 0;
             break;
-        case SPAN:
+        case HUDContainer::SPAN:
             // Whitespace is distributed between all items, and some at either end.
             if(itemCount() == 1) {
                 // With one item : like a CENTRE case.

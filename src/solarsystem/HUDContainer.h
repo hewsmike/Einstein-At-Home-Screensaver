@@ -38,12 +38,48 @@
  * container and contained. That is, any HUDContainer object may contain any
  * HUDItem, thus specifically another HUDContainer object. Circular inclusion
  * gives undefined behaviour ie. stick to directed acyclic graphs. What is
- * stored is in fact pointers to HUDItems.
+ * stored are in fact pointers to HUDItems.
  *      Note that it is not the  responsibility of this container to manage
  * heap allocation of contained items.
  *      Any contained object(s) will be activated for rendering when the
  * container itself is activated ( but only those present within at such time
  * of activation ).
+ *      For a given direction of primary axis there are several choices of
+ * policy to determine the distribution of spacing ( or justification )
+ * between the items :
+ *          - START : places all items to the left side in the case
+ *            of horizontal primary axis, or the top side in the case of
+ *            vertical primary axis, with any remaining space placed to
+ *            the right or below respectively.
+ *          - CENTRE : within rounding, the items are placed together
+ *            in the centre of the container, with equal space allotted
+ *            to left and right sides in the case of horizontal primary axis,
+ *            or equally above and below in the case of vertical primary axis.
+ *          - END : similiar to START except item placement is to the
+ *            right side for horizontal primary axis, and at the bottom in the
+ *            case of vertical primary axis, with any extra space being allocated
+ *            to the left and above respectively.
+ *          - START_AND_END : all extra space is allocated in the gaps
+ *            between items, equally within rounding, and no space at
+ *            either extreme of the container. If only one item present
+ *            then behaves like a START case.
+ *          - SPAN : similiar to START_AND_END except some gap, equal to
+ *            within rounding, at the extreme margins. If only one item
+ *            present then behaves like a CENTRE case.
+ *          The distribution of spacing ( or justification ) along the axis
+ * orthogonal to the primary axis has these policies :
+ *          - PROXIMAL : whereby items abut the upper edge of the
+ *            container in the case of horizontal primary axis, or the left
+ *            edge of the container in the case of vertical primary axis.
+ *          - MIDDLE : items have, within rounding, equal spacing above
+ *            and below in the case of horizontal primary axis, or to the left
+ *            and right in the case of vertical primary axis.
+ *          - DISTAL : similiar to PROXIMAL, but items abut the lower
+ *            container edge for horizontal primary axis, and the right edge
+ *            for vertical primary axis.
+ *      It is the responsibility of any subclass to actually enact the above
+ * placement semantics via allocateItemBases(). This class only accesses and
+ * mutates the justification settings.
  *
  * \see HUDItem
  *
@@ -52,10 +88,21 @@
 
 class HUDContainer : public HUDItem {
     public:
+        /// Enumerants to specify the mode of justification
+        /// along the primary axis.
+        enum primaryJustification {START, CENTRE, END, START_AND_END, SPAN};
+
+        /// Enumerants to specify the mode of justification
+        /// along the secondary axis.
+        enum secondaryJustification {PROXIMAL, MIDDLE, DISTAL};
+
+        /// Enumerant to specify the primary axis on screen.
+        enum Axis {HORIZONTAL, VERTICAL};
+
         /**
          * \brief Constructor
          */
-        HUDContainer(void);
+        HUDContainer(HUDContainer::Axis axis = HUDContainer::HORIZONTAL);
 
         /**
          * \brief Destructor
@@ -129,8 +176,42 @@ class HUDContainer : public HUDItem {
          */
         void addItem(int handle, HUDItem* item);
 
+        /**
+         * \brief Set the justification along the primary axis.
+         *
+         *      Triggers a recalculation of the positions of enclosed items.
+         *
+         * \param just : the desired justification
+         */
+        void setPrimaryJustification(primaryJustification just);
+
+        /**
+         * \brief Set the justification along the secondary axis.
+         *
+         *      Triggers a recalculation of the positions of enclosed items.
+         *
+         * \param just : the desired justification
+         */
+        void setSecondaryJustification(secondaryJustification just);
+
+        /**
+         * \brief Get the justification of the primary flow axis.
+         *
+         * \return the desired justification
+         */
+        HUDContainer::primaryJustification getPrimaryJustification(void) const;
+
+        /**
+         * \brief Get the justification of the secondary flow axis.
+         *
+         * \return the desired justification
+         */
+        HUDContainer::secondaryJustification getSecondaryJustification(void) const;
+
     protected:
         std::map<int, HUDItem*>& getMap(void);
+
+        HUDContainer::Axis getAxis(void) const;
 
         /**
          * \brief Re-assess the minimal width and height.
@@ -165,6 +246,11 @@ class HUDContainer : public HUDItem {
     private:
         /// Associative array b/w item pointers and integral labels.
         std::map<int, HUDItem*> container;
+
+        /// The axis and justification settings.
+        Axis ax;
+        primaryJustification primary_just;
+        secondaryJustification secondary_just;
     };
 
 /**

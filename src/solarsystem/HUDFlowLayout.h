@@ -40,42 +40,6 @@
  * placed from top to bottom in the order of their insertion ie. the
  * most recently added item is placed below existing items.
  *
- *      For a given direction of flow then there are several choices of
- * policy to determine the distribution of spacing ( or justification )
- * between the items :
- *          - START : places all items to the left side in the case
- *            of horizontal flow, or the top side in the case of
- *            vertical flow, with any remaining space placed to
- *            the right or below respectively.
- *          - CENTRE : within rounding, the items are placed together
- *            in the centre of the container, with equal space allotted
- *            to left and right sides in the case of horizontal flow,
- *            or equally above and below in the case of vertical flow.
- *          - END : similiar to START except item placement is to the
- *            right side for horizontal flow, and at the bottom in the
- *            case of vertical flow, with any extra space being allocated
- *            to the left and above respectively.
- *          - START_AND_END : all extra space is allocated in the gaps
- *            between items, equally within rounding, and no space at
- *            either extreme of the container. If only one item present
- *            then behaves like a START case.
- *          - SPAN : similiar to START_AND_END except some gap, equal to
- *            within rounding, at the extreme margins. If only one item
- *            present then behaves like a CENTRE case.
- *
- *      This feature has not yet been implemented. The distribution
- * of spacing ( or justification ) along the axis orthogonal to the
- * primary flow has these policies :
- *          - PROXIMAL : whereby items abut the upper edge of the
- *            container in the case of horizontal flow, or the left
- *            edge of the container in the case of vertical flow.
- *          - MIDDLE : items have, within rounding, equal spacing above
- *            and below in the case of horizontal flow, or to the left
- *            and right in the case of vertical flow.
- *          - DISTAL : similiar to PROXIMAL, but items abut the lower
- *            container edge for horizontal flow, and the right edge
- *            for vertical flow.
- *
  * \see HUDContainer
  * \see HUDContent
  *
@@ -84,17 +48,6 @@
 
 class HUDFlowLayout : public HUDContainer {
     public:
-        /// Enumerants to specify the mode of justification
-        /// along the primary or 'flow' axis.
-        enum primaryJustification {START, CENTRE, END, START_AND_END, SPAN};
-
-        /// Enumerants to specify the mode of justification
-        /// along the secondary axis.
-        enum secondaryJustification {PROXIMAL, MIDDLE, DISTAL};
-
-        /// Enumerant to specify the flow axis.
-        enum Axis {HORIZONTAL, VERTICAL};
-
         /**
          * \brief Constructor
          */
@@ -111,34 +64,6 @@ class HUDFlowLayout : public HUDContainer {
          * \param content : a pointer to the desired content
          */
         void addItem(HUDItem* item);
-
-        /**
-         * \brief Set the justification along the primary flow axis.
-         *
-         * \param just : the desired justification
-         */
-        void setPrimaryJustification(primaryJustification just);
-
-        /**
-         * \brief Set the justification along the secondary flow axis.
-         *
-         * \param just : the desired justification
-         */
-        void setSecondaryJustification(secondaryJustification just);
-
-        /**
-         * \brief Get the justification of the primary flow axis.
-         *
-         * \return the desired justification
-         */
-        HUDFlowLayout::primaryJustification getPrimaryJustification(void) const;
-
-        /**
-         * \brief Get the justification of the secondary flow axis.
-         *
-         * \return the desired justification
-         */
-        HUDFlowLayout::secondaryJustification getSecondaryJustification(void) const;
 
     protected:
         /**
@@ -159,7 +84,7 @@ class HUDFlowLayout : public HUDContainer {
 
     private:
         /** brief Determine how many of, and how wide are, the
-         *         whitespace gaps as per the justification setting.
+         *        whitespace gaps as per the justification setting.
          */
         void setPrimaryAxisGaps(void);
 
@@ -167,11 +92,6 @@ class HUDFlowLayout : public HUDContainer {
         GLuint primary_axis_total_white_space;
         GLint primary_axis_start_offset;
         GLint primary_axis_item_gap;
-
-        /// The axis and justification settings.
-        Axis ax;
-        primaryJustification primary_just;
-        secondaryJustification secondary_just;
     };
 
 /**
