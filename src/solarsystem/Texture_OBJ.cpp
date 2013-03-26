@@ -20,6 +20,10 @@
 
 #include "Texture_OBJ.h"
 
+#include <iostream>
+
+#include "ErrorHandler.h"
+
 Texture_OBJ::Texture_OBJ(void) {
     }
 
@@ -31,9 +35,16 @@ Texture_OBJ::~Texture_OBJ() {
 void Texture_OBJ::acquire(void) {
     // Ask OpenGL to assign a texture object.
     glGenTextures(1, &ident);
+
+    std::cout << "Texture_OBJ::acquire() : check for OpenGL error - ident = " << ident<< std::endl;
+    ErrorHandler::check_OpenGL_Error();
+    std::cout << "Texture_OBJ::acquire() : OpenGL error checked\n" << std::endl;
     }
 
 void Texture_OBJ::release(void) {
     // Ask OpenGL to release the texture object.
     glDeleteTextures(1, &ident);
+    std::cout << "Texture_OBJ::release() : check for OpenGL error - ident = " << ident << std::endl;
+    ErrorHandler::check_OpenGL_Error();
+    std::cout << "Texture_OBJ::release() : OpenGL error checked\n" << std::endl;
     }

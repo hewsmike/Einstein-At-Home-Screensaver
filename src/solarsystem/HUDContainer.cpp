@@ -30,8 +30,8 @@
 HUDContainer::HUDContainer(HUDContainer::Axis axis) :
                 HUDItem(),
                 ax(axis),
-                primaryJustification(HUDContainer::CENTRE),
-                secondaryJustification(HUDContainer::MIDDLE) {
+                primary_just(HUDContainer::CENTRE),
+                secondary_just(HUDContainer::MIDDLE) {
     }
 
 HUDContainer::~HUDContainer() {

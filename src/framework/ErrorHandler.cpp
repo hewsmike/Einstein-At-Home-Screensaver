@@ -154,32 +154,33 @@ void ErrorHandler::check_OpenGL_Error() {
 
     // Hit glGetError() until it runs out of errors.
     while(error_code != GL_NO_ERROR) {
-        std::string message = "ErrorHandler::check_OpenGL_Error() - Reported OpenGL error with code : ";
-        message += error_code;
-        message += " - ";
-        message += ErrorHandler::convertGLstring(gluErrorString(glGetError()));
-        message += " : ";
+        std::stringstream message;
+        message << "ErrorHandler::check_OpenGL_Error() - Reported OpenGL error with code : "
+                << error_code
+                << " - "
+                << ErrorHandler::convertGLstring(gluErrorString(glGetError()))
+                << " : ";
         switch(error_code) {
             case GL_INVALID_ENUM :
-                message += "An unacceptable value is specified for an enumerated argument";
+                message << "An unacceptable value is specified for an enumerated argument";
                 break;
             case GL_INVALID_VALUE :
-                message += "A numeric argument is out of range";
+                message << "A numeric argument is out of range";
                 break;
             case GL_INVALID_OPERATION :
-                message += "The specified operation is not allowed in the current state";
+                message << "The specified operation is not allowed in the current state";
                 break;
             case GL_INVALID_FRAMEBUFFER_OPERATION :
-                message += "The framebuffer object is not complete";
+                message << "The framebuffer object is not complete";
                 break;
             case GL_OUT_OF_MEMORY :
-                message += "There is not enough memory left to execute the command";
+                message << "There is not enough memory left to execute the command";
                 break;
             case GL_STACK_UNDERFLOW :
-                message += "An attempt has been made to perform an operation that would cause an internal stack to underflow";
+                message << "An attempt has been made to perform an operation that would cause an internal stack to underflow";
                 break;
             case GL_STACK_OVERFLOW :
-                message += "An attempt has been made to perform an operation that would cause an internal stack to overflow";
+                message << "An attempt has been made to perform an operation that would cause an internal stack to overflow";
                 break;
             default:
                 // We should NEVER get here, but in case we do ......
@@ -191,19 +192,13 @@ void ErrorHandler::check_OpenGL_Error() {
                 // This is an error, so goes to cerr.
                 std::cerr << message_fail << std::endl;
                 std::cout << message_fail << std::endl;
-                // But also record error in file,
-                // provided the output file stream is available for use.
-                if(output_ready == ErrorHandler::EH_READY) {
-                    // Then record to our file.
-                    output_file << message_fail << std::endl;
-                    }
                 // This indicates faulty error handling, a significant problem.
                 // Deserves to die. For shame.
                 exit(ErrorHandler::EH_ERROR);
                 break;
             }
         // Record any message string obtained from OpenGL.
-        ErrorHandler::record(message, ErrorHandler::WARN);
+        ErrorHandler::record(message.str(), ErrorHandler::WARN);
         // Fetch any/next error code.
         error_code = glGetError();
         }
