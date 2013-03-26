@@ -17,53 +17,45 @@
  *   along with Einstein@Home. If not, see <http://www.gnu.org/licenses/>. *
  *                                                                         *
  ***************************************************************************/
-#ifndef HUD_FLOW_LAYOUT_H_
-#define HUD_FLOW_LAYOUT_H_
+
+#ifndef HUD_IMAGES_FRAME_H_
+#define HUD_IMAGES_FRAME_H_
 
 #include "HUDContainer.h"
-#include "HUDContent.h"
+
+#include <utility>
+
+#include "HUDImage.h"
 
 /**
- * \addtogroup solarsystem Solarsystem
+ * \addtogroup  solarsystem Solarsystem
  * @{
  */
 
 /**
- * \brief This class enacts a container type having a 'flow' layout.
- *
- *      Either a horizontal or vertical axis of flow is chosen upon
- * construction, which indicates the direction along which to place
- * any items later added. Thus for a horizontal flow layout any added
- * items are placed from left to right in the order of their insertion
- * ie. the most recently added item is placed to the right side of
- * existing items. Similiarly the vertical flow layout has the items
- * placed from top to bottom in the order of their insertion ie. the
- * most recently added item is placed below existing items.
+ * \brief Container of logo/images to be held and displayed sequentially at
+ *        a given screen location.
  *
  * \see HUDContainer
- * \see HUDContent
  *
  * \author Mike Hewson\n
  */
 
-class HUDFlowLayout : public HUDContainer {
+class HUDImagesFrame : public HUDContainer {
     public:
         /**
-         * \brief Constructor
+         * \brief Constructor.
          */
-        HUDFlowLayout(Axis axis);
+        HUDImagesFrame(HUDContainer::Axis axis);
 
         /**
          * \brief Destructor
          */
-        virtual ~HUDFlowLayout();
+        virtual ~HUDImagesFrame();
 
-        /**
-         * \brief Add content to this container, which maybe another container.
-         *
-         * \param content : a pointer to the desired content
-         */
-        void addItem(HUDItem* item);
+        void erase(void);
+
+        void addItem(HUDImage* image);
 
     protected:
         /**
@@ -82,20 +74,22 @@ class HUDFlowLayout : public HUDContainer {
          */
         virtual void allocateItemBases(void);
 
-    private:
-        /** brief Determine how many of, and how wide are, the
-         *        whitespace gaps as per the justification setting.
-         */
-        void setPrimaryAxisGaps(void);
+        /// This routine satisfies the Renderable interface.
 
-        GLuint primary_axis_gap_count;
-        GLuint primary_axis_total_white_space;
-        GLint primary_axis_start_offset;
-        GLint primary_axis_item_gap;
+        /// Provide OpenGL code to render the object.
+        virtual void render(void);
+
+    private:
+        static GLuint DEFAULT_FRAME_GAP;
+
+        GLuint frame_gap;
+        GLuint frame_count;
+
+        GLuint current_image_index;
     };
 
 /**
  * @}
  */
 
-#endif /* HUD_FLOW_LAYOUT_H_ */
+#endif /* HUD_IMAGES_FRAME_H_ */

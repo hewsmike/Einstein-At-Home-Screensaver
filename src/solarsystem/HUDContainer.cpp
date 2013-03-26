@@ -27,8 +27,11 @@
 #include "HUDImage.h"
 #include "HUDTextLine.h"
 
-HUDContainer::HUDContainer(void) :
-                HUDItem() {
+HUDContainer::HUDContainer(HUDContainer::Axis axis) :
+                HUDItem(),
+                ax(axis),
+                primaryJustification(HUDContainer::CENTRE),
+                secondaryJustification(HUDContainer::MIDDLE) {
     }
 
 HUDContainer::~HUDContainer() {
@@ -92,7 +95,7 @@ void HUDContainer::adjust() {
     allocateItemBases();
     // Notify any possible containing object of this size change.
     HUDContainer* outer = getEnclosingContainer();
-    if(outer !=NULL) {
+    if(outer != NULL) {
         outer->adjust();
         }
     }
@@ -128,6 +131,24 @@ void HUDContainer::addItem(int handle, HUDItem* item) {
         }
     }
 
+void HUDContainer::setPrimaryJustification(primaryJustification justification) {
+    primary_just = justification;
+    allocateItemBases();
+    }
+
+void HUDContainer::setSecondaryJustification(secondaryJustification justification) {
+    secondary_just = justification;
+    allocateItemBases();
+    }
+
+HUDContainer::primaryJustification HUDContainer::getPrimaryJustification(void) const {
+    return primary_just;
+    }
+
+HUDContainer::secondaryJustification HUDContainer::getSecondaryJustification(void) const {
+    return secondary_just;
+    }
+
 std::map<int, HUDItem*>& HUDContainer::getMap(void) {
     return container;
     }
@@ -147,6 +168,10 @@ HUDItem* HUDContainer::getItem(int handle) {
         }
 
     return ret_val;
+    }
+
+HUDContainer::Axis HUDContainer::getAxis(void) const {
+    return ax;
     }
 
 void HUDContainer::prepare(SolarSystemGlobals::render_quality rq) {
