@@ -29,7 +29,27 @@
  */
 
 /**
- * \brief Base type for most HUD classes.
+ * \brief Base type for most HUD types.
+ *
+ *      A HUDItem object is assumed to have a rectangular shape and so has
+ * co-ordinates for it's lower left corner [ set/accessed by reBase(),
+ * horzBase() and vertBase() respectively ] and non-negative height and
+ * width. A distinction needs to be made b/w the minimum dimensions of a
+ * HUDItem ( smallest screen area to completely display contents ) and the
+ * current or actual dimensions.
+ *
+ *      Both the mimimal and actual dimensions can only be set through
+ * subclasses using protected functions. This is done in order to severely
+ * restrict the nexus of control for these attributes, specifically to ensure
+ * that the following policy applies :
+ *          - if the mimimum extents are increased then the actual extents
+ *            may require expansion.
+ *          - one cannot set any actual dimension to less than the mimima.
+ *
+ *      Evidently one may display the contents completely in an area exceeding
+ * such minima, and thus there may exist a margin(s) in either the horizontal
+ * or vertical directions. This 'whitespace' is available for handling by
+ * subtypes within justification schemes.
  *
  *      Especially note that the option exists of storing a pointer to
  * a HUDContainer type. This is used, if non-NULL, in order to alert
