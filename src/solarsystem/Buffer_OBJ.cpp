@@ -55,7 +55,7 @@ void Buffer_OBJ::loadBuffer(GLenum  target, GLenum  usage,
 	// transfer for THIS OpenGL call. See note below.
 	glBufferData(target, size, NULL, usage);
 
-	// Now transfer without using glMapBuffer(). Also using glBufferSubData()
+	// Now transfer WITHOUT using glMapBuffer(). Using glBufferSubData()
 	// has the performance advantage of not requiring ( back end ) memory
 	// re-allocation with repeated loads. Memory is entirely re-allocated
 	// when glBufferData() is used for any subsequent re-loads. While this
