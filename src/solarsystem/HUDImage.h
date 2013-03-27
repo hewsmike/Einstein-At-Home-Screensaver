@@ -84,6 +84,13 @@ class HUDImage : public HUDContent {
          */
         virtual ~HUDImage();
 
+        /**
+         * \brief Reload a new image into the server side texture buffer.
+         *
+         * \param resourceName : the name of the new image resource.
+         */
+        void resetImage(std::string resourceName);
+
     protected:
         /// These three routines below satisfy the Renderable interface.
 
@@ -117,6 +124,8 @@ class HUDImage : public HUDContent {
 
         /**
          * \brief Load a pixel map into a server-side texture buffer.
+         *
+         *      If successful then the minimum dimensions are set.
          */
         void loadTexture(void);
 
@@ -132,7 +141,7 @@ class HUDImage : public HUDContent {
         void loadVertexBuffer(void);
 
         /**
-         * \brief Load a single vertex's data into a server-side buffer
+         * \brief Load a single vertice's data into a server-side buffer
          *
          * \param vert : the vertex
          *

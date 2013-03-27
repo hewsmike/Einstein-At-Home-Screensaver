@@ -55,10 +55,20 @@ HUDImage::HUDImage(std::string resourceName,
     // Call base class to set minima for the given image content.
     setMinimumDimensions(image_width + 2*horzMargin(),
                          image_height + 2*vertMargin());
+
+    // Get an OpenGL texture object ONCE per HUDImage object lifetime.
+    texture.acquire();
     }
 
 HUDImage::~HUDImage() {
     release();
+    }
+
+void HUDImage::resetImage(std::string resourceName) {
+    image_resource_name = resourceName;
+
+    // Having changed the image, reload that to the texture object.
+    loadTexture();
     }
 
 void HUDImage::prepare(SolarSystemGlobals::render_quality rq) {
@@ -72,11 +82,6 @@ void HUDImage::prepare(SolarSystemGlobals::render_quality rq) {
 
     // Load vertex data to a server side buffer.
     loadVertexBuffer();
-
-    // Call base class to reset minima for the given image content,
-    // also accounting for any indicated margin.
-    setMinimumDimensions(image_width + 2*horzMargin(),
-                         image_height + 2*vertMargin());
 
     // Preparation of image implies any enclosing container
     // ought be made aware of size change.
@@ -146,9 +151,8 @@ void HUDImage::render(void) {
     }
 
 void HUDImage::loadTexture() {
-    // Get an OpenGL texture object.
-    texture.acquire();
-
+    // If successful this routine also discloses and then sets the minimum
+    // image dimensions.
     // Make our texture object OpenGL's current one.
     glBindTexture(GL_TEXTURE_2D, texture.ID());
 
@@ -194,6 +198,11 @@ void HUDImage::loadTexture() {
         // Yes we did ! Remember the image dimensions.
         image_width = gli.Width;
         image_height = gli.Height;
+
+        // Call base class to reset minima for the given image content,
+        // also accounting for any indicated margin.
+        setMinimumDimensions(image_width + 2*horzMargin(),
+                             image_height + 2*vertMargin());
 
         // Make our texture object OpenGL's current one.
         glBindTexture(GL_TEXTURE_2D, texture.ID());
