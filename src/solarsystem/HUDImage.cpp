@@ -41,6 +41,9 @@ const GLuint HUDImage::ARRAY_START(0);
 // No padding between vertex data entries
 const GLsizei HUDImage::ARRAY_STRIDE(0);
 
+// Four vertices per quadrilateral.
+const GLsizei HUDImage::VERTEX_COUNT(4);
+
 // Call base class constructor to set dimensions.
 HUDImage::HUDImage(std::string resourceName,
                    GLuint horizontalMargin,
@@ -56,10 +59,6 @@ HUDImage::HUDImage(std::string resourceName,
 
 HUDImage::~HUDImage() {
     release();
-    std::stringstream msg;
-        msg << "HUDImage::~HUDImage() - released resources for : "
-            << image_resource_name;
-    ErrorHandler::record(msg.str(), ErrorHandler::INFORM);
     }
 
 void HUDImage::prepare(SolarSystemGlobals::render_quality rq) {
@@ -74,29 +73,25 @@ void HUDImage::prepare(SolarSystemGlobals::render_quality rq) {
     // Load vertex data to a server side buffer.
     loadVertexBuffer();
 
-    // Call base class to reset minima for the given image content.
+    // Call base class to reset minima for the given image content,
+    // also accounting for any indicated margin.
     setMinimumDimensions(image_width + 2*horzMargin(),
                          image_height + 2*vertMargin());
 
     // Preparation of image implies any enclosing container
     // ought be made aware of size change.
     HUDContainer* outer = getEnclosingContainer();
-    if(outer !=NULL) {
+    if(outer != NULL) {
         outer->adjust();
         }
     }
 
 void HUDImage::release(void) {
-    std::stringstream msg;
-        msg << "HUDImage::release() - releasing resources for : "
-            << image_resource_name;
-    ErrorHandler::record(msg.str(), ErrorHandler::INFORM);
-    // Policy is to set size to zero when rendering is not implied.
-
     // Discard server side resources.
     texture.release();
     buff_obj_points.release();
 
+    // Policy is to set size to zero when rendering is not implied.
     // Call base class to reset minima to no content.
     setMinimumDimensions(0, 0);
 
@@ -120,25 +115,25 @@ void HUDImage::render(void) {
     // Make our vertex buffer identifier OpenGL's current one.
     glBindBuffer(GL_ARRAY_BUFFER, buff_obj_points.ID());
 
-    // The untextured polygonal ( triangles ) color will be opaque and white.
+    // The untextured quadrilateral color will be opaque and white.
     glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
     // If all goes well we won't see the lines at the edge of the
-    // polygons, but we have to define something.
+    // quadrilateral, but we ought define something.
     glLineWidth(0.1f);
 
     // This announces that the pattern of data storage, per vertex, is
     // 2 texture and 3 position coordinates in that order. They
-    // are all of the same floating point data type.
+    // are all of the same floating point data type. It begins at
+    // zero buffer offset with no padding b/w entries.
     glInterleavedArrays(GL_T2F_V3F, ARRAY_STRIDE, ARRAY_START);
 
     glPushMatrix();
+        // Move to where you want to place the image.
+        glTranslatef(horzBase(), vertBase(), 0);
 
-    glTranslatef(horzBase(), vertBase(), 0);
-
-    // This is one actual rendering call that all preparations have been aiming at.
-    glDrawArrays(GL_QUADS, ARRAY_START, 4);
-
+        // The rendering call that all preparations have been aiming at.
+        glDrawArrays(GL_QUADS, ARRAY_START, VERTEX_COUNT);
     glPopMatrix();
 
     // Unbind the buffers and the texture.
@@ -157,23 +152,29 @@ void HUDImage::loadTexture() {
     // Make our texture object OpenGL's current one.
     glBindTexture(GL_TEXTURE_2D, texture.ID());
 
+    // With a ResourceFactory instance create a texture resource instance.
     ResourceFactory factory;
-    // Create texture resource instance.
     const Resource* textureResource = factory.createInstance(image_resource_name.c_str());
 
-    // This implicitly operates on the GL_TEXTURE_2D target.
+    // This implicitly operates on the GL_TEXTURE_2D target. Use GLFW constructs.
     GLFWimage gli;
     int texture_load_success = GL_FALSE;
+    // Did we succeed in creating a texture resource instance from the
+    // ResourceFactory ?
     if(textureResource != NULL) {
+        // Yes, attempt to put that into a GLFWimage construct.
         int resource_load_success = glfwReadMemoryImage(&(textureResource->data()->front()),
                                                         textureResource->data()->size(),
                                                         &gli, 0);
+        // Did we succeed in that?
         if(resource_load_success == GL_TRUE) {
+            // Yes, so we try to load into server memory now.
             texture_load_success = glfwLoadMemoryTexture2D(&(textureResource->data()->front()),
                                                            textureResource->data()->size(),
                                                            0);
             }
         else {
+            // No, the texture resource could not be placed into a GLFWimage.
             std::stringstream msg;
             msg << "HUDImage::loadTexture() - texture resource did NOT load to GLFWimage : ";
             msg << image_resource_name;
@@ -181,14 +182,16 @@ void HUDImage::loadTexture() {
             }
         }
     else {
+        // No, failed to get a texture resource instance.
         std::stringstream msg;
         msg << "HUDImage::loadTexture() - texture resource NOT available : ";
         msg << image_resource_name;
         ErrorHandler::record(msg.str(), ErrorHandler::WARN);
         }
 
+    // Have we got the image data to server memory ?
     if(texture_load_success == GL_TRUE) {
-        // Remember the image dimensions.
+        // Yes we did ! Remember the image dimensions.
         image_width = gli.Width;
         image_height = gli.Height;
 
@@ -219,6 +222,7 @@ void HUDImage::loadTexture() {
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_PRIORITY, 1.0f);
         }
     else {
+        // No, the image data did not get to the server's texture memory.
         std::stringstream msg;
         msg << "HUDImage::loadTexture() - texture memory did NOT load from GLFWimage : ";
         msg << image_resource_name;
@@ -240,7 +244,7 @@ void HUDImage::createVertexData(void) {
     // counterclockwise listing of vertices begining at
     // the lower left corner. This seats the subsequent quad
     // rendering with lower left corner at (0, 0, 0), so one
-    // ought transform the desired position prior to render.
+    // ought transform to any desired position prior to render.
 
     Vertex lower_left = Vertex(Vector3D(horzMargin(), vertMargin(), 0.0f),
                                Vector3D(),
@@ -294,7 +298,7 @@ void HUDImage::loadVertexBuffer(void) {
         std::stringstream msg;
         msg << "HUDImage::loadVertexBuffer() - can't acquire buffer pointer : "
             << image_resource_name;
-        ErrorHandler::record(msg.str(), ErrorHandler::WARN);
+        ErrorHandler::record(msg.str(), ErrorHandler::FATAL);
         }
 
     for(std::vector<Vertex>::const_iterator vt = verts.begin();

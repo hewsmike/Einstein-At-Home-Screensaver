@@ -38,9 +38,26 @@
  */
 
 /**
- * \brief This class encapslates an image to display upon the HUD.
+ * \brief This class encapslates a rectangular image to display upon the HUD.
  *
+ *      The image data is assumed to be present as a memory image obtainable
+ * upon request to a ResourceFactory instance. As GLFW is used then that implies
+ * the image is in TGA format - specifically Truevision Targa version 1. As of
+ * writing that is the only GLFW supported type with glfwReadMemoryImage().
+ *
+ *      On can apply fixed margins ( default none ) in either the horizontal
+ * or vertical directions to the image surrounds. This is subsequently assumed
+ * to be part of the image extents ie. not considered as 'whitespace' and thus
+ * not manipulated by justification schemes. Any such margins will function
+ * as a transparent/invisible boundary.
+ *
+ * \see Buffer_OBJ
+ * \see HUDContainer
  * \see HUDContent
+ * \see Resource
+ * \see ResourceCompiler
+ * \see ResourceFactory
+ * \see Texture_OBJ
  * \see Vector3D
  * \see Vertex
  *
@@ -95,6 +112,9 @@ class HUDImage : public HUDContent {
         /// The number of bytes in the server-side buffer between each vertex
         static const GLsizei ARRAY_STRIDE;
 
+        /// The vertex count for a quadrilateral.
+        static const GLsizei VERTEX_COUNT;
+
         /**
          * \brief Load a pixel map into a server-side texture buffer.
          */
@@ -127,10 +147,10 @@ class HUDImage : public HUDContent {
         Texture_OBJ texture;
 
         /// An OpenGL buffer object ( in server-side memory ) holding
-        /// the vertex associated data for a quad.
+        /// the vertex associated data for a quadrilateral.
         Buffer_OBJ buff_obj_points;
 
-        /// Name to resource to load image from.
+        /// Name of resource to load image from.
         std::string image_resource_name;
 
         /// Dimensions of loaded image.
