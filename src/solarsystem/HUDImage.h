@@ -43,7 +43,8 @@
  *      The image data is assumed to be present as a memory image obtainable
  * upon request to a ResourceFactory instance. As GLFW is used then that implies
  * the image is in TGA format - specifically Truevision Targa version 1. As of
- * writing that is the only GLFW supported type with glfwReadMemoryImage().
+ * writing that is the only GLFW supported type usable with
+ * glfwReadMemoryImage().
  *
  *      On can apply fixed margins ( default none ) in either the horizontal
  * or vertical directions to the image surrounds. This is subsequently assumed
@@ -71,10 +72,10 @@ class HUDImage : public HUDContent {
          *
          * \param resourceName : the name of the image resource
          *
-         * \param horizontalMargin : the horizontal pixel margin to be applied
-         *                           either side of the enclosed content
-         * \param verticalMargin : the vertical pixel margin to be applied
-         *                         above and below the enclosed content
+         * \param horizontalMargin : the horizontal margin in pixels to be
+         *                           applied either side of the enclosed content
+         * \param verticalMargin : the vertical pixel margin in pixels to be
+         *                         applied above and below the enclosed content
          */
         HUDImage(std::string resourceName, GLuint horizontalMargin,
                  GLuint verticalMargin);

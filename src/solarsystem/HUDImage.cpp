@@ -163,8 +163,8 @@ void HUDImage::loadTexture() {
     // This implicitly operates on the GL_TEXTURE_2D target. Use GLFW constructs.
     GLFWimage gli;
     int texture_load_success = GL_FALSE;
-    // Did we succeed in creating a texture resource instance from the
-    // ResourceFactory ?
+    // Did we succeed in creating a texture resource
+    // instance from the ResourceFactory ?
     if(textureResource != NULL) {
         // Yes, attempt to put that into a GLFWimage construct.
         int resource_load_success = glfwReadMemoryImage(&(textureResource->data()->front()),

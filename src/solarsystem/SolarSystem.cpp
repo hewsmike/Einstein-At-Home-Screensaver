@@ -172,16 +172,27 @@ void SolarSystem::initialize(const int width, const int height, const Resource* 
     SolarSystemGlobals::setFont(SolarSystemGlobals::EARTH_GRID, earthgridFont);
     SolarSystemGlobals::setFont(SolarSystemGlobals::HUDOVER, HUDFont);
 
-    // more font setup and optimizations
-   glPixelStorei( GL_UNPACK_ALIGNMENT, 1 );
+    // Specify tight unpacking of pixel data ( from data buffers )
+    // ie. no padding generated. Default is 4 byte boundaries.
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 #if defined( GL_RASTER_POSITION_UNCLIPPED_IBM )
-    glEnable( GL_RASTER_POSITION_UNCLIPPED_IBM );
+    // To allow bitmap/character data to partially display at screen edges.
+    // Otherwise even a mere one pixel breach over the screen boundary
+    // could cause failure to display an entire image.
+    glEnable(GL_RASTER_POSITION_UNCLIPPED_IBM);
 #endif
 
-    // drawing setup:
-    glClearColor(0.0, 0.0, 0.0, 0.0); // background is black
+    // Black background.
+    glClearColor(0.0, 0.0, 0.0, 0.0);
+
+    // Allow polygon face culling.
     glEnable(GL_CULL_FACE);
+
+    // Define the 'front' face of a polygon to be that which has been
+    // constructed with a counterclockwise winding sense implied by
+    // it's vertex listings.
     glFrontFace(GL_CCW);
+
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 
     // FSAA will be enabled explicitly when needed!

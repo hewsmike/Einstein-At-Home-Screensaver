@@ -191,7 +191,6 @@ void Globe::render(void) {
 
     // Only want to look at and/or render the outside of the Globe,
     // for the sake of efficiency.
-    glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
 
     // Make our texture identifier OpenGL's current one.
@@ -205,7 +204,7 @@ void Globe::render(void) {
     glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
     // If all goes well we won't see the lines at the edge of the
-    // polygons, but we have to define something.
+    // polygons, but we ought define something.
     glLineWidth(0.1f);
 
     // This announces that the pattern of data storage, per vertex, is
@@ -258,9 +257,6 @@ void Globe::render(void) {
     glBindBuffer(GL_ARRAY_BUFFER, Buffer_OBJ::NO_ID);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Buffer_OBJ::NO_ID);
     glBindTexture(GL_TEXTURE_2D, Texture_OBJ::NO_ID);
-
-    // Disable polygon face culling.
-    glDisable(GL_CULL_FACE);
 
     // Disable the use of 2D textures.
     glDisable(GL_TEXTURE_2D);
