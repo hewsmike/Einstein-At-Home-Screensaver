@@ -90,14 +90,14 @@ class LookOut : public CameraState {
          *
          * \return a listing of resource names, which may be empty.
          */
-        const std::vector<std::string>& getImageResourceNames(void) const;
+        std::string getImageResourceName(void) const;
 
     private:
         // The set of descriptive strings for this LookOut
         std::vector<std::string> desc;
 
         // The image name listing
-        std::vector<std::string> images;
+        std::string image;
     };
 
 /**

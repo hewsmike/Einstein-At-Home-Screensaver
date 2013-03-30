@@ -76,12 +76,12 @@ void Path::setFinishMessages(const std::vector<std::string>& messages) {
         }
     }
 
-void Path::setStartImageResourceNames(const std::vector<std::string>& images) {
-    start_images = images;
+void Path::setStartImageResourceName(std::string image) {
+    start_image = image;
     }
 
-void Path::setFinishImageResourceNames(const std::vector<std::string>& images) {
-    finish_images = images;
+void Path::setFinishImageResourceName(std::string image) {
+    finish_image = image;
     }
 
 CameraState Path::value(float lambda) const {
@@ -104,10 +104,10 @@ const std::vector<std::string>& Path::getFinishMessages(void) const {
     return finish_msg;
     }
 
-const std::vector<std::string>& Path::getStartImageResourceNames(void) const {
-    return start_images;
+std::string Path::getStartImageResourceName(void) const {
+    return start_image;
     }
 
-const std::vector<std::string>& Path::getFinishImageResourceNames(void) const {
-    return finish_images;
+std::string Path::getFinishImageResourceName(void) const {
+    return finish_image;
     }

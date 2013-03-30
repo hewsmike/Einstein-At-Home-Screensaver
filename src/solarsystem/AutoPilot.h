@@ -127,16 +127,16 @@ class AutoPilot {
         const std::vector<std::string>& getDescription(void) const;
 
         /**
-         * \brief Obtain the image resource names for the nearest Lookout.
+         * \brief Obtain the image resource name for the nearest Lookout.
          *
          *      Along each Path in the Traverse the available images change.
-         * So just prior to, and just after, visiting a LookOut image(s) are
+         * So just prior to, and just after, visiting a LookOut image is
          * available. In the midsection of a Path between LookOut visits no
-         * image(s) are available.
+         * image is available.
          *
-         * \return A reference to a list of image resource names.
+         * \return An image resource name.
          */
-        const std::vector<std::string>& getImageResourceNames(void) const;
+        std::string getImageResourceName(void) const;
 
         /**
          * \brief Determine if the description/images have changed since the
@@ -195,8 +195,8 @@ class AutoPilot {
         // The current set of descriptive strings.
         std::vector<std::string> current_description;
 
-        // The current set of HUD displayable image resource names.
-        std::vector<std::string> current_images;
+        // The current HUD displayable image resource name.
+        std::string current_image;
 
         // A flag having the value of one of the path_stage enumerants that
         // indicate the stage of the current Path that we are in.

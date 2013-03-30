@@ -41,9 +41,9 @@ const std::vector<std::string>& LookOut::getDescription(void) const {
     }
 
 void LookOut::addImageResource(const std::string& resourceName) {
-    images.push_back(resourceName);
+    image = resourceName;
     }
 
-const std::vector<std::string>& LookOut::getImageResourceNames(void) const {
-    return images;
+std::string LookOut::getImageResourceName(void) const {
+    return image;
     }

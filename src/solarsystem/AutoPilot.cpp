@@ -127,7 +127,7 @@ void AutoPilot::step(void) {
                 current_description.push_back(*message);
                 }
             // Get the image set.
-            current_images = current_path.getFinishImageResourceNames();
+            current_image = current_path.getFinishImageResourceName();
             // Flag that the description has therefore altered.
             description_change_flag = true;
             }
@@ -153,7 +153,7 @@ void AutoPilot::step(void) {
                 path_stage_flag = MIDDLE;
                 // Clear the descriptions.
                 current_description.clear();
-                current_images.clear();
+                current_image.clear();
                 // Flag that the description has therefore altered.
                 description_change_flag = true;
                 }
@@ -172,8 +172,8 @@ const std::vector<std::string>& AutoPilot::getDescription(void) const {
     return current_description;
     }
 
-const std::vector<std::string>& AutoPilot::getImageResourceNames(void) const {
-    return current_images;
+std::string AutoPilot::getImageResourceName(void) const {
+    return current_image;
     }
 
 bool AutoPilot::hasDescriptionChanged(void) const {

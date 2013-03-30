@@ -121,18 +121,18 @@ class Path {
         void setFinishMessages(const std::vector<std::string>& message);
 
         /**
-         * \brief Specify a set of image resource names for the start of the path
+         * \brief Specify an image resource name for the start of the path
          *
-         * \param images : the list of image resource names
+         * \param images : the image resource name
          */
-        void setStartImageResourceNames(const std::vector<std::string>& images);
+        void setStartImageResourceName(std::string image);
 
         /**
-         * \brief Specify a set of image resource names for the finish of the path
+         * \brief Specify an image resource name for the finish of the path
          *
-         * \param images : the list of image resource names
+         * \param image : the image resource name
          */
-        void setFinishImageResourceNames(const std::vector<std::string>& message);
+        void setFinishImageResourceName(std::string message);
 
         /**
          * \brief Obtain the set of descriptive strings for the start of the path
@@ -149,18 +149,18 @@ class Path {
         const std::vector<std::string>& getFinishMessages(void) const;
 
         /**
-         * \brief Obtain the set of image resource names for the start of the path
+         * \brief Obtain the image resource name for the start of the path
          *
-         * \return the list of image resource names
+         * \return the image resource name
          */
-        const std::vector<std::string>& getStartImageResourceNames(void) const;
+        std::string getStartImageResourceName(void) const;
 
         /**
-         * \brief Obtain the set of image resource names for the finish of the path
+         * \brief Obtain the image resource name for the finish of the path
          *
-         * \return the list of image resource names
+         * \return the image resource name
          */
-        const std::vector<std::string>& getFinishImageResourceNames(void) const;
+        std::string getFinishImageResourceName(void) const;
 
         /// Evaluation of curves uses the 'lambda' parameter and needs limits.
         static const float LAMBDA_LOWER_BOUND;
@@ -176,9 +176,9 @@ class Path {
         std::vector<std::string> start_msg;
         std::vector<std::string> finish_msg;
 
-        /// A set of image resource names for each end of the path.
-        std::vector<std::string> start_images;
-        std::vector<std::string> finish_images;
+        /// The image resource names for each end of the path.
+        std::string start_image;
+        std::string finish_image;
     };
 
 /**
