@@ -93,7 +93,7 @@ class Renderable : public RenderQualityObserver {
         /**
          * \brief Cycles the activation state of the object.
          */
-        virtual void cycleActivation(void);
+        void cycleActivation(void);
 
         /**
          * \brief Allow the object to be shown if activated.

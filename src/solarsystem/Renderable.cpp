@@ -39,25 +39,29 @@ void Renderable::reAcquire(void) {
     }
 
 void Renderable::activate(void) {
-    // Prepare resources as we have decided to show it.
-    prepare(quality);
+    if(activity != Renderable::ACTIVE) {
+        // Mark as active.
+        activity = Renderable::ACTIVE;
 
-    // Register for callback should the global rendering level alter.
-    attachRender();
+        // Prepare resources as we have decided to show it.
+        prepare(quality);
 
-    // Mark as active.
-    activity = Renderable::ACTIVE;
+        // Register for callback should the global rendering level alter.
+        attachRender();
+        }
     }
 
 void Renderable::inactivate(void) {
-    // Release resources as we have decided not to show it.
-    release();
+    if(activity != Renderable::INACTIVE) {
+        // Mark as inactive.
+        activity = Renderable::INACTIVE;
 
-    // Unregister any callback triggered by global rendering level alteration.
-    detachRender();
+        // Release resources as we have decided not to show it.
+        release();
 
-    // Mark as inactive.
-    activity = Renderable::INACTIVE;
+        // Unregister any callback triggered by global rendering level alteration.
+        detachRender();
+        }
     }
 
 bool Renderable::isActivated(void) const {
@@ -70,7 +74,6 @@ bool Renderable::isActivated(void) const {
 
 void Renderable::cycleActivation(void) {
     // In this base class the activity state is simply toggled.
-    // Re-define this in a derived class if you want other behaviours.
     this->isActivated() ? inactivate() : activate();
     }
 
