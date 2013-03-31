@@ -69,6 +69,8 @@
 
 class AutoPilot {
     public :
+        enum description_change {NONE, ADDED, DELETED};
+
         /**
          * \brief Constructor.
          */
@@ -140,13 +142,13 @@ class AutoPilot {
 
         /**
          * \brief Determine if the description/images have changed since the
-         *        last step of the autopilot ( including whether or not they
-         *        are available ).
+         *        last step of the autopilot.
          *
-         * \param trav : a Traversable object to query.
-         * \param cam : the current viewpoint.
+         * \return enumerant : NONE             ( no change )
+         *                     ADDED            ( a description has been added )
+         *                     DELETED          ( a description has been removed )
          */
-        bool hasDescriptionChanged(void) const;
+        AutoPilot::description_change hasDescriptionChanged(void) const;
 
     private:
         // Enumerants for Path stages.
@@ -204,7 +206,7 @@ class AutoPilot {
 
         // Flag indicating whether there has been a change of descriptive
         // strings and/or images.
-        bool description_change_flag;
+        AutoPilot::description_change description_change_flag;
 
         /**
          * \brief For the current Path decide upon the best increment in lambda

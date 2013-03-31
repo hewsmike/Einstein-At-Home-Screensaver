@@ -85,13 +85,6 @@ class HUDImage : public HUDContent {
          */
         virtual ~HUDImage();
 
-        /**
-         * \brief Reload a new image into the server side texture buffer.
-         *
-         * \param resourceName : the name of the new image resource.
-         */
-        void resetImage(std::string resourceName);
-
     protected:
         /// These three routines below satisfy the Renderable interface.
 

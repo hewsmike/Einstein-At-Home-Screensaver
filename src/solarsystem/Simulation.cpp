@@ -207,12 +207,10 @@ Simulation::Simulation(BOINCClientAdapter* boinc_adapter) :
                                         Simulation::SKYGRID_RADIUS,
                                         72),
                                overlay(),
-                               north_panel(HUDFlowLayout::HORIZONTAL),
+                               north_panel(HUDFlowLayout::VERTICAL),
                                south_panel(HUDFlowLayout::HORIZONTAL),
                                east_panel(HUDFlowLayout::VERTICAL),
                                west_panel(HUDFlowLayout::VERTICAL),
-                               north_west_panel(HUDFlowLayout::VERTICAL),
-                               north_east_panel(HUDFlowLayout::HORIZONTAL),
                                south_west_panel(HUDFlowLayout::VERTICAL),
                                south_centre_panel(HUDFlowLayout::VERTICAL),
                                south_east_panel(),
@@ -304,10 +302,24 @@ void Simulation::step(void) {
         pilot.step();
 
         // ... check for any content change of the tour's descriptive text.
-        if(pilot.hasDescriptionChanged() == true) {
-            target.hide();
-            loadLookoutDataToPanels();
-            }
+//        AutoPilot::description_change change_flag = pilot.hasDescriptionChanged();
+//        if(change_flag != AutoPilot::NONE) {
+//            north_panel.erase();
+//            south_west_panel.erase();
+//            switch(change_flag) {
+//                case AutoPilot::ADDED :
+//                    target.show();
+//                    loadLookoutDataToPanels();
+//                    break;
+//                case AutoPilot::DELETED :
+//                    target.hide();
+//                    break;
+//                default:
+//                    ErrorHandler::record("Simulation::step() : bad switch case reached ( default )",
+//                                         ErrorHandler::FATAL);
+//                    break;
+//                }
+//            }
         }
 
     /// TODO - demo code only, needs proper ephemeris model.
@@ -397,7 +409,7 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
     /// at this level.
 
     // Activate 3D scene objects, while nominating any fonts
-    // P to activation of their respective objects..
+    // prior to activation of their respective objects..
     cs.setFont(SolarSystemGlobals::getFont(SolarSystemGlobals::CONSTELLATIONS));
     cs.activate();
     ps.activate();
@@ -417,10 +429,6 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
     // Now to arrange the HUD components.
 
     // First empty the panels, as we may be recycling.
-
-    north_east_panel.erase();
-    north_west_panel.erase();
-
     south_east_panel.erase();
     south_west_panel.erase();
     south_centre_panel.erase();
@@ -432,18 +440,13 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
 
     // Set panel justifications.
     north_panel.setPrimaryJustification(HUDFlowLayout::START);
-    north_panel.setSecondaryJustification(HUDFlowLayout::DISTAL);
+    north_panel.setSecondaryJustification(HUDFlowLayout::MIDDLE);
     south_panel.setPrimaryJustification(HUDFlowLayout::START_AND_END);
     south_panel.setSecondaryJustification(HUDFlowLayout::PROXIMAL);
     east_panel.setPrimaryJustification(HUDFlowLayout::CENTRE);
     east_panel.setSecondaryJustification(HUDFlowLayout::DISTAL);
     west_panel.setPrimaryJustification(HUDFlowLayout::CENTRE);
     west_panel.setSecondaryJustification(HUDFlowLayout::PROXIMAL);
-
-    north_west_panel.setPrimaryJustification(HUDFlowLayout::START);
-    north_west_panel.setSecondaryJustification(HUDFlowLayout::PROXIMAL);
-    north_east_panel.setPrimaryJustification(HUDFlowLayout::START);
-    north_east_panel.setSecondaryJustification(HUDFlowLayout::DISTAL);
 
     south_west_panel.setPrimaryJustification(HUDFlowLayout::END);
     south_west_panel.setSecondaryJustification(HUDFlowLayout::PROXIMAL);
@@ -472,12 +475,10 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
         }
     south_centre_panel.addItem(version_text);
 
-    // Create content and include into panels.
-    loadImageToPanel(boinc_image, &south_west_panel, "boincTGA", 5, 5);
-
-    south_east_panel.addItem(new HUDImage("aeiTGA", 5, 5));
-    south_east_panel.addItem(new HUDImage("wypTGA", 5, 5));
-    south_east_panel.addItem(new HUDImage("apsTGA", 5, 5));
+    south_east_panel.addItem(new HUDImage("aeiTGA", 10, 10));
+    south_east_panel.addItem(new HUDImage("wypTGA", 10, 10));
+    south_east_panel.addItem(new HUDImage("apsTGA", 10, 10));
+    south_east_panel.addItem(new HUDImage("boincTGA", 10,10));
 
     overlay.activate();
     }
@@ -3114,31 +3115,22 @@ std::vector<std::string> Simulation::parseLine(std::string input) const {
     }
 
 void Simulation::loadLookoutDataToPanels(void) {
-    north_panel.erase();
-    north_panel.activate();
     // Derive content according to the current position in the tour.
-    // First put new content text, if any, into the northwest panel.
-    north_west_panel.erase();
+    // First put new content text, if any, into the north panel.
     const std::vector<std::string>& messages = pilot.getDescription();
     if(messages.size() != 0) {
-        target.show();
         for(std::vector<std::string>::const_iterator message = messages.begin();
             message != messages.end();
             ++message) {
-            north_west_panel.addItem(new HUDTextLine(message->size(), *message, 0, 2));
+            north_panel.addItem(new HUDTextLine(message->size(), *message, 0, 2));
             }
         }
-    north_panel.addItem(&north_west_panel);
+    north_panel.activate();
 
-    // Then put new image(s), if any, into the west panel.
-    north_east_panel.erase();
-    const std::vector<std::string>& image_names = pilot.getImageResourceNames();
-    for(std::vector<std::string>::const_iterator image_name = image_names.begin();
-        image_name != image_names.end();
-        ++image_name) {
-        north_east_panel.addItem(new HUDImage(*image_name, 10, 10));
-        }
-    north_panel.addItem(&north_east_panel);
+    // Then put new image(s), if any, into the south_west panel.
+    south_west_panel.addItem(new HUDImage(pilot.getImageResourceName(),10,10));
+
+    south_west_panel.activate();
     }
 
 void Simulation::includeUserInformation(HUDFlowLayout* container) {

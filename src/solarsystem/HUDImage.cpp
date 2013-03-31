@@ -20,6 +20,7 @@
 
 #include "HUDImage.h"
 
+#include <iostream>
 #include <sstream>
 
 #include "ErrorHandler.h"
@@ -61,14 +62,9 @@ HUDImage::HUDImage(std::string resourceName,
     }
 
 HUDImage::~HUDImage() {
+    // Discard an OpenGL texture object ONCE per HUDImage object lifetime.
+    texture.release();
     release();
-    }
-
-void HUDImage::resetImage(std::string resourceName) {
-    image_resource_name = resourceName;
-
-    // Having changed the image, reload that to the texture object.
-    loadTexture();
     }
 
 void HUDImage::prepare(SolarSystemGlobals::render_quality rq) {
@@ -93,7 +89,6 @@ void HUDImage::prepare(SolarSystemGlobals::render_quality rq) {
 
 void HUDImage::release(void) {
     // Discard server side resources.
-    texture.release();
     buff_obj_points.release();
 
     // Policy is to set size to zero when rendering is not implied.
@@ -151,98 +146,101 @@ void HUDImage::render(void) {
     }
 
 void HUDImage::loadTexture() {
-    // If successful this routine also discloses and then sets the minimum
-    // image dimensions.
-    // Make our texture object OpenGL's current one.
-    glBindTexture(GL_TEXTURE_2D, texture.ID());
-
-    // With a ResourceFactory instance create a texture resource instance.
-    ResourceFactory factory;
-    const Resource* textureResource = factory.createInstance(image_resource_name.c_str());
-
-    // This implicitly operates on the GL_TEXTURE_2D target. Use GLFW constructs.
-    GLFWimage gli;
-    int texture_load_success = GL_FALSE;
-    // Did we succeed in creating a texture resource
-    // instance from the ResourceFactory ?
-    if(textureResource != NULL) {
-        // Yes, attempt to put that into a GLFWimage construct.
-        int resource_load_success = glfwReadMemoryImage(&(textureResource->data()->front()),
-                                                        textureResource->data()->size(),
-                                                        &gli, 0);
-        // Did we succeed in that?
-        if(resource_load_success == GL_TRUE) {
-            // Yes, so we try to load into server memory now.
-            texture_load_success = glfwLoadMemoryTexture2D(&(textureResource->data()->front()),
-                                                           textureResource->data()->size(),
-                                                           0);
-            }
-        else {
-            // No, the texture resource could not be placed into a GLFWimage.
-            std::stringstream msg;
-            msg << "HUDImage::loadTexture() - texture resource did NOT load to GLFWimage : ";
-            msg << image_resource_name;
-            ErrorHandler::record(msg.str(), ErrorHandler::WARN);
-            }
-        }
-    else {
-        // No, failed to get a texture resource instance.
-        std::stringstream msg;
-        msg << "HUDImage::loadTexture() - texture resource NOT available : ";
-        msg << image_resource_name;
-        ErrorHandler::record(msg.str(), ErrorHandler::WARN);
-        }
-
-    // Have we got the image data to server memory ?
-    if(texture_load_success == GL_TRUE) {
-        // Yes we did ! Remember the image dimensions.
-        image_width = gli.Width;
-        image_height = gli.Height;
-
-        // Call base class to reset minima for the given image content,
-        // also accounting for any indicated margin.
-        setMinimumDimensions(image_width + 2*horzMargin(),
-                             image_height + 2*vertMargin());
-
+    if(image_resource_name.size() != 0) {
+        // If successful this routine also discloses and then sets the minimum
+        // image dimensions.
         // Make our texture object OpenGL's current one.
         glBindTexture(GL_TEXTURE_2D, texture.ID());
 
-        // Set the texture's stretching properties
-        // for minification and magnification.
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        // With a ResourceFactory instance create a texture resource instance.
+        std::cout << "HUDImage::loadTexture() : image_resource_name = \"" << image_resource_name << "\"" << std::endl;
+        ResourceFactory factory;
+        const Resource* textureResource = factory.createInstance(image_resource_name.c_str());
 
-        // Do we repeat the map in either direction? No.
-        // 'S' is the 'horizontal' texture coordinate direction.
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-        // 'T' is the 'vertical' texture coordinate direction.
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+        // This implicitly operates on the GL_TEXTURE_2D target. Use GLFW constructs.
+        GLFWimage gli;
+        int texture_load_success = GL_FALSE;
+        // Did we succeed in creating a texture resource
+        // instance from the ResourceFactory ?
+        if(textureResource != NULL) {
+            // Yes, attempt to put that into a GLFWimage construct.
+            int resource_load_success = glfwReadMemoryImage(&(textureResource->data()->front()),
+                                                            textureResource->data()->size(),
+                                                            &gli, 0);
+            // Did we succeed in that?
+            if(resource_load_success == GL_TRUE) {
+                // Yes, so we try to load into server memory now.
+                texture_load_success = glfwLoadMemoryTexture2D(&(textureResource->data()->front()),
+                                                               textureResource->data()->size(),
+                                                               0);
+                }
+            else {
+                // No, the texture resource could not be placed into a GLFWimage.
+                std::stringstream msg;
+                msg << "HUDImage::loadTexture() - texture resource did NOT load to GLFWimage : ";
+                msg << image_resource_name;
+                ErrorHandler::record(msg.str(), ErrorHandler::WARN);
+                }
+            }
+        else {
+            // No, failed to get a texture resource instance.
+            std::stringstream msg;
+            msg << "HUDImage::loadTexture() - texture resource NOT available : ";
+            msg << image_resource_name;
+            ErrorHandler::record(msg.str(), ErrorHandler::WARN);
+            }
 
-        // How it maps when texels and fragments/pixels areas
-        // don't match when we do minification and magnification.
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        // Have we got the image data to server memory ?
+        if(texture_load_success == GL_TRUE) {
+            // Yes we did ! Remember the image dimensions.
+            image_width = gli.Width;
+            image_height = gli.Height;
 
-        // You want to paste the image on, with no
-        // show-through of what's beneath.
-        glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+            // Call base class to reset minima for the given image content,
+            // also accounting for any indicated margin.
+            setMinimumDimensions(image_width + 2*horzMargin(),
+                                 image_height + 2*vertMargin());
 
-        // Bless the texture as most important.
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_PRIORITY, 1.0f);
+            // Make our texture object OpenGL's current one.
+            glBindTexture(GL_TEXTURE_2D, texture.ID());
+
+            // Set the texture's stretching properties
+            // for minification and magnification.
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+            // Do we repeat the map in either direction? No.
+            // 'S' is the 'horizontal' texture coordinate direction.
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+            // 'T' is the 'vertical' texture coordinate direction.
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+
+            // How it maps when texels and fragments/pixels areas
+            // don't match when we do minification and magnification.
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+            // You want to paste the image on, with no
+            // show-through of what's beneath.
+            glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+
+            // Bless the texture as most important.
+            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_PRIORITY, 1.0f);
+            }
+        else {
+            // No, the image data did not get to the server's texture memory.
+            std::stringstream msg;
+            msg << "HUDImage::loadTexture() - texture memory did NOT load from GLFWimage : ";
+            msg << image_resource_name;
+            ErrorHandler::record(msg.str(), ErrorHandler::WARN);
+            }
+
+        // Get rid of any heap resource allocation.
+        delete textureResource;
+
+        // Unbind the texture from the state machine - but don't delete it!
+        glBindTexture(GL_TEXTURE_2D, Texture_OBJ::NO_ID);
         }
-    else {
-        // No, the image data did not get to the server's texture memory.
-        std::stringstream msg;
-        msg << "HUDImage::loadTexture() - texture memory did NOT load from GLFWimage : ";
-        msg << image_resource_name;
-        ErrorHandler::record(msg.str(), ErrorHandler::WARN);
-        }
-
-    // Get rid of any heap resource allocation.
-    delete textureResource;
-
-    // Unbind the texture from the state machine - but don't delete it!
-    glBindTexture(GL_TEXTURE_2D, Texture_OBJ::NO_ID);
     }
 
 void HUDImage::createVertexData(void) {

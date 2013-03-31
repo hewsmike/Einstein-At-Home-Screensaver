@@ -35,7 +35,7 @@ AutoPilot::AutoPilot(void) {
     lambda = Path::LAMBDA_LOWER_BOUND;
     current_delta_lambda = 0.0f;
     active_flag = false;
-    description_change_flag = false;
+    description_change_flag = AutoPilot::NONE;
     }
 
 AutoPilot::~AutoPilot() {
@@ -57,7 +57,7 @@ void AutoPilot::activate(const Traversable& trav, const CameraState& cam) {
 
     path_stage_flag = EARLY;
 
-    description_change_flag = false;
+    description_change_flag = AutoPilot::NONE;
     }
 
 void AutoPilot::inactivate(void) {
@@ -112,7 +112,7 @@ void AutoPilot::step(void) {
         }
 
     // Set the description as unchanged.
-    description_change_flag = false;
+    description_change_flag = AutoPilot::NONE;
 
     // Are we in the LATE portion of a Path?
     if(lambda > PATH_LATE_BOUNDARY) {
@@ -129,7 +129,7 @@ void AutoPilot::step(void) {
             // Get the image set.
             current_image = current_path.getFinishImageResourceName();
             // Flag that the description has therefore altered.
-            description_change_flag = true;
+            description_change_flag = AutoPilot::ADDED;
             }
         }
     else {
@@ -155,7 +155,7 @@ void AutoPilot::step(void) {
                 current_description.clear();
                 current_image.clear();
                 // Flag that the description has therefore altered.
-                description_change_flag = true;
+                description_change_flag = AutoPilot::DELETED;
                 }
             }
         }
@@ -176,7 +176,7 @@ std::string AutoPilot::getImageResourceName(void) const {
     return current_image;
     }
 
-bool AutoPilot::hasDescriptionChanged(void) const {
+AutoPilot::description_change AutoPilot::hasDescriptionChanged(void) const {
     return description_change_flag;
     }
 
