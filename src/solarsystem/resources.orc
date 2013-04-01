@@ -13,11 +13,11 @@ TerminatorTGA|terminator.tga.res
 
 # For HUD images.
 aeiTGA|aei.tga.res
-apsTGA|aps.tga.res
 boincTGA|boinc.tga.res
+fermiTGA|fermi.tga.res
 geoTGA|geo.tga.res
 ligoTGA|ligo.tga.res
-openclTGA|opencl.tga.res
+palfaTGA|palfa.tga.res
 virgoTGA|virgo.tga.res
 wypTGA|wyp.tga.res
 

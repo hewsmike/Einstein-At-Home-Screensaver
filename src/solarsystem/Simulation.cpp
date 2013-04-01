@@ -476,9 +476,13 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
     south_centre_panel.addItem(version_text);
 
     south_east_panel.addItem(new HUDImage("aeiTGA", 10, 10));
-    south_east_panel.addItem(new HUDImage("wypTGA", 10, 10));
-    south_east_panel.addItem(new HUDImage("apsTGA", 10, 10));
     south_east_panel.addItem(new HUDImage("boincTGA", 10,10));
+    south_east_panel.addItem(new HUDImage("fermiTGA", 10, 10));
+    south_east_panel.addItem(new HUDImage("geoTGA", 10,10));
+    south_east_panel.addItem(new HUDImage("ligoTGA", 10,10));
+    south_east_panel.addItem(new HUDImage("palfaTGA", 10,10));
+    south_east_panel.addItem(new HUDImage("virgoTGA", 10,10));
+    south_east_panel.addItem(new HUDImage("wypTGA", 10, 10));
 
     overlay.activate();
     }
