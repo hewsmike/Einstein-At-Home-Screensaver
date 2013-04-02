@@ -302,24 +302,23 @@ void Simulation::step(void) {
         pilot.step();
 
         // ... check for any content change of the tour's descriptive text.
-//        AutoPilot::description_change change_flag = pilot.hasDescriptionChanged();
-//        if(change_flag != AutoPilot::NONE) {
-//            north_panel.erase();
-//            south_west_panel.erase();
-//            switch(change_flag) {
-//                case AutoPilot::ADDED :
-//                    target.show();
-//                    loadLookoutDataToPanels();
-//                    break;
-//                case AutoPilot::DELETED :
-//                    target.hide();
-//                    break;
-//                default:
-//                    ErrorHandler::record("Simulation::step() : bad switch case reached ( default )",
-//                                         ErrorHandler::FATAL);
-//                    break;
-//                }
-//            }
+        AutoPilot::description_change change_flag = pilot.hasDescriptionChanged();
+        if(change_flag != AutoPilot::NONE) {
+            north_panel.erase();
+            south_west_panel.erase();
+            switch(change_flag) {
+                case AutoPilot::ADDED :
+                    loadLookoutDataToPanels();
+                    break;
+                case AutoPilot::DELETED :
+                    target.hide();
+                    break;
+                default:
+                    ErrorHandler::record("Simulation::step() : bad switch case reached ( default )",
+                                         ErrorHandler::FATAL);
+                    break;
+                }
+            }
         }
 
     /// TODO - demo code only, needs proper ephemeris model.
@@ -3128,6 +3127,8 @@ void Simulation::loadLookoutDataToPanels(void) {
             ++message) {
             north_panel.addItem(new HUDTextLine(message->size(), *message, 0, 2));
             }
+        // Only show reticle/target if content to display.
+        target.show();
         }
     north_panel.activate();
 

@@ -30,12 +30,6 @@ GLuint HUDLogoCycle::DEFAULT_FRAME_GAP(100);
 
 HUDLogoCycle::HUDLogoCycle(GLuint frames) :
                 frame_gap(frames) {
-    stringstream msg;
-    msg << "HUDLogoCycle::HUDLogoCycle() - frame_gap = "
-        << frame_gap;
-    ErrorHandler::record(msg.str(), ErrorHandler::INFORM);
-    vert_just = HUDLogoCycle::TOP;
-    horz_just = HUDLogoCycle::RIGHT;
     current_image_index = 0;
     frame_count = 0;
     }
@@ -76,24 +70,6 @@ GLuint HUDLogoCycle::getFrameGap(void) const {
 
 void HUDLogoCycle::setFrameGap(GLuint gap) {
     frame_gap = gap;
-    }
-
-HUDLogoCycle::horizontalJustification HUDLogoCycle::getHorizontalJustification(void) const {
-    return horz_just;
-    }
-
-HUDLogoCycle::verticalJustification HUDLogoCycle::getVerticalJustification(void) const {
-    return vert_just;
-    }
-
-void HUDLogoCycle::setHorizontalJustification(HUDLogoCycle::horizontalJustification justification) {
-    horz_just = justification;
-    allocateItemBases();
-    }
-
-void HUDLogoCycle::setVerticalJustification(HUDLogoCycle::verticalJustification justification) {
-    vert_just = justification;
-    allocateItemBases();
     }
 
 std::pair<GLuint, GLuint> HUDLogoCycle::reassessMinimumDimensions(void) {
@@ -150,7 +126,7 @@ void HUDLogoCycle::allocateItemBases(void) {
             // For a given amount of horizontal axis whitespace then
             // how is that to be divided? That depends upon horizontal
             // axis justification.
-            switch(horz_just) {
+            switch(HUDContainer:: horz_just) {
                 case LEFT:
                     break;
                 case CENTRE:

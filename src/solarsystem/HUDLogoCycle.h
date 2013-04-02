@@ -43,15 +43,7 @@
 
 class HUDLogoCycle : public HUDContainer {
     public:
-        /// Enumerants to specify the mode of justification
-        /// along the vertical axis.
-        enum verticalJustification {TOP, MIDDLE, BOTTOM};
-
-        /// Enumerants to specify the mode of justification
-        /// along the horizontal axis.
-        enum horizontalJustification {LEFT, CENTRE, RIGHT};
-
-        /**
+         /**
          * \brief Constructor.
          *
          * \param frames : the number of frames between image refreshes
@@ -70,14 +62,6 @@ class HUDLogoCycle : public HUDContainer {
         GLuint getFrameGap(void) const;
 
         void setFrameGap(GLuint gap);
-
-        HUDLogoCycle::horizontalJustification getHorizontalJustification(void) const;
-
-        HUDLogoCycle::verticalJustification getVerticalJustification(void) const;
-
-        void setHorizontalJustification(HUDLogoCycle::horizontalJustification justification);
-
-        void setVerticalJustification(HUDLogoCycle::verticalJustification justification);
 
     protected:
         /**
@@ -108,9 +92,6 @@ class HUDLogoCycle : public HUDContainer {
         GLuint frame_count;
 
         GLuint current_image_index;
-
-        verticalJustification vert_just;
-        horizontalJustification horz_just;
     };
 
 /**

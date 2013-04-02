@@ -104,8 +104,6 @@ void SolarSystem::initialize(const int width, const int height, const Resource* 
         ErrorHandler::record("SolarSystem::initialize() : Warning: font resource still unknown! You might want to recycle at a later stage...",
                              ErrorHandler::WARN);
         }
-    else {
-
 
     // Specify tight unpacking of pixel data ( from data buffers )
     // ie. no padding generated. Default is 4 byte boundaries.
@@ -462,7 +460,6 @@ void SolarSystem::setFonts(void) {
         }
     HUDFont->setBackgroundColor(0.0f, 0.0f, 0.0f, 0.0f);
     HUDFont->setForegroundColor(1.0f, 1.0f, 1.0f, 0.9f);
-    }
 
     // Some Simulation components need to have a font before activation.
     SolarSystemGlobals::setFont(SolarSystemGlobals::CONSTELLATIONS, constellationFont);
