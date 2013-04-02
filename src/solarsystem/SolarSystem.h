@@ -163,6 +163,8 @@ class SolarSystem : public AbstractGraphicsEngine, public RenderQualityObserver 
     private:
         void changeRenderQuality(void);
 
+        void setFonts(void);
+
         bool renderUpdateFlag;
 
         /// Overall rendering parameters.

@@ -37,6 +37,7 @@ CPPFLAGS += -I$(FRAMEWORK_INSTALL)/include/boinc -I$(FRAMEWORK_INSTALL)/include
 CPPFLAGS += -D_WIN32_WINDOWS=0x0410
 CPPFLAGS += -DGLEW_STATIC
 CPPFLAGS += -DWIN_OGL_WORKAROUND
+CPPFLAGS += -DWIN_OGFLT_WORKAROUND
 
 # Note the mention of 'glew.o' here.
 DEPS = Makefile
@@ -67,7 +68,7 @@ libframework.a: $(OBJS)  $(FRAMEWORK_SRC)/framework.h
 
 AbstractGraphicsEngine.o: $(DEPS) $(FRAMEWORK_SRC)/AbstractGraphicsEngine.cpp $(FRAMEWORK_SRC)/AbstractGraphicsEngine.h
 	$(CXX) -g ${CPPFLAGS} -c $(FRAMEWORK_SRC)/AbstractGraphicsEngine.cpp
-	
+
 ErrorHandler.o: $(DEPS) $(FRAMEWORK_SRC)/ErrorHandler.cpp $(FRAMEWORK_SRC)/ErrorHandler.h
 	$(CXX) -g $(CPPFLAGS) -c $(FRAMEWORK_SRC)/ErrorHandler.cpp
 
@@ -75,7 +76,7 @@ Events.o: $(DEPS) $(FRAMEWORK_SRC)/Events.cpp $(FRAMEWORK_SRC)/Events.h
 	$(CXX) -g ${CPPFLAGS} -c $(FRAMEWORK_SRC)/Events.cpp
 
 glew.o: $(DEPS) $(FRAMEWORK_SRC)/glew.c $(FRAMEWORK_INSTALL)/include/GL/glew.h
-	$(CXX) -g -DGLEW_STATIC ${CPPFLAGS} -c $(FRAMEWORK_SRC)/glew.c	
+	$(CXX) -g -DGLEW_STATIC ${CPPFLAGS} -c $(FRAMEWORK_SRC)/glew.c
 
 GraphicsEngineFactory.o: $(DEPS) $(FRAMEWORK_SRC)/GraphicsEngineFactory.cpp $(FRAMEWORK_SRC)/GraphicsEngineFactory.h
 	$(CXX) -g ${CPPFLAGS} -c $(FRAMEWORK_SRC)/GraphicsEngineFactory.cpp
@@ -94,9 +95,9 @@ Resource.o: $(DEPS) $(FRAMEWORK_SRC)/Resource.cpp $(FRAMEWORK_SRC)/Resource.h
 
 Libxml2Adapter.o: $(DEPS) $(FRAMEWORK_SRC)/Libxml2Adapter.cpp $(FRAMEWORK_SRC)/Libxml2Adapter.h $(FRAMEWORK_SRC)/XMLProcessorInterface.h
 	$(CXX) -g ${CPPFLAGS} -c $(FRAMEWORK_SRC)/Libxml2Adapter.cpp
-	
+
 TriggerTimer.o: $(DEPS) $(FRAMEWORK_SRC)/TriggerTimer.cpp $(FRAMEWORK_SRC)/TriggerTimer.h
-	$(CXX) -g ${CPPFLAGS} -c $(FRAMEWORK_SRC)/TriggerTimer.cpp	
+	$(CXX) -g ${CPPFLAGS} -c $(FRAMEWORK_SRC)/TriggerTimer.cpp
 
 # tools
 install:

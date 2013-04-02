@@ -79,26 +79,22 @@ void SolarSystem::initialize(const int width, const int height, const Resource* 
         if(font != NULL) {
             // So remember the font resource pointer, if non NULL.
             spaceFontResource = font;
+            setFonts();
+            }
+        if(spaceFontResource == NULL) {
+            // So we are here because spaceFontResource was not assigned
+            // to an actual resource instance. Display a warning ???
+            ErrorHandler::record("SolarSystem::initialize() : Warning: font resource!",
+                             ErrorHandler::WARN);
             }
         // initialize the BOINC client adapter
         m_BoincAdapter.initialize();
         }
     else {
-        // This is the recurrent call of this routine from WindowManager.
-        // Seems that windoze also "resets" our OpenGL fonts, so
-        // let's clean up before reinitializing them.
-        if(skygridFont != NULL) {
-            delete skygridFont;
-            }
-        if(earthgridFont != NULL) {
-            delete earthgridFont;
-            }
-        if(constellationFont != NULL) {
-            delete constellationFont;
-            }
-        if(HUDFont != NULL) {
-            delete HUDFont;
-            }
+        // Only recycle for Windows machines.
+#ifdef WIN_OGLFT_WORKAROUND
+        setFonts();
+#endif
         }
 
     // We might be called to recycle even before initialization. Why's that ??
@@ -109,68 +105,7 @@ void SolarSystem::initialize(const int width, const int height, const Resource* 
                              ErrorHandler::WARN);
         }
     else {
-        // create font instance using font resource (base address + size)
-        skygridFont = new OGLFT_ft(&spaceFontResource->data()->at(0),
-                                   spaceFontResource->data()->size(),
-                                   13, 78);
 
-        // Note short-circuit evaluation relevant in this if clause ie. right side
-        // expression is evaluated only if left side expression is false. Matters
-        // for pointer dereference so don't swap order of expressions here.
-        if(skygridFont == NULL || (skygridFont->isValid() == false)) {
-            /// TODO - better error path
-            std::string msg = "SolarSystem::initialize() - Could not construct sky grid font face from in memory resource!";
-            ErrorHandler::record(msg, ErrorHandler::FATAL);
-            }
-        skygridFont->setBackgroundColor(0.0f, 0.0f, 0.0f, 0.0f);
-        skygridFont->setForegroundColor(1.0f, 1.0f, 1.0f, 0.6f);
-
-        // create font instance using font resource (base address + size)
-        earthgridFont = new OGLFT_ft(&spaceFontResource->data()->at(0),
-                                     spaceFontResource->data()->size(),
-                                     13, 78);
-
-        if(earthgridFont == NULL || (earthgridFont->isValid() == false)) {
-            // TODO - better error path
-            std::string msg = "SolarSystem::initialize() - Could not construct earth grid font face from in memory resource!";
-            ErrorHandler::record(msg, ErrorHandler::FATAL);
-            }
-        earthgridFont->setBackgroundColor(0.0f, 0.0f, 0.0f, 0.0f);
-        earthgridFont->setForegroundColor(1.0f, 1.0f, 1.0f, 0.6f);
-
-        // create font instance using font resource (base address + size)
-        constellationFont = new OGLFT_ft(&spaceFontResource->data()->at(0),
-                                         spaceFontResource->data()->size(),
-                                         13, 78);
-        // Short-circuit .....
-        if(constellationFont == NULL || (constellationFont->isValid() == false)) {
-            // TODO - better error path ?
-            std::string msg = "SolarSystem::initialize() - Could not construct constellation font face from in memory resource!";
-            ErrorHandler::record(msg, ErrorHandler::FATAL);
-            }
-        constellationFont->setBackgroundColor(0.0f, 0.0f, 0.0f, 0.0f);
-        constellationFont->setForegroundColor(1.0f, 0.84f, 0.0f, 0.6f);
-
-        // create font instance using font resource (base address + size)
-        HUDFont = new OGLFT_ft(&spaceFontResource->data()->at(0),
-                               spaceFontResource->data()->size(),
-                               18, 90);
-
-        // Short-circuit .....
-        if(HUDFont == NULL || (HUDFont->isValid() == false)) {
-            // TODO - better error path ?
-            std::string msg = "SolarSystem::initialize() - Could not construct HUD font face from in memory resource!";
-            ErrorHandler::record(msg, ErrorHandler::FATAL);
-            }
-        HUDFont->setBackgroundColor(0.0f, 0.0f, 0.0f, 0.0f);
-        HUDFont->setForegroundColor(1.0f, 1.0f, 1.0f, 0.9f);
-        }
-
-    // Some Simulation components need to have a font before activation.
-    SolarSystemGlobals::setFont(SolarSystemGlobals::CONSTELLATIONS, constellationFont);
-    SolarSystemGlobals::setFont(SolarSystemGlobals::SKY_GRID, skygridFont);
-    SolarSystemGlobals::setFont(SolarSystemGlobals::EARTH_GRID, earthgridFont);
-    SolarSystemGlobals::setFont(SolarSystemGlobals::HUDOVER, HUDFont);
 
     // Specify tight unpacking of pixel data ( from data buffers )
     // ie. no padding generated. Default is 4 byte boundaries.
@@ -454,4 +389,84 @@ void SolarSystem::changeRenderQuality(void) {
             ErrorHandler::record(msg, ErrorHandler::FATAL);
             break;
         }
+    }
+
+void SolarSystem::setFonts(void) {
+    // This maybe a recurrent call, as windoze also "resets" our OpenGL
+    // fonts, so let's clean up before reinitializing them.
+    if(skygridFont != NULL) {
+        delete skygridFont;
+        }
+    if(earthgridFont != NULL) {
+        delete earthgridFont;
+        }
+    if(constellationFont != NULL) {
+        delete constellationFont;
+        }
+    if(HUDFont != NULL) {
+        delete HUDFont;
+        }
+
+    // create font instance using font resource (base address + size)
+    skygridFont = new OGLFT_ft(&spaceFontResource->data()->at(0),
+                               spaceFontResource->data()->size(),
+                               13, 78);
+
+    // Note short-circuit evaluation relevant in this if clause ie. right side
+    // expression is evaluated only if left side expression is false. Matters
+    // for pointer dereference so don't swap order of expressions here.
+    if(skygridFont == NULL || (skygridFont->isValid() == false)) {
+        /// TODO - better error path
+        std::string msg = "SolarSystem::initialize() - Could not construct sky grid font face from in memory resource!";
+        ErrorHandler::record(msg, ErrorHandler::FATAL);
+        }
+    skygridFont->setBackgroundColor(0.0f, 0.0f, 0.0f, 0.0f);
+    skygridFont->setForegroundColor(1.0f, 1.0f, 1.0f, 0.6f);
+
+    // create font instance using font resource (base address + size)
+    earthgridFont = new OGLFT_ft(&spaceFontResource->data()->at(0),
+                                 spaceFontResource->data()->size(),
+                                 13, 78);
+
+    if(earthgridFont == NULL || (earthgridFont->isValid() == false)) {
+        // TODO - better error path
+        std::string msg = "SolarSystem::initialize() - Could not construct earth grid font face from in memory resource!";
+        ErrorHandler::record(msg, ErrorHandler::FATAL);
+        }
+    earthgridFont->setBackgroundColor(0.0f, 0.0f, 0.0f, 0.0f);
+    earthgridFont->setForegroundColor(1.0f, 1.0f, 1.0f, 0.6f);
+
+    // create font instance using font resource (base address + size)
+    constellationFont = new OGLFT_ft(&spaceFontResource->data()->at(0),
+                                     spaceFontResource->data()->size(),
+                                     13, 78);
+    // Short-circuit .....
+    if(constellationFont == NULL || (constellationFont->isValid() == false)) {
+        // TODO - better error path ?
+        std::string msg = "SolarSystem::initialize() - Could not construct constellation font face from in memory resource!";
+        ErrorHandler::record(msg, ErrorHandler::FATAL);
+        }
+    constellationFont->setBackgroundColor(0.0f, 0.0f, 0.0f, 0.0f);
+    constellationFont->setForegroundColor(1.0f, 0.84f, 0.0f, 0.6f);
+
+    // create font instance using font resource (base address + size)
+    HUDFont = new OGLFT_ft(&spaceFontResource->data()->at(0),
+                           spaceFontResource->data()->size(),
+                           18, 90);
+
+    // Short-circuit .....
+    if(HUDFont == NULL || (HUDFont->isValid() == false)) {
+        // TODO - better error path ?
+        std::string msg = "SolarSystem::initialize() - Could not construct HUD font face from in memory resource!";
+        ErrorHandler::record(msg, ErrorHandler::FATAL);
+        }
+    HUDFont->setBackgroundColor(0.0f, 0.0f, 0.0f, 0.0f);
+    HUDFont->setForegroundColor(1.0f, 1.0f, 1.0f, 0.9f);
+    }
+
+    // Some Simulation components need to have a font before activation.
+    SolarSystemGlobals::setFont(SolarSystemGlobals::CONSTELLATIONS, constellationFont);
+    SolarSystemGlobals::setFont(SolarSystemGlobals::SKY_GRID, skygridFont);
+    SolarSystemGlobals::setFont(SolarSystemGlobals::EARTH_GRID, earthgridFont);
+    SolarSystemGlobals::setFont(SolarSystemGlobals::HUDOVER, HUDFont);
     }

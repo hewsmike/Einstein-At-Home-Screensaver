@@ -79,14 +79,14 @@ int main(int argc, char **argv) {
     // that produces the build for this product.
     scienceApplication = GraphicsEngineFactory::SCIENCE_APP;
 #else
-    // So if SCIENCE_APP was not given, this is the default.
+    // And if SCIENCE_APP was not given, this is the default.
     scienceApplication = GraphicsEngineFactory::EinsteinGravity;
 #endif
 
     // Instantiate and initialize our window manager.
     WindowManager window;
 
-    // Make an ABstractGraphicsEngine on the heap.
+    // Make an AbstractGraphicsEngine on the heap.
     // Edit this call for different build sources ie. swap 'Solarsystem' for whatever
     AbstractGraphicsEngine* graphics = GraphicsEngineFactory::createInstance(GraphicsEngineFactory::SolarSystem,
                                                                              scienceApplication);
@@ -169,8 +169,6 @@ int main(int argc, char **argv) {
     else {
         ErrorHandler::record("SolarSystem::main() : Icon resource could not be loaded! Continuing anyway...", ErrorHandler::WARN);
         }
-
-
 
     // Prepare for rendering by initialising chosen engine
     // and get up to date BOINC information.
