@@ -108,7 +108,6 @@ void HUDLogoCycle::allocateItemBases(void) {
     // We only need to bother with allocations
     // if there are items to render.
     if(HUDContainer::itemCount() > 0) {
-
         std::map<int, HUDItem*>& container = HUDContainer::getMap();
         for(std::map<int, HUDItem*>::iterator item = container.begin();
             item != container.end();
@@ -124,46 +123,10 @@ void HUDLogoCycle::allocateItemBases(void) {
             GLuint vert_whitespace = this->minHeight() - logo->minHeight();
 
             // For a given amount of horizontal axis whitespace then
-            // how is that to be divided? That depends upon horizontal
-            // axis justification.
-            switch(HUDContainer:: horz_just) {
-                case LEFT:
-                    break;
-                case CENTRE:
-                    horz_gap = horz_whitespace/2;
-                    break;
-                case RIGHT:
-                    horz_gap = horz_whitespace;
-                    break;
-                default:
-                    // Shouldn't ever get here!!
-                    ErrorHandler::record("HUDLogoCycle::allocateItemBases() - bad switch case ( horizontal justification ) reached (default)",
-                                         ErrorHandler::FATAL);
-                    break;
-                }
-
-            // For a given amount of vertical axis whitespace then
-            // how is that to be divided? That depends upon vertical
-            // axis justification.
-            switch(vert_just) {
-                case TOP:
-                    vert_gap = vert_whitespace;
-                    break;
-                case MIDDLE:
-                    vert_gap = vert_whitespace/2;
-                    break;
-                case BOTTOM:
-                    break;
-                default:
-                    // Shouldn't ever get here!!
-                    ErrorHandler::record("HUDLogoCycle::allocateItemBases() - bad switch case ( vertical justification ) reached (default)",
-                                         ErrorHandler::FATAL);
-                    break;
-                }
-
-
-            logo->reBase(this->horzBase() + horz_gap,
-                         this->vertBase() + vert_gap);
+            // how is that to be divided? Policy is to be centred in
+            // both axes, regardless of base class nomination.
+            logo->reBase(this->horzBase() + horz_whitespace/2;,
+                         this->vertBase() + vert_whitespace/2;);
             }
         }
     }
