@@ -291,7 +291,6 @@ void Simulation::step(void) {
                     loadLookoutDataToPanels();
                     break;
                 case AutoPilot::DELETED :
-                    target.hide();
                     break;
                 default:
                     ErrorHandler::record("Simulation::step() : bad switch case reached ( default )",
@@ -2858,7 +2857,10 @@ void Simulation::cycle(SolarSystemGlobals::content ct) {
                 // and also craft based. Thus prefer a distant focus point to
                 // reduce possible high initial slew rate.
                 current.setFocus(current.position() + SolarSystemGlobals::CELESTIAL_SPHERE_RADIUS*current.focus());
-                pilot.activate(ps_EAH, current);
+
+                // Activate the autopilot using the pulsar tour, current
+                // viewpoint and reticle.
+                pilot.activate(ps_EAH, current, &target);
 
                 // Activate the target reticle but don't show it yet.
                 target.activate();
@@ -3092,8 +3094,6 @@ void Simulation::loadLookoutDataToPanels(void) {
             htlp->activate();
             north_panel.addItem(htlp);
             }
-        // Only show reticle/target if content to display.
-        target.show();
         }
     north_panel.activate();
 

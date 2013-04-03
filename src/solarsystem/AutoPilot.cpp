@@ -36,6 +36,7 @@ AutoPilot::AutoPilot(void) {
     current_delta_lambda = 0.0f;
     active_flag = false;
     description_change_flag = AutoPilot::NONE;
+    target = NULL;
     }
 
 AutoPilot::~AutoPilot() {
@@ -92,6 +93,12 @@ void AutoPilot::step(void) {
             // Then pause movement and (re-)set the pause counter.
             pause_flag = true;
             count_down = PAUSE_FRAME_COUNT;
+            // Show the reticle, but only if a description exists.
+            if((target != NULL) &&
+               (current_description.size() != 0)) {
+                    target->show();
+                    }
+                }
             }
         }
     else {
@@ -100,6 +107,10 @@ void AutoPilot::step(void) {
 
         // End of pause interval ie. should we move on now ?
         if(count_down == 0) {
+            // Hide the reticle.
+            if(target != NULL) {
+                target->hide();
+                }
             // Yes, so move on to evolve the next available Path.
             current_path = current_traverse.getNextPath();
             // Find the right lambda increment for this new Path.

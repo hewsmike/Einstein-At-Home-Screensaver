@@ -26,6 +26,7 @@
 #include "CameraState.h"
 #include "HUDImage.h"
 #include "Path.h"
+#include "TargetReticle.h"
 #include "Traversable.h"
 #include "Traverse.h"
 
@@ -47,6 +48,7 @@
  * camera orientation ( which way is 'up' or top of window ). Thus at any
  * time ( notional units ) a CameraState is available to base a frame render
  * upon.
+ *
  *      When the Autopilot is activated a Traverse is created by querying the
  * given Traversable object to obtain a list of Lookouts, which is combined
  * with a Lookout representing the CameraState at the time of autopilot
@@ -56,11 +58,15 @@
  * the camera view at activation ) cyclically. Each Lookout may be queried
  * to yield descriptive strings and/or images specific to that point of view.
  *
+ *      A pointer to a TargetReticle object needs to be provided on activation
+ * in order to display or hide it appropriately.
+ *
  * \see CameraState
  * \see Curve
  * \see HUDimage
  * \see Lookout
  * \see Path
+ * \see TargetReticle
  * \see Traversable
  * \see Traverse
  *
@@ -92,8 +98,9 @@ class AutoPilot {
          *
          * \param trav : a Traversable object to query.
          * \param cam : the current viewpoint.
+         * \param reticle : a pointer to a TargetReticle
          */
-        void activate(const Traversable& trav, const CameraState& cam);
+        void activate(const Traversable& trav, const CameraState& cam, TargetReticle* reticle);
 
         /**
          * \brief Inactivate the autpilot.
@@ -207,6 +214,8 @@ class AutoPilot {
         // Flag indicating whether there has been a change of descriptive
         // strings and/or images.
         AutoPilot::description_change description_change_flag;
+
+        TargetReticle* target;
 
         /**
          * \brief For the current Path decide upon the best increment in lambda
