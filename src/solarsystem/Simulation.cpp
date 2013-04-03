@@ -223,12 +223,6 @@ Simulation::Simulation(BOINCClientAdapter* boinc_adapter) :
     earth_hour_angle = 0;
     sun_rot_angle = 0;
 
-    // Image pointers.
-    aei_image = NULL;
-    aps_image = NULL;
-    boinc_image = NULL;
-    wyp_image = NULL;
-
     // Pointer to scrolling marquee.
     version_text = NULL;
 
@@ -290,6 +284,7 @@ void Simulation::step(void) {
         AutoPilot::description_change change_flag = pilot.hasDescriptionChanged();
         if(change_flag != AutoPilot::NONE) {
             north_panel.erase();
+            std::cout << "Simulation::step() : erase south_west_panel" << std::endl;
             south_west_panel.erase();
             switch(change_flag) {
                 case AutoPilot::ADDED :
@@ -436,8 +431,6 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
     south_west_panel.setSecondaryJustification(HUDFlowLayout::PROXIMAL);
     south_centre_panel.setPrimaryJustification(HUDFlowLayout::END);
     south_centre_panel.setSecondaryJustification(HUDFlowLayout::MIDDLE);
-    south_east_panel.setHorizontalJustification(HUDLogoCycle::RIGHT);
-    south_east_panel.setVerticalJustification(HUDLogoCycle::BOTTOM);
 
     // Put the panels into the border layout.
     overlay.setPanel(HUDBorderLayout::NORTH, &north_panel);
@@ -487,22 +480,6 @@ void Simulation::release(void) {
 
     // Must inactivate the layout first !!
     overlay.inactivate();
-
-    if(aei_image != NULL) {
-        delete aei_image;
-        }
-    if(aps_image != NULL) {
-        delete aps_image;
-        }
-    if(boinc_image != NULL) {
-        delete boinc_image;
-        }
-    if(wyp_image != NULL) {
-        delete wyp_image;
-        }
-    if(version_text != NULL) {
-        delete version_text;
-        }
     }
 
 void Simulation::render(void) {
@@ -3106,11 +3083,14 @@ void Simulation::loadLookoutDataToPanels(void) {
     // Derive content according to the current position in the tour.
     // First put new content text, if any, into the north panel.
     const std::vector<std::string>& messages = pilot.getDescription();
+
     if(messages.size() != 0) {
         for(std::vector<std::string>::const_iterator message = messages.begin();
             message != messages.end();
             ++message) {
-            north_panel.addItem(new HUDTextLine(message->size(), *message, 0, 2));
+            HUDTextLine* htlp = new HUDTextLine(message->size(), *message, 0, 2);
+            htlp->activate();
+            north_panel.addItem(htlp);
             }
         // Only show reticle/target if content to display.
         target.show();
@@ -3118,7 +3098,9 @@ void Simulation::loadLookoutDataToPanels(void) {
     north_panel.activate();
 
     // Then put new image(s), if any, into the south_west panel.
-    south_west_panel.addItem(new HUDImage(pilot.getImageResourceName(),10,10));
+    HUDImage* hip = new HUDImage(pilot.getImageResourceName(),10,10);
+    hip->activate();
+    south_west_panel.addItem(hip);
 
     south_west_panel.activate();
     }
@@ -3130,33 +3112,47 @@ void Simulation::includeUserInformation(HUDFlowLayout* container) {
     // First empty of any existing content.
     container->erase();
 
+    HUDTextLine* htlp = NULL;
+
     // Name of user.
     stringstream user_name;
     user_name << "User name : " << BC_adapter->userName();
-    container->addItem(new HUDTextLine(user_name.str().size(), user_name.str(), 0, 2));
+    htlp = new HUDTextLine(user_name.str().size(), user_name.str(), 0, 2);
+    htlp->activate();
+    container->addItem(htlp);
 
     // Name of user's team.
     stringstream team_name;
     team_name << "User team : " << BC_adapter->teamName();
-    container->addItem(new HUDTextLine(team_name.str().size(), team_name.str(), 0, 2));
+    htlp = new HUDTextLine(team_name.str().size(), team_name.str(), 0, 2);
+    htlp->activate();
+    container->addItem(htlp);
 
     // Total user credit.
     stringstream user_credit;
     user_credit << "User credit : " << BC_adapter->userCredit();
-    container->addItem(new HUDTextLine(user_credit.str().size(), user_credit.str(), 0, 2));
+    htlp = new HUDTextLine(user_credit.str().size(), user_credit.str(), 0, 2);
+    htlp->activate();
+    container->addItem(htlp);
 
     // User RAC.
     stringstream user_RAC;
     user_RAC << "User RAC : " << BC_adapter->userRACredit();
-    container->addItem(new HUDTextLine(user_RAC.str().size(), user_RAC.str(), 0, 2));
+    htlp = new HUDTextLine(user_RAC.str().size(), user_RAC.str(), 0, 2);
+    htlp->activate();
+    container->addItem(htlp);
 
     // Total host credit.
     stringstream host_credit;
     host_credit << "Host credit : " << BC_adapter->hostCredit();
-    container->addItem(new HUDTextLine(host_credit.str().size(), host_credit.str(), 0, 2));
+    htlp = new HUDTextLine(host_credit.str().size(), host_credit.str(), 0, 2);
+    htlp->activate();
+    container->addItem(htlp);
 
     // Host RAC.
     stringstream host_RAC;
     host_RAC << "Host RAC : " << BC_adapter->hostRACredit();
-    container->addItem(new HUDTextLine(host_RAC.str().size(), host_RAC.str(), 0, 2));
+    htlp = new HUDTextLine(host_RAC.str().size(), host_RAC.str(), 0, 2);
+    htlp->activate();
+    container->addItem(htlp);
     }

@@ -42,11 +42,10 @@ void HUDTempFlowLayout::erase(void) {
         container.erase(head->first);
         }
 
-    // Notify any possible containing object of this size change.
-    HUDContainer* outer = getEnclosingContainer();
-    if(outer != NULL) {
-        outer->adjust();
-        }
+    std::cout << "HUDTempFlowLayout::erase() : call adjust()" << std::endl;
+
+    // Adjust dimensions of this container.
+    adjust();
     }
 
 void HUDTempFlowLayout::addItem(HUDContent* item) {

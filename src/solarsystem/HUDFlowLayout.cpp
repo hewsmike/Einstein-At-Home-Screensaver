@@ -96,6 +96,10 @@ std::pair<GLuint, GLuint> HUDFlowLayout::reassessMinimumDimensions(void) {
             }
         }
 
+    std::cout << "HUDFlowLayout::reassessMinimumDimensions() : layoutMinWidth = "
+              << layoutMinWidth << " layoutMinHeight = "
+              << layoutMinHeight << std::endl;
+
     return std::pair<GLuint, GLuint>(layoutMinWidth, layoutMinHeight);
     }
 

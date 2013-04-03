@@ -61,6 +61,10 @@ void HUDLogoCycle::erase(void) {
         // Remove element from the container.
         container.erase(head->first);
         }
+
+    // Adjust dimensions of this container.
+    adjust();
+
     // Notify any possible containing object of this size change.
     HUDContainer* outer = getEnclosingContainer();
     if(outer != NULL) {
@@ -118,19 +122,15 @@ void HUDLogoCycle::allocateItemBases(void) {
             ++item) {
             HUDItem* logo = (*item).second;
 
-            // Offsets for both axes to place this item.
-            GLuint horz_gap = 0;
-            GLuint vert_gap = 0;
-
-            // How much whitespace do we have in each direction to play with?
+                        // How much whitespace do we have in each direction to play with?
             GLuint horz_whitespace = this->minWidth() - logo->minWidth();
             GLuint vert_whitespace = this->minHeight() - logo->minHeight();
 
             // For a given amount of horizontal axis whitespace then
             // how is that to be divided? Policy is to be centred in
             // both axes, regardless of base class nomination.
-            logo->reBase(this->horzBase() + horz_whitespace/2;,
-                         this->vertBase() + vert_whitespace/2;);
+            logo->reBase(this->horzBase() + horz_whitespace/2,
+                         this->vertBase() + vert_whitespace/2);
             }
         }
     }

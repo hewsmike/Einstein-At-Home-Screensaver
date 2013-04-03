@@ -20,8 +20,8 @@
 
 #include "Renderable.h"
 
-// Mark initial state as being inactive, but able to be shown if later
-// activated, with lowest render quality and no associated font.
+// Mark initial state as being inactive, but able to be hidden later,
+// with lowest render quality and no associated font.
 Renderable::Renderable() : activity(Renderable::INACTIVE),
                            show_flag(true),
                            quality(SolarSystemGlobals::RENDER_LOWEST),
