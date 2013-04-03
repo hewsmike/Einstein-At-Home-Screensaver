@@ -273,21 +273,6 @@ Simulation::Simulation(BOINCClientAdapter* boinc_adapter) :
     }
 
 Simulation::~Simulation() {
-    if(aei_image != NULL) {
-        delete aei_image;
-        }
-    if(aps_image != NULL) {
-        delete aps_image;
-        }
-    if(boinc_image != NULL) {
-        delete boinc_image;
-        }
-    if(wyp_image != NULL) {
-        delete wyp_image;
-        }
-    if(version_text != NULL) {
-        delete version_text;
-        }
     }
 
 void Simulation::step(void) {

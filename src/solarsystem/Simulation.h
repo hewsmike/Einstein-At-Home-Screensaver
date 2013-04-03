@@ -383,13 +383,6 @@ class Simulation : public Renderable {
         /// The realtime clock instance.
         UTC clock;
 
-        /// Pointers to logo type images used on the
-        /// generic portion of the HUD.
-        HUDImage* aei_image;
-        HUDImage* aps_image;
-        HUDImage* boinc_image;
-        HUDImage* wyp_image;
-
         /// Associative array of names to image pointers
         /// for pulse profiles to display on the HUD.
         std::map<std::string, HUDItem*> pulse_profiles;
