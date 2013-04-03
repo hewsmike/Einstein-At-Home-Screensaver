@@ -63,7 +63,7 @@ class HUDFlowLayout : public HUDContainer {
          *
          * \param content : a pointer to the desired content
          */
-        void addItem(HUDItem* item);
+        virtual void addItem(HUDItem* item);
 
     protected:
         /**

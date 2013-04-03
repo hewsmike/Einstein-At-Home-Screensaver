@@ -138,7 +138,7 @@ class HUDContainer : public HUDItem {
         /**
          * \brief Empty the underlying container.
          */
-        void erase(void);
+        virtual void erase(void);
 
         /**
          * \brief Obtain the count of contained items
@@ -174,7 +174,7 @@ class HUDContainer : public HUDItem {
          * \param handle : an identifier for the item
          * \param obj : the item's pointer
          */
-        void addItem(int handle, HUDItem* item);
+        virtual void addItem(int handle, HUDItem* item);
 
         /**
          * \brief Set the justification along the primary axis.

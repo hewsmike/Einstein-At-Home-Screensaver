@@ -59,12 +59,12 @@ class HUDTempFlowLayout : public HUDFlowLayout {
          *
          * \param item : a pointer to heap based HUDContent instance.
          */
-        void addItem(HUDContent* item);
+        virtual void addItem(HUDContent* item);
 
         /**
          * \brief Empty the underlying container, while releasing heap memory.
          */
-        void erase(void);
+        virtual void erase(void);
     protected:
 
     private:

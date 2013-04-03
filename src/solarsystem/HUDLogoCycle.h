@@ -55,9 +55,9 @@ class HUDLogoCycle : public HUDContainer {
          */
         virtual ~HUDLogoCycle();
 
-        void erase(void);
+        virtual void erase(void);
 
-        void addItem(HUDImage* logo);
+        virtual void addItem(HUDImage* logo);
 
         GLuint getFrameGap(void) const;
 
