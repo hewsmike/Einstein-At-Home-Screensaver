@@ -76,7 +76,9 @@ class HUDLogoCycle : public HUDContainer {
 
         /**
          * \brief Determine and set the base positions of each item.
-         *        Enacts HUDContainer interface.
+         *        Enacts HUDContainer interface. Current policy is
+         *        to fix items as centred in both axes regardless of
+         *        base class nomination of justifications.
          */
         virtual void allocateItemBases(void);
 

@@ -35,7 +35,6 @@ HUDLogoCycle::HUDLogoCycle(GLuint frames) :
     }
 
 HUDLogoCycle::~HUDLogoCycle() {
-    erase();
     }
 
 void HUDLogoCycle::addItem(HUDImage* logo) {
@@ -61,6 +60,11 @@ void HUDLogoCycle::erase(void) {
         delete head->second;
         // Remove element from the container.
         container.erase(head->first);
+        }
+    // Notify any possible containing object of this size change.
+    HUDContainer* outer = getEnclosingContainer();
+    if(outer != NULL) {
+        outer->adjust();
         }
     }
 

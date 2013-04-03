@@ -35,6 +35,7 @@ HUDContainer::HUDContainer(HUDContainer::Axis axis) :
     }
 
 HUDContainer::~HUDContainer() {
+    erase();
     }
 
 bool HUDContainer::requestResize(GLuint newWidth, GLuint newHeight) {
@@ -72,6 +73,11 @@ bool HUDContainer::isEmpty(void) const {
 
 void HUDContainer::erase(void) {
     container.clear();
+    // Notify any possible containing object of this size change.
+    HUDContainer* outer = getEnclosingContainer();
+    if(outer != NULL) {
+        outer->adjust();
+        }
     }
 
 void HUDContainer::adjust() {

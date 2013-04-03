@@ -27,7 +27,6 @@ HUDTempFlowLayout::HUDTempFlowLayout(HUDFlowLayout::Axis axis) :
     }
 
 HUDTempFlowLayout::~HUDTempFlowLayout() {
-    // erase();
     }
 
 void HUDTempFlowLayout::erase(void) {
@@ -41,6 +40,12 @@ void HUDTempFlowLayout::erase(void) {
         delete head->second;
         // Remove element from the container.
         container.erase(head->first);
+        }
+
+    // Notify any possible containing object of this size change.
+    HUDContainer* outer = getEnclosingContainer();
+    if(outer != NULL) {
+        outer->adjust();
         }
     }
 
