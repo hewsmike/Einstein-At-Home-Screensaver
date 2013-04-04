@@ -36,6 +36,8 @@ SolarSystem::SolarSystem(string sharedMemoryAreaIdentifier) :
      */
     spaceFontResource = NULL;
     renderUpdateFlag = false;
+    last_mouse_wheel_position = Events::INITIAL_WHEEL_POSITION;
+    mouse_wheel_differential = 0;
     }
 
 SolarSystem::~SolarSystem() {
@@ -232,7 +234,8 @@ void SolarSystem::mouseMoveEvent(const int deltaX, const int deltaY,
     }
 
 void SolarSystem::mouseWheelEvent(const int pos) {
-    // Currently no behaviours attached to mouse wheel events.
+    mouse_wheel_differential = pos - last_mouse_wheel_position;
+    last_mouse_wheel_position = pos;
     }
 
 void SolarSystem::keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey keyPressed) {
