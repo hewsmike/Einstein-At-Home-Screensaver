@@ -231,6 +231,10 @@ void SolarSystem::mouseMoveEvent(const int deltaX, const int deltaY,
         }
     }
 
+void SolarSystem::mouseWheelEvent(const int pos) {
+    // Currently no behaviours attached to mouse wheel events.
+    }
+
 void SolarSystem::keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey keyPressed) {
     switch(keyPressed) {
         case KeyC:

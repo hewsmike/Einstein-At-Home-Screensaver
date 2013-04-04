@@ -112,6 +112,13 @@ class AbstractGraphicsEngine {
         virtual void mouseMoveEvent(const int deltaX, const int deltaY, const MouseButton buttonPressed) = 0;
 
         /**
+         * \brief This method is called when the windowing system encounters a mouse wheel event
+         *
+         * \param pos The new mouse wheel position
+         */
+        virtual void mouseWheelEvent(const int pos) = 0;
+
+        /**
          * \brief Defined keyboard identifiers
          *
          * \see keyboardPressEvent

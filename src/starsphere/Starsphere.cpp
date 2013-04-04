@@ -893,6 +893,10 @@ void Starsphere::mouseMoveEvent(const int deltaX, const int deltaY,
 	}
 }
 
+void Starsphere::mouseWheelEvent(const int pos) {
+    // Currently no behaviours attached to mouse wheel events.
+    }
+
 void Starsphere::keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey keyPressed)
 {
 	switch(keyPressed) {

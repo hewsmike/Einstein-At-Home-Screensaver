@@ -136,6 +136,13 @@ public:
                   const AbstractGraphicsEngine::MouseButton buttonPressed);
 
    /**
+    * \brief Event handler for mouse wheel events
+    *
+    * \param pos The new mouse wheel position
+    */
+   void mouseWheelEvent(const int pos);
+
+   /**
     * \brief Event handler for key press events
     *
     * \param keyPressed The key pressed

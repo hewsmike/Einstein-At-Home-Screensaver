@@ -358,6 +358,10 @@ void WindowManager::eventLoop(void) {
                                                            AbstractGraphicsEngine::MouseButtonRight);
                     }
 
+            else if(current_event.type == Events::MouseWheelEvent) {
+                    eventObservers.front()->
+                    }
+
             else if((current_event.type == Events::ResizeEventType) &&
                     (resize_invoked == false)) {
                 m_CurrentWidth = m_WindowedWidth = current_event.resize.width;
