@@ -358,7 +358,7 @@ void WindowManager::eventLoop(void) {
                                                            AbstractGraphicsEngine::MouseButtonRight);
                     }
 
-            else if(current_event.type == Events::MouseWheelEvent) {
+            else if(current_event.type == Events::MouseWheelEventType) {
                     eventObservers.front()->mouseWheelEvent(current_event.m_wheel.pos);
                     }
 
