@@ -36,6 +36,7 @@
 
 #include "AbstractGraphicsEngine.h"
 #include "Craft.h"
+#include "Events.h"
 #include "RenderQualityObserver.h"
 #include "Simulation.h"
 

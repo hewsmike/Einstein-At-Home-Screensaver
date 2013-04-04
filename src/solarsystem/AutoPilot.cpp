@@ -42,7 +42,9 @@ AutoPilot::AutoPilot(void) {
 AutoPilot::~AutoPilot() {
     }
 
-void AutoPilot::activate(const Traversable& trav, const CameraState& cam) {
+void AutoPilot::activate(const Traversable& trav, const CameraState& cam, TargetReticle* reticle) {
+    target = reticle;
+
     ErrorHandler::record("AutoPilot::activate()", ErrorHandler::INFORM);
     lambda = Path::LAMBDA_LOWER_BOUND;
 
@@ -98,7 +100,6 @@ void AutoPilot::step(void) {
                (current_description.size() != 0)) {
                     target->show();
                     }
-                }
             }
         }
     else {
