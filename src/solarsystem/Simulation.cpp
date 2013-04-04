@@ -2863,8 +2863,10 @@ void Simulation::cycle(SolarSystemGlobals::content ct) {
                 pilot.activate(ps_EAH, current, &target);
 
                 // Activate the target reticle but don't show it yet.
-                target.activate();
+                // Currently the autopilot has the responsibility of
+                // showing or hiding the reticle.
                 target.hide();
+                target.activate();
                 }
             break;
         case SolarSystemGlobals::TARGET_RETICLE:
