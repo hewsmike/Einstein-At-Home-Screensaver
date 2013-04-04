@@ -86,16 +86,8 @@ void HUDContainer::adjust() {
 
     // Call base class to adjust to such minima.
     this->setMinimumDimensions(min_size.first, min_size.second);
-
-    // However the 'outer' dimensions may need to expand because
-    // either/both of the minimum height/width was increased. In
-    // which case set those outer dimensions to the minima.
-    if(min_size.first > width()) {
-        setDimensions(min_size.first, height());
-        }
-    if(min_size.second > height()) {
-        setDimensions(width(), min_size.second);
-        }
+    // Policy is the overall dimensions are set to the minima.
+    this->setDimensions(min_size.first, min_size.second);
 
     // Rebase the contained items.
     allocateItemBases();
