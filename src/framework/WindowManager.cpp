@@ -359,7 +359,7 @@ void WindowManager::eventLoop(void) {
                     }
 
             else if(current_event.type == Events::MouseWheelEvent) {
-                    eventObservers.front()->
+                    eventObservers.front()->mouseWheelEvent(current_event.m_wheel.pos);
                     }
 
             else if((current_event.type == Events::ResizeEventType) &&

@@ -228,6 +228,7 @@ void GLFWCALL Events::mouseMotion(int x, int y) {
 void GLFWCALL Events::mouseWheel(int pos) {
     Event ev;
     ev.m_wheel.type = Events::MouseWheelEventType;
+    ev.m_wheel.pos = pos;
 
     event_queue.push_back(ev);
     }
