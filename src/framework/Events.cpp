@@ -26,8 +26,9 @@
 
 // Use minimum timing intervals in milliseconds
 // for BOINC and render callbacks.
-GLuint Events::BOINC_CALLBACK_INTERVAL(1000);
-GLuint Events::RENDER_CALLBACK_INTERVAL_MIN(TriggerTimer::TRIGGER_MIN);
+const GLuint Events::BOINC_CALLBACK_INTERVAL(1000);
+const GLuint Events::RENDER_CALLBACK_INTERVAL_MIN(TriggerTimer::TRIGGER_MIN);
+const int Events::INITIAL_WHEEL_POSITION(0);
 
 TriggerTimer* Events::boinc_timer(NULL);
 TriggerTimer* Events::render_timer(NULL);
@@ -226,10 +227,19 @@ void GLFWCALL Events::mouseMotion(int x, int y) {
     }
 
 void GLFWCALL Events::mouseWheel(int pos) {
+    static bool first_time = true;
     Event ev;
     ev.m_wheel.type = Events::MouseWheelEventType;
-    ev.m_wheel.pos = pos;
 
+    // For the very first call only to this routine,
+    // set the position of the wheel to zero.
+    if(first_time == true) {
+        first_time = false;
+        pos = 0;
+        glfwSetMouseWheel(pos);
+        }
+
+    ev.m_wheel.pos = pos;
     event_queue.push_back(ev);
     }
 

@@ -116,6 +116,8 @@ union Event {
 
 class Events {
     public:
+        static const int INITIAL_WHEEL_POSITION;
+
         enum eventType {BOINCUpdateEventType,
                         CharInputEventType,
                         KeyPressEventType,
@@ -173,8 +175,8 @@ class Events {
         static std::auto_ptr<Events> p_instance;
 
         /// Intervals in milliseconds for our special timers.
-        static GLuint BOINC_CALLBACK_INTERVAL;
-        static GLuint RENDER_CALLBACK_INTERVAL_MIN;
+        static const GLuint BOINC_CALLBACK_INTERVAL;
+        static const GLuint RENDER_CALLBACK_INTERVAL_MIN;
 
         /**
          * \brief Initialise this event manager.
