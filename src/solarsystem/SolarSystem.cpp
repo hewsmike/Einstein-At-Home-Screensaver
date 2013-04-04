@@ -24,7 +24,9 @@
 #include "SolarSystemGlobals.h"
 
 const int SolarSystem::FAR_LOOK_RATIO(1000);
-const GLdouble SolarSystem::FOV_ANGLE(45.0f);
+const GLdouble SolarSystem::FOV_ANGLE_MIN(20.0f);
+const GLdouble SolarSystem::FOV_ANGLE_MAX(70.0f);
+const GLdouble SolarSystem::FOV_ANGLE_INITIAL((FOV_ANGLE_MAX - FOV_ANGLE_MIN)/2);
 const GLdouble SolarSystem::NEAR_CLIP(0.5f);
 const GLdouble SolarSystem::FAR_CLIP(SolarSystemGlobals::CELESTIAL_SPHERE_RADIUS * 2.5f);
 const int SolarSystem::FAR_LOOK_DISTANCE(SolarSystemGlobals::CELESTIAL_SPHERE_RADIUS*SolarSystem::FAR_LOOK_RATIO);
@@ -38,6 +40,7 @@ SolarSystem::SolarSystem(string sharedMemoryAreaIdentifier) :
     renderUpdateFlag = false;
     last_mouse_wheel_position = Events::INITIAL_WHEEL_POSITION;
     mouse_wheel_differential = 0;
+    fov_angle = FOV_ANGLE_INITIAL;
     }
 
 SolarSystem::~SolarSystem() {
@@ -57,7 +60,7 @@ void SolarSystem::resize(const int width, const int height) {
     glViewport(0, 0, (GLsizei) width, (GLsizei) height);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluPerspective(FOV_ANGLE, aspect, NEAR_CLIP, FAR_CLIP);
+    gluPerspective(fov_angle, aspect, NEAR_CLIP, FAR_CLIP);
     glMatrixMode(GL_MODELVIEW);
 
     // Tell the underlying simulation that it's window

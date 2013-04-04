@@ -177,8 +177,12 @@ class SolarSystem : public AbstractGraphicsEngine, public RenderQualityObserver 
         int last_mouse_wheel_position;
         int mouse_wheel_differential;
 
+        GLdouble fov_angle;
+
         /// Overall rendering parameters.
-        static const GLdouble FOV_ANGLE;
+        static const GLdouble FOV_ANGLE_MIN;
+        static const GLdouble FOV_ANGLE_MAX;
+        static const GLdouble FOV_ANGLE_INITIAL;
         static const GLdouble NEAR_CLIP;
         static const GLdouble FAR_CLIP;
         static const int FAR_LOOK_DISTANCE;
