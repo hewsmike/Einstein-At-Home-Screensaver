@@ -207,12 +207,12 @@ Simulation::Simulation(BOINCClientAdapter* boinc_adapter) :
                                         Simulation::SKYGRID_RADIUS,
                                         72),
                                overlay(),
-                               north_panel(HUDFlowLayout::VERTICAL),
-                               south_panel(HUDFlowLayout::HORIZONTAL),
-                               east_panel(HUDFlowLayout::VERTICAL),
-                               west_panel(HUDFlowLayout::VERTICAL),
-                               south_west_panel(HUDFlowLayout::VERTICAL),
-                               south_centre_panel(HUDFlowLayout::VERTICAL),
+                               north_panel(HUDContainer::VERTICAL),
+                               south_panel(HUDContainer::HORIZONTAL),
+                               east_panel(HUDContainer::VERTICAL),
+                               west_panel(HUDContainer::VERTICAL),
+                               south_west_panel(HUDContainer::VERTICAL),
+                               south_centre_panel(HUDContainer::VERTICAL),
                                south_east_panel(),
                                BC_adapter(boinc_adapter) {
     // Starting values of simulation parameters.
@@ -417,19 +417,19 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
     west_panel.erase();
 
     // Set panel justifications.
-    north_panel.setPrimaryJustification(HUDFlowLayout::START);
-    north_panel.setSecondaryJustification(HUDFlowLayout::MIDDLE);
-    south_panel.setPrimaryJustification(HUDFlowLayout::START_AND_END);
-    south_panel.setSecondaryJustification(HUDFlowLayout::PROXIMAL);
-    east_panel.setPrimaryJustification(HUDFlowLayout::CENTRE);
-    east_panel.setSecondaryJustification(HUDFlowLayout::DISTAL);
-    west_panel.setPrimaryJustification(HUDFlowLayout::CENTRE);
-    west_panel.setSecondaryJustification(HUDFlowLayout::PROXIMAL);
+    north_panel.setPrimaryJustification(HUDContainer::START);
+    north_panel.setSecondaryJustification(HUDContainer::MIDDLE);
+    south_panel.setPrimaryJustification(HUDContainer::START_AND_END);
+    south_panel.setSecondaryJustification(HUDContainer::PROXIMAL);
+    east_panel.setPrimaryJustification(HUDContainer::CENTRE);
+    east_panel.setSecondaryJustification(HUDContainer::DISTAL);
+    west_panel.setPrimaryJustification(HUDContainer::CENTRE);
+    west_panel.setSecondaryJustification(HUDContainer::PROXIMAL);
 
-    south_west_panel.setPrimaryJustification(HUDFlowLayout::END);
-    south_west_panel.setSecondaryJustification(HUDFlowLayout::PROXIMAL);
-    south_centre_panel.setPrimaryJustification(HUDFlowLayout::END);
-    south_centre_panel.setSecondaryJustification(HUDFlowLayout::MIDDLE);
+    south_west_panel.setPrimaryJustification(HUDContainer::START);
+    south_west_panel.setSecondaryJustification(HUDContainer::DISTAL);
+    south_centre_panel.setPrimaryJustification(HUDContainer::CENTRE);
+    south_centre_panel.setSecondaryJustification(HUDContainer::MIDDLE);
 
     // Put the panels into the border layout.
     overlay.setPanel(HUDBorderLayout::NORTH, &north_panel);
