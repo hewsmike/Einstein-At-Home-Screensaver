@@ -102,8 +102,6 @@ class HUDTextLine : public HUDContent {
         /// Provide OpenGL code to render the object.
         virtual void render(void);
 
-
-
         void setText(const std::string& text);
 
     private:
