@@ -460,7 +460,7 @@ void SolarSystem::setFonts(void) {
     // create font instance using font resource (base address + size)
     HUDFont = new OGLFT_ft(&spaceFontResource->data()->at(0),
                            spaceFontResource->data()->size(),
-                           18, 90);
+                           16, 80);
 
     // Short-circuit .....
     if(HUDFont == NULL || (HUDFont->isValid() == false)) {

@@ -53,10 +53,10 @@ const GLfloat Simulation::SUN_TEXTURE_OFFSET(0.0f);
 const GLuint Simulation::CONSTELLATIONS_RADIUS(SolarSystemGlobals::CELESTIAL_SPHERE_RADIUS);
 
 const GLuint Simulation::PULSARS_RADIUS(SolarSystemGlobals::CELESTIAL_SPHERE_RADIUS - 25);
-const GLfloat Simulation::PULSARS_MAG_SIZE(2.0f);
-const GLfloat Simulation::PULSARS_RGB_RED(0.35f);
-const GLfloat Simulation::PULSARS_RGB_GREEN(0.15f);
-const GLfloat Simulation::PULSARS_RGB_BLUE(0.38f);
+const GLfloat Simulation::PULSARS_MAG_SIZE(3.0f);
+const GLfloat Simulation::PULSARS_RGB_RED(0.45f);
+const GLfloat Simulation::PULSARS_RGB_GREEN(0.25f);
+const GLfloat Simulation::PULSARS_RGB_BLUE(0.48f);
 
 const GLuint Simulation::PULSARS_EAH_RADIUS(SolarSystemGlobals::CELESTIAL_SPHERE_RADIUS - 75);
 const GLfloat Simulation::PULSARS_EAH_MAG_SIZE(4.0f);
@@ -65,7 +65,7 @@ const GLfloat Simulation::PULSARS_EAH_RGB_GREEN(0.60f);
 const GLfloat Simulation::PULSARS_EAH_RGB_BLUE(0.20f);
 
 const GLuint Simulation::SUPERNOVAE_RADIUS(SolarSystemGlobals::CELESTIAL_SPHERE_RADIUS - 50);
-const GLfloat Simulation::SUPERNOVAE_MAG_SIZE(2.0f);
+const GLfloat Simulation::SUPERNOVAE_MAG_SIZE(3.0f);
 const GLfloat Simulation::SUPERNOVAE_RGB_RED(0.40f);
 const GLfloat Simulation::SUPERNOVAE_RGB_GREEN(0.35f);
 const GLfloat Simulation::SUPERNOVAE_RGB_BLUE(1.00f);
@@ -211,9 +211,10 @@ Simulation::Simulation(BOINCClientAdapter* boinc_adapter) :
                                south_panel(HUDFlowLayout::HORIZONTAL),
                                east_panel(HUDFlowLayout::VERTICAL),
                                west_panel(HUDFlowLayout::VERTICAL),
-                               south_west_panel(HUDFlowLayout::VERTICAL),
+                               south_east_panel(HUDFlowLayout::VERTICAL),
                                south_centre_panel(HUDFlowLayout::VERTICAL),
-                               south_east_panel(),
+                               south_west_panel(HUDFlowLayout::VERTICAL),
+                               south_west_upper_panel(),
                                BC_adapter(boinc_adapter) {
     // Starting values of simulation parameters.
     frame_number = 0;
@@ -284,8 +285,7 @@ void Simulation::step(void) {
         AutoPilot::description_change change_flag = pilot.hasDescriptionChanged();
         if(change_flag != AutoPilot::NONE) {
             north_panel.erase();
-            std::cout << "Simulation::step() : erase south_west_panel" << std::endl;
-            south_west_panel.erase();
+            south_east_panel.erase();
             switch(change_flag) {
                 case AutoPilot::ADDED :
                     loadLookoutDataToPanels();
@@ -408,6 +408,7 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
 
     // First empty the panels, as we may be recycling.
     south_east_panel.erase();
+    south_west_upper_panel.erase();
     south_west_panel.erase();
     south_centre_panel.erase();
 
@@ -426,10 +427,12 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
     west_panel.setPrimaryJustification(HUDFlowLayout::CENTRE);
     west_panel.setSecondaryJustification(HUDFlowLayout::PROXIMAL);
 
-    south_west_panel.setPrimaryJustification(HUDFlowLayout::END);
-    south_west_panel.setSecondaryJustification(HUDFlowLayout::PROXIMAL);
+    south_east_panel.setPrimaryJustification(HUDFlowLayout::END);
+    south_east_panel.setSecondaryJustification(HUDFlowLayout::DISTAL);
     south_centre_panel.setPrimaryJustification(HUDFlowLayout::END);
     south_centre_panel.setSecondaryJustification(HUDFlowLayout::MIDDLE);
+    south_west_panel.setPrimaryJustification(HUDFlowLayout::END);
+    south_west_panel.setSecondaryJustification(HUDFlowLayout::PROXIMAL);
 
     // Put the panels into the border layout.
     overlay.setPanel(HUDBorderLayout::NORTH, &north_panel);
@@ -437,28 +440,31 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
     overlay.setPanel(HUDBorderLayout::EAST, &east_panel);
     overlay.setPanel(HUDBorderLayout::WEST, &west_panel);
 
+    //
+    south_west_panel.addItem(&south_west_upper_panel);
+
     // Within south panel put sub-panels.
     south_panel.addItem(&south_west_panel);
     south_panel.addItem(&south_centre_panel);
     south_panel.addItem(&south_east_panel);
 
     version_text = new HUDTextLineScroll(35,
-                                         "               http://einstein.phys.uwm.edu",
-                                         10, 10, HUDTextLineScroll::LEFT, 10);
+                                         "PLEASE JOIN US AT  http://einstein.phys.uwm.edu    ......    ",
+                                         10, 20, HUDTextLineScroll::LEFT, 10);
     if(version_text == NULL) {
         std::string msg = "Simulation::prepare() - failed creation of HUDTextLineScroll instance on heap";
         ErrorHandler::record(msg, ErrorHandler::FATAL);
         }
-    south_centre_panel.addItem(version_text);
+    south_west_panel.addItem(version_text);
 
-    south_east_panel.addItem(new HUDImage("aeiTGA", 10, 10));
-    south_east_panel.addItem(new HUDImage("boincTGA", 10,10));
-    south_east_panel.addItem(new HUDImage("fermiTGA", 10, 10));
-    south_east_panel.addItem(new HUDImage("geoTGA", 10,10));
-    south_east_panel.addItem(new HUDImage("ligoTGA", 10,10));
-    south_east_panel.addItem(new HUDImage("palfaTGA", 10,10));
-    south_east_panel.addItem(new HUDImage("virgoTGA", 10,10));
-    south_east_panel.addItem(new HUDImage("wypTGA", 10, 10));
+    south_west_upper_panel.addItem(new HUDImage("aeiTGA", 10, 10));
+    south_west_upper_panel.addItem(new HUDImage("boincTGA", 10,10));
+    south_west_upper_panel.addItem(new HUDImage("fermiTGA", 10, 10));
+    south_west_upper_panel.addItem(new HUDImage("geoTGA", 10,10));
+    south_west_upper_panel.addItem(new HUDImage("ligoTGA", 10,10));
+    south_west_upper_panel.addItem(new HUDImage("palfaTGA", 10,10));
+    south_west_upper_panel.addItem(new HUDImage("virgoTGA", 10,10));
+    south_west_upper_panel.addItem(new HUDImage("wypTGA", 10, 10));
 
     overlay.activate();
     }
@@ -2832,24 +2838,17 @@ void Simulation::cycle(SolarSystemGlobals::content ct) {
             // overlay.cycleActivation();
             break;
         case SolarSystemGlobals::AUTOPILOT:
-            if(pilot.isActive() == true) {
-                // When returning to user control ...
                 north_panel.erase();
-                west_panel.erase();
-
                 flyboy.manouevre(Craft::STOP_ROTATION);
                 flyboy.manouevre(Craft::STOP_TRANSLATION);
+            if(pilot.isActive() == true) {
+                // When returning to user control ...
                 flyboy.setViewState(pilot.viewState());
                 pilot.inactivate();
                 target.inactivate();
                 }
             else {
                 // When enabling autopilot ....
-                north_panel.erase();
-                west_panel.erase();
-
-                flyboy.manouevre(Craft::STOP_ROTATION);
-                flyboy.manouevre(Craft::STOP_TRANSLATION);
                 /// TODO Choice between Traversable objects ....
                 CameraState current = flyboy.viewState();
 
@@ -3100,11 +3099,11 @@ void Simulation::loadLookoutDataToPanels(void) {
     north_panel.activate();
 
     // Then put new image(s), if any, into the south_west panel.
-    HUDImage* hip = new HUDImage(pilot.getImageResourceName(),10,10);
+    HUDImage* hip = new HUDImage(pilot.getImageResourceName(),5,5);
     hip->activate();
-    south_west_panel.addItem(hip);
+    south_east_panel.addItem(hip);
 
-    south_west_panel.activate();
+    south_east_panel.activate();
     }
 
 void Simulation::includeUserInformation(HUDFlowLayout* container) {

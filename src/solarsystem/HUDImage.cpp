@@ -153,7 +153,6 @@ void HUDImage::loadTexture() {
         glBindTexture(GL_TEXTURE_2D, texture.ID());
 
         // With a ResourceFactory instance create a texture resource instance.
-        std::cout << "HUDImage::loadTexture() : image_resource_name = \"" << image_resource_name << "\"" << std::endl;
         ResourceFactory factory;
         const Resource* textureResource = factory.createInstance(image_resource_name.c_str());
 

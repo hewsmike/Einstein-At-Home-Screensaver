@@ -97,7 +97,7 @@ void HUDTextLine::release(void) {
 
 void HUDTextLine::render(void) {
     lineFont->draw(horzBase() + horzMargin(),
-                   vertBase() + vertMargin() + this->height()/4, txt.substr(0, len).c_str());
+                   vertBase() + vertMargin() + this->height()/8, txt.substr(0, len).c_str());
     }
 
 std::string HUDTextLine::text(void) const {

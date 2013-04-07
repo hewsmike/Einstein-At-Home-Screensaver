@@ -122,15 +122,14 @@ void HUDLogoCycle::allocateItemBases(void) {
             ++item) {
             HUDItem* logo = (*item).second;
 
-                        // How much whitespace do we have in each direction to play with?
-            GLuint horz_whitespace = this->minWidth() - logo->minWidth();
-            GLuint vert_whitespace = this->minHeight() - logo->minHeight();
+            // How much whitespace do we have in each direction to play with?
+            //GLuint horz_whitespace = this->minWidth() - logo->minWidth();
+            //GLuint vert_whitespace = this->minHeight() - logo->minHeight();
 
             // For a given amount of horizontal axis whitespace then
-            // how is that to be divided? Policy is to be centred in
-            // both axes, regardless of base class nomination.
-            logo->reBase(this->horzBase() + horz_whitespace/2,
-                         this->vertBase() + vert_whitespace/2);
+            // how is that to be divided? Policy is to be situated in
+            // the bottom left, regardless of base class nomination.
+            logo->reBase(this->horzBase(), this->vertBase());
             }
         }
     }
