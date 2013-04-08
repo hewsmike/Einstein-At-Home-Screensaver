@@ -143,15 +143,15 @@ bool WindowManager::initialize(const int width, const int height, const int fram
     fullscreen.BlueBits = current_desktop_mode.BlueBits;
 
     // check fullscreen video mode.
-    m_FullscreenModeAvailable = false;
+    m_FullscreenModeAvailable = true;
     // TODO - write case(s) for close matches
-    if(matchVideoMode(fullscreen) == WindowManager::MATCH_EXACT) {
-        m_FullscreenModeAvailable = true;
-        ErrorHandler::record("WindowManager::initialize() : Fullscreen video mode is supported", ErrorHandler::INFORM);
-        }
-    else {
-        ErrorHandler::record("WindowManager::initialize() : Fullscreen video mode not supported", ErrorHandler::WARN);
-        }
+//    if(matchVideoMode(fullscreen) == WindowManager::MATCH_EXACT) {
+//        m_FullscreenModeAvailable = true;
+//        ErrorHandler::record("WindowManager::initialize() : Fullscreen video mode is supported", ErrorHandler::INFORM);
+//        }
+//    else {
+//        ErrorHandler::record("WindowManager::initialize() : Fullscreen video mode not supported", ErrorHandler::WARN);
+//        }
 
     // Form structure for windowed mode.
     GLFWvidmode windowed;
@@ -195,7 +195,7 @@ bool WindowManager::initialize(const int width, const int height, const int fram
                                      current_desktop_mode.RedBits,			// Alpha range same as individual colors
                                      best_depth_buffer_grain,
                                      NO_STENCIL,
-                                     GLFW_WINDOW);
+                                     GLFW_FULLSCREEN);
 
     // If that didn't work, then maybe it was the depth buffer,
     // and try again with a lesser spec.
@@ -208,7 +208,7 @@ bool WindowManager::initialize(const int width, const int height, const int fram
                                         current_desktop_mode.RedBits,    // Alpha range same as individual colors
                                         best_depth_buffer_grain,
                                         NO_STENCIL,
-                                        GLFW_WINDOW);
+                                        GLFW_FULLSCREEN);
 
     // Did that work?
     if(window_open == GL_FALSE) {
@@ -746,11 +746,11 @@ void WindowManager::toggleFullscreen(void) {
                                          desiredMode);
 
         // Did that request work?
-    if(window_open == GL_FALSE) {
+    //if(window_open == GL_FALSE) {
         // It would be pretty screwy if we got here, so fail out.
-        ErrorHandler::record("WindowManager::toggleFullscreen() : Could not acquire rendering surface", ErrorHandler::FATAL);
-        }
-    else {
+    //    ErrorHandler::record("WindowManager::toggleFullscreen() : Could not acquire rendering surface", ErrorHandler::FATAL);
+     //   }
+    //else {
         // Give GLEW the best chance of finding
         // functionality with experimental drivers.
         glewExperimental = GL_TRUE;
@@ -765,7 +765,7 @@ void WindowManager::toggleFullscreen(void) {
             msg += ErrorHandler::convertGLstring(glewGetString(GLEW_VERSION));
             ErrorHandler::record(msg, ErrorHandler::INFORM);
             }
-        }
+        //}
 
         // All is good, so toggle state flag.
         isFullScreenMode = !isFullScreenMode;
