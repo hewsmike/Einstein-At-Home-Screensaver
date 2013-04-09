@@ -37,10 +37,10 @@ LOGFILE=$ROOT/build.log
 TAG_GFXAPPS="current_gfx_apps"
 
 # For some source fetches we use version strings.
-GLEW_VERSION=1.7.0
-GLFW_VERSION=2.7.5
+GLEW_VERSION=1.9.0
+GLFW_VERSION=2.7.8
 FREETYPE_VERSION=2.4.11
-LIBXML_VERSION=2.6.32
+LIBXML_VERSION=2.9.0
 
 # Target variants.
 TARGET_NONE=0
