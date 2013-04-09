@@ -2543,12 +2543,6 @@ void Constellations::loadIndexBuffer(void) {
 void Constellations::createMarkerLists(void) {
     // Get the OGLFT font for this class.
     OGLFT_ft* myFont = this->getFont();
-    if(myFont == NULL) {
-        std::cout << "Constellations::createMarkerLists() : null font!!" << std::endl;
-        }
-    else {
-        std::cout << "Constellations::createMarkerLists() : NON-null font!!" << std::endl;
-        }
 
     // This destroys any contained vectors too ...
     marker_lists.clear();

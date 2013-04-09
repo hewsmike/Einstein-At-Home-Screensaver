@@ -135,8 +135,8 @@ bool WindowManager::initialize(const int width, const int height, const int fram
     glfwOpenWindowHint(GLFW_OPENGL_VERSION_MAJOR, OPEN_GL_VERSION_MINIMUM_MAJOR);
     glfwOpenWindowHint(GLFW_OPENGL_VERSION_MINOR, OPEN_GL_VERSION_MINIMUM_MINOR);
 
-    // Start in windowed mode at whatever is the user's current settings for their desktop.
-    setWindowedMode(m_DesktopWidth, m_DesktopHeight);
+    // Start in full screen mode at whatever is the user's current settings for their desktop.
+    setFullScreenMode();
 
     // Manage Windows OpenGL backwards compatibility issue.
 #ifdef WIN_OGL_WORKAROUND
@@ -259,8 +259,10 @@ void WindowManager::eventLoop(void) {
 
             else if((current_event.type == Events::ResizeEventType) &&
                     (resize_invoked == false)) {
-                setWindowedMode(current_event.resize.width,
-                                current_event.resize.height);
+                m_WindowedWidth = current_event.resize.width;
+                m_WindowedHeight = current_event.resize.height;
+
+                setWindowedMode();
 
                 eventObservers.front()->initialize(m_CurrentWidth, m_CurrentHeight, 0, true);
                 resize_invoked = true;
@@ -552,10 +554,7 @@ void WindowManager::toggleFullscreen(void) {
     if(isFullScreenMode) {
         // In fullscreen mode, so go to windowed mode.
         // Set dimensions for whatever was the previous windowed mode.
-        setFullScreenMode(m_WindowedWidth, m_WindowedHeight);
-
-        m_CurrentWidth = m_WindowedWidth;
-        m_CurrentHeight = m_WindowedHeight;
+        setFullScreenMode();
 
         // Show cursor in windowed mode.
         glfwEnable(GLFW_MOUSE_CURSOR);
@@ -565,10 +564,7 @@ void WindowManager::toggleFullscreen(void) {
     else {
         // In windowed mode, so go to fullscreen mode.
         // Set dimensions of fullscreen as those of user's desktop.
-        setWindowedMode(m_DesktopWidth, m_DesktopHeight);
-
-        m_CurrentWidth = m_DesktopWidth;
-        m_CurrentHeight = m_DesktopHeight;
+        setWindowedMode();
 
         // Hide cursor in fullscreen mode.
         glfwDisable(GLFW_MOUSE_CURSOR);
@@ -582,50 +578,18 @@ void WindowManager::toggleFullscreen(void) {
 void WindowManager::setScreensaverMode(const bool choice) {
     m_ScreensaverMode = choice;
     if(choice) {
-        // We desire screensaver mode. That means a fullscreen
-        // display plus exit on any mouse or keyboard input.
-        setFullScreenMode();
+        // We desire screensaver mode.
         m_ScreensaverMode = true;
         }
     else {
-        // We desire non-screensaver mode, thus regardless of
-        // video mode ( window or fullscreen, which we wont
-        // change ), then exit is via 'usual' means.
+        // We desire non-screensaver mode.
         m_ScreensaverMode = false;
         }
     }
-  // Assume failure.
-    int ret_val = WindowManager::MATCH_NONE;
 
-    // What is the total color depth in bits ?
-    int desired_color_depth = test_case.RedBits + test_case.GreenBits + test_case.BlueBits;
-
-    /// TODO - create code for nearest match case(s) ???
-
-    // Search thru all the known video modes.
-    for(std::vector<GLFWvidmode>::const_iterator vm = video_modes.begin();
-        vm < video_modes.end();
-        ++vm) {
-        // The total color depth of this particular mode.
-        int current_color_depth = vm->RedBits + vm->GreenBits + vm->BlueBits;
-        // Do we match on color depth?
-        if(current_color_depth == desired_color_depth) {
-            // Yes, so look at width and height now.
-            if((test_case.Width == vm->Width) &&
-               (test_case.Height == vm->Height)){
-            // All parameters match so exit with flag to indicate success.
-            ret_val = WindowManager::MATCH_EXACT;
-            break;
-            }
-        }
-    }
-
-    return ret_val;
-    }
-
-void setWindowedMode(int width, int height) {
+void WindowManager::setWindowedMode(void) {
     // Attempt to obtain a window.
-    if(tryMode(width, height, GLFW_WINDOW) == GL_FALSE) {
+    if(tryMode(m_WindowedWidth, m_WindowedHeight, GLFW_WINDOW) == GL_FALSE) {
         ErrorHandler::record("WindowManager::setWindowedMode() : Could not acquire rendering surface", ErrorHandler::WARN);
         }
     else {
@@ -636,9 +600,9 @@ void setWindowedMode(int width, int height) {
         }
     }
 
-void setFullScreenMode(int width, int height) {
+void WindowManager::setFullScreenMode(void) {
     // Attempt to obtain a fullscreen.
-    if(tryMode(width, height, GLFW_FULLSCREEN) == GL_FALSE) {
+    if(tryMode(m_DesktopWidth, m_DesktopHeight, GLFW_FULLSCREEN) == GL_FALSE) {
         ErrorHandler::record("WindowManager::setFullScreenMode() : Could not acquire rendering surface", ErrorHandler::WARN);
         }
     else {
@@ -646,10 +610,12 @@ void setFullScreenMode(int width, int height) {
         }
     }
 
-bool tryMode(int width, int height, int mode) {
+bool WindowManager::tryMode(int width, int height, int mode) {
     stringstream msg;
     msg << "WindowManager::tryMode() : desiring of width = "
-        << width << "and height = " << height;
+        << width << " and height = " << height
+        << " using mode " << ((mode == GLFW_WINDOW)? "WINDOW" : "FULLSCREEN" )
+        << std::endl;
     ErrorHandler::record(msg.str(), ErrorHandler::INFORM);
 
     int window_open = glfwOpenWindow(width, height,
@@ -662,54 +628,31 @@ bool tryMode(int width, int height, int mode) {
                                      mode);
 
     msg.clear();
-    msg << "WindowManager::tryMode() : glfwOpenWindow() first attempt returned "
-        << ((window_open == GL_TRUE) ? "true" : "false");
+    msg << "WindowManager::tryMode() : glfwOpenWindow() attempt returned "
+        << ((window_open == GL_TRUE) ? "true" : "false") << std::endl;
     ErrorHandler::record(msg.str(), ErrorHandler::INFORM);
 
-    // If that didn't work, then maybe it was the depth buffer,
-    // thus try again with a lesser spec.
-    if(window_open == GL_FALSE) {
-        best_depth_buffer_grain = DEPTH_BUFFER_GRAIN_FALLBACK;
-        window_open = glfwOpenWindow(width, height,
-                                         current_desktop_mode.RedBits,
-                                         current_desktop_mode.GreenBits,
-                                         current_desktop_mode.BlueBits,
-                                         current_desktop_mode.RedBits,    // Alpha range same as individual colors
-                                         best_depth_buffer_grain,
-                                         NO_STENCIL,
-                                         mode);
-        msg.clear();
-        msg << "WindowManager::tryMode() : glfwOpenWindow() second attempt returned "
-            << ((window_open == GL_TRUE) ? "true" : "false");
-        ErrorHandler::record(msg.str(), ErrorHandler::INFORM);
-        }
+    // Inquire as to the actual client area obtained.
+    glfwGetWindowSize(&m_CurrentWidth,& m_CurrentHeight);
 
-    if(window_open == GL_FALSE) {
-        ErrorHandler::record("WindowManager::tryMode() : Could not acquire rendering surface", ErrorHandler::FATAL);
-        }
-    else {
-        // Inquire as to the actual client area obtained.
-        glfwGetWindowSize(&m_CurrentWidth,& m_CurrentHeight);
+    msg.clear();
+    msg << "WindowManager::tryMode() : Rendering surface acquired "
+        << m_CurrentWidth
+        << " x "
+        << m_CurrentHeight
+        << " @ "
+        << (current_desktop_mode.RedBits + current_desktop_mode.GreenBits + current_desktop_mode.BlueBits)
+        << " colors with a "
+        << best_depth_buffer_grain
+        << " bit depth buffer";
+    ErrorHandler::record(msg.str(), ErrorHandler::INFORM);
 
-        msg.clear();
-        msg << "WindowManager::tryMode() : Rendering surface acquired "
-            << m_CurrentWidth
-            << " x "
-            << m_CurrentHeight
-            << " @ "
-            << (current_desktop_mode.RedBits + current_desktop_mode.GreenBits + current_desktop_mode.BlueBits)
-            << " colors with a "
-            << best_depth_buffer_grain
-            << " bit depth buffer";
-        ErrorHandler::record(msg.str(), ErrorHandler::INFORM);
+    initializeGLEW();
 
-        initializeGLEW();
-        }
-
-    return (window_open = GL_TRUE ? TRUE : FALSE);
+    return (window_open = GL_TRUE ? true : false);
     }
 
-bool initializeGLEW(void) {
+bool WindowManager::initializeGLEW(void) {
     // Assume failure.
     bool ret_val = false;
 

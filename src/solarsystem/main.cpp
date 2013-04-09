@@ -188,15 +188,21 @@ int main(int argc, char **argv) {
         if(param == "--fullscreen") {
             // Set non-interactive mode ie. 'screensaver'
             // (must do this first on Apple).
+            window.setFullScreenMode();
             window.setScreensaverMode(true);
             }
-        if(param == "--fullscreen" || param == "--demo") {
+        else if(param == "--fullscreen" || param == "--demo") {
             // Switch to fullscreen.
             // (on windoze: after init!)
-            window.toggleFullscreen();
+            window.setFullScreenMode();
+            window.setScreensaverMode(false);
 #ifdef __APPLE__
             SetMacSSLevel();
 #endif
+            }
+        else {
+            window.setWindowedMode();
+            window.setScreensaverMode(false);
             }
         }
 

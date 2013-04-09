@@ -162,6 +162,10 @@ class WindowManager {
          */
         void setWindowIcon(const unsigned char *data, const int size) const;
 
+        void setWindowedMode(void);
+
+        void setFullScreenMode(void);
+
         /**
          * \brief Toggles the fullscreen state of the main window.
          */
@@ -207,10 +211,6 @@ class WindowManager {
          */
         bool setOGLContext(void);
 #endif
-
-        void setWindowedMode(int width, int height);
-
-        void setFullScreenMode(int width, int height);
 
         bool tryMode(int width, int height, int mode);
 
