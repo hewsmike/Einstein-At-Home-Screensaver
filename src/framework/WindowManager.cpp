@@ -647,6 +647,11 @@ void setFullScreenMode(int width, int height) {
     }
 
 bool tryMode(int width, int height, int mode) {
+    stringstream msg;
+    msg << "WindowManager::tryMode() : desiring of width = "
+        << width << "and height = " << height;
+    ErrorHandler::record(msg.str(), ErrorHandler::INFORM);
+
     int window_open = glfwOpenWindow(width, height,
                                      current_desktop_mode.RedBits,
                                      current_desktop_mode.GreenBits,
@@ -656,10 +661,10 @@ bool tryMode(int width, int height, int mode) {
                                      NO_STENCIL,
                                      mode);
 
-    stringstream msg1;
-    msg1 << "WindowManager::tryMode() : glfwOpenWindow() first attempt returned "
-         << ((window_open == GL_TRUE) ? "true" : "false");
-    ErrorHandler::record(msg1.str(), ErrorHandler::INFORM);
+    msg.clear();
+    msg << "WindowManager::tryMode() : glfwOpenWindow() first attempt returned "
+        << ((window_open == GL_TRUE) ? "true" : "false");
+    ErrorHandler::record(msg.str(), ErrorHandler::INFORM);
 
     // If that didn't work, then maybe it was the depth buffer,
     // thus try again with a lesser spec.
@@ -673,10 +678,10 @@ bool tryMode(int width, int height, int mode) {
                                          best_depth_buffer_grain,
                                          NO_STENCIL,
                                          mode);
-        stringstream msg2;
-        msg2 << "WindowManager::tryMode() : glfwOpenWindow() second attempt returned "
-             << ((window_open == GL_TRUE) ? "true" : "false");
-        ErrorHandler::record(msg2.str(), ErrorHandler::INFORM);
+        msg.clear();
+        msg << "WindowManager::tryMode() : glfwOpenWindow() second attempt returned "
+            << ((window_open == GL_TRUE) ? "true" : "false");
+        ErrorHandler::record(msg.str(), ErrorHandler::INFORM);
         }
 
     if(window_open == GL_FALSE) {
@@ -686,7 +691,7 @@ bool tryMode(int width, int height, int mode) {
         // Inquire as to the actual client area obtained.
         glfwGetWindowSize(&m_CurrentWidth,& m_CurrentHeight);
 
-        std::stringstream msg;
+        msg.clear();
         msg << "WindowManager::tryMode() : Rendering surface acquired "
             << m_CurrentWidth
             << " x "
