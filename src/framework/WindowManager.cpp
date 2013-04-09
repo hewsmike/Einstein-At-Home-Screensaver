@@ -631,9 +631,6 @@ void setWindowedMode(int width, int height) {
     else {
         isFullScreenMode = false;
 
-        m_CurrentWidth = width;
-        m_CurrentHeight = height;
-
         m_WindowedWidth = m_CurrentWidth;
         m_WindowedHeight = m_CurrentHeight;
         }
@@ -646,9 +643,6 @@ void setFullScreenMode(int width, int height) {
         }
     else {
         isFullScreenMode = true;
-
-        m_CurrentWidth = width;
-        m_CurrentHeight = height;
         }
     }
 
@@ -662,6 +656,11 @@ bool tryMode(int width, int height, int mode) {
                                      NO_STENCIL,
                                      mode);
 
+    stringstream msg1;
+    msg1 << "WindowManager::tryMode() : glfwOpenWindow() first attempt returned "
+         << ((window_open == GL_TRUE) ? "true" : "false");
+    ErrorHandler::record(msg1.str(), ErrorHandler::INFORM);
+
     // If that didn't work, then maybe it was the depth buffer,
     // thus try again with a lesser spec.
     if(window_open == GL_FALSE) {
@@ -674,14 +673,19 @@ bool tryMode(int width, int height, int mode) {
                                          best_depth_buffer_grain,
                                          NO_STENCIL,
                                          mode);
+        stringstream msg2;
+        msg2 << "WindowManager::tryMode() : glfwOpenWindow() second attempt returned "
+             << ((window_open == GL_TRUE) ? "true" : "false");
+        ErrorHandler::record(msg2.str(), ErrorHandler::INFORM);
         }
 
     if(window_open == GL_FALSE) {
         ErrorHandler::record("WindowManager::tryMode() : Could not acquire rendering surface", ErrorHandler::FATAL);
         }
     else {
-        m_CurrentWidth = width;
-        m_CurrentHeight = height;
+        // Inquire as to the actual client area obtained.
+        glfwGetWindowSize(&m_CurrentWidth,& m_CurrentHeight);
+
         std::stringstream msg;
         msg << "WindowManager::tryMode() : Rendering surface acquired "
             << m_CurrentWidth
