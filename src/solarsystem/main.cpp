@@ -94,6 +94,8 @@ int main(int argc, char **argv) {
         ErrorHandler::record("SolarSystem::main() : Requested graphics engine could not be found/instantiated!", ErrorHandler::FATAL);
         }
 
+    // Attempt to initialise our WindowManager,
+    // if succeeds then will be in windowed mode.
     if(window.initialize() != true) {
         // Failure, so destroy the AbstractGraphicsEngine and ...
         delete graphics;
@@ -179,6 +181,7 @@ int main(int argc, char **argv) {
     /// TODO - when GLFW 3.x arrives, put in a window icon as well.
     window.setWindowCaption("Einstein@Home");
 
+    window.setScreensaverMode(false);
     // Check other optional command line parameters
     if(argc == 2) {
         string param(argv[1]);

@@ -164,18 +164,16 @@ class WindowManager {
 
         /**
          * \brief Toggles the fullscreen state of the main window.
-         *
-         * Note: the initial state is windowed, not fullscreen.
          */
         void toggleFullscreen(void);
 
         /**
          * \brief Set the screensaver mode indicator.
          *
-         * When enabled, all user input will cause the application to quit
-         * (common screensaver behavior)
+         *      When enabled, all user input will cause the application to quit
+         * (common screensaver behavior).
          *
-         * \param enabled The new value for the screensaver mode indicator
+         * \param choice : the new value for the screensaver mode indicator
          */
         void setScreensaverMode(const bool enabled);
 
@@ -189,9 +187,6 @@ class WindowManager {
         void getOGLVersion(GLuint* major, GLuint* minor);
 
     private:
-        /// Identifiers for video match results.
-        enum match {MATCH_NONE, MATCH_CLOSE, MATCH_EXACT};
-
         /// Minimum OpenGL version requirements.
         static unsigned int OPEN_GL_VERSION_MINIMUM_MAJOR;
         static unsigned int OPEN_GL_VERSION_MINIMUM_MINOR;
@@ -203,21 +198,8 @@ class WindowManager {
         /// Stencil option.
         static int NO_STENCIL;
 
-        /// Store the disclosed video modes here.
-        std::vector<GLFWvidmode> video_modes;
-
         /// What was the best depth buffer resolution found ?
         int best_depth_buffer_grain;
-
-        /**
-         * \brief Get a listing of all available video modes
-         */
-        void getVideoModes(void);
-
-        /**
-         * \brief Assess match b/w requested and available video modes.
-         */
-        int matchVideoMode(GLFWvidmode test_case);
 
 #ifdef WIN_OGL_WORKAROUND
         /**
@@ -225,6 +207,14 @@ class WindowManager {
          */
         bool setOGLContext(void);
 #endif
+
+        void setWindowedMode(int width, int height);
+
+        void setFullScreenMode(int width, int height);
+
+        bool tryMode(int width, int height, int mode);
+
+        bool initializeGLEW(void);
 
         /**
          * \brief Tokenise a given string using a given delimiter character
@@ -265,12 +255,6 @@ class WindowManager {
 
         /// The height of the application window (windowed mode only)
         int m_WindowedHeight;
-
-        /// Indicator for fullscreen mode availability ie. can such be achieved ?
-        bool m_FullscreenModeAvailable;
-
-        /// Indicator for desired window mode availability ie. can such be achieved ?
-        bool m_WindowedModeAvailable;
 
         /// The screensaver mode indicator ie. was it requested ?
         bool m_ScreensaverMode;
