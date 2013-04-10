@@ -191,20 +191,15 @@ int main(int argc, char **argv) {
             window.setFullScreenMode();
             window.setScreensaverMode(true);
             }
-        else if(param == "--fullscreen" || param == "--demo") {
+        if(param == "--fullscreen" || param == "--demo") {
             // Switch to fullscreen.
             // (on windoze: after init!)
             window.setFullScreenMode();
-            window.setScreensaverMode(false);
 #ifdef __APPLE__
             SetMacSSLevel();
 #endif
             }
-        else {
-            window.setWindowedMode();
-            window.setScreensaverMode(false);
-            }
-        }
+         }
 
     // enter main event loop, but first flush any events.
     Events::Instance(0)->flush();

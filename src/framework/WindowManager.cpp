@@ -136,7 +136,7 @@ bool WindowManager::initialize(const int width, const int height, const int fram
     glfwOpenWindowHint(GLFW_OPENGL_VERSION_MINOR, OPEN_GL_VERSION_MINIMUM_MINOR);
 
     // Start in full screen mode at whatever is the user's current settings for their desktop.
-    setFullScreenMode();
+    setWindowedMode();
 
     // Manage Windows OpenGL backwards compatibility issue.
 #ifdef WIN_OGL_WORKAROUND
@@ -617,6 +617,9 @@ bool WindowManager::tryMode(int width, int height, int mode) {
         << " using mode " << ((mode == GLFW_WINDOW)? "WINDOW" : "FULLSCREEN" )
         << std::endl;
     ErrorHandler::record(msg.str(), ErrorHandler::INFORM);
+
+    // Eliminate any existing window/fullscreen !!
+    glfwCloseWindow();
 
     int window_open = glfwOpenWindow(width, height,
                                      current_desktop_mode.RedBits,
