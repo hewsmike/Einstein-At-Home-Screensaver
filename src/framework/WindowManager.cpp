@@ -34,6 +34,7 @@ unsigned int WindowManager::OPEN_GL_VERSION_MINIMUM_MINOR(5);
 int WindowManager::DEPTH_BUFFER_GRAIN(24);
 int WindowManager::DEPTH_BUFFER_GRAIN_FALLBACK(16);
 int WindowManager::NO_STENCIL(0);
+int WindowManager::VERTICAL_RETRACE_COUNT(1);
 
 WindowManager::WindowManager(void) {
     m_ScreensaverMode = false;
@@ -73,6 +74,10 @@ bool WindowManager::initialize(const int width, const int height, const int fram
 
     // GLFW is up and running by now, and glfwInit() has put a callback in
     // place for GLFW cleanup on normal program exit ie. atexit(glfwTerminate)
+
+    // Determines that a buffer swap ought await the
+    // return of the raster line to the top of the screen.
+    glfwSwapInterval(VERTICAL_RETRACE_COUNT);
 
     // Retrieve current video hardware settings for the user's desktop.
     glfwGetDesktopMode(&current_desktop_mode);
@@ -587,7 +592,7 @@ void WindowManager::setScreensaverMode(const bool choice) {
         }
     }
 
-void WindowManager::setWindowedMode(void) {
+bool WindowManager::setWindowedMode(void) {
     // Attempt to obtain a window.
     if(tryMode(m_WindowedWidth, m_WindowedHeight, GLFW_WINDOW) == GL_FALSE) {
         ErrorHandler::record("WindowManager::setWindowedMode() : Could not acquire rendering surface", ErrorHandler::WARN);
@@ -598,9 +603,11 @@ void WindowManager::setWindowedMode(void) {
         m_WindowedWidth = m_CurrentWidth;
         m_WindowedHeight = m_CurrentHeight;
         }
+
+    return !isFullScreenMode;
     }
 
-void WindowManager::setFullScreenMode(void) {
+bool WindowManager::setFullScreenMode(void) {
     // Attempt to obtain a fullscreen.
     if(tryMode(m_DesktopWidth, m_DesktopHeight, GLFW_FULLSCREEN) == GL_FALSE) {
         ErrorHandler::record("WindowManager::setFullScreenMode() : Could not acquire rendering surface", ErrorHandler::WARN);
@@ -608,11 +615,16 @@ void WindowManager::setFullScreenMode(void) {
     else {
         isFullScreenMode = true;
         }
+
+    return isFullScreenMode;
     }
 
 bool WindowManager::tryMode(int width, int height, int mode) {
+    // For this routine interpret 'window' as an OpenGL context
+    // which may be EITHER a "OS window" OR a fullscreen.
+
     stringstream msg;
-    msg << "WindowManager::tryMode() : desiring of width = "
+    msg << "WindowManager::tryMode() : attempt width = "
         << width << " and height = " << height
         << " using mode " << ((mode == GLFW_WINDOW)? "WINDOW" : "FULLSCREEN" )
         << std::endl;
@@ -621,6 +633,7 @@ bool WindowManager::tryMode(int width, int height, int mode) {
     // Eliminate any existing window/fullscreen !!
     glfwCloseWindow();
 
+    // See if you can get a rendering surface from the OS.
     int window_open = glfwOpenWindow(width, height,
                                      current_desktop_mode.RedBits,
                                      current_desktop_mode.GreenBits,
@@ -631,26 +644,48 @@ bool WindowManager::tryMode(int width, int height, int mode) {
                                      mode);
 
     msg.clear();
-    msg << "WindowManager::tryMode() : glfwOpenWindow() attempt returned "
+    msg << "WindowManager::tryMode() : glfwOpenWindow() first attempt returned "
         << ((window_open == GL_TRUE) ? "true" : "false") << std::endl;
     ErrorHandler::record(msg.str(), ErrorHandler::INFORM);
 
-    // Inquire as to the actual client area obtained.
-    glfwGetWindowSize(&m_CurrentWidth,& m_CurrentHeight);
+    if(window_open == GL_FALSE) {
+        // It may have failed to open because of the depth buffer choice,
+        // so retry with a lower depth resolution ...
+        best_depth_buffer_grain = DEPTH_BUFFER_GRAIN_FALLBACK;
+        window_open = glfwOpenWindow(width, height,
+                                     current_desktop_mode.RedBits,
+                                     current_desktop_mode.GreenBits,
+                                     current_desktop_mode.BlueBits,
+                                     current_desktop_mode.RedBits,			// Alpha range same as individual colors
+                                     best_depth_buffer_grain,
+                                     NO_STENCIL,
+                                     mode);
 
-    msg.clear();
-    msg << "WindowManager::tryMode() : Rendering surface acquired "
-        << m_CurrentWidth
-        << " x "
-        << m_CurrentHeight
-        << " @ "
-        << (current_desktop_mode.RedBits + current_desktop_mode.GreenBits + current_desktop_mode.BlueBits)
-        << " colors with a "
-        << best_depth_buffer_grain
-        << " bit depth buffer";
-    ErrorHandler::record(msg.str(), ErrorHandler::INFORM);
+        msg.clear();
+        msg << "WindowManager::tryMode() : glfwOpenWindow() second attempt returned "
+            << ((window_open == GL_TRUE) ? "true" : "false") << std::endl;
+        ErrorHandler::record(msg.str(), ErrorHandler::INFORM);
+        }
 
-    initializeGLEW();
+    if(window_open == GL_TRUE) {
+        // Inquire as to the actual client area obtained.
+        glfwGetWindowSize(&m_CurrentWidth,& m_CurrentHeight);
+
+        msg.clear();
+        msg << "WindowManager::tryMode() : Rendering surface acquired "
+            << m_CurrentWidth
+            << " x "
+            << m_CurrentHeight
+            << " @ "
+            << (current_desktop_mode.RedBits + current_desktop_mode.GreenBits + current_desktop_mode.BlueBits)
+            << " colors with a "
+            << best_depth_buffer_grain
+            << " bit depth buffer";
+        ErrorHandler::record(msg.str(), ErrorHandler::INFORM);
+
+        /// TODO Does acquisition of a new rendering surface necessarily imply that GLEW ought be re-initialised ??
+        initializeGLEW();
+        }
 
     return (window_open = GL_TRUE ? true : false);
     }

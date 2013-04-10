@@ -46,14 +46,22 @@ using namespace std;
  *
  *      %WindowManager provides an initialized OpenGL context needed by any
  * given \ref AbstractGraphicsEngine. In addition to that it serves as the main
- * event controller. That means it handles all window and user input events and
+ * event controller. That means it handles all window and user input \ref Events and
  * propagates them to all registered observers of type \ref
- * AbstractGraphicsEngine. This also includes all timer events required for
+ * AbstractGraphicsEngine. This also includes all timer \ref Events required for
  * rendering and information retrieval control.
+ *
+ * \see AbstractGraphicsEngine
+ * \see BOINCClientAdapter
+ * \see ErrorHandler
+ * \see Events
  *
  * \author Oliver Bock\n
  * Max-Planck-Institute for Gravitational Physics\n
  * Hannover, Germany
+ *
+ * \author Mike Hewson
+ * hewsmike[AT]iinet.net.au
  */
 
 class WindowManager {
@@ -67,7 +75,7 @@ class WindowManager {
         /**
          * \brief Initializes the %WindowManager.
          *
-         * Call this method first ( after instantiation ) to prepare the
+         *      Call this method first ( after instantiation ) to prepare the
          * main application window as well as the OpenGL context. Please
          * note that the optional parameters \c width, \c height and \c
          * frameRate are overridden by the values set by the user in the
@@ -162,10 +170,6 @@ class WindowManager {
          */
         void setWindowIcon(const unsigned char *data, const int size) const;
 
-        void setWindowedMode(void);
-
-        void setFullScreenMode(void);
-
         /**
          * \brief Toggles the fullscreen state of the main window.
          */
@@ -202,18 +206,59 @@ class WindowManager {
         /// Stencil option.
         static int NO_STENCIL;
 
+        /// Vertical retracing or 'v-sync', this may have no
+        /// effect - depends upon the OS and video driver.
+        static int VERTICAL_RETRACE_COUNT;
+
         /// What was the best depth buffer resolution found ?
         int best_depth_buffer_grain;
 
 #ifdef WIN_OGL_WORKAROUND
         /**
          * \brief For Windows builds only, set correct OpenGL version context.
+         *
+         * \return boolean indicating success ( TRUE ) or failure ( FALSE )
          */
         bool setOGLContext(void);
 #endif
 
+        /**
+         * \brief Attempt to obtain a rendering surface within an OS
+         *        window.
+         *
+         * \return boolean indicating success ( TRUE ) or failure ( FALSE )
+         */
+        bool setWindowedMode(void);
+
+        /**
+         * \brief Attempt to obtain a rendering surface as an OS
+         *        fullscreen.
+         *
+         * \return boolean indicating success ( TRUE ) or failure ( FALSE )
+         */
+        bool setFullScreenMode(void);
+
+        /**
+         * \brief Attempt to obtain a rendering surface within an OS
+         *        window.
+         *
+         * \param width : horizontal dimensions in pixels.
+         *
+         * \param height : vertical dimensions in pixels.
+         *
+         * \param mode : either GLFW_WINDOW if an OS window is desired or
+         *               GLFW_FULLSCREEN if a fullscreen surface is desired.
+         *
+         * \return boolean indicating success ( TRUE ) or failure ( FALSE )
+         */
         bool tryMode(int width, int height, int mode);
 
+        /**
+         * \brief Initialise the GLEW system, essentially establishing
+         *        dynamic linking to the video driver for OpenGL functionality.
+         *
+         * \return boolean indicating success ( TRUE ) or failure ( FALSE )
+         */
         bool initializeGLEW(void);
 
         /**
@@ -222,7 +267,6 @@ class WindowManager {
          * \param str : the string to tokenise
          * \param delimiter : the character to delimit by
          * \param store : a reference to the container to store the tokens in
-         *
          */
         void tokeniseString(const std::string str, const char delimiter, std::vector<std::string>& store);
 
