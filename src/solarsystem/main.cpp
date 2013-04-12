@@ -84,9 +84,27 @@ int main(int argc, char **argv) {
 #endif
 
     // Instantiate and initialize our window manager.
-    WindowManager window;
+    WindowManager::displaymode mode = WINDOW;
 
-    // Make an AbstractGraphicsEngine on the heap.
+    // Check other optional command line parameters
+    if(argc == 2) {
+        string param(argv[1]);
+        if(param == "--fullscreen") {
+            // Set non-interactive mode ie. 'screensaver'
+            // (must do this first on Apple).
+            mode = WindowManager::SCREENSAVER;
+            }
+        if(param == "--fullscreen" || param == "--demo") {
+            mode = WindowManager::DEMO;
+            }
+         }
+
+    WindowManager window(mode);
+#ifdef __APPLE__
+            SetMacSSLevel();
+#endif
+
+    // Make an AbstractGraphicsEngine on the heap, FATAL on fail.
     // Edit this call for different build sources ie. swap 'Solarsystem' for whatever
     AbstractGraphicsEngine* graphics = GraphicsEngineFactory::createInstance(GraphicsEngineFactory::SolarSystem,
                                                                              scienceApplication);
@@ -103,13 +121,67 @@ int main(int argc, char **argv) {
         ErrorHandler::record("SolarSystem::main() : Window manager could not be initialized!", ErrorHandler::FATAL);
         }
 
+    // Collate and record OpenGL info.
+    openGLReport(&window);
+
+    // Using a ResourceFactory, create font and icon resource instances
+    ResourceFactory factory;
+    const Resource* fontResource = factory.createInstance("FontSansSerif");
+    const Resource* iconResource = factory.createInstance("AppIconBMP");
+
+    // Check if font resource is available.
+    if(fontResource == NULL) {
+        // No, so that's a fatal. Exit with appropriate deletions and message.
+        delete graphics;
+        ErrorHandler::record("SolarSystem::main() : Font resource is NULL!", ErrorHandler::FATAL);
+        }
+
+    // Given that you have a font resource, is the size meaningful?
+    if(fontResource->data()->size() <= 0) {
+        // No, so that's also a fatal. Exit with appropriate deletions and message.
+        delete graphics;
+        delete fontResource;
+        ErrorHandler::record("SolarSystem::main() : Font resource could not be loaded!", ErrorHandler::FATAL);
+        }
+
+    // Check for an icon resource, but this is not fatal in the lack.
+    if(iconResource != NULL && iconResource->data()->size() > 0) {
+        window.setWindowIcon(&iconResource->data()->at(0), iconResource->data()->size());
+        delete iconResource;
+        }
+    else {
+        ErrorHandler::record("SolarSystem::main() : Icon resource could not be loaded! Continuing anyway...", ErrorHandler::WARN);
+        }
+
+    // Set the caption or window title.
+    /// TODO - if/when GLFW 3.x arrives, put in a window icon as well ?
+    window.setWindowCaption("Einstein@Home");
+
+    // Prepare for rendering by initialising chosen engine
+    // and get up to date BOINC information.
+    graphics->initialize(window.windowWidth(), window.windowHeight(), fontResource);
+    graphics->refreshBOINCInformation();
+
     // Register AbstractGraphicsEngine as event observer.
     window.registerEventObserver(graphics);
 
+    // Enter main event loop, but first flush any events.
+    Events::Instance(0)->flush();
+    window.eventLoop();
+
+    // Clean up end exit
+    window.unregisterEventObserver(graphics);
+    delete graphics;
+    delete fontResource;
+
+    exit(0);
+    }
+
+void openGLReport(WindowManager* window) {
     // Discover and record the OpenGL version.
     GLuint major = 0;
     GLuint minor = 0;
-    window.getOGLVersion(&major, &minor);
+    window->getOGLVersion(&major, &minor);
     std::stringstream msg1;
     msg1 << "SolarSystem::main() : OpenGL version = "
          << major << '.' << minor;
@@ -142,73 +214,4 @@ int main(int argc, char **argv) {
     else {
         ErrorHandler::record("SolarSystem::main() : I got a null for GL_RENDERER", ErrorHandler::WARN);
         }
-
-    // Using a ResourceFactory, create font and icon resource instances
-    ResourceFactory factory;
-    const Resource* fontResource = factory.createInstance("FontSansSerif");
-    const Resource* iconResource = factory.createInstance("AppIconBMP");
-
-    // Check if font resource is available.
-    if(fontResource == NULL) {
-        // No, so that's a fatal. Exit with appropriate deletions and message.
-        delete graphics;
-        ErrorHandler::record("SolarSystem::main() : Font resource is NULL!", ErrorHandler::FATAL);
-        }
-
-    // Given that you have a font resource, is the size meaningful?
-    if(fontResource->data()->size() <= 0) {
-        // No, so that's also a fatal. Exit with appropriate deletions and message.
-        delete graphics;
-        delete fontResource;
-        ErrorHandler::record("SolarSystem::main() : Font resource could not be loaded!", ErrorHandler::FATAL);
-        }
-
-    // Check for an icon resource, but this is not fatal in the lack.
-    if(iconResource != NULL && iconResource->data()->size() > 0) {
-        window.setWindowIcon(&iconResource->data()->at(0), iconResource->data()->size());
-        delete iconResource;
-        }
-    else {
-        ErrorHandler::record("SolarSystem::main() : Icon resource could not be loaded! Continuing anyway...", ErrorHandler::WARN);
-        }
-
-    // Prepare for rendering by initialising chosen engine
-    // and get up to date BOINC information.
-    graphics->initialize(window.windowWidth(), window.windowHeight(), fontResource);
-    graphics->refreshBOINCInformation();
-
-    // Set the caption or window title.
-    /// TODO - when GLFW 3.x arrives, put in a window icon as well.
-    window.setWindowCaption("Einstein@Home");
-
-    window.setScreensaverMode(false);
-    // Check other optional command line parameters
-    if(argc == 2) {
-        string param(argv[1]);
-        if(param == "--fullscreen") {
-            // Set non-interactive mode ie. 'screensaver'
-            // (must do this first on Apple).
-            window.toggleFullscreen();
-            window.setScreensaverMode(true);
-            }
-        if(param == "--fullscreen" || param == "--demo") {
-            // Switch to fullscreen.
-            // (on windoze: after init!)
-            window.toggleFullscreen();
-#ifdef __APPLE__
-            SetMacSSLevel();
-#endif
-            }
-         }
-
-    // enter main event loop, but first flush any events.
-    Events::Instance(0)->flush();
-    window.eventLoop();
-
-    // clean up end exit
-    window.unregisterEventObserver(graphics);
-    delete graphics;
-    delete fontResource;
-
-    exit(0);
     }

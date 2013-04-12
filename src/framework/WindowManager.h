@@ -51,6 +51,14 @@ using namespace std;
  * AbstractGraphicsEngine. This also includes all timer \ref Events required for
  * rendering and information retrieval control.
  *
+ *      A major point is that one must decide upon windowed, screensaver or demo
+ * usage upon construction, and subsequent toggling of the screen b/w window and
+ * fullscreen display is NOT available. This is due to dependencies
+ * b/w OpenGL/GLFW/GLEW, specifically that a renewal of an OpenGL context alters
+ * the dynamic function pointers obtained by GLEW, which in turn depends upon
+ * whether the target system is Windows or not ( that is, I've yet to find a
+ * reliable workaround for that ).
+ *
  * \see AbstractGraphicsEngine
  * \see BOINCClientAdapter
  * \see ErrorHandler
@@ -66,8 +74,20 @@ using namespace std;
 
 class WindowManager {
     public:
-        /// Default constructor
-        WindowManager(void);
+        static enum displaymode {WINDOW, SCREENSAVER, DEMO};
+
+        /**
+         * \brief Constructor requiring choice of display & behaviour.
+         *
+         * \param mode one of the above enumerants :
+         *          - WINDOW to produce an OS window with controls, and
+         *            allowing user interactivity
+         *          - SCREENSAVER to produce fullscreen display with exit
+         *            on any input
+         *          - DEMO to produce fullscreen display with user
+         *            interactivity
+         */
+        WindowManager(displaymode mode);
 
         /// Destructor
         virtual ~WindowManager();
@@ -171,21 +191,6 @@ class WindowManager {
         void setWindowIcon(const unsigned char *data, const int size) const;
 
         /**
-         * \brief Toggles the fullscreen state of the main window.
-         */
-        void toggleFullscreen(void);
-
-        /**
-         * \brief Set the screensaver mode indicator.
-         *
-         *      When enabled, all user input will cause the application to quit
-         * (common screensaver behavior).
-         *
-         * \param choice : the new value for the screensaver mode indicator
-         */
-        void setScreensaverMode(const bool enabled);
-
-        /**
          * \brief Obtain the major and minor version number of the
          *        current OpenGL context.
          *
@@ -239,8 +244,7 @@ class WindowManager {
         bool setFullScreenMode(void);
 
         /**
-         * \brief Attempt to obtain a rendering surface within an OS
-         *        window.
+         * \brief Attempt to obtain a rendering surface of a given size
          *
          * \param width : horizontal dimensions in pixels.
          *
@@ -303,8 +307,8 @@ class WindowManager {
         /// The screensaver mode indicator ie. was it requested ?
         bool m_ScreensaverMode;
 
-        /// Keep record of current actual window state - fullscreen or not ?
-        bool isFullScreenMode;
+        /// Keep record of current actual window state.
+        displaymode operating_mode;
 
         /// The event observer registry.
         list<AbstractGraphicsEngine *> eventObservers;

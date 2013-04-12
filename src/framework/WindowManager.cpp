@@ -36,9 +36,12 @@ int WindowManager::DEPTH_BUFFER_GRAIN_FALLBACK(16);
 int WindowManager::NO_STENCIL(0);
 int WindowManager::VERTICAL_RETRACE_COUNT(1);
 
-WindowManager::WindowManager(void) {
+WindowManager::WindowManager(displaymode mode) :
+                                operating_mode(mode) {
     m_ScreensaverMode = false;
-    isFullScreenMode = false;
+    if(operating_mode == SCREENSAVER) {
+        m_ScreensaverMode = true;
+        }
     best_depth_buffer_grain = DEPTH_BUFFER_GRAIN;
     m_BoincAdapter = new BOINCClientAdapter("");
     }
@@ -140,8 +143,21 @@ bool WindowManager::initialize(const int width, const int height, const int fram
     glfwOpenWindowHint(GLFW_OPENGL_VERSION_MAJOR, OPEN_GL_VERSION_MINIMUM_MAJOR);
     glfwOpenWindowHint(GLFW_OPENGL_VERSION_MINOR, OPEN_GL_VERSION_MINIMUM_MINOR);
 
-    // Start in full screen mode at whatever is the user's current settings for their desktop.
-    setWindowedMode();
+    // Start in selected screen and operational mode.
+    switch(displaymode) {
+        case WINDOW :
+            setWindowedMode();
+            break;
+        case SCREENSAVER :
+            setFullScreenMode();
+            break;
+        case DEMO :
+            setFullScreenMode();
+            break;
+        default:
+            ErrorHandler::record("WindowManager::initialize() : bad switch case ( default )", ErrorHandler::FATAL);
+            break;
+        }
 
     // Manage Windows OpenGL backwards compatibility issue.
 #ifdef WIN_OGL_WORKAROUND
@@ -459,7 +475,6 @@ void WindowManager::eventLoop(void) {
                         eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeySpace);
                         break;
                     case GLFW_KEY_ENTER:
-                        toggleFullscreen();
                         break;
                     case GLFW_KEY_KP_1:
                         eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyKP1);
@@ -555,43 +570,6 @@ void WindowManager::setWindowIcon(const unsigned char *data, const int size) con
 //      }
    }
 
-void WindowManager::toggleFullscreen(void) {
-    if(isFullScreenMode) {
-        // In fullscreen mode, so go to windowed mode.
-        // Set dimensions for whatever was the previous windowed mode.
-        setFullScreenMode();
-
-        // Show cursor in windowed mode.
-        glfwEnable(GLFW_MOUSE_CURSOR);
-
-        isFullScreenMode = false;
-        }
-    else {
-        // In windowed mode, so go to fullscreen mode.
-        // Set dimensions of fullscreen as those of user's desktop.
-        setWindowedMode();
-
-        // Hide cursor in fullscreen mode.
-        glfwDisable(GLFW_MOUSE_CURSOR);
-
-        isFullScreenMode = true;
-        }
-
-    eventObservers.front()->initialize(m_CurrentWidth, m_CurrentHeight, 0, true);
-    }
-
-void WindowManager::setScreensaverMode(const bool choice) {
-    m_ScreensaverMode = choice;
-    if(choice) {
-        // We desire screensaver mode.
-        m_ScreensaverMode = true;
-        }
-    else {
-        // We desire non-screensaver mode.
-        m_ScreensaverMode = false;
-        }
-    }
-
 bool WindowManager::setWindowedMode(void) {
     // Attempt to obtain a window.
     if(tryMode(m_WindowedWidth, m_WindowedHeight, GLFW_WINDOW) == GL_FALSE) {
@@ -682,9 +660,6 @@ bool WindowManager::tryMode(int width, int height, int mode) {
             << best_depth_buffer_grain
             << " bit depth buffer";
         ErrorHandler::record(msg.str(), ErrorHandler::INFORM);
-
-        /// TODO Does acquisition of a new rendering surface necessarily imply that GLEW ought be re-initialised ??
-        initializeGLEW();
         }
 
     return (window_open = GL_TRUE ? true : false);
