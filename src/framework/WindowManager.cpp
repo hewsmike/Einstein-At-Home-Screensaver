@@ -39,7 +39,7 @@ int WindowManager::VERTICAL_RETRACE_COUNT(1);
 WindowManager::WindowManager(displaymode mode) :
                                 operating_mode(mode) {
     m_ScreensaverMode = false;
-    if(operating_mode == SCREENSAVER) {
+    if(operating_mode == WindowManager::SCREENSAVER) {
         m_ScreensaverMode = true;
         }
     best_depth_buffer_grain = DEPTH_BUFFER_GRAIN;
@@ -144,7 +144,7 @@ bool WindowManager::initialize(const int width, const int height, const int fram
     glfwOpenWindowHint(GLFW_OPENGL_VERSION_MINOR, OPEN_GL_VERSION_MINIMUM_MINOR);
 
     // Start in selected screen and operational mode.
-    switch(displaymode) {
+    switch(operating_mode) {
         case WINDOW :
             setWindowedMode();
             break;
@@ -158,6 +158,8 @@ bool WindowManager::initialize(const int width, const int height, const int fram
             ErrorHandler::record("WindowManager::initialize() : bad switch case ( default )", ErrorHandler::FATAL);
             break;
         }
+
+    initializeGLEW();
 
     // Manage Windows OpenGL backwards compatibility issue.
 #ifdef WIN_OGL_WORKAROUND
@@ -254,6 +256,7 @@ void WindowManager::eventLoop(void) {
                      (current_event.type == Events::CharInputEventType) ||
                      (current_event.type == Events::KeyPressEventType))) {
                 // Close window, terminate GLFW and leave this window manager.
+                std::cout << "Exiting on account of user input" << std::endl;
                 glfwTerminate();
                 return;
                 }
@@ -280,10 +283,10 @@ void WindowManager::eventLoop(void) {
 
             else if((current_event.type == Events::ResizeEventType) &&
                     (resize_invoked == false)) {
-                m_WindowedWidth = current_event.resize.width;
-                m_WindowedHeight = current_event.resize.height;
+                glfwGetWindowSize(&m_CurrentWidth,& m_CurrentHeight);
 
-                setWindowedMode();
+                m_WindowedWidth = m_CurrentWidth;
+                m_WindowedHeight = m_CurrentHeight;
 
                 eventObservers.front()->initialize(m_CurrentWidth, m_CurrentHeight, 0, true);
                 resize_invoked = true;
@@ -571,30 +574,33 @@ void WindowManager::setWindowIcon(const unsigned char *data, const int size) con
    }
 
 bool WindowManager::setWindowedMode(void) {
+    bool ret_val = false;
+
     // Attempt to obtain a window.
     if(tryMode(m_WindowedWidth, m_WindowedHeight, GLFW_WINDOW) == GL_FALSE) {
         ErrorHandler::record("WindowManager::setWindowedMode() : Could not acquire rendering surface", ErrorHandler::WARN);
         }
     else {
-        isFullScreenMode = false;
-
         m_WindowedWidth = m_CurrentWidth;
         m_WindowedHeight = m_CurrentHeight;
+        ret_val = true;
         }
 
-    return !isFullScreenMode;
+    return ret_val;
     }
 
 bool WindowManager::setFullScreenMode(void) {
+    bool ret_val = false;
+
     // Attempt to obtain a fullscreen.
     if(tryMode(m_DesktopWidth, m_DesktopHeight, GLFW_FULLSCREEN) == GL_FALSE) {
         ErrorHandler::record("WindowManager::setFullScreenMode() : Could not acquire rendering surface", ErrorHandler::WARN);
         }
     else {
-        isFullScreenMode = true;
+        ret_val = true;
         }
 
-    return isFullScreenMode;
+    return ret_val;
     }
 
 bool WindowManager::tryMode(int width, int height, int mode) {

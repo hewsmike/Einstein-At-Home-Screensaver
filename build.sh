@@ -398,7 +398,7 @@ prepare_libxml() {
     log "Retrieving libxml2 (this may take a while)..."
     cd $ROOT/3rdparty || failure
     rm -f libxml2-sources-$LIBXML_VERSION.tar.gz >> $LOGFILE 2>&1 || failure
-    wget --passive-ftp ftp://xmlsoft.org/libxml2/old/libxml2-sources-$LIBXML_VERSION.tar.gz >> $LOGFILE 2>&1 || failure
+    wget --passive-ftp ftp://xmlsoft.org/libxml2/libxml2-sources-$LIBXML_VERSION.tar.gz >> $LOGFILE 2>&1 || failure
     tar -xzf libxml2-sources-$LIBXML_VERSION.tar.gz >> $LOGFILE 2>&1 || failure
     rm libxml2-sources-$LIBXML_VERSION.tar.gz >> $LOGFILE 2>&1 || failure
     # substitute old source tree

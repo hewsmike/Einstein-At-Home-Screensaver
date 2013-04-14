@@ -51,6 +51,46 @@ extern "C" {
 #endif
 #endif
 
+
+void openGLReport(WindowManager* window) {
+    // Discover and record the OpenGL version.
+    GLuint major = 0;
+    GLuint minor = 0;
+    window->getOGLVersion(&major, &minor);
+    std::stringstream msg1;
+    msg1 << "SolarSystem::main() : OpenGL version = "
+         << major << '.' << minor;
+    ErrorHandler::record(msg1.str(), ErrorHandler::INFORM);
+
+    // Discover and record the OpenGL vendor.
+    const GLubyte* vendor = glGetString(GL_VENDOR);
+    if(vendor != NULL) {
+        std::stringstream msg2;
+        msg2 << "SolarSystem::main() : OpenGL vendor string = "
+             << "'"
+             << ErrorHandler::convertGLstring(vendor)
+             << "'";
+        ErrorHandler::record(msg2.str(), ErrorHandler::INFORM);
+        }
+    else {
+        ErrorHandler::record("SolarSystem::main() : I got a null for GL_VENDOR", ErrorHandler::WARN);
+        }
+
+    // Discover and record the OpenGL renderer.
+    const GLubyte* renderer = glGetString(GL_RENDERER);
+    if(renderer != NULL) {
+        std::stringstream msg3;
+        msg3 << "SolarSystem::main() : OpenGL renderer string = "
+             << "'"
+             << ErrorHandler::convertGLstring(renderer)
+             << "'";
+        ErrorHandler::record(msg3.str(), ErrorHandler::INFORM);
+        }
+    else {
+        ErrorHandler::record("SolarSystem::main() : I got a null for GL_RENDERER", ErrorHandler::WARN);
+        }
+    }
+
 int main(int argc, char **argv) {
     // Print version info if the command line requests it.
     if(argc == 2) {
@@ -84,7 +124,7 @@ int main(int argc, char **argv) {
 #endif
 
     // Instantiate and initialize our window manager.
-    WindowManager::displaymode mode = WINDOW;
+    WindowManager::displaymode mode = WindowManager::WINDOW;
 
     // Check other optional command line parameters
     if(argc == 2) {
@@ -94,7 +134,7 @@ int main(int argc, char **argv) {
             // (must do this first on Apple).
             mode = WindowManager::SCREENSAVER;
             }
-        if(param == "--fullscreen" || param == "--demo") {
+        if(param == "--demo") {
             mode = WindowManager::DEMO;
             }
          }
@@ -175,43 +215,4 @@ int main(int argc, char **argv) {
     delete fontResource;
 
     exit(0);
-    }
-
-void openGLReport(WindowManager* window) {
-    // Discover and record the OpenGL version.
-    GLuint major = 0;
-    GLuint minor = 0;
-    window->getOGLVersion(&major, &minor);
-    std::stringstream msg1;
-    msg1 << "SolarSystem::main() : OpenGL version = "
-         << major << '.' << minor;
-    ErrorHandler::record(msg1.str(), ErrorHandler::INFORM);
-
-    // Discover and record the OpenGL vendor.
-    const GLubyte* vendor = glGetString(GL_VENDOR);
-    if(vendor != NULL) {
-        std::stringstream msg2;
-        msg2 << "SolarSystem::main() : OpenGL vendor string = "
-             << "'"
-             << ErrorHandler::convertGLstring(vendor)
-             << "'";
-        ErrorHandler::record(msg2.str(), ErrorHandler::INFORM);
-        }
-    else {
-        ErrorHandler::record("SolarSystem::main() : I got a null for GL_VENDOR", ErrorHandler::WARN);
-        }
-
-    // Discover and record the OpenGL renderer.
-    const GLubyte* renderer = glGetString(GL_RENDERER);
-    if(renderer != NULL) {
-        std::stringstream msg3;
-        msg3 << "SolarSystem::main() : OpenGL renderer string = "
-             << "'"
-             << ErrorHandler::convertGLstring(renderer)
-             << "'";
-        ErrorHandler::record(msg3.str(), ErrorHandler::INFORM);
-        }
-    else {
-        ErrorHandler::record("SolarSystem::main() : I got a null for GL_RENDERER", ErrorHandler::WARN);
-        }
     }

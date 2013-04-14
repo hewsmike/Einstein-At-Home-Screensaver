@@ -74,7 +74,7 @@ using namespace std;
 
 class WindowManager {
     public:
-        static enum displaymode {WINDOW, SCREENSAVER, DEMO};
+        enum displaymode {WINDOW, SCREENSAVER, DEMO};
 
         /**
          * \brief Constructor requiring choice of display & behaviour.

@@ -96,8 +96,7 @@ void AutoPilot::step(void) {
             pause_flag = true;
             count_down = PAUSE_FRAME_COUNT;
             // Show the reticle, but only if a description exists.
-            if((target != NULL) &&
-               (current_description.size() != 0)) {
+            if(target != NULL) {
                     target->show();
                     }
             }

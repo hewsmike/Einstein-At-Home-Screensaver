@@ -2843,6 +2843,7 @@ void Simulation::cycle(SolarSystemGlobals::content ct) {
                 flyboy.manouevre(Craft::STOP_TRANSLATION);
             if(pilot.isActive() == true) {
                 // When returning to user control ...
+                south_east_panel.erase();
                 flyboy.setViewState(pilot.viewState());
                 pilot.inactivate();
                 target.inactivate();
