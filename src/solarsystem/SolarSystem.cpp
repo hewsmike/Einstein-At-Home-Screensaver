@@ -26,7 +26,10 @@
 const int SolarSystem::FAR_LOOK_RATIO(1000);
 const GLdouble SolarSystem::FOV_ANGLE_MIN(20.0f);
 const GLdouble SolarSystem::FOV_ANGLE_MAX(70.0f);
-const GLdouble SolarSystem::FOV_ANGLE_INITIAL((FOV_ANGLE_MAX - FOV_ANGLE_MIN)/2);
+const GLdouble SolarSystem::FOV_ANGLE_INITIAL((FOV_ANGLE_MAX + FOV_ANGLE_MIN)/2);
+const GLdouble SolarSystem::FOV_ANGLE_GRADATIONS(10);
+const GLdouble SolarSystem::FOV_ANGLE_DIFFERENTIAL((FOV_ANGLE_MAX - FOV_ANGLE_MIN)/FOV_ANGLE_GRADATIONS);
+
 const GLdouble SolarSystem::NEAR_CLIP(0.5f);
 const GLdouble SolarSystem::FAR_CLIP(SolarSystemGlobals::CELESTIAL_SPHERE_RADIUS * 2.5f);
 const int SolarSystem::FAR_LOOK_DISTANCE(SolarSystemGlobals::CELESTIAL_SPHERE_RADIUS*SolarSystem::FAR_LOOK_RATIO);
@@ -167,8 +170,7 @@ void SolarSystem::initialize(const int width, const int height, const Resource* 
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
     sim_instance->activate();
 
-    // Setup dimensions. NB this is currently the only call to
-    // invoke this !!
+    // Setup dimensions.
     resize(width, height);
 
     ErrorHandler::check_OpenGL_Error();
@@ -238,6 +240,23 @@ void SolarSystem::mouseMoveEvent(const int deltaX, const int deltaY,
 
 void SolarSystem::mouseWheelEvent(const int pos) {
     mouse_wheel_differential = pos;
+    if(pos > 0) {
+        fov_angle += FOV_ANGLE_DIFFERENTIAL;
+        if(fov_angle > FOV_ANGLE_MAX){
+            fov_angle = FOV_ANGLE_MAX;
+            }
+        }
+
+    if(pos < 0) {
+        fov_angle -= FOV_ANGLE_DIFFERENTIAL;
+        if(fov_angle < FOV_ANGLE_MIN) {
+            fov_angle = FOV_ANGLE_MIN;
+            }
+        }
+
+    std::cout << "SolarSystem::mouseWheelEvent() : fov_angle = "
+              << fov_angle << std::endl;
+    // resize(m_currentWidth, m_currentHeight);
     }
 
 void SolarSystem::keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey keyPressed) {

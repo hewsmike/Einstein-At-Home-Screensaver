@@ -185,6 +185,9 @@ class SolarSystem : public AbstractGraphicsEngine, public RenderQualityObserver 
         static const GLdouble FOV_ANGLE_MIN;
         static const GLdouble FOV_ANGLE_MAX;
         static const GLdouble FOV_ANGLE_INITIAL;
+        static const GLdouble FOV_ANGLE_GRADATIONS;
+        static const GLdouble FOV_ANGLE_DIFFERENTIAL;
+
         static const GLdouble NEAR_CLIP;
         static const GLdouble FAR_CLIP;
         static const int FAR_LOOK_DISTANCE;
