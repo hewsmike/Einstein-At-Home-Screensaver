@@ -27,7 +27,7 @@ const int SolarSystem::FAR_LOOK_RATIO(1000);
 const GLdouble SolarSystem::FOV_ANGLE_MIN(20.0f);
 const GLdouble SolarSystem::FOV_ANGLE_MAX(70.0f);
 const GLdouble SolarSystem::FOV_ANGLE_INITIAL((FOV_ANGLE_MAX + FOV_ANGLE_MIN)/2);
-const GLdouble SolarSystem::FOV_ANGLE_GRADATIONS(10);
+const GLdouble SolarSystem::FOV_ANGLE_GRADATIONS(20);
 const GLdouble SolarSystem::FOV_ANGLE_DIFFERENTIAL((FOV_ANGLE_MAX - FOV_ANGLE_MIN)/FOV_ANGLE_GRADATIONS);
 
 const GLdouble SolarSystem::NEAR_CLIP(0.5f);
@@ -41,7 +41,6 @@ SolarSystem::SolarSystem(string sharedMemoryAreaIdentifier) :
      */
     spaceFontResource = NULL;
     renderUpdateFlag = false;
-    last_mouse_wheel_position = Events::INITIAL_WHEEL_POSITION;
     mouse_wheel_differential = 0;
     fov_angle = FOV_ANGLE_INITIAL;
     }
@@ -241,22 +240,22 @@ void SolarSystem::mouseMoveEvent(const int deltaX, const int deltaY,
 void SolarSystem::mouseWheelEvent(const int pos) {
     mouse_wheel_differential = pos;
     if(pos > 0) {
-        fov_angle += FOV_ANGLE_DIFFERENTIAL;
-        if(fov_angle > FOV_ANGLE_MAX){
-            fov_angle = FOV_ANGLE_MAX;
+        fov_angle -= FOV_ANGLE_DIFFERENTIAL;
+        if(fov_angle < FOV_ANGLE_MIN){
+            fov_angle = FOV_ANGLE_MIN;
             }
         }
 
     if(pos < 0) {
-        fov_angle -= FOV_ANGLE_DIFFERENTIAL;
-        if(fov_angle < FOV_ANGLE_MIN) {
-            fov_angle = FOV_ANGLE_MIN;
+        fov_angle += FOV_ANGLE_DIFFERENTIAL;
+        if(fov_angle > FOV_ANGLE_MAX) {
+            fov_angle = FOV_ANGLE_MAX;
             }
         }
 
     std::cout << "SolarSystem::mouseWheelEvent() : fov_angle = "
               << fov_angle << std::endl;
-    // resize(m_currentWidth, m_currentHeight);
+    resize(m_CurrentWidth, m_CurrentHeight);
     }
 
 void SolarSystem::keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey keyPressed) {
@@ -436,7 +435,7 @@ void SolarSystem::setFonts(void) {
     // create font instance using font resource (base address + size)
     skygridFont = new OGLFT_ft(&spaceFontResource->data()->at(0),
                                spaceFontResource->data()->size(),
-                               13, 78);
+                               6, 200);
 
     // Note short-circuit evaluation relevant in this if clause ie. right side
     // expression is evaluated only if left side expression is false. Matters
@@ -465,7 +464,7 @@ void SolarSystem::setFonts(void) {
     // create font instance using font resource (base address + size)
     constellationFont = new OGLFT_ft(&spaceFontResource->data()->at(0),
                                      spaceFontResource->data()->size(),
-                                     13, 78);
+                                     8, 200);
     // Short-circuit .....
     if(constellationFont == NULL || (constellationFont->isValid() == false)) {
         // TODO - better error path ?

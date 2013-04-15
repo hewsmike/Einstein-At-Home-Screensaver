@@ -248,13 +248,13 @@ void WindowManager::eventLoop(void) {
                 }
 
             // Check for any user input if in screensaver mode.
-            else if((m_ScreensaverMode == true) {
+            else if(m_ScreensaverMode == true) {
                     if((current_event.type == Events::MouseMotionEventType) ||
                        (current_event.type == Events::MouseButtonEventType) ||
                        (current_event.type == Events::CharInputEventType) ||
-                       (current_event.type == Events::KeyPressEventType))) {
+                       (current_event.type == Events::KeyPressEventType)) {
                     // Close window, terminate GLFW and leave this window manager.
-                    ErrorHandler::record("WindowManager::eventLoop() : Exiting on account of user input", ErrorHandler::INFORM):
+                    ErrorHandler::record("WindowManager::eventLoop() : Exiting on account of user input", ErrorHandler::INFORM);
                     glfwTerminate();
                     return;
                     }
@@ -277,7 +277,7 @@ void WindowManager::eventLoop(void) {
                     }
 
             else if(current_event.type == Events::MouseWheelEventType) {
-                    ErrorHandler.record("WindowManager::eventLoop() : MouseWheelEvent triggered", ErrorHandler::INFORM);
+                    ErrorHandler::record("WindowManager::eventLoop() : MouseWheelEvent triggered", ErrorHandler::INFORM);
                     eventObservers.front()->mouseWheelEvent(current_event.m_wheel.diff_pos);
                     }
 

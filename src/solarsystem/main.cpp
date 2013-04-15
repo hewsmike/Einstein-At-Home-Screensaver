@@ -163,10 +163,14 @@ int main(int argc, char **argv) {
     // Collate and record OpenGL info.
     openGLReport(&window);
 
+    ErrorHandler::record("SolarSystem::main() : checkpoint 1", ErrorHandler::INFORM);
+
     // Using a ResourceFactory, create font and icon resource instances
     ResourceFactory factory;
     const Resource* fontResource = factory.createInstance("FontSansSerif");
     const Resource* iconResource = factory.createInstance("AppIconBMP");
+
+    ErrorHandler::record("SolarSystem::main() : checkpoint 2", ErrorHandler::INFORM);
 
     // Check if font resource is available.
     if(fontResource == NULL) {
@@ -191,6 +195,8 @@ int main(int argc, char **argv) {
     else {
         ErrorHandler::record("SolarSystem::main() : Icon resource could not be loaded! Continuing anyway...", ErrorHandler::WARN);
         }
+
+    ErrorHandler::record("SolarSystem::main() : checkpoint 3", ErrorHandler::INFORM);
 
     // Set the caption or window title.
     /// TODO - if/when GLFW 3.x arrives, put in a window icon as well ?
