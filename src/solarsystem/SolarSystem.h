@@ -113,7 +113,8 @@ class SolarSystem : public AbstractGraphicsEngine, public RenderQualityObserver 
         /**
          * \brief Event handler for mouse wheel events
          *
-         * \param pos The new mouse wheel position
+         * \param pos The decrement ( if negative ) or increment ( if positive )
+         *            in the mouse wheel position.
          */
         void mouseWheelEvent(const int pos);
 
@@ -175,7 +176,7 @@ class SolarSystem : public AbstractGraphicsEngine, public RenderQualityObserver 
 
         bool renderUpdateFlag;
 
-        int last_mouse_wheel_position;
+        // The dec/inc-rement in the mouse wheel position.
         int mouse_wheel_differential;
 
         GLdouble fov_angle;

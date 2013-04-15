@@ -235,12 +235,16 @@ void GLFWCALL Events::mouseWheel(int pos) {
     // set the position of the wheel to zero.
     if(first_time == true) {
         first_time = false;
-        pos = 0;
+        pos = Events::INITIAL_WHEEL_POSITION;
         glfwSetMouseWheel(pos);
         }
 
-    ev.m_wheel.pos = pos;
+    ev.m_wheel.diff_pos = pos;
     event_queue.push_back(ev);
+
+    // As we are only doing differentials then re-set
+    // the position back to fiducial.
+    glfwSetMouseWheel(Events::INITIAL_WHEEL_POSITION);
     }
 
 void GLFWCALL Events::resize(int width, int height) {

@@ -39,7 +39,7 @@ int WindowManager::VERTICAL_RETRACE_COUNT(1);
 WindowManager::WindowManager(displaymode mode) :
                                 operating_mode(mode) {
     m_ScreensaverMode = false;
-    if(operating_mode == WindowManager::SCREENSAVER) {
+    if(mode == WindowManager::SCREENSAVER) {
         m_ScreensaverMode = true;
         }
     best_depth_buffer_grain = DEPTH_BUFFER_GRAIN;
@@ -248,15 +248,16 @@ void WindowManager::eventLoop(void) {
                 }
 
             // Check for any user input if in screensaver mode.
-            else if(m_ScreensaverMode &&
-                    ((current_event.type == Events::MouseMotionEventType) ||
-                     (current_event.type == Events::MouseButtonEventType) ||
-                     (current_event.type == Events::CharInputEventType) ||
-                     (current_event.type == Events::KeyPressEventType))) {
-                // Close window, terminate GLFW and leave this window manager.
-                std::cout << "Exiting on account of user input" << std::endl;
-                glfwTerminate();
-                return;
+            else if((m_ScreensaverMode == true) {
+                    if((current_event.type == Events::MouseMotionEventType) ||
+                       (current_event.type == Events::MouseButtonEventType) ||
+                       (current_event.type == Events::CharInputEventType) ||
+                       (current_event.type == Events::KeyPressEventType))) {
+                    // Close window, terminate GLFW and leave this window manager.
+                    ErrorHandler::record("WindowManager::eventLoop() : Exiting on account of user input", ErrorHandler::INFORM):
+                    glfwTerminate();
+                    return;
+                    }
                 }
 
             else if((current_event.type == Events::MouseMotionEventType) &&
@@ -276,7 +277,8 @@ void WindowManager::eventLoop(void) {
                     }
 
             else if(current_event.type == Events::MouseWheelEventType) {
-                    eventObservers.front()->mouseWheelEvent(current_event.m_wheel.pos);
+                    ErrorHandler.record("WindowManager::eventLoop() : MouseWheelEvent triggered", ErrorHandler::INFORM);
+                    eventObservers.front()->mouseWheelEvent(current_event.m_wheel.diff_pos);
                     }
 
             else if((current_event.type == Events::ResizeEventType) &&

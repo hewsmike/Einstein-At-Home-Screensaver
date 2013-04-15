@@ -237,8 +237,7 @@ void SolarSystem::mouseMoveEvent(const int deltaX, const int deltaY,
     }
 
 void SolarSystem::mouseWheelEvent(const int pos) {
-    mouse_wheel_differential = pos - last_mouse_wheel_position;
-    last_mouse_wheel_position = pos;
+    mouse_wheel_differential = pos;
     }
 
 void SolarSystem::keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey keyPressed) {

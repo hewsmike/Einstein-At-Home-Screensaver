@@ -59,7 +59,7 @@ struct MouseMotionEvent {
 
 struct MouseWheelEvent {
     GLuint type;
-    int pos;
+    int diff_pos;
     };
 
 struct RenderEvent {
