@@ -159,8 +159,6 @@ bool WindowManager::initialize(const int width, const int height, const int fram
             break;
         }
 
-    initializeGLEW();
-
     // Manage Windows OpenGL backwards compatibility issue.
 #ifdef WIN_OGL_WORKAROUND
     if(setOGLContext() == true) {
@@ -614,9 +612,6 @@ bool WindowManager::tryMode(int width, int height, int mode) {
         << std::endl;
     ErrorHandler::record(msg.str(), ErrorHandler::INFORM);
 
-    // Eliminate any existing window/fullscreen !!
-    glfwCloseWindow();
-
     // See if you can get a rendering surface from the OS.
     int window_open = glfwOpenWindow(width, height,
                                      current_desktop_mode.RedBits,
@@ -652,6 +647,10 @@ bool WindowManager::tryMode(int width, int height, int mode) {
         }
 
     if(window_open == GL_TRUE) {
+        // For MS Windows, the dynamic links will change
+        // upon rendering surface acquisition.
+        initializeGLEW();
+
         // Inquire as to the actual client area obtained.
         glfwGetWindowSize(&m_CurrentWidth,& m_CurrentHeight);
 

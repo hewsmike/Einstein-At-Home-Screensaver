@@ -51,7 +51,6 @@ extern "C" {
 #endif
 #endif
 
-
 void openGLReport(WindowManager* window) {
     // Discover and record the OpenGL version.
     GLuint major = 0;
