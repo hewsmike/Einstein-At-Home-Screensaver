@@ -2847,12 +2847,12 @@ void Simulation::cycle(SolarSystemGlobals::content ct) {
                 }
             break;
         case SolarSystemGlobals::AUTOPILOT:
-                north_panel.erase();
-                flyboy.manouevre(Craft::STOP_ROTATION);
-                flyboy.manouevre(Craft::STOP_TRANSLATION);
+            north_panel.erase();
+            south_east_panel.erase();
+            flyboy.manouevre(Craft::STOP_ROTATION);
+            flyboy.manouevre(Craft::STOP_TRANSLATION);
             if(pilot.isActive() == true) {
                 // When returning to user control ...
-                south_east_panel.erase();
                 flyboy.setViewState(pilot.viewState());
                 pilot.inactivate();
                 target.inactivate();
