@@ -23,6 +23,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <fstream>
+#include <iomanip>
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -3141,28 +3142,40 @@ void Simulation::includeUserInformation(HUDFlowLayout* container) {
 
     // Total user credit.
     stringstream user_credit;
-    user_credit << "User credit : " << BC_adapter->userCredit();
+    user_credit << "User credit : "
+                << std::setw(12) << std::setfill(' ') << std::left
+                << std::fixed << std::noshowpoint << std::setprecision(0)
+                << BC_adapter->userCredit();
     htlp = new HUDTextLine(user_credit.str().size(), user_credit.str(), 0, 2);
     htlp->activate();
     container->addItem(htlp);
 
     // User RAC.
     stringstream user_RAC;
-    user_RAC << "User RAC : " << BC_adapter->userRACredit();
+    user_RAC << "User RAC : "
+             << std::setw(12) << std::setfill(' ') << std::left
+             << std::fixed << std::noshowpoint << std::setprecision(0)
+             << BC_adapter->userRACredit();
     htlp = new HUDTextLine(user_RAC.str().size(), user_RAC.str(), 0, 2);
     htlp->activate();
     container->addItem(htlp);
 
     // Total host credit.
     stringstream host_credit;
-    host_credit << "Host credit : " << BC_adapter->hostCredit();
+    host_credit << "Host credit : "
+                << std::setw(12) << std::setfill(' ') << std::left
+                << std::fixed << std::noshowpoint << std::setprecision(0)
+                << BC_adapter->hostCredit();
     htlp = new HUDTextLine(host_credit.str().size(), host_credit.str(), 0, 2);
     htlp->activate();
     container->addItem(htlp);
 
     // Host RAC.
     stringstream host_RAC;
-    host_RAC << "Host RAC : " << BC_adapter->hostRACredit();
+    host_RAC << "Host RAC : "
+             << std::setw(12) << std::setfill(' ') << std::left
+             << std::fixed << std::noshowpoint << std::setprecision(0)
+             << BC_adapter->hostRACredit();
     htlp = new HUDTextLine(host_RAC.str().size(), host_RAC.str(), 0, 2);
     htlp->activate();
     container->addItem(htlp);
