@@ -274,8 +274,9 @@ Simulation::~Simulation() {
 void Simulation::step(void) {
     // Is the autopilot inactive?
     if(!pilot.isActive()) {
-        // No, then evolve the user's craft mechanics
-        // with knowledge of the day within the year.
+        // No, then evolve the user's craft mechanics with knowledge of the
+        // day within the year. Might be relevant if one is including
+        // influences from other simulation components.
         flyboy.step(day366);
         }
     else {
@@ -285,13 +286,16 @@ void Simulation::step(void) {
         // ... check for any content change of the tour's descriptive text.
         AutoPilot::description_change change_flag = pilot.hasDescriptionChanged();
         if(change_flag != AutoPilot::NONE) {
+            // Clear the respective info panels.
             north_panel.erase();
             south_east_panel.erase();
+            // Add in new data if needed.
             switch(change_flag) {
                 case AutoPilot::ADDED :
                     loadLookoutDataToPanels();
                     break;
                 case AutoPilot::DELETED :
+                    // Currently inactive choice but maybe future cahnge here ....
                     break;
                 default:
                     ErrorHandler::record("Simulation::step() : bad switch case reached ( default )",
@@ -301,7 +305,7 @@ void Simulation::step(void) {
             }
         }
 
-    /// TODO - demo code only, needs proper ephemeris model.
+    /// TODO - demo code only, needs proper ephemeris model ??
     // The time increments are minute granular.
     ++min60;
     // Have we rolled over to the next hour?
@@ -320,7 +324,7 @@ void Simulation::step(void) {
     earth_hour_angle = (hour24 + min60/SolarSystemGlobals::MINUTES_PER_HOUR) *
                        SolarSystemGlobals::DEGREES_PER_HOUR;
 
-    /// TODO - demo code only, needs proper ephemeris model.
+    /// TODO - demo code only, needs proper ephemeris model ??
     // This is a fudge for demo purposes, and makes the
     // Sun orbit far quicker and out of sync with Earth
     // rotations. Time increment in 1/20th's of a day.
@@ -350,29 +354,20 @@ void Simulation::moveRequest(Craft::movements mv) {
     }
 
 void Simulation::resize(GLuint width, GLuint height) {
+    // Store the new screen dimensions.
     screen_width = width;
     screen_height = height;
 
-    std::stringstream msg;
-    msg << "Simulation::resize() - resize screen to "
-        << "width = " << width
-        << "\theight = " << height;
-    ErrorHandler::record(msg.str(), ErrorHandler::INFORM);
-
+    // Tell the target reticle of change of screen size, so
+    // that it can center itself properly.
     target.resize(width, height);
     // Now tell the HUD of such settings.
-    /// TODO - if resize denied then inactivate HUD ?? Complex ....
     overlay.requestResize(width, height);
-
-    // If the autopilot is running, need refresh due to change
-    // of context on Windows machines ? Unclear .....
-    // if(pilot.isActive() == true) {
-        // target.hide();
-        // loadLookoutDataToPanels();
-        // }
     }
 
 CameraState Simulation::viewPoint(void) {
+    // Get a camera viewing point depending upon who
+    // controlling the flying.
     if(pilot.isActive()) {
         // The autopilot is flying the craft.
         return pilot.viewState();
@@ -388,7 +383,7 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
     /// at this level.
 
     // Activate 3D scene objects, while nominating any fonts
-    // prior to activation of their respective objects..
+    // PRIOR to activation of their respective objects..
     cs.setFont(SolarSystemGlobals::getFont(SolarSystemGlobals::CONSTELLATIONS));
     cs.activate();
     ps.activate();
@@ -407,12 +402,11 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
 
     // Now to arrange the HUD components.
 
-    // First empty the panels, as we may be recycling.
+    // First empty ALL the panels, as we may be recycling.
     south_east_panel.erase();
     south_west_upper_panel.erase();
     south_west_panel.erase();
     south_centre_panel.erase();
-
     north_panel.erase();
     south_panel.erase();
     east_panel.erase();
@@ -449,6 +443,7 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
     south_panel.addItem(&south_centre_panel);
     south_panel.addItem(&south_east_panel);
 
+    // Create our impetus message.
     version_text = new HUDTextLineScroll(35,
                                          "PLEASE JOIN US AT  http://einstein.phys.uwm.edu    ......    ",
                                          10, 20, HUDTextLineScroll::LEFT, 10);
@@ -458,6 +453,7 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
         }
     south_west_panel.addItem(version_text);
 
+    // Put our logos into the logo cycling display panel.
     south_west_upper_panel.addItem(new HUDImage("aeiTGA", 10, 10));
     south_west_upper_panel.addItem(new HUDImage("boincTGA", 10,10));
     south_west_upper_panel.addItem(new HUDImage("fermiTGA", 10, 10));
@@ -467,10 +463,12 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
     south_west_upper_panel.addItem(new HUDImage("virgoTGA", 10,10));
     south_west_upper_panel.addItem(new HUDImage("wypTGA", 10, 10));
 
+    // Activate the HUD, and thus it's contained items.
     overlay.activate();
     }
 
 void Simulation::release(void) {
+    // Inactivate the various simulation items.
     cs.inactivate();
     ps.inactivate();
     ps_EAH.inactivate();
@@ -484,13 +482,12 @@ void Simulation::release(void) {
     ecliptic.inactivate();
     galactic.inactivate();
 
-    // Must inactivate the layout first !!
+    // Must inactivate the HUD layout LAST !!
     overlay.inactivate();
     }
 
 void Simulation::render(void) {
-    stringstream msg;
-    // One more frame, maybe get new content WU detail display.
+    // One more frame, maybe get new content for info/detail display.
     // NB info updates occur at every WU_DETAILS_REFRESH_INTERVALth
     // or USER_DETAILS_REFRESH_INTERVALth frame respectively.
     if((frame_number % WU_DETAILS_REFRESH_INTERVAL) == 1) {
@@ -525,22 +522,23 @@ void Simulation::render(void) {
     glPopMatrix();
 
     glPushMatrix();
+        // Render the 'dark' side of the Earth, suitably transformed
+        // and evidently antithetic to the Sun's position.
         glRotatef(SunOrbit::ECLIPTIC_ANGLE_DEG, 1, 0, 0);
         glRotatef((day366/SunOrbit::DAYS_PER_YEAR)*SolarSystemGlobals::FULL_CIRCLE_DEG, 0, 0, 1);
-
         earth_shadow.draw();
     glPopMatrix();
 
     glPushMatrix();
         // Render the Sun, suitably transformed.
+        // Move to specified orbital position along ecliptic.
         glTranslatef(sun_pos.x(),
                      sun_pos.y(),
                      sun_pos.z());
-
+        // Tip into the ecliptic plane.
         glRotatef(SunOrbit::ECLIPTIC_ANGLE_DEG, 1, 0, 0);
-
+        // Then rotate the Sun itself 'in place'.
         glRotatef(sun_rot_angle, 0, 0, 1);
-
         sun.draw();
     glPopMatrix();
 
@@ -550,7 +548,7 @@ void Simulation::render(void) {
     // Size constraint used is the current minimum size of the outermost HUD
     // container, which is in turn derived from an aggregation of all it's
     // content.
-    // NB ordering of tests here - should give shortcut evaluation.
+    // NB the ordering of tests here should give shortcut evaluation.
     if((overlay.isActivated() == true) &&
        (overlay.isShown() == true) &&
        (screen_width >= overlay.minWidth()) &&
@@ -2492,13 +2490,16 @@ bool Simulation::loadPulsarsEAH(void) {
             std::string line;
             // Toss the first line ( header ).
             getline(data_file, line);
+            // Look at however many remain.
             do {
+                // Get a line.
                 line.clear();
                 getline(data_file, line);
+                // Provided it is non-empty.
                 if(line.size() != 0) {
-
+                    // Tokenise a line.
                     std::vector<std::string> tokens(parseLine(line));
-
+                    // Check out the tokens.
                     if(tokens.size() == LINE_TOKENS) {
                         // Get the pulsar's name.
                         std::string pulsar_name(tokens.at(NAME));
@@ -2553,7 +2554,8 @@ bool Simulation::loadPulsarsEAH(void) {
                                     }
                                 }
                             }
-
+                        // Optimistically assume the values are realistic
+                        // ie. check this manually if need be for sensibility.
                         ps_EAH.add(PulsarEAH(pulsar_ra,
                                              pulsar_dec,
                                              pulsar_name,
@@ -2569,6 +2571,7 @@ bool Simulation::loadPulsarsEAH(void) {
                         }
                     }
                 }while(line.size() != 0);
+            // No more lines to examine.
             data_file.close();
             }
         else {
@@ -2582,244 +2585,244 @@ bool Simulation::loadPulsarsEAH(void) {
     }
 
 void Simulation::loadSupernovae(void) {
-    sn.add(Supernova(266.433333f , -29.00000f ));
-    sn.add(Supernova(266.562500f , -28.63333f ));
-    sn.add(Supernova(266.837500f , -28.15000f ));
-    sn.add(Supernova(267.125000f , -28.15000f ));
-    sn.add(Supernova(267.412500f , -27.76667f ));
-    sn.add(Supernova(267.187500f , -27.16667f ));
-    sn.add(Supernova(268.858333f , -25.83333f ));
-    sn.add(Supernova(268.229167f , -25.46667f ));
-    sn.add(Supernova(272.229167f , -27.05000f ));
-    sn.add(Supernova(262.675000f , -21.48333f ));
-    sn.add(Supernova(263.354167f , -21.56667f ));
-    sn.add(Supernova(271.875000f , -25.75000f ));
-    sn.add(Supernova(270.541667f , -24.90000f ));
-    sn.add(Supernova(266.833333f , -22.26667f ));
-    sn.add(Supernova(268.729167f , -23.08333f ));
-    sn.add(Supernova(270.125000f , -23.43333f ));
-    sn.add(Supernova(266.291667f , -21.36667f ));
-    sn.add(Supernova(270.458333f , -22.90000f ));
-    sn.add(Supernova(274.354167f , -24.06667f ));
-    sn.add(Supernova(276.041667f , -23.80000f ));
-    sn.add(Supernova(271.375000f , -21.43333f ));
-    sn.add(Supernova(271.283333f , -20.23333f ));
-    sn.add(Supernova(272.862500f , -19.41667f ));
-    sn.add(Supernova(272.695833f , -19.08333f ));
-    sn.add(Supernova(273.045833f , -18.61667f ));
+    sn.add(Supernova(266.433333f , -29.00000f));
+    sn.add(Supernova(266.562500f , -28.63333f));
+    sn.add(Supernova(266.837500f , -28.15000f));
+    sn.add(Supernova(267.125000f , -28.15000f));
+    sn.add(Supernova(267.412500f , -27.76667f));
+    sn.add(Supernova(267.187500f , -27.16667f));
+    sn.add(Supernova(268.858333f , -25.83333f));
+    sn.add(Supernova(268.229167f , -25.46667f));
+    sn.add(Supernova(272.229167f , -27.05000f));
+    sn.add(Supernova(262.675000f , -21.48333f));
+    sn.add(Supernova(263.354167f , -21.56667f));
+    sn.add(Supernova(271.875000f , -25.75000f));
+    sn.add(Supernova(270.541667f , -24.90000f));
+    sn.add(Supernova(266.833333f , -22.26667f));
+    sn.add(Supernova(268.729167f , -23.08333f));
+    sn.add(Supernova(270.125000f , -23.43333f));
+    sn.add(Supernova(266.291667f , -21.36667f));
+    sn.add(Supernova(270.458333f , -22.90000f));
+    sn.add(Supernova(274.354167f , -24.06667f));
+    sn.add(Supernova(276.041667f , -23.80000f));
+    sn.add(Supernova(271.375000f , -21.43333f));
+    sn.add(Supernova(271.283333f , -20.23333f));
+    sn.add(Supernova(272.862500f , -19.41667f));
+    sn.add(Supernova(272.695833f , -19.08333f));
+    sn.add(Supernova(273.045833f , -18.61667f));
     sn.add(Supernova(274.833333f , -18.00000f ));
-    sn.add(Supernova(273.558333f , -17.20000f ));
-    sn.add(Supernova(276.000000f , -16.56667f ));
-    sn.add(Supernova(274.716667f , -15.03333f ));
-    sn.add(Supernova(277.208333f , -16.18333f ));
-    sn.add(Supernova(275.233333f , -14.33333f ));
-    sn.add(Supernova(276.333333f , -14.76667f ));
-    sn.add(Supernova(277.729167f , -14.86667f ));
-    sn.add(Supernova(278.208333f , -14.65000f ));
-    sn.add(Supernova(275.991667f , -12.38333f ));
-    sn.add(Supernova(277.458333f , -12.96667f ));
-    sn.add(Supernova(277.029167f , -11.58333f ));
-    sn.add(Supernova(278.387500f , -10.58333f ));
-    sn.add(Supernova(278.187500f , -10.13333f ));
-    sn.add(Supernova(278.312500f , -9.21667f ));
-    sn.add(Supernova(278.687500f , -8.80000f ));
-    sn.add(Supernova(278.262500f , -8.21667f ));
-    sn.add(Supernova(279.679167f , -7.53333f ));
-    sn.add(Supernova(278.541667f , -7.08333f ));
-    sn.add(Supernova(280.329167f , -4.93333f ));
-    sn.add(Supernova(279.958333f , -4.40000f ));
-    sn.add(Supernova(280.979167f , -3.88333f ));
-    sn.add(Supernova(279.750000f , -2.91667f ));
-    sn.add(Supernova(281.216667f , -2.95000f ));
-    sn.add(Supernova(281.604167f , -2.98333f ));
-    sn.add(Supernova(283.604167f , -2.90000f ));
-    sn.add(Supernova(281.000000f , -1.53333f ));
-    sn.add(Supernova(282.791667f , -1.51667f ));
+    sn.add(Supernova(273.558333f , -17.20000f));
+    sn.add(Supernova(276.000000f , -16.56667f));
+    sn.add(Supernova(274.716667f , -15.03333f));
+    sn.add(Supernova(277.208333f , -16.18333f));
+    sn.add(Supernova(275.233333f , -14.33333f));
+    sn.add(Supernova(276.333333f , -14.76667f));
+    sn.add(Supernova(277.729167f , -14.86667f));
+    sn.add(Supernova(278.208333f , -14.65000f));
+    sn.add(Supernova(275.991667f , -12.38333f));
+    sn.add(Supernova(277.458333f , -12.96667f));
+    sn.add(Supernova(277.029167f , -11.58333f));
+    sn.add(Supernova(278.387500f , -10.58333f));
+    sn.add(Supernova(278.187500f , -10.13333f));
+    sn.add(Supernova(278.312500f , -9.21667f));
+    sn.add(Supernova(278.687500f , -8.80000f));
+    sn.add(Supernova(278.262500f , -8.21667f));
+    sn.add(Supernova(279.679167f , -7.53333f));
+    sn.add(Supernova(278.541667f , -7.08333f));
+    sn.add(Supernova(280.329167f , -4.93333f));
+    sn.add(Supernova(279.958333f , -4.40000f));
+    sn.add(Supernova(280.979167f , -3.88333f));
+    sn.add(Supernova(279.750000f , -2.91667f));
+    sn.add(Supernova(281.216667f , -2.95000f));
+    sn.add(Supernova(281.604167f , -2.98333f));
+    sn.add(Supernova(283.604167f , -2.90000f));
+    sn.add(Supernova(281.000000f , -1.53333f));
+    sn.add(Supernova(282.791667f , -1.51667f));
     sn.add(Supernova(282.354167f , 0.00000f ));
-    sn.add(Supernova(286.500000f , -3.00000f ));
-    sn.add(Supernova(283.291667f , -1.13333f ));
-    sn.add(Supernova(282.854167f , 0.00000f ));
-    sn.add(Supernova(283.458333f , 0.00000f ));
-    sn.add(Supernova(283.200000f , 0.00000f ));
-    sn.add(Supernova(284.000000f , 1.36667f ));
-    sn.add(Supernova(285.145833f , 2.93333f ));
-    sn.add(Supernova(282.204167f , 4.43333f ));
-    sn.add(Supernova(286.033333f , 5.46667f ));
-    sn.add(Supernova(288.083333f , 4.91667f ));
-    sn.add(Supernova(286.791667f , 6.51667f ));
-    sn.add(Supernova(286.891667f , 7.13333f ));
-    sn.add(Supernova(286.833333f , 9.08333f ));
-    sn.add(Supernova(287.783333f , 9.10000f ));
-    sn.add(Supernova(286.458333f , 10.50000f ));
-    sn.add(Supernova(289.104167f , 11.15000f ));
-    sn.add(Supernova(289.541667f , 12.15000f ));
-    sn.add(Supernova(290.958333f , 14.10000f ));
-    sn.add(Supernova(294.708333f , 17.23333f ));
-    sn.add(Supernova(292.629167f , 18.86667f ));
-    sn.add(Supernova(293.333333f , 18.93333f ));
-    sn.add(Supernova(293.000000f , 19.83333f ));
-    sn.add(Supernova(290.333333f , 21.73333f ));
-    sn.add(Supernova(293.745833f , 21.95000f ));
-    sn.add(Supernova(295.637500f , 23.58333f ));
-    sn.add(Supernova(294.729167f , 24.31667f ));
-    sn.add(Supernova(296.966667f , 27.75000f ));
-    sn.add(Supernova(298.666667f , 28.58333f ));
-    sn.add(Supernova(293.250000f , 31.16667f ));
-    sn.add(Supernova(298.041667f , 29.43333f ));
-    sn.add(Supernova(298.633333f , 31.48333f ));
-    sn.add(Supernova(302.166667f , 30.61667f ));
-    sn.add(Supernova(298.333333f , 32.91667f ));
-    sn.add(Supernova(300.666667f , 32.71667f ));
-    sn.add(Supernova(303.562500f , 36.20000f ));
-    sn.add(Supernova(312.750000f , 30.66667f ));
-    sn.add(Supernova(304.008333f , 37.20000f ));
-    sn.add(Supernova(305.583333f , 38.71667f ));
-    sn.add(Supernova(305.208333f , 40.43333f ));
-    sn.add(Supernova(304.750000f , 45.50000f ));
-    sn.add(Supernova(313.333333f , 43.45000f ));
-    sn.add(Supernova(312.625000f , 44.88333f ));
-    sn.add(Supernova(312.666667f , 45.36667f ));
-    sn.add(Supernova(314.666667f , 44.88333f ));
-    sn.add(Supernova(311.250000f , 50.58333f ));
-    sn.add(Supernova(313.104167f , 55.35000f ));
-    sn.add(Supernova(322.333333f , 50.83333f ));
-    sn.add(Supernova(321.208333f , 51.88333f ));
-    sn.add(Supernova(336.875000f , 60.83333f ));
-    sn.add(Supernova(345.395833f , 58.88333f ));
-    sn.add(Supernova(350.858333f , 58.80000f ));
-    sn.add(Supernova(354.250000f , 61.91667f ));
-    sn.add(Supernova(358.416667f , 63.25000f ));
-    sn.add(Supernova(359.791667f , 62.43333f ));
-    sn.add(Supernova(  1.666667f , 72.75000f ));
-    sn.add(Supernova(  6.325000f , 64.15000f ));
-    sn.add(Supernova( 20.500000f , 64.25000f ));
-    sn.add(Supernova( 22.083333f , 63.16667f ));
-    sn.add(Supernova( 31.420833f , 64.81667f ));
-    sn.add(Supernova( 34.416667f , 62.75000f ));
-    sn.add(Supernova( 74.666667f , 51.83333f ));
-    sn.add(Supernova( 75.250000f , 46.66667f ));
-    sn.add(Supernova( 81.625000f , 42.93333f ));
-    sn.add(Supernova( 79.750000f , 41.91667f ));
-    sn.add(Supernova( 88.416667f , 31.08333f ));
-    sn.add(Supernova( 84.750000f , 27.83333f ));
-    sn.add(Supernova( 92.041667f , 29.00000f ));
-    sn.add(Supernova( 83.629167f , 22.01667f ));
-    sn.add(Supernova( 94.250000f , 22.56667f ));
-    sn.add(Supernova( 92.333333f , 17.33333f ));
-    sn.add(Supernova( 99.750000f , 6.50000f ));
-    sn.add(Supernova(102.166667f , 6.43333f ));
-    sn.add(Supernova(125.541667f , -43.00000f ));
-    sn.add(Supernova(136.083333f , -38.70000f ));
-    sn.add(Supernova(128.500000f , -45.83333f ));
-    sn.add(Supernova(133.000000f , -46.33333f ));
-    sn.add(Supernova(136.708333f , -52.11667f ));
-    sn.add(Supernova(149.416667f , -53.25000f ));
-    sn.add(Supernova(154.562500f , -59.00000f ));
-    sn.add(Supernova(158.916667f , -59.70000f ));
-    sn.add(Supernova(165.312500f , -60.30000f ));
-    sn.add(Supernova(165.770833f , -60.93333f ));
-    sn.add(Supernova(167.975000f , -60.63333f ));
-    sn.add(Supernova(171.150000f , -59.26667f ));
-    sn.add(Supernova(169.833333f , -61.46667f ));
-    sn.add(Supernova(173.750000f , -60.90000f ));
-    sn.add(Supernova(174.041667f , -61.63333f ));
-    sn.add(Supernova(177.791667f , -62.56667f ));
-    sn.add(Supernova(182.416667f , -52.41667f ));
-    sn.add(Supernova(179.625000f , -62.58333f ));
-    sn.add(Supernova(183.166667f , -62.86667f ));
-    sn.add(Supernova(183.420833f , -62.61667f ));
-    sn.add(Supernova(183.804167f , -65.50000f ));
-    sn.add(Supernova(185.437500f , -63.15000f ));
-    sn.add(Supernova(189.479167f , -63.81667f ));
-    sn.add(Supernova(191.479167f , -62.13333f ));
-    sn.add(Supernova(196.495833f , -62.70000f ));
-    sn.add(Supernova(204.404167f , -63.06667f ));
-    sn.add(Supernova(205.625000f , -62.38333f ));
-    sn.add(Supernova(206.629167f , -62.90000f ));
-    sn.add(Supernova(207.625000f , -62.08333f ));
-    sn.add(Supernova(209.500000f , -62.15000f ));
-    sn.add(Supernova(210.000000f , -62.28333f ));
-    sn.add(Supernova(211.408333f , -61.96667f ));
-    sn.add(Supernova(213.250000f , -61.73333f ));
-    sn.add(Supernova(215.250000f , -64.20000f ));
-    sn.add(Supernova(220.750000f , -62.50000f ));
-    sn.add(Supernova(218.979167f , -60.60000f ));
-    sn.add(Supernova(219.604167f , -60.18333f ));
-    sn.add(Supernova(220.375000f , -60.00000f ));
-    sn.add(Supernova(222.416667f , -59.76667f ));
-    sn.add(Supernova(223.708333f , -59.06667f ));
-    sn.add(Supernova(224.625000f , -58.48333f ));
-    sn.add(Supernova(228.625000f , -59.13333f ));
-    sn.add(Supernova(229.458333f , -59.26667f ));
-    sn.add(Supernova(230.937500f , -58.21667f ));
-    sn.add(Supernova(230.166667f , -57.56667f ));
-    sn.add(Supernova(230.845833f , -57.10000f ));
-    sn.add(Supernova(232.175000f , -56.35000f ));
-    sn.add(Supernova(238.250000f , -56.16667f ));
-    sn.add(Supernova(238.604167f , -55.15000f ));
-    sn.add(Supernova(237.083333f , -53.81667f ));
-    sn.add(Supernova(236.700000f , -53.33333f ));
-    sn.add(Supernova(225.708333f , -41.93333f ));
-    sn.add(Supernova(238.875000f , -53.28333f ));
-    sn.add(Supernova(240.333333f , -52.30000f ));
-    sn.add(Supernova(227.500000f , -40.00000f ));
-    sn.add(Supernova(240.275000f , -51.56667f ));
-    sn.add(Supernova(243.320833f , -50.88333f ));
-    sn.add(Supernova(244.387500f , -51.03333f ));
-    sn.add(Supernova(243.833333f , -50.70000f ));
-    sn.add(Supernova(246.937500f , -48.78333f ));
-    sn.add(Supernova(248.045833f , -47.31667f ));
-    sn.add(Supernova(248.987500f , -47.60000f ));
-    sn.add(Supernova(249.866667f , -47.85000f ));
-    sn.add(Supernova(248.162500f , -46.60000f ));
-    sn.add(Supernova(249.754167f , -46.98333f ));
-    sn.add(Supernova(249.495833f , -46.40000f ));
-    sn.add(Supernova(250.250000f , -46.56667f ));
-    sn.add(Supernova(250.287500f , -46.31667f ));
-    sn.add(Supernova(251.629167f , -44.65000f ));
-    sn.add(Supernova(251.920833f , -44.56667f ));
-    sn.add(Supernova(251.895833f , -43.78333f ));
-    sn.add(Supernova(253.754167f , -44.01667f ));
-    sn.add(Supernova(253.708333f , -43.88333f ));
-    sn.add(Supernova(252.679167f , -43.06667f ));
-    sn.add(Supernova(261.250000f , -46.50000f ));
-    sn.add(Supernova(257.000000f , -44.26667f ));
-    sn.add(Supernova(255.104167f , -43.23333f ));
-    sn.add(Supernova(255.962500f , -41.70000f ));
-    sn.add(Supernova(256.833333f , -40.88333f ));
-    sn.add(Supernova(257.579167f , -40.18333f ));
-    sn.add(Supernova(258.458333f , -39.75000f ));
-    sn.add(Supernova(258.858333f , -38.46667f ));
-    sn.add(Supernova(258.525000f , -38.53333f ));
-    sn.add(Supernova(258.479167f , -38.18333f ));
-    sn.add(Supernova(259.312500f , -38.06667f ));
-    sn.add(Supernova(259.495833f , -37.43333f ));
-    sn.add(Supernova(261.958333f , -38.53333f ));
-    sn.add(Supernova(260.612500f , -36.18333f ));
-    sn.add(Supernova(260.250000f , -35.45000f ));
-    sn.add(Supernova(262.216667f , -36.26667f ));
-    sn.add(Supernova(261.916667f , -35.11667f ));
-    sn.add(Supernova(264.729167f , -35.18333f ));
-    sn.add(Supernova(262.616667f , -33.76667f ));
-    sn.add(Supernova(264.000000f , -33.70000f ));
-    sn.add(Supernova(263.816667f , -32.63333f ));
-    sn.add(Supernova(266.470833f , -33.71667f ));
-    sn.add(Supernova(259.750000f , -29.66667f ));
-    sn.add(Supernova(264.483333f , -32.26667f ));
-    sn.add(Supernova(265.645833f , -32.86667f ));
-    sn.add(Supernova(265.120833f , -30.96667f ));
-    sn.add(Supernova(264.645833f , -30.73333f ));
-    sn.add(Supernova(261.500000f , -28.60000f ));
-    sn.add(Supernova(266.708333f , -30.26667f ));
-    sn.add(Supernova(266.375000f , -29.95000f ));
-    sn.add(Supernova(264.900000f , -29.18333f ));
+    sn.add(Supernova(286.500000f , -3.00000f));
+    sn.add(Supernova(283.291667f , -1.13333f));
+    sn.add(Supernova(282.854167f , 0.00000f));
+    sn.add(Supernova(283.458333f , 0.00000f));
+    sn.add(Supernova(283.200000f , 0.00000f));
+    sn.add(Supernova(284.000000f , 1.36667f));
+    sn.add(Supernova(285.145833f , 2.93333f));
+    sn.add(Supernova(282.204167f , 4.43333f));
+    sn.add(Supernova(286.033333f , 5.46667f));
+    sn.add(Supernova(288.083333f , 4.91667f));
+    sn.add(Supernova(286.791667f , 6.51667f));
+    sn.add(Supernova(286.891667f , 7.13333f));
+    sn.add(Supernova(286.833333f , 9.08333f));
+    sn.add(Supernova(287.783333f , 9.10000f));
+    sn.add(Supernova(286.458333f , 10.50000f));
+    sn.add(Supernova(289.104167f , 11.15000f));
+    sn.add(Supernova(289.541667f , 12.15000f));
+    sn.add(Supernova(290.958333f , 14.10000f));
+    sn.add(Supernova(294.708333f , 17.23333f));
+    sn.add(Supernova(292.629167f , 18.86667f));
+    sn.add(Supernova(293.333333f , 18.93333f));
+    sn.add(Supernova(293.000000f , 19.83333f));
+    sn.add(Supernova(290.333333f , 21.73333f));
+    sn.add(Supernova(293.745833f , 21.95000f));
+    sn.add(Supernova(295.637500f , 23.58333f));
+    sn.add(Supernova(294.729167f , 24.31667f));
+    sn.add(Supernova(296.966667f , 27.75000f));
+    sn.add(Supernova(298.666667f , 28.58333f));
+    sn.add(Supernova(293.250000f , 31.16667f));
+    sn.add(Supernova(298.041667f , 29.43333f));
+    sn.add(Supernova(298.633333f , 31.48333f));
+    sn.add(Supernova(302.166667f , 30.61667f));
+    sn.add(Supernova(298.333333f , 32.91667f));
+    sn.add(Supernova(300.666667f , 32.71667f));
+    sn.add(Supernova(303.562500f , 36.20000f));
+    sn.add(Supernova(312.750000f , 30.66667f));
+    sn.add(Supernova(304.008333f , 37.20000f));
+    sn.add(Supernova(305.583333f , 38.71667f));
+    sn.add(Supernova(305.208333f , 40.43333f));
+    sn.add(Supernova(304.750000f , 45.50000f));
+    sn.add(Supernova(313.333333f , 43.45000f));
+    sn.add(Supernova(312.625000f , 44.88333f));
+    sn.add(Supernova(312.666667f , 45.36667f));
+    sn.add(Supernova(314.666667f , 44.88333f));
+    sn.add(Supernova(311.250000f , 50.58333f));
+    sn.add(Supernova(313.104167f , 55.35000f));
+    sn.add(Supernova(322.333333f , 50.83333f));
+    sn.add(Supernova(321.208333f , 51.88333f));
+    sn.add(Supernova(336.875000f , 60.83333f));
+    sn.add(Supernova(345.395833f , 58.88333f));
+    sn.add(Supernova(350.858333f , 58.80000f));
+    sn.add(Supernova(354.250000f , 61.91667f));
+    sn.add(Supernova(358.416667f , 63.25000f));
+    sn.add(Supernova(359.791667f , 62.43333f));
+    sn.add(Supernova(1.666667f , 72.75000f));
+    sn.add(Supernova(6.325000f , 64.15000f));
+    sn.add(Supernova(20.500000f , 64.25000f));
+    sn.add(Supernova(22.083333f , 63.16667f));
+    sn.add(Supernova(31.420833f , 64.81667f));
+    sn.add(Supernova(34.416667f , 62.75000f));
+    sn.add(Supernova(74.666667f , 51.83333f));
+    sn.add(Supernova(75.250000f , 46.66667f));
+    sn.add(Supernova(81.625000f , 42.93333f));
+    sn.add(Supernova(79.750000f , 41.91667f));
+    sn.add(Supernova(88.416667f , 31.08333f));
+    sn.add(Supernova(84.750000f , 27.83333f));
+    sn.add(Supernova(92.041667f , 29.00000f));
+    sn.add(Supernova(83.629167f , 22.01667f));
+    sn.add(Supernova(94.250000f , 22.56667f));
+    sn.add(Supernova(92.333333f , 17.33333f));
+    sn.add(Supernova(99.750000f , 6.50000f));
+    sn.add(Supernova(102.166667f , 6.43333f));
+    sn.add(Supernova(125.541667f , -43.00000f));
+    sn.add(Supernova(136.083333f , -38.70000f));
+    sn.add(Supernova(128.500000f , -45.83333f));
+    sn.add(Supernova(133.000000f , -46.33333f));
+    sn.add(Supernova(136.708333f , -52.11667f));
+    sn.add(Supernova(149.416667f , -53.25000f));
+    sn.add(Supernova(154.562500f , -59.00000f));
+    sn.add(Supernova(158.916667f , -59.70000f));
+    sn.add(Supernova(165.312500f , -60.30000f));
+    sn.add(Supernova(165.770833f , -60.93333f));
+    sn.add(Supernova(167.975000f , -60.63333f));
+    sn.add(Supernova(171.150000f , -59.26667f));
+    sn.add(Supernova(169.833333f , -61.46667f));
+    sn.add(Supernova(173.750000f , -60.90000f));
+    sn.add(Supernova(174.041667f , -61.63333f));
+    sn.add(Supernova(177.791667f , -62.56667f));
+    sn.add(Supernova(182.416667f , -52.41667f));
+    sn.add(Supernova(179.625000f , -62.58333f));
+    sn.add(Supernova(183.166667f , -62.86667f));
+    sn.add(Supernova(183.420833f , -62.61667f));
+    sn.add(Supernova(183.804167f , -65.50000f));
+    sn.add(Supernova(185.437500f , -63.15000f));
+    sn.add(Supernova(189.479167f , -63.81667f));
+    sn.add(Supernova(191.479167f , -62.13333f));
+    sn.add(Supernova(196.495833f , -62.70000f));
+    sn.add(Supernova(204.404167f , -63.06667f));
+    sn.add(Supernova(205.625000f , -62.38333f));
+    sn.add(Supernova(206.629167f , -62.90000f));
+    sn.add(Supernova(207.625000f , -62.08333f));
+    sn.add(Supernova(209.500000f , -62.15000f));
+    sn.add(Supernova(210.000000f , -62.28333f));
+    sn.add(Supernova(211.408333f , -61.96667f));
+    sn.add(Supernova(213.250000f , -61.73333f));
+    sn.add(Supernova(215.250000f , -64.20000f));
+    sn.add(Supernova(220.750000f , -62.50000f));
+    sn.add(Supernova(218.979167f , -60.60000f));
+    sn.add(Supernova(219.604167f , -60.18333f));
+    sn.add(Supernova(220.375000f , -60.00000f));
+    sn.add(Supernova(222.416667f , -59.76667f));
+    sn.add(Supernova(223.708333f , -59.06667f));
+    sn.add(Supernova(224.625000f , -58.48333f));
+    sn.add(Supernova(228.625000f , -59.13333f));
+    sn.add(Supernova(229.458333f , -59.26667f));
+    sn.add(Supernova(230.937500f , -58.21667f));
+    sn.add(Supernova(230.166667f , -57.56667f));
+    sn.add(Supernova(230.845833f , -57.10000f));
+    sn.add(Supernova(232.175000f , -56.35000f));
+    sn.add(Supernova(238.250000f , -56.16667f));
+    sn.add(Supernova(238.604167f , -55.15000f));
+    sn.add(Supernova(237.083333f , -53.81667f));
+    sn.add(Supernova(236.700000f , -53.33333f));
+    sn.add(Supernova(225.708333f , -41.93333f));
+    sn.add(Supernova(238.875000f , -53.28333f));
+    sn.add(Supernova(240.333333f , -52.30000f));
+    sn.add(Supernova(227.500000f , -40.00000f));
+    sn.add(Supernova(240.275000f , -51.56667f));
+    sn.add(Supernova(243.320833f , -50.88333f));
+    sn.add(Supernova(244.387500f , -51.03333f));
+    sn.add(Supernova(243.833333f , -50.70000f));
+    sn.add(Supernova(246.937500f , -48.78333f));
+    sn.add(Supernova(248.045833f , -47.31667f));
+    sn.add(Supernova(248.987500f , -47.60000f));
+    sn.add(Supernova(249.866667f , -47.85000f));
+    sn.add(Supernova(248.162500f , -46.60000f));
+    sn.add(Supernova(249.754167f , -46.98333f));
+    sn.add(Supernova(249.495833f , -46.40000f));
+    sn.add(Supernova(250.250000f , -46.56667f));
+    sn.add(Supernova(250.287500f , -46.31667f));
+    sn.add(Supernova(251.629167f , -44.65000f));
+    sn.add(Supernova(251.920833f , -44.56667f));
+    sn.add(Supernova(251.895833f , -43.78333f));
+    sn.add(Supernova(253.754167f , -44.01667f));
+    sn.add(Supernova(253.708333f , -43.88333f));
+    sn.add(Supernova(252.679167f , -43.06667f));
+    sn.add(Supernova(261.250000f , -46.50000f));
+    sn.add(Supernova(257.000000f , -44.26667f));
+    sn.add(Supernova(255.104167f , -43.23333f));
+    sn.add(Supernova(255.962500f , -41.70000f));
+    sn.add(Supernova(256.833333f , -40.88333f));
+    sn.add(Supernova(257.579167f , -40.18333f));
+    sn.add(Supernova(258.458333f , -39.75000f));
+    sn.add(Supernova(258.858333f , -38.46667f));
+    sn.add(Supernova(258.525000f , -38.53333f));
+    sn.add(Supernova(258.479167f , -38.18333f));
+    sn.add(Supernova(259.312500f , -38.06667f));
+    sn.add(Supernova(259.495833f , -37.43333f));
+    sn.add(Supernova(261.958333f , -38.53333f));
+    sn.add(Supernova(260.612500f , -36.18333f));
+    sn.add(Supernova(260.250000f , -35.45000f));
+    sn.add(Supernova(262.216667f , -36.26667f));
+    sn.add(Supernova(261.916667f , -35.11667f));
+    sn.add(Supernova(264.729167f , -35.18333f));
+    sn.add(Supernova(262.616667f , -33.76667f));
+    sn.add(Supernova(264.000000f , -33.70000f));
+    sn.add(Supernova(263.816667f , -32.63333f));
+    sn.add(Supernova(266.470833f , -33.71667f));
+    sn.add(Supernova(259.750000f , -29.66667f));
+    sn.add(Supernova(264.483333f , -32.26667f));
+    sn.add(Supernova(265.645833f , -32.86667f));
+    sn.add(Supernova(265.120833f , -30.96667f));
+    sn.add(Supernova(264.645833f , -30.73333f));
+    sn.add(Supernova(261.500000f , -28.60000f));
+    sn.add(Supernova(266.708333f , -30.26667f));
+    sn.add(Supernova(266.375000f , -29.95000f));
+    sn.add(Supernova(264.900000f , -29.18333f));
     }
 
 void Simulation::cycle(SolarSystemGlobals::content ct) {
     // Which scene element to toggle?
     switch(ct) {
         case SolarSystemGlobals::AXES:
-         // We don't cycle the axes ... yet
+            // We don't cycle the axes ... yet
             break;
         case SolarSystemGlobals::CONSTELLATIONS:
             cs.cycleActivation();
@@ -2917,28 +2920,36 @@ void Simulation::loadImageToPanel(HUDImage* hip, HUDFlowLayout* hfl,
 std::string Simulation::getEAHPulsarDataFileName(void) {
     std::string ret_val;
 
-    // Read the soft link file to get the latest
-    // catalog filename.
+    // Read the soft link file to get the latest catalog filename.
     std::string soft_link_file(EAH_PULSAR_FILE + "." + EAH_PULSAR_FILE_EXT);
     ifstream soft_link(soft_link_file.c_str());
 
     std::string soft_link_contents;
+    // If we could read the soft link file.
     if(soft_link.good() == true) {
+        // OK, so what's in the soft link file
         soft_link >> soft_link_contents;
+        // Find the position of the 'preface' string.
         std::string::size_type data_file_name_idx_start = soft_link_contents.find(EAH_PULSAR_FILE.c_str(),
                                                                                   0, EAH_PULSAR_FILE.size());
+        // Assuming we found that ...
         if(data_file_name_idx_start != string::npos) {
+            // Find the extension delimiter ie. '.' ( the period character ).
             std::string::size_type data_file_name_idx_end = soft_link_contents.find(".", data_file_name_idx_start);
+            // Assuming we found that ...
             if(data_file_name_idx_start != string::npos) {
+                // Cobble together the components of the actual filename
+                // used to store the pulsar data.
                 std::string data_file(soft_link_contents,
                                       data_file_name_idx_start,
                                       data_file_name_idx_end - data_file_name_idx_start);
-                std::cout << "Simulation::getEAHPulsarDataFileName() - filename ( stub ) is '"
-                          << data_file
-                          << "'"
-                          << std::endl;
+                stringstream msg;
+                msg << "Simulation::getEAHPulsarDataFileName() : pulsar catalog filename is '"
+                    << data_file << "." << EAH_PULSAR_FILE_EXT
+                    << "'";
                 data_file += ".";
                 data_file += EAH_PULSAR_FILE_EXT;
+                ErrorHandler::record(msg.str(), ErrorHandler::INFORM);
                 return data_file;
                 }
             else {
@@ -2950,6 +2961,7 @@ std::string Simulation::getEAHPulsarDataFileName(void) {
             ErrorHandler::record("Simulation::getEAHPulsarDataFileName() - could not parse(1) pulsar soft link file",
                                  ErrorHandler::WARN);
             }
+        // We're finished with the soft link file.
         soft_link.close();
         }
     else {
