@@ -27,7 +27,7 @@ const int SolarSystem::FAR_LOOK_RATIO(1000);
 const GLdouble SolarSystem::FOV_ANGLE_MIN(20.0f);
 const GLdouble SolarSystem::FOV_ANGLE_MAX(70.0f);
 const GLdouble SolarSystem::FOV_ANGLE_INITIAL((FOV_ANGLE_MAX + FOV_ANGLE_MIN)/2);
-const GLdouble SolarSystem::FOV_ANGLE_GRADATIONS(15);
+const GLdouble SolarSystem::FOV_ANGLE_GRADATIONS(12);
 const GLdouble SolarSystem::FOV_ANGLE_DIFFERENTIAL((FOV_ANGLE_MAX - FOV_ANGLE_MIN)/FOV_ANGLE_GRADATIONS);
 
 const GLdouble SolarSystem::NEAR_CLIP(0.5f);
@@ -310,22 +310,18 @@ void SolarSystem::keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey k
             break;
         case KeyF2:
             // Cycle the rendering level.
+            {
             SolarSystemGlobals::render_quality qual = SolarSystemGlobals::getRenderLevel();
-            switch(qual) {
-                case SolarSystemGlobals::RENDER_LOWEST:
-                    SolarSystemGlobals::setRenderLevel(SolarSystemGlobals::RENDER_MEDIUM);
-                    break;
-                case SolarSystemGlobals::RENDER_MEDIUM:
-                    SolarSystemGlobals::setRenderLevel(SolarSystemGlobals::RENDER_HIGHEST);
-                    break;
-                case SolarSystemGlobals::RENDER_HIGHEST:
-                    SolarSystemGlobals::setRenderLevel(SolarSystemGlobals::RENDER_LOWEST);
-                    break;
-                default:
-                    ErrorHandler::record("SolarSystem::keyboardPressEvent() : bad switch cse reached ( default )",
-                                         ErrorHandler::FATAL);
-                break;
+            if(qual == SolarSystemGlobals::RENDER_HIGHEST) {
+                SolarSystemGlobals::setRenderLevel(SolarSystemGlobals::RENDER_LOWEST);
                 }
+            if(qual == SolarSystemGlobals::RENDER_MEDIUM) {
+                SolarSystemGlobals::setRenderLevel(SolarSystemGlobals::RENDER_HIGHEST);
+                }
+            if(qual == SolarSystemGlobals::RENDER_LOWEST) {
+                SolarSystemGlobals::setRenderLevel(SolarSystemGlobals::RENDER_MEDIUM);
+                }
+            }
             break;
         case KeyF4:
             /// TODO - cycle the HUD ??
@@ -479,7 +475,7 @@ void SolarSystem::setFonts(void) {
     // create font instance using font resource (base address + size)
     earthgridFont = new OGLFT_ft(&spaceFontResource->data()->at(0),
                                  spaceFontResource->data()->size(),
-                                 13, 78);
+                                 7, 150);
 
     if(earthgridFont == NULL || (earthgridFont->isValid() == false)) {
         // TODO - better error path
@@ -492,7 +488,7 @@ void SolarSystem::setFonts(void) {
     // create font instance using font resource (base address + size)
     constellationFont = new OGLFT_ft(&spaceFontResource->data()->at(0),
                                      spaceFontResource->data()->size(),
-                                     8, 200);
+                                     4, 400);
     // Short-circuit .....
     if(constellationFont == NULL || (constellationFont->isValid() == false)) {
         // TODO - better error path ?
@@ -505,7 +501,7 @@ void SolarSystem::setFonts(void) {
     // create font instance using font resource (base address + size)
     HUDFont = new OGLFT_ft(&spaceFontResource->data()->at(0),
                            spaceFontResource->data()->size(),
-                           16, 80);
+                           8, 160);
 
     // Short-circuit .....
     if(HUDFont == NULL || (HUDFont->isValid() == false)) {

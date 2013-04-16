@@ -1,7 +1,7 @@
 # Resource specification of the Einstein@Home graphics application : SolarSystem
 
 # Font.
-FontSansSerif|FreeMono.ttf.res
+FontSansSerif|AlteHaasGroteskRegular.ttf.res
 
 # For the window icon.
 AppIconBMP|EaH.bmp.res
