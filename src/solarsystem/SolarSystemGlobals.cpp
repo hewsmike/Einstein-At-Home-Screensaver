@@ -79,8 +79,9 @@ void SolarSystemGlobals::setRenderLevel(SolarSystemGlobals::render_quality rq) {
     if(qual != rq) {
         // Store the new quality level.
         qual = rq;
-        // Now call back each observer to let
-        // them know of the quality change.
+        // Now call back each observer to let them know of the quality change.
+        // Each ( if interested ) will have to discover the quality level
+        // via getRenderLevel().
         for(std::set<RenderQualityObserver*>::const_iterator ob = quality_observers.begin();
             ob != SolarSystemGlobals::quality_observers.end();
             ++ob) {

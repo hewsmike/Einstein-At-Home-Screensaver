@@ -27,7 +27,7 @@ const int SolarSystem::FAR_LOOK_RATIO(1000);
 const GLdouble SolarSystem::FOV_ANGLE_MIN(20.0f);
 const GLdouble SolarSystem::FOV_ANGLE_MAX(70.0f);
 const GLdouble SolarSystem::FOV_ANGLE_INITIAL((FOV_ANGLE_MAX + FOV_ANGLE_MIN)/2);
-const GLdouble SolarSystem::FOV_ANGLE_GRADATIONS(20);
+const GLdouble SolarSystem::FOV_ANGLE_GRADATIONS(15);
 const GLdouble SolarSystem::FOV_ANGLE_DIFFERENTIAL((FOV_ANGLE_MAX - FOV_ANGLE_MIN)/FOV_ANGLE_GRADATIONS);
 
 const GLdouble SolarSystem::NEAR_CLIP(0.5f);
@@ -53,20 +53,23 @@ SolarSystem::~SolarSystem() {
  * but from initialize().
  */
 void SolarSystem::resize(const int width, const int height) {
-    // store current settings
+    // Store current settings
     m_CurrentWidth = width;
     m_CurrentHeight = height;
     aspect = (float)width / (float)height;
 
-    // adjust aspect ratio and projection
+    // Adjust aspect ratio and projection.
     glViewport(0, 0, (GLsizei) width, (GLsizei) height);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
+    // The given field-of-view angle is along the vertical axis, so also
+    // applying the given aspect ratio then implicitly determines
+    // field-of-view across the horizontal axis.
     gluPerspective(fov_angle, aspect, NEAR_CLIP, FAR_CLIP);
     glMatrixMode(GL_MODELVIEW);
 
     // Tell the underlying simulation that it's window
-    // has been resized, and what it's dimensions are.
+    // has been resized and/or field of view angle altered.
     sim_instance->resize(static_cast<GLuint>(width), static_cast<GLuint>(height));
     }
 
@@ -238,23 +241,32 @@ void SolarSystem::mouseMoveEvent(const int deltaX, const int deltaY,
     }
 
 void SolarSystem::mouseWheelEvent(const int pos) {
+    // Store the differential mouse wheel scroll value.
     mouse_wheel_differential = pos;
+
+    // If we have rolled the mouse wheel forwards then zoom IN
+    // ie. smaller angular size to field of view.
     if(pos > 0) {
         fov_angle -= FOV_ANGLE_DIFFERENTIAL;
+        // Respect lower bounds.
         if(fov_angle < FOV_ANGLE_MIN){
             fov_angle = FOV_ANGLE_MIN;
             }
         }
 
+    // If we have rolled the mouse wheel backwards then zoom OUT
+    // ie. greater angular size to field of view.
     if(pos < 0) {
         fov_angle += FOV_ANGLE_DIFFERENTIAL;
+        // Respect upper bounds.
         if(fov_angle > FOV_ANGLE_MAX) {
             fov_angle = FOV_ANGLE_MAX;
             }
         }
 
-    std::cout << "SolarSystem::mouseWheelEvent() : fov_angle = "
-              << fov_angle << std::endl;
+    // So even though we aren't altering the dimensions
+    // of the rendering surface, we are changing the
+    // field of view.
     resize(m_CurrentWidth, m_CurrentHeight);
     }
 
@@ -297,11 +309,26 @@ void SolarSystem::keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey k
             // TODO - future 'help' functionality
             break;
         case KeyF2:
-            // TODO - cycle the rendering level.
-            // SolarSystemGlobals::setRenderLevel(SolarSystemGlobals::RENDER_LOWEST);
+            // Cycle the rendering level.
+            SolarSystemGlobals::render_quality qual = SolarSystemGlobals::getRenderLevel();
+            switch(qual) {
+                case SolarSystemGlobals::RENDER_LOWEST:
+                    SolarSystemGlobals::setRenderLevel(SolarSystemGlobals::RENDER_MEDIUM);
+                    break;
+                case SolarSystemGlobals::RENDER_MEDIUM:
+                    SolarSystemGlobals::setRenderLevel(SolarSystemGlobals::RENDER_HIGHEST);
+                    break;
+                case SolarSystemGlobals::RENDER_HIGHEST:
+                    SolarSystemGlobals::setRenderLevel(SolarSystemGlobals::RENDER_LOWEST);
+                    break;
+                default:
+                    ErrorHandler::record("SolarSystem::keyboardPressEvent() : bad switch cse reached ( default )",
+                                         ErrorHandler::FATAL);
+                break;
+                }
             break;
         case KeyF4:
-            // TODO - cycle the HUD
+            /// TODO - cycle the HUD ??
             // sim_instance->cycle(SolarSystemGlobals::HUDOVER);
             break;
         case KeyF5:
@@ -369,13 +396,14 @@ void SolarSystem::keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey k
 void SolarSystem::refreshLocalBOINCInformation() {
     }
 
-void SolarSystem::renderUpdate(void) {
+void SolarSystem::renderQualityUpdate() {
     // While this update signal is asynchronously received,
     // store this for later use when a frame render is complete.
     renderUpdateFlag = true;
     }
 
 void SolarSystem::changeRenderQuality(void) {
+    // Put overall rendering quality decisions here.
     switch(SolarSystemGlobals::getRenderLevel()) {
         case SolarSystemGlobals::RENDER_LOWEST:
             glDisable(GL_FOG);

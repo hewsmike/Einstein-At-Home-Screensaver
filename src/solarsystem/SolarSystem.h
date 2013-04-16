@@ -75,7 +75,9 @@ class SolarSystem : public AbstractGraphicsEngine, public RenderQualityObserver 
         virtual void initialize(const int width, const int height, const Resource *font, const bool recycle = false);
 
         /**
-         * \brief This method is called when the windowing system encounters a window resize event
+         * \brief This method is called when the windowing system encounters
+         *        a window resize event and/or a change in the field of
+         *        view angle.
          *
          * \param width The new width of the display surface
          * \param height The new height of the display surface
@@ -131,7 +133,7 @@ class SolarSystem : public AbstractGraphicsEngine, public RenderQualityObserver 
          *
          *      Satisfies RenderQualityObserver interface.
          */
-        virtual void renderUpdate(void);
+        virtual void renderQualityUpdate(void);
 
     protected:
         /**
@@ -170,6 +172,7 @@ class SolarSystem : public AbstractGraphicsEngine, public RenderQualityObserver 
         OGLFT_ft* HUDFont;
 
     private:
+
         void changeRenderQuality(void);
 
         void setFonts(void);
