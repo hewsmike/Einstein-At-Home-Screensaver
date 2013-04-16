@@ -329,7 +329,7 @@ void SolarSystem::keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey k
             break;
         case KeyF4:
             /// TODO - cycle the HUD ??
-            // sim_instance->cycle(SolarSystemGlobals::HUDOVER);
+            sim_instance->cycle(SolarSystemGlobals::HUDOVER);
             break;
         case KeyF5:
             sim_instance->cycle(SolarSystemGlobals::CONSTELLATIONS);

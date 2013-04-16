@@ -2834,8 +2834,17 @@ void Simulation::cycle(SolarSystemGlobals::content ct) {
             sn.cycleActivation();
             break;
         case SolarSystemGlobals::HUDOVER:
-            // TODO : still buggy .....
-            // overlay.cycleActivation();
+            // For the HUD, and to be more efficient perhaps,
+            // simply show or hide ie. not activating or
+            // inactivating.
+            if(overlay.isShown()) {
+                // It's being shown so hide it.
+                overlay.hide();
+                }
+            else {
+                // It's being hidden so show it.
+                overlay.show();
+                }
             break;
         case SolarSystemGlobals::AUTOPILOT:
                 north_panel.erase();
