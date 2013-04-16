@@ -138,7 +138,7 @@ const GLfloat Simulation::GALACTIC_LINE_BLUE(0.8f);
 const GLfloat Simulation::GALACTIC_LINE_ALPHA(0.25f);
 
 const GLuint Simulation::WU_DETAILS_REFRESH_INTERVAL(100);
-const GLuint Simulation::USER_DETAILS_REFRESH_INTERVAL(100);
+const GLuint Simulation::USER_DETAILS_REFRESH_INTERVAL(1000);
 
 Simulation::Simulation(BOINCClientAdapter* boinc_adapter) :
                                cs(CONSTELLATIONS_RADIUS),
@@ -491,10 +491,12 @@ void Simulation::release(void) {
 void Simulation::render(void) {
     stringstream msg;
     // One more frame, maybe get new content WU detail display.
+    // NB info updates occur at every WU_DETAILS_REFRESH_INTERVALth
+    // or USER_DETAILS_REFRESH_INTERVALth frame respectively.
     if((frame_number % WU_DETAILS_REFRESH_INTERVAL) == 1) {
         // Work unit detail goes on east side.
         includeSearchInformation(&east_panel);
-        // east_panel.activate();
+        east_panel.activate();
         }
 
     if((frame_number % USER_DETAILS_REFRESH_INTERVAL) == 1) {
