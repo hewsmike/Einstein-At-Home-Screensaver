@@ -542,10 +542,16 @@ void Simulation::render(void) {
         sun.draw();
     glPopMatrix();
 
-    // We only draw the HUD if the screen/window is of sufficient dimensions.
-    // Constraint used is the current minimum size of the outermost HUD container,
-    // which is in turn derived from an aggregation of all it's content.
-    if((screen_width >= overlay.minWidth()) &&
+    // We only draw the HUD if the screen/window is of sufficient dimensions
+    // and if it is marked to be shown at all. So that in theory would eliminate
+    // the time penalty of the code as below.
+    // Size constraint used is the current minimum size of the outermost HUD
+    // container, which is in turn derived from an aggregation of all it's
+    // content.
+    // NB ordering of tests here - should give shortcut evaluation.
+    if((overlay.isActivated() == true) &&
+       (overlay.isShown() == true) &&
+       (screen_width >= overlay.minWidth()) &&
        (screen_height >= overlay.minHeight())) {
 
         // Swap into 2D with back face culling, textures and no depth testing.
@@ -2895,6 +2901,7 @@ void Simulation::loadImageToPanel(HUDImage* hip, HUDFlowLayout* hfl,
                                   GLuint margin_width, GLuint margin_height) {
     // Put an image into the content.
     hip = new HUDImage(resource_name, margin_width, margin_height);
+    // But only if non-null, FATAL in the breach.
     if(hip == NULL) {
         std::string msg = "Simulation::LoadImageToPanel() - failed creation of HUDImage instance on heap : ";
         msg += resource_name;
@@ -3109,7 +3116,7 @@ void Simulation::loadLookoutDataToPanels(void) {
         }
     north_panel.activate();
 
-    // Then put new image(s), if any, into the south_west panel.
+    // Then put new image(s), if any, into the south_east panel.
     HUDImage* hip = new HUDImage(pilot.getImageResourceName(),5,5);
     hip->activate();
     south_east_panel.addItem(hip);
