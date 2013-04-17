@@ -402,6 +402,11 @@ class Simulation : public Renderable {
         HUDFlowLayout south_centre_panel;
         HUDTempFlowLayout south_east_panel;
 
+        /// The help HUD
+        HUDBorderLayout help_overlay;
+        HUDFlowLayout help_west_panel;
+        HUDFlowLayout help_east_panel;
+
         /// The index of the current rendered frame ( since program start ).
         GLuint frame_number;
 
