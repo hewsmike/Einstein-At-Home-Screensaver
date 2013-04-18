@@ -216,7 +216,7 @@ Simulation::Simulation(BOINCClientAdapter* boinc_adapter) :
                                south_west_panel(HUDContainer::VERTICAL),
                                south_centre_panel(HUDContainer::VERTICAL),
                                south_east_panel(HUDContainer::VERTICAL),
-                               help_overlay();
+                               help_overlay(),
                                help_north_panel(HUDContainer::VERTICAL),
                                help_south_panel(HUDContainer::VERTICAL),
                                help_west_panel(HUDContainer::VERTICAL),
@@ -233,6 +233,9 @@ Simulation::Simulation(BOINCClientAdapter* boinc_adapter) :
     // Initial HUD choice.
     active_HUD = &overlay;
     help_hud_active = false;
+
+    // Autopilot is initially not active.
+    pilot.inactivate();
 
     // Pointer to scrolling marquee.
     version_text = NULL;
@@ -281,6 +284,16 @@ Simulation::~Simulation() {
     }
 
 void Simulation::step(void) {
+    static bool first_time = true;
+    if(first_time == true ) {
+        first_time = false;
+        // In the case of the screensaver being active then
+        // the autopilot must do the flying.
+        if(SolarSystemGlobals::getDisplayMode() == WindowManager::SCREENSAVER) {
+            cycle(SolarSystemGlobals::AUTOPILOT);
+            }
+        }
+
     // Is the autopilot inactive?
     if(!pilot.isActive()) {
         // No, then evolve the user's craft mechanics with knowledge of the
@@ -422,8 +435,8 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
     west_panel.erase();
 
     // Help HUD.
-    help_north_panel();
-    help_south_panel();
+    help_north_panel.erase();
+    help_south_panel.erase();
     help_east_panel.erase();
     help_west_panel.erase();
 
@@ -532,7 +545,7 @@ void Simulation::render(void) {
     // or USER_DETAILS_REFRESH_INTERVALth frame respectively.
 
     // Only show user and WU details if in screensaver mode.
-    if(WindowManager::getDisplayMode() == WindowManager::SCREENSAVER) {
+    if(SolarSystemGlobals::getDisplayMode() == WindowManager::SCREENSAVER) {
         if((frame_number % WU_DETAILS_REFRESH_INTERVAL) == 1) {
             // Work unit detail goes on east side.
             includeSearchInformation(&east_panel);
@@ -2901,7 +2914,7 @@ void Simulation::cycle(SolarSystemGlobals::content ct) {
                 }
             else {
                 // It's being hidden so show it.
-                active->show();
+                active_HUD->show();
                 }
             break;
         case SolarSystemGlobals::AUTOPILOT:
@@ -2939,7 +2952,7 @@ void Simulation::cycle(SolarSystemGlobals::content ct) {
         case SolarSystemGlobals::TARGET_RETICLE:
             target.cycleActivation();
             break;
-        case SolarSystemGlobals::HELP_HUD;
+        case SolarSystemGlobals::HELP_HUD:
             if(help_hud_active == false) {
                 // If the standard HUD is active, switch to the help HUD.
                 active_HUD = &help_overlay;
@@ -3260,7 +3273,7 @@ void Simulation::includeUserInformation(HUDFlowLayout* container) {
     container->addItem(htlp);
     }
 
-void initialiseHelpHUD(void) {
+void Simulation::initialiseHelpHUD(void) {
     help_north_panel.addItem(new HUDTextLine(30,"",0,2));
 
 

@@ -199,12 +199,6 @@ class WindowManager {
          */
         void getOGLVersion(GLuint* major, GLuint* minor);
 
-        /**
-         * \brief Obtain the current display mode.
-         *
-         * \return one of the displaymode enumerants as above.
-         */
-        WindowManager::displaymode getDisplayMode(void) const;
 
     private:
         /// Minimum OpenGL version requirements.

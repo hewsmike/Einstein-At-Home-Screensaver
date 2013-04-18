@@ -35,9 +35,6 @@ const GLfloat SolarSystemGlobals::EARTH_RADIUS(100);
 
 const GLfloat SolarSystemGlobals::SUN_RADIUS(800);
 
-// Default rendering quality is the lowest.
-SolarSystemGlobals::render_quality SolarSystemGlobals::qual(RENDER_LOWEST);
-
 const GLfloat SolarSystemGlobals::FULL_CIRCLE_DEG(360.0f);
 const GLfloat SolarSystemGlobals::HALF_CIRCLE_DEG(FULL_CIRCLE_DEG/2);
 const GLfloat SolarSystemGlobals::QUARTER_CIRCLE_DEG(FULL_CIRCLE_DEG/4);
@@ -57,6 +54,11 @@ const GLuint SolarSystemGlobals::ALPHA_CHANNEL(NO_ALPHA_CHANNEL + 1);
 GLuint SolarSystemGlobals::width(0);
 GLuint SolarSystemGlobals::height(0);
 
+// Default rendering quality is the lowest.
+SolarSystemGlobals::render_quality SolarSystemGlobals::qual(RENDER_LOWEST);
+
+WindowManager::displaymode SolarSystemGlobals::operating_mode(WindowManager::WINDOW);
+
 std::set<RenderQualityObserver*> SolarSystemGlobals::quality_observers;
 std::map<SolarSystemGlobals::content, OGLFT_ft*> SolarSystemGlobals::fonts;
 
@@ -72,6 +74,14 @@ void SolarSystemGlobals::setFont(SolarSystemGlobals::content element, OGLFT_ft* 
 
 OGLFT_ft* SolarSystemGlobals::getFont(SolarSystemGlobals::content element) {
     return fonts[element];
+    }
+
+void SolarSystemGlobals::setDisplayMode(WindowManager::displaymode mode) {
+    operating_mode = mode;
+    }
+
+WindowManager::displaymode SolarSystemGlobals::getDisplayMode(void) {
+    return operating_mode;
     }
 
 void SolarSystemGlobals::setRenderLevel(SolarSystemGlobals::render_quality rq) {

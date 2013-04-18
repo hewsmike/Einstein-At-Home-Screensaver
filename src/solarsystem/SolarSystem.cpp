@@ -458,7 +458,7 @@ void SolarSystem::setFonts(void) {
     // create font instance using font resource (base address + size)
     skygridFont = new OGLFT_ft(&spaceFontResource->data()->at(0),
                                spaceFontResource->data()->size(),
-                               6, 200);
+                               3, 200);
 
     // Note short-circuit evaluation relevant in this if clause ie. right side
     // expression is evaluated only if left side expression is false. Matters

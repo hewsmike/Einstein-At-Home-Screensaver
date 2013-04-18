@@ -32,6 +32,7 @@
 #include "AbstractGraphicsEngine.h"
 #include "RenderQualityObserver.h"
 #include "Resource.h"
+#include "WindowManager.h"
 
 // SIN and COS take arguments in DEGREES
 /// TODO - Make these static constants.
@@ -143,6 +144,20 @@ class SolarSystemGlobals {
          */
         static OGLFT_ft* getFont(SolarSystemGlobals::content element);
 
+        /**
+         * \brief Record the current display mode.
+         *
+         * \param one of the displaymode enumerants as above.
+         */
+        static void setDisplayMode(WindowManager::displaymode mode);
+
+        /**
+         * \brief Obtain the current display mode.
+         *
+         * \return one of the displaymode enumerants as above.
+         */
+        static WindowManager::displaymode getDisplayMode(void);
+
     private:
         /// Prevent direct construction, copying and assignment.
         SolarSystemGlobals();
@@ -161,6 +176,9 @@ class SolarSystemGlobals {
 
         /// The current quality level.
         static SolarSystemGlobals::render_quality qual;
+
+        /// The current display mode.
+        static WindowManager::displaymode operating_mode;
 
         /// The set of observers to inform of any
         /// change to the rendering quality setting.
