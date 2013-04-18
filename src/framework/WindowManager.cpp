@@ -832,6 +832,10 @@ void WindowManager::getOGLVersion(GLuint* major, GLuint* minor) {
     *minor = minor_candidate;
     }
 
+WindowManager::displaymode WindowManager::getDisplayMode(void) {
+    return operating_mode;
+    }
+
 void WindowManager::tokeniseString(const std::string str,
         const char delimiter, std::vector<std::string>& store) {
     size_t string_pos = 0;
