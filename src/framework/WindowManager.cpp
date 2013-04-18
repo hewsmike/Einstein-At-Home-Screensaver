@@ -252,7 +252,8 @@ void WindowManager::eventLoop(void) {
                     if((current_event.type == Events::MouseMotionEventType) ||
                        (current_event.type == Events::MouseButtonEventType) ||
                        (current_event.type == Events::CharInputEventType) ||
-                       (current_event.type == Events::KeyPressEventType)) {
+                       (current_event.type == Events::KeyPressEventType) ||
+                       (current_event.type == Events::MouseWheelEventType)) {
                     // Close window, terminate GLFW and leave this window manager.
                     ErrorHandler::record("WindowManager::eventLoop() : Exiting on account of user input", ErrorHandler::INFORM);
                     glfwTerminate();
