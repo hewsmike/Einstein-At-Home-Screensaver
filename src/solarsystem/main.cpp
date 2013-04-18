@@ -136,7 +136,7 @@ int main(int argc, char **argv) {
         if(param == "--demo") {
             mode = WindowManager::DEMO;
             }
-         }
+        }
 
     WindowManager window(mode);
 #ifdef __APPLE__

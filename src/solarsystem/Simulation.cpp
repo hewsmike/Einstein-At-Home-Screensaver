@@ -212,10 +212,15 @@ Simulation::Simulation(BOINCClientAdapter* boinc_adapter) :
                                south_panel(HUDFlowLayout::HORIZONTAL),
                                east_panel(HUDFlowLayout::VERTICAL),
                                west_panel(HUDFlowLayout::VERTICAL),
-                               south_east_panel(HUDFlowLayout::VERTICAL),
-                               south_centre_panel(HUDFlowLayout::VERTICAL),
-                               south_west_panel(HUDFlowLayout::VERTICAL),
                                south_west_upper_panel(),
+                               south_west_panel(HUDFlowLayout::VERTICAL),
+                               south_centre_panel(HUDFlowLayout::VERTICAL),
+                               south_east_panel(HUDFlowLayout::VERTICAL),
+                               help_overlay();
+                               help_north_panel(HUDFlowLayout::VERTICAL),
+                               help_south_panel(HUDFlowLayout::VERTICAL),
+                               help_west_panel(HUDFlowLayout::VERTICAL),
+                               help_east_panel(HUDFlowLayout::VERTICAL),
                                BC_adapter(boinc_adapter) {
     // Starting values of simulation parameters.
     frame_number = 0;
