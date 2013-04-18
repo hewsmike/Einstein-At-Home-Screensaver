@@ -409,6 +409,10 @@ class Simulation : public Renderable {
         HUDFlowLayout help_west_panel;
         HUDFlowLayout help_east_panel;
 
+        // Pointer and flag for the active HUD.
+        HUDBorderLayout* active_HUD;
+        bool help_hud_active;
+
         /// The index of the current rendered frame ( since program start ).
         GLuint frame_number;
 

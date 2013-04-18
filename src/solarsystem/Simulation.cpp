@@ -230,6 +230,10 @@ Simulation::Simulation(BOINCClientAdapter* boinc_adapter) :
     earth_hour_angle = 0;
     sun_rot_angle = 0;
 
+    // Initial HUD choice.
+    active_HUD = &overlay;
+    help_hud_active = false;
+
     // Pointer to scrolling marquee.
     version_text = NULL;
 
@@ -367,7 +371,7 @@ void Simulation::resize(GLuint width, GLuint height) {
     // that it can center itself properly.
     target.resize(width, height);
     // Now tell the HUD of such settings.
-    overlay.requestResize(width, height);
+    active_HUD->requestResize(width, height);
     }
 
 CameraState Simulation::viewPoint(void) {
@@ -495,16 +499,20 @@ void Simulation::render(void) {
     // One more frame, maybe get new content for info/detail display.
     // NB info updates occur at every WU_DETAILS_REFRESH_INTERVALth
     // or USER_DETAILS_REFRESH_INTERVALth frame respectively.
-    if((frame_number % WU_DETAILS_REFRESH_INTERVAL) == 1) {
-        // Work unit detail goes on east side.
-        includeSearchInformation(&east_panel);
-        east_panel.activate();
-        }
 
-    if((frame_number % USER_DETAILS_REFRESH_INTERVAL) == 1) {
-        // User and host detail goes on west side.
-        includeUserInformation(&west_panel);
-        west_panel.activate();
+    // Only show user and WU details if in screensaver mode.
+    if(WindowManager::getDisplayMode() == WindowManager::SCREENSAVER) {
+        if((frame_number % WU_DETAILS_REFRESH_INTERVAL) == 1) {
+            // Work unit detail goes on east side.
+            includeSearchInformation(&east_panel);
+            east_panel.activate();
+            }
+
+        if((frame_number % USER_DETAILS_REFRESH_INTERVAL) == 1) {
+            // User and host detail goes on west side.
+            includeUserInformation(&west_panel);
+            west_panel.activate();
+            }
         }
     ++frame_number;
 
@@ -554,10 +562,10 @@ void Simulation::render(void) {
     // container, which is in turn derived from an aggregation of all it's
     // content.
     // NB the ordering of tests here should give shortcut evaluation.
-    if((overlay.isActivated() == true) &&
-       (overlay.isShown() == true) &&
-       (screen_width >= overlay.minWidth()) &&
-       (screen_height >= overlay.minHeight())) {
+    if((active_HUD->isActivated() == true) &&
+       (active_HUD->isShown() == true) &&
+       (screen_width >= active_HUD->minWidth()) &&
+       (screen_height >= active_HUD->minHeight())) {
 
         // Swap into 2D with back face culling, textures and no depth testing.
         glDisable(GL_DEPTH_TEST);
@@ -578,8 +586,10 @@ void Simulation::render(void) {
         glPushMatrix();
         glLoadIdentity();
 
-        // Finally draw the HUD.
-        overlay.draw();
+        // Finally draw whichever is the active HUD.
+        active_HUD->draw();
+
+        // Then the target reticle if activated.
         target.draw();
 
         // Restore the projection and modelview stacks.
@@ -2854,13 +2864,13 @@ void Simulation::cycle(SolarSystemGlobals::content ct) {
             // For the HUD, and to be more efficient perhaps,
             // simply show or hide ie. not activating or
             // inactivating.
-            if(overlay.isShown()) {
+            if(active_HUD->isShown()) {
                 // It's being shown so hide it.
-                overlay.hide();
+                active_HUD->hide();
                 }
             else {
                 // It's being hidden so show it.
-                overlay.show();
+                active->show();
                 }
             break;
         case SolarSystemGlobals::AUTOPILOT:
@@ -2897,6 +2907,18 @@ void Simulation::cycle(SolarSystemGlobals::content ct) {
             break;
         case SolarSystemGlobals::TARGET_RETICLE:
             target.cycleActivation();
+            break;
+        case SolarSystemGlobals::HELP_HUD;
+            if(help_hud_active == false) {
+                // If the standard HUD is active, switch to the help HUD.
+                active_HUD = &help_overlay;
+                help_hud_active = true;
+                }
+            else {
+                // If the help HUD is active, switch to the standard HUD.
+                active_HUD = &overlay;
+                help_hud_active = false;
+                }
             break;
         default:
             // Ought not get here !!

@@ -68,7 +68,8 @@ class SolarSystemGlobals {
                       SUPERNOVAE,
                       HUDOVER,
                       AUTOPILOT,
-                      TARGET_RETICLE};
+                      TARGET_RETICLE,
+                      HELP_HUD};
 
         // Levels of rendering quality.
         enum render_quality {RENDER_LOWEST, RENDER_MEDIUM, RENDER_HIGHEST};
