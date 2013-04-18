@@ -208,19 +208,19 @@ Simulation::Simulation(BOINCClientAdapter* boinc_adapter) :
                                         Simulation::SKYGRID_RADIUS,
                                         72),
                                overlay(),
-                               north_panel(HUDFlowLayout::VERTICAL),
-                               south_panel(HUDFlowLayout::HORIZONTAL),
-                               east_panel(HUDFlowLayout::VERTICAL),
-                               west_panel(HUDFlowLayout::VERTICAL),
+                               north_panel(HUDContainer::VERTICAL),
+                               south_panel(HUDContainer::HORIZONTAL),
+                               east_panel(HUDContainer::VERTICAL),
+                               west_panel(HUDContainer::VERTICAL),
                                south_west_upper_panel(),
-                               south_west_panel(HUDFlowLayout::VERTICAL),
-                               south_centre_panel(HUDFlowLayout::VERTICAL),
-                               south_east_panel(HUDFlowLayout::VERTICAL),
+                               south_west_panel(HUDContainer::VERTICAL),
+                               south_centre_panel(HUDContainer::VERTICAL),
+                               south_east_panel(HUDContainer::VERTICAL),
                                help_overlay();
-                               help_north_panel(HUDFlowLayout::VERTICAL),
-                               help_south_panel(HUDFlowLayout::VERTICAL),
-                               help_west_panel(HUDFlowLayout::VERTICAL),
-                               help_east_panel(HUDFlowLayout::VERTICAL),
+                               help_north_panel(HUDContainer::VERTICAL),
+                               help_south_panel(HUDContainer::VERTICAL),
+                               help_west_panel(HUDContainer::VERTICAL),
+                               help_east_panel(HUDContainer::VERTICAL),
                                BC_adapter(boinc_adapter) {
     // Starting values of simulation parameters.
     frame_number = 0;
@@ -409,9 +409,9 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
     ecliptic.activate();
     galactic.activate();
 
-    // Now to arrange the HUD components.
-
-    // First empty ALL the panels, as we may be recycling.
+    // Now to arrange the HUD components, firstly by emptying ALL the panels,
+    // as we may be recycling.
+    // Standard HUD.
     south_east_panel.erase();
     south_west_upper_panel.erase();
     south_west_panel.erase();
@@ -421,30 +421,56 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
     east_panel.erase();
     west_panel.erase();
 
-    // Set panel justifications.
-    north_panel.setPrimaryJustification(HUDFlowLayout::START);
-    north_panel.setSecondaryJustification(HUDFlowLayout::MIDDLE);
-    south_panel.setPrimaryJustification(HUDFlowLayout::START_AND_END);
-    south_panel.setSecondaryJustification(HUDFlowLayout::PROXIMAL);
-    east_panel.setPrimaryJustification(HUDFlowLayout::CENTRE);
-    east_panel.setSecondaryJustification(HUDFlowLayout::DISTAL);
-    west_panel.setPrimaryJustification(HUDFlowLayout::CENTRE);
-    west_panel.setSecondaryJustification(HUDFlowLayout::PROXIMAL);
+    // Help HUD.
+    help_north_panel();
+    help_south_panel();
+    help_east_panel.erase();
+    help_west_panel.erase();
 
-    south_east_panel.setPrimaryJustification(HUDFlowLayout::END);
-    south_east_panel.setSecondaryJustification(HUDFlowLayout::DISTAL);
-    south_centre_panel.setPrimaryJustification(HUDFlowLayout::END);
-    south_centre_panel.setSecondaryJustification(HUDFlowLayout::MIDDLE);
-    south_west_panel.setPrimaryJustification(HUDFlowLayout::END);
-    south_west_panel.setSecondaryJustification(HUDFlowLayout::PROXIMAL);
+    // Set panel justifications.
+    // Standard HUD.
+    north_panel.setPrimaryJustification(HUDContainer::START);
+    north_panel.setSecondaryJustification(HUDContainer::MIDDLE);
+    south_panel.setPrimaryJustification(HUDContainer::START_AND_END);
+    south_panel.setSecondaryJustification(HUDContainer::PROXIMAL);
+    east_panel.setPrimaryJustification(HUDContainer::CENTRE);
+    east_panel.setSecondaryJustification(HUDContainer::DISTAL);
+    west_panel.setPrimaryJustification(HUDContainer::CENTRE);
+    west_panel.setSecondaryJustification(HUDContainer::PROXIMAL);
+
+    south_east_panel.setPrimaryJustification(HUDContainer::END);
+    south_east_panel.setSecondaryJustification(HUDContainer::DISTAL);
+    south_centre_panel.setPrimaryJustification(HUDContainer::END);
+    south_centre_panel.setSecondaryJustification(HUDContainer::MIDDLE);
+    south_west_panel.setPrimaryJustification(HUDContainer::END);
+    south_west_panel.setSecondaryJustification(HUDContainer::PROXIMAL);
+
+    // Help HUD.
+    help_north_panel.setPrimaryJustification(HUDContainer::CENTRE);
+    help_north_panel.setSecondaryJustification(HUDContainer::MIDDLE);
+    help_south_panel.setPrimaryJustification(HUDContainer::CENTRE);
+    help_south_panel.setSecondaryJustification(HUDContainer::MIDDLE);
+    help_east_panel.setPrimaryJustification(HUDContainer::CENTRE);
+    help_east_panel.setSecondaryJustification(HUDContainer::DISTAL);
+    help_west_panel.setPrimaryJustification(HUDContainer::CENTRE);
+    help_west_panel.setSecondaryJustification(HUDContainer::PROXIMAL);
 
     // Put the panels into the border layout.
+    // Standard HUD.
     overlay.setPanel(HUDBorderLayout::NORTH, &north_panel);
     overlay.setPanel(HUDBorderLayout::SOUTH, &south_panel);
     overlay.setPanel(HUDBorderLayout::EAST, &east_panel);
     overlay.setPanel(HUDBorderLayout::WEST, &west_panel);
 
-    //
+    // Help HUD.
+    help_overlay.setPanel(HUDBorderLayout::NORTH, &help_north_panel);
+    help_overlay.setPanel(HUDBorderLayout::SOUTH, &help_south_panel);
+    help_overlay.setPanel(HUDBorderLayout::EAST, &help_east_panel);
+    help_overlay.setPanel(HUDBorderLayout::WEST, &help_west_panel);
+
+    // Sub panel placements.
+    // Standard HUD.
+    // Within south western panel put sub-panels.
     south_west_panel.addItem(&south_west_upper_panel);
 
     // Within south panel put sub-panels.
@@ -472,8 +498,12 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
     south_west_upper_panel.addItem(new HUDImage("virgoTGA", 10,10));
     south_west_upper_panel.addItem(new HUDImage("wypTGA", 10, 10));
 
-    // Activate the HUD, and thus it's contained items.
+    // Populate the help HUD.
+    initialiseHelpHUD();
+
+    // Activate the HUD's, and thus their contained items.
     overlay.activate();
+    help_overlay.activate();
     }
 
 void Simulation::release(void) {
@@ -491,8 +521,9 @@ void Simulation::release(void) {
     ecliptic.inactivate();
     galactic.inactivate();
 
-    // Must inactivate the HUD layout LAST !!
+    // Must inactivate the HUD layouts LAST !!
     overlay.inactivate();
+    help_overlay.inactivate();
     }
 
 void Simulation::render(void) {
@@ -3227,4 +3258,24 @@ void Simulation::includeUserInformation(HUDFlowLayout* container) {
     htlp = new HUDTextLine(host_RAC.str().size(), host_RAC.str(), 0, 2);
     htlp->activate();
     container->addItem(htlp);
+    }
+
+void initialiseHelpHUD(void) {
+    help_north_panel.addItem(new HUDTextLine(30,"",0,2));
+
+
+    help_south_panel.addItem(new HUDTextLine(30,"",0,2));
+
+
+    help_west_panel.addItem(new HUDTextLine(30,"F1 - this help screen",0,2));
+    help_west_panel.addItem(new HUDTextLine(30,"F2 - cycle rendering level",0,2));
+    help_west_panel.addItem(new HUDTextLine(30,"F4 - show/hide the HUD",0,2));
+    help_west_panel.addItem(new HUDTextLine(30,"F5 - cycle constellations display",0,2));
+    help_west_panel.addItem(new HUDTextLine(30,"F6 - cycle pulsars display",0,2));
+    help_west_panel.addItem(new HUDTextLine(30,"F7 - cycle supernovae display",0,2));
+    help_west_panel.addItem(new HUDTextLine(30,"F8 - cycle celestial sphere coordinate display",0,2));
+    help_west_panel.addItem(new HUDTextLine(30,"F9 - cycle Earth coordinate display",0,2));
+    help_west_panel.addItem(new HUDTextLine(30,"F12 - turn autopilot on/off",0,2));
+
+    help_east_panel.addItem(new HUDTextLine(30,"",0,2));
     }

@@ -31,14 +31,11 @@
 /**
  * \brief This class enacts a container type having a 'flow' layout.
  *
- *      Either a horizontal or vertical axis of flow is chosen upon
- * construction, which indicates the direction along which to place
- * any items later added. Thus for a horizontal flow layout any added
- * items are placed from left to right in the order of their insertion
- * ie. the most recently added item is placed to the right side of
- * existing items. Similiarly the vertical flow layout has the items
- * placed from top to bottom in the order of their insertion ie. the
- * most recently added item is placed below existing items.
+ *      Thus for a horizontal flow layout any added items are placed from
+ * left to right in the order of their insertion ie. the most recently added
+ * item is placed to the right side of existing items. Similiarly the vertical
+ * flow layout has the items placed from top to bottom in the order of their
+ * insertion ie. the most recently added item is placed below existing items.
  *
  * \see HUDContainer
  * \see HUDContent

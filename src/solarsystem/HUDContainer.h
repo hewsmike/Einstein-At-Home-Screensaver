@@ -44,6 +44,9 @@
  *      Any contained object(s) will be activated for rendering when the
  * container itself is activated ( but only those present within at such time
  * of activation ).
+ *      Either a HORIZONTAL or VERTICAL axis may be chosen upon
+ * construction, which indicates the direction along which to place
+ * any items later added.
  *      For a given direction of primary axis there are several choices of
  * policy to determine the distribution of spacing ( or justification )
  * between the items :

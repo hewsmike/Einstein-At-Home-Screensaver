@@ -476,8 +476,15 @@ class Simulation : public Renderable {
 
         /**
          * \brief Render general user and host information
+         *
+         * \param the container to insert information into.
          */
         void includeUserInformation(HUDFlowLayout* container);
+
+        /**
+         * \brief Populate the help HUD with information.
+         */
+        void initialiseHelpHUD(void);
     };
 
 /**
