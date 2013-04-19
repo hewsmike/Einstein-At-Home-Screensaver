@@ -248,9 +248,7 @@ class WindowManager {
          * \brief Attempt to obtain a rendering surface of a given size
          *
          * \param width : horizontal dimensions in pixels.
-         *
          * \param height : vertical dimensions in pixels.
-         *
          * \param mode : either GLFW_WINDOW if an OS window is desired or
          *               GLFW_FULLSCREEN if a fullscreen surface is desired.
          *
