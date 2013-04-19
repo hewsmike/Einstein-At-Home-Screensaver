@@ -217,7 +217,9 @@ Simulation::Simulation(BOINCClientAdapter* boinc_adapter) :
                                south_centre_panel(HUDContainer::VERTICAL),
                                south_east_panel(HUDContainer::VERTICAL),
                                help_overlay(),
-                               help_north_panel(HUDContainer::VERTICAL),
+                               help_north_panel(HUDContainer::HORIZONTAL),
+                               help_north_east_panel(HUDContainer::VERTICAL);
+                               help_north_west_panel(HUDContainer::VERTICAL);
                                help_south_panel(HUDContainer::VERTICAL),
                                help_west_panel(HUDContainer::VERTICAL),
                                help_east_panel(HUDContainer::VERTICAL),
@@ -436,6 +438,8 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
 
     // Help HUD.
     help_north_panel.erase();
+    help_north_east_panel.erase();
+    help_north_west_panel.erase();
     help_south_panel.erase();
     help_east_panel.erase();
     help_west_panel.erase();
@@ -461,10 +465,14 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
     // Help HUD.
     help_north_panel.setPrimaryJustification(HUDContainer::CENTRE);
     help_north_panel.setSecondaryJustification(HUDContainer::MIDDLE);
+    help_north_east_panel.setPrimaryJustification(HUDContainer::START);
+    help_north_east_panel.setSecondaryJustification(HUDContainer::PROXIMAL);
+    help_north_west_panel.setPrimaryJustification(HUDContainer::START);
+    help_north_west_panel.setSecondaryJustification(HUDContainer::PROXIMAL);
     help_south_panel.setPrimaryJustification(HUDContainer::CENTRE);
     help_south_panel.setSecondaryJustification(HUDContainer::MIDDLE);
     help_east_panel.setPrimaryJustification(HUDContainer::CENTRE);
-    help_east_panel.setSecondaryJustification(HUDContainer::DISTAL);
+    help_east_panel.setSecondaryJustification(HUDContainer::PROXIMAL);
     help_west_panel.setPrimaryJustification(HUDContainer::CENTRE);
     help_west_panel.setSecondaryJustification(HUDContainer::PROXIMAL);
 
@@ -490,6 +498,11 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
     south_panel.addItem(&south_west_panel);
     south_panel.addItem(&south_centre_panel);
     south_panel.addItem(&south_east_panel);
+
+    // Help HUD.
+    // Within help north panel put sub-panels.
+    help_north_panel.addItem(&help_north_west_panel);
+    help_north_panel.addItem(&help_north_east_panel);
 
     // Create our impetus message.
     version_text = new HUDTextLineScroll(35,
@@ -3274,21 +3287,66 @@ void Simulation::includeUserInformation(HUDFlowLayout* container) {
     }
 
 void Simulation::initialiseHelpHUD(void) {
-    help_north_panel.addItem(new HUDTextLine(30,"",0,2));
+    string msg = "F1 - this help screen";
+    help_north_west_panel.addItem(new HUDTextLine(msg.size(), msg, 0, 2));
+    msg = "F2 - cycle rendering level";
+    help_north_west_panel.addItem(new HUDTextLine(msg.size(), msg, 0, 2));
+    msg = "F4 - show/hide the HUD";
+    help_north_west_panel.addItem(new HUDTextLine(msg.size(), msg, 0, 2));
+    msg = "F5 - cycle constellations display";
+    help_north_west_panel.addItem(new HUDTextLine(msg.size(), msg, 0, 2));
+    msg = "F6 - cycle pulsars display";
+    help_north_west_panel.addItem(new HUDTextLine(msg.size(), msg, 0, 2));
 
+    msg = "F7 - cycle supernovae display";
+    help_north_east_panel.addItem(new HUDTextLine(msg.size(), msg, 0, 2));
+    msg = "F8 - cycle celestial sphere coordinate display";
+    help_north_east_panel.addItem(new HUDTextLine(msg.size(), msg, 0, 2));
+    msg = "F9 - cycle Earth coordinate display";
+    help_north_east_panel.addItem(new HUDTextLine(msg.size(), msg, 0, 2));
+    msg = "F12 - turn autopilot on/off";
+    help_north_east_panel.addItem(new HUDTextLine(msg.size(), msg, 0, 2));
 
-    help_south_panel.addItem(new HUDTextLine(30,"",0,2));
+    msg = "SPACEBAR - STOP all translation and rotation";
+    help_south_panel.addItem(new HUDTextLine(msg.size(), msg, 0, 2));
+    msg = "G - go to initial craft position";
+    help_south_panel.addItem(new HUDTextLine(msg.size(), msg, 0, 2));
+    msg = "ESC - exit the program";
+    help_south_panel.addItem(new HUDTextLine(msg.size(), msg, 0, 2));
+    msg = "Controller is 'inertial' - things will happen until you stop it";
+    help_south_panel.addItem(new HUDTextLine(msg.size(), msg, 0, 2));
 
+    msg = "Translation controls";
+    help_west_panel.addItem(new HUDTextLine(msg.size(), msg, 0, 2));
+    msg = "E - forward thrust";
+    help_west_panel.addItem(new HUDTextLine(msg.size(), msg, 0, 2));
+    msg = "C - reverse thrust";
+    help_west_panel.addItem(new HUDTextLine(msg.size(), msg, 0, 2));
+    msg = "S - leftwards thrust";
+    help_west_panel.addItem(new HUDTextLine(msg.size(), msg, 0, 2));
+    msg = "F - rightwards thrust";
+    help_west_panel.addItem(new HUDTextLine(msg.size(), msg, 0, 2));
+    msg = "R - upwards thrust";
+    help_west_panel.addItem(new HUDTextLine(msg.size(), msg, 0, 2));
+    msg = "V - downwards thrust";
+    help_west_panel.addItem(new HUDTextLine(msg.size(), msg, 0, 2));
+    msg = "D - STOP all translation";
+    help_west_panel.addItem(new HUDTextLine(msg.size(), msg, 0, 2));
 
-    help_west_panel.addItem(new HUDTextLine(30,"F1 - this help screen",0,2));
-    help_west_panel.addItem(new HUDTextLine(30,"F2 - cycle rendering level",0,2));
-    help_west_panel.addItem(new HUDTextLine(30,"F4 - show/hide the HUD",0,2));
-    help_west_panel.addItem(new HUDTextLine(30,"F5 - cycle constellations display",0,2));
-    help_west_panel.addItem(new HUDTextLine(30,"F6 - cycle pulsars display",0,2));
-    help_west_panel.addItem(new HUDTextLine(30,"F7 - cycle supernovae display",0,2));
-    help_west_panel.addItem(new HUDTextLine(30,"F8 - cycle celestial sphere coordinate display",0,2));
-    help_west_panel.addItem(new HUDTextLine(30,"F9 - cycle Earth coordinate display",0,2));
-    help_west_panel.addItem(new HUDTextLine(30,"F12 - turn autopilot on/off",0,2));
-
-    help_east_panel.addItem(new HUDTextLine(30,"",0,2));
+    msg = "Rotation controls";
+    help_east_panel.addItem(new HUDTextLine(msg.size(), msg, 0, 2));
+    msg = ". or Numpad2 - upwards pitch";
+    help_east_panel.addItem(new HUDTextLine(msg.size(), msg, 0, 2));
+    msg = "O or Numpad8 - downwards pitch";
+    help_east_panel.addItem(new HUDTextLine(msg.size(), msg, 0, 2));
+    msg = ", or Numpad1 - leftwards yaw";
+    help_east_panel.addItem(new HUDTextLine(msg.size(), msg, 0, 2));
+    msg = "/ or Numpad3 - rightwards yaw";
+    help_east_panel.addItem(new HUDTextLine(msg.size(), msg, 0, 2));
+    msg = "K or Numpad4 - leftwards roll";
+    help_east_panel.addItem(new HUDTextLine(msg.size(), msg, 0, 2));
+    msg = "; or Numpad6 - rightwards roll";
+    help_east_panel.addItem(new HUDTextLine(msg.size(), msg, 0, 2));
+    msg = "L or Numpad5 - STOP all rotation";
+    help_east_panel.addItem(new HUDTextLine(msg.size(), msg, 0, 2));
     }

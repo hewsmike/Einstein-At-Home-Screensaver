@@ -405,6 +405,8 @@ class Simulation : public Renderable {
         /// The help HUD
         HUDBorderLayout help_overlay;
         HUDFlowLayout help_north_panel;
+        HUDFlowLayout help_north_east_panel;
+        HUDFlowLayout help_north_west_panel;
         HUDFlowLayout help_south_panel;
         HUDFlowLayout help_west_panel;
         HUDFlowLayout help_east_panel;
