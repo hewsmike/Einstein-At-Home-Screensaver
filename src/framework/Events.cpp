@@ -43,7 +43,8 @@ Events::Events(const Events& other) {
     }
 
 Events& Events::operator=(const Events& other) {
-    // Skip self assignment check as no allocation.
+    // Skip self assignment check as no allocation ie. all
+    // members are static.
     return *this;
     }
 
@@ -54,6 +55,7 @@ Events* Events::Instance(GLuint render_interval) {
         init(render_interval);
         }
 
+    // The return value is an 'ordinary' pointer.
     return Events::p_instance.get();
     }
 
@@ -62,7 +64,6 @@ void Events::init(GLuint render_interval) {
     event_queue.clear();
 
     // Set GLFW global event behaviours.
-
     // Ensure keys are non-sticky.
     glfwDisable(GLFW_STICKY_KEYS);
 
@@ -77,11 +78,11 @@ void Events::init(GLuint render_interval) {
     glfwDisable(GLFW_STICKY_MOUSE_BUTTONS);
 
     // Non GLFW callbacks. See note below.
-
     // Set the BOINC callback timing.
     boinc_timer = new TriggerTimer(BOINC_CALLBACK_INTERVAL, boincUpdate);
 
     // Set the render callback timing, but adhere to minimum.
+    // Hence an upper limit is placed on framerate.
     if(render_interval < RENDER_CALLBACK_INTERVAL_MIN){
         render_interval = RENDER_CALLBACK_INTERVAL_MIN;
         }
@@ -93,7 +94,7 @@ void Events::init(GLuint render_interval) {
     // 'this' pointer and other OOP stuff, etc. The BOINC and render
     // callbacks mechanisms are of my own making, not GLFW library
     // linked and so such concerns are not relevant. An issue of
-    // language calling conventions ultimately.
+    // language conventions ultimately.
 
     // Set the keypress callback.
     glfwSetKeyCallback(keyPress);
@@ -232,7 +233,7 @@ void GLFWCALL Events::mouseWheel(int pos) {
     ev.m_wheel.type = Events::MouseWheelEventType;
 
     // For the very first call only to this routine,
-    // set the position of the wheel to zero.
+    // set the position of the wheel to 'zero'.
     if(first_time == true) {
         first_time = false;
         pos = Events::INITIAL_WHEEL_POSITION;

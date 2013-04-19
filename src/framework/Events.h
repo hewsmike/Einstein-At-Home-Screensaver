@@ -111,7 +111,12 @@ union Event {
  *
  * ... see p127+ thereof. Memory leakage is avoided, as destruction
  * of a ( static ) pointer doesn't per se de-allocate heap upon
- * program exit.
+ * program exit. But we are using an std::auto_ptr which thus :
+ *      - achieves destruction and heap clearance on any exit.
+ *      - is only accessed outside the class via an 'ordinary' pointer
+ *        [ std::auto_ptr.get() is used internally ] without transfer semantics.
+ *      - ownership transfer is prevented by making the relevant operations
+ *        private.
  */
 
 class Events {
