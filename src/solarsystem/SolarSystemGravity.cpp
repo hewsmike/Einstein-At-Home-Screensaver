@@ -27,15 +27,15 @@ SolarSystemGravity::SolarSystemGravity() :
 
 SolarSystemGravity::~SolarSystemGravity() {
     delete sim_instance;
-   }
+    }
 
 void SolarSystemGravity::initialize(const int width, const int height, const Resource *font, const bool recycle) {
 	SolarSystem::initialize(width, height, font, recycle);
-   }
+    }
 
 void SolarSystemGravity::resize(const int width, const int height) {
 	SolarSystem::resize(width, height);
-   }
+    }
 
 void SolarSystemGravity::refreshBOINCInformation(void) {
 	// call base class implementation

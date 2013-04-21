@@ -405,11 +405,11 @@ class Simulation : public Renderable {
         /// The help HUD
         HUDBorderLayout help_overlay;
         HUDFlowLayout help_north_panel;
-        HUDFlowLayout help_north_east_panel;
-        HUDFlowLayout help_north_west_panel;
-        HUDFlowLayout help_south_panel;
-        HUDFlowLayout help_west_panel;
-        HUDFlowLayout help_east_panel;
+        HUDTempFlowLayout help_north_east_panel;
+        HUDTempFlowLayout help_north_west_panel;
+        HUDTempFlowLayout help_south_panel;
+        HUDTempFlowLayout help_west_panel;
+        HUDTempFlowLayout help_east_panel;
 
         // Pointer and flag for the active HUD.
         HUDBorderLayout* active_HUD;

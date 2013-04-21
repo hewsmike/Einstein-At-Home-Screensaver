@@ -218,8 +218,8 @@ Simulation::Simulation(BOINCClientAdapter* boinc_adapter) :
                                south_east_panel(HUDContainer::VERTICAL),
                                help_overlay(),
                                help_north_panel(HUDContainer::HORIZONTAL),
-                               help_north_east_panel(HUDContainer::VERTICAL);
-                               help_north_west_panel(HUDContainer::VERTICAL);
+                               help_north_east_panel(HUDContainer::VERTICAL),
+                               help_north_west_panel(HUDContainer::VERTICAL),
                                help_south_panel(HUDContainer::VERTICAL),
                                help_west_panel(HUDContainer::VERTICAL),
                                help_east_panel(HUDContainer::VERTICAL),
@@ -385,8 +385,9 @@ void Simulation::resize(GLuint width, GLuint height) {
     // Tell the target reticle of change of screen size, so
     // that it can center itself properly.
     target.resize(width, height);
-    // Now tell the HUD of such settings.
-    active_HUD->requestResize(width, height);
+    // Now tell both HUDs of such settings.
+    overlay.requestResize(width, height);
+    help_overlay.requestResize(width, height);
     }
 
 CameraState Simulation::viewPoint(void) {
@@ -408,21 +409,32 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
 
     // Activate 3D scene objects, while nominating any fonts
     // PRIOR to activation of their respective objects..
+    ErrorHandler::record("Simulation::prepare() : Checkpoint 1", ErrorHandler::WARN);
     cs.setFont(SolarSystemGlobals::getFont(SolarSystemGlobals::CONSTELLATIONS));
+    ErrorHandler::record("Simulation::prepare() : Checkpoint 2", ErrorHandler::WARN);
     cs.activate();
     ps.activate();
     ps_EAH.activate();
     sn.activate();
+    ErrorHandler::record("Simulation::prepare() : Checkpoint 2a", ErrorHandler::WARN);
     c_sphere.setFont(SolarSystemGlobals::getFont(SolarSystemGlobals::SKY_GRID));
-    c_sphere.activate();
+    ErrorHandler::record("Simulation::prepare() : Checkpoint 2b", ErrorHandler::WARN);
+    // c_sphere.activate();
+    ErrorHandler::record("Simulation::prepare() : Checkpoint 2c", ErrorHandler::WARN);
     earth.activate();
+    ErrorHandler::record("Simulation::prepare() : Checkpoint 2d", ErrorHandler::WARN);
     earth_shadow.activate();
+    ErrorHandler::record("Simulation::prepare() : Checkpoint 2e", ErrorHandler::WARN);
     earth_grid.setFont(SolarSystemGlobals::getFont(SolarSystemGlobals::EARTH_GRID));
+    ErrorHandler::record("Simulation::prepare() : Checkpoint 2f", ErrorHandler::WARN);
     earth_grid.activate();
     sun.activate();
+
     overlay.setFont(SolarSystemGlobals::getFont(SolarSystemGlobals::HUDOVER));
+
     ecliptic.activate();
     galactic.activate();
+    ErrorHandler::record("Simulation::prepare() : Checkpoint 3", ErrorHandler::WARN);
 
     // Now to arrange the HUD components, firstly by emptying ALL the panels,
     // as we may be recycling.
@@ -435,6 +447,7 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
     south_panel.erase();
     east_panel.erase();
     west_panel.erase();
+    ErrorHandler::record("Simulation::prepare() : Checkpoint 4", ErrorHandler::WARN);
 
     // Help HUD.
     help_north_panel.erase();
@@ -443,6 +456,7 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
     help_south_panel.erase();
     help_east_panel.erase();
     help_west_panel.erase();
+    ErrorHandler::record("Simulation::prepare() : Checkpoint 5", ErrorHandler::WARN);
 
     // Set panel justifications.
     // Standard HUD.
@@ -454,6 +468,7 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
     east_panel.setSecondaryJustification(HUDContainer::DISTAL);
     west_panel.setPrimaryJustification(HUDContainer::CENTRE);
     west_panel.setSecondaryJustification(HUDContainer::PROXIMAL);
+    ErrorHandler::record("Simulation::prepare() : Checkpoint 6", ErrorHandler::WARN);
 
     south_east_panel.setPrimaryJustification(HUDContainer::END);
     south_east_panel.setSecondaryJustification(HUDContainer::DISTAL);
@@ -461,6 +476,7 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
     south_centre_panel.setSecondaryJustification(HUDContainer::MIDDLE);
     south_west_panel.setPrimaryJustification(HUDContainer::END);
     south_west_panel.setSecondaryJustification(HUDContainer::PROXIMAL);
+    ErrorHandler::record("Simulation::prepare() : Checkpoint 7", ErrorHandler::WARN);
 
     // Help HUD.
     help_north_panel.setPrimaryJustification(HUDContainer::CENTRE);
@@ -475,6 +491,7 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
     help_east_panel.setSecondaryJustification(HUDContainer::PROXIMAL);
     help_west_panel.setPrimaryJustification(HUDContainer::CENTRE);
     help_west_panel.setSecondaryJustification(HUDContainer::PROXIMAL);
+    ErrorHandler::record("Simulation::prepare() : Checkpoint 8", ErrorHandler::WARN);
 
     // Put the panels into the border layout.
     // Standard HUD.
@@ -482,6 +499,7 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
     overlay.setPanel(HUDBorderLayout::SOUTH, &south_panel);
     overlay.setPanel(HUDBorderLayout::EAST, &east_panel);
     overlay.setPanel(HUDBorderLayout::WEST, &west_panel);
+    ErrorHandler::record("Simulation::prepare() : Checkpoint 9", ErrorHandler::WARN);
 
     // Help HUD.
     help_overlay.setPanel(HUDBorderLayout::NORTH, &help_north_panel);
@@ -493,16 +511,19 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
     // Standard HUD.
     // Within south western panel put sub-panels.
     south_west_panel.addItem(&south_west_upper_panel);
+    ErrorHandler::record("Simulation::prepare() : Checkpoint 10", ErrorHandler::WARN);
 
     // Within south panel put sub-panels.
     south_panel.addItem(&south_west_panel);
     south_panel.addItem(&south_centre_panel);
     south_panel.addItem(&south_east_panel);
+    ErrorHandler::record("Simulation::prepare() : Checkpoint 11", ErrorHandler::WARN);
 
     // Help HUD.
     // Within help north panel put sub-panels.
     help_north_panel.addItem(&help_north_west_panel);
     help_north_panel.addItem(&help_north_east_panel);
+    ErrorHandler::record("Simulation::prepare() : Checkpoint 12", ErrorHandler::WARN);
 
     // Create our impetus message.
     version_text = new HUDTextLineScroll(35,
@@ -513,6 +534,7 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
         ErrorHandler::record(msg, ErrorHandler::FATAL);
         }
     south_west_panel.addItem(version_text);
+    ErrorHandler::record("Simulation::prepare() : Checkpoint 13", ErrorHandler::WARN);
 
     // Put our logos into the logo cycling display panel.
     south_west_upper_panel.addItem(new HUDImage("aeiTGA", 10, 10));
@@ -523,13 +545,17 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
     south_west_upper_panel.addItem(new HUDImage("palfaTGA", 10,10));
     south_west_upper_panel.addItem(new HUDImage("virgoTGA", 10,10));
     south_west_upper_panel.addItem(new HUDImage("wypTGA", 10, 10));
+    ErrorHandler::record("Simulation::prepare() : Checkpoint 14", ErrorHandler::WARN);
 
     // Populate the help HUD.
     initialiseHelpHUD();
+    ErrorHandler::record("Simulation::prepare() : Checkpoint 15", ErrorHandler::WARN);
 
     // Activate the HUD's, and thus their contained items.
     overlay.activate();
+    ErrorHandler::record("Simulation::prepare() : Checkpoint 16", ErrorHandler::WARN);
     help_overlay.activate();
+    ErrorHandler::record("Simulation::prepare() : Checkpoint 17", ErrorHandler::WARN);
     }
 
 void Simulation::release(void) {

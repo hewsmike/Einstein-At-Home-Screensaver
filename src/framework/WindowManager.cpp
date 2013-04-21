@@ -279,7 +279,8 @@ void WindowManager::eventLoop(void) {
 
                     m_WindowedWidth = m_CurrentWidth;
                     m_WindowedHeight = m_CurrentHeight;
-                    // Window resize has occurred.
+                    // Window resize has occurred. NB last argument is set to recycle
+                    // the .... AbstractGraphicsEngine.
                     eventObservers.front()->initialize(m_CurrentWidth, m_CurrentHeight, 0, true);
                     }
 
