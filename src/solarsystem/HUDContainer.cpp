@@ -180,51 +180,9 @@ HUDContainer::Axis HUDContainer::getAxis(void) const {
     }
 
 void HUDContainer::prepare(SolarSystemGlobals::render_quality rq) {
-    // Policy is that when a container is activated, then all
-    // contained items are as well.
-
-    // Go through the container, preparing each item within.
-    for(std::map<int, HUDItem*>::iterator obj = container.begin();
-        obj != container.end();
-        ++obj) {
-        // Mechanics of Renderable class ensures that activation
-        // implies preparation.
-
-        // Check on nullity ie. assume the iterator is valid, but
-        // does it dereference to a NULL pointer ?
-        if(obj->second != NULL) {
-            obj->second->activate();
-            }
-        else {
-            // Shouldn't ever get here, but ...
-            ErrorHandler::record("HUDContainer::prepare() - NULL found for object!",
-                                  ErrorHandler::FATAL);
-            }
-        }
     }
 
 void HUDContainer::release(void) {
-    // Policy is that when a container is inactivated, then all
-    // contained items are as well.
-
-    // Go through the container, releasing each item within.
-    for(std::map<int, HUDItem*>::iterator obj = container.begin();
-        obj != container.end();
-        ++obj) {
-        // Similiar to prepare() above, as inactivation has the same
-        // relation to release.
-
-        // Check on nullity ie. assume the iterator is valid, but
-        // does it dereference to a NULL pointer ?
-        if(obj->second != NULL) {
-            obj->second->inactivate();
-            }
-        else {
-            // Shouldn't ever get here, but ...
-            ErrorHandler::record("HUDContainer::release() - NULL found for object!",
-                                 ErrorHandler::FATAL);
-            }
-        }
     }
 
 void HUDContainer::render(void) {
