@@ -172,10 +172,7 @@ class SolarSystem : public AbstractGraphicsEngine, public RenderQualityObserver 
         OGLFT_ft* HUDFont;
 
     private:
-
         void changeRenderQuality(void);
-
-        void setFonts(void);
 
         bool renderUpdateFlag;
 
