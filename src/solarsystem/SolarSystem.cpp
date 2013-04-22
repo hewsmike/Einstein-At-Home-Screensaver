@@ -39,10 +39,15 @@ SolarSystem::SolarSystem(string sharedMemoryAreaIdentifier) :
     /**
      * Parameters and State info
      */
+    sim_instance = NULL;
     spaceFontResource = NULL;
     renderUpdateFlag = false;
     mouse_wheel_differential = 0;
     fov_angle = FOV_ANGLE_INITIAL;
+    skygridFont = NULL;
+    constellationFont = NULL;
+    earthgridFont = NULL;
+    HUDFont = NULL;
     }
 
 SolarSystem::~SolarSystem() {
@@ -83,7 +88,7 @@ void SolarSystem::resize(const int width, const int height) {
  *  value for recycle = false
  */
 void SolarSystem::initialize(const int width, const int height, const Resource* font, const bool recycle) {
-    // Check whether we initialize the first time or have to recycle (required for windoze)
+    /// Check whether we initialize the first time or have to recycle (required for windoze)
     if(recycle == false) {
         // This is the first call of this routine from main().
         if(font != NULL) {
@@ -97,32 +102,38 @@ void SolarSystem::initialize(const int width, const int height, const Resource* 
         // This is the recurrent call of this routine from WindowManager.
         // Seems that windoze also "resets" our OpenGL fonts, so
         // let's clean up before reinitializing them.
+#ifdef WIN_OGLFT_WORKAROUND
         if(skygridFont != NULL) {
             delete skygridFont;
+            skygridFont = NULL;
             }
         if(earthgridFont != NULL) {
             delete earthgridFont;
+            earthgridFont = NULL;
             }
         if(constellationFont != NULL) {
             delete constellationFont;
+            constellationFont = NULL;
             }
         if(HUDFont != NULL) {
             delete HUDFont;
+            HUDFont = NULL;
             }
+#endif
         }
 
     // We might be called to recycle even before initialization. Why's that ??
     if(spaceFontResource == NULL) {
         // So we are here because spaceFontResource was not assigned
-        // to an actual resource instance. Make it FATAL.
+        // to an actual resource instance. Make it a FATAL !
         ErrorHandler::record("SolarSystem::initialize() : Warning: font resource still unknown! You might want to recycle at a later stage...",
                              ErrorHandler::FATAL);
         }
-    else {
+
         // create font instance using font resource (base address + size)
         skygridFont = new OGLFT_ft(&spaceFontResource->data()->at(0),
                                    spaceFontResource->data()->size(),
-                                   5, 200);
+                                   13, 78);
 
         // Note short-circuit evaluation relevant in this if clause ie. right side
         // expression is evaluated only if left side expression is false. Matters
@@ -138,7 +149,7 @@ void SolarSystem::initialize(const int width, const int height, const Resource* 
         // create font instance using font resource (base address + size)
         earthgridFont = new OGLFT_ft(&spaceFontResource->data()->at(0),
                                      spaceFontResource->data()->size(),
-                                     7, 150);
+                                     13, 78);
 
         if(earthgridFont == NULL || (earthgridFont->isValid() == false)) {
             // TODO - better error path
@@ -151,7 +162,7 @@ void SolarSystem::initialize(const int width, const int height, const Resource* 
         // create font instance using font resource (base address + size)
         constellationFont = new OGLFT_ft(&spaceFontResource->data()->at(0),
                                          spaceFontResource->data()->size(),
-                                         4, 400);
+                                         13, 78);
         // Short-circuit .....
         if(constellationFont == NULL || (constellationFont->isValid() == false)) {
             // TODO - better error path ?
@@ -164,7 +175,7 @@ void SolarSystem::initialize(const int width, const int height, const Resource* 
         // create font instance using font resource (base address + size)
         HUDFont = new OGLFT_ft(&spaceFontResource->data()->at(0),
                                spaceFontResource->data()->size(),
-                               8, 160);
+                               18, 90);
 
         // Short-circuit .....
         if(HUDFont == NULL || (HUDFont->isValid() == false)) {
@@ -174,7 +185,7 @@ void SolarSystem::initialize(const int width, const int height, const Resource* 
             }
         HUDFont->setBackgroundColor(0.0f, 0.0f, 0.0f, 0.0f);
         HUDFont->setForegroundColor(1.0f, 1.0f, 1.0f, 0.9f);
-        }
+
 
     // Some Simulation components need to have a font before activation.
     SolarSystemGlobals::setFont(SolarSystemGlobals::CONSTELLATIONS, constellationFont);

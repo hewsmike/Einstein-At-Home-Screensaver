@@ -69,7 +69,9 @@ SolarSystemGlobals::~SolarSystemGlobals() {
     }
 
 void SolarSystemGlobals::setFont(SolarSystemGlobals::content element, OGLFT_ft* font) {
-    fonts[element] = font;
+    fonts.erase(element);
+    // Then put in a new key/value combo using pair semantics.
+    fonts.insert(std::pair<SolarSystemGlobals::content, OGLFT_ft*>(element, font));
     }
 
 OGLFT_ft* SolarSystemGlobals::getFont(SolarSystemGlobals::content element) {

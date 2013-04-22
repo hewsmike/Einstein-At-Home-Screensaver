@@ -103,6 +103,7 @@ ifeq ".$(SYSTEM)" ".win32"
     CPPFLAGS += -D_WIN32_WINDOWS=0x0410
     CPPFLAGS += -DWIN32_GLEXT_LINKS
     CPPFLAGS += -DGLEW_STATIC
+    CPPFLAGS += -DWIN_OGLFT_WORKAROUND
 endif
 ifeq ".$(SYSTEM)" ".mac"
     CPPFLAGS += -I/usr/include

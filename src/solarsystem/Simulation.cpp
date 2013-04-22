@@ -409,20 +409,32 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
 
     // Activate 3D scene objects, while nominating any fonts
     // PRIOR to activation of their respective objects..
+    cs.inactivate();
     cs.setFont(SolarSystemGlobals::getFont(SolarSystemGlobals::CONSTELLATIONS));
     cs.activate();
+
     ps.activate();
     ps_EAH.activate();
     sn.activate();
+
+    c_sphere.inactivate();
     c_sphere.setFont(SolarSystemGlobals::getFont(SolarSystemGlobals::SKY_GRID));
     c_sphere.activate();
+
     earth.activate();
     earth_shadow.activate();
+
+    earth_grid.inactivate();
     earth_grid.setFont(SolarSystemGlobals::getFont(SolarSystemGlobals::EARTH_GRID));
     earth_grid.activate();
+
     sun.activate();
 
+    overlay.inactivate();
     overlay.setFont(SolarSystemGlobals::getFont(SolarSystemGlobals::HUDOVER));
+
+    help_overlay.inactivate();
+    help_overlay.setFont(SolarSystemGlobals::getFont(SolarSystemGlobals::HUDOVER));
 
     ecliptic.activate();
     galactic.activate();
