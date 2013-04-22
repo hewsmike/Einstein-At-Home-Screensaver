@@ -39,29 +39,25 @@ void Renderable::reAcquire(void) {
     }
 
 void Renderable::activate(void) {
-    if(activity != Renderable::ACTIVE) {
-        // Mark as active.
-        activity = Renderable::ACTIVE;
+    // Register ONCE for callback should the global rendering level alter.
+    attachRender();
 
-        // Prepare resources as we have decided to show it.
-        prepare(quality);
+    // Mark as active.
+    activity = Renderable::ACTIVE;
 
-        // Register for callback should the global rendering level alter.
-        attachRender();
-        }
+    // Prepare resources as we have decided to show it.
+    prepare(quality);
     }
 
 void Renderable::inactivate(void) {
-    if(activity != Renderable::INACTIVE) {
-        // Mark as inactive.
-        activity = Renderable::INACTIVE;
+    // Mark as inactive.
+    activity = Renderable::INACTIVE;
 
-        // Release resources as we have decided not to show it.
-        release();
+    // Release resources as we have decided not to show it.
+    release();
 
-        // Unregister any callback triggered by global rendering level alteration.
-        detachRender();
-        }
+    // Unregister any callback triggered by global rendering level alteration.
+    detachRender();
     }
 
 bool Renderable::isActivated(void) const {
