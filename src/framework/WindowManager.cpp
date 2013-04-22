@@ -205,6 +205,9 @@ bool WindowManager::initialize(const int width, const int height, const int fram
     // render timing.
     Events::Instance(m_RenderEventInterval);
 
+    // To be sure, flush before use !! :-)
+    Events::Instance(0)->flush();
+
     return true;
     }
 
@@ -213,6 +216,13 @@ void WindowManager::eventLoop(void) {
     if(!eventObservers.empty()) {
         // Infinite looping until an exit is triggered.
         while(true) {
+            // Flush the queue first time through ....
+            static bool first_time = true;
+            if(first_time == true) {
+                Events::Instance(0)->flush();
+                first_time = false;
+                }
+
             // Holder of event type.
             Event current_event;
 
