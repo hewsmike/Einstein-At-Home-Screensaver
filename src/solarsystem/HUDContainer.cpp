@@ -122,14 +122,8 @@ void HUDContainer::addItem(int handle, HUDItem* item) {
         // Allow this container to be the enclosing one for this included item.
         item->setEnclosingContainer(this);
 
-        // Policy is for an included item to acquire the
-        // activation status of the container.
-//        if(this->isActivated()) {
-//            item->activate();
-//            }
-//        else {
-//            item->inactivate();
-//            }
+        // Policy is to activate all items upon inclusion.
+        item->activate();
 
         // Adjust container to account for this addition.
         adjust();
