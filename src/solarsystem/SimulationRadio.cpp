@@ -29,7 +29,6 @@ SimulationRadio::~SimulationRadio() {
     }
 
 void SimulationRadio::includeLogo(HUDFlowLayout* container) {
-    loadImageToPanel(ligo_image, container, "palfaTGA", 5, 5);
     }
 
 void SimulationRadio::includeSearchInformation(HUDFlowLayout* container) {

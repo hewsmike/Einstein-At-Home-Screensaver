@@ -29,7 +29,6 @@ SimulationGamma::~SimulationGamma() {
     }
 
 void SimulationGamma::includeLogo(HUDFlowLayout* container) {
-    loadImageToPanel(ligo_image, container, "fermiTGA", 5, 5);
     }
 
 void SimulationGamma::includeSearchInformation(HUDFlowLayout* container) {

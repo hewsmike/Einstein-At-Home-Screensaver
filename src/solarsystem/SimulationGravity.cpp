@@ -34,9 +34,6 @@ SimulationGravity::~SimulationGravity() {
     }
 
 void SimulationGravity::includeLogo(HUDFlowLayout* container) {
-    loadImageToPanel(ligo_image, container, "ligoTGA", 5, 5);
-    loadImageToPanel(ligo_image, container, "geoTGA", 5, 5);
-    loadImageToPanel(ligo_image, container, "virgoTGA", 5, 5);
     }
 
 void SimulationGravity::includeSearchInformation(HUDFlowLayout* container) {

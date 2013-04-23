@@ -248,10 +248,10 @@ void SolarSystem::initialize(const int width, const int height, const Resource* 
     glDisable(GL_CLIP_PLANE0);
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 
-    sim_instance->activate();
-
     // Setup dimensions.
     resize(width, height);
+
+    sim_instance->activate();
 
     ErrorHandler::check_OpenGL_Error();
     }

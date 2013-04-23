@@ -234,7 +234,7 @@ void AutoPilot::getTraverse(const Traversable& trav, const CameraState& cam) {
     for(unsigned int way_point = 0;
         way_point < trav.numberOfWayPoints();
         ++way_point) {
-        current_traverse.addLookout(first.getView(way_point));
+        current_traverse.addLookout(first);
         current_traverse.addLookout(trav.getView(way_point));
         }
     }
