@@ -204,11 +204,11 @@ int main(int argc, char **argv) {
     // Register AbstractGraphicsEngine as event observer.
     window.registerEventObserver(graphics);
 
-    // Enter main event loop, but first flush any events.
+    // Enter main event loop, but first flush any pending events.
     Events::Instance(0)->flush();
     window.eventLoop();
 
-    // Clean up end exit
+    // Clean up and exit
     window.unregisterEventObserver(graphics);
     delete graphics;
     delete fontResource;
