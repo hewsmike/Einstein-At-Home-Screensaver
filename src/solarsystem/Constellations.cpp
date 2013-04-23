@@ -2541,7 +2541,7 @@ void Constellations::loadIndexBuffer(void) {
     }
 
 void Constellations::createMarkerLists(void) {
-    // Get the OGLFT font for this class.
+    // Get the OGLFT font for this object.
     OGLFT_ft* myFont = this->getFont();
 
     // This destroys any contained vectors too ...

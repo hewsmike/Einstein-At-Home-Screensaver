@@ -186,7 +186,6 @@ void SolarSystem::initialize(const int width, const int height, const Resource* 
         HUDFont->setBackgroundColor(0.0f, 0.0f, 0.0f, 0.0f);
         HUDFont->setForegroundColor(1.0f, 1.0f, 1.0f, 0.9f);
 
-
     // Some Simulation components need to have a font before activation.
     SolarSystemGlobals::setFont(SolarSystemGlobals::CONSTELLATIONS, constellationFont);
     SolarSystemGlobals::setFont(SolarSystemGlobals::SKY_GRID, skygridFont);
