@@ -35,6 +35,8 @@ SimulationGravity::~SimulationGravity() {
 
 void SimulationGravity::includeLogo(HUDFlowLayout* container) {
     loadImageToPanel(ligo_image, container, "ligoTGA", 5, 5);
+    loadImageToPanel(ligo_image, container, "geoTGA", 5, 5);
+    loadImageToPanel(ligo_image, container, "virgoTGA", 5, 5);
     }
 
 void SimulationGravity::includeSearchInformation(HUDFlowLayout* container) {
@@ -44,17 +46,13 @@ void SimulationGravity::includeSearchInformation(HUDFlowLayout* container) {
     // First empty of any existing content.
     container->erase();
 
-    HUDTextLine* htlp = NULL;
-
     // Right ascension.
     double right_ascension = EG_adapter->wuSkyPosRightAscension();
     stringstream msg_RA;
     msg_RA << "Right ascension : ";
     msg_RA.setf(std::ios::showpos | ios::fixed);
     msg_RA << std::setw(6) << std::setprecision(2) << right_ascension;
-    htlp = new HUDTextLine(msg_RA.str().size(), msg_RA.str(), 0, 2);
-    htlp->activate();
-    container->addItem(htlp);
+    container->addItem(new HUDTextLine(msg_RA.str().size(), msg_RA.str(), 0, 2));
 
     // Declination.
     double declination = EG_adapter->wuSkyPosDeclination();
@@ -62,9 +60,7 @@ void SimulationGravity::includeSearchInformation(HUDFlowLayout* container) {
     msg_dec << "Declination : ";
     msg_dec.setf(std::ios::showpos | ios::fixed);
     msg_dec << std::setw(5) << std::setprecision(2) << declination;
-    htlp = new HUDTextLine(msg_dec.str().size(), msg_dec.str(), 0, 2);
-    htlp->activate();
-    container->addItem(htlp);
+    container->addItem(new HUDTextLine(msg_dec.str().size(), msg_dec.str(), 0, 2));
 
     // Fraction completed, as a percentage.
     double fraction_complete = EG_adapter->wuFractionDone() * 100;
@@ -73,9 +69,7 @@ void SimulationGravity::includeSearchInformation(HUDFlowLayout* container) {
     msg_fc.setf(std::ios::showpos | ios::fixed);
     msg_fc << std::setw(6) << std::setprecision(2)
            << fraction_complete << " %" ;
-    htlp = new HUDTextLine(msg_fc.str().size(), msg_fc.str(), 0, 2);
-    htlp->activate();
-    container->addItem(htlp);
+    container->addItem(new HUDTextLine(msg_fc.str().size(), msg_fc.str(), 0, 2));
 
     // CPU time.
     double CPU_time = EG_adapter->wuCPUTime();
@@ -84,9 +78,7 @@ void SimulationGravity::includeSearchInformation(HUDFlowLayout* container) {
     msg_cpu.setf(std::ios::showpos | ios::fixed);
     msg_cpu << std::setw(8) << std::setprecision(0)
             << CPU_time << " s" ;
-    htlp = new HUDTextLine(msg_cpu.str().size(), msg_cpu.str(), 0, 2);
-    htlp->activate();
-    container->addItem(htlp);
+    container->addItem(new HUDTextLine(msg_cpu.str().size(), msg_cpu.str(), 0, 2));
 
     container->activate();
     }
