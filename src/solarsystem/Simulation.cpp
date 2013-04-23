@@ -532,11 +532,6 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
     // Put our logos into the logo cycling display panel.
     south_west_upper_panel.addItem(new HUDImage("aeiTGA", 10, 10));
     south_west_upper_panel.addItem(new HUDImage("boincTGA", 10,10));
-    south_west_upper_panel.addItem(new HUDImage("fermiTGA", 10, 10));
-    south_west_upper_panel.addItem(new HUDImage("geoTGA", 10,10));
-    south_west_upper_panel.addItem(new HUDImage("ligoTGA", 10,10));
-    south_west_upper_panel.addItem(new HUDImage("palfaTGA", 10,10));
-    south_west_upper_panel.addItem(new HUDImage("virgoTGA", 10,10));
     south_west_upper_panel.addItem(new HUDImage("wypTGA", 10, 10));
 
     // Populate the help HUD.
@@ -3222,17 +3217,13 @@ void Simulation::loadLookoutDataToPanels(void) {
         for(std::vector<std::string>::const_iterator message = messages.begin();
             message != messages.end();
             ++message) {
-            HUDTextLine* htlp = new HUDTextLine(message->size(), *message, 0, 2);
-            htlp->activate();
-            north_panel.addItem(htlp);
+            north_panel.addItem(new HUDTextLine(message->size(), *message, 0, 2));
             }
         }
     north_panel.activate();
 
     // Then put new image(s), if any, into the south_east panel.
-    HUDImage* hip = new HUDImage(pilot.getImageResourceName(),5,5);
-    hip->activate();
-    south_east_panel.addItem(hip);
+    south_east_panel.addItem(new HUDImage(pilot.getImageResourceName(), 5, 5));
 
     south_east_panel.activate();
     }
@@ -3244,21 +3235,15 @@ void Simulation::includeUserInformation(HUDFlowLayout* container) {
     // First empty of any existing content.
     container->erase();
 
-    HUDTextLine* htlp = NULL;
-
     // Name of user.
     stringstream user_name;
     user_name << "User name : " << BC_adapter->userName();
-    htlp = new HUDTextLine(user_name.str().size(), user_name.str(), 0, 2);
-    htlp->activate();
-    container->addItem(htlp);
+    container->addItem(new HUDTextLine(user_name.str().size(), user_name.str(), 0, 2));
 
     // Name of user's team.
     stringstream team_name;
     team_name << "User team : " << BC_adapter->teamName();
-    htlp = new HUDTextLine(team_name.str().size(), team_name.str(), 0, 2);
-    htlp->activate();
-    container->addItem(htlp);
+    container->addItem(new HUDTextLine(team_name.str().size(), team_name.str(), 0, 2));
 
     // Total user credit.
     stringstream user_credit;
@@ -3266,9 +3251,7 @@ void Simulation::includeUserInformation(HUDFlowLayout* container) {
                 << std::setw(12) << std::setfill(' ') << std::left
                 << std::fixed << std::noshowpoint << std::setprecision(0)
                 << BC_adapter->userCredit();
-    htlp = new HUDTextLine(user_credit.str().size(), user_credit.str(), 0, 2);
-    htlp->activate();
-    container->addItem(htlp);
+    container->addItem(new HUDTextLine(user_credit.str().size(), user_credit.str(), 0, 2));
 
     // User RAC.
     stringstream user_RAC;
@@ -3276,9 +3259,7 @@ void Simulation::includeUserInformation(HUDFlowLayout* container) {
              << std::setw(12) << std::setfill(' ') << std::left
              << std::fixed << std::noshowpoint << std::setprecision(0)
              << BC_adapter->userRACredit();
-    htlp = new HUDTextLine(user_RAC.str().size(), user_RAC.str(), 0, 2);
-    htlp->activate();
-    container->addItem(htlp);
+    container->addItem(new HUDTextLine(user_RAC.str().size(), user_RAC.str(), 0, 2));
 
     // Total host credit.
     stringstream host_credit;
@@ -3286,9 +3267,7 @@ void Simulation::includeUserInformation(HUDFlowLayout* container) {
                 << std::setw(12) << std::setfill(' ') << std::left
                 << std::fixed << std::noshowpoint << std::setprecision(0)
                 << BC_adapter->hostCredit();
-    htlp = new HUDTextLine(host_credit.str().size(), host_credit.str(), 0, 2);
-    htlp->activate();
-    container->addItem(htlp);
+    container->addItem(new HUDTextLine(host_credit.str().size(), host_credit.str(), 0, 2));
 
     // Host RAC.
     stringstream host_RAC;
@@ -3296,13 +3275,13 @@ void Simulation::includeUserInformation(HUDFlowLayout* container) {
              << std::setw(12) << std::setfill(' ') << std::left
              << std::fixed << std::noshowpoint << std::setprecision(0)
              << BC_adapter->hostRACredit();
-    htlp = new HUDTextLine(host_RAC.str().size(), host_RAC.str(), 0, 2);
-    htlp->activate();
-    container->addItem(htlp);
+    container->addItem(new HUDTextLine(host_RAC.str().size(), host_RAC.str(), 0, 2));
     }
 
 void Simulation::initialiseHelpHUD(void) {
-    string msg = "F1 - this help screen";
+    std::string msg;
+
+    msg = "F1 - this help screen";
     help_north_west_panel.addItem(new HUDTextLine(msg.size(), msg, 0, 2));
     msg = "F2 - cycle rendering level";
     help_north_west_panel.addItem(new HUDTextLine(msg.size(), msg, 0, 2));
