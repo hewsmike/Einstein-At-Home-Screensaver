@@ -91,14 +91,14 @@ void AutoPilot::step(void) {
 
         // Is it the end of the current path ie. we have arrived
         // at a Lookout ?
-        if(lambda >= Path::LAMBDA_UPPER_BOUND) {
+        if(std::abs(lambda - Path::LAMBDA_UPPER_BOUND) < current_delta_lambda) {
             // Then pause movement and (re-)set the pause counter.
             pause_flag = true;
             count_down = PAUSE_FRAME_COUNT;
             // Show the reticle, but only if a description exists.
-            if(target != NULL) {
-                    target->show();
-                    }
+            if((target != NULL) && (current_description.size() != 0)) {
+                target->show();
+                }
             }
         }
     else {

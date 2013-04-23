@@ -207,8 +207,7 @@ class AutoPilot {
         // The current HUD displayable image resource name.
         std::string current_image;
 
-        // A flag having the value of one of the path_stage enumerants that
-        // indicate the stage of the current Path that we are in.
+        // A flag indicating the stage of the current Path that we are in.
         path_stage path_stage_flag;
 
         // Flag indicating whether there has been a change of descriptive
