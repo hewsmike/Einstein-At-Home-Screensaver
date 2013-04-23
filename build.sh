@@ -36,7 +36,9 @@ LOGFILE=$ROOT/build.log
 # Required for correct access to the BOINC repository.
 TAG_GFXAPPS="current_gfx_apps"
 
-# For some source fetches we use version strings.
+# For some source fetches we use version strings as I'm
+# not entirely happy to commit to whatever some latest
+# library build might be.
 GLEW_VERSION=1.9.0
 GLFW_VERSION=2.7.8
 FREETYPE_VERSION=2.4.11

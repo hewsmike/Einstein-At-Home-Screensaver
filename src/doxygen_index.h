@@ -49,7 +49,7 @@
  *
  * The binary versions as well as the build script support the following platforms:
  * - Linux (Intel, 32 Bit)
- * - Mac OS X (Tiger/Leopard, Intel/PowerPC, 32 Bit)
+ * - Mac OS TO BE ANNOUNCED
  * - Windows (Intel, 32 Bit, cross compiled with MinGW)
  *
  * \subsection sec_future The Future
@@ -81,7 +81,7 @@
  * you can control the graphics interactively using mouse and keyboard.
  *
  * Use the following keys to control the application:
- * - \c ENTER: Toggle fullscreen mode
+ * - \c ENTER: TO BE ANNOUNCED
  * - \c ESC: Exit the application
  *
  * Use your mouse to modify the 3D rendering (click & drag):
@@ -202,7 +202,8 @@
  *
  * \subsubsection sec_build_provided Libraries used (provided automatically)
  *
- * - SDL - Simple DirectMedia Layer
+ * - GLFW - Graphics Library For Windowing ( ??? )
+ * - GLEW - OpenGL Extension Wrangler Library
  * - FreeType 2 - High-quality glyph images
  * - libxml2 - Full XML support (DOM, SAX, XSLT, Validation)
  * - OGLFT - OpenGL-FreeType Library
@@ -213,44 +214,38 @@
  * Please make sure the following development packages (headers/libs) and tools are available to the build script
  * (note: the following package names refer to Debian only, your distribution's package names might vary):
  *
- * - Common libraries (mostly required by SDL):
+ * - Common libraries:
  *   - libc6-dev
  *   - zlib1g-dev
- * - Libraries for Linux and Windows/MinGW (required by SDL):
+ * - Libraries for Linux and Windows/MinGW:
  *   - libgl1-mesa-dev | nvidia-glx-dev
  *   - libglu1-mesa-dev
  *   - libdirectfb-dev
  *   - libxt-dev
  *   - libxext-dev
  *   - libaudio-dev
- * - Libraries for Mac OS X (required by SDL, provided by XCode):
- *   - OpenGL Framework
- *   - Cocoa Framework
- *   - Carbon Framework
- *   - QuickTime Framework
- *   - ApplicationServices Framework
- *   - AudioToolbox Framework
- *   - AudioUnit Framework
- *   - IOKit Framework
+ * - Libraries for Mac OS X:
+ *   - TO BE ANNOUNCED
  * - Tools:
- *   - bash
- *   - gcc / g++
+ *   - ar
  *   - automake
  *   - autoconf
- *   - m4
  *   - cmake
- *   - pkg-config
- *   - wget
  *   - cvs
+ *   - doxygen ( optional )
+ *   - g++
+ *   - gcc
+ *   - hg
+ *   - ld
+ *   - lex ( flex )
+ *   - libtool
+ *   - m4
+ *   - patch
+ *   - pkg-config
  *   - svn
  *   - tar
- *   - patch
- *   - ld
- *   - libtool
- *   - ar
- *   - lex (i.e. flex)
- *   - yacc (i.e. bison)
- *   - doxygen (optional)
+ *   - wget
+ *   - yacc ( bison )
  *
  * \subsubsection sec_build_usage Usage
  *
@@ -260,7 +255,7 @@
  * \c install/bin directory):
  *
  * - Linux build: \code build.sh --linux \endcode
- * - Mac OS X build: \code build.sh --mac-intel \endcode \code build.sh --mac-ppc \endcode
+ * - Mac OS X build: TO BE ANNOUNCED
  * - Windows build (uses MinGW cross-compile with Linux as build system!): \code build.sh --win32 \endcode
  *
  * Additional tools are provided as follows:
@@ -272,6 +267,7 @@
  * \verbatim
    Copyright © 2004 Bruce Allen, David Hammer, Eric Myers
    Copyright © 2008 Oliver Bock, Bernd Machenschalk
+   Copyright © 2013 Mike Hewson
 
    This application/framework is part of Einstein@Home.
 
