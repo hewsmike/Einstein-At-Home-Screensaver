@@ -153,7 +153,7 @@ class Simulation : public Renderable {
          * This abstract method is to be defined by derived classes implementing
          * the science run specific logo rendering.
          */
-        virtual void includeLogo(HUDFlowLayout* container) = 0;
+        virtual void includeLogo(HUDLogoCycle* container) = 0;
 
         /**
          * \brief Render science run specific search information

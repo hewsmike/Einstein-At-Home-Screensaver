@@ -55,7 +55,7 @@ class SimulationRadio : public Simulation {
         // Satisfy Simulation interface methods.
         void includeLogo(HUDFlowLayout* container);
 
-        void includeSearchInformation(HUDFlowLayout* container);
+        void includeSearchInformation(HUDLogoCycle* container);
 
         void renderObservatories(void);
 

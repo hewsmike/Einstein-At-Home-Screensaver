@@ -529,6 +529,8 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
     south_west_upper_panel.addItem(new HUDImage("boincTGA", 10,10));
     south_west_upper_panel.addItem(new HUDImage("wypTGA", 10, 10));
 
+    includeLogo(&south_west_upper_panel);
+
     // Populate the help HUD.
     initialiseHelpHUD();
 

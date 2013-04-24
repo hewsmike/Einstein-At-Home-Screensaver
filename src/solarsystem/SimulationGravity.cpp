@@ -33,7 +33,10 @@ SimulationGravity::~SimulationGravity() {
     delete ligo_image;
     }
 
-void SimulationGravity::includeLogo(HUDFlowLayout* container) {
+void SimulationGravity::includeLogo(HUDLogoCycle* container) {
+    container->(new HUDImage("geoTGA", 10, 10));
+    container->(new HUDImage("ligoTGA", 10, 10));
+    container->(new HUDImage("virgoTGA", 10, 10));
     }
 
 void SimulationGravity::includeSearchInformation(HUDFlowLayout* container) {

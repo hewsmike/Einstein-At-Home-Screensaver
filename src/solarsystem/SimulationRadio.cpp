@@ -28,7 +28,8 @@ SimulationRadio::SimulationRadio(BOINCClientAdapter* boinc_adapter, EinsteinRadi
 SimulationRadio::~SimulationRadio() {
     }
 
-void SimulationRadio::includeLogo(HUDFlowLayout* container) {
+void SimulationRadio::includeLogo(HUDLogoCycle* container) {
+    container->(new HUDImage("palfaTGA", 10, 10));
     }
 
 void SimulationRadio::includeSearchInformation(HUDFlowLayout* container) {

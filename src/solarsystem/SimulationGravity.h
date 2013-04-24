@@ -53,7 +53,7 @@ class SimulationGravity : public Simulation {
 
     protected:
         // Satisfy Simulation interface methods.
-        void includeLogo(HUDFlowLayout* container);
+        void includeLogo(HUDLogoCycle* container);
 
         void includeSearchInformation(HUDFlowLayout* container);
 

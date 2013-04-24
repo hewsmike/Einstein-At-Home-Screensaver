@@ -28,7 +28,8 @@ SimulationGamma::SimulationGamma(BOINCClientAdapter* boinc_adapter, EinsteinRadi
 SimulationGamma::~SimulationGamma() {
     }
 
-void SimulationGamma::includeLogo(HUDFlowLayout* container) {
+void SimulationGamma::includeLogo(HUDLogoCycle* container) {
+    container->(new HUDImage("fermiTGA", 10, 10));
     }
 
 void SimulationGamma::includeSearchInformation(HUDFlowLayout* container) {
