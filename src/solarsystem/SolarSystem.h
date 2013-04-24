@@ -176,6 +176,8 @@ class SolarSystem : public AbstractGraphicsEngine, public RenderQualityObserver 
 
         bool renderUpdateFlag;
 
+        void setFonts(void);
+
         // The dec/inc-rement in the mouse wheel position.
         int mouse_wheel_differential;
 
