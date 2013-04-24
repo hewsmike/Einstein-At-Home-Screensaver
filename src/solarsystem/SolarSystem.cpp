@@ -129,7 +129,15 @@ void SolarSystem::initialize(const int width, const int height, const Resource* 
         if(HUDFont != NULL) {
             delete HUDFont;
             }
-        setFonts();
+
+        // You have to get all the dynamic links for OpenGL functions again
+        // from the ICD, fail out in the breach.
+        if(glewInit() == GLEW_OK) {
+            setFonts();
+            }
+        else {
+            ErrorHandler::record("SolarSystem::initialize() : GLEW could not be initialised", ErrorHandler::FATAL);
+            }
 #endif
         }
 
@@ -459,6 +467,7 @@ void SolarSystem::changeRenderQuality(void) {
     }
 
 void SolarSystem::setFonts(void) {
+    ErrorHandler::record("SolarSystem::setFonts() : check 1", ErrorHandler::INFORM);
     // Create font instances using font resource (base address + size)
     skygridFont = new OGLFT_ft(&spaceFontResource->data()->at(0),
                                spaceFontResource->data()->size(),
@@ -505,8 +514,13 @@ void SolarSystem::setFonts(void) {
     HUDFont->setBackgroundColor(0.0f, 0.0f, 0.0f, 0.0f);
     HUDFont->setForegroundColor(1.0f, 1.0f, 1.0f, 0.9f);
 
+    ErrorHandler::record("SolarSystem::setFonts() : check 2", ErrorHandler::INFORM);
+
     // Store font pointers in global form.
     SolarSystemGlobals::setFont(SolarSystemGlobals::CONSTELLATIONS, constellationFont);
+    stringstream msg;
+    msg << "SolarSystem::setFonts() : constellationFont = " << constellationFont;
+    ErrorHandler::record(msg.str(), ErrorHandler::INFORM);
     SolarSystemGlobals::setFont(SolarSystemGlobals::SKY_GRID, skygridFont);
     SolarSystemGlobals::setFont(SolarSystemGlobals::EARTH_GRID, earthgridFont);
     SolarSystemGlobals::setFont(SolarSystemGlobals::HUDOVER, HUDFont);

@@ -419,7 +419,9 @@ void GridGlobe::createMarkerLists(void) {
         char ra_ones = '0' + (slice % 10);
         ra_token += ra_ones;
 
+        ErrorHandler::record("GridGlobe::createMarkerLists() : check 1", ErrorHandler::INFORM);
         GLuint ra_draw_ID = myFont->compile(ra_token.c_str());
+        ErrorHandler::record("GridGlobe::createMarkerLists() : check 2", ErrorHandler::INFORM);
 
         for(GLuint stack = 1; stack < stacks - 1; ++stack) {
             std::vector<GLuint> temp;

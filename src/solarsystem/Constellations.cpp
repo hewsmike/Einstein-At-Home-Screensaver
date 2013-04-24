@@ -2258,6 +2258,7 @@ void Constellations::cycleActivation(void) {
     }
 
 void Constellations::prepare(SolarSystemGlobals::render_quality rq) {
+    ErrorHandler::record("Constellations::prepare() : check 1", ErrorHandler::INFORM);
     // Get the OpenGL buffer objects.
     buff_obj_points.acquire();
     buff_obj_indices.acquire();
@@ -2269,7 +2270,9 @@ void Constellations::prepare(SolarSystemGlobals::render_quality rq) {
         case SolarSystemGlobals::RENDER_HIGHEST :
             loadVertexBuffer();
             loadIndexBuffer();
+            ErrorHandler::record("Constellations::prepare() : check 2", ErrorHandler::INFORM);
             createMarkerLists();
+            ErrorHandler::record("Constellations::prepare() : check 3", ErrorHandler::INFORM);
             break;
         default :
             // Ought not get here !!
@@ -2541,8 +2544,16 @@ void Constellations::loadIndexBuffer(void) {
     }
 
 void Constellations::createMarkerLists(void) {
+
+    ErrorHandler::record("Constellations::createMarkerLists() : check 1", ErrorHandler::INFORM);
     // Get the OGLFT font for this object.
-    OGLFT_ft* myFont = this->getFont();
+    OGLFT_ft* myFont = SolarSystemGlobals::getFont(SolarSystemGlobals::CONSTELLATIONS);
+
+    myFont->setCompileMode(OGLFT::Face::COMPILE);
+    stringstream msg;
+    msg << "Constellations::createMarkerLists() : myFont = " << myFont;
+    ErrorHandler::record(msg.str(), ErrorHandler::INFORM);
+    ErrorHandler::record("Constellations::createMarkerLists() : check 2", ErrorHandler::INFORM);
 
     // This destroys any contained vectors too ...
     marker_lists.clear();
@@ -2550,6 +2561,7 @@ void Constellations::createMarkerLists(void) {
     // An independent scaling.
     GLfloat text_scale_factor = radius/TEXT_RATIO;
 
+    ErrorHandler::record("Constellations::createMarkerLists() : check 2a", ErrorHandler::INFORM);
     // Work through the constellations one by one.
     for(std::vector<Constellation>::iterator cs = cons_list.begin();
         cs != cons_list.end();
@@ -2557,6 +2569,7 @@ void Constellations::createMarkerLists(void) {
         // A temporary STL vector for populating with display list ID's.
         std::vector<GLuint> temp;
 
+        ErrorHandler::record("Constellations::createMarkerLists() : check 2b", ErrorHandler::INFORM);
         // The constellation's name.
         std::string con_name = cs->name();
 
@@ -2565,7 +2578,9 @@ void Constellations::createMarkerLists(void) {
 
         // A display list for the constellation's name, OGLFT constructs this
         // for us.
-        GLuint cons_draw_ID = myFont->compile(con_name.c_str());
+        ErrorHandler::record("Constellations::createMarkerLists() : check 2c", ErrorHandler::INFORM);
+        // GLuint cons_draw_ID = myFont->compile(con_name.c_str());
+        ErrorHandler::record("Constellations::createMarkerLists() : check 2d", ErrorHandler::INFORM);
 
         // Ask OpenGL for a display list ID that will represent the transform
         // from the origin.
@@ -2604,6 +2619,7 @@ void Constellations::createMarkerLists(void) {
 
                 // Ascertain the dimensions of the bounding box for the entire
                 // constellation name string.
+                ErrorHandler::record("Constellations::createMarkerLists() : check 2e", ErrorHandler::INFORM);
                 OGLFT::BBox con_box = myFont->measure(con_name.c_str());
 
                 // Place one-half of rendered string length away from the
@@ -2611,7 +2627,8 @@ void Constellations::createMarkerLists(void) {
                 glTranslatef(-con_box.x_max_/2, 0, 0);
 
                 // Draw using the OGLFT provided display list.
-                glCallList(cons_draw_ID);
+                // myFont->draw(con_name.c_str());
+                //glCallList(cons_draw_ID);
             // Restore the prior transform state.
             glPopMatrix();
         glEndList();
@@ -2619,9 +2636,10 @@ void Constellations::createMarkerLists(void) {
         // Store the diplay list ID for the transform followed by that which
         // does the drawing.
         temp.push_back(transform_ID);
-        temp.push_back(cons_draw_ID);
+        //temp.push_back(cons_draw_ID);
 
         // Make an entry for this constellation in a master list.
         marker_lists.push_back(temp);
         }
+    ErrorHandler::record("Constellations::createMarkerLists() : check 3", ErrorHandler::INFORM);
     }

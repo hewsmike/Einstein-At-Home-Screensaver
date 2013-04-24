@@ -409,15 +409,21 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
 
     // Activate 3D scene objects, while nominating any fonts
     // PRIOR to activation of their respective objects..
+    ErrorHandler::record("Simulation::prepare() : check 1", ErrorHandler::INFORM);
     cs.setFont(SolarSystemGlobals::getFont(SolarSystemGlobals::CONSTELLATIONS));
+    ErrorHandler::record("Simulation::prepare() : check 2", ErrorHandler::INFORM);
     cs.activate();
+    ErrorHandler::record("Simulation::prepare() : check 3", ErrorHandler::INFORM);
 
     ps.activate();
     ps_EAH.activate();
     sn.activate();
 
+    ErrorHandler::record("Simulation::prepare() : check 4", ErrorHandler::INFORM);
     c_sphere.setFont(SolarSystemGlobals::getFont(SolarSystemGlobals::SKY_GRID));
+    ErrorHandler::record("Simulation::prepare() : check 5", ErrorHandler::INFORM);
     c_sphere.activate();
+    ErrorHandler::record("Simulation::prepare() : check 6", ErrorHandler::INFORM);
 
     earth.activate();
     earth_shadow.activate();
