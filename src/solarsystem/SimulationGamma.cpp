@@ -29,10 +29,11 @@ SimulationGamma::~SimulationGamma() {
     }
 
 void SimulationGamma::includeLogo(HUDLogoCycle* container) {
-    container->(new HUDImage("fermiTGA", 10, 10));
+    container->addItem(new HUDImage("fermiTGA", 10, 10));
     }
 
 void SimulationGamma::includeSearchInformation(HUDFlowLayout* container) {
+    /// TODO What should we show, if anything, in the absence of a gamma adapter ?
     }
 
 void SimulationGamma::renderObservatories(void) {

@@ -3232,6 +3232,10 @@ void Simulation::includeUserInformation(HUDFlowLayout* container) {
     // First empty of any existing content.
     container->erase();
 
+    stringstream boinc_heading;
+    boinc_heading << "BOINC Information";
+    container->addItem(new HUDTextLine(boinc_heading.str().size(), boinc_heading.str(), 0, 2));
+
     // Name of user.
     stringstream user_name;
     user_name << "User name : " << BC_adapter->userName();

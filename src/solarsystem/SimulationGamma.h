@@ -60,6 +60,7 @@ class SimulationGamma : public Simulation {
         void renderObservatories(void);
 
     private:
+        /// TODO Make a gamma adapter class etc ....
         EinsteinRadioAdapter* EG_adapter;
     };
 

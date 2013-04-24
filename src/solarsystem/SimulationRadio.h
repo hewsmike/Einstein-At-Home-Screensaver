@@ -60,7 +60,7 @@ class SimulationRadio : public Simulation {
         void renderObservatories(void);
 
     private:
-        EinsteinRadioAdapter* EG_adapter;
+        EinsteinRadioAdapter* ER_adapter;
     };
 
 /**

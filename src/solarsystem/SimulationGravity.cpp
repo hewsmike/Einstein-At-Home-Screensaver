@@ -34,9 +34,9 @@ SimulationGravity::~SimulationGravity() {
     }
 
 void SimulationGravity::includeLogo(HUDLogoCycle* container) {
-    container->(new HUDImage("geoTGA", 10, 10));
-    container->(new HUDImage("ligoTGA", 10, 10));
-    container->(new HUDImage("virgoTGA", 10, 10));
+    container->addItem(new HUDImage("geoTGA", 10, 10));
+    container->addItem(new HUDImage("ligoTGA", 10, 10));
+    container->addItem(new HUDImage("virgoTGA", 10, 10));
     }
 
 void SimulationGravity::includeSearchInformation(HUDFlowLayout* container) {
@@ -45,6 +45,10 @@ void SimulationGravity::includeSearchInformation(HUDFlowLayout* container) {
 
     // First empty of any existing content.
     container->erase();
+
+    stringstream work_unit_heading;
+    work_unit_heading << "Current Work Unit Details";
+    container->addItem(new HUDTextLine(work_unit_heading.str().size(), work_unit_heading.str(), 0, 2));
 
     // Right ascension.
     double right_ascension = EG_adapter->wuSkyPosRightAscension();
