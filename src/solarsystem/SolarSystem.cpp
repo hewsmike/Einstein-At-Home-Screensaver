@@ -129,15 +129,8 @@ void SolarSystem::initialize(const int width, const int height, const Resource* 
         if(HUDFont != NULL) {
             delete HUDFont;
             }
-
-        // You have to get all the dynamic links for OpenGL functions again
-        // from the ICD, fail out in the breach.
-        if(glewInit() == GLEW_OK) {
-            setFonts();
-            }
-        else {
-            ErrorHandler::record("SolarSystem::initialize() : GLEW could not be initialised", ErrorHandler::FATAL);
-            }
+        // All fonts need renewing on Windows.
+        setFonts();
 #endif
         }
 
