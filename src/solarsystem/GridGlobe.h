@@ -196,12 +196,6 @@ class GridGlobe : public Renderable {
         /// Provide OpenGL code to render the object.
         void render(void);
 
-        /// Assigned display list identifier for the hour glyph.
-        GLuint hour_glyph;
-
-        /// Assigned display list identifier for the degree glyph.
-        GLuint degree_glyph;
-
         /// The listing by latitude/stacks of the coordinate markers.
         std::vector<std::vector<GLuint> > marker_lists;
     };

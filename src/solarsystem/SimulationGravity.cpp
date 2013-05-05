@@ -25,12 +25,10 @@
 
 SimulationGravity::SimulationGravity(BOINCClientAdapter* boinc_adapter, EinsteinGravityAdapter* adapter) :
                                      Simulation(boinc_adapter),
-                                     EG_adapter(adapter),
-                                     ligo_image(NULL) {
+                                     EG_adapter(adapter) {
     }
 
 SimulationGravity::~SimulationGravity() {
-    delete ligo_image;
     }
 
 void SimulationGravity::includeLogo(HUDLogoCycle* container) {

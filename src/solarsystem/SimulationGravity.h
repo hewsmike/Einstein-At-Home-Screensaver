@@ -60,10 +60,6 @@ class SimulationGravity : public Simulation {
         void renderObservatories(void);
 
     private:
-        /// Pointers to logo image used on the
-        /// specific portion of the HUD.
-        HUDImage* ligo_image;
-
         EinsteinGravityAdapter* EG_adapter;
     };
 

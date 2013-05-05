@@ -2258,7 +2258,6 @@ void Constellations::cycleActivation(void) {
     }
 
 void Constellations::prepare(SolarSystemGlobals::render_quality rq) {
-    ErrorHandler::record("Constellations::prepare() : check 1", ErrorHandler::INFORM);
     // Get the OpenGL buffer objects.
     buff_obj_points.acquire();
     buff_obj_indices.acquire();
@@ -2270,9 +2269,7 @@ void Constellations::prepare(SolarSystemGlobals::render_quality rq) {
         case SolarSystemGlobals::RENDER_HIGHEST :
             loadVertexBuffer();
             loadIndexBuffer();
-            ErrorHandler::record("Constellations::prepare() : check 2", ErrorHandler::INFORM);
             createMarkerLists();
-            ErrorHandler::record("Constellations::prepare() : check 3", ErrorHandler::INFORM);
             break;
         default :
             // Ought not get here !!
@@ -2286,19 +2283,7 @@ void Constellations::release(void) {
     buff_obj_points.release();
     buff_obj_indices.release();
 
-    // Then the marker lists.
-    for(std::vector<std::vector<GLuint> >::const_iterator lists = marker_lists.begin();
-        lists != marker_lists.end();
-        ++lists) {
-        for(std::vector<GLuint>::const_iterator list = lists->begin();
-            list != lists->end();
-            ++list) {
-            glDeleteLists(*list, 1);
-            }
-        }
-
-    // This destroys any contained vectors too ...
-    marker_lists.clear();
+    clearMarkerLists();
     }
 
 void Constellations::render(void) {
@@ -2350,11 +2335,10 @@ void Constellations::render(void) {
             glDisable(GL_CULL_FACE);
 
             // Go through and call every display list.
-            for(std::vector<std::vector<GLuint> >::const_iterator lists = marker_lists.begin();
-                lists != marker_lists.end();
-                ++lists) {
-                // Only call the first, as others are called by it.
-                glCallList((*lists)[0]);
+            for(std::vector<GLuint>::const_iterator list = marker_lists.begin();
+                list != marker_lists.end();
+                ++list) {
+                glCallList(*list);
                 }
 
             glDisable(GL_TEXTURE_2D);
@@ -2544,43 +2528,25 @@ void Constellations::loadIndexBuffer(void) {
     }
 
 void Constellations::createMarkerLists(void) {
-
-    ErrorHandler::record("Constellations::createMarkerLists() : check 1", ErrorHandler::INFORM);
     // Get the OGLFT font for this object.
-    OGLFT_ft* myFont = SolarSystemGlobals::getFont(SolarSystemGlobals::CONSTELLATIONS);
+    OGLFT_ft* myFont = this->getFont();
 
-    myFont->setCompileMode(OGLFT::Face::COMPILE);
-    stringstream msg;
-    msg << "Constellations::createMarkerLists() : myFont = " << myFont;
-    ErrorHandler::record(msg.str(), ErrorHandler::INFORM);
-    ErrorHandler::record("Constellations::createMarkerLists() : check 2", ErrorHandler::INFORM);
+    myFont->setCompileMode(OGLFT::Face::IMMEDIATE);
 
-    // This destroys any contained vectors too ...
-    marker_lists.clear();
+    clearMarkerLists();
 
     // An independent scaling.
     GLfloat text_scale_factor = radius/TEXT_RATIO;
 
-    ErrorHandler::record("Constellations::createMarkerLists() : check 2a", ErrorHandler::INFORM);
     // Work through the constellations one by one.
     for(std::vector<Constellation>::iterator cs = cons_list.begin();
         cs != cons_list.end();
         ++cs) {
-        // A temporary STL vector for populating with display list ID's.
-        std::vector<GLuint> temp;
-
-        ErrorHandler::record("Constellations::createMarkerLists() : check 2b", ErrorHandler::INFORM);
         // The constellation's name.
         std::string con_name = cs->name();
 
         // The co-ordinates of the centroid of the constellation.
         std::pair<GLfloat, GLfloat> con_centre = cs->centre();
-
-        // A display list for the constellation's name, OGLFT constructs this
-        // for us.
-        ErrorHandler::record("Constellations::createMarkerLists() : check 2c", ErrorHandler::INFORM);
-        // GLuint cons_draw_ID = myFont->compile(con_name.c_str());
-        ErrorHandler::record("Constellations::createMarkerLists() : check 2d", ErrorHandler::INFORM);
 
         // Ask OpenGL for a display list ID that will represent the transform
         // from the origin.
@@ -2619,27 +2585,28 @@ void Constellations::createMarkerLists(void) {
 
                 // Ascertain the dimensions of the bounding box for the entire
                 // constellation name string.
-                ErrorHandler::record("Constellations::createMarkerLists() : check 2e", ErrorHandler::INFORM);
                 OGLFT::BBox con_box = myFont->measure(con_name.c_str());
 
                 // Place one-half of rendered string length away from the
                 // centroid.
                 glTranslatef(-con_box.x_max_/2, 0, 0);
 
-                // Draw using the OGLFT provided display list.
-                // myFont->draw(con_name.c_str());
-                //glCallList(cons_draw_ID);
+                // Draw the constellation name.
+                myFont->draw(con_name.c_str());
             // Restore the prior transform state.
             glPopMatrix();
         glEndList();
 
-        // Store the diplay list ID for the transform followed by that which
-        // does the drawing.
-        temp.push_back(transform_ID);
-        //temp.push_back(cons_draw_ID);
-
         // Make an entry for this constellation in a master list.
-        marker_lists.push_back(temp);
+        marker_lists.push_back(transform_ID);
         }
-    ErrorHandler::record("Constellations::createMarkerLists() : check 3", ErrorHandler::INFORM);
+    }
+
+void Constellations::clearMarkerLists(void) {
+    for(std::vector<GLuint>::const_iterator list = marker_lists.begin();
+            list != marker_lists.end();
+            ++list) {
+            glDeleteLists(*list, 1);
+            }
+    marker_lists.clear();
     }

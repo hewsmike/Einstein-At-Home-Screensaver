@@ -68,10 +68,6 @@ GridGlobe::GridGlobe(vec_t rad, GLuint slices, GLuint stacks, GridGlobe::textFac
     prime_meridian_links = 0;
 
     celestial_equator_links = 0;
-
-    hour_glyph = 0;
-
-    degree_glyph = 0;
     }
 
 GridGlobe::~GridGlobe() {
@@ -133,7 +129,7 @@ void GridGlobe::prepare(SolarSystemGlobals::render_quality rq) {
             if(hasEquator) {
                 loadCelestialEquatorIndexBuffer();
                 }
-            createMarkerLists();
+            //createMarkerLists();
             break;
         }
         default :
@@ -214,7 +210,7 @@ void GridGlobe::render(void) {
                 lists != marker_lists.end();
                 ++lists) {
                 // Only call the first, as others are called by it.
-                glCallList((*lists)[0]);
+                //glCallList((*lists)[0]);
                 }
 
             glDisable(GL_TEXTURE_2D);
@@ -389,6 +385,8 @@ void GridGlobe::createMarkerLists(void) {
     // Get the font for this item.
     OGLFT_ft* myFont = this->getFont();
 
+    myFont->setCompileMode(OGLFT::Face::IMMEDIATE);
+
     // Overall scaling for the text.
     GLfloat text_scale_factor = radius/TEXT_RATIO;
 
@@ -397,10 +395,6 @@ void GridGlobe::createMarkerLists(void) {
 
     // Angular displacement between latitude steps.
     GLfloat stack_step = SolarSystemGlobals::HALF_CIRCLE_DEG/(stacks - 1);
-
-    // Compile the OGLFT glyphs for units display.
-    hour_glyph = myFont->compile(HOUR_UNITS.c_str());
-    degree_glyph = myFont->compile(DEGREE_UNITS.c_str());
 
     // Per longitude value.
     for(GLuint slice = 0; slice < slices; ++slice) {
@@ -418,10 +412,6 @@ void GridGlobe::createMarkerLists(void) {
 
         char ra_ones = '0' + (slice % 10);
         ra_token += ra_ones;
-
-        ErrorHandler::record("GridGlobe::createMarkerLists() : check 1", ErrorHandler::INFORM);
-        GLuint ra_draw_ID = myFont->compile(ra_token.c_str());
-        ErrorHandler::record("GridGlobe::createMarkerLists() : check 2", ErrorHandler::INFORM);
 
         for(GLuint stack = 1; stack < stacks - 1; ++stack) {
             std::vector<GLuint> temp;
@@ -446,8 +436,6 @@ void GridGlobe::createMarkerLists(void) {
                 }
 
             dec_token += dec_ones;
-
-            GLuint dec_draw_ID = myFont->compile(dec_token.c_str());
 
             // Text scaling.
             GLfloat t_scale;
@@ -507,7 +495,7 @@ void GridGlobe::createMarkerLists(void) {
                         glTranslatef(+TEXT_OFFSET, +TEXT_OFFSET, 0);
 
                         // Render the current right ascension.
-                        glCallList(ra_draw_ID);
+                        myFont->draw(ra_token.c_str());
 
                         // Find the dimensions of what we just rendered.
                         OGLFT::BBox ra_box = myFont->measure(ra_token.c_str());
@@ -522,7 +510,7 @@ void GridGlobe::createMarkerLists(void) {
                         glScalef(TEXT_UNITS_RATIO, TEXT_UNITS_RATIO, 1);
 
                         // Render the 'hour' symbol.
-                        glCallList(hour_glyph);
+                        myFont->draw(HOUR_UNITS.c_str());
                     glPopMatrix();
 
                     // Find the dimensions of the 'degree' symbol.
@@ -542,7 +530,7 @@ void GridGlobe::createMarkerLists(void) {
                                  0);
 
                     // Render the current declination.
-                    glCallList(dec_draw_ID);
+                    myFont->draw(dec_token.c_str());
 
                     // Shift across and up to 'superscript' position.
                     glTranslatef(dec_adv.dx_, 7 * dec_box.y_max_/8, 0);
@@ -551,13 +539,12 @@ void GridGlobe::createMarkerLists(void) {
                     glScalef(TEXT_UNITS_RATIO, TEXT_UNITS_RATIO, 1);
 
                     // Render the 'degree' symbol.
-                    glCallList(degree_glyph);
+                    myFont->draw(DEGREE_UNITS.c_str());
                 glPopMatrix();
             glEndList();
 
             temp.push_back(transform_ID);
-            temp.push_back(ra_draw_ID);
-            temp.push_back(dec_draw_ID);
+
 
             marker_lists.push_back(temp);
             }
@@ -565,11 +552,6 @@ void GridGlobe::createMarkerLists(void) {
     }
 
 void GridGlobe::clearMarkerLists(void) {
-    // Nothing bad will happen if these display list ID's are
-    // not current, or invalid, or zero. That is, delete regardless.
-    glDeleteLists(hour_glyph, 1);
-    glDeleteLists(degree_glyph, 1);
-
     // Go through the display lists, and ask OpenGL to delete each of them.
     for(std::vector<std::vector<GLuint> >::iterator lists = marker_lists.begin();
         lists != marker_lists.end();

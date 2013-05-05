@@ -39,10 +39,10 @@ TAG_GFXAPPS="current_gfx_apps"
 # For some source fetches we use version strings as I'm
 # not entirely happy to commit to whatever some latest
 # library build might be.
-GLEW_VERSION=1.9.0
-GLFW_VERSION=2.7.8
+GLEW_VERSION=1.7.0
+GLFW_VERSION=2.7.5
 FREETYPE_VERSION=2.4.11
-LIBXML_VERSION=2.9.0
+LIBXML_VERSION=2.6.32
 
 # Target variants.
 TARGET_NONE=0

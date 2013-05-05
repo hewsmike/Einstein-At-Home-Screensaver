@@ -213,6 +213,8 @@ void WindowManager::eventLoop(void) {
     if(!eventObservers.empty()) {
         // Infinite looping until an exit is triggered.
         while(true) {
+            bool resize_flag = false;
+
             // Holder of event type.
             Event current_event;
 
@@ -269,44 +271,17 @@ void WindowManager::eventLoop(void) {
                     eventObservers.front()->mouseWheelEvent(current_event.m_wheel.diff_pos);
                     }
 
-                else if(current_event.type == Events::ResizeEventType) {
-                    // Only resize if in windowed mode !
-                    if(SolarSystemGlobals::getDisplayMode() == WindowManager::WINDOW) {
-                        // In practice it is better to use the actual
-                        // dimensions obtained by a resize, rather than
-                        // the dimensions used when requesting the resize.
-                        // Depending on the target system one may have the
-                        // OS allowing or not for menu and taskbar dimensions ....
-                        glfwGetWindowSize(&m_CurrentWidth,& m_CurrentHeight);
-                        m_WindowedWidth = m_CurrentWidth;
-                        m_WindowedHeight = m_CurrentHeight;
-                        int window_open = glfwOpenWindow(m_CurrentWidth, m_CurrentHeight,
-                                                         current_desktop_mode.RedBits,
-                                                         current_desktop_mode.GreenBits,
-                                                         current_desktop_mode.BlueBits,
-                                                         current_desktop_mode.RedBits, // Alpha range same as individual colors
-                                                         best_depth_buffer_grain,
-                                                         NO_STENCIL,
-                                                         GLFW_WINDOW);
+                else if((current_event.type == Events::ResizeEventType) &&
+                        (resize_flag == false)) {
+                    resize_flag = true;
+                    m_CurrentWidth = m_WindowedWidth = current_event.resize.width;
+                    m_CurrentHeight = m_WindowedHeight = current_event.resize.height;
 
-                        if(window_open == GL_FALSE) {
-                            ErrorHandler::record("WindowManager::eventLoop() : Could not resize window !",
-                                                 ErrorHandler::INFORM);
-                            }
-                        else {
-#ifdef WIN_OGLFT_WORKAROUND
-                            // On Windows machines you have to get all the dynamic
-                            // links for OpenGL functions again from the ICD,
-                            // failing out in the breach.
-                            if(glewInit() != GLEW_OK) {
-                                 ErrorHandler::record("WindowManager::eventLoop() : GLEW could not be initialised on resize",
-                                                      ErrorHandler::FATAL);
+                    setWindowedMode();
 
-                                }
-#endif
-                        }
-                    // Window resize has occurred. NB last argument is set to recycle
-                    // the .... AbstractGraphicsEngine.
+                    // Use actual acquired ( as distinct from requested ) size.
+                    glfwGetWindowSize(&m_CurrentWidth, &m_CurrentHeight);
+
                     eventObservers.front()->initialize(m_CurrentWidth, m_CurrentHeight, 0, true);
                     }
 

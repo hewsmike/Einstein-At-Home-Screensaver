@@ -32,7 +32,6 @@ HUDTextLine::HUDTextLine(GLuint length,
                            HUDContent(horizontalMargin, verticalMargin),
                            len(length),
                            txt(text) {
-    lineFont = SolarSystemGlobals::getFont(SolarSystemGlobals::HUDOVER);
     // Initial setting of minimum dimensions are those of the initial text
     // content in combination with the given fixed margins.
     this->setMinimumDimensions(width() + 2*horzMargin(),
@@ -40,7 +39,7 @@ HUDTextLine::HUDTextLine(GLuint length,
 
     // Any enclosing container must be made aware of size change.
     HUDContainer* outer = getEnclosingContainer();
-    if(outer !=NULL) {
+    if(outer != NULL) {
         outer->adjust();
         }
     }
@@ -54,6 +53,8 @@ GLuint HUDTextLine::maxLength(void) const {
     }
 
 GLuint HUDTextLine::width(void) const {
+    OGLFT_ft* lineFont = this->getFont();
+
     // Lazy evaluate.
     // Ask OGLFT what the pixel bounds are for the current text.
     OGLFT::BBox currentBox = lineFont->measure(txt.substr(0, len).c_str());
@@ -62,21 +63,24 @@ GLuint HUDTextLine::width(void) const {
     }
 
 GLuint HUDTextLine::height(void) const {
+    stringstream msg;
+    msg << "HUDTextLine::height() : '"
+        << txt << "'";
+    ErrorHandler::record(msg.str(), ErrorHandler::INFORM);
+    OGLFT_ft* lineFont = this->getFont();
     // Lazy evaluate.
     // Round up the height to nearest integer.
     return ceil(lineFont->height()*2);
     }
 
 void HUDTextLine::prepare(SolarSystemGlobals::render_quality rq) {
-    lineFont = SolarSystemGlobals::getFont(SolarSystemGlobals::HUDOVER);
-
     // Call base class to set minima for the given text content.
     this->setMinimumDimensions(width() + 2*horzMargin(),
                                height() + 2*vertMargin());
 
     // Any enclosing container must be made aware of size change.
     HUDContainer* outer = getEnclosingContainer();
-    if(outer !=NULL) {
+    if(outer != NULL) {
         outer->adjust();
         }
     }
@@ -96,8 +100,12 @@ void HUDTextLine::release(void) {
     }
 
 void HUDTextLine::render(void) {
-    lineFont->draw(horzBase() + horzMargin(),
-                   vertBase() + vertMargin() + this->height()/8, txt.substr(0, len).c_str());
+    OGLFT_ft* lineFont = this->getFont();
+    const char* test = txt.substr(0, len).c_str();
+    // lineFont->draw(horzBase() + horzMargin(),
+    //               vertBase() + vertMargin() + this->height()/8, "01234567890123456789");
+    lineFont->draw(0,
+                   0, "01234567890123456789");
     }
 
 std::string HUDTextLine::text(void) const {

@@ -190,6 +190,8 @@ class Constellations : public Renderable, public Traversable {
          */
         void createMarkerLists(void);
 
+        void clearMarkerLists(void);
+
         /**
          * \brief Convert a star's spectral class to an RGB color trio.
          *
@@ -201,7 +203,7 @@ class Constellations : public Renderable, public Traversable {
 
         /// The master list of display lists used when rendering the
         /// constellation names.
-        std::vector<std::vector<GLuint> > marker_lists;
+        std::vector<GLuint> marker_lists;
     };
 
 /**
