@@ -104,7 +104,7 @@ void HUDTextLineScroll::render(void) {
                     break;
                 }
             // Set the (new) text contents.
-            setText(contents);
+            this->setText(contents);
             }
         }
 

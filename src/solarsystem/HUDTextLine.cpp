@@ -30,8 +30,8 @@ HUDTextLine::HUDTextLine(GLuint length,
                          const std::string& text,
                          GLuint horizontalMargin, GLuint verticalMargin) :
                            HUDContent(horizontalMargin, verticalMargin),
-                           len(length),
-                           txt(text) {
+                           len(length) {
+    setText(text);
     // Initial setting of minimum dimensions are those of the initial text
     // content in combination with the given fixed margins.
     this->setMinimumDimensions(width() + 2*horzMargin(),
@@ -101,11 +101,9 @@ void HUDTextLine::release(void) {
 
 void HUDTextLine::render(void) {
     OGLFT_ft* lineFont = this->getFont();
-    const char* test = txt.substr(0, len).c_str();
-    // lineFont->draw(horzBase() + horzMargin(),
-    //               vertBase() + vertMargin() + this->height()/8, "01234567890123456789");
-    lineFont->draw(0,
-                   0, "01234567890123456789");
+    const char* line_text = txt.substr(0, len).c_str();
+    lineFont->draw(horzBase() + horzMargin(),
+                   vertBase() + vertMargin(), line_text);
     }
 
 std::string HUDTextLine::text(void) const {

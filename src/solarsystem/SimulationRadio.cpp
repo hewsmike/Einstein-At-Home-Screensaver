@@ -32,7 +32,7 @@ void SimulationRadio::includeLogo(HUDLogoCycle* container) {
     container->addItem(new HUDImage("palfaTGA", 10, 10));
     }
 
-void SimulationRadio::includeSearchInformation(HUDFlowLayout* container) {
+void SimulationRadio::includeSearchInformation(HUDtempFlowLayout* container) {
     // Refresh our BOINC data.
     ER_adapter->refresh();
 
@@ -41,7 +41,7 @@ void SimulationRadio::includeSearchInformation(HUDFlowLayout* container) {
 
     stringstream work_unit_heading;
     work_unit_heading << "Current Work Unit Details";
-    container->addItem(new HUDTextLine(work_unit_heading.str().size(), work_unit_heading.str(), 0, 2));
+    setText(container, work_unit_heading.str());
 
 	// Right ascension.
     double right_ascension = ER_adapter->wuSkyPosRightAscension();
@@ -49,7 +49,7 @@ void SimulationRadio::includeSearchInformation(HUDFlowLayout* container) {
     msg_RA << "Right ascension : ";
     msg_RA.setf(std::ios::showpos | ios::fixed);
     msg_RA << std::setw(6) << std::setprecision(2) << right_ascension;
-    container->addItem(new HUDTextLine(msg_RA.str().size(), msg_RA.str(), 0, 2));
+    setText(container, msg_RA.str());
 
     // Declination.
     double declination = ER_adapter->wuSkyPosDeclination();
@@ -57,7 +57,7 @@ void SimulationRadio::includeSearchInformation(HUDFlowLayout* container) {
     msg_dec << "Declination : ";
     msg_dec.setf(std::ios::showpos | ios::fixed);
     msg_dec << std::setw(5) << std::setprecision(2) << declination;
-    container->addItem(new HUDTextLine(msg_dec.str().size(), msg_dec.str(), 0, 2));
+    setText(container, msg_dec.str());
 
     // Dispersion.
     double dispersion = ER_adapter->wuDispersionMeasure();
@@ -65,7 +65,7 @@ void SimulationRadio::includeSearchInformation(HUDFlowLayout* container) {
     msg_disp << "Dispersion : ";
     msg_disp.setf(std::ios::showpos | ios::fixed);
     msg_disp << std::setw(5) << std::setprecision(2) << dispersion;
-    container->addItem(new HUDTextLine(msg_disp.str().size(), msg_disp.str(), 0, 2));
+    setText(container, msg_disp.str());
 
     // Orbital radius.
     double orb_radius = ER_adapter->wuTemplateOrbitalRadius();
@@ -73,7 +73,7 @@ void SimulationRadio::includeSearchInformation(HUDFlowLayout* container) {
     msg_orb_radius << "Template Orbital Radius : ";
     msg_orb_radius.setf(std::ios::showpos | ios::fixed);
     msg_orb_radius << std::setw(5) << std::setprecision(2) << orb_radius;
-    container->addItem(new HUDTextLine(msg_orb_radius.str().size(), msg_orb_radius.str(), 0, 2));
+    setText(container, msg_orb_radius.str());
 
     // Orbital period.
     double orb_period = ER_adapter->wuTemplateOrbitalPeriod();
@@ -81,7 +81,7 @@ void SimulationRadio::includeSearchInformation(HUDFlowLayout* container) {
     msg_orb_period << "Template Orbital Period : ";
     msg_orb_period.setf(std::ios::showpos | ios::fixed);
     msg_orb_period << std::setw(5) << std::setprecision(2) << orb_period;
-    container->addItem(new HUDTextLine(msg_orb_period.str().size(), msg_orb_period.str(), 0, 2));
+    setText(container, msg_orb_period.str());
 
     // Orbital phase.
     double orb_phase = ER_adapter->wuTemplateOrbitalPhase();
@@ -89,7 +89,7 @@ void SimulationRadio::includeSearchInformation(HUDFlowLayout* container) {
     msg_orb_phase << "Template Orbital Phase : ";
     msg_orb_phase.setf(std::ios::showpos | ios::fixed);
     msg_orb_phase << std::setw(5) << std::setprecision(2) << orb_phase;
-    container->addItem(new HUDTextLine(msg_orb_phase.str().size(), msg_orb_phase.str(), 0, 2));
+    setText(container, msg_orb_phase.str());
 
     // Fraction completed, as a percentage.
     double fraction_complete = ER_adapter->wuFractionDone() * 100;
@@ -98,7 +98,7 @@ void SimulationRadio::includeSearchInformation(HUDFlowLayout* container) {
     msg_fc.setf(std::ios::showpos | ios::fixed);
     msg_fc << std::setw(6) << std::setprecision(2)
            << fraction_complete << " %" ;
-    container->addItem(new HUDTextLine(msg_fc.str().size(), msg_fc.str(), 0, 2));
+    setText(container, msg_fc.str());
 
     // CPU time.
     double CPU_time = ER_adapter->wuCPUTime();
@@ -107,7 +107,7 @@ void SimulationRadio::includeSearchInformation(HUDFlowLayout* container) {
     msg_cpu.setf(std::ios::showpos | ios::fixed);
     msg_cpu << std::setw(8) << std::setprecision(0)
             << CPU_time << " s" ;
-    container->addItem(new HUDTextLine(msg_cpu.str().size(), msg_cpu.str(), 0, 2));
+    setText(container, msg_cpu.str());
 
     container->activate();
     }

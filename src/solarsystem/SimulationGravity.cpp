@@ -37,7 +37,7 @@ void SimulationGravity::includeLogo(HUDLogoCycle* container) {
     container->addItem(new HUDImage("virgoTGA", 10, 10));
     }
 
-void SimulationGravity::includeSearchInformation(HUDFlowLayout* container) {
+void SimulationGravity::includeSearchInformation(HUDTempFlowLayout* container) {
     // Refresh our BOINC data.
     EG_adapter->refresh();
 
@@ -46,7 +46,7 @@ void SimulationGravity::includeSearchInformation(HUDFlowLayout* container) {
 
     stringstream work_unit_heading;
     work_unit_heading << "Current Work Unit Details";
-    container->addItem(new HUDTextLine(work_unit_heading.str().size(), work_unit_heading.str(), 0, 2));
+    setText(container, work_unit_heading.str());
 
     // Right ascension.
     double right_ascension = EG_adapter->wuSkyPosRightAscension();
@@ -54,7 +54,7 @@ void SimulationGravity::includeSearchInformation(HUDFlowLayout* container) {
     msg_RA << "Right ascension : ";
     msg_RA.setf(std::ios::showpos | ios::fixed);
     msg_RA << std::setw(6) << std::setprecision(2) << right_ascension;
-    container->addItem(new HUDTextLine(msg_RA.str().size(), msg_RA.str(), 0, 2));
+    setText(container, msg_RA.str());
 
     // Declination.
     double declination = EG_adapter->wuSkyPosDeclination();
@@ -62,7 +62,7 @@ void SimulationGravity::includeSearchInformation(HUDFlowLayout* container) {
     msg_dec << "Declination : ";
     msg_dec.setf(std::ios::showpos | ios::fixed);
     msg_dec << std::setw(5) << std::setprecision(2) << declination;
-    container->addItem(new HUDTextLine(msg_dec.str().size(), msg_dec.str(), 0, 2));
+    setText(container, msg_dec.str());
 
     // Fraction completed, as a percentage.
     double fraction_complete = EG_adapter->wuFractionDone() * 100;
@@ -71,7 +71,7 @@ void SimulationGravity::includeSearchInformation(HUDFlowLayout* container) {
     msg_fc.setf(std::ios::showpos | ios::fixed);
     msg_fc << std::setw(6) << std::setprecision(2)
            << fraction_complete << " %" ;
-    container->addItem(new HUDTextLine(msg_fc.str().size(), msg_fc.str(), 0, 2));
+    setText(container, fraction_complete.str());
 
     // CPU time.
     double CPU_time = EG_adapter->wuCPUTime();
@@ -80,7 +80,7 @@ void SimulationGravity::includeSearchInformation(HUDFlowLayout* container) {
     msg_cpu.setf(std::ios::showpos | ios::fixed);
     msg_cpu << std::setw(8) << std::setprecision(0)
             << CPU_time << " s" ;
-    container->addItem(new HUDTextLine(msg_cpu.str().size(), msg_cpu.str(), 0, 2));
+    setText(container, CPU_time.str());
 
     container->activate();
     }

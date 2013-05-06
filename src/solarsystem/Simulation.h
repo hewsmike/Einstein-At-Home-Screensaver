@@ -163,7 +163,7 @@ class Simulation : public Renderable {
          * This abstract method is to be defined by derived classes implementing
          * the science run specific search information handling and rendering.
          */
-        virtual void includeSearchInformation(HUDFlowLayout* container) = 0;
+        virtual void includeSearchInformation(HUDTempFlowLayout* container) = 0;
 
         /**
          * \brief Render science run specific observatories
@@ -185,6 +185,8 @@ class Simulation : public Renderable {
         void loadImageToPanel(HUDImage* hip, HUDFlowLayout* hfl,
                               std::string resource_name, GLuint margin_width,
                               GLuint margin_height);
+
+        void setText(HUDTempFlowLayout* container, std::string msg);
 
     private:
         /// Enumerants for EAH pulsar file parsing
@@ -493,7 +495,7 @@ class Simulation : public Renderable {
          *
          * \param the container to insert information into.
          */
-        void includeUserInformation(HUDFlowLayout* container);
+        void includeUserInformation(HUDTempFlowLayout* container);
 
         /**
          * \brief Populate the help HUD with information.

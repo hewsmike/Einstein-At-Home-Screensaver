@@ -415,30 +415,16 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
     /// TODO - write cases per render_quality ... presently ignored
     /// at this level.
 
-    // Activate 3D scene objects, while nominating any fonts
-    // PRIOR to activation of their respective objects..
-    cs.setFont(fonts[SolarSystemGlobals::CONSTELLATIONS]);
+    // Activate 3D scene objects.
     cs.activate();
-
     ps.activate();
     ps_EAH.activate();
     sn.activate();
-
-    c_sphere.setFont(fonts[SolarSystemGlobals::SKY_GRID]);
     c_sphere.activate();
-
     earth.activate();
     earth_shadow.activate();
-
-    earth_grid.setFont(fonts[SolarSystemGlobals::EARTH_GRID]);
     earth_grid.activate();
-
     sun.activate();
-
-    overlay.setFont(fonts[SolarSystemGlobals::HUDOVER]);
-
-    help_overlay.setFont(fonts[SolarSystemGlobals::HUDOVER]);
-
     ecliptic.activate();
     galactic.activate();
 
@@ -523,16 +509,16 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
     help_north_panel.addItem(&help_north_east_panel);
 
     // Create our impetus message.
-//    version_text = new HUDTextLineScroll(35,
-//                                         "PLEASE JOIN US AT  http://einstein.phys.uwm.edu    ......    ",
-//                                         10, 20, HUDTextLineScroll::LEFT, 10);
-//
-//
-//    if(version_text == NULL) {
-//        std::string msg = "Simulation::prepare() - failed creation of HUDTextLineScroll instance on heap";
-//        ErrorHandler::record(msg, ErrorHandler::FATAL);
-//        }
-//    version_text->setFont(fonts[SolarSystemGlobals::HUDOVER]);
+    version_text = new HUDTextLineScroll(35,
+                                         "PLEASE JOIN US AT  http://einstein.phys.uwm.edu    ......    ",
+                                         10, 20, HUDTextLineScroll::LEFT, 10);
+
+
+    if(version_text == NULL) {
+        std::string msg = "Simulation::prepare() - failed creation of HUDTextLineScroll instance on heap";
+        ErrorHandler::record(msg, ErrorHandler::FATAL);
+        }
+    version_text->setFont(overlay.getFont());
     south_west_panel.addItem(version_text);
 
     // Put our logos into the logo cycling display panel.
@@ -3236,128 +3222,101 @@ void Simulation::loadLookoutDataToPanels(void) {
     south_east_panel.activate();
     }
 
-void Simulation::includeUserInformation(HUDFlowLayout* container) {
-//    // Refresh our BOINC data.
-//    BC_adapter->refresh();
-//
-//    // First empty of any existing content.
-//    container->erase();
-//
-//    stringstream boinc_heading;
-//    boinc_heading << "BOINC Information";
-//    container->addItem(new HUDTextLine(boinc_heading.str().size(), boinc_heading.str(), 0, 2));
-//
-//    // Name of user.
-//    stringstream user_name;
-//    user_name << "User name : " << BC_adapter->userName();
-//    container->addItem(new HUDTextLine(user_name.str().size(), user_name.str(), 0, 2));
-//
-//    // Name of user's team.
-//    stringstream team_name;
-//    team_name << "User team : " << BC_adapter->teamName();
-//    container->addItem(new HUDTextLine(team_name.str().size(), team_name.str(), 0, 2));
-//
-//    // Total user credit.
-//    stringstream user_credit;
-//    user_credit << "User credit : "
-//                << std::setw(12) << std::setfill(' ') << std::left
-//                << std::fixed << std::noshowpoint << std::setprecision(0)
-//                << BC_adapter->userCredit();
-//    container->addItem(new HUDTextLine(user_credit.str().size(), user_credit.str(), 0, 2));
-//
-//    // User RAC.
-//    stringstream user_RAC;
-//    user_RAC << "User RAC : "
-//             << std::setw(12) << std::setfill(' ') << std::left
-//             << std::fixed << std::noshowpoint << std::setprecision(0)
-//             << BC_adapter->userRACredit();
-//    container->addItem(new HUDTextLine(user_RAC.str().size(), user_RAC.str(), 0, 2));
-//
-//    // Total host credit.
-//    stringstream host_credit;
-//    host_credit << "Host credit : "
-//                << std::setw(12) << std::setfill(' ') << std::left
-//                << std::fixed << std::noshowpoint << std::setprecision(0)
-//                << BC_adapter->hostCredit();
-//    container->addItem(new HUDTextLine(host_credit.str().size(), host_credit.str(), 0, 2));
-//
-//    // Host RAC.
-//    stringstream host_RAC;
-//    host_RAC << "Host RAC : "
-//             << std::setw(12) << std::setfill(' ') << std::left
-//             << std::fixed << std::noshowpoint << std::setprecision(0)
-//             << BC_adapter->hostRACredit();
-//    container->addItem(new HUDTextLine(host_RAC.str().size(), host_RAC.str(), 0, 2));
+void Simulation::setText(HUDTempFlowLayout* container, std::string msg) {
+    HUDTextLine* htlp = new HUDTextLine(msg.size(), msg, 0, 2);
+    htlp->setFont(overlay.getFont());
+    container->addItem(htlp);
+    }
+
+void Simulation::includeUserInformation(HUDTempFlowLayout* container) {
+    // Refresh our BOINC data.
+    BC_adapter->refresh();
+
+    // First empty of any existing content.
+    container->erase();
+
+    // Heading.
+    stringstream boinc_heading;
+    boinc_heading << "BOINC Information";
+    setText(container, boinc_heading.str());
+
+    // Name of user.
+    stringstream user_name;
+    user_name << "User name : " << BC_adapter->userName();
+    setText(container, user_name.str());
+
+    // Name of user's team.
+    stringstream team_name;
+    team_name << "User team : " << BC_adapter->teamName();
+    setText(container, team_name.str());
+
+    // Total user credit.
+    stringstream user_credit;
+    user_credit << "User credit : "
+                << std::setw(12) << std::setfill(' ') << std::left
+                << std::fixed << std::noshowpoint << std::setprecision(0)
+                << BC_adapter->userCredit();
+    setText(container, user_credit.str());
+
+    // User RAC.
+    stringstream user_RAC;
+    user_RAC << "User RAC : "
+             << std::setw(12) << std::setfill(' ') << std::left
+             << std::fixed << std::noshowpoint << std::setprecision(0)
+             << BC_adapter->userRACredit();
+    setText(container, user_RAC.str());
+
+    // Total host credit.
+    stringstream host_credit;
+    host_credit << "Host credit : "
+                << std::setw(12) << std::setfill(' ') << std::left
+                << std::fixed << std::noshowpoint << std::setprecision(0)
+                << BC_adapter->hostCredit();
+    setText(container, host_credit.str());
+
+    // Host RAC.
+    stringstream host_RAC;
+    host_RAC << "Host RAC : "
+             << std::setw(12) << std::setfill(' ') << std::left
+             << std::fixed << std::noshowpoint << std::setprecision(0)
+             << BC_adapter->hostRACredit();
+    setText(container, host_RAC);
     }
 
 void Simulation::initialiseHelpHUD(void) {
-//    std::string msg;
-//
-//    msg = "F1 - this help screen";
-//
-//    HUDTextLine* htlp = new HUDTextLine(msg.size(), msg, 0, 2);
-//    htlp->setFont(overlay.getFont());
-//    help_north_west_panel.addItem(new HUDTextLine(msg.size(), msg, 0, 2));
-//    msg = "F2 - cycle rendering level";
-//    help_north_west_panel.addItem(new HUDTextLine(msg.size(), msg, 0, 2));
-//    msg = "F4 - show/hide the HUD";
-//    help_north_west_panel.addItem(new HUDTextLine(msg.size(), msg, 0, 2));
-//    msg = "F5 - cycle constellations display";
-//    help_north_west_panel.addItem(new HUDTextLine(msg.size(), msg, 0, 2));
-//    msg = "F6 - cycle pulsars display";
-//    help_north_west_panel.addItem(new HUDTextLine(msg.size(), msg, 0, 2));
-//
-//    msg = "F7 - cycle supernovae display";
-//    help_north_east_panel.addItem(new HUDTextLine(msg.size(), msg, 0, 2));
-//    msg = "F8 - cycle celestial sphere coordinate display";
-//    help_north_east_panel.addItem(new HUDTextLine(msg.size(), msg, 0, 2));
-//    msg = "F9 - cycle Earth coordinate display";
-//    help_north_east_panel.addItem(new HUDTextLine(msg.size(), msg, 0, 2));
-//    msg = "F12 - turn autopilot on/off";
-//    help_north_east_panel.addItem(new HUDTextLine(msg.size(), msg, 0, 2));
-//
-//    msg = "SPACEBAR - STOP all translation and rotation";
-//    help_south_panel.addItem(new HUDTextLine(msg.size(), msg, 0, 2));
-//    msg = "G - go to initial craft position";
-//    help_south_panel.addItem(new HUDTextLine(msg.size(), msg, 0, 2));
-//    msg = "ESC - exit the program";
-//    help_south_panel.addItem(new HUDTextLine(msg.size(), msg, 0, 2));
-//    msg = "Controller is 'inertial' - things will happen until you stop it";
-//    help_south_panel.addItem(new HUDTextLine(msg.size(), msg, 0, 2));
-//
-//    msg = "Translation controls";
-//    help_west_panel.addItem(new HUDTextLine(msg.size(), msg, 0, 2));
-//    msg = "E - forward thrust";
-//    help_west_panel.addItem(new HUDTextLine(msg.size(), msg, 0, 2));
-//    msg = "C - reverse thrust";
-//    help_west_panel.addItem(new HUDTextLine(msg.size(), msg, 0, 2));
-//    msg = "S - leftwards thrust";
-//    help_west_panel.addItem(new HUDTextLine(msg.size(), msg, 0, 2));
-//    msg = "F - rightwards thrust";
-//    help_west_panel.addItem(new HUDTextLine(msg.size(), msg, 0, 2));
-//    msg = "R - upwards thrust";
-//    help_west_panel.addItem(new HUDTextLine(msg.size(), msg, 0, 2));
-//    msg = "V - downwards thrust";
-//    help_west_panel.addItem(new HUDTextLine(msg.size(), msg, 0, 2));
-//    msg = "D - STOP all translation";
-//    help_west_panel.addItem(new HUDTextLine(msg.size(), msg, 0, 2));
-//
-//    msg = "Rotation controls";
-//    help_east_panel.addItem(new HUDTextLine(msg.size(), msg, 0, 2));
-//    msg = ". or Numpad2 - upwards pitch";
-//    help_east_panel.addItem(new HUDTextLine(msg.size(), msg, 0, 2));
-//    msg = "O or Numpad8 - downwards pitch";
-//    help_east_panel.addItem(new HUDTextLine(msg.size(), msg, 0, 2));
-//    msg = ", or Numpad1 - leftwards yaw";
-//    help_east_panel.addItem(new HUDTextLine(msg.size(), msg, 0, 2));
-//    msg = "/ or Numpad3 - rightwards yaw";
-//    help_east_panel.addItem(new HUDTextLine(msg.size(), msg, 0, 2));
-//    msg = "K or Numpad4 - leftwards roll";
-//    help_east_panel.addItem(new HUDTextLine(msg.size(), msg, 0, 2));
-//    msg = "; or Numpad6 - rightwards roll";
-//    help_east_panel.addItem(new HUDTextLine(msg.size(), msg, 0, 2));
-//    msg = "L or Numpad5 - STOP all rotation";
-//    help_east_panel.addItem(new HUDTextLine(msg.size(), msg, 0, 2));
+    setText(&help_north_west_panel, "F1 - this help screen");
+    setText(&help_north_west_panel, "F2 - cycle rendering level");
+    setText(&help_north_west_panel, "F4 - show/hide the HUD");
+    setText(&help_north_west_panel, "F5 - cycle constellations display");
+    setText(&help_north_west_panel, "F6 - cycle pulsars display");
+
+    setText(&help_north_east_panel, "F7 - cycle supernovae display");
+    setText(&help_north_east_panel, "F8 - cycle celestial sphere coordinate display");
+    setText(&help_north_east_panel, "F9 - cycle Earth coordinate display");
+    setText(&help_north_east_panel, "F12 - turn autopilot on/off");
+
+    setText(&help_south_panel, "SPACEBAR - STOP all translation and rotation");
+    setText(&help_south_panel, "G - go to initial craft position");
+    setText(&help_south_panel, "ESC - exit the program");
+    setText(&help_south_panel, "Controller is 'inertial' - things will happen until you stop it");
+
+    setText(&help_west_panel, "Translation controls");
+    setText(&help_west_panel, "E - forward thrust");
+    setText(&help_west_panel, "C - reverse thrust");
+    setText(&help_west_panel, "S - leftwards thrust");
+    setText(&help_west_panel, "F - rightwards thrust");
+    setText(&help_west_panel, "R - upwards thrust");
+    setText(&help_west_panel, "V - downwards thrust");
+    setText(&help_west_panel, "D - STOP all translation");
+
+    setText(&help_east_panel, "Rotation controls");
+    setText(&help_east_panel, ". or Numpad2 - upwards pitch");
+    setText(&help_east_panel, "O or Numpad8 - downwards pitch");
+    setText(&help_east_panel, ", or Numpad1 - leftwards yaw");
+    setText(&help_east_panel, "/ or Numpad3 - rightwards yaw");
+    setText(&help_east_panel, "K or Numpad4 - leftwards roll");
+    setText(&help_east_panel, "; or Numpad6 - rightwards roll");
+    setText(&help_east_panel, "L or Numpad5 - STOP all rotation");
     }
 
 void Simulation::setFonts(const Resource* font) {

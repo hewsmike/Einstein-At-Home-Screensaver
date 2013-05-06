@@ -108,9 +108,6 @@ class HUDTextLine : public HUDContent {
         // The line's maximum number of characters.
         GLuint len;
 
-        // The font to be used in rendering.
-        OGLFT_ft* lineFont;
-
         // The text itself.
         std::string txt;
     };

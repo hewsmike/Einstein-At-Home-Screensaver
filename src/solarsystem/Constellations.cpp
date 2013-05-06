@@ -2531,8 +2531,6 @@ void Constellations::createMarkerLists(void) {
     // Get the OGLFT font for this object.
     OGLFT_ft* myFont = this->getFont();
 
-    myFont->setCompileMode(OGLFT::Face::IMMEDIATE);
-
     clearMarkerLists();
 
     // An independent scaling.
