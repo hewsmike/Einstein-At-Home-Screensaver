@@ -24,9 +24,10 @@
 
 HUDTextLineScroll::HUDTextLineScroll(GLuint length,
                                      const std::string& text,
+                                     OGLFT_ft* font,
                                      GLuint horizontalMargin, GLuint verticalMargin,
                                      mode direction = NONE, GLuint scroll_interval = 10) :
-                                        HUDTextLine(length, text, horizontalMargin, verticalMargin),
+                                        HUDTextLine(length, text, font, horizontalMargin, verticalMargin),
                                         dir(direction), interval(scroll_interval), frame_count(0) {
     }
 

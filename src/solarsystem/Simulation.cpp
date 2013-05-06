@@ -505,6 +505,7 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
     // Create our impetus message.
     version_text = new HUDTextLineScroll(35,
                                          "PLEASE BARYY SARGE JOIN US AT  http://einstein.phys.uwm.edu    ......    ",
+                                         HUDFont,
                                          10, 20, HUDTextLineScroll::LEFT, 10);
 
 
@@ -512,9 +513,6 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
         std::string msg = "Simulation::prepare() - failed creation of HUDTextLineScroll instance on heap";
         ErrorHandler::record(msg, ErrorHandler::FATAL);
         }
-    ErrorHandler::record("Simulation::prepare() - (pre) setting font for version_text", ErrorHandler::INFORM);
-    version_text->Renderable::setFont(HUDFont);
-    ErrorHandler::record("Simulation::prepare() - (post) setting font for version_text", ErrorHandler::INFORM);
 
     south_west_panel.addItem(version_text);
 
@@ -3220,9 +3218,7 @@ void Simulation::loadLookoutDataToPanels(void) {
     }
 
 void Simulation::setText(HUDTempFlowLayout* container, std::string msg) {
-    HUDTextLine* htlp = new HUDTextLine(msg.size(), msg, 0, 2);
-    htlp->setFont(overlay.getFont());
-    container->addItem(htlp);
+    container->addItem( new HUDTextLine(msg.size(), msg, HUDFont, 0, 2););
     }
 
 void Simulation::includeUserInformation(HUDTempFlowLayout* container) {

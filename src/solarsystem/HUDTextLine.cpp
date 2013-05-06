@@ -28,9 +28,11 @@
 
 HUDTextLine::HUDTextLine(GLuint length,
                          const std::string& text,
+                         OGLFT_ft* font,
                          GLuint horizontalMargin, GLuint verticalMargin) :
                            HUDContent(horizontalMargin, verticalMargin),
                            len(length) {
+    this->setFont(font);
     this->setText(text);
     // Initial setting of minimum dimensions are those of the initial text
     // content in combination with the given fixed margins.

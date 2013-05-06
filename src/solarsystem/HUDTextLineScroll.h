@@ -55,6 +55,7 @@ class HUDTextLineScroll : public HUDTextLine {
          */
         HUDTextLineScroll(GLuint length,
                           const std::string& text,
+                          OGLFT_ft* font,
                           GLuint horizontalMargin, GLuint verticalMargin,
                           mode direction, GLuint scroll_interval);
 

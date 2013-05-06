@@ -51,6 +51,7 @@ class HUDTextLine : public HUDContent {
          * \param length : the maximum length in characters to be displayed
          * \param element : the scene element type as per Simulation class
          * \param text : a string containing the desired text
+         * \param font : a pointer to an OGLFT font instance
          * \param horizontalMargin : the horizontal pixel margin to be applied
          *                           either side of the enclosed content
          * \param verticalMargin : the vertical pixel margin to be applied
@@ -58,6 +59,7 @@ class HUDTextLine : public HUDContent {
          */
         HUDTextLine(GLuint length,
                     const std::string& text,
+                    OGLFT_ft* font,
                     GLuint horizontalMargin, GLuint verticalMargin);
 
         /**
