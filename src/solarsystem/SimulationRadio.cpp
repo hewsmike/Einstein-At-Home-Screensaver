@@ -32,7 +32,7 @@ void SimulationRadio::includeLogo(HUDLogoCycle* container) {
     container->addItem(new HUDImage("palfaTGA", 10, 10));
     }
 
-void SimulationRadio::includeSearchInformation(HUDtempFlowLayout* container) {
+void SimulationRadio::includeSearchInformation(HUDTempFlowLayout* container) {
     // Refresh our BOINC data.
     ER_adapter->refresh();
 

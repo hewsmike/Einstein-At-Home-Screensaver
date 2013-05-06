@@ -31,7 +31,7 @@ HUDTextLine::HUDTextLine(GLuint length,
                          GLuint horizontalMargin, GLuint verticalMargin) :
                            HUDContent(horizontalMargin, verticalMargin),
                            len(length) {
-    setText(text);
+    this->setText(text);
     // Initial setting of minimum dimensions are those of the initial text
     // content in combination with the given fixed margins.
     this->setMinimumDimensions(width() + 2*horzMargin(),
@@ -52,8 +52,8 @@ GLuint HUDTextLine::maxLength(void) const {
     return len;
     }
 
-GLuint HUDTextLine::width(void) const {
-    OGLFT_ft* lineFont = this->getFont();
+GLuint HUDTextLine::width(void) {
+    OGLFT_ft* lineFont = this->Renderable::getFont();
 
     // Lazy evaluate.
     // Ask OGLFT what the pixel bounds are for the current text.
@@ -62,15 +62,19 @@ GLuint HUDTextLine::width(void) const {
     return ceil(currentBox.advance_.dx_);
     }
 
-GLuint HUDTextLine::height(void) const {
+GLuint HUDTextLine::height(void) {
     stringstream msg;
     msg << "HUDTextLine::height() : '"
         << txt << "'";
     ErrorHandler::record(msg.str(), ErrorHandler::INFORM);
-    OGLFT_ft* lineFont = this->getFont();
+    OGLFT_ft* lineFont = this->Renderable::getFont();
     // Lazy evaluate.
     // Round up the height to nearest integer.
-    return ceil(lineFont->height()*2);
+    msg.clear();
+    msg << "HUDTextLine::height() : lineFont = "
+        << lineFont;
+    ErrorHandler::record(msg.str(), ErrorHandler::INFORM);
+    return ceil(lineFont->height());
     }
 
 void HUDTextLine::prepare(SolarSystemGlobals::render_quality rq) {
@@ -100,7 +104,7 @@ void HUDTextLine::release(void) {
     }
 
 void HUDTextLine::render(void) {
-    OGLFT_ft* lineFont = this->getFont();
+    OGLFT_ft* lineFont = this->Renderable::getFont();
     const char* line_text = txt.substr(0, len).c_str();
     lineFont->draw(horzBase() + horzMargin(),
                    vertBase() + vertMargin(), line_text);

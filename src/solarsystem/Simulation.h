@@ -135,7 +135,7 @@ class Simulation : public Renderable {
          */
         void cycle(SolarSystemGlobals::content ct);
 
-        void setFont(SolarSystemGlobals::content element, OGLFT_ft* font);
+        void setFonts(const Resource* font);
 
     protected:
         /// These three routines below satisfy the Renderable interface.
@@ -393,10 +393,6 @@ class Simulation : public Renderable {
         /// The realtime clock instance.
         UTC clock;
 
-        /// An associative array of font pointers to
-        /// store choices for each scene element.
-        std::map<SolarSystemGlobals::content, OGLFT_ft*> fonts;
-
         /// Associative array of names to image pointers
         /// for pulse profiles to display on the HUD.
         std::map<std::string, HUDItem*> pulse_profiles;
@@ -501,9 +497,7 @@ class Simulation : public Renderable {
          * \brief Populate the help HUD with information.
          */
         void initialiseHelpHUD(void);
-
-        void setFonts(const Resource* font);
-    };
+        };
 
 /**
  * @}

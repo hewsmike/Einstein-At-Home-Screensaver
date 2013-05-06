@@ -211,6 +211,7 @@ Simulation::Simulation(BOINCClientAdapter* boinc_adapter) :
                                              GALACTIC_LINE_ALPHA),
                                         Simulation::SKYGRID_RADIUS,
                                         72),
+                               version_text(NULL),
                                overlay(),
                                north_panel(HUDContainer::VERTICAL),
                                south_panel(HUDContainer::HORIZONTAL),
@@ -242,9 +243,6 @@ Simulation::Simulation(BOINCClientAdapter* boinc_adapter) :
 
     // Autopilot is initially not active.
     pilot.inactivate();
-
-    // Pointer to scrolling marquee.
-    version_text = NULL;
 
     // Line rendering detail for celestial coordinate grids.
     c_sphere.setLine(GridGlobe::MAIN, Line(SKYGRID_MAIN_WIDTH,
@@ -407,10 +405,6 @@ CameraState Simulation::viewPoint(void) {
         }
     }
 
-void Simulation::setFont(SolarSystemGlobals::content element, OGLFT_ft* font) {
-    fonts[element] = font;
-    }
-
 void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
     /// TODO - write cases per render_quality ... presently ignored
     /// at this level.
@@ -510,7 +504,7 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
 
     // Create our impetus message.
     version_text = new HUDTextLineScroll(35,
-                                         "PLEASE JOIN US AT  http://einstein.phys.uwm.edu    ......    ",
+                                         "PLEASE BARYY SARGE JOIN US AT  http://einstein.phys.uwm.edu    ......    ",
                                          10, 20, HUDTextLineScroll::LEFT, 10);
 
 
@@ -518,7 +512,10 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
         std::string msg = "Simulation::prepare() - failed creation of HUDTextLineScroll instance on heap";
         ErrorHandler::record(msg, ErrorHandler::FATAL);
         }
-    version_text->setFont(overlay.getFont());
+    ErrorHandler::record("Simulation::prepare() - (pre) setting font for version_text", ErrorHandler::INFORM);
+    version_text->Renderable::setFont(HUDFont);
+    ErrorHandler::record("Simulation::prepare() - (post) setting font for version_text", ErrorHandler::INFORM);
+
     south_west_panel.addItem(version_text);
 
     // Put our logos into the logo cycling display panel.
@@ -3280,7 +3277,7 @@ void Simulation::includeUserInformation(HUDTempFlowLayout* container) {
              << std::setw(12) << std::setfill(' ') << std::left
              << std::fixed << std::noshowpoint << std::setprecision(0)
              << BC_adapter->hostRACredit();
-    setText(container, host_RAC);
+    setText(container, host_RAC.str());
     }
 
 void Simulation::initialiseHelpHUD(void) {

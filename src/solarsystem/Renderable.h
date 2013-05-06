@@ -136,7 +136,7 @@ class Renderable : public RenderQualityObserver {
         /**
          * \brief Obtain the font.
          */
-        OGLFT_ft* getFont(void) const;
+        OGLFT_ft* getFont(void);
 
     protected:
         /**

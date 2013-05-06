@@ -71,7 +71,7 @@ void SimulationGravity::includeSearchInformation(HUDTempFlowLayout* container) {
     msg_fc.setf(std::ios::showpos | ios::fixed);
     msg_fc << std::setw(6) << std::setprecision(2)
            << fraction_complete << " %" ;
-    setText(container, fraction_complete.str());
+    setText(container, msg_fc.str());
 
     // CPU time.
     double CPU_time = EG_adapter->wuCPUTime();
@@ -80,7 +80,7 @@ void SimulationGravity::includeSearchInformation(HUDTempFlowLayout* container) {
     msg_cpu.setf(std::ios::showpos | ios::fixed);
     msg_cpu << std::setw(8) << std::setprecision(0)
             << CPU_time << " s" ;
-    setText(container, CPU_time.str());
+    setText(container, msg_cpu.str());
 
     container->activate();
     }

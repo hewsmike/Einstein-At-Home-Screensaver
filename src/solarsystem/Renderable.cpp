@@ -18,6 +18,9 @@
  *                                                                         *
  ***************************************************************************/
 
+#include <sstream>
+
+#include "ErrorHandler.h"
 #include "Renderable.h"
 
 // Mark initial state as being inactive, but able to be hidden later,
@@ -112,9 +115,17 @@ void Renderable::renderQualityUpdate(void) {
     }
 
 void Renderable::setFont(OGLFT_ft* a_font) {
-    myFont = a_font;
+    this->myFont = a_font;
+    stringstream msg;
+    msg << "Renderable::setFont() : myFont = "
+        << myFont;
+    ErrorHandler::record(msg.str(), ErrorHandler::INFORM);
     }
 
-OGLFT_ft* Renderable::getFont(void) const {
-    return myFont;
+OGLFT_ft* Renderable::getFont(void) {
+    stringstream msg;
+    msg << "Renderable::getFont() : myFont = "
+        << myFont;
+    ErrorHandler::record(msg.str(), ErrorHandler::INFORM);
+    return this->myFont;
     }

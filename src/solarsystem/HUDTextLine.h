@@ -78,7 +78,7 @@ class HUDTextLine : public HUDContent {
          *
          * \return the width
          */
-        GLuint width(void) const;
+        GLuint width(void);
 
         /**
          * \brief Get the height in pixels of the text line, as determined
@@ -86,7 +86,7 @@ class HUDTextLine : public HUDContent {
          *
          * \return the height
          */
-        GLuint height(void) const;
+        GLuint height(void);
 
         std::string text(void) const;
 
