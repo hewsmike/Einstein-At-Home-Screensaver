@@ -60,22 +60,11 @@ SolarSystemGlobals::render_quality SolarSystemGlobals::qual(RENDER_LOWEST);
 WindowManager::displaymode SolarSystemGlobals::operating_mode(WindowManager::WINDOW);
 
 std::set<RenderQualityObserver*> SolarSystemGlobals::quality_observers;
-std::map<SolarSystemGlobals::content, OGLFT_ft*> SolarSystemGlobals::fonts;
 
 SolarSystemGlobals::SolarSystemGlobals() {
     }
 
 SolarSystemGlobals::~SolarSystemGlobals() {
-    }
-
-void SolarSystemGlobals::setFont(SolarSystemGlobals::content element, OGLFT_ft* font) {
-    fonts.erase(element);
-    // Then put in a new key/value combo using pair semantics.
-    fonts.insert(std::make_pair(element, font));
-    }
-
-OGLFT_ft* SolarSystemGlobals::getFont(SolarSystemGlobals::content element) {
-    return fonts[element];
     }
 
 void SolarSystemGlobals::setDisplayMode(WindowManager::displaymode mode) {

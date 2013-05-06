@@ -128,23 +128,6 @@ class SolarSystemGlobals {
         static void setRenderLevel(SolarSystemGlobals::render_quality rq);
 
         /**
-         * \brief Set the font for a given scene element.
-         *
-         * \param element : one of the scene elements
-         * \param font : a pointer to the desired OGLFT font
-         */
-        static void setFont(SolarSystemGlobals::content element, OGLFT_ft* font);
-
-        /**
-         * \brief Get the font for a given scene element.
-         *
-         * \param element : one of the scene elements
-         *
-         * \return pointer to the desired OGLFT font
-         */
-        static OGLFT_ft* getFont(SolarSystemGlobals::content element);
-
-        /**
          * \brief Record the current display mode.
          *
          * \param one of the displaymode enumerants as above.
@@ -187,10 +170,6 @@ class SolarSystemGlobals {
         /// The current window dimensions.
         static GLuint width;
         static GLuint height;
-
-        /// An associative array of font pointers to
-        /// store choices for each scene element.
-        static std::map<SolarSystemGlobals::content, OGLFT_ft*> fonts;
     };
 
 /**

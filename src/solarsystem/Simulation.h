@@ -186,8 +186,6 @@ class Simulation : public Renderable {
                               std::string resource_name, GLuint margin_width,
                               GLuint margin_height);
 
-
-
     private:
         /// Enumerants for EAH pulsar file parsing
         enum line_content {NAME,
@@ -367,6 +365,12 @@ class Simulation : public Renderable {
         GLfloat sun_rot_angle;
         Vector3D sun_pos;
 
+        /// Font texture instances for in-simulation rendering.
+        OGLFT_ft* skygridFont;
+        OGLFT_ft* earthgridFont;
+        OGLFT_ft* constellationFont;
+        OGLFT_ft* HUDFont;
+
         /// The renderable scene elements
         Constellations cs;
         Stars<Pulsar> ps;
@@ -495,6 +499,8 @@ class Simulation : public Renderable {
          * \brief Populate the help HUD with information.
          */
         void initialiseHelpHUD(void);
+
+        void setFonts(const Resource* font);
     };
 
 /**

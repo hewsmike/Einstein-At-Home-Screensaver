@@ -165,18 +165,10 @@ class SolarSystem : public AbstractGraphicsEngine, public RenderQualityObserver 
         /// Font resource instance
         const Resource* spaceFontResource;
 
-        /// Font texture instances for in-simulation rendering
-        OGLFT_ft* skygridFont;
-        OGLFT_ft* earthgridFont;
-        OGLFT_ft* constellationFont;
-        OGLFT_ft* HUDFont;
-
     private:
         void changeRenderQuality(void);
 
         bool renderUpdateFlag;
-
-        void setFonts(void);
 
         // The dec/inc-rement in the mouse wheel position.
         int mouse_wheel_differential;

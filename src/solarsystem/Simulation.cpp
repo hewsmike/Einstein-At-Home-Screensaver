@@ -141,6 +141,10 @@ const GLuint Simulation::WU_DETAILS_REFRESH_INTERVAL(100);
 const GLuint Simulation::USER_DETAILS_REFRESH_INTERVAL(1000);
 
 Simulation::Simulation(BOINCClientAdapter* boinc_adapter) :
+                               skygridFont(NULL),
+                               earthgridFont(NULL),
+                               constellationFont(NULL),
+                               HUDFont(NULL),
                                cs(CONSTELLATIONS_RADIUS),
                                ps(PULSARS_RADIUS,
                                   PULSARS_MAG_SIZE,
@@ -3354,4 +3358,78 @@ void Simulation::initialiseHelpHUD(void) {
 //    help_east_panel.addItem(new HUDTextLine(msg.size(), msg, 0, 2));
 //    msg = "L or Numpad5 - STOP all rotation";
 //    help_east_panel.addItem(new HUDTextLine(msg.size(), msg, 0, 2));
+    }
+
+void Simulation::setFonts(const Resource* font) {
+    // Might be recycling on Windows.
+    if(skygridFont != NULL) {
+        delete skygridFont;
+        }
+    if(earthgridFont != NULL) {
+        delete earthgridFont;
+        }
+    if(constellationFont) {
+        delete constellationFont;
+        }
+    if(HUDFont) {
+        delete HUDFont;
+        }
+
+    // Create font instances using font resource (base address + size)
+    skygridFont = new OGLFT_ft(&font->data()->at(0),
+                               font->data()->size(),
+                               13, 78);
+    // Note short-circuit evaluation relevant in this if clause ie. right side
+    // expression is evaluated only if left side expression is false. Matters
+    // for pointer dereference so don't swap order of expressions here.
+    if(skygridFont == NULL || (skygridFont->isValid() == false)) {
+        std::string msg = "Simulation::setFonts() - Could not construct sky grid font face from in memory resource!";
+        ErrorHandler::record(msg, ErrorHandler::FATAL);
+        }
+    skygridFont->setBackgroundColor(0.0f, 0.0f, 0.0f, 0.0f);
+    skygridFont->setForegroundColor(1.0f, 1.0f, 1.0f, 0.6f);
+    skygridFont->setCompileMode(OGLFT::Face::IMMEDIATE);
+
+    c_sphere.setFont(skygridFont);
+
+    earthgridFont = new OGLFT_ft(&font->data()->at(0),
+                                 font->data()->size(),
+                                 13, 78);
+
+    if(earthgridFont == NULL || (earthgridFont->isValid() == false)) {
+        std::string msg = "Simulation::setFonts() - Could not construct earth grid font face from in memory resource!";
+        ErrorHandler::record(msg, ErrorHandler::FATAL);
+        }
+    earthgridFont->setBackgroundColor(0.0f, 0.0f, 0.0f, 0.0f);
+    earthgridFont->setForegroundColor(1.0f, 1.0f, 1.0f, 0.6f);
+    earthgridFont->setCompileMode(OGLFT::Face::IMMEDIATE);
+
+    earth_grid.setFont(earthgridFont);
+
+    constellationFont = new OGLFT_ft(&font->data()->at(0),
+                                     font->data()->size(),
+                                     13, 78);
+    if(constellationFont == NULL || (constellationFont->isValid() == false)) {
+        std::string msg = "Simulation::setFonts() - Could not construct constellation font face from in memory resource!";
+        ErrorHandler::record(msg, ErrorHandler::FATAL);
+        }
+    constellationFont->setBackgroundColor(0.0f, 0.0f, 0.0f, 0.0f);
+    constellationFont->setForegroundColor(1.0f, 0.84f, 0.0f, 0.6f);
+    constellationFont->setCompileMode(OGLFT::Face::IMMEDIATE);
+
+    cs.setFont(constellationFont);
+
+    HUDFont = new OGLFT_ft(&font->data()->at(0),
+                           font->data()->size(),
+                           18, 90);
+    if(HUDFont == NULL || (HUDFont->isValid() == false)) {
+        std::string msg = "Simulation::setFonts() - Could not construct HUD font face from in memory resource!";
+        ErrorHandler::record(msg, ErrorHandler::FATAL);
+        }
+    HUDFont->setBackgroundColor(0.0f, 0.0f, 0.0f, 0.0f);
+    HUDFont->setForegroundColor(1.0f, 1.0f, 1.0f, 0.9f);
+    HUDFont->setCompileMode(OGLFT::Face::IMMEDIATE);
+
+    overlay.setFont(HUDFont);
+    help_overlay.setFont(HUDFont);
     }
