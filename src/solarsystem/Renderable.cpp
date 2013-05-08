@@ -116,16 +116,8 @@ void Renderable::renderQualityUpdate(void) {
 
 void Renderable::setFont(OGLFT_ft* a_font) {
     this->myFont = a_font;
-    stringstream msg;
-    msg << "Renderable::setFont() : myFont = "
-        << myFont;
-    ErrorHandler::record(msg.str(), ErrorHandler::INFORM);
     }
 
 OGLFT_ft* Renderable::getFont(void) {
-    stringstream msg;
-    msg << "Renderable::getFont() : myFont = "
-        << myFont;
-    ErrorHandler::record(msg.str(), ErrorHandler::INFORM);
     return this->myFont;
     }

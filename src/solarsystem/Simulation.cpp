@@ -238,7 +238,7 @@ Simulation::Simulation(BOINCClientAdapter* boinc_adapter) :
     sun_rot_angle = 0;
 
     // Initial HUD choice.
-    active_HUD = &overlay;
+    active_HUD = &help_overlay;
     help_hud_active = false;
 
     // Autopilot is initially not active.
@@ -414,9 +414,11 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
     ps.activate();
     ps_EAH.activate();
     sn.activate();
+    c_sphere.setFont(skygridFont);
     c_sphere.activate();
     earth.activate();
     earth_shadow.activate();
+    earth_grid.setFont(earthgridFont);
     earth_grid.activate();
     sun.activate();
     ecliptic.activate();
@@ -504,16 +506,15 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
 
     // Create our impetus message.
     version_text = new HUDTextLineScroll(35,
-                                         "PLEASE BARYY SARGE JOIN US AT  http://einstein.phys.uwm.edu    ......    ",
+                                         "PLEASE JOIN US AT  http://einstein.phys.uwm.edu    ......    ",
                                          HUDFont,
                                          10, 20, HUDTextLineScroll::LEFT, 10);
-
 
     if(version_text == NULL) {
         std::string msg = "Simulation::prepare() - failed creation of HUDTextLineScroll instance on heap";
         ErrorHandler::record(msg, ErrorHandler::FATAL);
         }
-
+    version_text->activate();
     south_west_panel.addItem(version_text);
 
     // Put our logos into the logo cycling display panel.
@@ -560,12 +561,14 @@ void Simulation::render(void) {
     if(SolarSystemGlobals::getDisplayMode() == WindowManager::SCREENSAVER) {
         if((frame_number % WU_DETAILS_REFRESH_INTERVAL) == 1) {
             // Work unit detail goes on east side.
+            east_panel.erase();
             includeSearchInformation(&east_panel);
             east_panel.activate();
             }
 
         if((frame_number % USER_DETAILS_REFRESH_INTERVAL) == 1) {
             // User and host detail goes on west side.
+            west_panel.erase();
             includeUserInformation(&west_panel);
             west_panel.activate();
             }
@@ -3218,7 +3221,7 @@ void Simulation::loadLookoutDataToPanels(void) {
     }
 
 void Simulation::setText(HUDTempFlowLayout* container, std::string msg) {
-    container->addItem( new HUDTextLine(msg.size(), msg, HUDFont, 0, 2););
+    container->addItem(new HUDTextLine(msg.size(), msg, HUDFont, 0, 2));
     }
 
 void Simulation::includeUserInformation(HUDTempFlowLayout* container) {
@@ -3277,22 +3280,26 @@ void Simulation::includeUserInformation(HUDTempFlowLayout* container) {
     }
 
 void Simulation::initialiseHelpHUD(void) {
+    help_north_west_panel.erase();
     setText(&help_north_west_panel, "F1 - this help screen");
     setText(&help_north_west_panel, "F2 - cycle rendering level");
     setText(&help_north_west_panel, "F4 - show/hide the HUD");
     setText(&help_north_west_panel, "F5 - cycle constellations display");
     setText(&help_north_west_panel, "F6 - cycle pulsars display");
 
+    help_north_east_panel.erase();
     setText(&help_north_east_panel, "F7 - cycle supernovae display");
     setText(&help_north_east_panel, "F8 - cycle celestial sphere coordinate display");
     setText(&help_north_east_panel, "F9 - cycle Earth coordinate display");
     setText(&help_north_east_panel, "F12 - turn autopilot on/off");
 
+    help_south_panel.erase();
     setText(&help_south_panel, "SPACEBAR - STOP all translation and rotation");
     setText(&help_south_panel, "G - go to initial craft position");
     setText(&help_south_panel, "ESC - exit the program");
     setText(&help_south_panel, "Controller is 'inertial' - things will happen until you stop it");
 
+    help_west_panel.erase();
     setText(&help_west_panel, "Translation controls");
     setText(&help_west_panel, "E - forward thrust");
     setText(&help_west_panel, "C - reverse thrust");
@@ -3302,6 +3309,7 @@ void Simulation::initialiseHelpHUD(void) {
     setText(&help_west_panel, "V - downwards thrust");
     setText(&help_west_panel, "D - STOP all translation");
 
+    help_east_panel.erase();
     setText(&help_east_panel, "Rotation controls");
     setText(&help_east_panel, ". or Numpad2 - upwards pitch");
     setText(&help_east_panel, "O or Numpad8 - downwards pitch");

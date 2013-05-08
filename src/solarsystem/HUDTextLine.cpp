@@ -55,7 +55,7 @@ GLuint HUDTextLine::maxLength(void) const {
     }
 
 GLuint HUDTextLine::width(void) {
-    OGLFT_ft* lineFont = this->Renderable::getFont();
+    OGLFT_ft* lineFont = this->getFont();
 
     // Lazy evaluate.
     // Ask OGLFT what the pixel bounds are for the current text.
@@ -65,17 +65,9 @@ GLuint HUDTextLine::width(void) {
     }
 
 GLuint HUDTextLine::height(void) {
-    stringstream msg;
-    msg << "HUDTextLine::height() : '"
-        << txt << "'";
-    ErrorHandler::record(msg.str(), ErrorHandler::INFORM);
-    OGLFT_ft* lineFont = this->Renderable::getFont();
+    OGLFT_ft* lineFont = this->getFont();
     // Lazy evaluate.
     // Round up the height to nearest integer.
-    msg.clear();
-    msg << "HUDTextLine::height() : lineFont = "
-        << lineFont;
-    ErrorHandler::record(msg.str(), ErrorHandler::INFORM);
     return ceil(lineFont->height());
     }
 
@@ -106,7 +98,7 @@ void HUDTextLine::release(void) {
     }
 
 void HUDTextLine::render(void) {
-    OGLFT_ft* lineFont = this->Renderable::getFont();
+    OGLFT_ft* lineFont = this->getFont();
     const char* line_text = txt.substr(0, len).c_str();
     lineFont->draw(horzBase() + horzMargin(),
                    vertBase() + vertMargin(), line_text);

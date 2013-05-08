@@ -129,7 +129,7 @@ void GridGlobe::prepare(SolarSystemGlobals::render_quality rq) {
             if(hasEquator) {
                 loadCelestialEquatorIndexBuffer();
                 }
-            //createMarkerLists();
+            createMarkerLists();
             break;
         }
         default :
@@ -210,7 +210,7 @@ void GridGlobe::render(void) {
                 lists != marker_lists.end();
                 ++lists) {
                 // Only call the first, as others are called by it.
-                //glCallList((*lists)[0]);
+                glCallList((*lists)[0]);
                 }
 
             glDisable(GL_TEXTURE_2D);

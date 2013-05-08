@@ -309,7 +309,7 @@ void SolarSystem::keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey k
             sim_instance->moveRequest(Craft::DOWNWARDS);
             break;
         case KeyF1:
-            sim_instance->cycle(SolarSystemGlobals::HELP_HUD);
+            // sim_instance->cycle(SolarSystemGlobals::HELP_HUD);
             break;
         case KeyF2:
             // Cycle the rendering level.
