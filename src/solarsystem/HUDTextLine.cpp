@@ -35,8 +35,8 @@ HUDTextLine::HUDTextLine(GLuint length,
     // Store the font choice.
     setFont(font);
 
-    // Allocate more than enough characters on the heap.
-    txt = new char[length + 2];
+    // Allocate enough characters on the heap.
+    txt = new char[length + 1];
 
     // Transfer characters to this heap storage.
     setText(text);
