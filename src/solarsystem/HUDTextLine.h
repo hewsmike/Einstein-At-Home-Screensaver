@@ -90,7 +90,12 @@ class HUDTextLine : public HUDContent {
          */
         GLuint height(void);
 
-        std::string text(void) const;
+         /**
+         * \brief Get the text .
+         *
+         * \return the text as a NULL character terminated C-style string.
+         */
+         std::string text(void) const;
 
     protected:
         /// These three routines below satisfy the Renderable interface.
@@ -104,14 +109,14 @@ class HUDTextLine : public HUDContent {
         /// Provide OpenGL code to render the object.
         virtual void render(void);
 
-        void setText(const std::string& text);
+        void setText(std::string& text);
 
     private:
         // The line's maximum number of characters.
         GLuint len;
 
         // The text itself.
-        std::string txt;
+        char* txt;
     };
 
 /**

@@ -20,7 +20,7 @@
 
 #include "HUDTextLine.h"
 
-#include <sstream>
+#include <cstring>
 
 #include "ErrorHandler.h"
 #include "HUDContainer.h"
@@ -32,12 +32,19 @@ HUDTextLine::HUDTextLine(GLuint length,
                          GLuint horizontalMargin, GLuint verticalMargin) :
                            HUDContent(horizontalMargin, verticalMargin),
                            len(length) {
-    this->setFont(font);
-    this->setText(text);
+    // Store the font choice.
+    setFont(font);
+
+    // Allocate more than enough characters on the heap.
+    txt = new char[length + 2];
+
+    // Transfer characters to this heap storage.
+    setText(text);
+
     // Initial setting of minimum dimensions are those of the initial text
     // content in combination with the given fixed margins.
-    this->setMinimumDimensions(width() + 2*horzMargin(),
-                               height() + 2*vertMargin());
+    setMinimumDimensions(width() + 2*horzMargin(),
+                         height() + 2*vertMargin());
 
     // Any enclosing container must be made aware of size change.
     HUDContainer* outer = getEnclosingContainer();
@@ -47,6 +54,10 @@ HUDTextLine::HUDTextLine(GLuint length,
     }
 
 HUDTextLine::~HUDTextLine() {
+    // Free up any allocated heap for character data.
+    delete txt;
+
+    // Plus any OpenGL resources.
     release();
     }
 
@@ -55,7 +66,7 @@ GLuint HUDTextLine::maxLength(void) const {
     }
 
 GLuint HUDTextLine::width(void) {
-    OGLFT_ft* lineFont = this->getFont();
+    OGLFT_ft* lineFont = getFont();
 
     // Lazy evaluate.
     // Ask OGLFT what the pixel bounds are for the current text.
@@ -65,7 +76,7 @@ GLuint HUDTextLine::width(void) {
     }
 
 GLuint HUDTextLine::height(void) {
-    OGLFT_ft* lineFont = this->getFont();
+    OGLFT_ft* lineFont = getFont();
     // Lazy evaluate.
     // Round up the height to nearest integer.
     return ceil(lineFont->height());
@@ -98,16 +109,19 @@ void HUDTextLine::release(void) {
     }
 
 void HUDTextLine::render(void) {
-    OGLFT_ft* lineFont = this->getFont();
-    const char* line_text = txt.substr(0, len).c_str();
+    OGLFT_ft* lineFont = getFont();
     lineFont->draw(horzBase() + horzMargin(),
-                   vertBase() + vertMargin(), line_text);
+                   vertBase() + vertMargin(), txt);
     }
 
 std::string HUDTextLine::text(void) const {
     return txt;
     }
 
-void HUDTextLine::setText(const std::string& text) {
-    txt = text;
+void HUDTextLine::setText(std::string& text) {
+    // Move the character data.
+    strncpy(txt, text.c_str(), sizeof(txt));
+
+    // To be sure ... :-)
+    txt[length + 1] = '\0';
     }
