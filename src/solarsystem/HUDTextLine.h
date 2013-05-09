@@ -109,7 +109,7 @@ class HUDTextLine : public HUDContent {
         /// Provide OpenGL code to render the object.
         virtual void render(void);
 
-        void setText(std::string& text);
+        void setText(const std::string& text);
 
     private:
         // The line's maximum number of characters.

@@ -67,10 +67,11 @@ GLuint HUDTextLine::maxLength(void) const {
 
 GLuint HUDTextLine::width(void) {
     OGLFT_ft* lineFont = getFont();
+    std::cout << "HUDTextLine::width() : txt = '" << txt << "'"  << std::endl;
 
     // Lazy evaluate.
     // Ask OGLFT what the pixel bounds are for the current text.
-    OGLFT::BBox currentBox = lineFont->measure(txt.substr(0, len).c_str());
+    OGLFT::BBox currentBox = lineFont->measure(txt);
     // Round up the advance in horizontal direction to nearest integer.
     return ceil(currentBox.advance_.dx_);
     }
@@ -118,10 +119,11 @@ std::string HUDTextLine::text(void) const {
     return txt;
     }
 
-void HUDTextLine::setText(std::string& text) {
+void HUDTextLine::setText(const std::string& text) {
     // Move the character data.
-    strncpy(txt, text.c_str(), sizeof(txt));
+    strncpy(txt, text.c_str(), len);
 
     // To be sure ... :-)
-    txt[length + 1] = '\0';
+    txt[len] = '\0';
+    std::cout << "HUDTextLine::setText() : txt = '" << txt << "'"  << std::endl;
     }
