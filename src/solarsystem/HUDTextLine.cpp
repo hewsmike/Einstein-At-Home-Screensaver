@@ -55,7 +55,7 @@ HUDTextLine::HUDTextLine(GLuint length,
 
 HUDTextLine::~HUDTextLine() {
     // Free up any allocated heap for character data.
-    delete txt;
+    delete[] txt;
 
     // Plus any OpenGL resources.
     release();
