@@ -375,12 +375,12 @@ void GridGlobe::loadCelestialEquatorIndexBuffer(void) {
     }
 
 void GridGlobe::createMarkerLists(void) {
+    // Symbols for hours and degrees.
+    static const char* const HOUR_UNITS = 'h';
+    static const char* const DEGREE_UNITS = 'o';
+
     // Erase any previous lists.
     clearMarkerLists();
-
-    // Symbols for hours and degrees.
-    static const std::string HOUR_UNITS("h");
-    static const std::string DEGREE_UNITS("o");
 
     // Get the font for this item.
     OGLFT_ft* myFont = this->getFont();
@@ -401,41 +401,62 @@ void GridGlobe::createMarkerLists(void) {
         // Calculate the right ascension.
         GLint right_asc = slice * slice_step;
 
-        //
-        std::string ra_token = "";
-        char ra_tens = '0' + (slice/10);
+        // Whatever the number of grid slices, get the
+        // ( truncated ) integral number of hours of right ascension.
+        /// TODO this only really works well for 15 degree right ascension increments.
+        // GLint ra_value = right_asc/SolarSystemGlobals::DEGREES_PER_HOUR;
+        GLint ra_value = slice;
 
-        // Only show a second digit if it's non-zero.
-        if(slice >= 10) {
-            ra_token += ra_tens;;
+        // A three character array initialised with null terminators,
+        // the address of which thus denotes an up to two character
+        // C-style string construct if not overfilled.
+        char ra_tokens[3] = {'\0', '\0', '\0'};
+
+        // Determine characters according digit significance.
+        if(ra_value > 9) {
+            // Two digits make up the value of the C-style string.
+            ra_tokens[0] = '0' + ra_value/10;
+            ra_tokens[1] = '0' + (ra_value % 10);
             }
-
-        char ra_ones = '0' + (slice % 10);
-        ra_token += ra_ones;
+        else {
+            // Note this single digit is entire value of the C-string.
+            ra_tokens[0] = '0' + (ra_value % 10);
+            }
 
         for(GLuint stack = 1; stack < stacks - 1; ++stack) {
             std::vector<GLuint> temp;
 
             GLint declin = SolarSystemGlobals::QUARTER_CIRCLE_DEG - stack * stack_step;
 
-            std::string dec_token = "";
+            // A four character array initialised with null terminators,
+            // the address of which thus denotes an up to three character
+            // C-style string construct if not overfilled.
+            char dec_tokens[3] = {'\0', '\0', '\0', '\0'};
 
-            char dec_tens = '0' + (abs(declin)/10);
-            char dec_ones = '0' + (abs(declin) % 10);
-
-            char dec_sign = (declin > 0) ? '+' : '-';
-
-            // Only show a sign for non-zero values.
-            if(declin != 0) {
-                dec_token += dec_sign;
+            // Declination is zero ?
+            if(declin == 0) {
+                // Yes, so single character in C-string with no sign indication.
+                dec_tokens[0] = '0';
                 }
-
-            // Only show a second digit if it's non-zero.
-            if(abs(declin) >= 10) {
-                dec_token += dec_tens;
+            else {
+                // No, so first character indicates sign.
+                if(declin < 0 ) {
+                    dec_tokens[0] = '-';
+                    }
+                if(declin > 0) {
+                    dec_tokens[0] = '+';
+                    }
+                // Determine subsequent characters according digit significance.
+                if(declin > 9) {
+                    // Two digits make up the value of the C-style string.
+                    dec_tokens[1] = '0' + declin/10;
+                    dec_tokens[2] = '0' + (declin % 10);
+                    }
+                else {
+                    // Note this single digit is entire value of the C-string.
+                    dec_tokens[1] = '0' + (declin % 10);
+                    }
                 }
-
-            dec_token += dec_ones;
 
             // Text scaling.
             GLfloat t_scale;
@@ -495,10 +516,10 @@ void GridGlobe::createMarkerLists(void) {
                         glTranslatef(+TEXT_OFFSET, +TEXT_OFFSET, 0);
 
                         // Render the current right ascension.
-                        myFont->draw(ra_token.c_str());
+                        myFont->draw(&ra_tokens);
 
                         // Find the dimensions of what we just rendered.
-                        OGLFT::BBox ra_box = myFont->measure(ra_token.c_str());
+                        OGLFT::BBox ra_box = myFont->measure(&ra_tokens);
 
                         // How much to advance towards the right.
                         OGLFT::Advance ra_adv = ra_box.advance_;
@@ -510,14 +531,14 @@ void GridGlobe::createMarkerLists(void) {
                         glScalef(TEXT_UNITS_RATIO, TEXT_UNITS_RATIO, 1);
 
                         // Render the 'hour' symbol.
-                        myFont->draw(HOUR_UNITS.c_str());
+                        myFont->draw(HOUR_UNITS);
                     glPopMatrix();
 
                     // Find the dimensions of the 'degree' symbol.
-                    OGLFT::BBox degree_box = myFont->measure(DEGREE_UNITS.c_str());
+                    OGLFT::BBox degree_box = myFont->measure(DEGREE_UNITS);
 
                     // Find the dimensions of what we are about to render.
-                    OGLFT::BBox dec_box = myFont->measure(dec_token.c_str());
+                    OGLFT::BBox dec_box = myFont->measure(&dec_tokens);
 
                     // How much will it advance towards the right?
                     OGLFT::Advance dec_adv = dec_box.advance_;
@@ -530,7 +551,7 @@ void GridGlobe::createMarkerLists(void) {
                                  0);
 
                     // Render the current declination.
-                    myFont->draw(dec_token.c_str());
+                    myFont->draw(&dec_tokens);
 
                     // Shift across and up to 'superscript' position.
                     glTranslatef(dec_adv.dx_, 7 * dec_box.y_max_/8, 0);
@@ -539,12 +560,11 @@ void GridGlobe::createMarkerLists(void) {
                     glScalef(TEXT_UNITS_RATIO, TEXT_UNITS_RATIO, 1);
 
                     // Render the 'degree' symbol.
-                    myFont->draw(DEGREE_UNITS.c_str());
+                    myFont->draw(DEGREE_UNITS);
                 glPopMatrix();
             glEndList();
 
             temp.push_back(transform_ID);
-
 
             marker_lists.push_back(temp);
             }
