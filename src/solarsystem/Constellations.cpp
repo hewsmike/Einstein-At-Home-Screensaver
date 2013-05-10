@@ -2529,7 +2529,7 @@ void Constellations::loadIndexBuffer(void) {
 
 void Constellations::createMarkerLists(void) {
     // Get the OGLFT font for this object.
-    OGLFT_ft* myFont = this->getFont();
+    OGLFT_ft* myFont = getFont();
 
     clearMarkerLists();
 
@@ -2540,8 +2540,14 @@ void Constellations::createMarkerLists(void) {
     for(std::vector<Constellation>::iterator cs = cons_list.begin();
         cs != cons_list.end();
         ++cs) {
-        // The constellation's name.
-        std::string con_name = cs->name();
+        // A heap based character array initially filled with '\0',
+        // which serves as a C-style string if not over filled.
+        // Note the use of 'value initialisation' with the trailing
+        // parenthesis set.
+        char* con_name = new char[cs->name().size() + 1)]();
+
+        // Put the constellation's name in.
+        strncpy(con_name, cs->name.c_str(), cs->name().size());
 
         // The co-ordinates of the centroid of the constellation.
         std::pair<GLfloat, GLfloat> con_centre = cs->centre();
@@ -2583,20 +2589,22 @@ void Constellations::createMarkerLists(void) {
 
                 // Ascertain the dimensions of the bounding box for the entire
                 // constellation name string.
-                OGLFT::BBox con_box = myFont->measure(con_name.c_str());
+                OGLFT::BBox con_box = myFont->measure(&con_name);
 
                 // Place one-half of rendered string length away from the
                 // centroid.
                 glTranslatef(-con_box.x_max_/2, 0, 0);
 
                 // Draw the constellation name.
-                myFont->draw(con_name.c_str());
+                myFont->draw(&con_name);
             // Restore the prior transform state.
             glPopMatrix();
         glEndList();
 
         // Make an entry for this constellation in a master list.
         marker_lists.push_back(transform_ID);
+
+        delete[] con_name;
         }
     }
 
