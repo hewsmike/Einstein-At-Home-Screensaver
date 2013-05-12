@@ -548,7 +548,15 @@ void GridGlobe::createMarkerLists(void) {
                                  0);
 
                     // Render the current declination.
-                    myFont->draw(dec_tokens);
+                    if(dec_tokens[0] != '\0') {
+                        myFont->draw(dec_tokens[0]);
+                        if(dec_tokens[1] != '\0') {
+                            myFont->draw(dec_tokens[1]);
+                            if(dec_tokens[2] != '\0') {
+                                myFont->draw(dec_tokens[2]);
+                                }
+                            }
+                        }
 
                     // Shift across and up to 'superscript' position.
                     // glTranslatef(dec_adv.dx_, 7 * dec_box.y_max_/8, 0);
