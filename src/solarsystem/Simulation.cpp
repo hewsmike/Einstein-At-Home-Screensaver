@@ -3209,7 +3209,7 @@ void Simulation::loadLookoutDataToPanels(void) {
         for(std::vector<std::string>::const_iterator message = messages.begin();
             message != messages.end();
             ++message) {
-            //north_panel.addItem(new HUDTextLine(message->size(), *message, 0, 2));
+            north_panel.addItem(new HUDTextLine(message->size(), *message, HUDFont, 0, 2));
             }
         }
     north_panel.activate();
@@ -3221,7 +3221,7 @@ void Simulation::loadLookoutDataToPanels(void) {
     }
 
 void Simulation::setText(HUDTempFlowLayout* container, std::string msg) {
-    container->addItem(new HUDTextLine(msg.size(), msg, HUDFont, 0, 2));
+    container->addItem(new HUDTextLine(msg.size(), msg, HUDFont, 5, 5));
     }
 
 void Simulation::includeUserInformation(HUDTempFlowLayout* container) {

@@ -113,6 +113,8 @@ void SolarSystem::initialize(const int width, const int height, const Resource* 
         // display lists which are relied upon by the OGLFT implementation.
         // Not an issue for Linux or Mac.
 #ifdef WIN_OGLFT_WORKAROUND
+
+
         sim_instance->setFonts(spaceFontResource);
 #endif
         }
