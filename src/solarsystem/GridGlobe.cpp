@@ -376,8 +376,8 @@ void GridGlobe::loadCelestialEquatorIndexBuffer(void) {
 
 void GridGlobe::createMarkerLists(void) {
     // Symbols for hours and degrees.
-    static const char* const HOUR_UNITS = 'h';
-    static const char* const DEGREE_UNITS = 'o';
+    static const char HOUR_UNITS = 'h';
+    static const char DEGREE_UNITS = 'o';
 
     // Erase any previous lists.
     clearMarkerLists();
@@ -431,7 +431,7 @@ void GridGlobe::createMarkerLists(void) {
             // A four character array initialised with null terminators,
             // the address of which thus denotes an up to three character
             // C-style string construct if not overfilled.
-            char dec_tokens[3] = {'\0', '\0', '\0', '\0'};
+            char dec_tokens[4] = {'\0', '\0', '\0', '\0'};
 
             // Declination is zero ?
             if(declin == 0) {
@@ -447,14 +447,14 @@ void GridGlobe::createMarkerLists(void) {
                     dec_tokens[0] = '+';
                     }
                 // Determine subsequent characters according digit significance.
-                if(declin > 9) {
+                if(abs(declin) > 9) {
                     // Two digits make up the value of the C-style string.
-                    dec_tokens[1] = '0' + declin/10;
-                    dec_tokens[2] = '0' + (declin % 10);
+                    dec_tokens[1] = '0' + abs(declin)/10;
+                    dec_tokens[2] = '0' + (abs(declin) % 10);
                     }
                 else {
                     // Note this single digit is entire value of the C-string.
-                    dec_tokens[1] = '0' + (declin % 10);
+                    dec_tokens[1] = '0' + (abs(declin) % 10);
                     }
                 }
 
@@ -516,16 +516,13 @@ void GridGlobe::createMarkerLists(void) {
                         glTranslatef(+TEXT_OFFSET, +TEXT_OFFSET, 0);
 
                         // Render the current right ascension.
-                        myFont->draw(&ra_tokens);
+                        myFont->draw(ra_tokens);
 
                         // Find the dimensions of what we just rendered.
-                        OGLFT::BBox ra_box = myFont->measure(&ra_tokens);
+                        OGLFT::BBox ra_box = myFont->measure(ra_tokens);
 
-                        // How much to advance towards the right.
-                        OGLFT::Advance ra_adv = ra_box.advance_;
-
-                        // Shift across and up to 'superscript' position.
-                        glTranslatef(ra_adv.dx_, ra_box.y_max_/2, 0);
+                        // Shift up to 'superscript' position.
+                        glTranslatef(0, ra_box.y_max_/2, 0);
 
                         // Resize for 'hour' symbol.
                         glScalef(TEXT_UNITS_RATIO, TEXT_UNITS_RATIO, 1);
@@ -538,7 +535,7 @@ void GridGlobe::createMarkerLists(void) {
                     OGLFT::BBox degree_box = myFont->measure(DEGREE_UNITS);
 
                     // Find the dimensions of what we are about to render.
-                    OGLFT::BBox dec_box = myFont->measure(&dec_tokens);
+                    OGLFT::BBox dec_box = myFont->measure(dec_tokens);
 
                     // How much will it advance towards the right?
                     OGLFT::Advance dec_adv = dec_box.advance_;
@@ -551,10 +548,11 @@ void GridGlobe::createMarkerLists(void) {
                                  0);
 
                     // Render the current declination.
-                    myFont->draw(&dec_tokens);
+                    myFont->draw(dec_tokens);
 
                     // Shift across and up to 'superscript' position.
-                    glTranslatef(dec_adv.dx_, 7 * dec_box.y_max_/8, 0);
+                    // glTranslatef(dec_adv.dx_, 7 * dec_box.y_max_/8, 0);
+                    glTranslatef(0, 7 * dec_box.y_max_/8, 0);
 
                     // Resize for 'degree' symbol.
                     glScalef(TEXT_UNITS_RATIO, TEXT_UNITS_RATIO, 1);
