@@ -28,7 +28,8 @@ HUDTextLineScroll::HUDTextLineScroll(GLuint length,
                                      GLuint horizontalMargin, GLuint verticalMargin,
                                      mode direction = NONE, GLuint scroll_interval = 10) :
                                         HUDTextLine(length, text, font, horizontalMargin, verticalMargin),
-                                        dir(direction), interval(scroll_interval), frame_count(0) {
+                                        dir(direction), interval(scroll_interval), frame_count(0),
+                                        scroll_text(text) {
     }
 
 HUDTextLineScroll::~HUDTextLineScroll() {
@@ -68,9 +69,9 @@ void HUDTextLineScroll::render(void) {
     // Has the timer triggered ?
     if((frame_count % interval) == 0) {
         // Yes, get the line's text content.
-        std::string contents = text();
+        std::string temp = scroll_text;
         // It must have at least two characters
-        if(contents.size() >= MIN_STRING_SIZE) {
+        if(temp.size() >= MIN_STRING_SIZE) {
             // Depending upon the scroll direction .....
             switch(dir) {
                 case NONE:
@@ -80,22 +81,22 @@ void HUDTextLineScroll::render(void) {
                     // Rotate text to the left.
                     {
                     // Get the first character.
-                    std::string first = contents.substr(0, 1);
+                    std::string first = temp.substr(0, 1);
                     // Get the remainder.
-                    std::string remainder = contents.substr(1);
+                    std::string remainder = temp.substr(1);
                     // Reverse their order.
-                    contents = remainder + first;
+                    temp = remainder + first;
                     }
                     break;
                 case RIGHT:
                     // Rotate text to the right.
                     {
                     // Get the last character.
-                    std::string last = contents.substr(contents.length() - 1);
+                    std::string last = temp.substr(temp.length() - 1);
                     // Get the remainder.
-                    std::string remainder = contents.substr(0, contents.length() - 1);
+                    std::string remainder = temp.substr(0, temp.length() - 1);
                     // Reverse their order.
-                    contents = last + remainder;
+                    temp = last + remainder;
                     }
                     break;
                 default:
@@ -105,7 +106,8 @@ void HUDTextLineScroll::render(void) {
                     break;
                 }
             // Set the (new) text contents.
-            this->setText(contents);
+            scroll_text = temp;
+            setText(scroll_text);
             }
         }
 

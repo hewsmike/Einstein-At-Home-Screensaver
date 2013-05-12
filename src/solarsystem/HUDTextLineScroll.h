@@ -95,6 +95,8 @@ class HUDTextLineScroll : public HUDTextLine {
         GLuint interval;
 
         GLuint frame_count;
+
+        std::string scroll_text;
     };
 
 /**

@@ -67,7 +67,6 @@ GLuint HUDTextLine::maxLength(void) const {
 
 GLuint HUDTextLine::width(void) {
     OGLFT_ft* lineFont = getFont();
-    std::cout << "HUDTextLine::width() : txt = '" << txt << "'"  << std::endl;
 
     // Lazy evaluate.
     // Ask OGLFT what the pixel bounds are for the current text.
@@ -125,5 +124,4 @@ void HUDTextLine::setText(const std::string& text) {
 
     // To be sure ... :-)
     txt[len] = '\0';
-    std::cout << "HUDTextLine::setText() : txt = '" << txt << "'"  << std::endl;
     }

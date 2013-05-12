@@ -238,7 +238,7 @@ Simulation::Simulation(BOINCClientAdapter* boinc_adapter) :
     sun_rot_angle = 0;
 
     // Initial HUD choice.
-    active_HUD = &help_overlay;
+    active_HUD = &overlay;
     help_hud_active = false;
 
     // Autopilot is initially not active.

@@ -2544,10 +2544,10 @@ void Constellations::createMarkerLists(void) {
         // which serves as a C-style string if not over filled.
         // Note the use of 'value initialisation' with the trailing
         // parenthesis set.
-        char* con_name = new char[cs->name().size() + 1)]();
+        char* con_name = new char[cs->name().size() + 1]();
 
         // Put the constellation's name in.
-        strncpy(con_name, cs->name.c_str(), cs->name().size());
+        strncpy(con_name, cs->name().c_str(), cs->name().size());
 
         // The co-ordinates of the centroid of the constellation.
         std::pair<GLfloat, GLfloat> con_centre = cs->centre();
@@ -2589,14 +2589,14 @@ void Constellations::createMarkerLists(void) {
 
                 // Ascertain the dimensions of the bounding box for the entire
                 // constellation name string.
-                OGLFT::BBox con_box = myFont->measure(&con_name);
+                OGLFT::BBox con_box = myFont->measure(con_name);
 
                 // Place one-half of rendered string length away from the
                 // centroid.
                 glTranslatef(-con_box.x_max_/2, 0, 0);
 
                 // Draw the constellation name.
-                myFont->draw(&con_name);
+                myFont->draw(con_name);
             // Restore the prior transform state.
             glPopMatrix();
         glEndList();
