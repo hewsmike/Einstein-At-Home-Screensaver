@@ -48,7 +48,7 @@
  */
 
 /// Convenience type for OGLFT font specification
-typedef OGLFT::GrayscaleTexture OGLFT_ft;
+typedef OGLFT::MonochromeTexture OGLFT_ft;
 
 /**
  * \brief %SolarSystem Helper class with global definitions and useful static
