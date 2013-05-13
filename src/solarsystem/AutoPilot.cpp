@@ -228,13 +228,14 @@ void AutoPilot::getTraverse(const Traversable& trav, const CameraState& cam) {
     // Construct a Lookout from the existing position and orientation
     // within the Simulation.
     LookOut first(cam.position(), cam.focus(), cam.orientation());
+    current_traverse.addLookout(first);
 
     // The set of Lookouts come from alternating our initial
     // Lookout with the given Traversable object.
     for(unsigned int way_point = 0;
         way_point < trav.numberOfWayPoints();
         ++way_point) {
-        current_traverse.addLookout(first);
+        // current_traverse.addLookout(first);
         current_traverse.addLookout(trav.getView(way_point));
         }
     }

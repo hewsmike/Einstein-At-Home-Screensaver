@@ -220,7 +220,7 @@ Simulation::Simulation(BOINCClientAdapter* boinc_adapter) :
                                south_west_upper_panel(),
                                south_west_panel(HUDContainer::VERTICAL),
                                south_centre_panel(HUDContainer::VERTICAL),
-                               south_east_panel(HUDContainer::VERTICAL),
+                               south_east_panel(HUDContainer::HORIZONTAL),
                                help_overlay(),
                                help_north_panel(HUDContainer::HORIZONTAL),
                                help_north_east_panel(HUDContainer::VERTICAL),
