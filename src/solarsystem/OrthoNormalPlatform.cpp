@@ -25,7 +25,7 @@
 
 // NOTE we want to have these class invariants :
 //    'up' , 'look' and 'cross' vectors form a right handed
-//    orthonormal Cartesian set
+//    orthonormal Cartesian set.
 
 // The initial stance puts one looking along the positive x-axis with the
 // z-axis being 'up', thus implying the positive y-axis is to the left of

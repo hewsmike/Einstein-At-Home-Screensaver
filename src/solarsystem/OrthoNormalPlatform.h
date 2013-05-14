@@ -81,29 +81,35 @@ class OrthoNormalPlatform {
          * direction of the 'look' axis ( from the tail to the head of the 'look'
          * vector ), then the 'cross' vector can be obtained by turning the 'up'
          * vector 90 degrees clockwise around that 'look' axis.
+         *
+         * \return a Vector3D indicating the 'cross' direction.
          */
         Vector3D cross(void) const;
 
         /**
          * \brief Retrieve the 'look' vector
+         *
+         * \return a Vector3D indicating the 'look' direction.
          */
         Vector3D look(void) const;
 
         /**
          * \brief Retrieve the 'up' vector
+         *
+         * \return a Vector3D indicating the 'up' direction.
          */
         Vector3D up(void) const;
 
    protected:
         /**
-         * \brief Set the direction of the 'look' and 'up' vectors
+         * \brief Set the direction of the 'look' and 'up' vectors.
          *
-         * Protected use only as need to ensure orthogonality of the vector set
-         * ie. can't have arbitrary assignment of the 'look' or 'up' vectors.
-         * Also want the changes as atomic.
+         *      Protected use only as need to ensure orthogonality of the
+         * vector set ie. can't have arbitrary assignment of the 'look' or
+         * 'up' vectors. Also want the changes as atomic.
          *
-         * \param new_look : the desired 'look' vector
-         * \param new_up : the desired 'up' vector
+         * \param new_look : a Vector3D indicating the desired 'look' direction.
+         * \param new_up : a Vector3D indicating the desired 'up' direction.
          */
         void setOrientation(Vector3D new_look,
                             Vector3D new_up);
