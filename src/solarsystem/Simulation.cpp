@@ -219,7 +219,6 @@ Simulation::Simulation(BOINCClientAdapter* boinc_adapter) :
                                west_panel(HUDContainer::VERTICAL),
                                south_west_upper_panel(),
                                south_west_panel(HUDContainer::VERTICAL),
-                               south_centre_panel(HUDContainer::VERTICAL),
                                south_east_panel(HUDContainer::HORIZONTAL),
                                help_overlay(),
                                help_north_panel(HUDContainer::HORIZONTAL),
@@ -430,7 +429,6 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
     south_east_panel.erase();
     south_west_upper_panel.erase();
     south_west_panel.erase();
-    south_centre_panel.erase();
     north_panel.erase();
     south_panel.erase();
     east_panel.erase();
@@ -457,8 +455,6 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
 
     south_east_panel.setPrimaryJustification(HUDContainer::END);
     south_east_panel.setSecondaryJustification(HUDContainer::DISTAL);
-    south_centre_panel.setPrimaryJustification(HUDContainer::END);
-    south_centre_panel.setSecondaryJustification(HUDContainer::MIDDLE);
     south_west_panel.setPrimaryJustification(HUDContainer::END);
     south_west_panel.setSecondaryJustification(HUDContainer::PROXIMAL);
 
@@ -496,7 +492,6 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
 
     // Within south panel put sub-panels.
     south_panel.addItem(&south_west_panel);
-    south_panel.addItem(&south_centre_panel);
     south_panel.addItem(&south_east_panel);
 
     // Help HUD.

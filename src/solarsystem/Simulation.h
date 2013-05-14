@@ -409,7 +409,6 @@ class Simulation : public Renderable {
 
         HUDLogoCycle south_west_upper_panel;
         HUDFlowLayout south_west_panel;
-        HUDFlowLayout south_centre_panel;
         HUDTempFlowLayout south_east_panel;
 
         /// The help HUD
