@@ -127,8 +127,9 @@ void AutoPilot::step(void) {
 
     // Are we in the LATE portion of a Path?
     if(lambda > PATH_LATE_BOUNDARY) {
-        // Yes, so have we just transitioned from the MIDDLE portion?
-        if(path_stage_flag == MIDDLE) {
+        // Yes, so have we just transitioned from an earlier
+        // stage ie. EARLY or MIDDLE?
+        if(path_stage_flag != LATE) {
             // Yes, thus set the stage as LATE.
             path_stage_flag = LATE;
             // Change the current description to that of the upcoming Lookout.

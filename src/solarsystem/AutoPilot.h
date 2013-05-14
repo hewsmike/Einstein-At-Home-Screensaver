@@ -217,7 +217,7 @@ class AutoPilot {
         TargetReticle* target;
 
         /**
-         * \brief For the current Path decide upon the best increment in lambda
+         * \brief For the current Path, decide upon the best increment in lambda
          *        to use.
          *
          *      Essentially the following occurs : the Curves within the Path
