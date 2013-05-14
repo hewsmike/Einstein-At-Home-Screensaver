@@ -31,19 +31,23 @@
 /**
  * \brief %Solarsystem Position platform.
  *
- *      This class comprises position state data, accessors and mutators thereof.
+ *      This class comprises position state data, accessors and mutators
+ * thereof.
  *
  * \author Mike Hewson\n
  */
 
 class PositionPlatform {
     public:
+        /**
+         * \brief Constructor.
+         */
         PositionPlatform(void);
 
         /**
          * \brief Constructor.
          *
-         * \param position : a vector to the desired point
+         * \param position : a Vector3D to the desired point
          */
         PositionPlatform(const Vector3D& position);
 
@@ -54,13 +58,15 @@ class PositionPlatform {
 
         /**
          * \brief Get the position.
+         *
+         * \brief a Vector3D indicating the current position.
          */
         Vector3D position(void) const;
 
         /**
          * \brief Set the position.
           *
-         * \param position : a vector to the desired point
+         * \param position : a Vector3D to the desired point.
          */
         void setPosition(const Vector3D& position);
 
