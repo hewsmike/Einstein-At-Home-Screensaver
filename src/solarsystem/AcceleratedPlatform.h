@@ -37,7 +37,8 @@
  *      This class comprises acceleration state data, accessors and
  * mutators thereof. However this doesn't model angular acceleration
  * around centre of mass, only linear acceleration of centre of mass
- * and constant angular rotation rates.
+ * and constant angular rotation rates. This is because a constant
+ * angular rotation is already an acceleration. :-)
  *
  * \see CameraState
  * \see RotatablePlatform
@@ -62,14 +63,14 @@ class AcceleratedPlatform : public VelocityPlatform, public RotatablePlatform {
         /**
          * \brief Obtain the linear acceleration.
          *
-         * \return a vector3D representing the acceleration.
+         * \return a Vector3D representing the acceleration.
          */
         Vector3D linearAcceleration(void) const;
 
         /**
          * \brief Set the linear acceleration.
          *
-         * \param acceleration : a vector3D indicating the desired acceleration.
+         * \param acceleration : a Vector3D indicating the desired acceleration.
          */
         void setLinearAcceleration(const Vector3D& acceleration);
 
@@ -133,8 +134,8 @@ class AcceleratedPlatform : public VelocityPlatform, public RotatablePlatform {
         void setViewState(const CameraState& cam);
 
         /**
-         * \brief Reset the platform in acceleration, velocity,
-         *        position and rotation.
+         * \brief Reset the platform in linear acceleration,
+         *        linear velocity, position and rotation.
          */
         virtual void reset(void);
 

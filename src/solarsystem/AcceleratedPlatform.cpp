@@ -79,13 +79,15 @@ void AcceleratedPlatform::reset(void) {
     // Not only reset to a choice of initial acceleration ...
     setLinearAcceleration(INITIAL_LINEAR_ACCELERATION);
 
-    // But also reset the velocity, position.
+    // ... but also reset the velocity ( position ) ...
     VelocityPlatform::reset();
 
-    // ... and in rotation rates and orientation.
+    // ... and in rotation rates ...
     setPitchRate(NULL_RATE);
     setRollRate(NULL_RATE);
     setYawRate(NULL_RATE);
+
+    // ... and orientation.
     OrthoNormalPlatform::reset();
     }
 
