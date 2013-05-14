@@ -320,7 +320,7 @@ void Simulation::step(void) {
                     loadLookoutDataToPanels();
                     break;
                 case AutoPilot::DELETED :
-                    // Currently inactive choice but maybe future cahnge here ....
+                    // Currently inactive choice but maybe future change here ....
                     break;
                 default:
                     ErrorHandler::record("Simulation::step() : bad switch case reached ( default )",
@@ -453,8 +453,8 @@ void Simulation::prepare(SolarSystemGlobals::render_quality rq) {
     west_panel.setPrimaryJustification(HUDContainer::CENTRE);
     west_panel.setSecondaryJustification(HUDContainer::PROXIMAL);
 
-    south_east_panel.setPrimaryJustification(HUDContainer::END);
-    south_east_panel.setSecondaryJustification(HUDContainer::DISTAL);
+    south_east_panel.setPrimaryJustification(HUDContainer::START);
+    south_east_panel.setSecondaryJustification(HUDContainer::PROXIMAL);
     south_west_panel.setPrimaryJustification(HUDContainer::END);
     south_west_panel.setSecondaryJustification(HUDContainer::PROXIMAL);
 
