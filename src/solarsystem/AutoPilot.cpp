@@ -23,6 +23,7 @@
 #include <cmath>
 
 #include "ErrorHandler.h"
+#include "LookOut.h"
 
 const float AutoPilot::LENGTH_PER_FRAME(15.0f);
 const float AutoPilot::LEAST_PATH_LENGTH(0.00001f);
@@ -237,6 +238,11 @@ void AutoPilot::getTraverse(const Traversable& trav, const CameraState& cam) {
         way_point < trav.numberOfWayPoints();
         ++way_point) {
         // current_traverse.addLookout(first);
-        current_traverse.addLookout(trav.getView(way_point));
+        LookOut temp = trav.getView(way_point);
+        current_traverse.addLookout(temp);
+        const Vector3D pos(temp.position());
+        const Vector3D foc(0, 0, 0);
+        const Vector3D ori(temp.orientation());
+        current_traverse.addLookout(LookOut(pos, foc, ori));
         }
     }
