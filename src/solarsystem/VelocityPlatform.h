@@ -31,37 +31,42 @@
 /**
  * \brief Velocity platform
  *
- *      This class comprises velocity state data,
- * accessors and mutators thereof.
+ *      This class comprises velocity state data, accessors and mutators
+ * thereof.
  *
  * \author Mike Hewson\n
  */
 
 class VelocityPlatform : public PositionPlatform {
     public:
+        /**
+         * \brief Constructor.
+         */
         VelocityPlatform(void);
 
         /**
-         * \brief Constructor
+         * \brief Constructor.
          *
          * \param velocity : a vector indicating the desired velocity.
          */
         VelocityPlatform(const Vector3D& velocity);
 
         /**
-         * \brief Destructor
+         * \brief Destructor.
          */
         virtual ~VelocityPlatform();
 
         /**
-         * \brief Get the velocity
+         * \brief Get the velocity.
+         *
+         * \return a Vector3D indicating the current velocity.
          */
         Vector3D velocity(void) const;
 
         /**
-         * \brief Set the velocity
+         * \brief Set the velocity.
          *
-         * \param velocity : a vector indicating the desired velocity.
+         * \param velocity : a Vector3D indicating the desired velocity.
          */
         void setVelocity(const Vector3D& velocity);
 
