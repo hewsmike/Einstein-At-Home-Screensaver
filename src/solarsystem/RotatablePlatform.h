@@ -29,10 +29,10 @@
  */
 
 /**
- * \brief Rotatable right handed Cartesian orthonormal vector set
+ * \brief Rotatable right handed Cartesian orthonormal vector set.
  *
- *      This class performs specific angular changes upon
- * the axes of the OrthoNormalPlatform class.
+ *      This class performs specific angular changes upon the axes of
+ * the OrthoNormalPlatform class.
  *
  * \see OrthoNormalPlatform
  *
