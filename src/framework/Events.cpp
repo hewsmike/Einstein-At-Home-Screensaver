@@ -199,13 +199,6 @@ void GLFWCALL Events::keyPress(int key, int action) {
     }
 
 void GLFWCALL Events::mouseButton(int button, int action) {
-    std::stringstream msg;
-    msg << "Events::mouseButton() : button_code = "
-        << button
-        << " \taction = "
-        << action;
-    ErrorHandler::record(msg.str(), ErrorHandler::INFORM);
-
     Event ev;
     ev.m_button.type = Events::MouseButtonEventType;
 
