@@ -12,7 +12,7 @@ J1644-4409 16:44:35.2 -44:09:34.5 173.91055 535.1 6.2 "Jesse Charles Wagner II [
 J1644-4625 16:44:05.2 -46:25:43.3 250.94056 405.8 4.8 "Augusto Cortemiglia / Axiel" PMPS
 J1652-4844 16:52:53.9 -48:44:38.9 3.78512377 187.8 3.3 "Craig G / Brian Adrian" PMPS
 J1726-3156 17:26:33.4 -31:56:47.5 123.470178 264.4 4.1 "Boguslaw Sobczak / Steve Mellor" PMPS
-J1748-3010 17:48:34.2 -30:10:53.8 9.6842731 420.2 5.0 "Jürgen Sauermann / Stan Galka" PMPS
+J1748-3010 17:48:34.2 -30:10:53.8 9.6842731 420.2 5.0 "Jurgen Sauermann / Stan Galka" PMPS
 J1750-2534 17:50:23.1 -25:34:44.3 34.7490529 178.4 3.2 "Frederick J. Pfitzer / Rosenthal Library / Masor_DC / Gordon E. Hartman" PMPS
 J1755-3331 17:55:13.6 -33:31:17.0 959.4656 266.5 5.7 "Omega Sector - Game Systems / Dwaine / revoluzzer / Jacek Richter" PMPS
 J1811-1047 18:11:23.4 -10:47:21.5 2623.916 239.7 5.0 "ingo / Paul Serban" PMPS
@@ -24,7 +24,7 @@ J1840-0644 18:40:22.3 -06:44:21.0 35.5775996 494.1 6.6 "terrydudley / nemo / Tre
 J1851+02 18:51:22.2 +02:42:36.6 1497.04 534.1 9.8 "Mel S Stark / TRON" PALFA
 J1855+03 18:55:41.0 +03:07:07.1 1633.46 625.6 9.4 "Jeroen Moetwil / Bob Inman" PALFA
 J1857+0259 18:57:13.1 +02:59:46.4 772.747 681.4 9.5 "Philemon1752 / edgen" PALFA
-J1858+0319 18:58:39.5 +03:19:01.9 867.378 289.8 6.1 "Philipp Kählitz / Termit" PALFA
+J1858+0319 18:58:39.5 +03:19:01.9 867.378 289.8 6.1 "Philipp Kahlitz / Termit" PALFA
 J1858-0736 18:58:36.9 -07:36:59.7 551.0553 201.4 5.1 "Christoph Donat / gone" PMPS
 J1900+0439 19:00:14.3 +04:39:07.7 312.3018 639.0 9.4 "Robert D Burbeck / Harald Buchholz" PALFA
 J1901+0510 19:01:48.0 +05:10:19.6 657.154 417.9 7.1 "John A. Lorimer Jr. / Ugur Munir Kir (Guzel Sanatlar Saatchi & Saatchi)" PALFA
