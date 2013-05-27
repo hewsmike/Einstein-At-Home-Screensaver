@@ -2548,11 +2548,6 @@ bool Simulation::loadPulsarsEAH(void) {
 
     std::string data_file_name = getEAHPulsarDataFileName();
     if(data_file_name.size() != 0) {
-        std::cout << "Simulation::loadPulsarsEAH() - filename is '"
-                  << data_file_name
-                  << "'"
-                  << std::endl;
-
         // Load the data file.
         ifstream data_file(data_file_name.c_str());
         if(data_file.good() == true) {
@@ -3292,7 +3287,8 @@ void Simulation::initialiseHelpHUD(void) {
     setText(&help_south_panel, "SPACEBAR - STOP all translation and rotation");
     setText(&help_south_panel, "G - go to initial craft position");
     setText(&help_south_panel, "ESC - exit the program");
-    setText(&help_south_panel, "Controller is 'inertial' - things will happen until you stop it");
+    setText(&help_south_panel, "Mouse wheel - zoom view in & out");
+    setText(&help_south_panel, "Controller is 'inertial' - things will happen until you stop it !!");
 
     help_west_panel.erase();
     setText(&help_west_panel, "Translation controls");
