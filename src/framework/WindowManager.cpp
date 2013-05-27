@@ -568,7 +568,7 @@ bool WindowManager::setWindowedMode(void) {
     bool ret_val = false;
 
     // Attempt to obtain a window.
-    if(tryMode(m_WindowedWidth, m_WindowedHeight, GLFW_WINDOW) == GL_FALSE) {
+    if(tryMode(m_WindowedWidth, m_WindowedHeight, GLFW_WINDOW) == false) {
         ErrorHandler::record("WindowManager::setWindowedMode() : Could not acquire rendering surface", ErrorHandler::WARN);
         }
     else {
@@ -584,7 +584,7 @@ bool WindowManager::setFullScreenMode(void) {
     bool ret_val = false;
 
     // Attempt to obtain a fullscreen.
-    if(tryMode(m_DesktopWidth, m_DesktopHeight, GLFW_FULLSCREEN) == GL_FALSE) {
+    if(tryMode(m_DesktopWidth, m_DesktopHeight, GLFW_FULLSCREEN) == false) {
         ErrorHandler::record("WindowManager::setFullScreenMode() : Could not acquire rendering surface", ErrorHandler::WARN);
         }
     else {
@@ -598,13 +598,6 @@ bool WindowManager::tryMode(int width, int height, int mode) {
     // For this routine interpret 'window' as an OpenGL context
     // which may be EITHER a "OS window" OR a fullscreen.
 
-    stringstream msg;
-    msg << "WindowManager::tryMode() : attempt width = "
-        << width << " and height = " << height
-        << " using mode " << ((mode == GLFW_WINDOW)? "WINDOW" : "FULLSCREEN" )
-        << std::endl;
-    ErrorHandler::record(msg.str(), ErrorHandler::INFORM);
-
     // See if you can get a rendering surface from the OS.
     int window_open = glfwOpenWindow(width, height,
                                      current_desktop_mode.RedBits,
@@ -614,11 +607,6 @@ bool WindowManager::tryMode(int width, int height, int mode) {
                                      best_depth_buffer_grain,
                                      NO_STENCIL,
                                      mode);
-
-    msg.clear();
-    msg << "WindowManager::tryMode() : glfwOpenWindow() first attempt returned "
-        << ((window_open == GL_TRUE) ? "true" : "false") << std::endl;
-    ErrorHandler::record(msg.str(), ErrorHandler::INFORM);
 
     if(window_open == GL_FALSE) {
         // It may have failed to open because of the depth buffer choice,
@@ -633,10 +621,6 @@ bool WindowManager::tryMode(int width, int height, int mode) {
                                      NO_STENCIL,
                                      mode);
 
-        msg.clear();
-        msg << "WindowManager::tryMode() : glfwOpenWindow() second attempt returned "
-            << ((window_open == GL_TRUE) ? "true" : "false") << std::endl;
-        ErrorHandler::record(msg.str(), ErrorHandler::INFORM);
         }
 
     if(window_open == GL_TRUE) {
@@ -652,6 +636,7 @@ bool WindowManager::tryMode(int width, int height, int mode) {
         // ask for and what you get! :-)
         glfwGetWindowSize(&m_CurrentWidth,& m_CurrentHeight);
 
+        stringstream msg;
         msg.clear();
         msg << "WindowManager::tryMode() : Rendering surface acquired "
             << m_CurrentWidth
