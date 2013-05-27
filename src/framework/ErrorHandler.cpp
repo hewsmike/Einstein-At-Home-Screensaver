@@ -96,8 +96,8 @@ void ErrorHandler::record(std::string msg, message_type mt) {
             break;
         case ErrorHandler::WARN :
             message += "WARN : " + msg;
-            std::cerr << msg << std::endl;
-            std::cout << msg << std::endl;
+            std::cerr << message << std::endl;
+            std::cout << message << std::endl;
             if(output_ready == ErrorHandler::EH_READY) {
                 output_file << message << std::endl;
                 }
