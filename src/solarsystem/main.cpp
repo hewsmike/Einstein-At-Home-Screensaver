@@ -138,6 +138,7 @@ int main(int argc, char **argv) {
             }
         }
 
+    SolarSystemGlobals::setDisplayMode(mode);
     WindowManager window(mode);
 #ifdef __APPLE__
             SetMacSSLevel();

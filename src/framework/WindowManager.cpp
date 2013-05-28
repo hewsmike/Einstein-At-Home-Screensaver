@@ -28,7 +28,6 @@
 
 #include "ErrorHandler.h"
 #include "Events.h"
-#include "SolarSystemGlobals.h"
 
 unsigned int WindowManager::OPEN_GL_VERSION_MINIMUM_MAJOR(1);
 unsigned int WindowManager::OPEN_GL_VERSION_MINIMUM_MINOR(5);
@@ -43,7 +42,6 @@ WindowManager::WindowManager(displaymode mode) :
     if(mode == WindowManager::SCREENSAVER) {
         m_ScreensaverMode = true;
         }
-    SolarSystemGlobals::setDisplayMode(mode);
     best_depth_buffer_grain = DEPTH_BUFFER_GRAIN;
     m_BoincAdapter = new BOINCClientAdapter("");
     }
