@@ -55,6 +55,9 @@ class GridGlobe : public Renderable {
         /// Which side will text be readable on?
         enum textFacing {INSIDE, OUTSIDE};
 
+        /// Units for right ascension display
+        enum ra_units {DEGREES, HOURS};
+
         /**
          * \brief Constructor.
          *
@@ -82,6 +85,13 @@ class GridGlobe : public Renderable {
          * \param line : the line features to render using
          */
         void setLine(lineType type, Line line);
+
+        /**
+         * \brief Set the units for right ascension display
+         *
+         * \param units : an enumerant indicating the units choice
+         */
+        void setRAUnits(GridGlobe::ra_units units);
 
     private:
         /// Cyclic rendering states
@@ -129,6 +139,8 @@ class GridGlobe : public Renderable {
         bool hasEquator;
 
         bool textInside;
+
+        bool ra_is_hours;
 
         state current_cycle_state;
 

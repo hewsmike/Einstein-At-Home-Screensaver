@@ -53,7 +53,8 @@ const GridGlobe::state GridGlobe::INITIAL_CYCLE_STATE(ALL_ON);
 GridGlobe::GridGlobe(vec_t rad, GLuint slices, GLuint stacks, GridGlobe::textFacing tf) :
                      radius(rad),
                      slices(slices),
-                     stacks(stacks) {
+                     stacks(stacks),
+                     ra_is_hours(true) {
     sp = NULL;
     // We only have an equatorial slice if an odd number of stacks.
     hasEquator = ((stacks % 2) == 1) ? true : false;
@@ -109,6 +110,25 @@ void GridGlobe::setLine(lineType type, Line line) {
             ErrorHandler::record("GridGlobe::setLine() - bad switch case reached (default)", ErrorHandler::INFORM);
             break;
         }
+    }
+
+void GridGlobe::setRAUnits(GridGlobe::ra_units units) {
+    switch(units) {
+        case GridGlobe::DEGREES :
+            ra_is_hours = false;
+            break;
+        case GridGlobe::HOURS :
+            ra_is_hours =true;
+            break;
+        default :
+            // Ought not get here !!
+            std::string msg = "GridGlobe::setRAUnits() - bad switch case reached (default)";
+            ErrorHandler::record(msg, ErrorHandler::FATAL);
+            break;
+
+        }
+    clearMarkerLists();
+    createMarkerLists();
     }
 
 void GridGlobe::prepare(SolarSystemGlobals::render_quality rq) {
@@ -408,19 +428,35 @@ void GridGlobe::createMarkerLists(void) {
         GLint ra_value = slice;
 
         // A three character array initialised with null terminators,
-        // the address of which thus denotes an up to two character
+        // the address of which thus denotes an up to three character
         // C-style string construct if not overfilled.
-        char ra_tokens[3] = {'\0', '\0', '\0'};
+        char ra_tokens[4] = {'\0', '\0', '\0', '\0'};
 
-        // Determine characters according digit significance.
-        if(ra_value > 9) {
-            // Two digits make up the value of the C-style string.
-            ra_tokens[0] = '0' + ra_value/10;
-            ra_tokens[1] = '0' + (ra_value % 10);
+        if(ra_is_hours == true) {
+            // Determine characters according digit significance.
+            if(ra_value > 9) {
+                // Two digits make up the value of the C-style string.
+                ra_tokens[0] = '0' + ra_value/10;
+                ra_tokens[1] = '0' + (ra_value % 10);
+                }
+            else {
+                // Note this single digit is entire value of the C-string.
+                ra_tokens[0] = '0' + (ra_value % 10);
+                }
             }
         else {
-            // Note this single digit is entire value of the C-string.
-            ra_tokens[0] = '0' + (ra_value % 10);
+            ra_tokens[0] = '0' + right_asc/100;
+            ra_tokens[1] = '0' + (right_asc % 100)/10;
+            ra_tokens[2] = '0' + right_asc % 10;
+            if(ra_tokens[0] == '0') {
+                ra_tokens[0] = ra_tokens[1];
+                ra_tokens[1] = ra_tokens[2];
+                ra_tokens[2] = '\0';
+                if(ra_tokens[0] == '0') {
+                    ra_tokens[0] = ra_tokens[1];
+                    ra_tokens[1] = '\0';
+                    }
+                }
             }
 
         for(GLuint stack = 1; stack < stacks - 1; ++stack) {
@@ -521,14 +557,24 @@ void GridGlobe::createMarkerLists(void) {
                         // Find the dimensions of what we just rendered.
                         OGLFT::BBox ra_box = myFont->measure(ra_tokens);
 
-                        // Shift up to 'superscript' position.
-                        glTranslatef(0, ra_box.y_max_/2, 0);
+                        if(ra_is_hours == true) {
+                            // Render the 'hour' symbol.
+                            // Shift up to 'superscript' position.
+                            glTranslatef(0, ra_box.y_max_/2, 0);
 
-                        // Resize for 'hour' symbol.
-                        glScalef(TEXT_UNITS_RATIO, TEXT_UNITS_RATIO, 1);
+                            // Resize for 'hour' symbol.
+                            glScalef(TEXT_UNITS_RATIO, TEXT_UNITS_RATIO, 1);
+                            myFont->draw(HOUR_UNITS);
+                            }
+                        else {
+                            // Render the 'degree' symbol.
+                            // Shift up to 'superscript' position.
+                            glTranslatef(0, 7 * ra_box.y_max_/8, 0);
 
-                        // Render the 'hour' symbol.
-                        myFont->draw(HOUR_UNITS);
+                            // Resize for 'degree' symbol.
+                            glScalef(TEXT_UNITS_RATIO, TEXT_UNITS_RATIO, 1);
+                            myFont->draw(DEGREE_UNITS);
+                            }
                     glPopMatrix();
 
                     // Find the dimensions of the 'degree' symbol.
@@ -543,8 +589,8 @@ void GridGlobe::createMarkerLists(void) {
                     // Move down and to the left of the origin, using the above dimensions
                     // as a guide, so tha we have the 'degree' symbol suitably abut the
                     // intersection of the grid lines.
-                    glTranslatef(-(TEXT_OFFSET + dec_box.x_max_ + degree_box.x_max_),
-                                 -(TEXT_OFFSET + dec_box.y_max_ + degree_box.y_max_),
+                    glTranslatef(-(TEXT_OFFSET + dec_box.x_max_ + degree_box.x_max_/2),
+                                 -(TEXT_OFFSET + dec_box.y_max_ + degree_box.y_max_/2),
                                  0);
 
                     // Render the current declination.
@@ -559,7 +605,6 @@ void GridGlobe::createMarkerLists(void) {
                         }
 
                     // Shift across and up to 'superscript' position.
-                    // glTranslatef(dec_adv.dx_, 7 * dec_box.y_max_/8, 0);
                     glTranslatef(0, 7 * dec_box.y_max_/8, 0);
 
                     // Resize for 'degree' symbol.

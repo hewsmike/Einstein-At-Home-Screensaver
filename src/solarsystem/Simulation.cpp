@@ -235,6 +235,7 @@ Simulation::Simulation(BOINCClientAdapter* boinc_adapter) :
     day366 = 0;
     earth_hour_angle = 0;
     sun_rot_angle = 0;
+    ra_as_hours = true;
 
     // Initial HUD choice.
     active_HUD = &overlay;
@@ -2956,6 +2957,16 @@ void Simulation::cycle(SolarSystemGlobals::content ct) {
             break;
         case SolarSystemGlobals::TARGET_RETICLE:
             target.cycleActivation();
+            break;
+        case SolarSystemGlobals::RA_UNITS:
+            // Toggle the right ascension units choice.
+            ra_as_hours = !ra_as_hours;
+            if(ra_as_hours == true) {
+                c_sphere.setRAUnits(GridGlobe::HOURS);
+                }
+            else {
+                c_sphere.setRAUnits(GridGlobe::DEGREES);
+                }
             break;
         case SolarSystemGlobals::HELP_HUD:
             if(help_hud_active == false) {

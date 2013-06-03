@@ -70,6 +70,7 @@ class SolarSystemGlobals {
                       HUDOVER,
                       AUTOPILOT,
                       TARGET_RETICLE,
+                      RA_UNITS,
                       HELP_HUD};
 
         // Levels of rendering quality.

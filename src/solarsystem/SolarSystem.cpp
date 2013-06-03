@@ -346,6 +346,9 @@ void SolarSystem::keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey k
         case KeyF9:
             sim_instance->cycle(SolarSystemGlobals::EARTH_GRID);
             break;
+        case KeyF10:
+            sim_instance->cycle(SolarSystemGlobals::RA_UNITS);
+            break;
         case KeyF12:
             // Toggle the state of the autopilot
             sim_instance->cycle(SolarSystemGlobals::AUTOPILOT);

@@ -393,6 +393,9 @@ class Simulation : public Renderable {
         /// The realtime clock instance.
         UTC clock;
 
+        /// Flag for choice of right ascension units.
+        bool ra_as_hours;
+
         /// Associative array of names to image pointers
         /// for pulse profiles to display on the HUD.
         std::map<std::string, HUDItem*> pulse_profiles;
