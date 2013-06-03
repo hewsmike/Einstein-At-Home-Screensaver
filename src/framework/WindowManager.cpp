@@ -32,6 +32,7 @@
 
 unsigned int WindowManager::OPEN_GL_VERSION_MINIMUM_MAJOR(1);
 unsigned int WindowManager::OPEN_GL_VERSION_MINIMUM_MINOR(5);
+int WindowManager::NO_OPEN_GL_CONTEXT(0);
 int WindowManager::DEPTH_BUFFER_GRAIN(24);
 int WindowManager::DEPTH_BUFFER_GRAIN_FALLBACK(16);
 int WindowManager::NO_STENCIL(0);
@@ -599,31 +600,42 @@ bool WindowManager::tryMode(int width, int height, int mode) {
     // which may be EITHER a "OS window" OR a fullscreen.
 
     // See if you can get a rendering surface from the OS.
-    int window_open = glfwOpenWindow(width, height,
-                                     current_desktop_mode.RedBits,
-                                     current_desktop_mode.GreenBits,
-                                     current_desktop_mode.BlueBits,
-                                     current_desktop_mode.RedBits,			// Alpha range same as individual colors
-                                     best_depth_buffer_grain,
-                                     NO_STENCIL,
-                                     mode);
+    glfwOpenWindow(width, height,
+                   current_desktop_mode.RedBits,
+                   current_desktop_mode.GreenBits,
+                   current_desktop_mode.BlueBits,
+                   current_desktop_mode.RedBits,			// Alpha range same as individual colors
+                   best_depth_buffer_grain,
+                   NO_STENCIL,
+                   mode);
 
-    if(window_open == GL_FALSE) {
+    // Rather than examine the return the value of glfwOpenWindow - which
+    // may return GL_FALSE even in the case where a window/context was obtained
+    // but not at the window size requested - then look at the following
+    // instead :
+
+    int window_open = glfwGetWindowParam(GLFW_OPENGL_PROFILE);
+    // If this value is ZERO then no OpenGL context was obtained.
+
+    if(window_open == NO_OPEN_GL_CONTEXT) {
         // It may have failed to open because of the depth buffer choice,
         // so retry with a lower depth resolution ...
         best_depth_buffer_grain = DEPTH_BUFFER_GRAIN_FALLBACK;
-        window_open = glfwOpenWindow(width, height,
-                                     current_desktop_mode.RedBits,
-                                     current_desktop_mode.GreenBits,
-                                     current_desktop_mode.BlueBits,
-                                     current_desktop_mode.RedBits,			// Alpha range same as individual colors
-                                     best_depth_buffer_grain,
-                                     NO_STENCIL,
-                                     mode);
+        glfwOpenWindow(width, height,
+                       current_desktop_mode.RedBits,
+                       current_desktop_mode.GreenBits,
+                       current_desktop_mode.BlueBits,
+                       current_desktop_mode.RedBits,			// Alpha range same as individual colors
+                       best_depth_buffer_grain,
+                       NO_STENCIL,
+                       mode);
 
+        // See if a context was obtained.
+        window_open = glfwGetWindowParam(GLFW_OPENGL_PROFILE);
         }
 
-    if(window_open == GL_TRUE) {
+    // Again, if this value is ZERO then no OpenGL context was obtained.
+    if(window_open != NO_OPEN_GL_CONTEXT) {
         // For MS Windows, the dynamic links will change
         // upon rendering surface acquisition !!
         initializeGLEW();
