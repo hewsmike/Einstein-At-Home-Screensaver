@@ -205,6 +205,9 @@ class WindowManager {
         static unsigned int OPEN_GL_VERSION_MINIMUM_MAJOR;
         static unsigned int OPEN_GL_VERSION_MINIMUM_MINOR;
 
+        ///
+        static int NO_OPEN_GL_CONTEXT;
+
         /// Choices for depth buffer resolution.
         static int DEPTH_BUFFER_GRAIN;
         static int DEPTH_BUFFER_GRAIN_FALLBACK;
