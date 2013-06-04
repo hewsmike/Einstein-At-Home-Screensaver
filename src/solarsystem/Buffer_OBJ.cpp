@@ -19,6 +19,7 @@
  ***************************************************************************/
 
 #include "Buffer_OBJ.h"
+#include "ErrorHandler.h"
 
 Buffer_OBJ::Buffer_OBJ() {
     }
@@ -31,6 +32,12 @@ Buffer_OBJ::~Buffer_OBJ() {
 void Buffer_OBJ::acquire(void) {
     // Ask OpenGL for a single buffer handle.
     glGenBuffers(1, &ident);
+
+    // Failure to acquire a handle should be FATAL.
+    if(ident == OGL_ID::NO_ID) {
+        ErrorHandler::record("Buffer_OBJ::acquire : failure to obtain identifier",
+                             ErrorHandler::FATAL);
+        }
     }
 
 void Buffer_OBJ::release(void) {

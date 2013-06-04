@@ -29,7 +29,7 @@ const GLuint OGL_ID::NO_ID(0);
 OGL_ID::OGL_ID() : ident(OGL_ID::NO_ID) {
     }
 
-/// Can't call release() from here ( 'cos it's virtual )
+// Must not call release() from here !!
 OGL_ID::~OGL_ID() {
     }
 
