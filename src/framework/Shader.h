@@ -25,15 +25,22 @@
 
 class Shader {
     public:
-        enum status {EXISTS, COMPILED, VALID};
+        /// Enumerant to define stages of shader handling.
+        ///     INVALID - shader has no contents ( invalid resource identifier provided ).
+        ///     EXIXTS - contents have been loaded from a Resource.
+        ///     COMPILED - shader has compiled satisfactorily.
+        enum status {INVALID, EXISTS, COMPILED};
+
+        enum context {BACKWARD, FORWARD};
 
         /**
          * Constructor
          *
-         * \param a resource identifier, so that a ResourceFactory may
-         *        instantiate.
+         * \param a resource identifier, so that a ResourceFactory may instantiate.
+         *
+         * \param an enmerant indicating type of OpenGL context being used.
          */
-        Shader(const string resource_identifier);
+        Shader(const string resource_identifier, Shader::context ogl_context);
 
         /**
          * Destructor
@@ -47,7 +54,25 @@ class Shader {
          */
         const std::string& contents(void) const;
 
+        /**
+         * Obtain the status of this shader.
+         *
+         * \return - one of the status enumerants as above.
+         */
+        Shader::status getStatus(void) const;
+
     private:
+        /// Strings representing shader headers per OpenGL context type.
+        static const std::string BACKWARD_SHADER_HEADER;
+        static const std::string FORWARD_SHADER_HEADER;
+
+        /// Stage of this shader.
+        Shader::status state;
+
+        /// OpenGL context this shader will run under.
+        Shader::context ogl_context_type;
+
+        /// Shader contents.
         std::string text;
     }
 
