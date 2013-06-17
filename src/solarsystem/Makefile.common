@@ -46,6 +46,7 @@
 # DEBUGFLAGSCPP
 # FRAMEWORK_SRC
 # LDFLAGS
+# OGL_UTILITY_SRC
 # PROJECT_ROOT
 #
 ###########################################################################
@@ -92,6 +93,7 @@ CPPFLAGS += $(shell $(PRODUCT_INSTALL)/bin/freetype-config --cflags)
 CPPFLAGS += $(shell $(PRODUCT_INSTALL)/bin/xml2-config --cflags)
 CPPFLAGS += -I$(PRODUCT_INSTALL)/include/boinc
 CPPFLAGS += -I$(FRAMEWORK_SRC) -I$(PRODUCT_SRC) -I$(PRODUCT_SRC)/../framework
+CPPFLAGS += -I$(OGL_UTILITY_SRC)
 
 # Target specific.
 ifeq ".$(SYSTEM)" ".linux"

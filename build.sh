@@ -840,6 +840,7 @@ build_product() {
 
     log "Building $PRODUCT_NAME [Framework]..."
     export FRAMEWORK_SRC=$ROOT/src/framework || failure
+    export OGL_UTILITY_SRC=$ROOT/src/ogl_utility || failure
     export FRAMEWORK_INSTALL=$ROOT/install || failure
     cd $ROOT/build/framework || failure
     if [ "$1" == "$TARGET_WIN32" ]; then
