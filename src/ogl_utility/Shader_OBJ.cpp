@@ -18,7 +18,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "Shader.h"
+#include "Shader_OBJ.h"
 
 #include <sstream>
 
@@ -26,15 +26,15 @@
 #include "Resource.h"
 #include "ResourceFactory.h"
 
-const std::string Shader::BACKWARD_SHADER_HEADER("");
-const std::string Shader::FORWARD_SHADER_HEADER("");
+const std::string Shader_OBJ::BACKWARD_SHADER_HEADER("");
+const std::string Shader_OBJ::FORWARD_SHADER_HEADER("");
 
-Shader::Shader(const string resource_identifier, Shader::context ogl_context) {
+Shader_OBJ::Shader_OBJ(const string resource_identifier, Shader_OBJ::context ogl_context) {
     // Assume failure.
-    state = Shader::INVALID;
+    state = Shader_OBJ::INVALID;
 
     // Instantiate a ResourceFactory in order to obtain the
-    // text of the shader.
+    // text of the Shader_OBJ.
     ResourceFactory factory;
 
     Resource* txt = factory.createInstance(resource_identifier);
@@ -44,37 +44,37 @@ Shader::Shader(const string resource_identifier, Shader::context ogl_context) {
             text += (*contents)[index];
             }
         switch(ogl_context) {
-            case Shader::BACKWARD :
-                text = Shader::BACKWARD_SHADER_HEADER + text;
+            case Shader_OBJ::BACKWARD :
+                text = Shader_OBJ::BACKWARD_SHADER_HEADER + text;
                 break;
-            case Shader::FORWARD :
-                text = Shader::FORWARD_SHADER_HEADER + text;
+            case Shader_OBJ::FORWARD :
+                text = Shader_OBJ::FORWARD_SHADER_HEADER + text;
                 break;
             default:
                 // Should not get here!!
-                ErrorHandler::record("Shader::Shader() : bad switch case reached (default)",
+                ErrorHandler::record("Shader_OBJ::Shader_OBJ() : bad switch case reached (default)",
                                      ErrorHandler::FATAL);
                 break;
             }
 
 
-        state = Shader::EXISTS;
+        state = Shader_OBJ::EXISTS;
         }
     else {
         std::stringstream msg;
-        msg << "Shader::Shader() : no resource to construct shader available "
+        msg << "Shader_OBJ::Shader_OBJ() : no resource to construct Shader_OBJ available "
             << "for resource identifier = '" << resource_identifier << "'";
         ErrorHandler::record(msg, ErrorHandler::WARN);
         }
     }
 
-Shader::~Shader() {
+Shader_OBJ::~Shader_OBJ() {
     }
 
-const std::string& Shader::contents(void) const {
+const std::string& Shader_OBJ::contents(void) const {
     return text;
     }
 
-Shader::status Shader::getStatus(void) const {
+Shader_OBJ::status Shader_OBJ::getStatus(void) const {
     return state;
     }
