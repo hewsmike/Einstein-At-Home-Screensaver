@@ -119,8 +119,9 @@ void SolarSystem::initialize(const int width, const int height, const Resource* 
 #endif
         }
 
-    // Specify tight unpacking of pixel data ( from data buffers )
-    // ie. no padding generated. Default is 4 byte boundaries.
+    // Specify tight unpacking of pixel data ( from client data buffers )
+    // ie. no padding generated and start of row is single byte aligned.
+    // ( Default is 4 byte boundaries )
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 #if defined( GL_RASTER_POSITION_UNCLIPPED_IBM )
     // To allow bitmap/character data to partially display at screen edges.
