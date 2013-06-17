@@ -21,38 +21,39 @@
 #ifndef SHADER_OBJ_H_
 #define SHADER_OBJ_H_
 
+#include "OGL_ID.h"
+
 #include <string>
 
 class Shader_OBJ {
     public:
         /// Enumerant to define stages of Shader_OBJ handling.
-        ///     INVALID - Shader_OBJ has no contents ( invalid resource identifier provided ).
-        ///     EXIXTS - contents have been loaded from a Resource.
-        ///     COMPILED - Shader_OBJ has compiled satisfactorily.
-        enum status {INVALID, EXISTS, COMPILED};
-
-        enum context {BACKWARD, FORWARD};
+        ///     INVALID - Shader object has no contents
+        ///     EXISTS - contents have been loaded from a Resource.
+        ///     COMPILED - Shader object has compiled satisfactorily.
+        ///     FAILED - Shader object has not compiled satisfactorily.
+        enum status {INVALID, EXISTS, COMPILED, FAILED};
 
         /**
          * Constructor
          *
-         * \param a resource identifier, so that a ResourceFactory may instantiate.
+         * \param a resource identifier, so that a ResourceFactory may instantiate
+         *        a byte sequence representing the shader code
          *
-         * \param an enmerant indicating type of OpenGL context being used.
+         * \param an enumerant of GLenum indicating type of OpenGL shader to construct.
+         *          One of :
+         *              - GL_VERTEX_SHADER
+         *              - GL_FRAGMENT_SHADER
+         *              - GL_TESS_CONTROL_SHADER
+         *              - GL_TESS_EVALUATION_SHADER
+         *              - GL_GEOMETRY_SHADER
          */
-        Shader_OBJ(const string resource_identifier, Shader_OBJ::context ogl_context);
+        Shader_OBJ(const string resource_identifier, GLenum shader_type);
 
         /**
          * Destructor
          */
         ~Shader_OBJ();
-
-        /**
-         * Obtain the text contents of the Shader_OBJ.
-         *
-         * \return - an std::string reference representing the text
-         */
-        const std::string& contents(void) const;
 
         /**
          * Obtain the status of this Shader_OBJ.
@@ -61,16 +62,22 @@ class Shader_OBJ {
          */
         Shader_OBJ::status getStatus(void) const;
 
-    private:
-        /// Strings representing Shader_OBJ headers per OpenGL context type.
-        static const std::string BACKWARD_SHADER_HEADER;
-        static const std::string FORWARD_SHADER_HEADER;
+        /**
+         * \brief Obtains the shader object resources.
+         */
+        virtual void acquire(void);
 
-        /// Stage of this Shader_OBJ.
+        /**
+         * \brief Releases the shader object resources.
+         */
+        virtual void release(void);
+
+    private:
+        /// Stage of this shader object's development.
         Shader_OBJ::status state;
 
-        /// OpenGL context this Shader_OBJ will run under.
-        Shader_OBJ::context ogl_context_type;
+        /// OpenGL shader type this object represents.
+        GLenum type;
 
         /// Shader_OBJ contents.
         std::string text;

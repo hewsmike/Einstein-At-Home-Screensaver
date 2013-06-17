@@ -26,12 +26,15 @@
 #include "Resource.h"
 #include "ResourceFactory.h"
 
-const std::string Shader_OBJ::BACKWARD_SHADER_HEADER("");
-const std::string Shader_OBJ::FORWARD_SHADER_HEADER("");
+Shader_OBJ::Shader_OBJ(const string resource_identifier, GLenum shader_type) {
+    // Remember the shader type.
+    type = shader_type;
 
-Shader_OBJ::Shader_OBJ(const string resource_identifier, Shader_OBJ::context ogl_context) {
     // Assume failure.
     state = Shader_OBJ::INVALID;
+
+    // Get a shader identifier.
+    acquire();
 
     // Instantiate a ResourceFactory in order to obtain the
     // text of the Shader_OBJ.
@@ -40,24 +43,13 @@ Shader_OBJ::Shader_OBJ(const string resource_identifier, Shader_OBJ::context ogl
     Resource* txt = factory.createInstance(resource_identifier);
     if(txt != NULL) {
         const vector<unsigned char>* contents = txt.data();
-        for(unsigned int index = 0; index < contents->size(); ++index) {
+        glShaderSource(ident, contents.size(),
+                       txt->data().const GLchar **string, NULL);
+
+        const vector<unsigned char>* contents = txt.data();
+        for(unsigned int index = 0; index < contents->sid ze(); ++index) {
             text += (*contents)[index];
             }
-        switch(ogl_context) {
-            case Shader_OBJ::BACKWARD :
-                text = Shader_OBJ::BACKWARD_SHADER_HEADER + text;
-                break;
-            case Shader_OBJ::FORWARD :
-                text = Shader_OBJ::FORWARD_SHADER_HEADER + text;
-                break;
-            default:
-                // Should not get here!!
-                ErrorHandler::record("Shader_OBJ::Shader_OBJ() : bad switch case reached (default)",
-                                     ErrorHandler::FATAL);
-                break;
-            }
-
-
         state = Shader_OBJ::EXISTS;
         }
     else {
@@ -66,15 +58,36 @@ Shader_OBJ::Shader_OBJ(const string resource_identifier, Shader_OBJ::context ogl
             << "for resource identifier = '" << resource_identifier << "'";
         ErrorHandler::record(msg, ErrorHandler::WARN);
         }
+
+    // Now try and compile it.
+
+
     }
 
 Shader_OBJ::~Shader_OBJ() {
-    }
-
-const std::string& Shader_OBJ::contents(void) const {
-    return text;
+    // Must call this here in this derived class.
+    release();
     }
 
 Shader_OBJ::status Shader_OBJ::getStatus(void) const {
     return state;
+    }
+
+void Shader_OBJ::acquire(void) {
+    // Ask OpenGL for a single shader handle.
+    ident = glCreateShader(type);
+
+    // Failure to acquire a handle should be FATAL.
+    if(ident == OGL_ID::NO_ID) {
+        ErrorHandler::record("Shader_OBJ::acquire : failure to obtain identifier",
+                             ErrorHandler::FATAL);
+        }
+    }
+
+void Shader_OBJ::release(void) {
+    // Inform OpenGL that we no longer need this specific shader handle.
+    glDeleteShader(ident);
+
+    // And set the identifier as unused for OpenGL.
+    ident = OGL_ID::NO_ID;
     }
