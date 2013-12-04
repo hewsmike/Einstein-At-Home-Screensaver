@@ -23,7 +23,7 @@
 #                                                                         #
 ###########################################################################
 
-### globals ############################################################################################################
+### globals ###############################################################
 
 # Set paths.
 ROOT=`pwd`
@@ -40,7 +40,7 @@ TAG_GFXAPPS="current_gfx_apps"
 # not entirely happy to commit to whatever some latest
 # library build might be.
 GLEW_VERSION=1.7.0
-GLFW_VERSION=2.7.5
+SDL_VERSION=2.0.1
 FREETYPE_VERSION=2.4.11
 LIBXML_VERSION=2.9.0
 
@@ -71,7 +71,7 @@ BS_PREPARE_TREE=2
 
 # Non-MinGW build stages
 BS_BUILD_GLEW=3
-BS_BUILD_GLFW=4
+BS_BUILD_SDL=4
 BS_BUILD_FREETYPE=5
 BS_BUILD_LIBXML=6
 BS_BUILD_OGLFT=7
@@ -79,7 +79,7 @@ BS_BUILD_BOINC=8
 
 # MinGW build stages
 BS_BUILD_GLEW_MINGW=9
-BS_BUILD_GLFW_MINGW=10
+BS_BUILD_SDL_MINGW=10
 BS_BUILD_FREETYPE_MINGW=11
 BS_BUILD_LIBXML_MINGW=12
 BS_BUILD_OGLFT_MINGW=13
@@ -88,7 +88,7 @@ BS_BUILD_BOINC_MINGW=14
 # No buildstate set initially.
 BUILDSTATE=$BS_NONE
 
-### functions (utility) ################################################################################################
+### functions (utility) ###################################################
 
 check_last_build() {
     log "Checking previous build target..."
@@ -216,8 +216,7 @@ print_usage() {
     echo
     echo "      Available targets:"
     echo "          --linux"
-    echo "          --mac"
-    echo "          --mac-sdk           ( Mac OS 10.4 x86 SDK )"
+    echo "          --mac_osx"
     echo "          --win32"
     echo
     echo "      Available modes:"
@@ -314,7 +313,7 @@ write_version_header() {
     echo "#endif" >> $HEADER_FILE || failure
     }
 
-### functions to obtain sources ########################################################################################
+### functions to obtain sources ####################################
 
 prepare_boinc() {
     log "Preparing BOINC..."
@@ -372,23 +371,6 @@ prepare_glew() {
     # substitute old source tree
     rm -rf glew >> $LOGFILE 2>&1 || failure
     mv glew-$GLEW_VERSION glew >> $LOGFILE 2>&1 || failure
-
-    return 0
-    }
-
-prepare_glfw() {
-    log "Preparing GLFW..."
-    mkdir -p $ROOT/3rdparty/glfw >> $LOGFILE || failure
-    mkdir -p $ROOT/build/glfw >> $LOGFILE || failure
-
-    log "Retrieving GLFW (this may take a while)..."
-    cd $ROOT/3rdparty || failure
-    wget http://sourceforge.net/projects/glfw/files/glfw/$GLFW_VERSION/glfw-$GLFW_VERSION.tar.bz2 >> $LOGFILE 2>&1 || failure
-    tar -xjf glfw-$GLFW_VERSION.tar.bz2 >> $LOGFILE 2>&1 || failure
-    rm glfw-$GLFW_VERSION.tar.bz2 >> $LOGFILE 2>&1 || failure
-    # substitute old source tree
-    rm -rf glfw >> $LOGFILE 2>&1 || failure
-    mv glfw-$GLFW_VERSION glfw >> $LOGFILE 2>&1 || failure
 
     return 0
     }
@@ -456,26 +438,6 @@ build_glew() {
     log "Successfully built and installed GLEW!"
 
     save_build_state $BS_BUILD_GLEW || failure
-    return 0
-    }
-
-build_glfw() {
-    if [ $BUILDSTATE -ge $BS_BUILD_GLFW ]; then
-        return 0
-    fi
-
-    prepare_glfw || failure
-
-    log "Building GLFW (this may take a while)..."
-    cd $ROOT/3rdparty/glfw || failure
-
-    export PREFIX=$ROOT/install
-
-    make x11-install >> $LOGFILE 2>&1 || failure
-
-    log "Successfully built and installed GLFW!"
-
-    save_build_state $BS_BUILD_GLFW || failure
     return 0
     }
 
@@ -603,26 +565,6 @@ build_glew_mac() {
     return 0
     }
 
-build_glfw_mac() {
-    if [ $BUILDSTATE -ge $BS_BUILD_GLFW ]; then
-        return 0
-    fi
-
-    prepare_glfw || failure
-
-    log "Building GLFW (this may take a while)..."
-    cd $ROOT/3rdparty/glfw || failure
-
-    export PREFIX=$ROOT/install
-
-    make cocoa-install >> $LOGFILE 2>&1 || failure
-
-    log "Successfully built and installed GLFW!"
-
-    save_build_state $BS_BUILD_GLFW || failure
-    return 0
-    }
-
 ### functions to build from sources for Win32 targets ##################################################################
 
 set_mingw() {
@@ -670,25 +612,6 @@ build_glew_mingw() {
     log "Successfully built and installed GLEW!"
 
     save_build_state $BS_BUILD_GLEW_MINGW || failure
-    return 0
-    }
-
-build_glfw_mingw() {
-    if [ $BUILDSTATE -ge $BS_BUILD_GLFW_MINGW ]; then
-        return 0
-    fi
-
-    prepare_glfw || failure
-
-    log "Building GLFW (this may take a while)..."
-    cd $ROOT/3rdparty/glfw || failure
-
-    export PREFIX=$ROOT/install
-
-    make cross-mgw-install >> $LOGFILE 2>&1 || failure
-    log "Successfully built and installed GLFW!"
-
-    save_build_state $BS_BUILD_GLFW_MINGW || failure
     return 0
     }
 
@@ -876,13 +799,10 @@ build_linux() {
     log "Important for an official build: let CC and CXX point to gcc/g++ 4.6+ !"
 
     # Intercept build stages at the non-MinGW group to build the libraries
-    # that the framework build will depend upon. Except that GLEW actually
-    # is incorporated into the framework library via GLEW source files
-    # during the framework build.
+    # that the framework build will depend upon.
 
-    # However use linux specific functions to get GLEW and GLFW.
+    # However use linux specific functions to get GLEW.
     build_glew || failure
-    build_glfw || failure
 
     # Common linux/Mac build stages.
     build_freetype || failure
@@ -895,16 +815,12 @@ build_linux() {
     }
 
 build_mac() {
-
     # Intercept build stages at the non-MinGW group to build the libraries
     # that the framework build will depend upon.
-    # However use Mac specific functions to get GLEW and GLFW.
+    # However use Mac specific functions to get GLEW.
 
     # Avoid shared GLEW libraries.
     build_glew_mac || failure
-
-    # Use the GLFW cocoa library.
-    build_glfw_mac $TARGET_MAC $2 || failure
 
     # Common linux/Mac build stages.
     build_freetype || failure
@@ -927,7 +843,6 @@ build_win32() {
     # is incorporated into the framework library via GLEW source files
     # during the framework build.
     build_glew_mingw || failure
-    build_glfw_mingw || failure
     build_freetype_mingw || failure
     build_libxml_mingw || failure
     build_oglft_mingw || failure
@@ -988,14 +903,7 @@ if [ $# -eq 3 ]; then
             log "Building linux version "
             retrieve_build_state || failure
             ;;
-        "--mac")
-            TARGET=$TARGET_MAC
-            mode_check
-            check_last_build "$1" || failure
-            log "Building mac (Intel) version "
-            retrieve_build_state || failure
-            ;;
-        "--mac-sdk")
+        "--mac_osx")
             TARGET=$TARGET_MAC
             mode_check
             SDK="yes"

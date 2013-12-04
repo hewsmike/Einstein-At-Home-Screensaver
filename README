@@ -2,3 +2,12 @@ Repository for development of screensaver code using the Einstein At Home projec
 
  https://n0.aei.uni-hannover.de/doxygen/einsteinathome/graphics/index.html
 
+04/12/2013 : Revamp of framework to re-incorporate SDL ( version 2 )
+    - retire Shader_OBJ, Events and TriggerTimer classes
+    - GLFW no longer used
+    - on mac's only OS X supported
+    - GLEW retained to manage dynamic function pointers on win32
+    - WIN_OGL_WORKAROUND ( source level switch ) removed
+    - NB zlib_licence.txt as applying to SDL 2 usage
+    - assume that OpenGL backwards compatible contexts are available at runtime
+      and thus display list functionality ie. can still use OGLFT

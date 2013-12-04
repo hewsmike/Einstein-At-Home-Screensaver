@@ -23,7 +23,7 @@
 #                                                                         #
 ###########################################################################
 
-### globals ############################################################################################################
+### globals ################################################################
 
 # Set paths.
 ROOT=`pwd`
@@ -35,11 +35,10 @@ LOGFILE=$ROOT/build.log
 TARGET_NONE=0
 TARGET_ALL=1
 TARGET_LINUX=2
-TARGET_MAC=3
-TARGET_MAC_SDK=4
-TARGET_WIN32=5
-TARGET_DOC=6
-TARGET_CLEAN=7
+TARGET_MAC_OSX=3
+TARGET_WIN32=4
+TARGET_DOC=5
+TARGET_CLEAN=6
 
 # No target set initially.
 TARGET=TARGET_NONE
@@ -54,7 +53,7 @@ MODE_CALLGRIND=4
 # Default mode is DEBUG
 MODE=MODE_DEBUG
 
-### functions (utility) ################################################################################################
+### functions (utility) ####################################################
 
 log() {
     echo $1 | tee -a $LOGFILE
@@ -107,8 +106,7 @@ print_usage() {
     echo "      Available targets:"
     echo "          --all"
     echo "          --linux"
-    echo "          --mac"
-    echo "          --mac-sdk           ( Mac OS 10.4 x86 SDK )"
+    echo "          --mac_osx"
     echo "          --win32"
     echo
     echo "      Available modes:"
@@ -137,7 +135,7 @@ print_usage() {
     return 0
     }
 
-### main control #######################################################################################################
+### main control ############################################################
 
 # Delete any prior build log
 rm -f ./build.log
@@ -185,11 +183,8 @@ if [ $# -eq 3 ]; then
         "--linux")
             TARGET=$TARGET_LINUX
             ;;
-        "--mac")
-            TARGET=$TARGET_MAC
-            ;;
-        "--mac-sdk")
-            TARGET=$TARGET_MAC_SDK
+        "--mac_osx")
+            TARGET=$TARGET_MAC_OSX
             ;;
         "--win32")
             TARGET=$TARGET_WIN32
@@ -262,18 +257,11 @@ case $TARGET in
         ./build.sh --linux $2 $3
         cd ..
         ;;
-    $TARGET_MAC)
-        prepare_directories mac
-        log "For $PRODUCT_NAME : invoking mac build script ... "
-        cd mac
-        ./build.sh --mac $2 $3
-        cd ..
-        ;;
-    $TARGET_MAC_SDK)
-        prepare_directories mac-sdk
-        log "For $PRODUCT_NAME : invoking mac-sdk build script ... "
-        cd mac-sdk
-        ./build.sh --mac-sdk $2 $3
+    $TARGET_MAC_OSX)
+        prepare_directories mac_osx
+        log "For $PRODUCT_NAME : invoking mac_osx build script ... "
+        cd mac_osx
+        ./build.sh --mac_osx $2 $3
         cd ..
         ;;
     $TARGET_WIN32)
@@ -288,9 +276,7 @@ case $TARGET in
         ./build.sh --distclean
         cd $ROOT/win32
         ./build.sh --distclean
-        cd $ROOT/mac-sdk
-        ./build.sh --distclean
-        cd $ROOT/mac
+        cd $ROOT/mac_osx
         ./build.sh --distclean
         cd $ROOT
         ;;
