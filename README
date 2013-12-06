@@ -9,5 +9,7 @@ Repository for development of screensaver code using the Einstein At Home projec
     - GLEW retained to manage dynamic function pointers on win32
     - WIN_OGL_WORKAROUND ( source level switch ) removed
     - NB zlib_licence.txt as applying to SDL 2 usage
-    - assume that OpenGL backwards compatible contexts are available at runtime
-      and thus display list functionality ie. can still use OGLFT
+    - assume that OpenGL forwards compatible contexts are available at runtime
+      and thus display list functionality nolonger usable.
+    - use sdl_ttf library for rendering, using font interface via FreeType.
+    - expand build system ( initially by stubs ) for Android and iOS.

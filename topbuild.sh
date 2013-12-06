@@ -28,17 +28,30 @@
 # Set paths.
 ROOT=`pwd`
 
-# Set the logfile.
-LOGFILE=$ROOT/build.log
+# Set the topbuild logfile.
+LOGFILE=$ROOT/topbuild.log
+
+# Required for correct access to the BOINC repository.
+TAG_GFXAPPS="current_gfx_apps"
+
+# For some source fetches we use version strings as I'm
+# not entirely happy to commit to whatever some latest
+# library build might be.
+FREETYPE_VERSION=2.5.1
+GLEW_VERSION=1.10.0
+LIBXML_VERSION=2.9.1
+SDL_VERSION=2.0.1
 
 # Target variants.
 TARGET_NONE=0
 TARGET_ALL=1
-TARGET_LINUX=2
-TARGET_MAC_OSX=3
-TARGET_WIN32=4
-TARGET_DOC=5
-TARGET_CLEAN=6
+TARGET_ANDROID=2
+TARGET_IOS=3
+TARGET_LINUX=4
+TARGET_MAC_OSX=5
+TARGET_WIN32=6
+TARGET_DOC=7
+TARGET_CLEAN=8
 
 # No target set initially.
 TARGET=TARGET_NONE
@@ -53,7 +66,52 @@ MODE_CALLGRIND=4
 # Default mode is DEBUG
 MODE=MODE_DEBUG
 
+# Common build stages.
+TBS_NONE=0
+TBS_PREREQUISITES=1
+TBS_RETRIEVED=2
+
+# No topbuild state set initially.
+TOPBUILDSTATE=$TBS_NONE
+
 ### functions (utility) ####################################################
+
+check_prerequisites() {
+    if [ $TOPBUILDSTATE -ge $TBS_PREREQUISITES ]; then
+        return 0
+    fi
+
+    log "Checking prerequisites..."
+
+    # required toolchain
+    TOOLS="ar automake autoconf cmake cvs g++ gcc hg ld lex libtool m4 patch pkg-config svn tar wget yacc"
+
+    for tool in $TOOLS; do
+        if ! ( type $tool >/dev/null 2>&1 ); then
+            log "Missing \"$tool\" which is a required tool!"
+            return 1
+        fi
+    done
+
+    save_topbuild_state $TBS_PREREQUISITES
+    return 0
+    }
+
+check_retrieval() {
+    if [ $TOPBUILDSTATE -ge $TBS_RETRIEVED ]; then
+        return 0
+    fi
+
+    log "Retrieving common library/sourcesies..."
+
+    purge_toptree
+    prepare_toptree
+
+    # TODO
+
+    save_topbuild_state $TBS_RETRIEVED
+    return 0
+    }
 
 log() {
     echo $1 | tee -a $LOGFILE
@@ -78,22 +136,41 @@ mode_check() {
 
 prepare_directories() {
     log "Preparing $1 directories ... "
-    mkdir -p $ROOT/$1
-    rm -rf $ROOT/$1/src
-    rm -rf $ROOT/$1/patches
-    rm -f $ROOT/$1/build.sh
 
+    # If not present, create the given target's top level directory.
+    mkdir -p $ROOT/$1
+
+    # If not present, create an install directory for the given target.
     mkdir -p $ROOT/$1/install
 
+    # If not present, create a 3rd party source directory for the given target.
+    mkdir -p $ROOT/$1/3rdparty
+
+    # For common source retrieval only update
+    # ( replace if newer, copy if non-existent )
+    cp -rfu $ROOT/retrieval $ROOT/$1/3rdparty
+
+    # Populate with latest developer ( ie. YOU ) source code.
+    rm -rf $ROOT/$1/src
     cp -rf $ROOT/src $ROOT/$1/src
+
+    # Populate with latest patches.
+    rm -rf $ROOT/$1/patches
     cp -rf $ROOT/patches $ROOT/$1/patches
-    cp -f $ROOT/build.sh $ROOT/$1/build.sh
+
+    # Remove any prior build script.
+    rm -f $ROOT/$1/build.sh
+    }
+
+prepare_toptree() {
+    log "Preparing retrieval directory..."
+
+    mkdir -p $ROOT/retrieval >> $LOGFILE || failure
+
+    return 0
     }
 
 print_usage() {
-    # Wherever you came from, come back to $ROOT where you invoked this script.
-    cd $ROOT
-
     echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
     echo "                  TOPBUILD Usage"
     echo "                  --------------"
@@ -105,6 +182,8 @@ print_usage() {
     echo
     echo "      Available targets:"
     echo "          --all"
+    echo "          --android"
+    echo "          --ios"
     echo "          --linux"
     echo "          --mac_osx"
     echo "          --win32"
@@ -116,6 +195,7 @@ print_usage() {
     echo "          --callgrind         ( linux only )"
     echo
     echo "      Available products:"
+    echo "          --all"
     echo "          --starsphere"
     echo "          --solarsystem"
     echo
@@ -125,20 +205,52 @@ print_usage() {
     echo "          `basename $0` <target>"
     echo
     echo "      Available targets:"
-    echo "          --distclean"
+    echo "          --projectclean         ( BEWARE : cleans all targets )"
     echo "          --doc"
     echo
     echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
 
-    log "Wrong usage. Stopping!"
+    return 0
+    }
+
+purge_toptree() {
+    log "Purging topbuild common retrieval directories..."
+
+    rm -rf $ROOT/retrieval >> $LOGFILE || failure
+
+    return 0
+    }
+
+obtain_topbuild_state() {
+    log "Checking for previous topbuild checkpoints..."
+
+    # Do we have a record of the most recent topbuild state?
+    if [ ! -f .topbuildstate ]; then
+        # No. Start from the beginning.
+        cd $ROOT || failure
+        log "No previous topbuild checkpoints found! Starting from scratch..."
+        TOPBUILDSTATE=$TBS_NONE
+    else
+        # Yes. Get that topbuild state.
+        TOPBUILDSTATE=`cat $ROOT/.topbuildstate 2>/dev/null`
+        log "Recovering previous topbuild..."
+    fi
+
+    return 0
+    }
+
+save_topbuild_state() {
+    log "Saving topbuild checkpoint..."
+
+    echo "$1" > $ROOT/.topbuildstate || failure
 
     return 0
     }
 
 ### main control ############################################################
 
-# Delete any prior build log
-rm -f ./build.log
+# Delete any prior topbuild log
+rm -f ./topbuild.log
 
 log "++++++++++++++++++++++++++++++++++++"
 log "`date`"
@@ -158,7 +270,7 @@ if [ $# -eq 1 ]; then
         "--doc")
             TARGET=$TARGET_DOC
             ;;
-        "--distclean")
+        "--projectclean")
             TARGET=$TARGET_CLEAN
             ;;
         *)
@@ -179,6 +291,12 @@ if [ $# -eq 3 ]; then
     case "$1" in
         "--all")
             TARGET=$TARGET_ALL
+            ;;
+        "--android")
+            TARGET=$TARGET_ANDROID
+            ;;
+        "--ios")
+            TARGET=$TARGET_IOS
             ;;
         "--linux")
             TARGET=$TARGET_LINUX
@@ -226,6 +344,9 @@ if [ $# -eq 3 ]; then
             PRODUCT_NAME="SolarSystem"
             ;;
         "--all")
+            # Recursive invocation here
+            ./topbuild.sh $1 $2 --starsphere
+            ./topbuild.sh $1 $2 --solarsystem
             ;;
         *)
             log "Incorrect third argument given !!"
@@ -245,40 +366,86 @@ fi
 
 mode_check $2 $1
 
+obtain_topbuild_state || failure
+
+check_prerequisites || failure
+
+check_retrieval || failure
+
 case $TARGET in
     $TARGET_ALL)
-        # ./topbuild.sh --linux $2 $3
-        # ./topbuild.sh --win32 $2 $3
+        # Recursive invocation here.
+        ./topbuild.sh --android $2 $3
+        ./topbuild.sh --ios $2 $3
+        ./topbuild.sh --linux $2 $3
+        ./topbuild.sh --mac_osx $2 $3
+        ./topbuild.sh --win32 $2 $3
+        ;;
+    $TARGET_ANDROID)
+        prepare_directories android
+        cp -f $ROOT/build_android.sh $ROOT/$1/build.sh
+        log "For $PRODUCT_NAME : invoking Android build script ... "
+        cd android
+        ./build.sh $2 $3
+        ;;
+    $TARGET_IOS)
+        prepare_directories ios
+        cp -f $ROOT/build_ios.sh $ROOT/$1/build.sh
+        log "For $PRODUCT_NAME : invoking iOS build script ... "
+        cd ios
+        ./build.sh $2 $3
         ;;
     $TARGET_LINUX)
         prepare_directories linux
-        log "For $PRODUCT_NAME : invoking linux build script ... "
+        cp -f $ROOT/build_linux.sh $ROOT/$1/build.sh
+        log "For $PRODUCT_NAME : invoking Linux build script ... "
         cd linux
-        ./build.sh --linux $2 $3
+        ./build.sh $2 $3
         cd ..
         ;;
     $TARGET_MAC_OSX)
         prepare_directories mac_osx
-        log "For $PRODUCT_NAME : invoking mac_osx build script ... "
+        cp -f $ROOT/build_macosx.sh $ROOT/$1/build.sh
+        log "For $PRODUCT_NAME : invoking Mac OSX build script ... "
         cd mac_osx
-        ./build.sh --mac_osx $2 $3
+        ./build.sh $2 $3
         cd ..
         ;;
     $TARGET_WIN32)
         prepare_directories win32
-        log "For $PRODUCT_NAME : invoking win32 build script ... "
+        cp -f $ROOT/build_win32.sh $ROOT/$1/build.sh
+        log "For $PRODUCT_NAME : invoking Win32 build script ... "
         cd win32
-        ./build.sh --win32 $2 $3
+        ./build.sh $2 $3
         cd ..
         ;;
     $TARGET_CLEAN)
+        log "Cleaning Android... "
+        cd $ROOT/android
+        ./build.sh --distclean
+
+        log "Cleaning iOS... "
+        cd $ROOT/ios
+        ./build.sh --distclean
+
+        log "Cleaning Linux... "
         cd $ROOT/linux
         ./build.sh --distclean
-        cd $ROOT/win32
-        ./build.sh --distclean
+
+        log "Cleaning Mac OSX... "
         cd $ROOT/mac_osx
         ./build.sh --distclean
+
+        log "Cleaning Win32... "
+        cd $ROOT/win32
+        ./build.sh --distclean
+
         cd $ROOT
+
+        log "Cleaning common retrieval directory...  "
+        rm -rf $ROOT/retrieval || failure
+
+        save_topbuild_state $TBS_NONE
         ;;
     $TARGET_DOC)
         log "Building documentation ... "
@@ -288,6 +455,7 @@ case $TARGET in
         ;;
     *)
         # should be unreachable
+        log "Unreachable case for TARGET"
         print_usage
         exit 1
         ;;
