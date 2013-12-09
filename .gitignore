@@ -5,10 +5,12 @@ Debug
 install
 dist
 doc/html
+/android
+/ios
 /win32
 /linux
 /mac
-/mac-sdk
+/mac_osx
 .settings
 
 # patterns
@@ -21,8 +23,11 @@ doc/*.tag
 # files
 erp_git_version.h
 .buildstate
+.topbuildstate
+.lasttopbuild
 .lastbuild
 build.log
+topbuild.log
 @LOGFILE
 *.cbp
 *.cbTemp

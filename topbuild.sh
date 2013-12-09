@@ -74,6 +74,37 @@ TBS_RETRIEVED=2
 # No topbuild state set initially.
 TOPBUILDSTATE=$TBS_NONE
 
+### functions to obtain sources ####################################
+
+retrieve_boinc() {
+    log "Retrieving BOINC..."
+    mkdir -p $ROOT/retrieval/boinc >> $LOGFILE || failure
+
+
+    cd $ROOT/retrieval/boinc || failure
+    if [ -d .git ]; then
+        log "Updating BOINC (tag: $1)..."
+        # make sure local changes (patches) are reverted to ensure fast-forward merge
+        git checkout -f $1 >> $LOGFILE  2>&1 || failure
+        # update tag info
+        git remote update >> $LOGFILE  2>&1 || failure
+        git fetch --tags >> $LOGFILE  2>&1 || failure
+        # checkout build revision
+        git checkout -f $1 >> $LOGFILE  2>&1 || failure
+    else
+        # workaround for old git versions
+        rm -rf $ROOT/retrieval/boinc >> $LOGFILE || failure
+
+        log "Retrieving BOINC (tag: $1) (this may take a while)..."
+        cd $ROOT/retrieval || failure
+        git clone git://git.aei.uni-hannover.de/shared/einsteinathome/boinc.git boinc >> $LOGFILE 2>&1 || failure
+        cd $ROOT/retrieval/boinc || failure
+        git checkout $1 >> $LOGFILE  2>&1 || failure
+    fi
+
+    return 0
+    }
+
 ### functions (utility) ####################################################
 
 check_prerequisites() {
@@ -84,12 +115,12 @@ check_prerequisites() {
     log "Checking prerequisites..."
 
     # required toolchain
-    TOOLS="ar automake autoconf cmake cvs g++ gcc hg ld lex libtool m4 patch pkg-config svn tar wget yacc"
+    TOOLS="ar automake autoconf cmake cvs doxygen g++ gcc hg ld lex libtool m4 patch pkg-config svn tar wget yacc"
 
     for tool in $TOOLS; do
         if ! ( type $tool >/dev/null 2>&1 ); then
             log "Missing \"$tool\" which is a required tool!"
-            return 1
+            exit 1
         fi
     done
 
@@ -102,12 +133,12 @@ check_retrieval() {
         return 0
     fi
 
-    log "Retrieving common library/sourcesies..."
+    log "Retrieving common library/sources..."
 
     purge_toptree
     prepare_toptree
 
-    # TODO
+    # retrieve_boinc $TAG_GFXAPPS || failure
 
     save_topbuild_state $TBS_RETRIEVED
     return 0
@@ -181,7 +212,6 @@ print_usage() {
     echo "          `basename $0` <target> <mode> <product>"
     echo
     echo "      Available targets:"
-    echo "          --all"
     echo "          --android"
     echo "          --ios"
     echo "          --linux"
@@ -195,7 +225,6 @@ print_usage() {
     echo "          --callgrind         ( linux only )"
     echo
     echo "      Available products:"
-    echo "          --all"
     echo "          --starsphere"
     echo "          --solarsystem"
     echo
@@ -252,11 +281,6 @@ save_topbuild_state() {
 # Delete any prior topbuild log
 rm -f ./topbuild.log
 
-log "++++++++++++++++++++++++++++++++++++"
-log "`date`"
-log "Top level build entry"
-log "Selected ${1:2} target ( using ${2:2} mode ) for product ${3:2}"
-
 # Improved command line parsing :-)
 
 if [ $# -eq 0 ]; then
@@ -289,9 +313,6 @@ fi
 
 if [ $# -eq 3 ]; then
     case "$1" in
-        "--all")
-            TARGET=$TARGET_ALL
-            ;;
         "--android")
             TARGET=$TARGET_ANDROID
             ;;
@@ -335,18 +356,13 @@ if [ $# -eq 3 ]; then
     esac
 
     case "$3" in
-        "--starsphere")
-            PRODUCT=starsphere
-            PRODUCT_NAME="Starsphere"
-            ;;
         "--solarsystem")
             PRODUCT=solarsystem
             PRODUCT_NAME="SolarSystem"
             ;;
-        "--all")
-            # Recursive invocation here
-            ./topbuild.sh $1 $2 --starsphere
-            ./topbuild.sh $1 $2 --solarsystem
+        "--starsphere")
+            PRODUCT=starsphere
+            PRODUCT_NAME="Starsphere"
             ;;
         *)
             log "Incorrect third argument given !!"
@@ -362,6 +378,11 @@ if [ $# -gt 3 ]; then
     exit 1
 fi
 
+log "++++++++++++++++++++++++++++++++++++"
+log "`date`"
+log "Top level build entry"
+log "Selected ${1:2} target ( using ${2:2} mode ) for product ${3:2}"
+
 # here we go...
 
 mode_check $2 $1
@@ -373,31 +394,23 @@ check_prerequisites || failure
 check_retrieval || failure
 
 case $TARGET in
-    $TARGET_ALL)
-        # Recursive invocation here.
-        ./topbuild.sh --android $2 $3
-        ./topbuild.sh --ios $2 $3
-        ./topbuild.sh --linux $2 $3
-        ./topbuild.sh --mac_osx $2 $3
-        ./topbuild.sh --win32 $2 $3
-        ;;
     $TARGET_ANDROID)
         prepare_directories android
-        cp -f $ROOT/build_android.sh $ROOT/$1/build.sh
+        cp -f $ROOT/build_android.sh $ROOT/android/build.sh
         log "For $PRODUCT_NAME : invoking Android build script ... "
         cd android
         ./build.sh $2 $3
         ;;
     $TARGET_IOS)
         prepare_directories ios
-        cp -f $ROOT/build_ios.sh $ROOT/$1/build.sh
+        cp -f $ROOT/build_ios.sh $ROOT/ios/build.sh
         log "For $PRODUCT_NAME : invoking iOS build script ... "
         cd ios
         ./build.sh $2 $3
         ;;
     $TARGET_LINUX)
         prepare_directories linux
-        cp -f $ROOT/build_linux.sh $ROOT/$1/build.sh
+        cp -f $ROOT/build_linux.sh $ROOT/linux/build.sh
         log "For $PRODUCT_NAME : invoking Linux build script ... "
         cd linux
         ./build.sh $2 $3
@@ -405,7 +418,7 @@ case $TARGET in
         ;;
     $TARGET_MAC_OSX)
         prepare_directories mac_osx
-        cp -f $ROOT/build_macosx.sh $ROOT/$1/build.sh
+        cp -f $ROOT/build_macosx.sh $ROOT/mac_osx/build.sh
         log "For $PRODUCT_NAME : invoking Mac OSX build script ... "
         cd mac_osx
         ./build.sh $2 $3
@@ -413,7 +426,7 @@ case $TARGET in
         ;;
     $TARGET_WIN32)
         prepare_directories win32
-        cp -f $ROOT/build_win32.sh $ROOT/$1/build.sh
+        cp -f $ROOT/build_win32.sh $ROOT/win32/build.sh
         log "For $PRODUCT_NAME : invoking Win32 build script ... "
         cd win32
         ./build.sh $2 $3
@@ -434,7 +447,6 @@ case $TARGET in
 
         log "Cleaning Mac OSX... "
         cd $ROOT/mac_osx
-        ./build.sh --distclean
 
         log "Cleaning Win32... "
         cd $ROOT/win32
@@ -449,6 +461,7 @@ case $TARGET in
         ;;
     $TARGET_DOC)
         log "Building documentation ... "
+        cd $ROOT
         doxygen Doxyfile >> $LOGFILE 2>&1 || failure
         cp -f $ROOT/doc/default/*.png $ROOT/doc/html >> $LOGFILE 2>&1 || failure
         cp -f $ROOT/doc/default/*.gif $ROOT/doc/html >> $LOGFILE 2>&1 || failure
