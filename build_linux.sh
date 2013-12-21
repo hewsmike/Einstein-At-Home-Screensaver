@@ -36,7 +36,7 @@ log() {
 rm -f ./build.log
 
 log "++++++++++++++++++++++++++++++++++++"
-log "Starting new build!"
+log "Starting new Linux build!"
 log "`date`"
 log "This is a stub for the Linux build script : does nuthin' at all"
 log "++++++++++++++++++++++++++++++++++++"

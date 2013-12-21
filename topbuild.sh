@@ -34,12 +34,12 @@ LOGFILE=$ROOT/topbuild.log
 # Required for correct access to the BOINC repository.
 TAG_GFXAPPS="current_gfx_apps"
 
-# For some source fetches we use version strings as I'm
+# For some source fetches I use version strings as I'm
 # not entirely happy to commit to whatever some latest
 # library build might be.
 FREETYPE_VERSION=2.5.1
 GLEW_VERSION=1.10.0
-LIBXML_VERSION=2.9.1
+LIBXML_VERSION=2.9.0
 SDL_VERSION=2.0.1
 
 # Target variants.
@@ -54,7 +54,7 @@ TARGET_DOC=7
 TARGET_CLEAN=8
 
 # No target set initially.
-TARGET=TARGET_NONE
+TARGET=$TARGET_NONE
 
 # Build mode variants.
 MODE_NONE=0
@@ -64,12 +64,17 @@ MODE_MEMCHECK=3
 MODE_CALLGRIND=4
 
 # Default mode is DEBUG
-MODE=MODE_DEBUG
+MODE=$MODE_DEBUG
 
 # Common build stages.
 TBS_NONE=0
 TBS_PREREQUISITES=1
-TBS_RETRIEVED=2
+TBS_BOINC_RETRIEVED=2
+TBS_FREETYPE_RETRIEVED=3
+TBS_GLEW_RETRIEVED=4
+TBS_LIBXML_RETRIEVED=5
+TBS_SDL_RETRIEVED=6
+TBS_RETRIEVED=7
 
 # No topbuild state set initially.
 TOPBUILDSTATE=$TBS_NONE
@@ -101,6 +106,99 @@ retrieve_boinc() {
         cd $ROOT/retrieval/boinc || failure
         git checkout $1 >> $LOGFILE  2>&1 || failure
     fi
+
+    save_topbuild_state $TBS_BOINC_RETRIEVED
+
+    return 0
+    }
+
+retrieve_freetype() {
+    FREETYPE_RETRIEVE_STR=freetype-$FREETYPE_VERSION
+    FREETYPE_RETRIEVE_FILE=$FREETYPE_RETRIEVE_STR.tar.bz2
+    FREETYPE_RETRIEVE_DOMAIN=http://download.savannah.gnu.org/releases/freetype/
+    FREETYPE_RETRIEVE_PATH=$FREETYPE_RETRIEVE_DOMAIN$FREETYPE_RETRIEVE_FILE
+
+    log "Retrieving Freetype2 (this may take a while)..."
+    mkdir -p $ROOT/retrieval/freetype2 >> $LOGFILE || failure
+
+    cd $ROOT/retrieval || failure
+    wget $FREETYPE_RETRIEVE_PATH >> $LOGFILE 2>&1 || failure
+    tar -xjf $FREETYPE_RETRIEVE_FILE >> $LOGFILE 2>&1 || failure
+    rm $FREETYPE_RETRIEVE_FILE >> $LOGFILE 2>&1 || failure
+    # substitute old source tree
+    rm -rf freetype2 >> $LOGFILE 2>&1 || failure
+    mv $FREETYPE_RETRIEVE_STR freetype2 >> $LOGFILE 2>&1 || failure
+
+    save_topbuild_state $TBS_FREETYPE_RETRIEVED
+
+    return 0
+    }
+
+retrieve_glew() {
+    GLEW_RETRIEVE_STR=glew-$GLEW_VERSION
+    GLEW_RETRIEVE_FILE=$GLEW_RETRIEVE_STR.tgz
+    GLEW_RETRIEVE_DOMAIN=http://sourceforge.net/projects/glew/files/glew/$GLEW_VERSION/
+    GLEW_RETRIEVE_PATH=$GLEW_RETRIEVE_DOMAIN$GLEW_RETRIEVE_FILE
+
+    log "Preparing GLEW..."
+    mkdir -p $ROOT/retrieval/glew >> $LOGFILE || failure
+
+    cd $ROOT/retrieval || failure
+    wget $GLEW_RETRIEVE_PATH >> $LOGFILE 2>&1 || failure
+    tar -xf $GLEW_RETRIEVE_FILE >> $LOGFILE 2>&1 || failure
+    rm $GLEW_RETRIEVE_FILE >> $LOGFILE 2>&1 || failure
+    # substitute old source tree
+    rm -rf glew >> $LOGFILE 2>&1 || failure
+    mv $GLEW_RETRIEVE_STR glew >> $LOGFILE 2>&1 || failure
+
+    save_topbuild_state $TBS_GLEW_RETRIEVED
+
+    return 0
+    }
+
+retrieve_libxml() {
+    LIBXML_RETRIEVE_STR=libxml2-sources-$LIBXML_VERSION
+    LIBXML_DELETE_STR=libxml2-$LIBXML_VERSION
+    LIBXML_RETRIEVE_FILE=$LIBXML_RETRIEVE_STR.tar.gz
+    LIBXML_RETRIEVE_DOMAIN=ftp://xmlsoft.org/libxml2/
+    LIBXML_RETRIEVE_PATH=$LIBXML_RETRIEVE_DOMAIN$LIBXML_RETRIEVE_FILE
+
+    log "Retrieving libxml2 (this may take a while)..."
+    mkdir -p $ROOT/retrieval/libxml2 >> $LOGFILE || failure
+
+    cd $ROOT/retrieval || failure
+    rm -f $LIBXML_RETRIEVE_FILE >> $LOGFILE 2>&1 || failure
+    wget --passive-ftp $LIBXML_RETRIEVE_PATH >> $LOGFILE 2>&1 || failure
+    tar -xzf $LIBXML_RETRIEVE_FILE >> $LOGFILE 2>&1 || failure
+    rm $LIBXML_RETRIEVE_FILE >> $LOGFILE 2>&1 || failure
+    # substitute old source tree
+    rm -rf libxml2 >> $LOGFILE 2>&1 || failure
+    mv $LIBXML_DELETE_STR libxml2 >> $LOGFILE 2>&1 || failure
+
+    save_topbuild_state $TBS_LIBXML_RETRIEVED
+
+    return 0
+    }
+
+retrieve_sdl() {
+    SDL_RETRIEVE_STR=SDL2-$SDL_VERSION
+    SDL_RETRIEVE_FILE=$SDL_RETRIEVE_STR.tar.gz
+    SDL_RETRIEVE_DOMAIN=http://www.libsdl.org/release/
+    SDL_RETRIEVE_PATH=$SDL_RETRIEVE_DOMAIN$SDL_RETRIEVE_FILE
+
+    log "Retrieving SDL2 (this may take a while)..."
+    mkdir -p $ROOT/retrieval/sdl2 >> $LOGFILE || failure
+
+    cd $ROOT/retrieval || failure
+    rm -f $SDL_RETRIEVE_FILE >> $LOGFILE 2>&1 || failure
+    wget $SDL_RETRIEVE_PATH >> $LOGFILE 2>&1 || failure
+    tar -xzf $SDL_RETRIEVE_FILE >> $LOGFILE 2>&1 || failure
+    rm $SDL_RETRIEVE_FILE >> $LOGFILE 2>&1 || failure
+    # substitute old source tree
+    rm -rf sdl2 >> $LOGFILE 2>&1 || failure
+    mv $SDL_RETRIEVE_STR sdl2 >> $LOGFILE 2>&1 || failure
+
+    save_topbuild_state $TBS_SDL_RETRIEVED
 
     return 0
     }
@@ -138,7 +236,25 @@ check_retrieval() {
     purge_toptree
     prepare_toptree
 
-    # retrieve_boinc $TAG_GFXAPPS || failure
+    if [ $TOPBUILDSTATE -lt $TBS_BOINC_RETRIEVED ]; then
+        retrieve_boinc $TAG_GFXAPPS || failure
+    fi
+
+    if [ $TOPBUILDSTATE -lt $TBS_FREETYPE_RETRIEVED ]; then
+        retrieve_freetype || failure
+    fi
+
+    if [ $TOPBUILDSTATE -lt $TBS_GLEW_RETRIEVED ]; then
+        retrieve_glew || failure
+    fi
+
+    if [ $TOPBUILDSTATE -lt $TBS_LIBXML_RETRIEVED ]; then
+        retrieve_libxml || failure
+    fi
+
+    if [ $TOPBUILDSTATE -lt $TBS_SDL_RETRIEVED ]; then
+        retrieve_sdl || failure
+    fi
 
     save_topbuild_state $TBS_RETRIEVED
     return 0
@@ -179,7 +295,7 @@ prepare_directories() {
 
     # For common source retrieval only update
     # ( replace if newer, copy if non-existent )
-    cp -rfu $ROOT/retrieval $ROOT/$1/3rdparty
+    cp -rfu $ROOT/retrieval/* $ROOT/$1/3rdparty
 
     # Populate with latest developer ( ie. YOU ) source code.
     rm -rf $ROOT/$1/src
@@ -398,29 +514,29 @@ case $TARGET in
         prepare_directories android
         cp -f $ROOT/build_android.sh $ROOT/android/build.sh
         log "For $PRODUCT_NAME : invoking Android build script ... "
-        cd android
+        cd $ROOT/android
         ./build.sh $2 $3
         ;;
     $TARGET_IOS)
         prepare_directories ios
         cp -f $ROOT/build_ios.sh $ROOT/ios/build.sh
         log "For $PRODUCT_NAME : invoking iOS build script ... "
-        cd ios
+        cd $ROOT/ios
         ./build.sh $2 $3
         ;;
     $TARGET_LINUX)
         prepare_directories linux
         cp -f $ROOT/build_linux.sh $ROOT/linux/build.sh
         log "For $PRODUCT_NAME : invoking Linux build script ... "
-        cd linux
+        cd $ROOT/linux
         ./build.sh $2 $3
         cd ..
         ;;
     $TARGET_MAC_OSX)
         prepare_directories mac_osx
-        cp -f $ROOT/build_macosx.sh $ROOT/mac_osx/build.sh
+        cp -f $ROOT/build_mac_osx.sh $ROOT/mac_osx/build.sh
         log "For $PRODUCT_NAME : invoking Mac OSX build script ... "
-        cd mac_osx
+        cd $ROOT/mac_osx
         ./build.sh $2 $3
         cd ..
         ;;
@@ -428,7 +544,7 @@ case $TARGET in
         prepare_directories win32
         cp -f $ROOT/build_win32.sh $ROOT/win32/build.sh
         log "For $PRODUCT_NAME : invoking Win32 build script ... "
-        cd win32
+        cd $ROOT/win32
         ./build.sh $2 $3
         cd ..
         ;;
@@ -446,7 +562,8 @@ case $TARGET in
         ./build.sh --distclean
 
         log "Cleaning Mac OSX... "
-        cd $ROOT/mac_osx
+        cd $ROOT/mac_osx --distclean
+        ./build.sh --distclean
 
         log "Cleaning Win32... "
         cd $ROOT/win32
@@ -456,6 +573,10 @@ case $TARGET in
 
         log "Cleaning common retrieval directory...  "
         rm -rf $ROOT/retrieval || failure
+
+        log "Cleaning all doxygen output"
+        rm -rf $ROOT/doc/html
+        rm -rf $ROOT/doc/*.*
 
         save_topbuild_state $TBS_NONE
         ;;

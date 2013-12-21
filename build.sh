@@ -52,7 +52,7 @@ TARGET_WIN32=3
 TARGET_DOC=4
 
 # No target set initially.
-TARGET=TARGET_NONE
+TARGET=$TARGET_NONE
 
 # Build mode variants.
 MODE_NONE=0

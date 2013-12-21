@@ -36,7 +36,7 @@ log() {
 rm -f ./build.log
 
 log "++++++++++++++++++++++++++++++++++++"
-log "Starting new build!"
+log "Starting new Win32 build!"
 log "`date`"
 log "This is a stub for the Win32 build script : does nuthin' at all"
 log "++++++++++++++++++++++++++++++++++++"

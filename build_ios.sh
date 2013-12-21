@@ -36,7 +36,7 @@ log() {
 rm -f ./build.log
 
 log "++++++++++++++++++++++++++++++++++++"
-log "Starting new build!"
+log "Starting new iOS build!"
 log "`date`"
 log "This is a stub for the iOS build script : does nuthin' at all"
 log "++++++++++++++++++++++++++++++++++++"

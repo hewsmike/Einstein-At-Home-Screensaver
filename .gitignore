@@ -11,6 +11,7 @@ doc/html
 /linux
 /mac
 /mac_osx
+/retrieval
 .settings
 
 # patterns
@@ -29,6 +30,7 @@ erp_git_version.h
 build.log
 topbuild.log
 @LOGFILE
+*.bak
 *.cbp
 *.cbTemp
 *.layout

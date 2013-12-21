@@ -36,7 +36,7 @@ log() {
 rm -f ./build.log
 
 log "++++++++++++++++++++++++++++++++++++"
-log "Starting new build!"
+log "Starting new Android build!"
 log "`date`"
 log "This is a stub for the Android build script : does nuthin' at all"
 log "++++++++++++++++++++++++++++++++++++"

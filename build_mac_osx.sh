@@ -36,7 +36,7 @@ log() {
 rm -f ./build.log
 
 log "++++++++++++++++++++++++++++++++++++"
-log "Starting new build!"
+log "Starting new Mac OSX build!"
 log "`date`"
 log "This is a stub for the Mac OSX build script : does nuthin' at all"
 log "++++++++++++++++++++++++++++++++++++"
