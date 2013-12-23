@@ -52,6 +52,7 @@ TARGET_MAC_OSX=5
 TARGET_WIN32=6
 TARGET_DOC=7
 TARGET_CLEAN=8
+TARGET_DISTCLEAN=9
 
 # No target set initially.
 TARGET=$TARGET_NONE
@@ -205,6 +206,34 @@ retrieve_sdl() {
 
 ### functions (utility) ####################################################
 
+distclean() {
+    log "Cleaning Android... "
+    cd $ROOT/android
+    ./build.sh --distclean
+
+    log "Cleaning iOS... "
+    cd $ROOT/ios
+    ./build.sh --distclean
+
+    log "Cleaning Linux... "
+    cd $ROOT/linux
+    ./build.sh --distclean
+
+    log "Cleaning Mac OSX... "
+    cd $ROOT/mac_osx --distclean
+    ./build.sh --distclean
+
+    log "Cleaning Win32... "
+    cd $ROOT/win32
+    ./build.sh --distclean
+
+    cd $ROOT
+
+    log "Cleaning all doxygen output"
+    rm -rf $ROOT/doc/html
+    rm -rf $ROOT/doc/*.*
+    }
+
 check_prerequisites() {
     if [ $TOPBUILDSTATE -ge $TBS_PREREQUISITES ]; then
         return 0
@@ -260,6 +289,24 @@ check_retrieval() {
     return 0
     }
 
+failure() {
+    log "++++++++++++++++++++++++++++++++++++"
+    log "Error detected! Stopping build!"
+    log "`date`"
+
+    if [ -f "$LOGFILE" ]; then
+        echo "------------------------------------"
+        echo "Please check logfile: `basename $LOGFILE`"
+        echo "These are the final ten lines:"
+        echo "------------------------------------"
+        tail -n 14 $LOGFILE | head -n 10
+    fi
+
+    log "++++++++++++++++++++++++++++++++++++"
+
+    exit 1
+    }
+
 log() {
     echo $1 | tee -a $LOGFILE
     return 0
@@ -281,14 +328,29 @@ mode_check() {
     return 0
     }
 
+obtain_topbuild_state() {
+    log "Checking for previous topbuild checkpoints..."
+
+    # Do we have a record of the most recent topbuild state?
+    if [ ! -f .topbuildstate ]; then
+        # No. Start from the beginning.
+        cd $ROOT || failure
+        log "No previous topbuild checkpoints found! Starting from scratch..."
+        TOPBUILDSTATE=$TBS_NONE
+    else
+        # Yes. Get that topbuild state.
+        TOPBUILDSTATE=`cat $ROOT/.topbuildstate 2>/dev/null`
+        log "Recovering previous topbuild..."
+    fi
+
+    return 0
+    }
+
 prepare_directories() {
     log "Preparing $1 directories ... "
 
     # If not present, create the given target's top level directory.
     mkdir -p $ROOT/$1
-
-    # If not present, create an install directory for the given target.
-    mkdir -p $ROOT/$1/install
 
     # If not present, create a 3rd party source directory for the given target.
     mkdir -p $ROOT/$1/3rdparty
@@ -350,8 +412,9 @@ print_usage() {
     echo "          `basename $0` <target>"
     echo
     echo "      Available targets:"
-    echo "          --projectclean         ( BEWARE : cleans all targets )"
     echo "          --doc"
+    echo "          --distclean            ( cleans all targets trees )"
+    echo "          --projectclean         ( distclean + BEWARE : deletes common library fetches )"
     echo
     echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
 
@@ -362,24 +425,6 @@ purge_toptree() {
     log "Purging topbuild common retrieval directories..."
 
     rm -rf $ROOT/retrieval >> $LOGFILE || failure
-
-    return 0
-    }
-
-obtain_topbuild_state() {
-    log "Checking for previous topbuild checkpoints..."
-
-    # Do we have a record of the most recent topbuild state?
-    if [ ! -f .topbuildstate ]; then
-        # No. Start from the beginning.
-        cd $ROOT || failure
-        log "No previous topbuild checkpoints found! Starting from scratch..."
-        TOPBUILDSTATE=$TBS_NONE
-    else
-        # Yes. Get that topbuild state.
-        TOPBUILDSTATE=`cat $ROOT/.topbuildstate 2>/dev/null`
-        log "Recovering previous topbuild..."
-    fi
 
     return 0
     }
@@ -412,6 +457,9 @@ if [ $# -eq 1 ]; then
             ;;
         "--projectclean")
             TARGET=$TARGET_CLEAN
+            ;;
+        "--distclean")
+            TARGET=$TARGET_DISTCLEAN
             ;;
         *)
             log "Wrong argument given !!"
@@ -549,36 +597,13 @@ case $TARGET in
         cd ..
         ;;
     $TARGET_CLEAN)
-        log "Cleaning Android... "
-        cd $ROOT/android
-        ./build.sh --distclean
-
-        log "Cleaning iOS... "
-        cd $ROOT/ios
-        ./build.sh --distclean
-
-        log "Cleaning Linux... "
-        cd $ROOT/linux
-        ./build.sh --distclean
-
-        log "Cleaning Mac OSX... "
-        cd $ROOT/mac_osx --distclean
-        ./build.sh --distclean
-
-        log "Cleaning Win32... "
-        cd $ROOT/win32
-        ./build.sh --distclean
-
-        cd $ROOT
-
         log "Cleaning common retrieval directory...  "
         rm -rf $ROOT/retrieval || failure
-
-        log "Cleaning all doxygen output"
-        rm -rf $ROOT/doc/html
-        rm -rf $ROOT/doc/*.*
-
-        save_topbuild_state $TBS_NONE
+        distclean
+        TOPBUILDSTATE=$TBS_NONE
+        ;;
+    $TARGET_DISTCLEAN)
+        distclean
         ;;
     $TARGET_DOC)
         log "Building documentation ... "
