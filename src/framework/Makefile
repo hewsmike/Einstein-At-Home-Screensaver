@@ -40,7 +40,8 @@ OBJS = AbstractGraphicsEngine.o ErrorHandler.o GraphicsEngineFactory.o glew.o
 OBJS += WindowManager.o Resource.o ResourceFactory.o BOINCClientAdapter.o Libxml2Adapter.o
 OBJS += TriggerTimer.o Events.o
 
-# TODO: GraphicsEngineFactory obviously depends on the actual implementations (here solarsystem & starsphere)! need to change the structure! what about plugins?
+# TODO: GraphicsEngineFactory obviously depends on the actual implementations (here solarsystem & starsphere)!
+# need to change the structure! what about plugins?
 CPPFLAGS += -I$(FRAMEWORK_SRC)
 CPPFLAGS += -I$(FRAMEWORK_SRC)/../solarsystem
 CPPFLAGS += -I$(SOLARSYSTEM_INSTALL)/include/boinc

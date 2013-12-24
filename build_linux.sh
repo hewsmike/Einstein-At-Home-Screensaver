@@ -180,6 +180,52 @@ save_build_state() {
     return 0
     }
 
+write_version_header() {
+    log "Retrieving git version information..."
+
+    # Path/name to the version header file.
+    HEADER_FILE="$ROOT/src/erp_git_version.h"
+
+    # Assuming the parent to $ROOT directory has a git repository.
+    # Save current directory.
+    OLD_DIR=`pwd`
+
+    # Move to parent of $ROOT
+    cd $ROOT
+    cd ..
+    if [ -d .git ]; then
+        log "Yup, found git repo !"
+        # Get the name of the most recent commit ( ie. the 40 digit hex code of same ).
+        GIT_LOG=`git log -n1 --pretty="format:%H"` || failure
+        # Get the name of the machine we are building on.
+        HOST=`hostname` || failure
+
+    fi
+
+    # Start constructing the header file with include guards.
+    echo "#ifndef ERP_GIT_VERSION_H" > $HEADER_FILE || failure
+    echo "#define ERP_GIT_VERSION_H" >> $HEADER_FILE || failure
+    echo "" >> $HEADER_FILE || failure
+
+    # Did we have a git repository for the $ROOT directory?
+    if [ "no$GIT_LOG" != "no" ]; then
+        # Yes. Write the git version variable combining the commit name, the host name
+        # and the top level build directory.
+        echo "#define ERP_GIT_VERSION \"$GIT_LOG ($HOST:$ROOT)\"" >> $HEADER_FILE || failure
+    else
+        # No. Write the git version variable to show that.
+        echo "#define ERP_GIT_VERSION \"unknown (git repository not found!)\"" >> $HEADER_FILE || failure
+    fi
+
+    # Close off include guard.
+    echo "" >> $HEADER_FILE || failure
+    echo "#endif" >> $HEADER_FILE || failure
+
+    # Return to prior directory.
+    cd $OLD_DIR
+    }
+
+
 ### functions to build from sources for linux targets #################################################################
 
 build_boinc() {
@@ -310,48 +356,42 @@ build_sdl() {
 
 ### specific build functions ###########################################################################################
 
-build_product() {
+build_orc() {
     # make sure ORC is always compiled for host platform
     log "Preparing $PRODUCT_NAME..."
     mkdir -p $ROOT/build/orc >> $LOGFILE || failure
     mkdir -p $ROOT/build/framework >> $LOGFILE || failure
     mkdir -p $ROOT/build/$PRODUCT >> $LOGFILE || failure
-    export PATH=$PATH_ORG
 
     # Create the header containing ( if available ) any git commit,
     # build machine and working directory information.
     write_version_header || failure
 
-    log "Building $PRODUCT_NAME [ORC]..."
     export ORC_SRC=$ROOT/src/orc || failure
     export ORC_INSTALL=$ROOT/install || failure
     cd $ROOT/build/orc || failure
     cp $ROOT/src/orc/Makefile . >> $LOGFILE 2>&1 || failure
+
+    log "Building $PRODUCT_NAME [ORC]..."
     make >> $LOGFILE 2>&1 || failure
     make install >> $LOGFILE 2>&1 || failure
-    log "Successfully built and installed $PRODUCT_NAME [ORC]!"
 
+    log "Successfully built and installed $PRODUCT_NAME [ORC]!"
+    return 0
+    }
+
+build_framework() {
+    # Now compile framework for host platform
     log "Building $PRODUCT_NAME [Framework]..."
     export FRAMEWORK_SRC=$ROOT/src/framework || failure
     export OGL_UTILITY_SRC=$ROOT/src/ogl_utility || failure
     export FRAMEWORK_INSTALL=$ROOT/install || failure
     cd $ROOT/build/framework || failure
     cp -f $ROOT/src/framework/Makefile . >> $LOGFILE 2>&1 || failure
+
     make ${2:2} PRODUCT=$PRODUCT_NAME >> $LOGFILE 2>&1 || failure
     make install >> $LOGFILE 2>&1 || failure
     log "Successfully built and installed $PRODUCT_NAME [Framework]!"
-
-    log "Building $PRODUCT_NAME [Application]..."
-    export PROJECT_ROOT=$ROOT || failure
-    cd $ROOT/build/$PRODUCT || failure
-    cp $ROOT/src/$PRODUCT/*.res . >> $LOGFILE 2>&1 || failure
-    cp -f $ROOT/src/$PRODUCT/Makefile.common Makefile >> $LOGFILE 2>&1 || failure
-
-    make ${2:2} SYSTEM="linux" PRODUCT=$PRODUCT_NAME >> $LOGFILE 2>&1 || failure
-
-    make install >> $LOGFILE 2>&1 || failure
-
-    log "Successfully built and installed $PRODUCT_NAME [Application]!"
 
     return 0
     }
@@ -359,14 +399,16 @@ build_product() {
 build_linux() {
     log "Important for an official build: let CC and CXX point to gcc/g++ 4.6+ !"
 
-
+    # Make sure the base libraries are built.
     build_boinc || failure
     build_freetype || failure
     build_glew || failure
     build_libxml || failure
     build_sdl || failure
 
-    # build_mode $TARGET_LINUX $2 || failure
+    # Now client code.
+    build_orc || failure
+    # build_framework || failure
 
     return 0
     }
