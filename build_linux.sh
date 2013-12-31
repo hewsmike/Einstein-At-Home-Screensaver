@@ -35,6 +35,8 @@ LOGFILE=$ROOT/build.log
 MODE_NONE=0
 MODE_DEBUG=1
 MODE_RELEASE=2
+
+# Linux only targets.
 MODE_MEMCHECK=3
 MODE_CALLGRIND=4
 
@@ -190,16 +192,14 @@ write_version_header() {
     # Save current directory.
     OLD_DIR=`pwd`
 
-    # Move to parent of $ROOT
-    cd $ROOT
-    cd ..
+    # Move to parent of $ROOT ( which ought have repo )
+    cd ../$ROOT
     if [ -d .git ]; then
         log "Yup, found git repo !"
         # Get the name of the most recent commit ( ie. the 40 digit hex code of same ).
         GIT_LOG=`git log -n1 --pretty="format:%H"` || failure
         # Get the name of the machine we are building on.
         HOST=`hostname` || failure
-
     fi
 
     # Start constructing the header file with include guards.
