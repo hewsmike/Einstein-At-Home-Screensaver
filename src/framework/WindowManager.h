@@ -65,20 +65,11 @@ using namespace std;
 
 class WindowManager {
     public:
-        enum displaymode {WINDOW, SCREENSAVER, DEMO};
 
         /**
-         * \brief Constructor requiring choice of display & behaviour.
-         *
-         * \param mode one of the above enumerants :
-         *          - WINDOW to produce an OS window with controls, and
-         *            allowing user interactivity
-         *          - SCREENSAVER to produce fullscreen display with exit
-         *            on any input
-         *          - DEMO to produce fullscreen display with user
-         *            interactivity
+         * \brief Constructor.
          */
-        WindowManager(displaymode mode);
+        WindowManager(void);
 
         /// Destructor
         virtual ~WindowManager();
@@ -181,30 +172,7 @@ class WindowManager {
          */
         void setWindowIcon(const unsigned char *data, const int size) const;
 
-        /**
-         * \brief Obtain the major and minor version number of the
-         *        current OpenGL context.
-         *
-         * \param major : pointer to place the major version number
-         * \param minor : pointer to place the minor version number
-         */
-        void getOGLVersion(GLuint* major, GLuint* minor);
-
     private:
-        /// Minimum OpenGL version requirements.
-        static unsigned int OPEN_GL_VERSION_MINIMUM_MAJOR;
-        static unsigned int OPEN_GL_VERSION_MINIMUM_MINOR;
-
-        ///
-        static int NO_OPEN_GL_CONTEXT;
-
-        /// Stencil option.
-        static int NO_STENCIL;
-
-        /// Vertical retracing or 'v-sync', this may have no
-        /// effect - depends upon the OS and video driver.
-        static int VERTICAL_RETRACE_COUNT;
-
         /**
          * \brief Initialise the GLEW system, essentially establishing
          *        dynamic linking to the video driver for OpenGL functionality.
@@ -213,23 +181,11 @@ class WindowManager {
          */
         bool initializeGLEW(void);
 
-        /**
-         * \brief Tokenise a given string using a given delimiter character
-         *
-         * \param str : the string to tokenise
-         * \param delimiter : the character to delimit by
-         * \param store : a reference to the container to store the tokens in
-         */
-        void tokeniseString(const std::string str, const char delimiter, std::vector<std::string>& store);
-
         /// Local BOINC adapter instance to read project preferences
         BOINCClientAdapter* m_BoincAdapter;
 
         /// The render event interval (in ms) for invoking the render event observer
         float m_RenderEventInterval;
-
-        /// The user's choice of video mode ie. the initial mode for this application.
-        GLFWvidmode current_desktop_mode;
 
         /// The current width of the host's desktop
         int m_DesktopWidth;
@@ -254,9 +210,6 @@ class WindowManager {
 
         /// The screensaver mode indicator ie. was it requested ?
         bool m_ScreensaverMode;
-
-        /// Keep record of current actual window state.
-        displaymode operating_mode;
 
         /// The event observer registry.
         list<AbstractGraphicsEngine *> eventObservers;
