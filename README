@@ -1,4 +1,4 @@
-Repository for development of screensaver code using the Einstein At Home project's build system as outlined here :
+Repository for development of screensaver code using a rather updated version of the Einstein At Home project's build system as outlined here :
 
  https://n0.aei.uni-hannover.de/doxygen/einsteinathome/graphics/index.html
 
@@ -9,7 +9,6 @@ Repository for development of screensaver code using the Einstein At Home projec
     - GLEW retained to manage dynamic function pointers on win32
     - WIN_OGL_WORKAROUND ( source level switch ) removed
     - NB zlib_licence.txt as applying to SDL 2 usage
-    - assume that OpenGL forwards compatible contexts are available at runtime
-      and thus display list functionality nolonger usable.
+    - use OpenGL ES 2.x ie. that subset of OpenGL forwards compatible contexts.
     - use sdl_ttf library for rendering, using font interface via FreeType.
     - expand build system ( initially by stubs ) for Android and iOS.
