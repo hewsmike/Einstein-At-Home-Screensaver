@@ -32,8 +32,6 @@
 unsigned int WindowManager::OPEN_GL_VERSION_MINIMUM_MAJOR(1);
 unsigned int WindowManager::OPEN_GL_VERSION_MINIMUM_MINOR(5);
 int WindowManager::NO_OPEN_GL_CONTEXT(0);
-int WindowManager::DEPTH_BUFFER_GRAIN(24);
-int WindowManager::DEPTH_BUFFER_GRAIN_FALLBACK(16);
 int WindowManager::NO_STENCIL(0);
 int WindowManager::VERTICAL_RETRACE_COUNT(1);
 
@@ -52,40 +50,6 @@ WindowManager::~WindowManager() {
     }
 
 bool WindowManager::initialize(const int width, const int height, const int frameRate) {
-    // Can the GLFW system be initialised ?
-    if(glfwInit() == GL_FALSE) {
-        // No it can't, and that's fatal.
-        ErrorHandler::record("WindowManager::initialize() : Window system could not be initalized - GLFW init fail", ErrorHandler::FATAL);
-        return false;
-        }
-    else {
-        // Yes it can be, and now is, initialised.
-        // Emit GLFW version info.
-        int major = 0;
-        int minor = 0;
-        int revision = 0;
-
-        glfwGetVersion(&major, &minor, &revision);
-        std::stringstream msg;
-        msg << "WindowManager::initialize() : Using GLfW version "
-            << major
-            << "."
-            << minor
-            << "."
-            << revision;
-        ErrorHandler::record(msg.str(), ErrorHandler::INFORM);
-        }
-
-    // GLFW is up and running by now, and glfwInit() has put a callback in
-    // place for GLFW cleanup on normal program exit ie. atexit(glfwTerminate)
-
-    // Determines that a buffer swap ought await the
-    // return of the raster line to the top of the screen.
-    glfwSwapInterval(VERTICAL_RETRACE_COUNT);
-
-    // Retrieve current video hardware settings for the user's desktop.
-    glfwGetDesktopMode(&current_desktop_mode);
-
     m_DesktopWidth = current_desktop_mode.Width;
     stringstream msg_init_current_desktop_mode_width;
     msg_init_current_desktop_mode_width << "WindowManager::initialize() : current desktop width = "
@@ -140,10 +104,6 @@ bool WindowManager::initialize(const int width, const int height, const int fram
     m_WindowedHeight = (preferredHeight != 0) ? preferredHeight : height;
     m_RenderEventInterval = 1000.0f / ((preferredFrameRate != 0) ? preferredFrameRate : frameRate);
 
-    // Suggest our OpenGL version minimum.
-    glfwOpenWindowHint(GLFW_OPENGL_VERSION_MAJOR, OPEN_GL_VERSION_MINIMUM_MAJOR);
-    glfwOpenWindowHint(GLFW_OPENGL_VERSION_MINOR, OPEN_GL_VERSION_MINIMUM_MINOR);
-
     // Start in selected screen and operational mode.
     switch(operating_mode) {
         case WINDOW :
@@ -159,26 +119,6 @@ bool WindowManager::initialize(const int width, const int height, const int fram
             ErrorHandler::record("WindowManager::initialize() : bad switch case ( default )", ErrorHandler::FATAL);
             break;
         }
-
-    // Manage Windows OpenGL backwards compatibility issue.
-#ifdef WIN_OGL_WORKAROUND
-    if(setOGLContext() == true) {
-        // Good to go.
-        ErrorHandler::record("WindowManager::initialize() : acquired adequate OpenGL backward compatible version", ErrorHandler::INFORM);
-        // Find out the OpenGL version.
-        GLuint major = 0;
-        GLuint minor = 0;
-        getOGLVersion(&major, &minor);
-        std::stringstream msg1;
-        msg1 << "WindowManager::initialize() : OpenGL version = "
-             << major << '.' << minor;
-        ErrorHandler::record(msg1.str(), ErrorHandler::INFORM);
-        }
-    else {
-        ErrorHandler::record("WindowManager::initialize() : could not acquire correct OpenGL backward compatible version", ErrorHandler::INFORM);
-        return false;
-        }
-#endif
 
     // Final test to see if the driver is "truthful".
     // If OPEN_GL_VERSION_MINIMUM_MAJOR or OPEN_GL_VERSION_MINIMUM_MINOR
@@ -598,39 +538,7 @@ bool WindowManager::tryMode(int width, int height, int mode) {
     // which may be EITHER a "OS window" OR a fullscreen.
 
     // See if you can get a rendering surface from the OS.
-    glfwOpenWindow(width, height,
-                   current_desktop_mode.RedBits,
-                   current_desktop_mode.GreenBits,
-                   current_desktop_mode.BlueBits,
-                   current_desktop_mode.RedBits,			// Alpha range same as individual colors
-                   best_depth_buffer_grain,
-                   NO_STENCIL,
-                   mode);
 
-    // Rather than examine the return the value of glfwOpenWindow - which
-    // may return GL_FALSE even in the case where a window/context was obtained
-    // but not at the window size requested - then look at the following
-    // instead :
-
-    int window_open = glfwGetWindowParam(GLFW_OPENGL_PROFILE);
-    // If this value is ZERO then no OpenGL context was obtained.
-
-    if(window_open == NO_OPEN_GL_CONTEXT) {
-        // It may have failed to open because of the depth buffer choice,
-        // so retry with a lower depth resolution ...
-        best_depth_buffer_grain = DEPTH_BUFFER_GRAIN_FALLBACK;
-        glfwOpenWindow(width, height,
-                       current_desktop_mode.RedBits,
-                       current_desktop_mode.GreenBits,
-                       current_desktop_mode.BlueBits,
-                       current_desktop_mode.RedBits,			// Alpha range same as individual colors
-                       best_depth_buffer_grain,
-                       NO_STENCIL,
-                       mode);
-
-        // See if a context was obtained.
-        window_open = glfwGetWindowParam(GLFW_OPENGL_PROFILE);
-        }
 
     // Again, if this value is ZERO then no OpenGL context was obtained.
     if(window_open != NO_OPEN_GL_CONTEXT) {
@@ -684,99 +592,6 @@ bool WindowManager::initializeGLEW(void) {
 
     return ret_val;
     }
-
-#ifdef WIN_OGL_WORKAROUND
-bool WindowManager::setOGLContext(void) {
-    // Assume failure.
-    bool ret_val = false;
-
-    // Determine OpenGL version.
-    GLuint major = 0;
-    GLuint minor = 0;
-    getOGLVersion(&major, &minor);
-    std::stringstream msg;
-    msg << "WindowManager::setOGLContext() : OpenGL v"
-        << major
-        << "."
-        << minor;
-    ErrorHandler::record(msg.str(), ErrorHandler::INFORM);
-
-    // With v3.2+ then ...
-    if((major > 3) ||
-        ((major == 3) && (minor >= 2))) {
-        ErrorHandler::record("WindowManager::setOGLContext() : OpenGL v3.2+ version", ErrorHandler::INFORM);
-        // ... try to establish a backwards compatible context.
-        if(glewIsSupported("GL_ARB_compatibility")) {
-            ErrorHandler::record("WindowManager::setOGLContext() : GL_ARB_compatibility supported", ErrorHandler::INFORM);
-           // Great, we have compatibility mode.
-            // Get a handle to the device context.
-            HDC hdc = wglGetCurrentDC();
-            // Get a handle to the OpenGL context.
-            HGLRC hglrc = wglGetCurrentContext();
-            if(WGLEW_ARB_create_context_profile) {
-                ErrorHandler::record("WindowManager::setOGLContext() : WGL_ARB_create_context_profile supported", ErrorHandler::INFORM);
-                // Initialise attribute array for wgl.
-                int attribList[] = {WGL_CONTEXT_MAJOR_VERSION_ARB, OPEN_GL_VERSION_MINIMUM_MAJOR,
-                                    WGL_CONTEXT_MINOR_VERSION_ARB, OPEN_GL_VERSION_MINIMUM_MINOR,
-                                    0, 0};
-
-                // Create new context from current.
-                HGLRC new_context = wglCreateContextAttribsARB(hdc, hglrc, attribList);
-
-                // Did that work?
-                if(new_context != NULL) {
-                    // Make this new context the current one.
-                    wglMakeCurrent(hdc, new_context);
-
-                    // Delete the old context.
-                    wglDeleteContext(hglrc);
-
-                    // Give GLEW the best chance of finding
-                    // functionality with experimental drivers.
-                    glewExperimental = GL_TRUE;
-
-                    // Re-initialise GLEW.
-                    if(glewInit() != GLEW_OK) {
-                        ErrorHandler::record("WindowManager::setOGLContext() : Window system could not be initalized - GLEW init fail", ErrorHandler::WARN);
-                        }
-                    else {
-                        // Finally!!
-                        ErrorHandler::record("WindowManager::setOGLContext() : Window system could be initalized - GLEW init success", ErrorHandler::INFORM);
-                        ret_val = true;
-                        }
-                    }
-                else {
-                    // Tried, but couldn't get a context.
-                    ErrorHandler::record("WindowManager::setOGLContext() : Failed to created backward compatible context", ErrorHandler::WARN);
-                    }
-                }
-            else {
-                // No, backward context creation facility not available.
-                ErrorHandler::record("WindowManager::setOGLContext() : WGL_ARB_create_context_profile NOT supported", ErrorHandler::WARN);
-                }
-            }
-        }
-    else {
-        // OK, so we're less than v3.2, are we at least the minumum ?
-        if((major > OPEN_GL_VERSION_MINIMUM_MAJOR) ||
-            ((major == OPEN_GL_VERSION_MINIMUM_MAJOR) && (minor >= OPEN_GL_VERSION_MINIMUM_MINOR))) {
-            ret_val = true;
-            }
-        else {
-            // No, the declared OpenGL version is less than desired.
-            std::stringstream msg;
-            msg << "WindowManager::setOGLContext() : OpenGL pre v"
-                << OPEN_GL_VERSION_MINIMUM_MAJOR
-                << "."
-                << OPEN_GL_VERSION_MINIMUM_MINOR
-                << " version";
-            ErrorHandler::record(msg.str(), ErrorHandler::WARN);
-            }
-        }
-
-    return ret_val;
-    }
-#endif
 
 void WindowManager::getOGLVersion(GLuint* major, GLuint* minor) {
     // Try to obtain the version string from the context.

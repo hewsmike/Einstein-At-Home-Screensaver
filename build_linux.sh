@@ -408,7 +408,7 @@ build_linux() {
 
     # Now client code.
     build_orc || failure
-    # build_framework || failure
+    build_framework || failure
 
     return 0
     }

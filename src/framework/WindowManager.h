@@ -51,18 +51,9 @@ using namespace std;
  * AbstractGraphicsEngine. This also includes all timer \ref Events required for
  * rendering and information retrieval control.
  *
- *      A major point is that one must decide upon windowed, screensaver or demo
- * usage upon construction, and subsequent toggling of the screen b/w window and
- * fullscreen display is NOT available. This is due to dependencies
- * b/w OpenGL/GLFW/GLEW, specifically that a renewal of an OpenGL context alters
- * the dynamic function pointers obtained by GLEW, which in turn depends upon
- * whether the target system is Windows or not ( that is, I've yet to find a
- * reliable workaround for that ).
- *
  * \see AbstractGraphicsEngine
  * \see BOINCClientAdapter
  * \see ErrorHandler
- * \see Events
  *
  * \author Oliver Bock\n
  * Max-Planck-Institute for Gravitational Physics\n
@@ -98,7 +89,7 @@ class WindowManager {
          *      Call this method first ( after instantiation ) to prepare the
          * main application window as well as the OpenGL context. Please
          * note that the optional parameters \c width, \c height and \c
-         * frameRate are overridden by the values set by the user in the
+         * frameRate will be overridden by the values set by the user in the
          * project preferences!
          *
          * \param width The optional initial width of the main window.
@@ -199,7 +190,6 @@ class WindowManager {
          */
         void getOGLVersion(GLuint* major, GLuint* minor);
 
-
     private:
         /// Minimum OpenGL version requirements.
         static unsigned int OPEN_GL_VERSION_MINIMUM_MAJOR;
@@ -208,56 +198,12 @@ class WindowManager {
         ///
         static int NO_OPEN_GL_CONTEXT;
 
-        /// Choices for depth buffer resolution.
-        static int DEPTH_BUFFER_GRAIN;
-        static int DEPTH_BUFFER_GRAIN_FALLBACK;
-
         /// Stencil option.
         static int NO_STENCIL;
 
         /// Vertical retracing or 'v-sync', this may have no
         /// effect - depends upon the OS and video driver.
         static int VERTICAL_RETRACE_COUNT;
-
-        /// What was the best depth buffer resolution found ?
-        int best_depth_buffer_grain;
-
-#ifdef WIN_OGL_WORKAROUND
-        /**
-         * \brief For Windows builds only, set correct OpenGL version context.
-         *
-         * \return boolean indicating success ( TRUE ) or failure ( FALSE )
-         */
-        bool setOGLContext(void);
-#endif
-
-        /**
-         * \brief Attempt to obtain a rendering surface within an OS
-         *        window.
-         *
-         * \return boolean indicating success ( TRUE ) or failure ( FALSE )
-         */
-        bool setWindowedMode(void);
-
-        /**
-         * \brief Attempt to obtain a rendering surface as an OS
-         *        fullscreen.
-         *
-         * \return boolean indicating success ( TRUE ) or failure ( FALSE )
-         */
-        bool setFullScreenMode(void);
-
-        /**
-         * \brief Attempt to obtain a rendering surface of a given size
-         *
-         * \param width : horizontal dimensions in pixels.
-         * \param height : vertical dimensions in pixels.
-         * \param mode : either GLFW_WINDOW if an OS window is desired or
-         *               GLFW_FULLSCREEN if a fullscreen surface is desired.
-         *
-         * \return boolean indicating success ( TRUE ) or failure ( FALSE )
-         */
-        bool tryMode(int width, int height, int mode);
 
         /**
          * \brief Initialise the GLEW system, essentially establishing

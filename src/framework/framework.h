@@ -32,12 +32,8 @@
  * \author Mike Hewson\n
  */
 
-#include <GL/glew.h>
-#include <GL/glfw.h>
-
-#ifdef WIN_OGL_WORKAROUND
-#include <GL/wglew.h>
-#endif
+#include <glew.h>
+#include "SDL.h"
 
 /**
  * @}
