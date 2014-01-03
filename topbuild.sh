@@ -429,6 +429,16 @@ purge_toptree() {
     return 0
     }
 
+realtarget() {
+    mode_check $2 $1
+
+    obtain_topbuild_state || failure
+
+    check_prerequisites || failure
+
+    check_retrieval || failure
+    }
+
 save_topbuild_state() {
     log "Saving topbuild checkpoint..."
 
@@ -549,16 +559,9 @@ log "Selected ${1:2} target ( using ${2:2} mode ) for product ${3:2}"
 
 # here we go...
 
-mode_check $2 $1
-
-obtain_topbuild_state || failure
-
-check_prerequisites || failure
-
-check_retrieval || failure
-
 case $TARGET in
     $TARGET_ANDROID)
+        realtarget
         prepare_directories android
         cp -f $ROOT/build_android.sh $ROOT/android/build.sh
         log "For $PRODUCT_NAME : invoking Android build script ... "
@@ -566,6 +569,7 @@ case $TARGET in
         ./build.sh $2 $3
         ;;
     $TARGET_IOS)
+        realtarget
         prepare_directories ios
         cp -f $ROOT/build_ios.sh $ROOT/ios/build.sh
         log "For $PRODUCT_NAME : invoking iOS build script ... "
@@ -573,6 +577,7 @@ case $TARGET in
         ./build.sh $2 $3
         ;;
     $TARGET_LINUX)
+        realtarget
         prepare_directories linux
         cp -f $ROOT/build_linux.sh $ROOT/linux/build.sh
         log "For $PRODUCT_NAME : invoking Linux build script ... "
@@ -581,6 +586,7 @@ case $TARGET in
         cd ..
         ;;
     $TARGET_MAC_OSX)
+        realtarget
         prepare_directories mac_osx
         cp -f $ROOT/build_mac_osx.sh $ROOT/mac_osx/build.sh
         log "For $PRODUCT_NAME : invoking Mac OSX build script ... "
@@ -589,6 +595,7 @@ case $TARGET in
         cd ..
         ;;
     $TARGET_WIN32)
+        realtarget
         prepare_directories win32
         cp -f $ROOT/build_win32.sh $ROOT/win32/build.sh
         log "For $PRODUCT_NAME : invoking Win32 build script ... "
@@ -600,7 +607,7 @@ case $TARGET in
         log "Cleaning common retrieval directory...  "
         rm -rf $ROOT/retrieval || failure
         distclean
-        TOPBUILDSTATE=$TBS_NONE
+        save_topbuild_state $TBS_NONE
         ;;
     $TARGET_DISTCLEAN)
         distclean

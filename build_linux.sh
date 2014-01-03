@@ -193,7 +193,8 @@ write_version_header() {
     OLD_DIR=`pwd`
 
     # Move to parent of $ROOT ( which ought have repo )
-    cd ../$ROOT
+    cd $ROOT
+    cd ..
     if [ -d .git ]; then
         log "Yup, found git repo !"
         # Get the name of the most recent commit ( ie. the 40 digit hex code of same ).
@@ -285,22 +286,11 @@ build_glew() {
         return 0
     fi
 
+    cd $ROOT/3rdparty/glew
+
     log "Building GLEW (this may take a while)..."
-
-    # Not actually building a distinct GLEW library here.
-    # Incorporate GLEW via an object file ( glew.o ) to later
-    # link to instead. Currently the glew.org provided makefile
-    # is problematic for user defined intallation targets
-    # ( ie. doesn't work ). See makefile(s) in our framework
-    # sub-directory.
-
-    # GLEW headers copied
-    cd $ROOT/3rdparty/glew/include/GL || failure
-    cp -f *.h $ROOT/install/include/GL || failure
-
-    # Put glew.c into our framework sub-directory
-    cd $ROOT/3rdparty/glew/src || failure
-    cp -f glew.c $ROOT/src/framework  || failure
+    make >> $LOGFILE 2>&1 || failure
+    make GLEW_DEST=$ROOT/install/ install >> $LOGFILE 2>&1 || failure
 
     log "Successfully built and installed GLEW!"
 

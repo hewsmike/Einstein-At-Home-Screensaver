@@ -32,7 +32,7 @@
  * \author Mike Hewson\n
  */
 
-#include <glew.h>
+#include "glew.h"
 #include "SDL.h"
 
 /**

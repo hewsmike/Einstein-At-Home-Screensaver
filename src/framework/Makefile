@@ -37,10 +37,11 @@ CPPFLAGS += -I$(FRAMEWORK_INSTALL)/include/GL
 CPPFLAGS += -I$(FRAMEWORK_INSTALL)/include/SDL2
 CPPFLAGS += -I/usr/include
 
-# Note the mention of 'glew.o' here.
 DEPS = Makefile
-OBJS = AbstractGraphicsEngine.o ErrorHandler.o GraphicsEngineFactory.o glew.o
-OBJS += WindowManager.o Resource.o ResourceFactory.o BOINCClientAdapter.o Libxml2Adapter.o
+# OBJS += AbstractGraphicsEngine.o
+# OBJS += ErrorHandler.o
+# OBJS += GraphicsEngineFactory.o
+# OBJS += WindowManager.o Resource.o ResourceFactory.o BOINCClientAdapter.o Libxml2Adapter.o
 
 # TODO: GraphicsEngineFactory obviously depends on the actual implementations (here solarsystem & starsphere)!
 # need to change the structure! what about plugins?
@@ -68,9 +69,6 @@ AbstractGraphicsEngine.o: $(DEPS) $(FRAMEWORK_SRC)/AbstractGraphicsEngine.cpp $(
 
 ErrorHandler.o: $(DEPS) $(FRAMEWORK_SRC)/ErrorHandler.cpp $(FRAMEWORK_SRC)/ErrorHandler.h
 	$(CXX) -g $(CPPFLAGS) -c $(FRAMEWORK_SRC)/ErrorHandler.cpp
-
-glew.o: $(DEPS) $(FRAMEWORK_SRC)/glew.c $(FRAMEWORK_INSTALL)/include/GL/glew.h
-	$(CXX) -g -DGLEW_STATIC ${CPPFLAGS} -c $(FRAMEWORK_SRC)/glew.c
 
 GraphicsEngineFactory.o: $(DEPS) $(FRAMEWORK_SRC)/GraphicsEngineFactory.cpp $(FRAMEWORK_SRC)/GraphicsEngineFactory.h
 	$(CXX) -g ${CPPFLAGS} -c $(FRAMEWORK_SRC)/GraphicsEngineFactory.cpp
