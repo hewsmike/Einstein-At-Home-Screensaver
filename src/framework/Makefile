@@ -38,10 +38,11 @@ CPPFLAGS += -I$(FRAMEWORK_INSTALL)/include/SDL2
 CPPFLAGS += -I/usr/include
 
 DEPS = Makefile
-# OBJS += AbstractGraphicsEngine.o
-# OBJS += ErrorHandler.o
+OBJS = AbstractGraphicsEngine.o
+OBJS += ErrorHandler.o
 # OBJS += GraphicsEngineFactory.o
-# OBJS += WindowManager.o Resource.o ResourceFactory.o BOINCClientAdapter.o Libxml2Adapter.o
+OBJS += WindowManager.o
+OBJS += Resource.o ResourceFactory.o BOINCClientAdapter.o Libxml2Adapter.o
 
 # TODO: GraphicsEngineFactory obviously depends on the actual implementations (here solarsystem & starsphere)!
 # need to change the structure! what about plugins?

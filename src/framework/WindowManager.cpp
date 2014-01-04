@@ -27,21 +27,22 @@
 #include <string>
 
 #include "ErrorHandler.h"
-#include "Events.h"
 
-unsigned int WindowManager::OPEN_GL_VERSION_MINIMUM_MAJOR(1);
-unsigned int WindowManager::OPEN_GL_VERSION_MINIMUM_MINOR(5);
-int WindowManager::NO_OPEN_GL_CONTEXT(0);
-int WindowManager::NO_STENCIL(0);
-int WindowManager::VERTICAL_RETRACE_COUNT(1);
+const std::string WindowManager::m_WindowTitle("Einstein At Home");
 
-WindowManager::WindowManager(displaymode mode) :
-                                operating_mode(mode) {
-    m_ScreensaverMode = false;
-    if(mode == WindowManager::SCREENSAVER) {
-        m_ScreensaverMode = true;
-        }
-    best_depth_buffer_grain = DEPTH_BUFFER_GRAIN;
+const int WindowManager::RED_BITS(8);
+const int WindowManager::GREEN_BITS(8);
+const int WindowManager::BLUE_BITS(8);
+const int WindowManager::ALPHA_BITS(8);
+const int WindowManager::DEPTH_BITS(16);
+const int WindowManager::HAS_DEPTH_BUFFER(1);
+
+const int WindowManager::OGL_MAJOR_VERSION(3);
+const int WindowManager::OGL_MINOR_VERSION(2);
+
+const int WindowManager::DISPLAY_ZERO(0);
+
+WindowManager::WindowManager(void) {
     m_BoincAdapter = new BOINCClientAdapter("");
     }
 
@@ -50,36 +51,30 @@ WindowManager::~WindowManager() {
     }
 
 bool WindowManager::initialize(const int width, const int height, const int frameRate) {
-    m_DesktopWidth = current_desktop_mode.Width;
+    /// TODO - check error return on this.
+    SDL_GetDesktopDisplayMode(WindowManager::DISPLAY_ZERO, m_Mode);
+
+    m_DesktopWidth = m_Mode->w;
     stringstream msg_init_current_desktop_mode_width;
     msg_init_current_desktop_mode_width << "WindowManager::initialize() : current desktop width = "
                                         << m_DesktopWidth;
     ErrorHandler::record(msg_init_current_desktop_mode_width.str(), ErrorHandler::INFORM);
 
 
-    m_DesktopHeight = current_desktop_mode.Height;
+    m_DesktopHeight = m_Mode->h;
     stringstream msg_init_current_desktop_mode_height;
     msg_init_current_desktop_mode_height << "WindowManager::initialize() : current desktop height = "
                                          << m_DesktopHeight;
     ErrorHandler::record(msg_init_current_desktop_mode_height.str(), ErrorHandler::INFORM);
 
 
-    m_DesktopBitsPerPixel = current_desktop_mode.RedBits +
-                            current_desktop_mode.GreenBits +
-                            current_desktop_mode.BlueBits;
+    m_DesktopBitsPerPixel = SDL_BITSPERPIXEL(m_Mode->format);
     stringstream msg_init_current_desktop_bitsperpixel;
     msg_init_current_desktop_bitsperpixel << "WindowManager::initialize() : current desktop bits per pixel = "
-                                          << m_DesktopBitsPerPixel
-                                          << " ( red = "
-                                          << current_desktop_mode.RedBits
-                                          << ", green = "
-                                          << current_desktop_mode.GreenBits
-                                          << ", blue = "
-                                          << current_desktop_mode.BlueBits
-                                          << " )";
+                                          << m_DesktopBitsPerPixel;
     ErrorHandler::record(msg_init_current_desktop_bitsperpixel.str(), ErrorHandler::INFORM);
 
-    // get initial non-fullscreen resolution and frame rate from project preferences
+    // Get initial non-fullscreen resolution and frame rate from project preferences
     m_BoincAdapter->initialize();
     int preferredWidth = m_BoincAdapter->graphicsWindowWidth();
     stringstream msg_init_prefwidth;
@@ -99,56 +94,44 @@ bool WindowManager::initialize(const int width, const int height, const int fram
                              << preferredFrameRate;
     ErrorHandler::record(msg_init_pref_frame_rate.str(), ErrorHandler::INFORM);
 
-    // override optional given default values if preferred values are set
+    // Override optional given default values if preferred values are set
     m_WindowedWidth = (preferredWidth != 0) ? preferredWidth : width;
     m_WindowedHeight = (preferredHeight != 0) ? preferredHeight : height;
     m_RenderEventInterval = 1000.0f / ((preferredFrameRate != 0) ? preferredFrameRate : frameRate);
 
-    // Start in selected screen and operational mode.
-    switch(operating_mode) {
-        case WINDOW :
-            setWindowedMode();
-            break;
-        case SCREENSAVER :
-            setFullScreenMode();
-            break;
-        case DEMO :
-            setFullScreenMode();
-            break;
-        default:
-            ErrorHandler::record("WindowManager::initialize() : bad switch case ( default )", ErrorHandler::FATAL);
-            break;
+    // Set desired OpenGL context attributes for our window.
+    SDL_GL_SetAttribute(SDL_GL_RED_SIZE, WindowManager::RED_BITS);
+    SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, WindowManager::GREEN_BITS);
+    SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, WindowManager::BLUE_BITS);
+    SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, WindowManager::ALPHA_BITS);
+    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, WindowManager::DEPTH_BITS);
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, WindowManager::HAS_DEPTH_BUFFER);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, WindowManager::OGL_MAJOR_VERSION);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, WindowManager::OGL_MINOR_VERSION);
+
+    // Start in windowed mode.
+    m_Window = SDL_CreateWindow(m_WindowTitle.c_str(),
+                                SDL_WINDOWPOS_UNDEFINED,
+                                SDL_WINDOWPOS_UNDEFINED,
+                                m_WindowedWidth,
+                                m_WindowedHeight,
+                                SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_INPUT_GRABBED);
+
+    // Check that the window was successfully made.
+    if (m_Window == NULL) {
+        // In the event that the window could not be made...
+        ErrorHandler::record("WindowManager::initialise() : Couldn't obtain window !!", ErrorHandler::FATAL);
         }
 
-    // Final test to see if the driver is "truthful".
-    // If OPEN_GL_VERSION_MINIMUM_MAJOR or OPEN_GL_VERSION_MINIMUM_MINOR
-    // altered need to change the test variable here.
-    if(GLEW_VERSION_1_5) {
-        // Fine as is.
-        ErrorHandler::record("WindowManager::initialize() : satisfactory OpenGL v1.5+", ErrorHandler::INFORM);
-        }
-    else {
-        // Whoops, some components at the minimum level not actually supported.
-        std::stringstream msg;
-        msg << "WindowManager::initialize() : Driver claims v"
-            << OPEN_GL_VERSION_MINIMUM_MAJOR
-            << "."
-            << OPEN_GL_VERSION_MINIMUM_MINOR
-            << " minimum interface, but some components missing ....";
-        ErrorHandler::record(msg.str(), ErrorHandler::WARN);
-        return false;
-        }
-
-    // This being the first call to this routine will have the effect
-    // of establishing the event queue/callbacks, plus set the
-    // render timing.
-    Events::Instance(m_RenderEventInterval);
+    // Create a desired OpenGL for use with that window.
+    /// TODO - Check error on return here, how ?
+    m_Context = SDL_GL_CreateContext(m_Window);
 
     return true;
     }
 
 void WindowManager::eventLoop(void) {
-    // Provided we have at least one observer.
+     Provided we have at least one observer.
     if(!eventObservers.empty()) {
         // Infinite looping until an exit is triggered.
         while(true) {
@@ -472,13 +455,14 @@ int WindowManager::windowHeight(void) const {
     }
 
 void WindowManager::setWindowCaption(const string caption) const {
-    glfwSetWindowTitle(caption.c_str());
+    // SDL_SetWindowTitle(m_Window, caption.c_str());
     }
 
 void WindowManager::setWindowIcon(const string filename) const {
     //if (filename.length() > 0) {
     //      SDL_WM_SetIcon(SDL_LoadBMP(filename.c_str()), NULL);
     //      }
+    // SDL_SetWindowIcon(m_Window, SDL_Surface* icon);
     }
 
 void WindowManager::setWindowIcon(const unsigned char *data, const int size) const {
@@ -501,74 +485,7 @@ void WindowManager::setWindowIcon(const unsigned char *data, const int size) con
 //   else {
 //      cerr << "Could not prepare window icon data: " << SDL_GetError() << endl;
 //      }
-   }
-
-bool WindowManager::setWindowedMode(void) {
-    bool ret_val = false;
-
-    // Attempt to obtain a window.
-    if(tryMode(m_WindowedWidth, m_WindowedHeight, GLFW_WINDOW) == false) {
-        ErrorHandler::record("WindowManager::setWindowedMode() : Could not acquire rendering surface", ErrorHandler::WARN);
-        }
-    else {
-        m_WindowedWidth = m_CurrentWidth;
-        m_WindowedHeight = m_CurrentHeight;
-        ret_val = true;
-        }
-
-    return ret_val;
-    }
-
-bool WindowManager::setFullScreenMode(void) {
-    bool ret_val = false;
-
-    // Attempt to obtain a fullscreen.
-    if(tryMode(m_DesktopWidth, m_DesktopHeight, GLFW_FULLSCREEN) == false) {
-        ErrorHandler::record("WindowManager::setFullScreenMode() : Could not acquire rendering surface", ErrorHandler::WARN);
-        }
-    else {
-        ret_val = true;
-        }
-
-    return ret_val;
-    }
-
-bool WindowManager::tryMode(int width, int height, int mode) {
-    // For this routine interpret 'window' as an OpenGL context
-    // which may be EITHER a "OS window" OR a fullscreen.
-
-    // See if you can get a rendering surface from the OS.
-
-
-    // Again, if this value is ZERO then no OpenGL context was obtained.
-    if(window_open != NO_OPEN_GL_CONTEXT) {
-        // For MS Windows, the dynamic links will change
-        // upon rendering surface acquisition !!
-        initializeGLEW();
-
-        // Inquire as to the actual client area obtained. Otherwise for
-        // Linux systems one may expect desktop dimensions but only get
-        // that minus taskbar and/or menubar dimensions. That in turn
-        // depends upon the distro and window manager ( KDE, Gnome etc .... ).
-        // In generality one ought expect a discrepancy between what you
-        // ask for and what you get! :-)
-        glfwGetWindowSize(&m_CurrentWidth,& m_CurrentHeight);
-
-        stringstream msg;
-        msg.clear();
-        msg << "WindowManager::tryMode() : Rendering surface acquired "
-            << m_CurrentWidth
-            << " x "
-            << m_CurrentHeight
-            << " @ "
-            << (current_desktop_mode.RedBits + current_desktop_mode.GreenBits + current_desktop_mode.BlueBits)
-            << " colors with a "
-            << best_depth_buffer_grain
-            << " bit depth buffer";
-        ErrorHandler::record(msg.str(), ErrorHandler::INFORM);
-        }
-
-    return (window_open == GL_TRUE ? true : false);
+    // SDL_SetWindowIcon(m_Window, SDL_Surface* icon);
     }
 
 bool WindowManager::initializeGLEW(void) {
@@ -593,70 +510,3 @@ bool WindowManager::initializeGLEW(void) {
     return ret_val;
     }
 
-void WindowManager::getOGLVersion(GLuint* major, GLuint* minor) {
-    // Try to obtain the version string from the context.
-    const GLubyte* version = glGetString(GL_VERSION);
-
-    // Did that succeed ?
-    if (version == NULL) {
-        // No, can't proceed.
-        std::string msg = "WindowManager::getOGLVersion() : couldn't obtain version string";
-        ErrorHandler::record(msg, ErrorHandler::FATAL);
-        }
-
-    // Convert the version string to STL format.
-    std::string ver = ErrorHandler::convertGLstring(version);
-
-    // Now tokenise the string thus obtained.
-    std::vector<std::string> ver_strings;
-    tokeniseString(ver, '.', ver_strings);
-
-    if (ver_strings.size() < 2) {
-        std::string msg = "WindowManager::getOGLVersion() : couldn't tokenise version string";
-        }
-
-    int major_candidate = 0;
-    std::stringstream convert1(ver_strings[0]);
-    convert1 >> major_candidate;
-
-    if (convert1.goodbit != 0) {
-        std::string msg =
-                "WindowManager::getOGLVersion() : couldn't interpret major version string";
-        ErrorHandler::record(msg, ErrorHandler::FATAL);
-        }
-    *major = major_candidate;
-
-    int minor_candidate = 0;
-    std::stringstream convert2(ver_strings[1]);
-    convert2 >> minor_candidate;
-
-    if (convert2.goodbit != 0) {
-        std::string msg =
-                "WindowManager::getOGLVersion() : couldn't interpret minor version string";
-        ErrorHandler::record(msg, ErrorHandler::FATAL);
-        }
-    *minor = minor_candidate;
-    }
-
-void WindowManager::tokeniseString(const std::string str,
-        const char delimiter, std::vector<std::string>& store) {
-    size_t string_pos = 0;
-    size_t delimiter_pos = 0;
-
-    // Provided we don't get to the end of ( what remains
-    // of ) the input string and not find a delimiter.
-    while ((delimiter_pos = str.find(delimiter, string_pos))
-            != std::string::npos) {
-        // Are the delimiters adjacent ? Policy is that
-        // we will not create empty tokens, hence multiple
-        // adjacent delimiters are treated as one.
-        if (delimiter_pos > string_pos) {
-            // Non-adjacent.
-            size_t token_len = delimiter_pos - string_pos;
-            std::string token = str.substr(string_pos, token_len);
-            store.push_back(token);
-        }
-        // Move along to the position just after last delimiter found.
-        string_pos = delimiter_pos + 1;
-    }
-}

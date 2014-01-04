@@ -173,6 +173,22 @@ class WindowManager {
         void setWindowIcon(const unsigned char *data, const int size) const;
 
     private:
+        /// The window's title/caption.
+        static const std::string m_WindowTitle;
+
+        /// OpenGL framebuffer characteristics.
+        static const int RED_BITS;
+        static const int GREEN_BITS;
+        static const int BLUE_BITS;
+        static const int ALPHA_BITS;
+        static const int DEPTH_BITS;
+        static const int HAS_DEPTH_BUFFER;
+
+        static const int OGL_MAJOR_VERSION;
+        static const int OGL_MINOR_VERSION;
+
+        static const int DISPLAY_ZERO;
+
         /**
          * \brief Initialise the GLEW system, essentially establishing
          *        dynamic linking to the video driver for OpenGL functionality.
@@ -180,6 +196,15 @@ class WindowManager {
          * \return boolean indicating success ( TRUE ) or failure ( FALSE )
          */
         bool initializeGLEW(void);
+
+        /// The user's desktop mode.
+        SDL_DisplayMode* m_Mode;
+
+        /// Pointer to the window created by SDL.
+        SDL_Window* m_Window;
+
+        /// OpenGL context associated with the window.
+        SDL_GLContext m_Context;
 
         /// Local BOINC adapter instance to read project preferences
         BOINCClientAdapter* m_BoincAdapter;
