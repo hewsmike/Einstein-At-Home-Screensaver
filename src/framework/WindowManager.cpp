@@ -27,6 +27,7 @@
 #include <string>
 
 #include "ErrorHandler.h"
+#include "SDL_events.h"
 
 const std::string WindowManager::m_WindowTitle("Einstein At Home");
 
@@ -41,6 +42,14 @@ const int WindowManager::OGL_MAJOR_VERSION(3);
 const int WindowManager::OGL_MINOR_VERSION(2);
 
 const int WindowManager::DISPLAY_ZERO(0);
+
+const int WindowManager::EVENT_PENDING(1);
+
+const int WindowManager::LEFT_MOUSE_BUTTON(1);
+const int WindowManager::MIDDLE_MOUSE_BUTTON(2);
+const int WindowManager::RIGHT_MOUSE_BUTTON(3);
+
+const float WindowManager::TIMER_DELAY_BOINC(1000);
 
 WindowManager::WindowManager(void) {
     m_BoincAdapter = new BOINCClientAdapter("");
@@ -60,13 +69,11 @@ bool WindowManager::initialize(const int width, const int height, const int fram
                                         << m_DesktopWidth;
     ErrorHandler::record(msg_init_current_desktop_mode_width.str(), ErrorHandler::INFORM);
 
-
     m_DesktopHeight = m_Mode->h;
     stringstream msg_init_current_desktop_mode_height;
     msg_init_current_desktop_mode_height << "WindowManager::initialize() : current desktop height = "
                                          << m_DesktopHeight;
     ErrorHandler::record(msg_init_current_desktop_mode_height.str(), ErrorHandler::INFORM);
-
 
     m_DesktopBitsPerPixel = SDL_BITSPERPIXEL(m_Mode->format);
     stringstream msg_init_current_desktop_bitsperpixel;
@@ -127,28 +134,34 @@ bool WindowManager::initialize(const int width, const int height, const int fram
     /// TODO - Check error on return here, how ?
     m_Context = SDL_GL_CreateContext(m_Window);
 
+    // OK we have a window, so initialise GLEW and SDL.
+    initializeGLEW();
+
+    /// TODO - Put this is main, with SDL_main etc pfaffage ??
+    SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER);
+
     return true;
     }
 
 void WindowManager::eventLoop(void) {
-     Provided we have at least one observer.
+    // Provided we have at least one observer.
     if(!eventObservers.empty()) {
+        // Set two main timers (interval in ms).
+        SDL_AddTimer(m_RenderEventInterval, &timerCallbackRenderEvent, NULL);
+        SDL_AddTimer(WindowManager::TIMER_DELAY_BOINC, &timerCallbackBOINCUpdateEvent, NULL);
+
+        // Holder of current event type.
+        SDL_Event current_event;
         // Infinite looping until an exit is triggered.
         while(true) {
             bool resize_flag = false;
-
-            // Holder of event type.
-            Event current_event;
-
-            // Keep our special timers ticking over.
-            Events::Instance(0)->tick();
 
             // Keep extracting any events from the queue, until it is empty.
             // Events are gathered 'behind the scenes' from input devices
             // asynchronously ... and placed in a 'queue of next available
             // events'. Currently enacting only one listener, which is of
             // AbstractGraphicsEngine type.
-            while(Events::Instance(0)->next(&current_event)) {
+            while(SDL_PollEvent(&current_event) == WindowManager::EVENT_PENDING) {
                 if(current_event.type == Events::RenderEventType) {
                     // Frame render falling due.
                     eventObservers.front()->render(dtime());
@@ -161,59 +174,64 @@ void WindowManager::eventLoop(void) {
 
                 // Check for any user input if in screensaver mode.
                 else if((m_ScreensaverMode == true) &&
-                        ((current_event.type == Events::MouseMotionEventType) ||
-                         (current_event.type == Events::MouseButtonEventType) ||
-                         (current_event.type == Events::CharInputEventType) ||
-                         (current_event.type == Events::KeyPressEventType) ||
-                         (current_event.type == Events::MouseWheelEventType))) {
-                    // Close window, terminate GLFW and leave this window manager.
+                        ((current_event.type == SDL_MouseMotionEvent) ||
+                         (current_event.type == SDL_MouseButtonEvent) ||
+                         (current_event.type == SDL_KeyboardEvent) ||
+                         (current_event.type == SDL_MouseWheelEvent))) {
+                    // Close window, terminate SDL and leave this window manager.
+                    /// TODO - atexit(SDL_Quit) in main too ??
                     ErrorHandler::record("WindowManager::eventLoop() : Exiting on account of user input", ErrorHandler::INFORM);
-                    glfwTerminate();
+                    SDL_DestroyWindow(m_Window);
+                    SDL_Quit();
                     return;
                     }
 
-                else if((current_event.type == Events::MouseMotionEventType) &&
-                        (glfwGetMouseButton(GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)) {
+                else if((current_event.type == SDL_MouseMotionEvent) &&
+                        (SDL_GetMouseState(NULL, NULL)&SDL_BUTTON(WindowManager::LEFT_MOUSE_BUTTON))) {
                     // Mouse movement with left button pressed down.
-                    eventObservers.front()->mouseMoveEvent(current_event.m_motion.xrel,
-                                                           current_event.m_motion.yrel,
+                    eventObservers.front()->mouseMoveEvent(current_event.xrel,
+                                                           current_event.yrel,
                                                            AbstractGraphicsEngine::MouseButtonLeft);
                     }
 
-                else if((current_event.type == Events::MouseMotionEventType) &&
-                        (glfwGetMouseButton(GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)) {
+                else if((current_event.type == SDL_MouseMotionEvent) &&
+                        (SDL_GetMouseState(NULL, NULL)&SDL_BUTTON(WindowManager::RIGHT_MOUSE_BUTTON))) {
                     // Mouse movement with right button pressed down.
-                    eventObservers.front()->mouseMoveEvent(current_event.m_motion.xrel,
-                                                           current_event.m_motion.yrel,
+                    eventObservers.front()->mouseMoveEvent(current_event.xrel,
+                                                           current_event.yrel,
                                                            AbstractGraphicsEngine::MouseButtonRight);
                     }
 
-                else if(current_event.type == Events::MouseWheelEventType) {
+                else if(current_event.type == SDL_MouseWheelEvent) {
                     // Mouse wheel has been moved.
-                    eventObservers.front()->mouseWheelEvent(current_event.m_wheel.diff_pos);
+                    eventObservers.front()->mouseWheelEvent(current_event.y);
                     }
 
-                else if((current_event.type == Events::ResizeEventType) &&
+                else if((current_event.type == SDL_WINDOWEVENT) &&
+                        (current_event.event == SDL_WINDOWEVENT_RESIZED) &&
                         (resize_flag == false)) {
                     resize_flag = true;
-                    m_CurrentWidth = m_WindowedWidth = current_event.resize.width;
-                    m_CurrentHeight = m_WindowedHeight = current_event.resize.height;
-
-                    setWindowedMode();
+                    m_CurrentWidth = m_WindowedWidth = current_event.data1;
+                    m_CurrentHeight = m_WindowedHeight = current_event.data2;
 
                     // Use actual acquired ( as distinct from requested ) size.
-                    glfwGetWindowSize(&m_CurrentWidth, &m_CurrentHeight);
+                    SDL_GetWindowSize(m_Window,
+                                      &m_CurrentWidth,
+                                      &m_CurrentHeight);
 
                     eventObservers.front()->initialize(m_CurrentWidth, m_CurrentHeight, 0, true);
                     }
 
                 // 'Normal' exit pathway if not screensaver.
-                else if((current_event.type == Events::QuitEventType) ||
+                else if((current_event.type == SDL_QUIT) ||
                         ((current_event.type == Events::KeyPressEventType) &&
                          (current_event.k_press.pressed == true) &&
                          (current_event.k_press.key_code == GLFW_KEY_ESC))) {
-                    // Close window, terminate GLFW and leave this window manager.
-                    glfwTerminate();
+                    // Close window, terminate SDL and leave this window manager.
+                    /// TODO - atexit(SDL_Quit) in main too ??
+                    ErrorHandler::record("WindowManager::eventLoop() : normal exit on user request", ErrorHandler::INFORM);
+                    SDL_DestroyWindow(m_Window);
+                    SDL_Quit();
                     return;
                     }
 
@@ -510,3 +528,36 @@ bool WindowManager::initializeGLEW(void) {
     return ret_val;
     }
 
+Uint32 WindowManager::timerCallbackRenderEvent(Uint32 interval, void *param) {
+    SDL_Event event;
+    SDL_UserEvent userevent;
+
+    userevent.type = SDL_USEREVENT;
+    userevent.code = RenderEvent;
+    userevent.data1 = NULL;
+    userevent.data2 = NULL;
+
+    event.type = SDL_USEREVENT;
+    event.user = userevent;
+
+    SDL_PushEvent(&event);
+
+    return interval;
+    }
+
+Uint32 WindowManager::timerCallbackBOINCUpdateEvent(Uint32 interval, void *param) {
+    SDL_Event event;
+    SDL_UserEvent userevent;
+
+    userevent.type = SDL_USEREVENT;
+    userevent.code = BOINCUpdateEvent;
+    userevent.data1 = NULL;
+    userevent.data2 = NULL;
+
+    event.type = SDL_USEREVENT;
+    event.user = userevent;
+
+    SDL_PushEvent(&event);
+
+    return interval;
+    }

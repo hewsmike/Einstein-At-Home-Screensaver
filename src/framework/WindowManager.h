@@ -189,6 +189,62 @@ class WindowManager {
 
         static const int DISPLAY_ZERO;
 
+        static const int EVENT_PENDING;
+
+        static const int LEFT_MOUSE_BUTTON;
+        static const int MIDDLE_MOUSE_BUTTON;
+        static const int RIGHT_MOUSE_BUTTON;
+
+        static const float TIMER_DELAY_BOINC;
+
+        /**
+         * \brief Timer callback to trigger render events
+         *
+         * This callback is used by a SDL timer registered in \ref eventLoop().
+         * It creates a \ref RenderEvent which is handled by eventLoop().
+         * In order to use a constant timer interval, \c interval is
+         * returned as it was passed.
+         *
+         * \param interval The current timer interval
+         * \param param The user supplied parameter of the timer event
+         *
+         * \return The timer interval to be used for the following events
+         *
+         * \see eventLoop()
+         * \see EventCodes
+         *
+         * \todo Work around static callback, otherwise we might get event conflicts
+         * when more than one instance. Maybe we should use a singleton here anyway...
+         */
+        static Uint32 timerCallbackRenderEvent(Uint32 interval, void *param);
+
+        /**
+         * \brief Timer callback to trigger BOINC update events
+         *
+         * This callback is used by a SDL timer registered in \ref eventLoop().
+         * It creates a \ref BOINCUpdateEvent which is handled by eventLoop().
+         * In order to use a constant timer interval, \c interval is
+         * returned as it was passed.
+         *
+         * Note: it might seem a bit strange to trigger the BOINC updates here but it's
+         * here where \b all event controlling and propagation takes place. BOINCClientAdapter
+         * for example is meant to be used \b by an instance receiving this event, not
+         * actually handling it itself. Thus AbstractGraphicsEngine handles this event
+         * and \b uses its BOINC adapter accordingly.
+         *
+         * \param interval The current timer interval
+         * \param param The user supplied parameter of the timer event
+         *
+         * \return The timer interval to be used for the following events
+         *
+         * \see eventLoop()
+         * \see EventCodes
+         *
+         * \todo Work around static callback, otherwise we might get event conflicts
+         * when more than one instance. Maybe we should use a singleton here anyway...
+         */
+        static Uint32 timerCallbackBOINCUpdateEvent(Uint32 interval, void *param);
+
         /**
          * \brief Initialise the GLEW system, essentially establishing
          *        dynamic linking to the video driver for OpenGL functionality.
@@ -196,6 +252,8 @@ class WindowManager {
          * \return boolean indicating success ( TRUE ) or failure ( FALSE )
          */
         bool initializeGLEW(void);
+
+
 
         /// The user's desktop mode.
         SDL_DisplayMode* m_Mode;
