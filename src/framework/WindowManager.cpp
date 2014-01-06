@@ -66,6 +66,7 @@ WindowManager::~WindowManager() {
 bool WindowManager::initialize(const int width, const int height, const int frameRate) {
     /// TODO - Put this is main, with SDL_main etc pfaffage ??
     SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER);
+    atexit(SDL_Quit);
 
     /// TODO - check error return on this.
     SDL_GetDesktopDisplayMode(WindowManager::DISPLAY_ZERO, m_Mode);
@@ -143,8 +144,9 @@ bool WindowManager::initialize(const int width, const int height, const int fram
 
     /// TODO - check after successful context creation to see if we got what we asked for.
     // Set desired OpenGL context attributes for our window.
-    // Request buffer swap on vertical sync.
-    SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, WindowManager::ENABLE_VERTICAL_SYNC);
+
+    /// TODO - find a way to request vsync in platform independent way !!
+    /// Neither Open GL nor SDL provide this.
 
     // Request a minimum number of multisample buffers.
     SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, WindowManager::NUM_MULTISAMPLE_BUFFERS);
@@ -201,310 +203,310 @@ bool WindowManager::initialize(const int width, const int height, const int fram
     }
 
 void WindowManager::eventLoop(void) {
-    // Provided we have at least one observer.
-    if(!eventObservers.empty()) {
-        // Set two main timers (interval in ms).
-        SDL_AddTimer(m_RenderEventInterval, &timerCallbackRenderEvent, NULL);
-        SDL_AddTimer(WindowManager::TIMER_DELAY_BOINC, &timerCallbackBOINCUpdateEvent, NULL);
-
-        // Holder of current event type.
-        SDL_Event current_event;
-        // Infinite looping until an exit is triggered.
-        while(true) {
-            bool resize_flag = false;
-
-            // Keep extracting any events from the queue, until it is empty.
-            // Events are gathered 'behind the scenes' from input devices
-            // asynchronously ... and placed in a 'queue of next available
-            // events'. Currently enacting only one listener, which is of
-            // AbstractGraphicsEngine type.
-            while(SDL_PollEvent(&current_event) == WindowManager::EVENT_PENDING) {
-                if(current_event.type == Events::RenderEventType) {
-                    // Frame render falling due.
-                    eventObservers.front()->render(dtime());
-                    }
-
-                else if(current_event.type == Events::BOINCUpdateEventType) {
-                    // BOINC update falling due.
-                    eventObservers.front()->refreshBOINCInformation();
-                    }
-
-                // Check for any user input if in screensaver mode.
-                else if((m_ScreensaverMode == true) &&
-                        ((current_event.type == SDL_MouseMotionEvent) ||
-                         (current_event.type == SDL_MouseButtonEvent) ||
-                         (current_event.type == SDL_KeyboardEvent) ||
-                         (current_event.type == SDL_MouseWheelEvent))) {
-                    // Close window, terminate SDL and leave this window manager.
-                    /// TODO - atexit(SDL_Quit) in main too ??
-                    ErrorHandler::record("WindowManager::eventLoop() : Exiting on account of user input", ErrorHandler::INFORM);
-                    SDL_DestroyWindow(m_Window);
-                    SDL_Quit();
-                    return;
-                    }
-
-                else if((current_event.type == SDL_MouseMotionEvent) &&
-                        (SDL_GetMouseState(NULL, NULL)&SDL_BUTTON(WindowManager::LEFT_MOUSE_BUTTON))) {
-                    // Mouse movement with left button pressed down.
-                    eventObservers.front()->mouseMoveEvent(current_event.xrel,
-                                                           current_event.yrel,
-                                                           AbstractGraphicsEngine::MouseButtonLeft);
-                    }
-
-                else if((current_event.type == SDL_MouseMotionEvent) &&
-                        (SDL_GetMouseState(NULL, NULL)&SDL_BUTTON(WindowManager::RIGHT_MOUSE_BUTTON))) {
-                    // Mouse movement with right button pressed down.
-                    eventObservers.front()->mouseMoveEvent(current_event.xrel,
-                                                           current_event.yrel,
-                                                           AbstractGraphicsEngine::MouseButtonRight);
-                    }
-
-                else if(current_event.type == SDL_MouseWheelEvent) {
-                    // Mouse wheel has been moved.
-                    eventObservers.front()->mouseWheelEvent(current_event.y);
-                    }
-
-                else if((current_event.type == SDL_WINDOWEVENT) &&
-                        (current_event.event == SDL_WINDOWEVENT_RESIZED) &&
-                        (resize_flag == false)) {
-                    resize_flag = true;
-                    m_CurrentWidth = m_WindowedWidth = current_event.data1;
-                    m_CurrentHeight = m_WindowedHeight = current_event.data2;
-
-                    // Use actual acquired ( as distinct from requested ) size.
-                    SDL_GetWindowSize(m_Window,
-                                      &m_CurrentWidth,
-                                      &m_CurrentHeight);
-
-                    eventObservers.front()->initialize(m_CurrentWidth, m_CurrentHeight, 0, true);
-                    }
-
-                // 'Normal' exit pathway if not screensaver.
-                else if((current_event.type == SDL_QUIT) ||
-                        ((current_event.type == Events::KeyPressEventType) &&
-                         (current_event.k_press.pressed == true) &&
-                         (current_event.k_press.key_code == GLFW_KEY_ESC))) {
-                    // Close window, terminate SDL and leave this window manager.
-                    /// TODO - atexit(SDL_Quit) in main too ??
-                    ErrorHandler::record("WindowManager::eventLoop() : normal exit on user request", ErrorHandler::INFORM);
-                    SDL_DestroyWindow(m_Window);
-                    SDL_Quit();
-                    return;
-                    }
-
-                // Process printable character input.
-                else if((current_event.type == Events::CharInputEventType) &&
-                        (current_event.c_input.pressed == true)) {
-                        // Note : we account for shifted characters from the same key.
-                    switch(current_event.c_input.char_code) {
-                        case ',':
-                        case '<':
-                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyComma);
-                            break;
-                        case '.':
-                        case '>':
-                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyPeriod);
-                            break;
-                        case '/':
-                        case '?':
-                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyForwardSlash);
-                            break;
-                        case ';':
-                        case ':':
-                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeySemiColon);
-                            break;
-                        case 'a':
-                        case 'A':
-                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyA);
-                            break;
-                        case 'b':
-                        case 'B':
-                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyB);
-                            break;
-                        case 'c':
-                        case 'C':
-                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyC);
-                            break;
-                        case 'd':
-                        case 'D':
-                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyD);
-                            break;
-                        case 'e':
-                        case 'E':
-                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyE);
-                            break;
-                        case 'f':
-                        case 'F':
-                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyF);
-                            break;
-                        case 'g':
-                        case 'G':
-                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyG);
-                            break;
-                        case 'h':
-                        case 'H':
-                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyH);
-                            break;
-                        case 'i':
-                        case 'I':
-                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyI);
-                            break;
-                        case 'j':
-                        case 'J':
-                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyJ);
-                            break;
-                        case 'k':
-                        case 'K':
-                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyK);
-                            break;
-                        case 'l':
-                        case 'L':
-                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyL);
-                            break;
-                        case 'm':
-                        case 'M':
-                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyM);
-                            break;
-                        case 'n':
-                        case 'N':
-                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyN);
-                            break;
-                        case 'o':
-                        case 'O':
-                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyO);
-                            break;
-                        case 'p':
-                        case 'P':
-                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyP);
-                            break;
-                        case 'q':
-                        case 'Q':
-                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyQ);
-                            break;
-                        case 'r':
-                        case 'R':
-                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyR);
-                            break;
-                        case 's':
-                        case 'S':
-                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyS);
-                            break;
-                        case 't':
-                        case 'T':
-                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyT);
-                            break;
-                        case 'u':
-                        case 'U':
-                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyU);
-                            break;
-                        case 'v':
-                        case 'V':
-                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyV);
-                            break;
-                        case 'w':
-                        case 'W':
-                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyW);
-                            break;
-                        case 'x':
-                        case 'X':
-                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyX);
-                            break;
-                        case 'y':
-                        case 'Y':
-                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyY);
-                            break;
-                        case 'z':
-                        case 'Z':
-                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyZ);
-                            break;
-                        default:
-                            break;
-                        }
-                    }
-
-                // Process non-printable keypresses.
-                else if((current_event.type == Events::KeyPressEventType) &&
-                        (current_event.k_press.pressed == true)) {
-                    switch(current_event.k_press.key_code) {
-                        case GLFW_KEY_F1:
-                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyF1);
-                            break;
-                        case GLFW_KEY_F2:
-                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyF2);
-                            break;
-                        case GLFW_KEY_F3:
-                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyF3);
-                            break;
-                        case GLFW_KEY_F4:
-                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyF4);
-                            break;
-                        case GLFW_KEY_F5:
-                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyF5);
-                            break;
-                        case GLFW_KEY_F6:
-                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyF6);
-                            break;
-                        case GLFW_KEY_F7:
-                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyF7);
-                            break;
-                        case GLFW_KEY_F8:
-                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyF8);
-                            break;
-                        case GLFW_KEY_F9:
-                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyF9);
-                            break;
-                        case GLFW_KEY_F10:
-                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyF10);
-                            break;
-                        case GLFW_KEY_F11:
-                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyF11);
-                            break;
-                        case GLFW_KEY_F12:
-                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyF12);
-                            break;
-                        case GLFW_KEY_SPACE:
-                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeySpace);
-                            break;
-                        case GLFW_KEY_ENTER:
-                            break;
-                        case GLFW_KEY_KP_1:
-                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyKP1);
-                            break;
-                        case GLFW_KEY_KP_2:
-                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyKP2);
-                            break;
-                        case GLFW_KEY_KP_3:
-                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyKP3);
-                            break;
-                        case GLFW_KEY_KP_4:
-                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyKP4);
-                            break;
-                        case GLFW_KEY_KP_5:
-                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyKP5);
-                            break;
-                        case GLFW_KEY_KP_6:
-                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyKP6);
-                            break;
-                        case GLFW_KEY_KP_8:
-                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyKP8);
-                            break;
-                        case GLFW_KEY_KP_0:
-                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyKP0);
-                            break;
-                        case GLFW_KEY_KP_DECIMAL:
-                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyKPPeriod);
-                            break;
-                        default:
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-    else {
-        // This is a logic error, as we shoulda/woulda/coulda have an observer by now !!
-        ErrorHandler::record("WindowManager::eventLoop() : no event observer present", ErrorHandler::FATAL);
-        }
+//    // Provided we have at least one observer.
+//    if(!eventObservers.empty()) {
+//        // Set two main timers (interval in ms).
+//        SDL_AddTimer(m_RenderEventInterval, &timerCallbackRenderEvent, NULL);
+//        SDL_AddTimer(WindowManager::TIMER_DELAY_BOINC, &timerCallbackBOINCUpdateEvent, NULL);
+//
+//        // Holder of current event type.
+//        SDL_Event current_event;
+//        // Infinite looping until an exit is triggered.
+//        while(true) {
+//            bool resize_flag = false;
+//
+//            // Keep extracting any events from the queue, until it is empty.
+//            // Events are gathered 'behind the scenes' from input devices
+//            // asynchronously ... and placed in a 'queue of next available
+//            // events'. Currently enacting only one listener, which is of
+//            // AbstractGraphicsEngine type.
+//            while(SDL_PollEvent(&current_event) == WindowManager::EVENT_PENDING) {
+//                if(current_event.type == Events::RenderEventType) {
+//                    // Frame render falling due.
+//                    eventObservers.front()->render(dtime());
+//                    }
+//
+//                else if(current_event.type == Events::BOINCUpdateEventType) {
+//                    // BOINC update falling due.
+//                    eventObservers.front()->refreshBOINCInformation();
+//                    }
+//
+//                // Check for any user input if in screensaver mode.
+//                else if((m_ScreensaverMode == true) &&
+//                        ((current_event.type == SDL_MouseMotionEvent) ||
+//                         (current_event.type == SDL_MouseButtonEvent) ||
+//                         (current_event.type == SDL_KeyboardEvent) ||
+//                         (current_event.type == SDL_MouseWheelEvent))) {
+//                    // Close window, terminate SDL and leave this window manager.
+//                    /// TODO - atexit(SDL_Quit) in main too ??
+//                    ErrorHandler::record("WindowManager::eventLoop() : Exiting on account of user input", ErrorHandler::INFORM);
+//                    SDL_DestroyWindow(m_Window);
+//                    SDL_Quit();
+//                    return;
+//                    }
+//
+//                else if((current_event.type == SDL_MouseMotionEvent) &&
+//                        (SDL_GetMouseState(NULL, NULL)&SDL_BUTTON(WindowManager::LEFT_MOUSE_BUTTON))) {
+//                    // Mouse movement with left button pressed down.
+//                    eventObservers.front()->mouseMoveEvent(current_event.xrel,
+//                                                           current_event.yrel,
+//                                                           AbstractGraphicsEngine::MouseButtonLeft);
+//                    }
+//
+//                else if((current_event.type == SDL_MouseMotionEvent) &&
+//                        (SDL_GetMouseState(NULL, NULL)&SDL_BUTTON(WindowManager::RIGHT_MOUSE_BUTTON))) {
+//                    // Mouse movement with right button pressed down.
+//                    eventObservers.front()->mouseMoveEvent(current_event.xrel,
+//                                                           current_event.yrel,
+//                                                           AbstractGraphicsEngine::MouseButtonRight);
+//                    }
+//
+//                else if(current_event.type == SDL_MouseWheelEvent) {
+//                    // Mouse wheel has been moved.
+//                    eventObservers.front()->mouseWheelEvent(current_event.y);
+//                    }
+//
+//                else if((current_event.type == SDL_WINDOWEVENT) &&
+//                        (current_event.event == SDL_WINDOWEVENT_RESIZED) &&
+//                        (resize_flag == false)) {
+//                    resize_flag = true;
+//                    m_CurrentWidth = m_WindowedWidth = current_event.data1;
+//                    m_CurrentHeight = m_WindowedHeight = current_event.data2;
+//
+//                    // Use actual acquired ( as distinct from requested ) size.
+//                    SDL_GetWindowSize(m_Window,
+//                                      &m_CurrentWidth,
+//                                      &m_CurrentHeight);
+//
+//                    eventObservers.front()->initialize(m_CurrentWidth, m_CurrentHeight, 0, true);
+//                    }
+//
+//                // 'Normal' exit pathway if not screensaver.
+//                else if((current_event.type == SDL_QUIT) ||
+//                        ((current_event.type == Events::KeyPressEventType) &&
+//                         (current_event.k_press.pressed == true) &&
+//                         (current_event.k_press.key_code == GLFW_KEY_ESC))) {
+//                    // Close window, terminate SDL and leave this window manager.
+//                    /// TODO - atexit(SDL_Quit) in main too ??
+//                    ErrorHandler::record("WindowManager::eventLoop() : normal exit on user request", ErrorHandler::INFORM);
+//                    SDL_DestroyWindow(m_Window);
+//                    SDL_Quit();
+//                    return;
+//                    }
+//
+//                // Process printable character input.
+//                else if((current_event.type == Events::CharInputEventType) &&
+//                        (current_event.c_input.pressed == true)) {
+//                        // Note : we account for shifted characters from the same key.
+//                    switch(current_event.c_input.char_code) {
+//                        case ',':
+//                        case '<':
+//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyComma);
+//                            break;
+//                        case '.':
+//                        case '>':
+//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyPeriod);
+//                            break;
+//                        case '/':
+//                        case '?':
+//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyForwardSlash);
+//                            break;
+//                        case ';':
+//                        case ':':
+//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeySemiColon);
+//                            break;
+//                        case 'a':
+//                        case 'A':
+//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyA);
+//                            break;
+//                        case 'b':
+//                        case 'B':
+//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyB);
+//                            break;
+//                        case 'c':
+//                        case 'C':
+//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyC);
+//                            break;
+//                        case 'd':
+//                        case 'D':
+//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyD);
+//                            break;
+//                        case 'e':
+//                        case 'E':
+//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyE);
+//                            break;
+//                        case 'f':
+//                        case 'F':
+//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyF);
+//                            break;
+//                        case 'g':
+//                        case 'G':
+//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyG);
+//                            break;
+//                        case 'h':
+//                        case 'H':
+//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyH);
+//                            break;
+//                        case 'i':
+//                        case 'I':
+//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyI);
+//                            break;
+//                        case 'j':
+//                        case 'J':
+//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyJ);
+//                            break;
+//                        case 'k':
+//                        case 'K':
+//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyK);
+//                            break;
+//                        case 'l':
+//                        case 'L':
+//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyL);
+//                            break;
+//                        case 'm':
+//                        case 'M':
+//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyM);
+//                            break;
+//                        case 'n':
+//                        case 'N':
+//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyN);
+//                            break;
+//                        case 'o':
+//                        case 'O':
+//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyO);
+//                            break;
+//                        case 'p':
+//                        case 'P':
+//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyP);
+//                            break;
+//                        case 'q':
+//                        case 'Q':
+//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyQ);
+//                            break;
+//                        case 'r':
+//                        case 'R':
+//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyR);
+//                            break;
+//                        case 's':
+//                        case 'S':
+//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyS);
+//                            break;
+//                        case 't':
+//                        case 'T':
+//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyT);
+//                            break;
+//                        case 'u':
+//                        case 'U':
+//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyU);
+//                            break;
+//                        case 'v':
+//                        case 'V':
+//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyV);
+//                            break;
+//                        case 'w':
+//                        case 'W':
+//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyW);
+//                            break;
+//                        case 'x':
+//                        case 'X':
+//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyX);
+//                            break;
+//                        case 'y':
+//                        case 'Y':
+//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyY);
+//                            break;
+//                        case 'z':
+//                        case 'Z':
+//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyZ);
+//                            break;
+//                        default:
+//                            break;
+//                        }
+//                    }
+//
+//                // Process non-printable keypresses.
+//                else if((current_event.type == Events::KeyPressEventType) &&
+//                        (current_event.k_press.pressed == true)) {
+//                    switch(current_event.k_press.key_code) {
+//                        case GLFW_KEY_F1:
+//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyF1);
+//                            break;
+//                        case GLFW_KEY_F2:
+//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyF2);
+//                            break;
+//                        case GLFW_KEY_F3:
+//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyF3);
+//                            break;
+//                        case GLFW_KEY_F4:
+//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyF4);
+//                            break;
+//                        case GLFW_KEY_F5:
+//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyF5);
+//                            break;
+//                        case GLFW_KEY_F6:
+//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyF6);
+//                            break;
+//                        case GLFW_KEY_F7:
+//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyF7);
+//                            break;
+//                        case GLFW_KEY_F8:
+//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyF8);
+//                            break;
+//                        case GLFW_KEY_F9:
+//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyF9);
+//                            break;
+//                        case GLFW_KEY_F10:
+//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyF10);
+//                            break;
+//                        case GLFW_KEY_F11:
+//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyF11);
+//                            break;
+//                        case GLFW_KEY_F12:
+//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyF12);
+//                            break;
+//                        case GLFW_KEY_SPACE:
+//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeySpace);
+//                            break;
+//                        case GLFW_KEY_ENTER:
+//                            break;
+//                        case GLFW_KEY_KP_1:
+//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyKP1);
+//                            break;
+//                        case GLFW_KEY_KP_2:
+//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyKP2);
+//                            break;
+//                        case GLFW_KEY_KP_3:
+//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyKP3);
+//                            break;
+//                        case GLFW_KEY_KP_4:
+//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyKP4);
+//                            break;
+//                        case GLFW_KEY_KP_5:
+//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyKP5);
+//                            break;
+//                        case GLFW_KEY_KP_6:
+//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyKP6);
+//                            break;
+//                        case GLFW_KEY_KP_8:
+//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyKP8);
+//                            break;
+//                        case GLFW_KEY_KP_0:
+//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyKP0);
+//                            break;
+//                        case GLFW_KEY_KP_DECIMAL:
+//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyKPPeriod);
+//                            break;
+//                        default:
+//                            break;
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//    else {
+//        // This is a logic error, as we shoulda/woulda/coulda have an observer by now !!
+//        ErrorHandler::record("WindowManager::eventLoop() : no event observer present", ErrorHandler::FATAL);
+//        }
     }
 
 void WindowManager::registerEventObserver(AbstractGraphicsEngine *engine) {

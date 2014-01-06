@@ -44,45 +44,6 @@ extern "C" {
 #endif
 #endif
 
-void openGLReport(WindowManager* window) {
-    // Discover and record the OpenGL version.
-    GLuint major = 0;
-    GLuint minor = 0;
-    window->getOGLVersion(&major, &minor);
-    std::stringstream msg1;
-    msg1 << "SolarSystem::main() : OpenGL version = "
-         << major << '.' << minor;
-    ErrorHandler::record(msg1.str(), ErrorHandler::INFORM);
-
-    // Discover and record the OpenGL vendor.
-    const GLubyte* vendor = glGetString(GL_VENDOR);
-    if(vendor != NULL) {
-        std::stringstream msg2;
-        msg2 << "SolarSystem::main() : OpenGL vendor string = "
-             << "'"
-             << ErrorHandler::convertGLstring(vendor)
-             << "'";
-        ErrorHandler::record(msg2.str(), ErrorHandler::INFORM);
-        }
-    else {
-        ErrorHandler::record("SolarSystem::main() : I got a null for GL_VENDOR", ErrorHandler::WARN);
-        }
-
-    // Discover and record the OpenGL renderer.
-    const GLubyte* renderer = glGetString(GL_RENDERER);
-    if(renderer != NULL) {
-        std::stringstream msg3;
-        msg3 << "SolarSystem::main() : OpenGL renderer string = "
-             << "'"
-             << ErrorHandler::convertGLstring(renderer)
-             << "'";
-        ErrorHandler::record(msg3.str(), ErrorHandler::INFORM);
-        }
-    else {
-        ErrorHandler::record("SolarSystem::main() : I got a null for GL_RENDERER", ErrorHandler::WARN);
-        }
-    }
-
 int main(int argc, char **argv) {
     // Print version info if the command line requests it.
     if(argc == 2) {
@@ -115,8 +76,7 @@ int main(int argc, char **argv) {
     scienceApplication = GraphicsEngineFactory::EinsteinGravity;
 #endif
 
-    // Instantiate and initialize our window manager.
-    WindowManager window;
+
 
 
 
@@ -146,8 +106,8 @@ int main(int argc, char **argv) {
         ErrorHandler::record("SolarSystem::main() : Requested graphics engine could not be found/instantiated!", ErrorHandler::FATAL);
         }
 
-    // Attempt to initialise our WindowManager,
-    // if succeeds then will be in windowed mode.
+    // Instantiate then attempt to initialize our window manager.
+    WindowManager window;
     if(window.initialize() != true) {
         // Failure, so destroy the AbstractGraphicsEngine and ...
         delete graphics;
