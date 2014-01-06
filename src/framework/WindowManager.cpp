@@ -37,6 +37,10 @@ const int WindowManager::BLUE_BITS(8);
 const int WindowManager::ALPHA_BITS(8);
 const int WindowManager::DEPTH_BITS(16);
 const int WindowManager::HAS_DEPTH_BUFFER(1);
+const int WindowManager::ENABLE_VERTICAL_SYNC(1);
+const int WindowManager::ENABLE_DOUBLE_BUFFER(1);
+const int WindowManager::NUM_MULTISAMPLE_BUFFERS(1);
+const int WindowManager::NUM_MULTISAMPLES(2);
 
 const int WindowManager::OGL_MAJOR_VERSION(3);
 const int WindowManager::OGL_MINOR_VERSION(2);
@@ -60,59 +64,113 @@ WindowManager::~WindowManager() {
     }
 
 bool WindowManager::initialize(const int width, const int height, const int frameRate) {
+    /// TODO - Put this is main, with SDL_main etc pfaffage ??
+    SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER);
+
     /// TODO - check error return on this.
     SDL_GetDesktopDisplayMode(WindowManager::DISPLAY_ZERO, m_Mode);
 
+    // Obtain current desktop width.
     m_DesktopWidth = m_Mode->w;
     stringstream msg_init_current_desktop_mode_width;
     msg_init_current_desktop_mode_width << "WindowManager::initialize() : current desktop width = "
                                         << m_DesktopWidth;
     ErrorHandler::record(msg_init_current_desktop_mode_width.str(), ErrorHandler::INFORM);
 
+    // Obtain current desktop height.
     m_DesktopHeight = m_Mode->h;
     stringstream msg_init_current_desktop_mode_height;
     msg_init_current_desktop_mode_height << "WindowManager::initialize() : current desktop height = "
                                          << m_DesktopHeight;
     ErrorHandler::record(msg_init_current_desktop_mode_height.str(), ErrorHandler::INFORM);
 
+    // Obtain current desktop color depth.
     m_DesktopBitsPerPixel = SDL_BITSPERPIXEL(m_Mode->format);
     stringstream msg_init_current_desktop_bitsperpixel;
     msg_init_current_desktop_bitsperpixel << "WindowManager::initialize() : current desktop bits per pixel = "
                                           << m_DesktopBitsPerPixel;
     ErrorHandler::record(msg_init_current_desktop_bitsperpixel.str(), ErrorHandler::INFORM);
 
-    // Get initial non-fullscreen resolution and frame rate from project preferences
+    // Get initial non-fullscreen resolution and frame rate from project preferences.
+    // Reset the BOINC adapter.
     m_BoincAdapter->initialize();
+
+    // Obtain BOINC preferred window width.
     int preferredWidth = m_BoincAdapter->graphicsWindowWidth();
     stringstream msg_init_prefwidth;
     msg_init_prefwidth << "WindowManager::initialize() : BOINC preferred width = "
                        << preferredWidth;
     ErrorHandler::record(msg_init_prefwidth.str(), ErrorHandler::INFORM);
 
+    // Obtain BOINC preferred window height.
     int preferredHeight = m_BoincAdapter->graphicsWindowHeight();
     stringstream msg_init_prefheight;
     msg_init_prefheight << "WindowManager::initialize() : BOINC preferred height = "
                         << preferredHeight;
     ErrorHandler::record(msg_init_prefheight.str(), ErrorHandler::INFORM);
 
+    // Obtain BOINC preferred frame rate ie. frames to render per second.
     int preferredFrameRate = m_BoincAdapter->graphicsFrameRate();
     stringstream msg_init_pref_frame_rate;
     msg_init_pref_frame_rate << "WindowManager::initialize() : BOINC preferred frame rate = "
                              << preferredFrameRate;
     ErrorHandler::record(msg_init_pref_frame_rate.str(), ErrorHandler::INFORM);
 
-    // Override optional given default values if preferred values are set
+    // Record requested values ( via this function's arguments including
+    // defaults ) of width, height and frame rate.
+    // NB : NO bounds checking on 'silly' values for height, width or frame rate !!
+    /// TODO - bounds checking on width, height and framerate ??
+    stringstream msg_init_req_width;
+    msg_init_req_width << "WindowManager::initialize() : requested width = "
+                       << width;
+    ErrorHandler::record(msg_init_req_width.str(), ErrorHandler::INFORM);
+
+    stringstream msg_init_req_height;
+    msg_init_req_height << "WindowManager::initialize() : requested height = "
+                        << height;
+    ErrorHandler::record(msg_init_req_height.str(), ErrorHandler::INFORM);
+
+    stringstream msg_init_req_framerate;
+    msg_init_req_framerate << "WindowManager::initialize() : requested frame rate = "
+                           << frameRate;
+    ErrorHandler::record(msg_init_req_framerate.str(), ErrorHandler::INFORM);
+
+    // If BOINC preferred values are not set then override with arguments given
+    // to this machine.
     m_WindowedWidth = (preferredWidth != 0) ? preferredWidth : width;
     m_WindowedHeight = (preferredHeight != 0) ? preferredHeight : height;
     m_RenderEventInterval = 1000.0f / ((preferredFrameRate != 0) ? preferredFrameRate : frameRate);
 
+    /// TODO - check after successful context creation to see if we got what we asked for.
     // Set desired OpenGL context attributes for our window.
+    // Request buffer swap on vertical sync.
+    SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, WindowManager::ENABLE_VERTICAL_SYNC);
+
+    // Request a minimum number of multisample buffers.
+    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, WindowManager::NUM_MULTISAMPLE_BUFFERS);
+
+    // Request a minimum of multisamples ( around a given pixel ).
+    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, WindowManager::NUM_MULTISAMPLES);
+
+    // Request double buffering.
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, WindowManager::ENABLE_DOUBLE_BUFFER);
+
+    // Request a specific color depth.
     SDL_GL_SetAttribute(SDL_GL_RED_SIZE, WindowManager::RED_BITS);
     SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, WindowManager::GREEN_BITS);
     SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, WindowManager::BLUE_BITS);
+
+    // Request a specific alpha channnel.
     SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, WindowManager::ALPHA_BITS);
+
+    // Request a minimum number of bits in depth buffer.
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, WindowManager::DEPTH_BITS);
+
+    // Request a depth buffer.
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, WindowManager::HAS_DEPTH_BUFFER);
+
+    /// TODO - Need to create compile switch here for use of ES with Android etc.
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, WindowManager::OGL_MAJOR_VERSION);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, WindowManager::OGL_MINOR_VERSION);
 
@@ -130,15 +188,14 @@ bool WindowManager::initialize(const int width, const int height, const int fram
         ErrorHandler::record("WindowManager::initialise() : Couldn't obtain window !!", ErrorHandler::FATAL);
         }
 
-    // Create a desired OpenGL for use with that window.
+    // Create a desired OpenGL context for use with that window,
+    // noting the above attribute selections.
     /// TODO - Check error on return here, how ?
     m_Context = SDL_GL_CreateContext(m_Window);
 
-    // OK we have a window, so initialise GLEW and SDL.
+    // OK we have a window, so initialise GLEW. This matters especially if the
+    // driver's function pointers need runtime linkage ie. Win32 target.
     initializeGLEW();
-
-    /// TODO - Put this is main, with SDL_main etc pfaffage ??
-    SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER);
 
     return true;
     }
@@ -561,3 +618,59 @@ Uint32 WindowManager::timerCallbackBOINCUpdateEvent(Uint32 interval, void *param
 
     return interval;
     }
+
+
+void WindowManager::toggleFullscreen() {
+    // toggle fullscreen bit and reset video mode
+    if(m_WindowedModeAvailable && (m_VideoModeFlags & SDL_FULLSCREEN)) {
+        // set new dimensions
+        m_CurrentWidth = m_WindowedWidth;
+        m_CurrentHeight = m_WindowedHeight;
+
+        // (un)set video mode flags
+        m_VideoModeFlags &= ~SDL_FULLSCREEN;
+        m_VideoModeFlags |= SDL_RESIZABLE;
+
+        // show cursor in fullscreen mode
+        SDL_ShowCursor(SDL_ENABLE);
+        }
+    else if(m_FullscreenModeAvailable && !(m_VideoModeFlags & SDL_FULLSCREEN)) {
+        // set new dimensions
+        m_CurrentWidth = m_DesktopWidth;
+        m_CurrentHeight = m_DesktopHeight;
+
+        // (un)set video mode flags
+#ifdef __APPLE__
+        if (m_ScreensaverMode) {
+            m_CurrentWidth = m_DesktopWidth;
+            m_CurrentHeight = m_DesktopHeight;
+            m_VideoModeFlags |= SDL_NOFRAME;
+            }
+        else
+#endif
+            {
+            m_VideoModeFlags |= SDL_FULLSCREEN;
+            }
+        m_VideoModeFlags &= ~SDL_RESIZABLE;
+
+        // hide cursor
+        SDL_ShowCursor(SDL_DISABLE);
+        }
+
+    // reset video mode
+    m_DisplaySurface = SDL_SetVideoMode(m_CurrentWidth,
+                                        m_CurrentHeight,
+                                        m_DesktopBitsPerPixel,
+                                        m_VideoModeFlags);
+
+    // notify our observers (currently exactly one, hence front())
+    // (windoze needs to be reinitialized instead of just resized, oh well)
+    /// TODO - with SDL2 don't need to re-acquire a context on resize.
+    /// \todo Can we determine the host OS? On X11 a resize() is sufficient!
+    eventObservers.front()->initialize(m_CurrentWidth, m_CurrentHeight, 0, true);
+    }
+
+void WindowManager::setScreensaverMode(const bool enabled) {
+    m_ScreensaverMode = enabled;
+    }
+

@@ -29,7 +29,6 @@
 
 #include "AbstractGraphicsEngine.h"
 #include "ErrorHandler.h"
-#include "Events.h"
 #include "GraphicsEngineFactory.h"
 #include "ResourceFactory.h"
 #include "WindowManager.h"
@@ -117,7 +116,9 @@ int main(int argc, char **argv) {
 #endif
 
     // Instantiate and initialize our window manager.
-    WindowManager::displaymode mode = WindowManager::WINDOW;
+    WindowManager window;
+
+
 
     // Check other optional command line parameters
     if(argc == 2) {
@@ -154,9 +155,6 @@ int main(int argc, char **argv) {
         ErrorHandler::record("SolarSystem::main() : Window manager could not be initialized!", ErrorHandler::FATAL);
         }
 
-    // Collate and record OpenGL info.
-    openGLReport(&window);
-
     // Using a ResourceFactory, create font and icon resource instances
     ResourceFactory factory;
     const Resource* fontResource = factory.createInstance("FontSansSerif");
@@ -187,7 +185,7 @@ int main(int argc, char **argv) {
         }
 
     // Set the caption or window title.
-    /// TODO - if/when GLFW 3.x arrives, put in a window icon as well ?
+    /// TODO - Now that SDL2 is here, put in a window icon as well.
     window.setWindowCaption("Einstein@Home");
 
     // Prepare for rendering by initialising chosen engine
@@ -199,7 +197,6 @@ int main(int argc, char **argv) {
     window.registerEventObserver(graphics);
 
     // Enter main event loop, but first flush any pending events.
-    Events::Instance(0)->flush();
     window.eventLoop();
 
     // Clean up and exit

@@ -172,6 +172,24 @@ class WindowManager {
          */
         void setWindowIcon(const unsigned char *data, const int size) const;
 
+        /**
+         * \brief Toggles the fullscreen state of the main window
+         *
+         * Note: the initial state is windowed (not fullscreen).
+         *
+         */
+        void toggleFullscreen();
+
+        /**
+         * \brief Set the screensaver mode indicator.
+         *
+         * When enabled, all user input will cause the application to quit
+         * (common screensaver behavior)
+         *
+         * \param enabled The new value for the screensaver mode indicator
+         */
+        void setScreensaverMode(const bool enabled);
+
     private:
         /// The window's title/caption.
         static const std::string m_WindowTitle;
@@ -183,6 +201,10 @@ class WindowManager {
         static const int ALPHA_BITS;
         static const int DEPTH_BITS;
         static const int HAS_DEPTH_BUFFER;
+        static const int ENABLE_VERTICAL_SYNC;
+        static const int ENABLE_DOUBLE_BUFFER;
+        static const int NUM_MULTISAMPLE_BUFFERS;
+        static const int NUM_MULTISAMPLES;
 
         static const int OGL_MAJOR_VERSION;
         static const int OGL_MINOR_VERSION;
