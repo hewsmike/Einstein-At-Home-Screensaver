@@ -20,6 +20,7 @@
 
 #include <cstdlib>
 #include <iostream>
+#include <sstream>
 
 #include <diagnostics.h>
 #include <boinc_api.h>
@@ -49,12 +50,50 @@ int main(int argc, char **argv) {
     if(argc == 2) {
         string param(argv[1]);
         if(param == "--version" || param == "-v") {
-            cout << "Version information:" << endl;
-            cout << "Graphics Application Revision: " << ERP_GIT_VERSION << endl;
-            cout << "BOINC Revision: " << SVN_VERSION << endl;
-            exit(0);
+            stringstream boinc_version;
+            boinc_version << "Version information:" << endl;
+            boinc_version << "Graphics Application Revision: " << ERP_GIT_VERSION << endl;
+            boinc_version << "BOINC Revision: " << SVN_VERSION << endl;
+            ErrorHandler::record(boinc_version.str(), ErrorHandler::NORMAL_EXIT);
             }
         }
+
+    // Put these first up here, in order to handle any failure(s)
+    // immediately ( hopefully cleaner for debug ).
+    // To circumvent potential later failure of SDL_Init(), as we are not
+    // not using SDL_main() as a program entry point. The SDL2 Wiki entries
+    // ( as of 05 Jan 2014 ) are :
+    //
+    // Under 'Initialization and Shutdown' : "It should be noted that on some
+    // operating systems, SDL_Init() will fail if SDL_main() has not been defined
+    // as the entry point for the program. Calling SDL_SetMainReady() prior to
+    // SDL_Init() will circumvent this failure condition, however, users should be
+    // careful when calling SDL_SetMainReady() as improper initalization may cause
+    // crashes and hard to diagnose problems."
+    //
+    // Under 'SDL_SetMainReady' : "This function is defined in SDL_main.h, along
+    // with the preprocessor rule to redefine main() as SDL_main(). Thus to ensure
+    // that your main() function will not be changed it is necessary to define
+    // SDL_MAIN_HANDLED before including SDL.h."
+    //
+    // Err ..... some each-way bet here ??? :-O
+    //
+    // NB : FWIW This order of usage ( as recommended in the SDL2 Wiki )
+    // contradicts the statement that SDL_Init() must be called before
+    // using any other SDL function ! :-0
+    SDL_SetMainReady();
+    if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) != 0) {
+        stringstream init_error;
+        init_error << "\nUnable to initialize SDL:  "
+                   << ErrorHandler::check_SDL2_Error()
+                   << std::endl;
+        ErrorHandler::record(init_error.str(), ErrorHandler::FATAL);
+        }
+
+    // At this point SDL initialisation will have succeeded, so make sure
+    // that ( for whatever 'normal' exit modes later occur ) SDL will be
+    // cleaned up.
+    atexit(SDL_Quit);
 
     // Enable BOINC diagnostics
     /// TODO: we might want to optimize this for glibc- and mingw-based stacktraces!
@@ -75,10 +114,6 @@ int main(int argc, char **argv) {
     // And if SCIENCE_APP was not given, this is the default.
     scienceApplication = GraphicsEngineFactory::EinsteinGravity;
 #endif
-
-
-
-
 
     // Check other optional command line parameters
     if(argc == 2) {
@@ -102,11 +137,11 @@ int main(int argc, char **argv) {
     // Edit this call for different build sources ie. swap 'Solarsystem' for whatever
     AbstractGraphicsEngine* graphics = GraphicsEngineFactory::createInstance(GraphicsEngineFactory::Starsphere,
                                                                              scienceApplication);
-    if(!graphics) {
+    if(graphics == NULL) {
         ErrorHandler::record("SolarSystem::main() : Requested graphics engine could not be found/instantiated!", ErrorHandler::FATAL);
         }
 
-    // Instantiate then attempt to initialize our window manager.
+    // Instantiate and then attempt to initialize our window manager.
     WindowManager window;
     if(window.initialize() != true) {
         // Failure, so destroy the AbstractGraphicsEngine and ...
@@ -115,7 +150,7 @@ int main(int argc, char **argv) {
         ErrorHandler::record("SolarSystem::main() : Window manager could not be initialized!", ErrorHandler::FATAL);
         }
 
-    // Using a ResourceFactory, create font and icon resource instances
+    // Using a ResourceFactory instance, create font and icon resource instances.
     ResourceFactory factory;
     const Resource* fontResource = factory.createInstance("FontSansSerif");
     const Resource* iconResource = factory.createInstance("AppIconBMP");
@@ -148,15 +183,16 @@ int main(int argc, char **argv) {
     /// TODO - Now that SDL2 is here, put in a window icon as well.
     window.setWindowCaption("Einstein@Home");
 
-    // Prepare for rendering by initialising chosen engine
-    // and get up to date BOINC information.
+    // Prepare for rendering by initialising chosen engine.
     graphics->initialize(window.windowWidth(), window.windowHeight(), fontResource);
+
+    // Get up to date BOINC information.
     graphics->refreshBOINCInformation();
 
     // Register AbstractGraphicsEngine as event observer.
     window.registerEventObserver(graphics);
 
-    // Enter main event loop, but first flush any pending events.
+    // Enter main event loop.
     window.eventLoop();
 
     // Clean up and exit

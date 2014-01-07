@@ -64,10 +64,6 @@ WindowManager::~WindowManager() {
     }
 
 bool WindowManager::initialize(const int width, const int height, const int frameRate) {
-    /// TODO - Put this is main, with SDL_main etc pfaffage ??
-    SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER);
-    atexit(SDL_Quit);
-
     /// TODO - check error return on this.
     SDL_GetDesktopDisplayMode(WindowManager::DISPLAY_ZERO, m_Mode);
 

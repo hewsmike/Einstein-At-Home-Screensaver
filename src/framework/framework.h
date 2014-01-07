@@ -29,10 +29,34 @@
 /**
  * \brief Enforce the order of inclusions. BTW glew includes gl/glu ...
  *
+ * \see main.cpp ( as regards use of SDL_SetMainReady() with SDL_MAIN_HANDLED )
+ *
  * \author Mike Hewson\n
  */
 
 #include "glew.h"
+
+// To circumvent potential later failure of SDL_Init(), as we are not
+// not using SDL_main() as a program entry point. The SDL2 Wiki entries
+// ( as of 05 Jan 2014 ) are :
+//
+// Under 'Initialization and Shutdown' : "It should be noted that on some
+// operating systems, SDL_Init() will fail if SDL_main() has not been defined
+// as the entry point for the program. Calling SDL_SetMainReady() prior to
+// SDL_Init() will circumvent this failure condition, however, users should be
+// careful when calling SDL_SetMainReady() as improper initalization may cause
+// crashes and hard to diagnose problems."
+//
+// Under 'SDL_SetMainReady' : "This function is defined in SDL_main.h, along
+// with the preprocessor rule to redefine main() as SDL_main(). Thus to ensure
+// that your main() function will not be changed it is necessary to define
+// SDL_MAIN_HANDLED before including SDL.h."
+//
+// Err ..... some each-way bet here ??? :-O
+#ifndef SDL_MAIN_HANDLED
+    #define SDL_MAIN_HANDLED
+#endif
+
 #include "SDL.h"
 
 /**
