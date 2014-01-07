@@ -89,12 +89,14 @@ class ErrorHandler {
          * message.
          *
          *      Only the most recent, if any, error is reported upon since
-         * the last call SDL_ClearError(). Return value will be an empty string
-         * if there is no error to report.
+         * the last call to SDL_ClearError(). Return value will be an empty string
+         * if there is no error to report. Before using this function I recommended
+         * testing of any return value of a given SDL function to see if any error
+         * occurred at all, before/if calling this method.
          *
          * \return : an std::string version of any SDL error message.
          */
-        static const std::string& ErrorHandler::check_SDL2_Error(void);
+        static const std::string& check_SDL2_Error(void);
 
         /**
          * \brief Transform an OpenGL string type to an STL string type.
@@ -120,7 +122,7 @@ class ErrorHandler {
         static struct tm* local;
 
         /// Most recently polled SDL2 error.
-        std::string last_SDL2_error;
+        static std::string last_SDL2_error;
 
         /**
          * \brief Constructor ( private since this a static class )
