@@ -115,24 +115,6 @@ int main(int argc, char **argv) {
     scienceApplication = GraphicsEngineFactory::EinsteinGravity;
 #endif
 
-    // Check other optional command line parameters
-    if(argc == 2) {
-        string param(argv[1]);
-        if(param == "--fullscreen") {
-            // Set non-interactive mode ie. 'screensaver'
-            // (must do this first on Apple).
-            mode = WindowManager::SCREENSAVER;
-            }
-        if(param == "--demo") {
-            mode = WindowManager::DEMO;
-            }
-        }
-
-    WindowManager window(mode);
-#ifdef __APPLE__
-            SetMacSSLevel();
-#endif
-
     // Make an AbstractGraphicsEngine on the heap, FATAL on fail.
     // Edit this call for different build sources ie. swap 'Solarsystem' for whatever
     AbstractGraphicsEngine* graphics = GraphicsEngineFactory::createInstance(GraphicsEngineFactory::Starsphere,
@@ -172,6 +154,7 @@ int main(int argc, char **argv) {
 
     // Check for an icon resource, but this is not fatal in the lack.
     if(iconResource != NULL && iconResource->data()->size() > 0) {
+        // Use that icon for the window ....
         window.setWindowIcon(&iconResource->data()->at(0), iconResource->data()->size());
         delete iconResource;
         }
@@ -180,8 +163,10 @@ int main(int argc, char **argv) {
         }
 
     // Set the caption or window title.
-    /// TODO - Now that SDL2 is here, put in a window icon as well.
     window.setWindowCaption("Einstein@Home");
+
+    // Register AbstractGraphicsEngine as event observer.
+    window.registerEventObserver(graphics);
 
     // Prepare for rendering by initialising chosen engine.
     graphics->initialize(window.windowWidth(), window.windowHeight(), fontResource);
@@ -189,8 +174,21 @@ int main(int argc, char **argv) {
     // Get up to date BOINC information.
     graphics->refreshBOINCInformation();
 
-    // Register AbstractGraphicsEngine as event observer.
-    window.registerEventObserver(graphics);
+    // Check other optional command line parameters
+    if(argc == 2) {
+        string param(argv[1]);
+        if(param == "--fullscreen") {
+            // Set non-interactive mode ie. 'screensaver'
+            // (must do this first on Apple).
+            window.setScreensaverMode(true);
+            }
+        if((param == "--fullscreen") || (param == "--demo")) {
+            window.toggleFullscreen();
+#ifdef __APPLE__
+            SetMacSSLevel();
+#endif
+            }
+        }
 
     // Enter main event loop.
     window.eventLoop();
