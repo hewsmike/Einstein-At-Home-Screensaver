@@ -33,8 +33,6 @@
 #include "AbstractGraphicsEngine.h"
 #include "BOINCClientAdapter.h"
 
-using namespace std;
-
 /**
  * \addtogroup framework Framework
  * @{
@@ -106,7 +104,7 @@ class WindowManager {
          * \see AbstractGraphicsEngine::mouseMoveEvent()
          * \see AbstractGraphicsEngine::keyboardPressEvent()
          */
-        void registerEventObserver(AbstractGraphicsEngine *engine);
+        void registerEventObserver(AbstractGraphicsEngine* engine);
 
         /**
          * \brief Unregisters an event observer.
@@ -114,7 +112,7 @@ class WindowManager {
          * \param engine The pointer to the \ref AbstractGraphicsEngine instance
          *        to unregister.
          */
-        void unregisterEventObserver(AbstractGraphicsEngine *engine);
+        void unregisterEventObserver(AbstractGraphicsEngine* engine);
 
         /**
          * \brief The main event loop.
@@ -144,7 +142,7 @@ class WindowManager {
          *
          * \param caption The new caption of the main window.
          */
-        void setWindowCaption(const string caption) const;
+        void setWindowCaption(const std::string& caption) const;
 
         /**
          * \brief Set the main window's icon.
@@ -156,7 +154,9 @@ class WindowManager {
          *
          * \param filename The new icon's filename.
          */
-        void setWindowIcon(const string filename) const;
+        /// TODO - should we delete this method to enforce that the
+        /// final executable must contain all it's ( constant ) resources ??
+        void setWindowIcon(const std::string& filename) const;
 
         /**
          * \brief Set the main window's icon.
@@ -170,7 +170,7 @@ class WindowManager {
          * \param data Pointer to the bitmap data buffer
          * \param size Size of the bitmap data buffer
          */
-        void setWindowIcon(const unsigned char *data, const int size) const;
+        void setWindowIcon(const unsigned char* data, const int size) const;
 
         /**
          * \brief Toggles the fullscreen state of the main window
@@ -222,7 +222,7 @@ class WindowManager {
         /**
          * \brief Timer callback to trigger render events
          *
-         * This callback is used by a SDL timer registered in \ref eventLoop().
+         * This callback is used by an SDL timer registered in \ref eventLoop().
          * It creates a \ref RenderEvent which is handled by eventLoop().
          * In order to use a constant timer interval, \c interval is
          * returned as it was passed.
@@ -238,12 +238,12 @@ class WindowManager {
          * \todo Work around static callback, otherwise we might get event conflicts
          * when more than one instance. Maybe we should use a singleton here anyway...
          */
-        static Uint32 timerCallbackRenderEvent(Uint32 interval, void *param);
+        static Uint32 timerCallbackRenderEvent(Uint32 interval, void* param);
 
         /**
          * \brief Timer callback to trigger BOINC update events
          *
-         * This callback is used by a SDL timer registered in \ref eventLoop().
+         * This callback is used by an SDL timer registered in \ref eventLoop().
          * It creates a \ref BOINCUpdateEvent which is handled by eventLoop().
          * In order to use a constant timer interval, \c interval is
          * returned as it was passed.
@@ -265,7 +265,7 @@ class WindowManager {
          * \todo Work around static callback, otherwise we might get event conflicts
          * when more than one instance. Maybe we should use a singleton here anyway...
          */
-        static Uint32 timerCallbackBOINCUpdateEvent(Uint32 interval, void *param);
+        static Uint32 timerCallbackBOINCUpdateEvent(Uint32 interval, void* param);
 
         /**
          * \brief Initialise the GLEW system, essentially establishing
@@ -274,8 +274,6 @@ class WindowManager {
          * \return boolean indicating success ( TRUE ) or failure ( FALSE )
          */
         bool initializeGLEW(void);
-
-
 
         /// The user's desktop mode.
         SDL_DisplayMode* m_Mode;
@@ -317,7 +315,7 @@ class WindowManager {
         bool m_ScreensaverMode;
 
         /// The event observer registry.
-        list<AbstractGraphicsEngine *> eventObservers;
+        list<AbstractGraphicsEngine*> eventObservers;
     };
 
 /**

@@ -64,235 +64,248 @@ WindowManager::~WindowManager() {
     }
 
 bool WindowManager::initialize(const int width, const int height, const int frameRate) {
-    /// TODO - check error return on this.
-    SDL_GetDesktopDisplayMode(WindowManager::DISPLAY_ZERO, m_Mode);
+    // Assume failure of this method.
+    bool ret_val = false;
 
-    // Obtain current desktop width.
-    m_DesktopWidth = m_Mode->w;
-    stringstream msg_init_current_desktop_mode_width;
-    msg_init_current_desktop_mode_width << "WindowManager::initialize() : current desktop width = "
-                                        << m_DesktopWidth;
-    ErrorHandler::record(msg_init_current_desktop_mode_width.str(), ErrorHandler::INFORM);
+    if(SDL_GetDesktopDisplayMode(WindowManager::DISPLAY_ZERO, m_Mode) == 0) {
+        // Obtain current desktop width.
+        m_DesktopWidth = m_Mode->w;
+        stringstream msg_init_current_desktop_mode_width;
+        msg_init_current_desktop_mode_width << "WindowManager::initialize() : current desktop width = "
+                                            << m_DesktopWidth;
+        ErrorHandler::record(msg_init_current_desktop_mode_width.str(), ErrorHandler::INFORM);
 
-    // Obtain current desktop height.
-    m_DesktopHeight = m_Mode->h;
-    stringstream msg_init_current_desktop_mode_height;
-    msg_init_current_desktop_mode_height << "WindowManager::initialize() : current desktop height = "
-                                         << m_DesktopHeight;
-    ErrorHandler::record(msg_init_current_desktop_mode_height.str(), ErrorHandler::INFORM);
+        // Obtain current desktop height.
+        m_DesktopHeight = m_Mode->h;
+        stringstream msg_init_current_desktop_mode_height;
+        msg_init_current_desktop_mode_height << "WindowManager::initialize() : current desktop height = "
+                                             << m_DesktopHeight;
+        ErrorHandler::record(msg_init_current_desktop_mode_height.str(), ErrorHandler::INFORM);
 
-    // Obtain current desktop color depth.
-    m_DesktopBitsPerPixel = SDL_BITSPERPIXEL(m_Mode->format);
-    stringstream msg_init_current_desktop_bitsperpixel;
-    msg_init_current_desktop_bitsperpixel << "WindowManager::initialize() : current desktop bits per pixel = "
-                                          << m_DesktopBitsPerPixel;
-    ErrorHandler::record(msg_init_current_desktop_bitsperpixel.str(), ErrorHandler::INFORM);
+        // Obtain current desktop color depth.
+        m_DesktopBitsPerPixel = SDL_BITSPERPIXEL(m_Mode->format);
+        stringstream msg_init_current_desktop_bitsperpixel;
+        msg_init_current_desktop_bitsperpixel << "WindowManager::initialize() : current desktop bits per pixel = "
+                                              << m_DesktopBitsPerPixel;
+        ErrorHandler::record(msg_init_current_desktop_bitsperpixel.str(), ErrorHandler::INFORM);
 
-    // Get initial non-fullscreen resolution and frame rate from project preferences.
-    // Reset the BOINC adapter.
-    m_BoincAdapter->initialize();
+        // Get initial non-fullscreen resolution and frame rate from project preferences.
+        // Reset the BOINC adapter.
+        m_BoincAdapter->initialize();
 
-    // Obtain BOINC preferred window width.
-    int preferredWidth = m_BoincAdapter->graphicsWindowWidth();
-    stringstream msg_init_prefwidth;
-    msg_init_prefwidth << "WindowManager::initialize() : BOINC preferred width = "
-                       << preferredWidth;
-    ErrorHandler::record(msg_init_prefwidth.str(), ErrorHandler::INFORM);
+        // Obtain BOINC preferred window width.
+        int preferredWidth = m_BoincAdapter->graphicsWindowWidth();
+        stringstream msg_init_prefwidth;
+        msg_init_prefwidth << "WindowManager::initialize() : BOINC preferred width = "
+                           << preferredWidth;
+        ErrorHandler::record(msg_init_prefwidth.str(), ErrorHandler::INFORM);
 
-    // Obtain BOINC preferred window height.
-    int preferredHeight = m_BoincAdapter->graphicsWindowHeight();
-    stringstream msg_init_prefheight;
-    msg_init_prefheight << "WindowManager::initialize() : BOINC preferred height = "
-                        << preferredHeight;
-    ErrorHandler::record(msg_init_prefheight.str(), ErrorHandler::INFORM);
+        // Obtain BOINC preferred window height.
+        int preferredHeight = m_BoincAdapter->graphicsWindowHeight();
+        stringstream msg_init_prefheight;
+        msg_init_prefheight << "WindowManager::initialize() : BOINC preferred height = "
+                            << preferredHeight;
+        ErrorHandler::record(msg_init_prefheight.str(), ErrorHandler::INFORM);
 
-    // Obtain BOINC preferred frame rate ie. frames to render per second.
-    int preferredFrameRate = m_BoincAdapter->graphicsFrameRate();
-    stringstream msg_init_pref_frame_rate;
-    msg_init_pref_frame_rate << "WindowManager::initialize() : BOINC preferred frame rate = "
-                             << preferredFrameRate;
-    ErrorHandler::record(msg_init_pref_frame_rate.str(), ErrorHandler::INFORM);
+        // Obtain BOINC preferred frame rate ie. frames to render per second.
+        int preferredFrameRate = m_BoincAdapter->graphicsFrameRate();
+        stringstream msg_init_pref_frame_rate;
+        msg_init_pref_frame_rate << "WindowManager::initialize() : BOINC preferred frame rate = "
+                                 << preferredFrameRate;
+        ErrorHandler::record(msg_init_pref_frame_rate.str(), ErrorHandler::INFORM);
 
-    // Record requested values ( via this function's arguments including
-    // defaults ) of width, height and frame rate.
-    // NB : NO bounds checking on 'silly' values for height, width or frame rate !!
-    /// TODO - bounds checking on width, height and framerate ??
-    stringstream msg_init_req_width;
-    msg_init_req_width << "WindowManager::initialize() : requested width = "
-                       << width;
-    ErrorHandler::record(msg_init_req_width.str(), ErrorHandler::INFORM);
+        // Record requested values ( via this function's arguments including
+        // defaults ) of width, height and frame rate.
+        // NB : NO bounds checking on 'silly' values for height, width or frame rate !!
+        /// TODO - bounds checking on width, height and framerate ??
+        stringstream msg_init_req_width;
+        msg_init_req_width << "WindowManager::initialize() : requested width = "
+                           << width;
+        ErrorHandler::record(msg_init_req_width.str(), ErrorHandler::INFORM);
 
-    stringstream msg_init_req_height;
-    msg_init_req_height << "WindowManager::initialize() : requested height = "
-                        << height;
-    ErrorHandler::record(msg_init_req_height.str(), ErrorHandler::INFORM);
+        stringstream msg_init_req_height;
+        msg_init_req_height << "WindowManager::initialize() : requested height = "
+                            << height;
+        ErrorHandler::record(msg_init_req_height.str(), ErrorHandler::INFORM);
 
-    stringstream msg_init_req_framerate;
-    msg_init_req_framerate << "WindowManager::initialize() : requested frame rate = "
-                           << frameRate;
-    ErrorHandler::record(msg_init_req_framerate.str(), ErrorHandler::INFORM);
+        stringstream msg_init_req_framerate;
+        msg_init_req_framerate << "WindowManager::initialize() : requested frame rate = "
+                               << frameRate;
+        ErrorHandler::record(msg_init_req_framerate.str(), ErrorHandler::INFORM);
 
-    // If BOINC preferred values are not set then override with arguments given
-    // to this machine.
-    m_WindowedWidth = (preferredWidth != 0) ? preferredWidth : width;
-    m_WindowedHeight = (preferredHeight != 0) ? preferredHeight : height;
-    m_RenderEventInterval = 1000.0f / ((preferredFrameRate != 0) ? preferredFrameRate : frameRate);
+        // If BOINC preferred values are not set then override with arguments given
+        // to this machine.
+        m_WindowedWidth = (preferredWidth != 0) ? preferredWidth : width;
+        m_WindowedHeight = (preferredHeight != 0) ? preferredHeight : height;
+        m_RenderEventInterval = 1000.0f / ((preferredFrameRate != 0) ? preferredFrameRate : frameRate);
 
-    /// TODO - check after successful context creation to see if we got what we asked for.
-    // Set desired OpenGL context attributes for our window.
+        /// TODO - check after successful context creation to see if we got what we asked for.
+        // Set desired OpenGL context attributes for our window.
 
-    /// TODO - find a way to request vsync in platform independent way !!
-    /// Neither Open GL nor SDL provide this.
+        /// TODO - find a way to request vsync in platform independent way !!
+        /// Neither Open GL nor SDL ( cleanly ) provide this. Maybe roll my own
+        /// abstraction ?
 
-    // Request a minimum number of multisample buffers.
-    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, WindowManager::NUM_MULTISAMPLE_BUFFERS);
+        // Request a minimum number of multisample buffers.
+        SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, WindowManager::NUM_MULTISAMPLE_BUFFERS);
 
-    // Request a minimum of multisamples ( around a given pixel ).
-    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, WindowManager::NUM_MULTISAMPLES);
+        // Request a minimum of multisamples ( around a given pixel ).
+        SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, WindowManager::NUM_MULTISAMPLES);
 
-    // Request double buffering.
-    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, WindowManager::ENABLE_DOUBLE_BUFFER);
+        // Request double buffering.
+        SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, WindowManager::ENABLE_DOUBLE_BUFFER);
 
-    // Request a specific color depth.
-    SDL_GL_SetAttribute(SDL_GL_RED_SIZE, WindowManager::RED_BITS);
-    SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, WindowManager::GREEN_BITS);
-    SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, WindowManager::BLUE_BITS);
+        // Request a specific color depth.
+        SDL_GL_SetAttribute(SDL_GL_RED_SIZE, WindowManager::RED_BITS);
+        SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, WindowManager::GREEN_BITS);
+        SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, WindowManager::BLUE_BITS);
 
-    // Request a specific alpha channnel.
-    SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, WindowManager::ALPHA_BITS);
+        // Request a specific alpha channnel.
+        SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, WindowManager::ALPHA_BITS);
 
-    // Request a minimum number of bits in depth buffer.
-    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, WindowManager::DEPTH_BITS);
+        // Request a minimum number of bits in depth buffer.
+        SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, WindowManager::DEPTH_BITS);
 
-    // Request a depth buffer.
-    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, WindowManager::HAS_DEPTH_BUFFER);
+        // Request a depth buffer.
+        SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, WindowManager::HAS_DEPTH_BUFFER);
 
-    /// TODO - Need to create compile switch here for use of ES with Android etc.
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, WindowManager::OGL_MAJOR_VERSION);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, WindowManager::OGL_MINOR_VERSION);
+        /// TODO - Need to create compile switch here for use of ES with Android etc.
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, WindowManager::OGL_MAJOR_VERSION);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, WindowManager::OGL_MINOR_VERSION);
 
-    // Start in windowed mode.
-    m_Window = SDL_CreateWindow(m_WindowTitle.c_str(),
-                                SDL_WINDOWPOS_UNDEFINED,
-                                SDL_WINDOWPOS_UNDEFINED,
-                                m_WindowedWidth,
-                                m_WindowedHeight,
-                                SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_INPUT_GRABBED);
+        // Start in windowed mode.
+        m_Window = SDL_CreateWindow(m_WindowTitle.c_str(),
+                                    SDL_WINDOWPOS_UNDEFINED,
+                                    SDL_WINDOWPOS_UNDEFINED,
+                                    m_WindowedWidth,
+                                    m_WindowedHeight,
+                                    SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_INPUT_GRABBED);
 
-    // Check that the window was successfully made.
-    if (m_Window == NULL) {
-        // In the event that the window could not be made...
-        ErrorHandler::record("WindowManager::initialise() : Couldn't obtain window !!", ErrorHandler::FATAL);
+        // Check that the window was successfully made.
+        if (m_Window == NULL) {
+            // In the event that the window could not be made...
+            ErrorHandler::record("WindowManager::initialise() : Couldn't obtain window !!", ErrorHandler::FATAL);
+            }
+
+        // Create a desired OpenGL context for use with that window,
+        // noting the above attribute selections.
+        /// TODO - Check error on return here, how ?
+        m_Context = SDL_GL_CreateContext(m_Window);
+
+        // OK we have a window, so initialise GLEW. This matters especially if the
+        // driver's function pointers need runtime linkage ie. Win32 target.
+        initializeGLEW();
+
+        ret_val = true;
+        }
+    else {
+        // Could not get the desktop parameters.
+        stringstream msg_get_desktop_error;
+        msg_get_desktop_error << "WindowManager::initialize() : can't obtain current desktop mode : "
+                              << << ErrorHandler::check_SDL2_Error() << endl;
+        ErrorHandler::record(msg_get_desktop_error.str(), ErrorHandler::WARN);
+
         }
 
-    // Create a desired OpenGL context for use with that window,
-    // noting the above attribute selections.
-    /// TODO - Check error on return here, how ?
-    m_Context = SDL_GL_CreateContext(m_Window);
-
-    // OK we have a window, so initialise GLEW. This matters especially if the
-    // driver's function pointers need runtime linkage ie. Win32 target.
-    initializeGLEW();
-
-    return true;
+    return ret_val;
     }
 
 void WindowManager::eventLoop(void) {
-//    // Provided we have at least one observer.
-//    if(!eventObservers.empty()) {
-//        // Set two main timers (interval in ms).
-//        SDL_AddTimer(m_RenderEventInterval, &timerCallbackRenderEvent, NULL);
-//        SDL_AddTimer(WindowManager::TIMER_DELAY_BOINC, &timerCallbackBOINCUpdateEvent, NULL);
-//
-//        // Holder of current event type.
-//        SDL_Event current_event;
-//        // Infinite looping until an exit is triggered.
-//        while(true) {
-//            bool resize_flag = false;
-//
-//            // Keep extracting any events from the queue, until it is empty.
-//            // Events are gathered 'behind the scenes' from input devices
-//            // asynchronously ... and placed in a 'queue of next available
-//            // events'. Currently enacting only one listener, which is of
-//            // AbstractGraphicsEngine type.
-//            while(SDL_PollEvent(&current_event) == WindowManager::EVENT_PENDING) {
-//                if(current_event.type == Events::RenderEventType) {
-//                    // Frame render falling due.
-//                    eventObservers.front()->render(dtime());
-//                    }
-//
-//                else if(current_event.type == Events::BOINCUpdateEventType) {
-//                    // BOINC update falling due.
-//                    eventObservers.front()->refreshBOINCInformation();
-//                    }
-//
-//                // Check for any user input if in screensaver mode.
-//                else if((m_ScreensaverMode == true) &&
-//                        ((current_event.type == SDL_MouseMotionEvent) ||
-//                         (current_event.type == SDL_MouseButtonEvent) ||
-//                         (current_event.type == SDL_KeyboardEvent) ||
-//                         (current_event.type == SDL_MouseWheelEvent))) {
-//                    // Close window, terminate SDL and leave this window manager.
-//                    /// TODO - atexit(SDL_Quit) in main too ??
-//                    ErrorHandler::record("WindowManager::eventLoop() : Exiting on account of user input", ErrorHandler::INFORM);
-//                    SDL_DestroyWindow(m_Window);
-//                    SDL_Quit();
-//                    return;
-//                    }
-//
-//                else if((current_event.type == SDL_MouseMotionEvent) &&
-//                        (SDL_GetMouseState(NULL, NULL)&SDL_BUTTON(WindowManager::LEFT_MOUSE_BUTTON))) {
-//                    // Mouse movement with left button pressed down.
-//                    eventObservers.front()->mouseMoveEvent(current_event.xrel,
-//                                                           current_event.yrel,
-//                                                           AbstractGraphicsEngine::MouseButtonLeft);
-//                    }
-//
-//                else if((current_event.type == SDL_MouseMotionEvent) &&
-//                        (SDL_GetMouseState(NULL, NULL)&SDL_BUTTON(WindowManager::RIGHT_MOUSE_BUTTON))) {
-//                    // Mouse movement with right button pressed down.
-//                    eventObservers.front()->mouseMoveEvent(current_event.xrel,
-//                                                           current_event.yrel,
-//                                                           AbstractGraphicsEngine::MouseButtonRight);
-//                    }
-//
-//                else if(current_event.type == SDL_MouseWheelEvent) {
-//                    // Mouse wheel has been moved.
-//                    eventObservers.front()->mouseWheelEvent(current_event.y);
-//                    }
-//
-//                else if((current_event.type == SDL_WINDOWEVENT) &&
-//                        (current_event.event == SDL_WINDOWEVENT_RESIZED) &&
-//                        (resize_flag == false)) {
-//                    resize_flag = true;
-//                    m_CurrentWidth = m_WindowedWidth = current_event.data1;
-//                    m_CurrentHeight = m_WindowedHeight = current_event.data2;
-//
-//                    // Use actual acquired ( as distinct from requested ) size.
-//                    SDL_GetWindowSize(m_Window,
-//                                      &m_CurrentWidth,
-//                                      &m_CurrentHeight);
-//
-//                    eventObservers.front()->initialize(m_CurrentWidth, m_CurrentHeight, 0, true);
-//                    }
-//
-//                // 'Normal' exit pathway if not screensaver.
-//                else if((current_event.type == SDL_QUIT) ||
-//                        ((current_event.type == Events::KeyPressEventType) &&
-//                         (current_event.k_press.pressed == true) &&
-//                         (current_event.k_press.key_code == GLFW_KEY_ESC))) {
-//                    // Close window, terminate SDL and leave this window manager.
-//                    /// TODO - atexit(SDL_Quit) in main too ??
-//                    ErrorHandler::record("WindowManager::eventLoop() : normal exit on user request", ErrorHandler::INFORM);
-//                    SDL_DestroyWindow(m_Window);
-//                    SDL_Quit();
-//                    return;
-//                    }
-//
-//                // Process printable character input.
-//                else if((current_event.type == Events::CharInputEventType) &&
-//                        (current_event.c_input.pressed == true)) {
+    // Provided we have at least one observer.
+    if(!eventObservers.empty()) {
+        // Set two main timers (interval in ms).
+        SDL_AddTimer(m_RenderEventInterval, &timerCallbackRenderEvent, NULL);
+        SDL_AddTimer(WindowManager::TIMER_DELAY_BOINC, &timerCallbackBOINCUpdateEvent, NULL);
+
+        // Holder of current event type.
+        SDL_Event current_event;
+        // Infinite looping until an exit is triggered.
+        while(true) {
+            bool resize_flag = false;
+
+            // Keep extracting any events from the queue, until it is empty.
+            // Events are gathered 'behind the scenes' from input devices
+            // asynchronously ... and placed in a 'queue of next available
+            // events'. Currently enacting only one listener, which is of
+            // AbstractGraphicsEngine type.
+            while(SDL_PollEvent(&current_event) == WindowManager::EVENT_PENDING) {
+                if(current_event.type == Events::RenderEventType) {
+                    // Frame render falling due.
+                    eventObservers.front()->render(dtime());
+                    }
+
+                else if(current_event.type == Events::BOINCUpdateEventType) {
+                    // BOINC update falling due.
+                    eventObservers.front()->refreshBOINCInformation();
+                    }
+
+                // Check for any user input if in screensaver mode.
+                else if((m_ScreensaverMode == true) &&
+                        ((current_event.type == SDL_MouseMotionEvent) ||
+                         (current_event.type == SDL_MouseButtonEvent) ||
+                         (current_event.type == SDL_KeyboardEvent) ||
+                         (current_event.type == SDL_MouseWheelEvent))) {
+                    // Close window, terminate SDL and leave this window manager.
+                    /// TODO - atexit(SDL_Quit) in main too ??
+                    ErrorHandler::record("WindowManager::eventLoop() : Exiting on account of user input", ErrorHandler::INFORM);
+                    SDL_DestroyWindow(m_Window);
+                    SDL_Quit();
+                    return;
+                    }
+
+                else if((current_event.type == SDL_MouseMotionEvent) &&
+                        (SDL_GetMouseState(NULL, NULL)&SDL_BUTTON(WindowManager::LEFT_MOUSE_BUTTON))) {
+                    // Mouse movement with left button pressed down.
+                    eventObservers.front()->mouseMoveEvent(current_event.xrel,
+                                                           current_event.yrel,
+                                                           AbstractGraphicsEngine::MouseButtonLeft);
+                    }
+
+                else if((current_event.type == SDL_MouseMotionEvent) &&
+                        (SDL_GetMouseState(NULL, NULL)&SDL_BUTTON(WindowManager::RIGHT_MOUSE_BUTTON))) {
+                    // Mouse movement with right button pressed down.
+                    eventObservers.front()->mouseMoveEvent(current_event.xrel,
+                                                           current_event.yrel,
+                                                           AbstractGraphicsEngine::MouseButtonRight);
+                    }
+
+                else if(current_event.type == SDL_MouseWheelEvent) {
+                    // Mouse wheel has been moved.
+                    eventObservers.front()->mouseWheelEvent(current_event.y);
+                    }
+
+                else if((current_event.type == SDL_WINDOWEVENT) &&
+                        (current_event.event == SDL_WINDOWEVENT_RESIZED) &&
+                        (resize_flag == false)) {
+                    resize_flag = true;
+                    m_CurrentWidth = m_WindowedWidth = current_event.data1;
+                    m_CurrentHeight = m_WindowedHeight = current_event.data2;
+
+                    // Use actual acquired ( as distinct from requested ) size.
+                    SDL_GetWindowSize(m_Window,
+                                      &m_CurrentWidth,
+                                      &m_CurrentHeight);
+
+                    eventObservers.front()->initialize(m_CurrentWidth, m_CurrentHeight, 0, true);
+                    }
+
+                // 'Normal' exit pathway if not screensaver.
+                else if((current_event.type == SDL_QUIT) ||
+                        ((current_event.type == Events::KeyPressEventType) &&
+                         (current_event.k_press.pressed == true) &&
+                         (current_event.k_press.key_code == GLFW_KEY_ESC))) {
+                    // Close window, terminate SDL and leave this window manager.
+                    /// TODO - atexit(SDL_Quit) in main too ??
+                    ErrorHandler::record("WindowManager::eventLoop() : normal exit on user request", ErrorHandler::INFORM);
+                    SDL_DestroyWindow(m_Window);
+                    SDL_Quit();
+                    return;
+                    }
+
+                // Process printable character input.
+                else if((current_event.type == Events::CharInputEventType) &&
+                        (current_event.c_input.pressed == true)) {
 //                        // Note : we account for shifted characters from the same key.
 //                    switch(current_event.c_input.char_code) {
 //                        case ',':
@@ -418,11 +431,11 @@ void WindowManager::eventLoop(void) {
 //                        default:
 //                            break;
 //                        }
-//                    }
-//
-//                // Process non-printable keypresses.
-//                else if((current_event.type == Events::KeyPressEventType) &&
-//                        (current_event.k_press.pressed == true)) {
+                    }
+
+                // Process non-printable keypresses.
+                else if((current_event.type == Events::KeyPressEventType) &&
+                        (current_event.k_press.pressed == true)) {
 //                    switch(current_event.k_press.key_code) {
 //                        case GLFW_KEY_F1:
 //                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyF1);
@@ -495,14 +508,14 @@ void WindowManager::eventLoop(void) {
 //                        default:
 //                            break;
 //                        }
-//                    }
-//                }
-//            }
-//        }
-//    else {
-//        // This is a logic error, as we shoulda/woulda/coulda have an observer by now !!
-//        ErrorHandler::record("WindowManager::eventLoop() : no event observer present", ErrorHandler::FATAL);
-//        }
+                    }
+                }
+            }
+        }
+    else {
+        // This is a logic error, as we shoulda/woulda/coulda have an observer by now !!
+        ErrorHandler::record("WindowManager::eventLoop() : no event observer present", ErrorHandler::FATAL);
+        }
     }
 
 void WindowManager::registerEventObserver(AbstractGraphicsEngine *engine) {
@@ -527,38 +540,45 @@ int WindowManager::windowHeight(void) const {
     return m_CurrentHeight;
     }
 
-void WindowManager::setWindowCaption(const string caption) const {
-    // SDL_SetWindowTitle(m_Window, caption.c_str());
+void WindowManager::setWindowCaption(const std::string& caption) const {
+    SDL_SetWindowTitle(m_Window, caption.c_str());
     }
 
-void WindowManager::setWindowIcon(const string filename) const {
-    //if (filename.length() > 0) {
-    //      SDL_WM_SetIcon(SDL_LoadBMP(filename.c_str()), NULL);
-    //      }
-    // SDL_SetWindowIcon(m_Window, SDL_Surface* icon);
+void WindowManager::setWindowIcon(const std::string& filename) const {
+    if (filename.length() > 0) {
+        SDL_Surface* icon = SDL_LoadBMP(filename.c_str());
+        SDL_SetWindowIcon(m_Window, icon);
+        }
     }
 
-void WindowManager::setWindowIcon(const unsigned char *data, const int size) const {
-   //// prepare data buffer structure
-//   SDL_RWops *buffer = SDL_RWFromMem((void*) data, size);
-//
-//   if(buffer != NULL) {
-//      // load BMP from prepared data buffer
-//      SDL_Surface *surface = SDL_LoadBMP_RW(buffer, 1);
-//
-//      if(surface != NULL) {
-//         // set window icon
-//         SDL_WM_SetIcon(surface, NULL);
-//         SDL_FreeSurface(surface);
-//         }
-//      else {
-//         cerr << "Could not create window icon surface: " << SDL_GetError() << endl;
-//         }
-//      }
-//   else {
-//      cerr << "Could not prepare window icon data: " << SDL_GetError() << endl;
-//      }
-    // SDL_SetWindowIcon(m_Window, SDL_Surface* icon);
+void WindowManager::setWindowIcon(const unsigned char* data, const int size) const {
+    // Prepare data buffer structure
+    SDL_RWops* buffer = SDL_RWFromMem((void*) data, size);
+
+    if(buffer != NULL) {
+        // Load BMP from prepared data buffer, closing stream too.
+        SDL_Surface* surface = SDL_LoadBMP_RW(buffer, 1);
+
+        // Did that load succeed ?
+        if(surface != NULL) {
+            // set window icon, then release the SDL_Surface.
+            SDL_SetWindowIcon(m_Window, surface);
+            SDL_FreeSurface(surface);
+            }
+        else {
+            stringstream icon_surface_error_msg;
+            icon_surface_error_msg << "Could not create window icon surface : "
+                                   << ErrorHandler::check_SDL2_Error() << endl;
+            ErrorHandler::record(icon_surface_error_msg.str(), ErrorHandler::WARN);
+            }
+
+        }
+    else {
+        stringstream icon_load_error_msg;
+        icon_load_error_msg << "Could not prepare window icon data : "
+                            << ErrorHandler::check_SDL2_Error() << endl;
+        ErrorHandler::record(icon_load_error_msg.str(), ErrorHandler::WARN);
+        }
     }
 
 bool WindowManager::initializeGLEW(void) {
@@ -583,7 +603,7 @@ bool WindowManager::initializeGLEW(void) {
     return ret_val;
     }
 
-Uint32 WindowManager::timerCallbackRenderEvent(Uint32 interval, void *param) {
+Uint32 WindowManager::timerCallbackRenderEvent(Uint32 interval, void* param) {
     SDL_Event event;
     SDL_UserEvent userevent;
 
@@ -600,7 +620,7 @@ Uint32 WindowManager::timerCallbackRenderEvent(Uint32 interval, void *param) {
     return interval;
     }
 
-Uint32 WindowManager::timerCallbackBOINCUpdateEvent(Uint32 interval, void *param) {
+Uint32 WindowManager::timerCallbackBOINCUpdateEvent(Uint32 interval, void* param) {
     SDL_Event event;
     SDL_UserEvent userevent;
 
@@ -661,11 +681,7 @@ void WindowManager::toggleFullscreen() {
                                         m_DesktopBitsPerPixel,
                                         m_VideoModeFlags);
 
-    // notify our observers (currently exactly one, hence front())
-    // (windoze needs to be reinitialized instead of just resized, oh well)
-    /// TODO - with SDL2 don't need to re-acquire a context on resize.
-    /// \todo Can we determine the host OS? On X11 a resize() is sufficient!
-    eventObservers.front()->initialize(m_CurrentWidth, m_CurrentHeight, 0, true);
+    // NB : No longer need to recycle a listener's window on a per OS basis.
     }
 
 void WindowManager::setScreensaverMode(const bool enabled) {
