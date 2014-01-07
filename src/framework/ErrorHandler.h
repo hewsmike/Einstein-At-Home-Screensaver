@@ -85,6 +85,18 @@ class ErrorHandler {
         static void check_OpenGL_Error(void);
 
         /**
+         * \brief Check the current SDL2 state for error, and return any error
+         * message.
+         *
+         *      Only the most recent, if any, error is reported upon since
+         * the last call SDL_ClearError(). Return value will be an empty string
+         * if there is no error to report.
+         *
+         * \return : an std::string version of any SDL error message.
+         */
+        static const std::string& ErrorHandler::check_SDL2_Error(void);
+
+        /**
          * \brief Transform an OpenGL string type to an STL string type.
          *
          * \param glstring : the OpenGL string
@@ -106,6 +118,9 @@ class ErrorHandler {
         /// Holders for timestamp manipulation.
         static time_t current;
         static struct tm* local;
+
+        /// Most recently polled SDL2 error.
+        std::string last_SDL2_error;
 
         /**
          * \brief Constructor ( private since this a static class )

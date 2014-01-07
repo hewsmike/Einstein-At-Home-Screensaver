@@ -204,6 +204,18 @@ void ErrorHandler::check_OpenGL_Error() {
         }
     }
 
+const std::string& ErrorHandler::check_SDL2_Error(void) {
+    // Retrieve and store a message about the most recent error
+    // since call to SDL_ClearError(). Repeated calls to SDL_GetError
+    // will only ever return the same last error.
+    last_SDL2_error = SDL_GetError();
+
+    // Clearout any message.
+    SDL_ClearError();
+
+    return last_SDL2_error;
+    }
+
 std::string ErrorHandler::convertGLstring(const GLubyte* glstring) {
     // gluErrorString(), and others, return 'const GLubyte *' - essentially
     // devolving to 'const unsigned char *'  - but string expects
