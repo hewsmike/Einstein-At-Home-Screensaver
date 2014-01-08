@@ -79,7 +79,8 @@ class WindowManager {
          * main application window as well as the OpenGL context. Please
          * note that the optional parameters \c width, \c height and \c
          * frameRate will be overridden by the values set by the user in the
-         * project preferences!
+         * project preferences! Note that SDL MUST be successfully
+         * initialised prior to use of this method.
          *
          * \param width The optional initial width of the main window.
          * \param height The optional initial height of the main window.
@@ -218,6 +219,7 @@ class WindowManager {
         static const int RIGHT_MOUSE_BUTTON;
 
         static const float TIMER_DELAY_BOINC;
+        static const float MILLISECONDS_PER_SECOND;
 
         /**
          * \brief Timer callback to trigger render events

@@ -54,6 +54,7 @@ const int WindowManager::MIDDLE_MOUSE_BUTTON(2);
 const int WindowManager::RIGHT_MOUSE_BUTTON(3);
 
 const float WindowManager::TIMER_DELAY_BOINC(1000);
+const float WindowManager::MILLISECONDS_PER_SECOND(1000.0f).
 
 WindowManager::WindowManager(void) {
     m_BoincAdapter = new BOINCClientAdapter("");
@@ -66,6 +67,23 @@ WindowManager::~WindowManager() {
 bool WindowManager::initialize(const int width, const int height, const int frameRate) {
     // Assume failure of this method.
     bool ret_val = false;
+
+    // Get SDL to assign event codes for render and BOINC events. This occurs
+    // dynamically to avoid runtime clashes ( an SDL Wiki recommendation ).
+
+    RenderEvent = SDL_RegisterEvents(1);
+    // Check if that succeeded.
+    if(RenderEvent == ((Uint32)-1)) {
+        // Make this a fatal, can't really proceed otherwise.
+        ErrorHandler::record("WindowManager::initialize() : could not obtain RenderEvent code !", ErrorHandler::FATAL);
+        }
+
+    BOINCUpdateEvent SDL_RegisterEvents(1);
+     // Check if that succeeded.
+    if(BOINCUpdateEvent == ((Uint32)-1)) {
+        // Make this a fatal, can't really proceed otherwise.
+        ErrorHandler::record("WindowManager::initialize() : could not obtain BOINCUpdateEvent code !", ErrorHandler::FATAL);
+        }
 
     if(SDL_GetDesktopDisplayMode(WindowManager::DISPLAY_ZERO, m_Mode) == 0) {
         // Obtain current desktop width.
@@ -137,7 +155,7 @@ bool WindowManager::initialize(const int width, const int height, const int fram
         // to this machine.
         m_WindowedWidth = (preferredWidth != 0) ? preferredWidth : width;
         m_WindowedHeight = (preferredHeight != 0) ? preferredHeight : height;
-        m_RenderEventInterval = 1000.0f / ((preferredFrameRate != 0) ? preferredFrameRate : frameRate);
+        m_RenderEventInterval = WindowManager::MILLISECONDS_PER_SECOND / ((preferredFrameRate != 0) ? preferredFrameRate : frameRate);
 
         /// TODO - check after successful context creation to see if we got what we asked for.
         // Set desired OpenGL context attributes for our window.
@@ -232,12 +250,14 @@ void WindowManager::eventLoop(void) {
             while(SDL_PollEvent(&current_event) == WindowManager::EVENT_PENDING) {
                 // NB Having pulled the event off queue, what is
                 // subsequently not handled here is thus ignored.
-                if(current_event.type == SDL_USEREVENT) {
+                if((current_event.type == SDL_USEREVENT) &&
+                   (current_event.user.code == WindowManager::RenderEvent)) {
                     // Frame render falling due.
                     eventObservers.front()->render(dtime());
                     }
 
-                else if(current_event.type == SDL_USEREVENT) {
+                else if((current_event.type == SDL_USEREVENT) &&
+                        (current_event.user.code == WindowManager::BOINCUpdateEvent)) {
                     // BOINC update falling due.
                     eventObservers.front()->refreshBOINCInformation();
                     }
@@ -605,38 +625,40 @@ bool WindowManager::initializeGLEW(void) {
     }
 
 Uint32 WindowManager::timerCallbackRenderEvent(Uint32 interval, void* param) {
+    // Instantiate and populate a user event structure.
     SDL_Event event;
-    SDL_UserEvent userevent;
 
-    userevent.type = SDL_USEREVENT;
-    userevent.code = WindowManager::RenderEvent;
-    userevent.data1 = NULL;
-    userevent.data2 = NULL;
+    // SDL_zero is a 'secret' SDL macro that sets the contents
+    // of an object to binary zero values. See 'SDL_stdinc_h'.
+    SDL_zero(event);
+    event.type = SDL_USEREVENT;;
+    event.user.code = WindowManager::RenderEvent;
+    event.user.data1 = 0;
+    event.user.data2 = 0;
 
-    event.type = SDL_USEREVENT;
-    event.user = userevent;
+    /// TODO - Handle event push failure ( likely full queue ) ??
+    SDL_PushEvent(&event);
 
-    if(SDL_PushEvent(&event) != 1) {
-
-        }
-
+    // Don't change interval to next callback.
     return interval;
     }
 
 Uint32 WindowManager::timerCallbackBOINCUpdateEvent(Uint32 interval, void* param) {
+    // Instantiate and populate a user event structure.
     SDL_Event event;
-    SDL_UserEvent userevent;
 
-    userevent.type = SDL_USEREVENT;
-    userevent.code = WindowManager::BOINCUpdateEvent;
-    userevent.data1 = NULL;
-    userevent.data2 = NULL;
+    // SDL_zero is a 'secret' SDL macro that sets the contents
+    // of an object to binary zero values. See 'SDL_stdinc_h'.
+    SDL_zero(event);
+    event.type = SDL_USEREVENT;;
+    event.user.code = WindowManager::BOINCUpdateEvent;
+    event.user.data1 = 0;
+    event.user.data2 = 0;
 
-    event.type = SDL_USEREVENT;
-    event.user = userevent;
-
+    /// TODO - Handle event push failure ( likely full queue ) ??
     SDL_PushEvent(&event);
 
+    // Don't change interval to next callback.
     return interval;
     }
 
