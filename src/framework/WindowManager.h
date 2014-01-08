@@ -314,6 +314,18 @@ class WindowManager {
         /// The screensaver mode indicator ie. was it requested ?
         bool m_ScreensaverMode;
 
+         /**
+          * \brief The known event codes handled by %eventLoop()
+          *
+          * The values stored here MUST be obtained via SDL_RegisterEvents().
+          *
+          * \see eventLoop()
+          * \see timerCallbackRenderEvent()
+          * \see timerCallbackBOINCUpdateEvent()
+          */
+        Uint32 RenderEvent;
+        Uint32 BOINCUpdateEvent;
+
         /// The event observer registry.
         list<AbstractGraphicsEngine*> eventObservers;
     };

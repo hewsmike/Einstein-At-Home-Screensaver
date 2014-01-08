@@ -230,6 +230,8 @@ void WindowManager::eventLoop(void) {
             // events'. Currently enacting only one listener, which is of
             // AbstractGraphicsEngine type.
             while(SDL_PollEvent(&current_event) == WindowManager::EVENT_PENDING) {
+                // NB Having pulled the event off queue, what is
+                // subsequently not handled here is thus ignored.
                 if(current_event.type == SDL_USEREVENT) {
                     // Frame render falling due.
                     eventObservers.front()->render(dtime());
@@ -244,7 +246,7 @@ void WindowManager::eventLoop(void) {
                 else if((m_ScreensaverMode == true) &&
                         ((current_event.type == SDL_MOUSEMOTION) ||
                          (current_event.type == SDL_MOUSEBUTTONDOWN) ||
-                         (current_event.type == SDL_MOUSEWHEEL)
+                         (current_event.type == SDL_MOUSEWHEEL) ||
                          (current_event.type == SDL_KEYDOWN))) {
                     // Close window, terminate SDL and leave this window manager.
                     /// TODO - atexit(SDL_Quit) in main too ??
@@ -257,22 +259,22 @@ void WindowManager::eventLoop(void) {
                 else if((current_event.type == SDL_MOUSEMOTION) &&
                         (SDL_GetMouseState(NULL, NULL)&SDL_BUTTON(WindowManager::LEFT_MOUSE_BUTTON))) {
                     // Mouse movement with left button pressed down.
-                    eventObservers.front()->mouseMoveEvent(current_event.xrel,
-                                                           current_event.yrel,
+                    eventObservers.front()->mouseMoveEvent(current_event.motion.xrel,
+                                                           current_event.motion.yrel,
                                                            AbstractGraphicsEngine::MouseButtonLeft);
                     }
 
                 else if((current_event.type == SDL_MOUSEMOTION) &&
                         (SDL_GetMouseState(NULL, NULL)&SDL_BUTTON(WindowManager::RIGHT_MOUSE_BUTTON))) {
                     // Mouse movement with right button pressed down.
-                    eventObservers.front()->mouseMoveEvent(current_event.xrel,
-                                                           current_event.yrel,
+                    eventObservers.front()->mouseMoveEvent(current_event.motion.xrel,
+                                                           current_event.motion.yrel,
                                                            AbstractGraphicsEngine::MouseButtonRight);
                     }
 
                 else if(current_event.type == SDL_MOUSEWHEEL) {
                     // Mouse wheel has been moved.
-                    eventObservers.front()->mouseWheelEvent(current_event.y);
+                    eventObservers.front()->mouseWheelEvent(current_event.wheel.y);
                     }
 
                 else if((current_event.type == SDL_WINDOWEVENT) &&
@@ -607,14 +609,16 @@ Uint32 WindowManager::timerCallbackRenderEvent(Uint32 interval, void* param) {
     SDL_UserEvent userevent;
 
     userevent.type = SDL_USEREVENT;
-    userevent.code = RenderEvent;
+    userevent.code = WindowManager::RenderEvent;
     userevent.data1 = NULL;
     userevent.data2 = NULL;
 
     event.type = SDL_USEREVENT;
     event.user = userevent;
 
-    SDL_PushEvent(&event);
+    if(SDL_PushEvent(&event) != 1) {
+
+        }
 
     return interval;
     }
@@ -624,7 +628,7 @@ Uint32 WindowManager::timerCallbackBOINCUpdateEvent(Uint32 interval, void* param
     SDL_UserEvent userevent;
 
     userevent.type = SDL_USEREVENT;
-    userevent.code = BOINCUpdateEvent;
+    userevent.code = WindowManager::BOINCUpdateEvent;
     userevent.data1 = NULL;
     userevent.data2 = NULL;
 
@@ -685,4 +689,3 @@ void WindowManager::toggleFullscreen() {
 void WindowManager::setScreensaverMode(const bool enabled) {
     m_ScreensaverMode = enabled;
     }
-
