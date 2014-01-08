@@ -230,22 +230,22 @@ void WindowManager::eventLoop(void) {
             // events'. Currently enacting only one listener, which is of
             // AbstractGraphicsEngine type.
             while(SDL_PollEvent(&current_event) == WindowManager::EVENT_PENDING) {
-                if(current_event.type == Events::RenderEventType) {
+                if(current_event.type == SDL_USEREVENT) {
                     // Frame render falling due.
                     eventObservers.front()->render(dtime());
                     }
 
-                else if(current_event.type == Events::BOINCUpdateEventType) {
+                else if(current_event.type == SDL_USEREVENT) {
                     // BOINC update falling due.
                     eventObservers.front()->refreshBOINCInformation();
                     }
 
                 // Check for any user input if in screensaver mode.
                 else if((m_ScreensaverMode == true) &&
-                        ((current_event.type == SDL_MouseMotionEvent) ||
-                         (current_event.type == SDL_MouseButtonEvent) ||
-                         (current_event.type == SDL_KeyboardEvent) ||
-                         (current_event.type == SDL_MouseWheelEvent))) {
+                        ((current_event.type == SDL_MOUSEMOTION) ||
+                         (current_event.type == SDL_MOUSEBUTTONDOWN) ||
+                         (current_event.type == SDL_MOUSEWHEEL)
+                         (current_event.type == SDL_KEYDOWN))) {
                     // Close window, terminate SDL and leave this window manager.
                     /// TODO - atexit(SDL_Quit) in main too ??
                     ErrorHandler::record("WindowManager::eventLoop() : Exiting on account of user input", ErrorHandler::INFORM);
@@ -254,7 +254,7 @@ void WindowManager::eventLoop(void) {
                     return;
                     }
 
-                else if((current_event.type == SDL_MouseMotionEvent) &&
+                else if((current_event.type == SDL_MOUSEMOTION) &&
                         (SDL_GetMouseState(NULL, NULL)&SDL_BUTTON(WindowManager::LEFT_MOUSE_BUTTON))) {
                     // Mouse movement with left button pressed down.
                     eventObservers.front()->mouseMoveEvent(current_event.xrel,
@@ -262,7 +262,7 @@ void WindowManager::eventLoop(void) {
                                                            AbstractGraphicsEngine::MouseButtonLeft);
                     }
 
-                else if((current_event.type == SDL_MouseMotionEvent) &&
+                else if((current_event.type == SDL_MOUSEMOTION) &&
                         (SDL_GetMouseState(NULL, NULL)&SDL_BUTTON(WindowManager::RIGHT_MOUSE_BUTTON))) {
                     // Mouse movement with right button pressed down.
                     eventObservers.front()->mouseMoveEvent(current_event.xrel,
@@ -270,7 +270,7 @@ void WindowManager::eventLoop(void) {
                                                            AbstractGraphicsEngine::MouseButtonRight);
                     }
 
-                else if(current_event.type == SDL_MouseWheelEvent) {
+                else if(current_event.type == SDL_MOUSEWHEEL) {
                     // Mouse wheel has been moved.
                     eventObservers.front()->mouseWheelEvent(current_event.y);
                     }
@@ -292,8 +292,7 @@ void WindowManager::eventLoop(void) {
 
                 // 'Normal' exit pathway if not screensaver.
                 else if((current_event.type == SDL_QUIT) ||
-                        ((current_event.type == Events::KeyPressEventType) &&
-                         (current_event.k_press.pressed == true) &&
+                        ((current_event.type == SDL_KEYDOWN) &&
                          (current_event.k_press.key_code == GLFW_KEY_ESC))) {
                     // Close window, terminate SDL and leave this window manager.
                     /// TODO - atexit(SDL_Quit) in main too ??
@@ -434,7 +433,7 @@ void WindowManager::eventLoop(void) {
                     }
 
                 // Process non-printable keypresses.
-                else if((current_event.type == Events::KeyPressEventType) &&
+                else if((current_event.type == SDL_KEYDOWN) &&
                         (current_event.k_press.pressed == true)) {
 //                    switch(current_event.k_press.key_code) {
 //                        case GLFW_KEY_F1:
@@ -636,7 +635,6 @@ Uint32 WindowManager::timerCallbackBOINCUpdateEvent(Uint32 interval, void* param
 
     return interval;
     }
-
 
 void WindowManager::toggleFullscreen() {
     // toggle fullscreen bit and reset video mode
