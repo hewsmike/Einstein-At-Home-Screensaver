@@ -34,43 +34,43 @@ StarsphereRadio::~StarsphereRadio()
 {
 }
 
-void StarsphereRadio::initialize(const int width, const int height, const Resource *font, const bool recycle)
-{
-	Starsphere::initialize(width, height, font, recycle);
+void StarsphereRadio::initialize(const int width, const int height, const Resource* font) {
+	Starsphere::initialize(width, height, font);
 
 	// store quality setting
 	m_QualitySetting = m_BoincAdapter.graphicsQualitySetting();
 
-	// check whether we initialize the first time or have to recycle (required for windoze)
-	if(!recycle) {
-
-		// adjust HUD config
-		m_YOffsetMedium = 15.0;
-		m_XStartPosRightWidthOffset = 125.0;
-		m_XStartPosRight = width - m_XStartPosRightWidthOffset;
-		m_YStartPosBottom = 100.0;
-		m_Y1StartPosBottom = m_YStartPosBottom  - m_YOffsetMedium;
-		m_Y2StartPosBottom = m_Y1StartPosBottom - m_YOffsetMedium;
-		m_Y3StartPosBottom = m_Y2StartPosBottom - m_YOffsetMedium;
-		m_Y4StartPosBottom = m_Y3StartPosBottom - m_YOffsetMedium;
-		m_Y5StartPosBottom = m_Y4StartPosBottom - m_YOffsetMedium;
-		m_Y6StartPosBottom = m_Y5StartPosBottom - m_YOffsetMedium;
-
-		// adjust Power Spectrum config
-		m_PowerSpectrumWidth = 200.0;
-		m_PowerSpectrumHeight = 50.0;
-		m_PowerSpectrumOriginWidthOffset = 210.0;
-		m_PowerSpectrumOriginHeightOffset = 60.0;
-		m_PowerSpectrumXPos = width - m_PowerSpectrumOriginWidthOffset;
-		m_PowerSpectrumYPos = height - m_PowerSpectrumOriginHeightOffset;
-		m_PowerSpectrumAxesWidth = 2.0;
-		m_PowerSpectrumBinWidth = 3.0;
-		m_PowerSpectrumBinDistance = 2.0;
-		m_PowerSpectrumLabelXOffset = (m_PowerSpectrumWidth - 150.0) / 2;
-		m_PowerSpectrumLabelYOffset = 15.0;
-		m_PowerSpectrumLabelXPos = m_PowerSpectrumXPos + m_PowerSpectrumLabelXOffset;
-		m_PowerSpectrumLabelYPos = m_PowerSpectrumYPos - m_PowerSpectrumLabelYOffset;
-	}
+    /// TODO - retain this code ? Alternate method/flag ?
+//	// check whether we initialize the first time or have to recycle (required for windoze)
+//	if(!recycle) {
+//
+//		// adjust HUD config
+//		m_YOffsetMedium = 15.0;
+//		m_XStartPosRightWidthOffset = 125.0;
+//		m_XStartPosRight = width - m_XStartPosRightWidthOffset;
+//		m_YStartPosBottom = 100.0;
+//		m_Y1StartPosBottom = m_YStartPosBottom  - m_YOffsetMedium;
+//		m_Y2StartPosBottom = m_Y1StartPosBottom - m_YOffsetMedium;
+//		m_Y3StartPosBottom = m_Y2StartPosBottom - m_YOffsetMedium;
+//		m_Y4StartPosBottom = m_Y3StartPosBottom - m_YOffsetMedium;
+//		m_Y5StartPosBottom = m_Y4StartPosBottom - m_YOffsetMedium;
+//		m_Y6StartPosBottom = m_Y5StartPosBottom - m_YOffsetMedium;
+//
+//		// adjust Power Spectrum config
+//		m_PowerSpectrumWidth = 200.0;
+//		m_PowerSpectrumHeight = 50.0;
+//		m_PowerSpectrumOriginWidthOffset = 210.0;
+//		m_PowerSpectrumOriginHeightOffset = 60.0;
+//		m_PowerSpectrumXPos = width - m_PowerSpectrumOriginWidthOffset;
+//		m_PowerSpectrumYPos = height - m_PowerSpectrumOriginHeightOffset;
+//		m_PowerSpectrumAxesWidth = 2.0;
+//		m_PowerSpectrumBinWidth = 3.0;
+//		m_PowerSpectrumBinDistance = 2.0;
+//		m_PowerSpectrumLabelXOffset = (m_PowerSpectrumWidth - 150.0) / 2;
+//		m_PowerSpectrumLabelYOffset = 15.0;
+//		m_PowerSpectrumLabelXPos = m_PowerSpectrumXPos + m_PowerSpectrumLabelXOffset;
+//		m_PowerSpectrumLabelYPos = m_PowerSpectrumYPos - m_PowerSpectrumLabelYOffset;
+//	}
 
 	// create large font instances using font resource (base address + size)
 	m_FontLogo1 = new OGLFT::Translucent(

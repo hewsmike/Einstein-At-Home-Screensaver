@@ -309,9 +309,7 @@ void WindowManager::eventLoop(void) {
                                       &m_CurrentWidth,
                                       &m_CurrentHeight);
 
-                    // Allegedly no longer the case that on Windows a
-                    // re-initialisation is required ( to be tested ).
-                    eventObservers.front()->initialize(m_CurrentWidth, m_CurrentHeight, 0, true);
+                    eventObservers.front()->initialize(m_CurrentWidth, m_CurrentHeight, NULL);
                     }
 
                 // 'Normal' exit pathway if not screensaver.

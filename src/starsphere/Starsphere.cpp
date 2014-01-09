@@ -23,6 +23,8 @@
 
 #include "Starsphere.h"
 
+#include "ErrorHandler.h"
+
 Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
 	AbstractGraphicsEngine(sharedMemoryAreaIdentifier)
 {
@@ -604,49 +606,15 @@ void Starsphere::resize(const int width, const int height)
 /**
  *  What to do when graphics are "initialized".
  */
-void Starsphere::initialize(const int width, const int height, const Resource *font, const bool recycle)
-{
-	// check whether we initialize the first time or have to recycle (required for windoze)
-	if(!recycle) {
-
-		// store the font resource
-		if(font) m_FontResource = font;
-
-		// initialize the BOINC client adapter
-		m_BoincAdapter.initialize();
-
-		// inital HUD offset setup
-		m_XStartPosLeft = 5;
-		m_YOffsetLarge = 18;
-
-		setFeature(STARS, true);
-		setFeature(CONSTELLATIONS, true);
-		setFeature(PULSARS, true);
-		setFeature(SNRS, true);
-		setFeature(OBSERVATORIES, true);
-		setFeature(SEARCHINFO, true);
-		setFeature(LOGO, true);
-		setFeature(MARKER, true);
-	}
-	else {
-
-		// seems that windoze also "resets" our OpenGL fonts
-		// let's clean up before reinitializing them
-		if(m_FontLogo1) delete m_FontLogo1;
-		if(m_FontLogo2) delete m_FontLogo2;
-		if(m_FontHeader)delete m_FontHeader;
-		if(m_FontText)  delete m_FontText;
-	}
-
+void Starsphere::initialize(const int width, const int height, const Resource *font) {
+    /// TODO - retain this code ? Alternate method/flag ?
 	// we might be called to recycle even before initialization
 	if(!m_FontResource) {
-
-		// display a warning, this could be unintentionally
-		cerr << "Warning: font resource still unknown! You might want to recycle at a later stage..." << endl;
-	}
+        // Display a warning, this may/not be a problem ....
+        ErrorHandler::record("Starsphere::initialize()", ErrorHandler::WARN);
+        }
 	else {
-
-		// note: initialization of logo font instances is done in subclasses!
+        // NB : initialization of logo font instances is done in subclasses!
 
 		// create medium font instances using font resource (base address + size)
 		m_FontHeader = new OGLFT::Translucent(
@@ -673,7 +641,7 @@ void Starsphere::initialize(const int width, const int height, const Resource *f
 		}
 
 		m_FontText->setForegroundColor(0.75, 0.75, 0.75, 1.0);
-	}
+        }
 
 	// setup initial dimensions
 	resize(width, height);

@@ -33,34 +33,33 @@ StarsphereGravity::~StarsphereGravity()
 {
 }
 
-void StarsphereGravity::initialize(const int width, const int height, const Resource *font, const bool recycle)
-{
-	Starsphere::initialize(width, height, font, recycle);
+void StarsphereGravity::initialize(const int width, const int height, const Resource* font) {
+	Starsphere::initialize(width, height, font);
 
-	// check whether we initialize the first time or have to recycle (required for windoze)
-	if(!recycle) {
-
-		// adjust HUD config
-		m_YOffsetMedium = 15;
-		m_XStartPosRight = width - 125;
-		m_XStartPosClock = width - 98;
-		m_YStartPosBottom = 70;
-		m_Y1StartPosBottom = m_YStartPosBottom  - m_YOffsetMedium;
-		m_Y2StartPosBottom = m_Y1StartPosBottom - m_YOffsetMedium;
-		m_Y3StartPosBottom = m_Y2StartPosBottom - m_YOffsetMedium;
-		m_Y4StartPosBottom = m_Y3StartPosBottom - m_YOffsetMedium;
-	}
+    /// TODO - retain this code ? Alternate method/flag ?
+//	// check whether we initialize the first time or have to recycle (required for windoze)
+//	if(!recycle) {
+//
+//		// adjust HUD config
+//		m_YOffsetMedium = 15;
+//		m_XStartPosRight = width - 125;
+//		m_XStartPosClock = width - 98;
+//		m_YStartPosBottom = 70;
+//		m_Y1StartPosBottom = m_YStartPosBottom  - m_YOffsetMedium;
+//		m_Y2StartPosBottom = m_Y1StartPosBottom - m_YOffsetMedium;
+//		m_Y3StartPosBottom = m_Y2StartPosBottom - m_YOffsetMedium;
+//		m_Y4StartPosBottom = m_Y3StartPosBottom - m_YOffsetMedium;
+//	}
 
 	// create large font instances using font resource (base address + size)
-	m_FontLogo1 = new OGLFT::Translucent(
-								&m_FontResource->data()->at(0),
-								m_FontResource->data()->size(),
-								24, 72 );
+	m_FontLogo1 = new OGLFT::Translucent(&m_FontResource->data()->at(0),
+                                         m_FontResource->data()->size(),
+                                         24, 72 );
 
 	if ( m_FontLogo1 == 0 || !m_FontLogo1->isValid() ) {
 	     cerr << "Could not construct logo1 font face from in memory resource!" << endl;
 	     return;
-	}
+        }
 
 	m_FontLogo1->setForegroundColor(1.0, 1.0, 0.0, 1.0);
 

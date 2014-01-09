@@ -57,11 +57,8 @@ class AbstractGraphicsEngine {
          * \param width The current width of the display surface
          * \param height The current height of the display surface
          * \param font A pointer to a Resource object containing TTF font faces for text rendering
-         * \param recycle This flag indicates whether we initialize (FALSE) or reinitialize (TRUE) the context
          */
-        /// TODO - do we need the recycle option here ?? Given that SDL2 ( allegedly )
-        /// avoids loss of OpenGL context on window resize with win32 targets ....
-        virtual void initialize(const int width, const int height, const Resource *font, const bool recycle = false) = 0;
+        virtual void initialize(const int width, const int height, const Resource* font) = 0;
 
         /**
          * \brief This method is called when the windowing system encounters a window resize event
