@@ -54,7 +54,7 @@ const int WindowManager::MIDDLE_MOUSE_BUTTON(2);
 const int WindowManager::RIGHT_MOUSE_BUTTON(3);
 
 const float WindowManager::TIMER_DELAY_BOINC(1000);
-const float WindowManager::MILLISECONDS_PER_SECOND(1000.0f).
+const float WindowManager::MILLISECONDS_PER_SECOND(1000.0f);
 
 WindowManager::WindowManager(void) {
     m_BoincAdapter = new BOINCClientAdapter("");
@@ -78,7 +78,7 @@ bool WindowManager::initialize(const int width, const int height, const int fram
         ErrorHandler::record("WindowManager::initialize() : could not obtain RenderEvent code !", ErrorHandler::FATAL);
         }
 
-    BOINCUpdateEvent SDL_RegisterEvents(1);
+    BOINCUpdateEvent = SDL_RegisterEvents(1);
      // Check if that succeeded.
     if(BOINCUpdateEvent == ((Uint32)-1)) {
         // Make this a fatal, can't really proceed otherwise.
@@ -224,7 +224,7 @@ bool WindowManager::initialize(const int width, const int height, const int fram
         // Could not get the desktop parameters.
         stringstream msg_get_desktop_error;
         msg_get_desktop_error << "WindowManager::initialize() : can't obtain current desktop mode : "
-                              << << ErrorHandler::check_SDL2_Error() << endl;
+                              << ErrorHandler::check_SDL2_Error() << endl;
         ErrorHandler::record(msg_get_desktop_error.str(), ErrorHandler::WARN);
 
         }
@@ -299,8 +299,8 @@ void WindowManager::eventLoop(void) {
 
                 // Finicky : check the window event refers to the window we are using ... :-)
                 else if((current_event.type == SDL_WINDOWEVENT) &&
-                        (event.window.windowID ==  m_WindowID) &&
-                        (current_event.windows.event == SDL_WINDOWEVENT_RESIZED)) {
+                        (current.event.window.windowID ==  m_WindowID) &&
+                        (current_event.window.event == SDL_WINDOWEVENT_RESIZED)) {
                     m_CurrentWidth = m_WindowedWidth = current_event.window.data1;
                     m_CurrentHeight = m_WindowedHeight = current_event.window.data2;
 
@@ -322,7 +322,7 @@ void WindowManager::eventLoop(void) {
                 else if((current_event.type == SDL_QUIT) ||
                         (current_event.type == SDL_WINDOWEVENT_CLOSE) ||
                         ((current_event.type == SDL_KEYDOWN) &&
-                         (current_event.keysym.sym == SDLK_ESCAPE))) {
+                         (current_event.key.keysym.sym == SDLK_ESCAPE))) {
                     // Close window, terminate SDL and leave this window manager.
                     ErrorHandler::record("WindowManager::eventLoop() : normal exit on user request", ErrorHandler::INFORM);
                     SDL_DestroyWindow(m_Window);
@@ -335,7 +335,7 @@ void WindowManager::eventLoop(void) {
                 else if(current_event.type == SDL_KEYDOWN) {
                     // Note : we account for shifted characters from
                     // the same physical key.
-                    switch(current_event.keysym.sym) {
+                    switch(current_event.key.keysym.sym) {
                         case SDLK_COMMA:
                         case SDLK_LESS:
                             eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyComma);
@@ -442,7 +442,7 @@ void WindowManager::eventLoop(void) {
                 else if(current_event.type == SDL_KEYDOWN) {
                     // Only unmodified version of these keys are handled
                     // eg. NOT catching Shift + F1 .... etc
-                    switch(current_event.keysym.sym) {
+                    switch(current_event.key.keysym.sym) {
                         case SDLK_F1:
                             eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyF1);
                             break;
