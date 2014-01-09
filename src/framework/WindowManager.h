@@ -192,6 +192,7 @@ class WindowManager {
         void setScreensaverMode(const bool enabled);
 
     private:
+        /// Most of these statics are to remove magic numbers.
         /// The window's title/caption.
         static const std::string m_WindowTitle;
 
@@ -207,17 +208,22 @@ class WindowManager {
         static const int NUM_MULTISAMPLE_BUFFERS;
         static const int NUM_MULTISAMPLES;
 
+        /// OpenGL version
         static const int OGL_MAJOR_VERSION;
         static const int OGL_MINOR_VERSION;
 
+        /// Can have multiple displays, we only want one !!
         static const int DISPLAY_ZERO;
 
+        /// Was an event retrieval successful.
         static const int EVENT_PENDING;
 
+        /// Mouse buttons.
         static const int LEFT_MOUSE_BUTTON;
         static const int MIDDLE_MOUSE_BUTTON;
         static const int RIGHT_MOUSE_BUTTON;
 
+        /// For user timer delays.
         static const float TIMER_DELAY_BOINC;
         static const float MILLISECONDS_PER_SECOND;
 
@@ -282,6 +288,9 @@ class WindowManager {
 
         /// Pointer to the window created by SDL.
         SDL_Window* m_Window;
+
+        /// A window identifier for possible logging and interrogation.
+        Uint32 m_WindowID;
 
         /// OpenGL context associated with the window.
         SDL_GLContext m_Context;

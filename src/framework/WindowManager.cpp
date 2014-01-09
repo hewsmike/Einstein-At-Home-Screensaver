@@ -206,6 +206,9 @@ bool WindowManager::initialize(const int width, const int height, const int fram
             ErrorHandler::record("WindowManager::initialise() : Couldn't obtain window !!", ErrorHandler::FATAL);
             }
 
+        // Get a window identifier, it may be needed.
+        m_WindowID = SDL_GetWindowID(m_Window);
+
         // Create a desired OpenGL context for use with that window,
         // noting the above attribute selections.
         /// TODO - Check error on return here, how ?
@@ -240,12 +243,10 @@ void WindowManager::eventLoop(void) {
         SDL_Event current_event;
         // Infinite looping until an exit is triggered.
         while(true) {
-            bool resize_flag = false;
-
             // Keep extracting any events from the queue, until it is empty.
             // Events are gathered 'behind the scenes' from input devices
-            // asynchronously ... and placed in a 'queue of next available
-            // events'. Currently enacting only one listener, which is of
+            // asynchronously ... by SDL ... and placed in a queue.
+            // Currently enacting only one listener, which is of
             // AbstractGraphicsEngine type.
             while(SDL_PollEvent(&current_event) == WindowManager::EVENT_PENDING) {
                 // NB Having pulled the event off queue, what is
@@ -262,14 +263,13 @@ void WindowManager::eventLoop(void) {
                     eventObservers.front()->refreshBOINCInformation();
                     }
 
-                // Check for any user input if in screensaver mode.
+                // Check for ANY user input if in screensaver mode.
                 else if((m_ScreensaverMode == true) &&
                         ((current_event.type == SDL_MOUSEMOTION) ||
                          (current_event.type == SDL_MOUSEBUTTONDOWN) ||
                          (current_event.type == SDL_MOUSEWHEEL) ||
                          (current_event.type == SDL_KEYDOWN))) {
                     // Close window, terminate SDL and leave this window manager.
-                    /// TODO - atexit(SDL_Quit) in main too ??
                     ErrorHandler::record("WindowManager::eventLoop() : Exiting on account of user input", ErrorHandler::INFORM);
                     SDL_DestroyWindow(m_Window);
                     SDL_Quit();
@@ -297,238 +297,225 @@ void WindowManager::eventLoop(void) {
                     eventObservers.front()->mouseWheelEvent(current_event.wheel.y);
                     }
 
+                // Finicky : check the window event refers to the window we are using ... :-)
                 else if((current_event.type == SDL_WINDOWEVENT) &&
-                        (current_event.event == SDL_WINDOWEVENT_RESIZED) &&
-                        (resize_flag == false)) {
-                    resize_flag = true;
-                    m_CurrentWidth = m_WindowedWidth = current_event.data1;
-                    m_CurrentHeight = m_WindowedHeight = current_event.data2;
+                        (event.window.windowID ==  m_WindowID) &&
+                        (current_event.windows.event == SDL_WINDOWEVENT_RESIZED)) {
+                    m_CurrentWidth = m_WindowedWidth = current_event.window.data1;
+                    m_CurrentHeight = m_WindowedHeight = current_event.window.data2;
 
                     // Use actual acquired ( as distinct from requested ) size.
                     SDL_GetWindowSize(m_Window,
                                       &m_CurrentWidth,
                                       &m_CurrentHeight);
 
+                    // Allegedly no longer the case that on Windows a
+                    // re-initialisation is required ( to be tested ).
                     eventObservers.front()->initialize(m_CurrentWidth, m_CurrentHeight, 0, true);
                     }
 
                 // 'Normal' exit pathway if not screensaver.
+                // NB The ESC key mapping here is virtual and so eliminates
+                // any modified versions triggering eg. Ctrl + ESC. But on
+                // the other hand ( though not likely to matter ) any
+                // re-mapping of the keyboard will be transparent ie. some
+                // facility substituting/aliasing another physical key to perform
+                // as the ESC key.
                 else if((current_event.type == SDL_QUIT) ||
+                        (current_event.type == SDL_WINDOWEVENT_CLOSE) ||
                         ((current_event.type == SDL_KEYDOWN) &&
-                         (current_event.k_press.key_code == GLFW_KEY_ESC))) {
+                         (current_event.keysym.sym == SDLK_ESCAPE))) {
                     // Close window, terminate SDL and leave this window manager.
-                    /// TODO - atexit(SDL_Quit) in main too ??
                     ErrorHandler::record("WindowManager::eventLoop() : normal exit on user request", ErrorHandler::INFORM);
                     SDL_DestroyWindow(m_Window);
                     SDL_Quit();
                     return;
                     }
 
-                // Process printable character input.
-                else if((current_event.type == Events::CharInputEventType) &&
-                        (current_event.c_input.pressed == true)) {
-//                        // Note : we account for shifted characters from the same key.
-//                    switch(current_event.c_input.char_code) {
-//                        case ',':
-//                        case '<':
-//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyComma);
-//                            break;
-//                        case '.':
-//                        case '>':
-//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyPeriod);
-//                            break;
-//                        case '/':
-//                        case '?':
-//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyForwardSlash);
-//                            break;
-//                        case ';':
-//                        case ':':
-//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeySemiColon);
-//                            break;
-//                        case 'a':
-//                        case 'A':
-//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyA);
-//                            break;
-//                        case 'b':
-//                        case 'B':
-//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyB);
-//                            break;
-//                        case 'c':
-//                        case 'C':
-//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyC);
-//                            break;
-//                        case 'd':
-//                        case 'D':
-//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyD);
-//                            break;
-//                        case 'e':
-//                        case 'E':
-//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyE);
-//                            break;
-//                        case 'f':
-//                        case 'F':
-//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyF);
-//                            break;
-//                        case 'g':
-//                        case 'G':
-//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyG);
-//                            break;
-//                        case 'h':
-//                        case 'H':
-//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyH);
-//                            break;
-//                        case 'i':
-//                        case 'I':
-//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyI);
-//                            break;
-//                        case 'j':
-//                        case 'J':
-//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyJ);
-//                            break;
-//                        case 'k':
-//                        case 'K':
-//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyK);
-//                            break;
-//                        case 'l':
-//                        case 'L':
-//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyL);
-//                            break;
-//                        case 'm':
-//                        case 'M':
-//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyM);
-//                            break;
-//                        case 'n':
-//                        case 'N':
-//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyN);
-//                            break;
-//                        case 'o':
-//                        case 'O':
-//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyO);
-//                            break;
-//                        case 'p':
-//                        case 'P':
-//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyP);
-//                            break;
-//                        case 'q':
-//                        case 'Q':
-//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyQ);
-//                            break;
-//                        case 'r':
-//                        case 'R':
-//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyR);
-//                            break;
-//                        case 's':
-//                        case 'S':
-//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyS);
-//                            break;
-//                        case 't':
-//                        case 'T':
-//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyT);
-//                            break;
-//                        case 'u':
-//                        case 'U':
-//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyU);
-//                            break;
-//                        case 'v':
-//                        case 'V':
-//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyV);
-//                            break;
-//                        case 'w':
-//                        case 'W':
-//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyW);
-//                            break;
-//                        case 'x':
-//                        case 'X':
-//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyX);
-//                            break;
-//                        case 'y':
-//                        case 'Y':
-//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyY);
-//                            break;
-//                        case 'z':
-//                        case 'Z':
-//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyZ);
-//                            break;
-//                        default:
-//                            break;
-//                        }
+                // Process printable character input using virtual keys, see
+                // above comments for ESC key.
+                else if(current_event.type == SDL_KEYDOWN) {
+                    // Note : we account for shifted characters from
+                    // the same physical key.
+                    switch(current_event.keysym.sym) {
+                        case SDLK_COMMA:
+                        case SDLK_LESS:
+                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyComma);
+                            break;
+                        case SDLK_PERIOD:
+                        case SDLK_GREATER:
+                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyPeriod);
+                            break;
+                        case SDLK_SLASH:
+                        case SDLK_QUESTION:
+                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyForwardSlash);
+                            break;
+                        case SDLK_SEMICOLON:
+                        case SDLK_COLON:
+                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeySemiColon);
+                            break;
+                        // Upper and lower case alphabetic characters DO map to the
+                        // same virtual key, despite the lowercase tail of the enumerant.
+                        case SDLK_a:
+                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyA);
+                            break;
+                        case SDLK_b:
+                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyB);
+                            break;
+                        case SDLK_c:
+                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyC);
+                            break;
+                        case SDLK_d:
+                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyD);
+                            break;
+                        case SDLK_e:
+                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyE);
+                            break;
+                        case SDLK_f:
+                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyF);
+                            break;
+                        case SDLK_g:
+                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyG);
+                            break;
+                        case SDLK_h:
+                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyH);
+                            break;
+                        case SDLK_i:
+                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyI);
+                            break;
+                        case SDLK_j:
+                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyJ);
+                            break;
+                        case SDLK_k:
+                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyK);
+                            break;
+                        case SDLK_l:
+                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyL);
+                            break;
+                        case SDLK_m:
+                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyM);
+                            break;
+                        case SDLK_n:
+                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyN);
+                            break;
+                        case SDLK_o:
+                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyO);
+                            break;
+                        case SDLK_p:
+                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyP);
+                            break;
+                        case SDLK_q:
+                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyQ);
+                            break;
+                        case SDLK_r:
+                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyR);
+                            break;
+                        case SDLK_s:
+                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyS);
+                            break;
+                        case SDLK_t:
+                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyT);
+                            break;
+                        case SDLK_u:
+                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyU);
+                            break;
+                        case SDLK_v:
+                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyV);
+                            break;
+                        case SDLK_w:
+                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyW);
+                            break;
+                        case SDLK_x:
+                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyX);
+                            break;
+                        case SDLK_y:
+                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyY);
+                            break;
+                        case SDLK_z:
+                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyZ);
+                            break;
+                        default:
+                            break;
+                        }
                     }
 
-                // Process non-printable keypresses.
-                else if((current_event.type == SDL_KEYDOWN) &&
-                        (current_event.k_press.pressed == true)) {
-//                    switch(current_event.k_press.key_code) {
-//                        case GLFW_KEY_F1:
-//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyF1);
-//                            break;
-//                        case GLFW_KEY_F2:
-//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyF2);
-//                            break;
-//                        case GLFW_KEY_F3:
-//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyF3);
-//                            break;
-//                        case GLFW_KEY_F4:
-//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyF4);
-//                            break;
-//                        case GLFW_KEY_F5:
-//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyF5);
-//                            break;
-//                        case GLFW_KEY_F6:
-//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyF6);
-//                            break;
-//                        case GLFW_KEY_F7:
-//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyF7);
-//                            break;
-//                        case GLFW_KEY_F8:
-//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyF8);
-//                            break;
-//                        case GLFW_KEY_F9:
-//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyF9);
-//                            break;
-//                        case GLFW_KEY_F10:
-//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyF10);
-//                            break;
-//                        case GLFW_KEY_F11:
-//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyF11);
-//                            break;
-//                        case GLFW_KEY_F12:
-//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyF12);
-//                            break;
-//                        case GLFW_KEY_SPACE:
-//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeySpace);
-//                            break;
-//                        case GLFW_KEY_ENTER:
-//                            break;
-//                        case GLFW_KEY_KP_1:
-//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyKP1);
-//                            break;
-//                        case GLFW_KEY_KP_2:
-//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyKP2);
-//                            break;
-//                        case GLFW_KEY_KP_3:
-//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyKP3);
-//                            break;
-//                        case GLFW_KEY_KP_4:
-//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyKP4);
-//                            break;
-//                        case GLFW_KEY_KP_5:
-//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyKP5);
-//                            break;
-//                        case GLFW_KEY_KP_6:
-//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyKP6);
-//                            break;
-//                        case GLFW_KEY_KP_8:
-//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyKP8);
-//                            break;
-//                        case GLFW_KEY_KP_0:
-//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyKP0);
-//                            break;
-//                        case GLFW_KEY_KP_DECIMAL:
-//                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyKPPeriod);
-//                            break;
-//                        default:
-//                            break;
-//                        }
+                // Process non-printable keypresses using virtual keys, see
+                // above comments for ESC key.
+                else if(current_event.type == SDL_KEYDOWN) {
+                    // Only unmodified version of these keys are handled
+                    // eg. NOT catching Shift + F1 .... etc
+                    switch(current_event.keysym.sym) {
+                        case SDLK_F1:
+                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyF1);
+                            break;
+                        case SDLK_F2:
+                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyF2);
+                            break;
+                        case SDLK_F3:
+                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyF3);
+                            break;
+                        case SDLK_F4:
+                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyF4);
+                            break;
+                        case SDLK_F5:
+                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyF5);
+                            break;
+                        case SDLK_F6:
+                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyF6);
+                            break;
+                        case SDLK_F7:
+                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyF7);
+                            break;
+                        case SDLK_F8:
+                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyF8);
+                            break;
+                        case SDLK_F9:
+                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyF9);
+                            break;
+                        case SDLK_F10:
+                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyF10);
+                            break;
+                        case SDLK_F11:
+                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyF11);
+                            break;
+                        case SDLK_F12:
+                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyF12);
+                            break;
+                        case SDLK_SPACE:
+                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeySpace);
+                            break;
+                        case SDLK_RETURN:
+                            break;
+                        case SDLK_KP_1:
+                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyKP1);
+                            break;
+                        case SDLK_KP_2:
+                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyKP2);
+                            break;
+                        case SDLK_KP_3:
+                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyKP3);
+                            break;
+                        case SDLK_KP_4:
+                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyKP4);
+                            break;
+                        case SDLK_KP_5:
+                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyKP5);
+                            break;
+                        case SDLK_KP_6:
+                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyKP6);
+                            break;
+                        case SDLK_KP_8:
+                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyKP8);
+                            break;
+                        case SDLK_KP_0:
+                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyKP0);
+                            break;
+                        case SDLK_KP_PERIOD:
+                            eventObservers.front()->keyboardPressEvent(AbstractGraphicsEngine::KeyKPPeriod);
+                            break;
+                        default:
+                            break;
+                        }
                     }
                 }
             }
