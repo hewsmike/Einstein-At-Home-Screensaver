@@ -183,6 +183,8 @@ int main(int argc, char **argv) {
             window.setScreensaverMode(true);
             }
         if((param == "--fullscreen") || (param == "--demo")) {
+            // Initialised display is as a window,
+            // so we transition to a fullscreen.
             window.toggleFullscreen();
 #ifdef __APPLE__
             SetMacSSLevel();

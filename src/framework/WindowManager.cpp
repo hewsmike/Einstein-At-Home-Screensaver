@@ -49,6 +49,8 @@ const int WindowManager::DISPLAY_ZERO(0);
 
 const int WindowManager::EVENT_PENDING(1);
 
+const int WindowManager::WINDOW_PLEASE(0);
+
 const int WindowManager::LEFT_MOUSE_BUTTON(1);
 const int WindowManager::MIDDLE_MOUSE_BUTTON(2);
 const int WindowManager::RIGHT_MOUSE_BUTTON(3);
@@ -208,6 +210,9 @@ bool WindowManager::initialize(const int width, const int height, const int fram
 
         // Get a window identifier, it may be needed.
         m_WindowID = SDL_GetWindowID(m_Window);
+
+        // Initial display is as a window, not fullscreen.
+        m_CurrentScreenMode = Window::WINDOWED;
 
         // Create a desired OpenGL context for use with that window,
         // noting the above attribute selections.
@@ -647,50 +652,23 @@ Uint32 WindowManager::timerCallbackBOINCUpdateEvent(Uint32 interval, void* param
     return interval;
     }
 
-void WindowManager::toggleFullscreen() {
-    // toggle fullscreen bit and reset video mode
-    if(m_WindowedModeAvailable && (m_VideoModeFlags & SDL_FULLSCREEN)) {
-        // set new dimensions
-        m_CurrentWidth = m_WindowedWidth;
-        m_CurrentHeight = m_WindowedHeight;
-
-        // (un)set video mode flags
-        m_VideoModeFlags &= ~SDL_FULLSCREEN;
-        m_VideoModeFlags |= SDL_RESIZABLE;
-
-        // show cursor in fullscreen mode
-        SDL_ShowCursor(SDL_ENABLE);
-        }
-    else if(m_FullscreenModeAvailable && !(m_VideoModeFlags & SDL_FULLSCREEN)) {
-        // set new dimensions
-        m_CurrentWidth = m_DesktopWidth;
-        m_CurrentHeight = m_DesktopHeight;
-
-        // (un)set video mode flags
-#ifdef __APPLE__
-        if (m_ScreensaverMode) {
-            m_CurrentWidth = m_DesktopWidth;
-            m_CurrentHeight = m_DesktopHeight;
-            m_VideoModeFlags |= SDL_NOFRAME;
+void WindowManager::toggleFullscreen(void) {
+    if(m_CurrentScreenMode == Window::WINDOWED) {
+        if(SDL_SetWindowFullscreen(m_Window, SDL_WINDOW_FULLSCREEN) != 0){
+            ErrorHandler::record("WindowManager::toggleFullscreen() : Couldn't toggle to fullscreen !", ErrorHandler::WARN);
             }
-        else
-#endif
-            {
-            m_VideoModeFlags |= SDL_FULLSCREEN;
+        else {
+            m_CurrentScreenMode = Window::FULLSCREEN;
             }
-        m_VideoModeFlags &= ~SDL_RESIZABLE;
-
-        // hide cursor
-        SDL_ShowCursor(SDL_DISABLE);
         }
-
-    // reset video mode
-    m_DisplaySurface = SDL_SetVideoMode(m_CurrentWidth,
-                                        m_CurrentHeight,
-                                        m_DesktopBitsPerPixel,
-                                        m_VideoModeFlags);
-
-    // NB : No longer need to recycle a listener's window on a per OS basis.
+    else {
+        if(SDL_SetWindowFullscreen(m_Window, WindowManager::WINDOW_PLEASE) != 0){
+            ErrorHandler::record("WindowManager::toggleFullscreen() : Couldn't toggle to window !", ErrorHandler::WARN);
+            }
+        else {
+            m_CurrentScreenMode = Window::WINDOWED;
+            }
+        }
     }
 
 void WindowManager::setScreensaverMode(const bool enabled) {

@@ -179,7 +179,7 @@ class WindowManager {
          * Note: the initial state is windowed (not fullscreen).
          *
          */
-        void toggleFullscreen();
+        void toggleFullscreen(void);
 
         /**
          * \brief Set the screensaver mode indicator.
@@ -217,6 +217,9 @@ class WindowManager {
 
         /// Was an event retrieval successful.
         static const int EVENT_PENDING;
+
+        /// Want a window, not fullscreen.
+        static const int WINDOW_PLEASE;
 
         /// Mouse buttons.
         static const int LEFT_MOUSE_BUTTON;
@@ -324,6 +327,14 @@ class WindowManager {
 
         /// The screensaver mode indicator ie. was it requested ?
         bool m_ScreensaverMode;
+
+        /// Are we currently in fullscreen or windowed ?
+        enum screen_mode {
+            WINDOWED;
+            FULLSCREEN;
+            }
+
+        screen_mode m_CurrentScreenMode;
 
          /**
           * \brief The known event codes handled by %eventLoop()
