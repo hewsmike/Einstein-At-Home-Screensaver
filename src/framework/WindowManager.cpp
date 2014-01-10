@@ -212,7 +212,7 @@ bool WindowManager::initialize(const int width, const int height, const int fram
         m_WindowID = SDL_GetWindowID(m_Window);
 
         // Initial display is as a window, not fullscreen.
-        m_CurrentScreenMode = Window::WINDOWED;
+        m_CurrentScreenMode = WindowManager::WINDOWED;
 
         // Create a desired OpenGL context for use with that window,
         // noting the above attribute selections.
@@ -304,7 +304,7 @@ void WindowManager::eventLoop(void) {
 
                 // Finicky : check the window event refers to the window we are using ... :-)
                 else if((current_event.type == SDL_WINDOWEVENT) &&
-                        (current.event.window.windowID ==  m_WindowID) &&
+                        (current_event.window.windowID ==  m_WindowID) &&
                         (current_event.window.event == SDL_WINDOWEVENT_RESIZED)) {
                     m_CurrentWidth = m_WindowedWidth = current_event.window.data1;
                     m_CurrentHeight = m_WindowedHeight = current_event.window.data2;
@@ -653,12 +653,12 @@ Uint32 WindowManager::timerCallbackBOINCUpdateEvent(Uint32 interval, void* param
     }
 
 void WindowManager::toggleFullscreen(void) {
-    if(m_CurrentScreenMode == Window::WINDOWED) {
+    if(m_CurrentScreenMode == WindowManager::WINDOWED) {
         if(SDL_SetWindowFullscreen(m_Window, SDL_WINDOW_FULLSCREEN) != 0){
             ErrorHandler::record("WindowManager::toggleFullscreen() : Couldn't toggle to fullscreen !", ErrorHandler::WARN);
             }
         else {
-            m_CurrentScreenMode = Window::FULLSCREEN;
+            m_CurrentScreenMode = WindowManager::FULLSCREEN;
             }
         }
     else {
@@ -666,7 +666,7 @@ void WindowManager::toggleFullscreen(void) {
             ErrorHandler::record("WindowManager::toggleFullscreen() : Couldn't toggle to window !", ErrorHandler::WARN);
             }
         else {
-            m_CurrentScreenMode = Window::WINDOWED;
+            m_CurrentScreenMode = WindowManager::WINDOWED;
             }
         }
     }

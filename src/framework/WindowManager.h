@@ -330,9 +330,9 @@ class WindowManager {
 
         /// Are we currently in fullscreen or windowed ?
         enum screen_mode {
-            WINDOWED;
-            FULLSCREEN;
-            }
+            WINDOWED,
+            FULLSCREEN,
+            };
 
         screen_mode m_CurrentScreenMode;
 
