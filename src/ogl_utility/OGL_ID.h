@@ -32,11 +32,10 @@
  * \brief This interface declares public methods to deal with OpenGL
  *        identifiers.
  *
- *      OpenGL display lists, buffer objects and texture objects have
- * a common functionality for which this class is a wrapper of. The
- * detailed acquisition and release of OpenGL resources is to be provided
- * in subclasses. NOTE CAREFULLY that a derived class destructor MUST
- * call release() !!!
+ *      Many OpenGL objects have a common functionality for which this
+ * class is a wrapper of. The detailed acquisition and release of OpenGL
+ * resources is to be provided in subclasses. NOTE CAREFULLY that a
+ * suitable derived class destructor MUST call release() !!!
  *
  * \author Mike Hewson\n
  */
@@ -52,7 +51,7 @@ class OGL_ID {
         OGL_ID(void);
 
         /**
-         * \brief Destructor - any derived class destructor must call release()
+         * \brief Destructor - a suitable derived class destructor MUST call release()
          */
         virtual ~OGL_ID();
 

@@ -29,7 +29,7 @@ const GLuint OGL_ID::NO_ID(0);
 OGL_ID::OGL_ID() : ident(OGL_ID::NO_ID) {
     }
 
-// Must not call release() from here !!
+// Must NOT call release() from here !!
 OGL_ID::~OGL_ID() {
     }
 
