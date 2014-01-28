@@ -24,7 +24,7 @@
 #include "framework.h"
 
 /**
- * \addtogroup solarsystem Solarsystem
+ * \addtogroup ogl_utility OGL_Utility
  * @{
  */
 
@@ -51,19 +51,28 @@ class OGL_ID {
         OGL_ID(void);
 
         /**
-         * \brief Destructor - a suitable derived class destructor MUST call release()
+         * \brief Destructor - do NOT call release() here, a suitable derived
+         *        class destructor MUST call it.
          */
         virtual ~OGL_ID();
 
         /**
-         * \brief Obtains the OpenGL resource.
+         * \brief Obtain the OpenGL resource.
+         *
+         * \return a boolean indicating success of acquisition
+         *              TRUE - resources acquired without error
+         *              FALSE - resources were not acquired
          */
-        virtual void acquire(void) = 0;
+        virtual bool acquire(void) = 0;
 
         /**
-         * \brief Releases the OpenGL resource.
+         * \brief Release the OpenGL resource.
+         *
+         * \return a boolean indicating success of release
+         *              TRUE - resources released without error
+         *              FALSE - resources were not released
          */
-        virtual void release(void) = 0;
+        virtual bool release(void) = 0;
 
         /**
          * \brief Obtain the OpenGL resource identifier.

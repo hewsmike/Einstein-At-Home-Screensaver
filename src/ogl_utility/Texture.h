@@ -24,7 +24,7 @@
 #include "OGL_ID.h"
 
 /**
- * \addtogroup solarsystem Solarsystem
+ * \addtogroup ogl_utility OGL_Utility
  * @{
  */
 

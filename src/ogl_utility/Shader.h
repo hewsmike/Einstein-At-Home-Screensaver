@@ -24,7 +24,7 @@
 #include "OGL_ID.h"
 
 /**
- * \addtogroup solarsystem Solarsystem
+ * \addtogroup ogl_utility OGL_Utility
  * @{
  */
 
@@ -42,11 +42,20 @@
 
 class Shader : public OGL_ID {
     public :
-        enum shaderType {VERTEX, FRAGMENT};
+        enum compileStatus {NEVER_COMPILED,
+                            COMPILE_FAILED,
+                            COMPILE_SUCCEEDED};
+
         /**
          * \brief Constructor
+         *
+         * \param type - one of the following OpenGL ES 2.0 supported shader types :
+         *               GL_VERTEX_SHADER
+         *               GL_FRAGMENT_SHADER
+         *
+         * \param source - pointer to the shader's source code.
          */
-        Shader(shaderType type);
+        Shader_OBJ(GLenum type, const GLchar* source);
 
         /**
          * \brief Destructor
@@ -55,11 +64,39 @@ class Shader : public OGL_ID {
 
         /**
          * \brief Acquire the shader object's OpenGL resources.
+         *
+         * \return a boolean indicating success of acquisition
+         *              TRUE - resources acquired without error
+         *              FALSE - resources were not acquired
          */
-        virtual void acquire(void);
+        virtual bool acquire(void);
 
         /**
          * \brief Release the shader object's OpenGL resources.
+         *
+         * \return a boolean indicating success of release
+         *              TRUE - resources released without error
+         *              FALSE - resources were not released
+         */
+        virtual bool release(void);
+
+        /**
+         * \brief Compile the shader.
+         *
+         * \return a boolean indicating success of compilation.
+         *              TRUE - shader compiled without error
+         *              FALSE - shader compilation failed
+         */
+        bool compile(void);
+
+        /**
+         * \brief Query the compilation status.
+         *
+         * \return an enumerant of type compileStatus indicating the result
+         *         of the most recent compilation, if any.
+         *              NEVER_COMPILED : has not yet been presented to GLSL compiler
+         *              COMPILE_FAILED : has been presented but failed
+         *              COMPILE_SUCCEEDED : has been presented and no error occurred
          */
         virtual void release(void);
 
@@ -90,6 +127,23 @@ class Shader : public OGL_ID {
     std::string m_GLSL_version;
     std::string m_compile_log;
     std::string m_source;
+
+        compileStatus isCompiled(void) const;
+
+        /**
+         * \brief Query the shader type.
+         *
+         * \return an enumerant indicating one of the following OpenGL ES 2.0
+         *         supported shader types :
+         *               GL_VERTEX_SHADER
+         *               GL_FRAGMENT_SHADER
+         */
+        GLenum type(void) const;
+
+    private :
+        GLenum shader_type;
+
+        compileStatus compilation_status;
     };
 
 /**
