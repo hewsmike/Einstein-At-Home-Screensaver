@@ -28,7 +28,7 @@
 #define BUFFER_OFFSET(bytes)  ((GLubyte*)NULL + (bytes))
 
 /**
- * \addtogroup solarsystem Solarsystem
+ * \addtogroup ogl_utility OGL_Utility
  * @{
  */
 

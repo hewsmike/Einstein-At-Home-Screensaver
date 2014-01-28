@@ -24,7 +24,7 @@
 #include "framework.h"
 
 /**
- * \addtogroup solarsystem Solarsystem
+ * \addtogroup ogl_utility OGL_Utility
  * @{
  */
 
