@@ -18,10 +18,14 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef OGL_ID_H_
-#define OGL_ID_H_
+#ifndef BUFFER_OBJ_H_
+#define BUFFER_OBJ_H_
 
-#include "framework.h"
+#include "OGL_ID.h"
+
+/// Not a pretty solution for a purist, but it gets the pointer type right.
+/// Used to represent an offset into an OpenGL buffer ( server side ) object.
+#define BUFFER_OFFSET(bytes)  ((GLubyte*)NULL + (bytes))
 
 /**
  * \addtogroup solarsystem Solarsystem
@@ -30,55 +34,58 @@
 
 /**
  * \brief This interface declares public methods to deal with OpenGL
- *        objects that use runtime allocated identifiers.
+ *        buffer objects. It's a wrapper.
  *
- *      Many OpenGL objects have a common functionality for which this
- * class is a wrapper of. The detailed acquisition and release of OpenGL
- * resources is to be provided in subclasses. NOTE CAREFULLY that a
- * suitable derived class destructor MUST call release() !!!
+ * \see OGL_ID
  *
  * \author Mike Hewson\n
  */
 
-class OGL_ID {
-    public:
-        /// Default initialiser for the identifier.
-        static const GLuint NO_ID;
-
+class Buffer_OBJ : public OGL_ID {
+    public :
         /**
-         * \brief Constructor ( no argument )
+         * \brief Constructor.
          */
-        OGL_ID(void);
+        Buffer_OBJ(void);
 
         /**
-         * \brief Destructor - a suitable derived class destructor MUST call release()
+         * \brief Destructor.
          */
-        virtual ~OGL_ID();
+        virtual ~Buffer_OBJ();
 
         /**
-         * \brief Obtains the OpenGL resource.
+         * \brief Obtains the buffer object resources.
          */
-        virtual void acquire(void) = 0;
+        virtual void acquire(void);
 
         /**
-         * \brief Releases the OpenGL resource.
+         * \brief Releases the buffer object resources.
          */
-        virtual void release(void) = 0;
+        virtual void release(void);
 
         /**
-         * \brief Obtain the OpenGL resource identifier.
+         * \brief Write data to the buffer with the given characteristics.
          *
-         * \return the identifier.
+         * 	    It is the caller's responsibility to ensure that the given
+         * parameters are sensible. So beware the combination of enumerants,
+         * the validity of the data pointer and the size. If no buffer
+         * identifier has been allocated by OpenGL then one is obtained.
+         *
+         * \param target - one of the accepted OpenGL enumerants for buffer
+         *                 objects, typically either GL_ARRAY_BUFFER or
+         *                 GL_ELEMENT_ARRAY_BUFFER.
+         * \param usage - one of the accepted OpenGL enumerants, say
+         *                GL_STATIC_DRAW.
+         * \param size - the amount of data ( counted in bytes ) to transfer
+         *               to the server buffer.
+         * \param data - a pointer to the data to be transferred.
          */
-        GLuint ID(void) const;
-
-    protected:
-        /// The identifier as allocated by OpenGL.
-        GLuint ident;
+        void loadBuffer(GLenum  target, GLenum  usage,
+                        GLsizeiptr size, const GLvoid* data);
     };
 
 /**
  * @}
  */
 
-#endif /*OGL_ID_H_*/
+#endif /*BUFFER_OBJ_H_*/

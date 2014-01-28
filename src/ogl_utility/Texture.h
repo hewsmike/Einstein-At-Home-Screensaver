@@ -18,10 +18,10 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef OGL_ID_H_
-#define OGL_ID_H_
+#ifndef TEXTURE_H_
+#define TEXTURE_H_
 
-#include "framework.h"
+#include "OGL_ID.h"
 
 /**
  * \addtogroup solarsystem Solarsystem
@@ -30,55 +30,41 @@
 
 /**
  * \brief This interface declares public methods to deal with OpenGL
- *        objects that use runtime allocated identifiers.
+ *        texture objects.
  *
- *      Many OpenGL objects have a common functionality for which this
- * class is a wrapper of. The detailed acquisition and release of OpenGL
- * resources is to be provided in subclasses. NOTE CAREFULLY that a
- * suitable derived class destructor MUST call release() !!!
+ *      It's a wrapper class to especially manage acquisition and
+ * release of OpenGL resources.
+ *
+ * \see OGL_ID
  *
  * \author Mike Hewson\n
  */
 
-class OGL_ID {
-    public:
-        /// Default initialiser for the identifier.
-        static const GLuint NO_ID;
+class Texture_OBJ : public OGL_ID {
+    public :
+        /**
+         * \brief Constructor
+         */
+        Texture_OBJ(void);
 
         /**
-         * \brief Constructor ( no argument )
+         * \brief Destructor
          */
-        OGL_ID(void);
+        virtual ~Texture_OBJ();
 
         /**
-         * \brief Destructor - a suitable derived class destructor MUST call release()
+         * \brief Acquire the texture object's OpenGL resources.
          */
-        virtual ~OGL_ID();
+        virtual void acquire(void);
 
         /**
-         * \brief Obtains the OpenGL resource.
+         * \brief Release the texture object's OpenGL resources.
          */
-        virtual void acquire(void) = 0;
-
-        /**
-         * \brief Releases the OpenGL resource.
-         */
-        virtual void release(void) = 0;
-
-        /**
-         * \brief Obtain the OpenGL resource identifier.
-         *
-         * \return the identifier.
-         */
-        GLuint ID(void) const;
-
-    protected:
-        /// The identifier as allocated by OpenGL.
-        GLuint ident;
+        virtual void release(void);
     };
 
 /**
  * @}
  */
 
-#endif /*OGL_ID_H_*/
+#endif /*TEXTURE_H_*/

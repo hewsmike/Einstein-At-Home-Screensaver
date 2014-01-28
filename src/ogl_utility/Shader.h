@@ -18,10 +18,10 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef OGL_ID_H_
-#define OGL_ID_H_
+#ifndef SHADER_H_
+#define SHADER_H_
 
-#include "framework.h"
+#include "OGL_ID.h"
 
 /**
  * \addtogroup solarsystem Solarsystem
@@ -30,55 +30,70 @@
 
 /**
  * \brief This interface declares public methods to deal with OpenGL
- *        objects that use runtime allocated identifiers.
+ *        shader objects.
  *
- *      Many OpenGL objects have a common functionality for which this
- * class is a wrapper of. The detailed acquisition and release of OpenGL
- * resources is to be provided in subclasses. NOTE CAREFULLY that a
- * suitable derived class destructor MUST call release() !!!
+ *      It's a wrapper class to especially manage acquisition and
+ * release of OpenGL resources.
+ *
+ * \see OGL_ID
  *
  * \author Mike Hewson\n
  */
 
-class OGL_ID {
-    public:
-        /// Default initialiser for the identifier.
-        static const GLuint NO_ID;
+class Shader : public OGL_ID {
+    public :
+        enum shaderType {VERTEX, FRAGMENT};
+        /**
+         * \brief Constructor
+         */
+        Shader(shaderType type);
 
         /**
-         * \brief Constructor ( no argument )
+         * \brief Destructor
          */
-        OGL_ID(void);
+        virtual ~Shader();
 
         /**
-         * \brief Destructor - a suitable derived class destructor MUST call release()
+         * \brief Acquire the shader object's OpenGL resources.
          */
-        virtual ~OGL_ID();
+        virtual void acquire(void);
 
         /**
-         * \brief Obtains the OpenGL resource.
+         * \brief Release the shader object's OpenGL resources.
          */
-        virtual void acquire(void) = 0;
+        virtual void release(void);
 
         /**
-         * \brief Releases the OpenGL resource.
+         * \brief Release the shader object's OpenGL resources.
          */
-        virtual void release(void) = 0;
+        shaderType getType(void) const;
 
-        /**
-         * \brief Obtain the OpenGL resource identifier.
-         *
-         * \return the identifier.
-         */
-        GLuint ID(void) const;
+    void loadSource(const GLchar* source);
 
-    protected:
-        /// The identifier as allocated by OpenGL.
-        GLuint ident;
+    const std::string& getSource(void) const;
+
+    bool compile(void);
+
+    bool isCompileOK(void) const;
+
+    const std::string& getCompileLog(void) const;
+
+    const std::string& getGLSLversion(void) const;
+
+  private:
+
+    GLuint m_id;
+    shaderType m_type;
+
+    bool m_compile_flag;
+
+    std::string m_GLSL_version;
+    std::string m_compile_log;
+    std::string m_source;
     };
 
 /**
  * @}
  */
 
-#endif /*OGL_ID_H_*/
+#endif /*SHADER_H_*/

@@ -18,67 +18,26 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef OGL_ID_H_
-#define OGL_ID_H_
+#include "Texture_OBJ.h"
 
-#include "framework.h"
+#include <iostream>
 
-/**
- * \addtogroup solarsystem Solarsystem
- * @{
- */
+#include "ErrorHandler.h"
 
-/**
- * \brief This interface declares public methods to deal with OpenGL
- *        objects that use runtime allocated identifiers.
- *
- *      Many OpenGL objects have a common functionality for which this
- * class is a wrapper of. The detailed acquisition and release of OpenGL
- * resources is to be provided in subclasses. NOTE CAREFULLY that a
- * suitable derived class destructor MUST call release() !!!
- *
- * \author Mike Hewson\n
- */
+Texture_OBJ::Texture_OBJ(void) {
+    }
 
-class OGL_ID {
-    public:
-        /// Default initialiser for the identifier.
-        static const GLuint NO_ID;
+Texture_OBJ::~Texture_OBJ() {
+    // Must call this here in this derived class.
+    release();
+    }
 
-        /**
-         * \brief Constructor ( no argument )
-         */
-        OGL_ID(void);
+void Texture_OBJ::acquire(void) {
+    // Ask OpenGL to assign a texture object.
+    glGenTextures(1, &ident);
+    }
 
-        /**
-         * \brief Destructor - a suitable derived class destructor MUST call release()
-         */
-        virtual ~OGL_ID();
-
-        /**
-         * \brief Obtains the OpenGL resource.
-         */
-        virtual void acquire(void) = 0;
-
-        /**
-         * \brief Releases the OpenGL resource.
-         */
-        virtual void release(void) = 0;
-
-        /**
-         * \brief Obtain the OpenGL resource identifier.
-         *
-         * \return the identifier.
-         */
-        GLuint ID(void) const;
-
-    protected:
-        /// The identifier as allocated by OpenGL.
-        GLuint ident;
-    };
-
-/**
- * @}
- */
-
-#endif /*OGL_ID_H_*/
+void Texture_OBJ::release(void) {
+    // Ask OpenGL to release the texture object.
+    glDeleteTextures(1, &ident);
+    }
