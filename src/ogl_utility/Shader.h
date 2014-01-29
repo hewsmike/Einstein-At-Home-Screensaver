@@ -23,6 +23,8 @@
 
 #include "OGL_ID.h"
 
+#include<string>
+
 /**
  * \addtogroup ogl_utility OGL_Utility
  * @{
@@ -42,9 +44,9 @@
 
 class Shader : public OGL_ID {
     public :
-        enum compileStatus {NEVER_COMPILED,
-                            COMPILE_FAILED,
-                            COMPILE_SUCCEEDED};
+        enum compilationState {NEVER_COMPILED,
+                               COMPILE_FAILED,
+                               COMPILE_SUCCEEDED};
 
         /**
          * \brief Constructor
@@ -92,43 +94,13 @@ class Shader : public OGL_ID {
         /**
          * \brief Query the compilation status.
          *
-         * \return an enumerant of type compileStatus indicating the result
+         * \return an enumerant of type compilationState indicating the result
          *         of the most recent compilation, if any.
          *              NEVER_COMPILED : has not yet been presented to GLSL compiler
          *              COMPILE_FAILED : has been presented but failed
          *              COMPILE_SUCCEEDED : has been presented and no error occurred
          */
-        virtual void release(void);
-
-        /**
-         * \brief Release the shader object's OpenGL resources.
-         */
-        shaderType getType(void) const;
-
-    void loadSource(const GLchar* source);
-
-    const std::string& getSource(void) const;
-
-    bool compile(void);
-
-    bool isCompileOK(void) const;
-
-    const std::string& getCompileLog(void) const;
-
-    const std::string& getGLSLversion(void) const;
-
-  private:
-
-    GLuint m_id;
-    shaderType m_type;
-
-    bool m_compile_flag;
-
-    std::string m_GLSL_version;
-    std::string m_compile_log;
-    std::string m_source;
-
-        compileStatus isCompiled(void) const;
+         compilationState status(void) const;
 
         /**
          * \brief Query the shader type.
@@ -140,10 +112,42 @@ class Shader : public OGL_ID {
          */
         GLenum type(void) const;
 
+        /**
+         * \brief Obtain a copy of this shader's source code.
+         *
+         * \return A string reference to the source code.
+         */
+        const std::string& source(void) const;
+
+        /**
+         * \brief Obtain a copy of this shader's compile log.
+         *
+         * \return A string reference to the compile log code.
+         */
+        const std::string& compileLog(void) const;
+
+        /**
+         * \brief Obtain a copy of this shader's apparent GLSL version
+         *
+         * \return A string reference to the version in x.yy format, 0.00 if none.
+         */
+        const std::string& version(void) const;
+
     private :
+        /// One of the OpenGL ES 2.0 supported shader types.
         GLenum shader_type;
 
-        compileStatus compilation_status;
+        /// Indicator of current compilation state.
+        compilationState comp_status;
+
+        /// The shader's GLSL source code.
+        std::string shader_source;
+
+        /// The compilation log for this shader.
+        std::string compile_log;
+
+        /// The GLSL version, if any, as disclosed by the shader source code.
+        std::string glsl_version;
     };
 
 /**
