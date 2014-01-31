@@ -86,6 +86,15 @@ class Shader : public OGL_ID {
         virtual bool release(void);
 
         /**
+         * \brief Determine if shader has been marked for deletion.
+         *
+         * \return a boolean indicating deletion status
+         *              TRUE - shader is marked for deletion
+         *              FALSE - shader is NOT marked for deletion
+         */
+        bool isDeleted(void);
+
+        /**
          * \brief Query the compilation status.
          *
          * \return an enumerant of type compilationState indicating the result
