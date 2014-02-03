@@ -51,7 +51,6 @@ BS_BUILD_FREETYPE=3
 BS_BUILD_GLEW=4
 BS_BUILD_LIBXML=5
 BS_BUILD_SDL=6
-BS_BUILD_BOOST=7
 
 # No buildstate set initially.
 BUILDSTATE=$BS_NONE
@@ -345,27 +344,6 @@ build_sdl() {
     return 0
     }
 
-build_boost() {
-    if [ $BUILDSTATE -ge $BS_BUILD_BOOST ]; then
-        return 0
-    fi
-
-    cd $ROOT/3rdparty/boost || failure
-    chmod +x configure >> $LOGFILE 2>&1 || failure
-    cd $ROOT/build/boost || failure
-    $ROOT/3rdparty/boost/configure >> $LOGFILE 2>&1 || failure
-
-    log "Building boost (this may take a while)..."
-    make >> $LOGFILE 2>&1 || failure
-    make install >> $LOGFILE 2>&1 || failure
-
-    log "Successfully built and installed boost!"
-
-    save_build_state $BS_BUILD_BOOST || failure
-
-    return 0
-    }
-
 ### specific build functions ###########################################################################################
 
 build_orc() {
@@ -417,7 +395,6 @@ build_linux() {
     build_glew || failure
     build_libxml || failure
     build_sdl || failure
-    build_boost || failure
 
     # Now client code.
     build_orc || failure

@@ -41,7 +41,6 @@ FREETYPE_VERSION=2.5.1
 GLEW_VERSION=1.10.0
 LIBXML_VERSION=2.9.0
 SDL_VERSION=2.0.1
-BOOST_VERSION=1.55.0
 
 # Target variants.
 TARGET_NONE=0
@@ -77,7 +76,6 @@ TBS_FREETYPE_RETRIEVED=3
 TBS_GLEW_RETRIEVED=4
 TBS_LIBXML_RETRIEVED=5
 TBS_SDL_RETRIEVED=6
-TBS_BOOST_RETRIEVED=7
 TBS_RETRIEVED=8
 
 # No topbuild state set initially.
@@ -207,32 +205,6 @@ retrieve_sdl() {
     return 0
     }
 
-retrieve_boost() {
-    # Need a boost version string with '.' replaced by '_'
-    BOOST_VERSION_=${BOOST_VERSION//./_}
-    BOOST_RETRIEVE_STR="boost_$BOOST_VERSION_"
-    BOOST_RETRIEVE_FILE="$BOOST_RETRIEVE_STR.tar.gz"
-    BOOST_RETRIEVE_DOMAIN="http://sourceforge.net/projects/boost/files/boost/$BOOST_VERSION/"
-    BOOST_RETRIEVE_PATH="$BOOST_RETRIEVE_DOMAIN$BOOST_RETRIEVE_FILE"
-
-    log "Retrieving BOOST (this may take a while)..."
-    mkdir -p $ROOT/retrieval/boost >> $LOGFILE || failure
-
-    cd $ROOT/retrieval || failure
-    rm -f $BOOST_RETRIEVE_FILE >> $LOGFILE 2>&1 || failure
-    wget $BOOST_RETRIEVE_PATH >> $LOGFILE 2>&1 || failure
-    tar -xzf $BOOST_RETRIEVE_FILE >> $LOGFILE 2>&1 || failure
-    rm $BOOST_RETRIEVE_FILE >> $LOGFILE 2>&1 || failure
-    # substitute old source tree
-    rm -rf boost >> $LOGFILE 2>&1 || failure
-    mv $BOOST_RETRIEVE_STR boost >> $LOGFILE 2>&1 || failure
-
-    save_topbuild_state $BOOST_SDL_RETRIEVED
-
-    return 0
-
-    }
-
 ### functions (utility) ####################################################
 
 distclean() {
@@ -317,11 +289,6 @@ check_retrieval() {
     if [ $TOPBUILDSTATE -lt $TBS_SDL_RETRIEVED ]; then
         retrieve_sdl || failure
         save_topbuild_state $TBS_SDL_RETRIEVED
-    fi
-
-    if [ $TOPBUILDSTATE -lt $TBS_BOOST_RETRIEVED ]; then
-        retrieve_boost || failure
-        save_topbuild_state $TBS_BOOST_RETRIEVED
     fi
 
     save_topbuild_state $TBS_RETRIEVED
