@@ -22,15 +22,6 @@
 
 #include "ErrorHandler.h"
 
-const char* Shader::VERSION_MARKER("#version");
-const char* Shader::CORE_MARKER("core");
-const char* Shader::COMPATIBILITY_MARKER("compatibility");
-
-// This is almost certainly the version that you don't want, but
-// it will be the one that GLSL will assume if you don't specify.
-const char* Shader::DEFAULT_GLSL_VERSION("110");
-
-profileType Shader::DEFAULT_GLSL_PROFILE(Shader::CORE);
 const GLint Shader::GLSL_COMPILE_FAILURE(0);
 const GLint Shader::GLSL_COMPILE_SUCCESS(1);
 
@@ -169,12 +160,4 @@ const std::string& Shader::source(void) const {
 
 const std::string& Shader::compileLog(void) const {
     return compile_log;
-    }
-
-const std::string& Shader::version(void) const {
-    return glsl_version;
-    }
-
-const std::string& Shader::profile(void) const {
-    return glsl_profile;
     }
