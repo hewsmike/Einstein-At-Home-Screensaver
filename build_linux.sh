@@ -350,8 +350,6 @@ build_orc() {
     # make sure ORC is always compiled for host platform
     log "Preparing $PRODUCT_NAME..."
     mkdir -p $ROOT/build/orc >> $LOGFILE || failure
-    mkdir -p $ROOT/build/framework >> $LOGFILE || failure
-    mkdir -p $ROOT/build/$PRODUCT >> $LOGFILE || failure
 
     # Create the header containing ( if available ) any git commit,
     # build machine and working directory information.
@@ -373,6 +371,7 @@ build_orc() {
 build_framework() {
     # Now compile framework for host platform
     log "Building $PRODUCT_NAME [Framework]..."
+    mkdir -p $ROOT/build/framework >> $LOGFILE || failure
     export FRAMEWORK_SRC=$ROOT/src/framework || failure
     export OGL_UTILITY_SRC=$ROOT/src/ogl_utility || failure
     export FRAMEWORK_INSTALL=$ROOT/install || failure
@@ -386,8 +385,26 @@ build_framework() {
     return 0
     }
 
+build_ogl_utility() {
+    # Now compile OpenGL utility classes for host platform
+    log "Building $PRODUCT_NAME [OpenGL Utilities]..."
+    mkdir -p $ROOT/build/ogl_utility >> $LOGFILE || failure
+    export FRAMEWORK_SRC=$ROOT/src/framework || failure
+    export UTILITY_SRC=$ROOT/src/ogl_utility || failure
+    export UTILITY_INSTALL=$ROOT/install || failure
+    cd $ROOT/build/ogl_utility || failure
+    cp -f $ROOT/src/ogl_utility/Makefile . >> $LOGFILE 2>&1 || failure
+
+    make ${2:2} PRODUCT=$PRODUCT_NAME >> $LOGFILE 2>&1 || failure
+    make install >> $LOGFILE 2>&1 || failure
+    log "Successfully built and installed $PRODUCT_NAME [OpenGL Utilities]!"
+
+    return 0
+    }
+
 build_linux() {
     log "Important for an official build: let CC and CXX point to gcc/g++ 4.6+ !"
+    mkdir -p $ROOT/build/$PRODUCT >> $LOGFILE || failure
 
     # Make sure the base libraries are built.
     build_boinc || failure
@@ -399,6 +416,7 @@ build_linux() {
     # Now client code.
     build_orc || failure
     build_framework || failure
+    build_ogl_utility || failure
 
     return 0
     }

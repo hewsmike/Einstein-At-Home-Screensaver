@@ -18,7 +18,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "Buffer_OBJ.h"
+#include "Buffer.h"
 #include "ErrorHandler.h"
 
 Buffer_OBJ::Buffer_OBJ() {

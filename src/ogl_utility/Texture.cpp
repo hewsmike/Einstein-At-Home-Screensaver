@@ -18,7 +18,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "Texture_OBJ.h"
+#include "Texture.h"
 
 #include <iostream>
 
