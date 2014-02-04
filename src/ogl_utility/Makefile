@@ -26,15 +26,16 @@ UTILITY_INSTALL?=$(PWD)
 CXX?=g++
 
 # variables
+CPPFLAGS += -I$(UTILITY_SRC)
 CPPFLAGS += -I$(FRAMEWORK_SRC)
+CPPFLAGS += -I$(FRAMEWORK_INSTALL)/include/GL
+CPPFLAGS += -I$(FRAMEWORK_INSTALL)/include/SDL2
 
 DEPS = Makefile
 OBJS = Buffer.o
 OBJS += OGL_ID.o
 OBJS += Shader.o
 OBJS += Texture.o
-
-CPPFLAGS += -I$(UTILITY_SRC)
 
 # primary role based tagets
 default: release
