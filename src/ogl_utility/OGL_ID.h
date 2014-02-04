@@ -32,8 +32,8 @@
  * \brief This interface declares public methods to deal with OpenGL
  *        objects that use runtime allocated identifiers.
  *
- *      Many OpenGL objects have a common functionality for which this
- * class is a wrapper of. The detailed acquisition and release of OpenGL
+ *      Many OpenGL types have a common functionality for which this
+ * class is a base of. The detailed acquisition and release of OpenGL
  * resources is to be provided in subclasses. NOTE CAREFULLY that a
  * suitable derived class destructor MUST call release() !!!
  *
