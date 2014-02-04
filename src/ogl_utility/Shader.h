@@ -47,10 +47,6 @@ class Shader : public OGL_ID {
         enum compilationState {NEVER_COMPILED,
                                COMPILE_FAILED,
                                COMPILE_SUCCEEDED};
-
-        enum profileType{CORE,
-                         COMPATIBILITY};
-
         /**
          * \brief Constructor
          *
@@ -125,30 +121,11 @@ class Shader : public OGL_ID {
         /**
          * \brief Obtain a copy of this shader's compile log.
          *
-         * \return A string reference to the compile log code.
+         * \return A string reference to the compile log code. This may be empty.
          */
         const std::string& compileLog(void) const;
 
-        /**
-         * \brief Obtain a copy of this shader's apparent GLSL version
-         *
-         * \return A string reference to the version in XXX format, 000 if none.
-         */
-        const std::string& version(void) const;
-
-        /**
-         * \brief Obtain a copy of this shader's apparent GLSL profile type
-         *
-         * \return A string reference to the profile version in XXX format, 000 if none.
-         */
-        const std::string& profile(void) const;
-
     private :
-        static const char* VERSION_MARKER;
-        static const char* CORE_MARKER;
-        static const char* COMPATIBILITY_MARKER;
-        static const char* DEFAULT_GLSL_VERSION;
-        static profileType DEFAULT_GLSL_PROFILE;
         static const GLint GLSL_COMPILE_FAILURE;
         static const GLint GLSL_COMPILE_SUCCESS;
 
@@ -172,12 +149,6 @@ class Shader : public OGL_ID {
 
         /// The compilation log for this shader.
         std::string compile_log;
-
-        /// The GLSL version, if any, as disclosed by the shader source code.
-        std::string glsl_version;
-
-        /// The GLSL profile type, if any, as disclosed by the shader source code.
-        std::string glsl_profile;
     };
 
 /**

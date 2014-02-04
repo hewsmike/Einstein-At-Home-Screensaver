@@ -45,8 +45,14 @@ class Buffer_OBJ : public OGL_ID {
     public :
         /**
          * \brief Constructor.
+         *
+         * \param target : one of GL_ARRAY_BUFFER or GL_ELEMENT_ARRAY_BUFFER
+         * \param siz
          */
-        Buffer_OBJ(void);
+        Buffer_OBJ(GLenum target,
+                  GLsizeiptr size,
+                  const GLvoid * data,
+                  GLenum usage);
 
         /**
          * \brief Destructor.
