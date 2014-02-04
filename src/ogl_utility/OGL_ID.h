@@ -72,7 +72,7 @@ class OGL_ID {
          *              TRUE - resources released without error
          *              FALSE - resources were not released
          */
-        virtual bool release(void) = 0;
+        virtual void release(void) = 0;
 
         /**
          * \brief Obtain the OpenGL resource identifier.
