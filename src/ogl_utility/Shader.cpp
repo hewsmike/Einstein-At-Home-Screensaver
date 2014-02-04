@@ -43,15 +43,6 @@ Shader::Shader(GLenum type, const GLchar* source) {
         shader_source = source;
         }
 
-    // If possible detect and store GLSL version ie. inspect source code
-    // for lines of the form : '#version ddd [core|compatibility]'
-    // Default return values.
-    glsl_version = Shader::DEFAULT_GLSL_VERSION;
-    glsl_profile = Shader::DEFAULT_GLSL_PROFILE;
-
-    // Search the shader source string for the first occurrence of '#version'.
-    /// TODO - use <regex> from BOOST ??
-
     // Initially uncompiled.
     comp_status = Shader::NEVER_COMPILED;
     }
@@ -62,20 +53,20 @@ Shader::~Shader() {
 
 bool Shader::acquire(void) {
     // Assume failure.
-    bool ret_val = FALSE;
+    bool ret_val = false;
 
     // Empty the compilation log.
     compile_log = "";
 
     // Get an OpenGl handle for this shader object.
-    OGL_ID::ident = glCreateShader(type);
+    OGL_ID::ident = glCreateShader(shader_type);
     // If that handle acquisition failed the we have no other option ...
     if(OGL_ID::ident == OGL_ID::NO_ID)  {
         ErrorHandler::record("Shader::acquire() : OpenGL handle acquisition failure !", ErrorHandler::FATAL);
         }
 
     // Load the source code into the shader object.
-    glShaderSource(type, 1, shader_source.c_str(), NULL);
+    glShaderSource(shader_type, 1, StringHelper(shader_source), NULL);
 
     // Compile it and return the result.
     ret_val = compile();
@@ -92,7 +83,7 @@ bool Shader::acquire(void) {
         // Use extra character to account for null character terminator ( documentation unclear ).
         GLchar* temp_log = new GLchar[log_len+1];
         GLsizei returned_log_len;
-        glGetShaderInfoLog(OGL_ID::ident, log_len+1, returned_log_len, temp_log);
+        glGetShaderInfoLog(OGL_ID::ident, log_len+1, &returned_log_len, temp_log);
 
         /// TODO - remove this after testing
         if(log_len != returned_log_len) {
@@ -109,7 +100,7 @@ bool Shader::acquire(void) {
     return ret_val;
     }
 
-bool Shader::release(void) {
+void Shader::release(void) {
     OGL_ID::release();
     }
 
@@ -146,7 +137,7 @@ bool Shader::compile(void) {
     return ret_val;
     }
 
-compilationState Shader::status(void) const {
+Shader::compilationState Shader::status(void) const {
     return comp_status;
     }
 

@@ -74,12 +74,8 @@ class Shader : public OGL_ID {
 
         /**
          * \brief Release the shader object's OpenGL resources.
-         *
-         * \return a boolean indicating success of release
-         *              TRUE - resources released without error
-         *              FALSE - resources were not released
          */
-        virtual bool release(void);
+        virtual void release(void);
 
         /**
          * \brief Determine if shader has been marked for deletion.
@@ -99,7 +95,7 @@ class Shader : public OGL_ID {
          *              COMPILE_FAILED : has been presented but failed
          *              COMPILE_SUCCEEDED : has been presented and no error occurred
          */
-        compilationState status(void) const;
+        Shader::compilationState status(void) const;
 
         /**
          * \brief Query the shader type.
@@ -137,6 +133,12 @@ class Shader : public OGL_ID {
          *              FALSE - shader compilation failed
          */
         bool compile(void);
+
+        struct StringHelper {
+            const char *p;
+            StringHelper(const std::string& s) : p(s.c_str()) {}
+            operator const char**() { return &p; }
+            };
 
         /// One of the OpenGL ES 2.0 supported shader types.
         GLenum shader_type;
