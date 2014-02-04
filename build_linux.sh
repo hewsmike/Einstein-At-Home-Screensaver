@@ -389,7 +389,7 @@ build_ogl_utility() {
     # Now compile OpenGL utility classes for host platform
     log "Building $PRODUCT_NAME [OpenGL Utilities]..."
     mkdir -p $ROOT/build/ogl_utility >> $LOGFILE || failure
-    export FRAMEWORK_SRC=$ROOT/src/framework || failure
+    export FRAMEWORK_INSTALL=$ROOT/install || failure
     export UTILITY_SRC=$ROOT/src/ogl_utility || failure
     export UTILITY_INSTALL=$ROOT/install || failure
     cd $ROOT/build/ogl_utility || failure
