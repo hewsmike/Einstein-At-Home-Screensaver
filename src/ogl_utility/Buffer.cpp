@@ -21,32 +21,39 @@
 #include "Buffer.h"
 #include "ErrorHandler.h"
 
-Buffer_OBJ::Buffer_OBJ() {
+Buffer::Buffer(GLenum target, GLsizeiptr size, GLenum usage, const GLvoid* data) {
     }
 
-Buffer_OBJ::~Buffer_OBJ() {
+Buffer::~Buffer() {
     // Must call this here in this derived class.
-    release();
+    Buffer::release();
     }
 
-void Buffer_OBJ::acquire(void) {
+bool Buffer::acquire(void) {
+    // Assume failure to acquire.
+    bool ret_val = false;
+
     // Ask OpenGL for a single buffer handle.
     glGenBuffers(1, &ident);
 
     // Failure to acquire a handle should be FATAL.
     if(ident == OGL_ID::NO_ID) {
-        ErrorHandler::record("Buffer_OBJ::acquire : failure to obtain identifier",
+        ErrorHandler::record("Buffer::acquire : failure to obtain identifier",
                              ErrorHandler::FATAL);
         }
+    else {
+        ret_val = true;
+        }
+
+    return ret_val;
     }
 
-void Buffer_OBJ::release(void) {
+void Buffer::release(void) {
     // Inform OpenGL that we no longer need this specific buffer handle.
     glDeleteBuffers(1, &ident);
     }
 
-void Buffer_OBJ::loadBuffer(GLenum  target, GLenum  usage,
-                            GLsizeiptr size, const GLvoid* data) {
+void Buffer::loadBuffer() {
 	// This implementation avoids both the poor performance and poor error
 	// reporting ( as disclosed in actual practice ) of glMapBuffer().
 
@@ -56,20 +63,12 @@ void Buffer_OBJ::loadBuffer(GLenum  target, GLenum  usage,
 		}
 
 	// Bind the buffer ( of 'target' type ) to our identifier.
-	glBindBuffer(target, this->ID());
+	glBindBuffer(m_target, this->ID());
 
 	// Allocate space. NULL for third parameter means no data
 	// transfer for THIS OpenGL call. See note below.
-	glBufferData(target, size, NULL, usage);
-
-	// Now transfer WITHOUT using glMapBuffer(). Using glBufferSubData()
-	// has the performance advantage of not requiring ( back end ) memory
-	// re-allocation with repeated loads. Memory is entirely re-allocated
-	// when glBufferData() is used for any subsequent re-loads. While this
-	// may not matter ( depends on usage ), there is no penalty for this
-	// approach.
-	glBufferSubData(target, 0, size, data);
+	glBufferData(m_target, m_size, m_data, m_usage);
 
 	// Unbind the buffer.
-	glBindBuffer(target, Buffer_OBJ::NO_ID);
+	glBindBuffer(m_target, Buffer::NO_ID);
 	}

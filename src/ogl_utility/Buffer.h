@@ -18,8 +18,8 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef BUFFER_OBJ_H_
-#define BUFFER_OBJ_H_
+#ifndef BUFFER_H_
+#define BUFFER_H_
 
 #include "OGL_ID.h"
 
@@ -41,33 +41,44 @@
  * \author Mike Hewson\n
  */
 
-class Buffer_OBJ : public OGL_ID {
+class Buffer : public OGL_ID {
     public :
         /**
          * \brief Constructor.
          *
          * \param target : one of GL_ARRAY_BUFFER or GL_ELEMENT_ARRAY_BUFFER
-         * \param siz
+         * \param size : number of bytes to allocate
+         * \param usage : one of GL_STREAM_DRAW, GL_STATIC_DRAW or GL_DYNAMIC_DRAW
+         * \param data : pointer to the data to be stored,
+         *               note the data is only bound when acquire() is called.
          */
-        Buffer_OBJ(GLenum target,
-                  GLsizeiptr size,
-                  const GLvoid * data,
-                  GLenum usage);
+        Buffer(GLenum target, GLsizeiptr size, GLenum usage, const GLvoid* data);
 
         /**
          * \brief Destructor.
          */
-        virtual ~Buffer_OBJ();
+        virtual ~Buffer();
 
         /**
          * \brief Obtains the buffer object resources.
+         *
+         * \return a boolean indicating success of acquisition
+         *              TRUE - resources acquired without error
+         *              FALSE - resources were not acquired
+         *
          */
-        virtual void acquire(void);
+        bool acquire(void);
 
         /**
          * \brief Releases the buffer object resources.
          */
-        virtual void release(void);
+        void release(void);
+
+    private:
+        GLenum m_target;
+        GLsizeiptr m_size;
+        GLenum m_usage;
+        const GLvoid* m_data;
 
         /**
          * \brief Write data to the buffer with the given characteristics.
@@ -86,12 +97,11 @@ class Buffer_OBJ : public OGL_ID {
          *               to the server buffer.
          * \param data - a pointer to the data to be transferred.
          */
-        void loadBuffer(GLenum  target, GLenum  usage,
-                        GLsizeiptr size, const GLvoid* data);
+        void loadBuffer(void);
     };
 
 /**
  * @}
  */
 
-#endif /*BUFFER_OBJ_H_*/
+#endif /*BUFFER_H_*/
