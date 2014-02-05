@@ -94,6 +94,7 @@ bool Shader::acquire(void) {
         temp_log[log_len] = '\0';
         compile_log = temp_log;
 
+        // Dispose of the temporary character array.
         delete[] temp_log;
         }
 
@@ -101,14 +102,17 @@ bool Shader::acquire(void) {
     }
 
 void Shader::release(void) {
-    glDeleteShader(OGL_ID::ident);
+    // Inform OpenGL that we no longer need this specific shader handle.
+    glDeleteShader(ident);
+    // Set our handle store to safe value.
+    ident = OGL_ID::NO_ID;
     }
 
 bool Shader::isDeleted(void) {
-    // Lazy evaluation through inquiry to OpenGL context.
     // Assume not marked for deletion.
     bool ret_val = false;
 
+    // Lazy evaluation through inquiry to OpenGL context.
     GLint d_status;
     glGetShaderiv(OGL_ID::ident, GL_DELETE_STATUS, &d_status);
     if(d_status == GL_TRUE) {
@@ -123,12 +127,14 @@ bool Shader::compile(void) {
     // Assume compile failure
     bool ret_val = false;
 
+    // Present shader's GLSL code to the GLSL compiler.
     glCompileShader(OGL_ID::ident);
 
     /// TODO - remove after full testing.
     // Check here proximally pro-tem.
     ErrorHandler::check_OpenGL_Error();
 
+    // See if the compilation was a success.
     GLint c_status;
     glGetShaderiv(OGL_ID::ident, GL_COMPILE_STATUS, &c_status);
     if(c_status == GL_TRUE) {

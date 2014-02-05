@@ -40,22 +40,22 @@
  * \author Mike Hewson\n
  */
 
-class Texture_OBJ : public OGL_ID {
+class Texture : public OGL_ID {
     public :
         /**
          * \brief Constructor
          */
-        Texture_OBJ(void);
+        Texture(void);
 
         /**
          * \brief Destructor
          */
-        virtual ~Texture_OBJ();
+        virtual ~Texture();
 
         /**
          * \brief Acquire the texture object's OpenGL resources.
          */
-        virtual void acquire(void);
+        virtual bool acquire(void);
 
         /**
          * \brief Release the texture object's OpenGL resources.

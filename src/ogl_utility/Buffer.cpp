@@ -21,7 +21,8 @@
 #include "Buffer.h"
 #include "ErrorHandler.h"
 
-Buffer::Buffer(GLenum target, GLsizeiptr size, GLenum usage, const GLvoid* data) {
+Buffer::Buffer(GLenum target, GLsizeiptr size, GLenum usage, const GLvoid* data) :
+                m_target(target), m_size(size), m_usage(usage), m_data(data) {
     }
 
 Buffer::~Buffer() {
@@ -42,6 +43,8 @@ bool Buffer::acquire(void) {
                              ErrorHandler::FATAL);
         }
     else {
+        // Use the handle and load data.
+        loadBuffer();
         ret_val = true;
         }
 
@@ -51,22 +54,15 @@ bool Buffer::acquire(void) {
 void Buffer::release(void) {
     // Inform OpenGL that we no longer need this specific buffer handle.
     glDeleteBuffers(1, &ident);
+    // Set our handle store to safe value.
+    ident = OGL_ID::NO_ID;
     }
 
 void Buffer::loadBuffer() {
-	// This implementation avoids both the poor performance and poor error
-	// reporting ( as disclosed in actual practice ) of glMapBuffer().
-
-	// If we have no identifier allocation then get one.
-	if(this->ID() == OGL_ID::NO_ID) {
-		this->acquire();
-		}
-
 	// Bind the buffer ( of 'target' type ) to our identifier.
 	glBindBuffer(m_target, this->ID());
 
-	// Allocate space. NULL for third parameter means no data
-	// transfer for THIS OpenGL call. See note below.
+	// Allocate space and transfer any data.
 	glBufferData(m_target, m_size, m_data, m_usage);
 
 	// Unbind the buffer.
