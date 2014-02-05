@@ -35,7 +35,7 @@ DEPS = Makefile
 OBJS = Buffer.o
 OBJS += OGL_ID.o
 OBJS += Shader.o
-OBJS += Texture.o
+# OBJS += Texture.o
 
 # primary role based tagets
 default: release

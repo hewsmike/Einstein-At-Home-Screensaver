@@ -49,8 +49,8 @@ class Buffer : public OGL_ID {
          * \param target : one of GL_ARRAY_BUFFER or GL_ELEMENT_ARRAY_BUFFER
          * \param size : number of bytes to allocate
          * \param usage : one of GL_STREAM_DRAW, GL_STATIC_DRAW or GL_DYNAMIC_DRAW
-         * \param data : pointer to the data to be stored,
-         *               note the data is only bound when acquire() is called.
+         * \param data : pointer to the data to be stored, but
+         *               NOTE CAREFULLY : the data is only accessed when acquire() is called.
          */
         Buffer(GLenum target, GLsizeiptr size, GLenum usage, const GLvoid* data);
 
@@ -65,7 +65,6 @@ class Buffer : public OGL_ID {
          * \return a boolean indicating success of acquisition
          *              TRUE - resources acquired without error
          *              FALSE - resources were not acquired
-         *
          */
         bool acquire(void);
 
@@ -75,9 +74,17 @@ class Buffer : public OGL_ID {
         void release(void);
 
     private:
+        // These are merely set during construction, though utilised during acquisition.
+        /// The buffer target type ( binding point ).
         GLenum m_target;
+
+        /// The number of bytes to be allocated to the buffer.
         GLsizeiptr m_size;
+
+        /// The usage hint.
         GLenum m_usage;
+
+        /// A pointer to untyped data.
         const GLvoid* m_data;
 
         /**

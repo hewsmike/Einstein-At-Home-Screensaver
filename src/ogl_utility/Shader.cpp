@@ -48,7 +48,7 @@ Shader::Shader(GLenum type, const GLchar* source) {
     }
 
 Shader::~Shader() {
-    release();
+    Shader::release();
     }
 
 bool Shader::acquire(void) {
@@ -101,10 +101,11 @@ bool Shader::acquire(void) {
     }
 
 void Shader::release(void) {
-    OGL_ID::release();
+    glDeleteShader(OGL_ID::ident);
     }
 
 bool Shader::isDeleted(void) {
+    // Lazy evaluation through inquiry to OpenGL context.
     // Assume not marked for deletion.
     bool ret_val = false;
 

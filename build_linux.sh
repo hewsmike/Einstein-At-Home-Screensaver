@@ -360,11 +360,11 @@ build_orc() {
     cd $ROOT/build/orc || failure
     cp $ROOT/src/orc/Makefile . >> $LOGFILE 2>&1 || failure
 
-    log "Building $PRODUCT_NAME [ORC]..."
+    log "Building $PRODUCT_NAME [Object Resource Compiler]..."
     make >> $LOGFILE 2>&1 || failure
     make install >> $LOGFILE 2>&1 || failure
 
-    log "Successfully built and installed $PRODUCT_NAME [ORC]!"
+    log "Successfully built and installed $PRODUCT_NAME [Object Resource Compiler]!"
     return 0
     }
 
