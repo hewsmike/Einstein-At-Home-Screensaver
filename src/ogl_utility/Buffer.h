@@ -88,21 +88,7 @@ class Buffer : public OGL_ID {
         const GLvoid* m_data;
 
         /**
-         * \brief Write data to the buffer with the given characteristics.
-         *
-         * 	    It is the caller's responsibility to ensure that the given
-         * parameters are sensible. So beware the combination of enumerants,
-         * the validity of the data pointer and the size. If no buffer
-         * identifier has been allocated by OpenGL then one is obtained.
-         *
-         * \param target - one of the accepted OpenGL enumerants for buffer
-         *                 objects, typically either GL_ARRAY_BUFFER or
-         *                 GL_ELEMENT_ARRAY_BUFFER.
-         * \param usage - one of the accepted OpenGL enumerants, say
-         *                GL_STATIC_DRAW.
-         * \param size - the amount of data ( counted in bytes ) to transfer
-         *               to the server buffer.
-         * \param data - a pointer to the data to be transferred.
+         * \brief Write data to the buffer with the characteristics given at construction.
          */
         void loadBuffer(void);
     };

@@ -61,6 +61,13 @@ class Texture : public OGL_ID {
          * \brief Release the texture object's OpenGL resources.
          */
         virtual void release(void);
+
+    private :
+
+        /**
+         * \brief Write data to the texture with the characteristics given at construction.
+         */
+        void loadTexture(void);
     };
 
 /**

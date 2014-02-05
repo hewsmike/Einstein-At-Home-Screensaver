@@ -29,7 +29,7 @@ Texture::Texture(void) {
 
 Texture::~Texture() {
     // Must call this here in this derived class.
-    release();
+    Texture::release();
     }
 
 bool Texture::acquire(void) {
@@ -54,4 +54,6 @@ bool Texture::acquire(void) {
 void Texture::release(void) {
     // Ask OpenGL to release the texture object.
     glDeleteTextures(1, &ident);
+    // Set our handle store to safe value.
+    ident = OGL_ID::NO_ID;
     }
