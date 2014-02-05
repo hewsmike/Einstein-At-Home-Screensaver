@@ -24,20 +24,34 @@
 
 #include "ErrorHandler.h"
 
-Texture_OBJ::Texture_OBJ(void) {
+Texture::Texture(void) {
     }
 
-Texture_OBJ::~Texture_OBJ() {
+Texture::~Texture() {
     // Must call this here in this derived class.
     release();
     }
 
-void Texture_OBJ::acquire(void) {
+bool Texture::acquire(void) {
+    // Assume failure to acquire.
+    bool ret_val = false;
+
     // Ask OpenGL to assign a texture object.
     glGenTextures(1, &ident);
+
+    // Failure to acquire a handle should be FATAL.
+    if(ident == OGL_ID::NO_ID) {
+        ErrorHandler::record("Texture::acquire : failure to obtain identifier",
+                             ErrorHandler::FATAL);
+        }
+    else {
+        ret_val = true;
+        }
+
+    return ret_val;
     }
 
-void Texture_OBJ::release(void) {
+void Texture::release(void) {
     // Ask OpenGL to release the texture object.
     glDeleteTextures(1, &ident);
     }
