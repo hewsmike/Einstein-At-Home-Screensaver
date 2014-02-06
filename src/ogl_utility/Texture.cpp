@@ -41,10 +41,12 @@ bool Texture::acquire(void) {
 
     // Failure to acquire a handle should be FATAL.
     if(ident == OGL_ID::NO_ID) {
-        ErrorHandler::record("Texture::acquire : failure to obtain identifier",
+        ErrorHandler::record("Texture::acquire() : failure to obtain identifier",
                              ErrorHandler::FATAL);
         }
     else {
+        // Use the handle and load the texture data.
+        loadTexture();
         ret_val = true;
         }
 
@@ -56,4 +58,8 @@ void Texture::release(void) {
     glDeleteTextures(1, &ident);
     // Set our handle store to safe value.
     ident = OGL_ID::NO_ID;
+    }
+
+void Texture::loadTexture(void) {
+
     }

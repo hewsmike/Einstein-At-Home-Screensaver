@@ -39,7 +39,7 @@ bool Buffer::acquire(void) {
 
     // Failure to acquire a handle should be FATAL.
     if(ident == OGL_ID::NO_ID) {
-        ErrorHandler::record("Buffer::acquire : failure to obtain identifier",
+        ErrorHandler::record("Buffer::acquire() : failure to obtain identifier",
                              ErrorHandler::FATAL);
         }
     else {

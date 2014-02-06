@@ -54,6 +54,10 @@ class Texture : public OGL_ID {
 
         /**
          * \brief Acquire the texture object's OpenGL resources.
+         *
+         * \return a boolean indicating success of acquisition
+         *              TRUE - resources acquired without error
+         *              FALSE - resources were not acquired
          */
         virtual bool acquire(void);
 
