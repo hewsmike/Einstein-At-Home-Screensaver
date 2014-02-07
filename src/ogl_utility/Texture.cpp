@@ -24,7 +24,18 @@
 
 #include "ErrorHandler.h"
 
-Texture::Texture(void) {
+Texture::Texture(Texture(bool mipmap,
+                 GLint format,
+                 GLsizei width,
+                 GLsizei height,
+                 GLenum data_type,
+                 const GLvoid* data) :
+                    m_mipmap(mipmap),
+                    m_format(format),
+                    m_width(width),
+                    m_height(height),
+                    m_data_type(data_type),
+                    m_data(data) {
     }
 
 Texture::~Texture() {
@@ -61,5 +72,27 @@ void Texture::release(void) {
     }
 
 void Texture::loadTexture(void) {
+    // Bind the texture ( of GL_TEXTURE_2D type ) to our identifier.
+    glBindTexture(GL_TEXTURE_2D, this->ID());
 
+    glTexImage2D(GL_TEXTURE_2D,
+                 0,                      // Mipmap level zero.
+                 m_format,               // Rendering intent.
+                 m_width,                // image width in texels.
+                 m_height,               // image height in texels.
+                 0,                      // No image border.
+                 m_format,               // Rendering intent.
+                 m_type,                 // Binary data represetnation.
+                 m_data);                // The actual data.
+
+    // Specify mipmap
+    glTexParameter();
+
+    // Make mipmaps if requested.
+    if(m_mipmap == true) {
+        glGenerateMipmap(GL_TEXTURE_2D);
+        }
+
+    // Unbind the texture.
+    glBindTexture(GL_TEXTURE_2D, OGL_ID::NO_ID);
     }

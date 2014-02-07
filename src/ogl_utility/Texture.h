@@ -43,9 +43,32 @@
 class Texture : public OGL_ID {
     public :
         /**
-         * \brief Constructor
+         * \brief Constructor of an OpenGL ES 2.0 borderless GL_TEXTURE_2D
+         *        texture type.
+         *
+         * \param mipmaps : if false are later generated,
+         *                  if true, all mipmaps generated down to 1x1
+         * \param format : one of the following ES 2.0 allowed enumerants
+         *                      GL_ALPHA
+         *                      GL_LUMINANCE
+         *                      GL_LUMINANCE_ALPHA
+         *                      GL_RGB
+         *                      GL_RGBA
+         * \param width : in texels, must be at least 64
+         * \param height : in texels, must be at least 64
+         * \param data_type : one of the following ES 2.0 allowed enumerants
+         *                      GL_UNSIGNED_BYTE
+         *                      GL_UNSIGNED_SHORT_5_6_5
+         *                      GL_UNSIGNED_SHORT_4_4_4_4
+         *                      GL_UNSIGNED_SHORT_5_5_5_1
+         * \param data : a pointer to the image data
          */
-        Texture(void);
+        Texture(bool mipmap,
+                GLint format,
+                GLsizei width,
+                GLsizei height,
+                GLenum data_type,
+                const GLvoid* data);
 
         /**
          * \brief Destructor
@@ -67,6 +90,24 @@ class Texture : public OGL_ID {
         virtual void release(void);
 
     private :
+        // These are merely set during construction, though utilised during acquisition.
+        /// Whether or not mipmaps are to be generated.
+        bool m_mipmap;
+
+        /// What the texture data represents in terms of rendering intent.
+        GLint m_format;
+
+        /// The width of the texture.
+        GLsizei m_width;
+
+        /// The height of the texture.
+        GLsizei m_height;
+
+        /// The binary representation of the data.
+        GLenum m_data_type;
+
+        /// A pointer to the data.
+        const GLvoid* m_data;
 
         /**
          * \brief Write data to the texture with the characteristics given at construction.
