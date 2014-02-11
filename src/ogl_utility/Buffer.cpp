@@ -35,10 +35,12 @@ bool Buffer::acquire(void) {
     bool ret_val = false;
 
     // Ask OpenGL for a single buffer handle.
-    glGenBuffers(1, &ident);
+    GLuint temp;
+    glGenBuffers(1, &temp);
+    set_ID(temp);
 
     // Failure to acquire a handle should be FATAL.
-    if(ident == OGL_ID::NO_ID) {
+    if(this->ID() == OGL_ID::NO_ID) {
         ErrorHandler::record("Buffer::acquire() : failure to obtain identifier",
                              ErrorHandler::FATAL);
         }
@@ -53,9 +55,10 @@ bool Buffer::acquire(void) {
 
 void Buffer::release(void) {
     // Inform OpenGL that we no longer need this specific buffer handle.
-    glDeleteBuffers(1, &ident);
+    GLuint temp = this->ID();
+    glDeleteBuffers(1, &temp);
     // Set our handle store to safe value.
-    ident = OGL_ID::NO_ID;
+    set_ID(OGL_ID::NO_ID);
     }
 
 void Buffer::loadBuffer() {

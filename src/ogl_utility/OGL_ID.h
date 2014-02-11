@@ -82,6 +82,14 @@ class OGL_ID {
         GLuint ID(void) const;
 
     protected:
+        /**
+         * \brief Set the OpenGL resource identifier.
+         *
+         * \param value : the identifier value to set too
+         */
+        void set_ID(GLuint value);
+
+    private:
         /// The identifier as allocated by OpenGL.
         GLuint ident;
     };

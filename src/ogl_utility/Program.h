@@ -41,6 +41,10 @@
 
 class Program : public OGL_ID {
     public :
+        enum linkageState {NEVER_LINKED,
+                           LINKAGE_FAILED,
+                           LINKAGE_SUCCEEDED};
+
         /**
          * \brief Constructor.
          *
@@ -72,13 +76,52 @@ class Program : public OGL_ID {
          */
         void release(void);
 
+        /**
+         * \brief Determine if program has been marked for deletion.
+         *
+         * \return a boolean indicating deletion status
+         *              TRUE - shader is marked for deletion
+         *              FALSE - shader is NOT marked for deletion
+         */
+        bool isDeleted(void) const;
+
+        /**
+         * \brief Query the linkage status.
+         *
+         * \return an enumerant of type linkageState indicating the result
+         *         of the most recent linking attempt, if any.
+         *              NEVER_LINKED : has not yet been presented to GLSL linker
+         *              LINKAGE_FAILED : has been presented but failed
+         *              LINKAGE_SUCCEEDED : has been presented and no error occurred
+         */
+        Program::linkageState status(void) const;
+
+
     private:
+        static const GLint GLSL_LINKAGE_FAILURE;
+        static const GLint GLSL_LINKAGE_SUCCESS;
+
+        /**
+         * \brief Link the program.
+         *
+         * \return a boolean indicating success of linkage.
+         *              true - program linked without error
+         *              false - program linkage failed
+         */
+        bool link(void);
+
         // These are merely set during construction, though utilised during acquisition.
         /// The vertex shader reference.
         const Shader& m_vertex_shader;
 
         /// The fragment shader reference.
         const Shader& m_fragment_shader;
+
+        /// Indicator of current linkage state.
+        linkageState link_status;
+
+        /// The linker log for this shader.
+        std::string linker_log;
     };
 
 /**

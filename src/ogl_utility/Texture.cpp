@@ -24,7 +24,7 @@
 
 #include "ErrorHandler.h"
 
-Texture::Texture(Texture(bool mipmap,
+Texture::Texture(bool mipmap,
                  GLint format,
                  GLsizei width,
                  GLsizei height,
@@ -48,10 +48,12 @@ bool Texture::acquire(void) {
     bool ret_val = false;
 
     // Ask OpenGL to assign a texture object.
-    glGenTextures(1, &ident);
+    GLuint temp;
+    glGenTextures(1, &temp);
+    set_ID(temp);
 
     // Failure to acquire a handle should be FATAL.
-    if(ident == OGL_ID::NO_ID) {
+    if(this->ID() == OGL_ID::NO_ID) {
         ErrorHandler::record("Texture::acquire() : failure to obtain identifier",
                              ErrorHandler::FATAL);
         }
@@ -66,9 +68,10 @@ bool Texture::acquire(void) {
 
 void Texture::release(void) {
     // Ask OpenGL to release the texture object.
-    glDeleteTextures(1, &ident);
+    GLuint temp = this->ID();
+    glDeleteTextures(1, &temp);
     // Set our handle store to safe value.
-    ident = OGL_ID::NO_ID;
+    set_ID(OGL_ID::NO_ID);
     }
 
 void Texture::loadTexture(void) {
@@ -82,11 +85,11 @@ void Texture::loadTexture(void) {
                  m_height,               // image height in texels.
                  0,                      // No image border.
                  m_format,               // Rendering intent.
-                 m_type,                 // Binary data represetnation.
+                 m_data_type,            // Binary data represetnation.
                  m_data);                // The actual data.
 
     // Specify mipmap
-    glTexParameter();
+    // glTexParameter();
 
     // Make mipmaps if requested.
     if(m_mipmap == true) {

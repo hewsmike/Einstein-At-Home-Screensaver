@@ -47,6 +47,7 @@ class Shader : public OGL_ID {
         enum compilationState {NEVER_COMPILED,
                                COMPILE_FAILED,
                                COMPILE_SUCCEEDED};
+
         /**
          * \brief Constructor
          *
@@ -54,7 +55,7 @@ class Shader : public OGL_ID {
          *               GL_VERTEX_SHADER
          *               GL_FRAGMENT_SHADER
          *
-         * \param source - pointer to the shader's source code.
+         * \param source - pointer to the shader's SINGLE source code C-string.
          */
         Shader(GLenum type, const GLchar* source);
 
@@ -84,7 +85,7 @@ class Shader : public OGL_ID {
          *              TRUE - shader is marked for deletion
          *              FALSE - shader is NOT marked for deletion
          */
-        bool isDeleted(void);
+        bool isDeleted(void) const;
 
         /**
          * \brief Query the compilation status.
@@ -108,14 +109,15 @@ class Shader : public OGL_ID {
         GLenum type(void) const;
 
         /**
-         * \brief Obtain a copy of this shader's source code.
+         * \brief Obtain a reference to this shader's source code.
          *
-         * \return A string reference to the source code.
+         * \return A string reference to the source code. This maybe empty if
+         *         none was provided.
          */
         const std::string& source(void) const;
 
         /**
-         * \brief Obtain a copy of this shader's compile log.
+         * \brief Obtain a reference to this shader's compile log.
          *
          * \return A string reference to the compile log code. This may be empty.
          */
@@ -129,11 +131,13 @@ class Shader : public OGL_ID {
          * \brief Compile the shader.
          *
          * \return a boolean indicating success of compilation.
-         *              TRUE - shader compiled without error
-         *              FALSE - shader compilation failed
+         *              true - shader compiled without error
+         *              false - shader compilation failed
          */
         bool compile(void);
 
+        /// Helper class to convert a reference to an std::string's C-string
+        /// member to a doubly dereferenced character pointer.
         struct StringHelper {
             const char *p;
             StringHelper(const std::string& s) : p(s.c_str()) {}

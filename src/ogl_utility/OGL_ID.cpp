@@ -36,3 +36,7 @@ OGL_ID::~OGL_ID() {
 GLuint OGL_ID::ID(void) const {
     return ident;
     }
+
+void OGL_ID::set_ID(GLuint value) {
+    ident = value;
+    }

@@ -34,6 +34,7 @@ CPPFLAGS += -I$(FRAMEWORK_INSTALL)/include/SDL2
 DEPS = Makefile
 OBJS = Buffer.o
 OBJS += OGL_ID.o
+OBJS += Program.o
 OBJS += Shader.o
 OBJS += Texture.o
 
@@ -57,6 +58,9 @@ Buffer.o: $(DEPS) $(UTILITY_SRC)/Buffer.cpp $(UTILITY_SRC)/Buffer.h
 
 OGL_ID.o: $(DEPS) $(UTILITY_SRC)/OGL_ID.cpp $(UTILITY_SRC)/OGL_ID.h
 	$(CXX) -g $(CPPFLAGS) -c $(UTILITY_SRC)/OGL_ID.cpp
+
+Program.o: $(DEPS) $(UTILITY_SRC)/Program.cpp $(UTILITY_SRC)/Program.h
+	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/Program.cpp
 
 Shader.o: $(DEPS) $(UTILITY_SRC)/Shader.cpp $(UTILITY_SRC)/Shader.h
 	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/Shader.cpp

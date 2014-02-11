@@ -26,7 +26,9 @@ ORC_INSTALL?=$(PWD)
 CXX?=g++
 
 # variables
-CPPFLAGS += -I/usr/include -B/usr/bin
+CPPFLAGS += -I/usr/include
+# Force search path for 'ld'
+CPPFLAGS += -B/usr/bin
 LDFLAGS +=
 LIBS += -L/usr/lib
 

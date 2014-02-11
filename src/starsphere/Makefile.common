@@ -115,7 +115,7 @@ endif
 # Target specific.
 ifeq ".$(SYSTEM)" ".linux"
     LIBS += -Wl,-Bstatic
-    LIBS += -lframework -loglft -lglfw -lrt -L$(PRODUCT_INSTALL)/lib
+    LIBS += -lframework -loglutility -lrt -L$(PRODUCT_INSTALL)/lib
     LIBS += $(shell $(PRODUCT_INSTALL)/bin/freetype-config --libs)
     LIBS += $(shell $(PRODUCT_INSTALL)/bin/xml2-config --libs)
     LIBS += -lboinc_api -lboinc
@@ -123,27 +123,27 @@ ifeq ".$(SYSTEM)" ".linux"
     LIBS += -lstdc++
     LIBS += -L/usr/lib
     LIBS += -Wl,-Bdynamic
-    LIBS += -lGL -lGLU
+    LIBS += -lGL
     LIBS += -lpthread -lm -lc
 endif
 
 ifeq ".$(SYSTEM)" ".win32"
     LIBS += -Wl,-Bstatic
-    LIBS += -lframework -loglft -lglfw -L$(PRODUCT_INSTALL)/lib
+    LIBS += -lframework -loglutility -L$(PRODUCT_INSTALL)/lib
     LIBS += $(shell $(PRODUCT_INSTALL)/bin/freetype-config --libs)
     LIBS += $(shell $(PRODUCT_INSTALL)/bin/xml2-config --libs)
     LIBS += -lws2_32 # required by libxml2
     LIBS += -lboinc_graphics2 -lboinc_api -lboinc
     LIBS += -Wl,-Bdynamic
-    LIBS += -lopengl32 -lglu32
+    LIBS += -lopengl32
 endif
 
 ifeq ".$(SYSTEM)" ".mac"
-    LIBS += -lframework -loglft -L$(PRODUCT_INSTALL)/lib
+    LIBS += -lframework -loglutility -L$(PRODUCT_INSTALL)/lib
     LIBS += $(shell $(PRODUCT_INSTALL)/bin/freetype-config --libs)
     LIBS += $(shell $(PRODUCT_INSTALL)/bin/xml2-config --libs)
     LIBS += -lboinc_graphics2 -lboinc_api -lboinc -L$(PRODUCT_INSTALL)/lib
-    LIBS += -lglfw -lGLEW -framework AGL -framework OpenGL
+    LIBS += -lGLEW -framework AGL -framework OpenGL
     LIBS += -framework Carbon -framework AppKit -framework CoreFoundation
     LIBS += -lstdc++
     LIBS += -lpthread -lm -lc
