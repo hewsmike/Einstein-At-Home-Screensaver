@@ -68,8 +68,8 @@ class Shader : public OGL_ID {
          * \brief Acquire the shader object's OpenGL resources.
          *
          * \return a boolean indicating success of acquisition
-         *              TRUE - resources acquired without error
-         *              FALSE - resources were not acquired
+         *              true - resources acquired without error
+         *              false - resources were not acquired
          */
         virtual bool acquire(void);
 
@@ -82,8 +82,8 @@ class Shader : public OGL_ID {
          * \brief Determine if shader has been marked for deletion.
          *
          * \return a boolean indicating deletion status
-         *              TRUE - shader is marked for deletion
-         *              FALSE - shader is NOT marked for deletion
+         *              true - shader is marked for deletion
+         *              false - shader is NOT marked for deletion
          */
         bool isDeleted(void) const;
 
