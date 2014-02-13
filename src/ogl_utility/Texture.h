@@ -46,8 +46,8 @@ class Texture : public OGL_ID {
          * \brief Constructor of an OpenGL ES 2.0 borderless GL_TEXTURE_2D
          *        texture type.
          *
-         * \param mipmaps : if false are later generated,
-         *                  if true, all mipmaps generated down to 1x1
+         * \param mipmaps : if true, all mipmaps generated down to 1x1
+         *
          * \param format : one of the following ES 2.0 allowed enumerants
          *                      GL_ALPHA
          *                      GL_LUMINANCE

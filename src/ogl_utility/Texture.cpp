@@ -88,8 +88,29 @@ void Texture::loadTexture(void) {
                  m_data_type,            // Binary data represetnation.
                  m_data);                // The actual data.
 
-    // Specify mipmap
-    // glTexParameter();
+    // Specify 'reasonable' values for simple 'decal' like application.
+
+    // 'S' is the 'horizontal' texture coordinate direction. GL_REPEAT
+    // chosen to cope with globes ie. the longitude = 0 modulus.
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    // 'T' is the 'vertical' texture coordinate direction.
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+    // How it maps when texels and fragments/pixels areas don't match
+    // when we do minification and magnification. That partly depends upon
+    // whether we are mipmapping. GL_NEAREST ( Manhattan distance ) chosen
+    // as faster than GL_LINEAR ( Pythagorus to hypotenuse ).
+    /// TODO - make these choices dependent upon rendering quality selection.
+    if(m_mipmap == true) {
+        // With mipmapping intended.
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+        }
+    else {
+        // Without mipmaps involved.
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        }
 
     // Make mipmaps if requested.
     if(m_mipmap == true) {
