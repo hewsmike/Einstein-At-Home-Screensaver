@@ -25,9 +25,12 @@
 const GLint Program::GLSL_LINKAGE_FAILURE(GL_FALSE);
 const GLint Program::GLSL_LINKAGE_SUCCESS(GL_TRUE);
 
-Program::Program(const Shader& vertex_shader, const Shader& fragment_shader) :
+Program::Program(const Shader& vertex_shader,
+                 const Shader& fragment_shader,
+                 shaderDisposition dispose) :
                     m_vertex_shader(vertex_shader),
-                    m_fragment_shader(fragment_shader) {
+                    m_fragment_shader(fragment_shader),
+                    m_dispose(dispose) {
     // Initially unlinked.
     link_status = Program::NEVER_LINKED;
     }
@@ -50,8 +53,13 @@ bool Program::acquire(void) {
         ErrorHandler::record("Program::acquire() : OpenGL handle acquisition failure !", ErrorHandler::FATAL);
         }
 
+    // Attaching and linking shaders only occurs if both have compiled
+    // successfully and neither have been marked for deletion ( which
+    // includes the possibility that they may have been deleted ).
     if((m_vertex_shader.status() == Shader::COMPILE_SUCCEEDED) &&
-       (m_fragment_shader.status() == Shader::COMPILE_SUCCEEDED)) {
+       (m_vertex_shader.isDeleted() != true ) &&
+       (m_fragment_shader.status() == Shader::COMPILE_SUCCEEDED) &&
+       (m_fragment_shader.isDeleted() != true)) {
         // The shaders have compiled without error, now attach them.
         glAttachShader(this->ID(), m_vertex_shader.ID());
         glAttachShader(this->ID(), m_fragment_shader.ID());
@@ -59,6 +67,12 @@ bool Program::acquire(void) {
         // Link program and check for success.
         if(link() == true) {
             link_status = Program::LINKAGE_SUCCEEDED;
+            // If this behaviour previously selected, then release the shaders.
+            if(m_dispose == Program::RELEASE_ON_GOOD_LINK) {
+                m_vertex_shader.release();
+                m_fragment_shader.release();
+                }
+            ret_val = true;
             }
         else {
             link_status = Program::LINKAGE_FAILED;
@@ -86,7 +100,6 @@ bool Program::acquire(void) {
 
         // Dispose of the temporary character array.
         delete[] temp_log;
-
         }
 
     return ret_val;

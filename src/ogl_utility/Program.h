@@ -33,6 +33,8 @@
  * \brief This interface declares public methods to deal with OpenGL
  *        program objects. It's a wrapper.
  *
+ * TODO : currently only enacting one each of vertex and fragment shaders. Extend ??
+ *
  * \see OGL_ID
  * \see Shader
  *
@@ -45,6 +47,9 @@ class Program : public OGL_ID {
                            LINKAGE_FAILED,
                            LINKAGE_SUCCEEDED};
 
+        enum shaderDisposition {KEEP_ON_GOOD_LINK,
+                                RELEASE_ON_GOOD_LINK};
+
         /**
          * \brief Constructor.
          *
@@ -54,8 +59,13 @@ class Program : public OGL_ID {
          * \param fragment_shader : reference to an existing Shader object,
          *                          assumed to take on the role of an
          *                          OpenGL ES 2.0 fragment shader.
+         * \param dispose : one of the shaderDisposition enumerants indicating
+         *                  desired fate of supplied shaders after any successful
+         *                  linkage.
          */
-        Program(const Shader& vertex_shader, const Shader& fragment_shader);
+        Program(const Shader& vertex_shader,
+                const Shader& fragment_shader,
+                shaderDisposition dispose);
 
         /**
          * \brief Destructor.
@@ -80,8 +90,8 @@ class Program : public OGL_ID {
          * \brief Determine if program has been marked for deletion.
          *
          * \return a boolean indicating deletion status
-         *              TRUE - shader is marked for deletion
-         *              FALSE - shader is NOT marked for deletion
+         *              true - shader is marked for deletion
+         *              false - shader is NOT marked for deletion
          */
         bool isDeleted(void) const;
 
@@ -119,6 +129,9 @@ class Program : public OGL_ID {
 
         /// Indicator of current linkage state.
         linkageState link_status;
+
+        /// Choice of disposition of shader objects.
+        shaderDisposition m_dispose;
 
         /// The linker log for this shader.
         std::string linker_log;
