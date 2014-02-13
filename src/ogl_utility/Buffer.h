@@ -33,7 +33,7 @@
  */
 
 /**
- * \brief This interface declares public methods to deal with OpenGL
+ * \brief This interface declares public methods to deal with OpenGL ES 2.0
  *        buffer objects. It's a wrapper.
  *
  * \see OGL_ID
@@ -63,8 +63,8 @@ class Buffer : public OGL_ID {
          * \brief Obtains the buffer object resources.
          *
          * \return a boolean indicating success of acquisition
-         *              TRUE - resources acquired without error
-         *              FALSE - resources were not acquired
+         *              true - resources acquired without error
+         *              false - resources were not acquired
          */
         bool acquire(void);
 
@@ -72,6 +72,15 @@ class Buffer : public OGL_ID {
          * \brief Releases the buffer object resources.
          */
         void release(void);
+
+        /**
+         * \brief Obtains the buffer target type.
+         *
+         * \return an enumerant indicating one of the allowed OpenGl ES 2.0 types :
+         *              GL_ARRAY_BUFFER
+         *              GL_ELEMENT_ARRAY_BUFFER
+         */
+        GLenum target(void) const;
 
     private:
         // These are merely set during construction, though utilised during acquisition.

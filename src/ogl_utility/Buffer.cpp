@@ -71,3 +71,7 @@ void Buffer::loadBuffer() {
 	// Unbind the buffer.
 	glBindBuffer(m_target, Buffer::NO_ID);
 	}
+
+GLenum Buffer::target(void) const {
+    return m_target;
+    }
