@@ -65,6 +65,8 @@ class Renderable : public RenderQualityObserver {
         /// Virtual destructor
         virtual ~Renderable();
 
+        /// TODO Consider removing this, now that SDL2 makes this
+        /// option redundant.
         void reAcquire(void);
 
         /**

@@ -34,6 +34,8 @@ HUDBorderLayout::~HUDBorderLayout() {
 
 bool HUDBorderLayout::requestResize(GLuint newWidth, GLuint newHeight) {
     /// TODO Test if on windows, maybe compile level define ... ?
+    /// TODO - no longer need this and hence Renderable::reAcquire()
+    /// now that SDL2 is in use ??
     if(true) {
         this->reAcquire();
         }
