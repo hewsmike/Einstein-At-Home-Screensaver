@@ -65,8 +65,18 @@ class VertexFetch
 
         /**
          * \brief Trigger pipeline activity.
+         *
+         * \param primitive : one of the OpenGL ES 2.0 primitives
+         *          GL_POINTS
+         *          GL_LINE_STRIP
+         *          GL_LINE_LOOP
+         *          GL_LINES
+         *          GL_TRIANGLE_STRIP
+         *          GL_TRIANGLE_FAN
+         *          GL_TRIANGLES
+         * \param count : how many times to invoke the vertex shader.
          */
-        virtual void trigger(void);
+        virtual void trigger(GLenum primitive, GLsizei count);
     };
 
 /**

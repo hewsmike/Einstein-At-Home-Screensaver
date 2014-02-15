@@ -41,7 +41,7 @@ void VertexFetch::detach(void) {
     // Does nothing. Here to implement the 'bare' vertex fetch case.
     }
 
-void VertexFetch::trigger() {
-	// Provokes a 'single shot' of the pipeline.
-	glDrawArrays();
+void VertexFetch::trigger(GLenum primitive, GLsizei count) {
+	// Provokes vertex shader activity for count invocations.
+	glDrawArrays(primitive, 0, count);
 	}
