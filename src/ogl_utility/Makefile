@@ -33,10 +33,12 @@ CPPFLAGS += -I$(FRAMEWORK_INSTALL)/include/SDL2
 
 DEPS = Makefile
 OBJS = Buffer.o
+OBJS += BufferVertexFetch.o
 OBJS += OGL_ID.o
 OBJS += Program.o
 OBJS += Shader.o
 OBJS += Texture.o
+OBJS += VertexFetch.o
 
 # primary role based tagets
 default: release
@@ -56,6 +58,9 @@ liboglutility.a: $(OBJS) $(UTILITY_SRC)/vmath.h
 Buffer.o: $(DEPS) $(UTILITY_SRC)/Buffer.cpp $(UTILITY_SRC)/Buffer.h
 	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/Buffer.cpp
 
+BufferVertexFetch.o: $(DEPS) $(UTILITY_SRC)/BufferVertexFetch.cpp $(UTILITY_SRC)/BufferVertexFetch.h
+	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/BufferVertexFetch.cpp
+
 OGL_ID.o: $(DEPS) $(UTILITY_SRC)/OGL_ID.cpp $(UTILITY_SRC)/OGL_ID.h
 	$(CXX) -g $(CPPFLAGS) -c $(UTILITY_SRC)/OGL_ID.cpp
 
@@ -67,6 +72,9 @@ Shader.o: $(DEPS) $(UTILITY_SRC)/Shader.cpp $(UTILITY_SRC)/Shader.h
 
 Texture.o: $(DEPS) $(UTILITY_SRC)/Texture.cpp $(UTILITY_SRC)/Texture.h
 	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/Texture.cpp
+
+VertexFetch.o: $(DEPS) $(UTILITY_SRC)/Vertexfetch.cpp $(UTILITY_SRC)/VertexFetch.h
+	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/VertexFetch.cpp
 
 # tools
 install:
