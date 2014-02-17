@@ -84,8 +84,16 @@ class BufferVertexFetch
          *
          * \param vertex_buffer : the ogl_utility buffer object containing
          *                        the vertex data.
+         * \param vertex_count : how many vertices are represented by
+         *                       the buffer object.
          */
-        void attach(const Buffer& vertex_buffer);
+        void attach(const Buffer& vertex_buffer, GLuint vertex_count);
+
+
+        /**
+         * \brief Remove any data binding to the pipeline input.
+         */
+        void detach(void);
 
         /**
          * \brief Add a vertex attribute.
@@ -99,7 +107,11 @@ class BufferVertexFetch
                                 attribute_spec specification);
 
     private :
+        // How the data is mixed within the buffer.
         data_mix m_mix;
+
+        // How many vertices are represented within the buffer.
+        GLuint m_vertex_count;
 
         struct attribute_record {attribute_spec a_spec;
                                  GLsizei stride;
@@ -113,7 +125,7 @@ class BufferVertexFetch
         // layout (location = index_1) in attribute_type1 attribute_name_in_shader1;
         // layout (location = index_2) in attribute_type2 attribute_name_in_shader2;
         //
-        std::map<attribute_record> m_attribute_specs;
+        std::map<GLuint index, attribute_record> m_attribute_specs;
 
         /**
          * \brief Create full/detailed mapping of attribute positions within

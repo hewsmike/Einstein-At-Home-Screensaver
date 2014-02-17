@@ -27,10 +27,20 @@ BufferVertexFetch::BufferVertexFetch(data_mix mix) :
 BufferVertexFetch::~BufferVertexFetch() {
     }
 
-void BufferVertexFetch::attach(const Buffer& vertex_buffer) {
+void BufferVertexFetch::attach(const Buffer& vertex_buffer,
+                               GLuint vertex_count) {
     glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer->ID());
+    m_vertex_count = vertex_count;
+    }
 
+void BufferVertexFetch::detach(void) {
+    for(std::<attribute_record>::iterator attrib = m_attribute_specs.begin();
+        attrib != m_attribute_specs.end();
+        ++attrib) {
+        glDisableVertexAttributeArray(attrib->first);
+        }
 
+    glBindBuffer(GL_ARRAY_BUFFER, OGL_ID::NO_ID);
     }
 
 void BufferVertexFetch::addVertexAttribute(GLuint shader_index,
@@ -49,7 +59,7 @@ void BufferVertexFetch::addVertexAttribute(GLuint shader_index,
 
 void BufferVertexFetch::mapAttributes(void) {
     for(std::<attribute_record>::iterator attrib = m_attribute_specs.begin();
-        attrib <= m_attribute_specs.end();
+        attrib != m_attribute_specs.end();
         ++attrib) {
 
         }

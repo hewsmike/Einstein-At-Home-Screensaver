@@ -51,17 +51,8 @@ class VertexFetch
 
         /**
          * \brief Perform any data binding to the pipeline input.
-         *
-         * \return a boolean indicating success of attachment
-         *              true - attachment achieved without error
-         *              false - attachment was not achieved
          */
-        virtual bool attach(void);
-
-        /**
-         * \brief Detach any data binding from the pipeline input.
-         */
-        virtual void detach(void);
+        void attach(void);
 
         /**
          * \brief Trigger pipeline activity.
@@ -76,7 +67,7 @@ class VertexFetch
          *          GL_TRIANGLES
          * \param count : how many times to invoke the vertex shader.
          */
-        virtual void trigger(GLenum primitive, GLsizei count);
+        void trigger(GLenum primitive, GLsizei count);
     };
 
 /**

@@ -28,17 +28,11 @@ VertexFetch::VertexFetch(void) {
 VertexFetch::~VertexFetch() {
     }
 
-bool VertexFetch::attach(void) {
+void VertexFetch::attach(void) {
     // Ensure that the pipeline vertex fetch stage is NOT
     // bound at all, regardless of any prior bindings.
     glBindBuffer(GL_ARRAY_BUFFER, OGL_ID::NO_ID);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, OGL_ID::NO_ID);
-
-    return true;
-    }
-
-void VertexFetch::detach(void) {
-    // Does nothing. Here to implement the 'bare' vertex fetch case.
     }
 
 void VertexFetch::trigger(GLenum primitive, GLsizei count) {
