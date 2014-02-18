@@ -20,47 +20,150 @@
 
 #include "BufferVertexFetch.h"
 
-BufferVertexFetch::BufferVertexFetch(data_mix mix) :
-                        m_mix(mix) {
+#include "ErrorHandler.h"
+
+BufferVertexFetch::BufferVertexFetch(const Buffer* vertex_buffer,
+                                     data_mix mix,
+                                     GLuint vertex_count) :
+                                        m_vert_buffer(vertex_buffer),
+                                        m_mix(mix),
+                                        m_vertex_count(vertex_count) {
+    if(vertex_count == 0) {
+        ErrorHandler::record("BufferVertexFetch::BufferVertexFetch() : vertex count is ZERO", ErrorHandler::FATAL);
+        }
+    if(vertex_buffer == NULL) {
+        ErrorHandler::record("BufferVertexFetch::BufferVertexFetch() : vertex count is ZERO", ErrorHandler::FATAL);
+        }
+
+    // Initially the total sum of attribute lengths is zero.
+    m_attribute_length_sum = 0;
+
+    // Initially attributes are not mapped.
+    m_attributes_mapped = false;
     }
 
 BufferVertexFetch::~BufferVertexFetch() {
     }
 
-void BufferVertexFetch::attach(const Buffer& vertex_buffer,
-                               GLuint vertex_count) {
-    glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer->ID());
-    m_vertex_count = vertex_count;
+void BufferVertexFetch::attach(void) {
+    // Attachment only occurs if all preparations are complete.
+    if(m_attributes_mapped == true) {
+        // Enable fetching for all supplied vertex attribute indices,
+        // these corresponding to 'location' definitions within the
+        // vertex shader's GLSL code.
+        for(std::vector<attribute_record>::iterator attrib = m_attribute_specs.begin();
+            attrib != m_attribute_specs.end();
+            ++attrib) {
+            glEnableVertexAttributeArray(attrib->a_spec.index);
+            glVertexAttribPointer(attrib->a_spec.index,
+                                  attrib->a_spec.size,
+                                  attrib->a_spec.type,
+                                  attrib->a_spec.normalised,
+                                  attrib->stride,
+                                  attrib->pointer);
+            }
+        // Bind the given buffer object to pipeline state.
+        glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer->ID());
+        }
+    else {
+        // Mapping has not yet occurred. Do it.
+        prepareAttributeMapping();
+
+        // RECURSION !! :-)
+        this->attach();
+        }
     }
 
 void BufferVertexFetch::detach(void) {
-    for(std::<attribute_record>::iterator attrib = m_attribute_specs.begin();
-        attrib != m_attribute_specs.end();
-        ++attrib) {
-        glDisableVertexAttributeArray(attrib->first);
+    // Detachment only occurs if mapping was ever completed.
+    if(m_attributes_mapped == true) {
+        // Disable fetching for all supplied vertex attribute indices.
+        for(std::vector<attribute_record>::iterator attrib = m_attribute_specs.begin();
+            attrib != m_attribute_specs.end();
+            ++attrib) {
+            glDisableVertexAttributeArray(attrib->a_spec.index);
+            }
+        // Unbind the given buffer object from pipeline state.
+        glBindBuffer(GL_ARRAY_BUFFER, OGL_ID::NO_ID);
         }
-
-    glBindBuffer(GL_ARRAY_BUFFER, OGL_ID::NO_ID);
     }
 
-void BufferVertexFetch::addVertexAttribute(GLuint shader_index,
-                                           attribute_spec specification) {
-    attribute_record record;
-    record.a_spec = specification;
-    record.stride = 0;
-    record.pointer = 0;
+void BufferVertexFetch::addAttributeDescription(attrib_spec specification) {
+    // May only enter new attribute descriptions if mapping has
+    // not yet been performed.
+    if(m_attributes_mapped == false) {
+        attribute_record record;
+        record.a_spec = specification;
 
-    // Insert into the attributes record.
-    m_attribute_specs[index] = record;
+        // The length in bytes of an attribute is it's number
+        // of ( identically sized ) components times the
+        // the size of a component.
+        record.length = record.a_spec.size;
+        switch (record.a_spec.type) {
+            case GL_BYTE:
+                record.length *= sizeof(GL_BYTE);
+                break;
+            case GL_UNSIGNED_BYTE:
+                record.length *= sizeof(GL_UNSIGNED_BYTE);
+                break;
+            case GL_SHORT:
+                record.length *= sizeof(GL_SHORT);
+                break;
+            case GL_UNSIGNED_SHORT:
+                record.length *= sizeof(GL_UNSIGNED_SHORT);
+                break;
+            case GL_FIXED:
+                record.length *= sizeof(GL_FIXED);
+                break;
+            case GL_FLOAT:
+                record.length *= sizeof(GL_FLOAT);
+                break;
+            default:
+                ErrorHandler::record("BufferVertexFetch::addVertexAttribute() : Bad switch case ( default )",
+                                     ErrorHandler::FATAL);
+                break;
+            }
 
-    // Recalculate the attribute positioning within the buffer.
-    mapAttributes();
+        // Add this attribute's length to the sum of same.
+        m_attribute_length_sum += record.length;
+
+        // These must/will be calculated once all attributes have been described.
+        record.stride = 0;
+        record.pointer = 0;
+
+        // Insert into the attributes record.
+        m_attribute_specs.push_back(record);
+        }
+    else {
+        ErrorHandler::record("BufferVertexFetch::addAttributeDescription() : attempt to add attribute after mapping completed",
+                              ErrorHandler::WARN);
+        }
     }
 
-void BufferVertexFetch::mapAttributes(void) {
-    for(std::<attribute_record>::iterator attrib = m_attribute_specs.begin();
-        attrib != m_attribute_specs.end();
-        ++attrib) {
+void BufferVertexFetch::prepareAttributeMapping(void) {
+    // Can only map attributes if it has never been done before in the lifetime
+    // a BufferVertexFetch instance ie. this method is only ever performed
+    // at most ONCE.
+    if(m_attributes_mapped == false) {
+        // Go through and examine all the given attribute specifications.
+        for(std::<attribute_record>::iterator attrib = m_attribute_specs.begin();
+            attrib != m_attribute_specs.end();
+            ++attrib) {
+            if(m_mix == BY_VERTEX) {
+                attrib->stride = m_attribute_length_sum;
+                attrib->pointer =
+                }
+            if(m_mix == BY_ATTRIBUTE) {
+                attrib->stride = m_vertex_count * attrib->length;
+                attrib->pointer =
+                }
+            }
 
+        // Mark attribute mapping as completed.
+        m_attributes_mapped = true;
+        }
+    else {
+        ErrorHandler::record("BufferVertexFetch::prepareAttributeMapping() : called more than once",
+                              ErrorHandler::WARN);
         }
     }

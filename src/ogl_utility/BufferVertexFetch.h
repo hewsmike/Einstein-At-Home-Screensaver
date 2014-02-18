@@ -23,7 +23,7 @@
 
 #include "Buffer.h"
 
-#include <map>
+#include <vector>
 
 /**
  * \addtogroup ogl_utility OGL_Utility
@@ -32,10 +32,20 @@
 
 /**
  * \brief This class declares public methods to deal with the OpenGL ES 2.0
- *        pipeline vertex fetch functionality using buffers.
+ *        pipeline vertex fetch functionality using server side buffers.
  *
  *      This is the case where vertex attributes are supplied to the pipeline
- * sequentially from a buffer.
+ * sequentially from a buffer. The following sequence is strongly advised :
+ *      - constructor to instantiate.
+ *      - by sufficient calls to addAttributeDescription(), provide
+ *        information about ALL attributes within the provided buffer,
+ *        in the order that they are stored within the buffer.
+ *      - use attach(), to make buffer current for the pipeline.
+ *      - use trigger(), to get rendering activity.
+ *      - use detach(), when rendering is complete.
+ *
+ *      Note that the buffer must be populated elsewhere by data to
+ * match the provided attribute specifications and data mixing.
  *
  * \author Mike Hewson\n
  */
@@ -45,7 +55,9 @@ class BufferVertexFetch
         enum data_mix {BY_VERTEX,
                        BY_ATTRIBUTE};
 
-        struct attribute_spec {
+        struct attrib_spec {
+            // The attribute's index within the vertex shader.
+            GLuint index;
             // Number of components for this attribute.
             GLint size;
             // The data type of each component of this attribute.
@@ -68,11 +80,17 @@ class BufferVertexFetch
         /**
          * \brief Constructor.
          *
-         * \param mix : the type of mixing of data
-         *                  BY_VERTEX, per vertex storage
-         *                  BY_ATTRIBUTE, per attribute storage
+         * \param vertex_buffer : pointer to the ogl_utility Buffer object
+         *                        containing the vertex data. A NON-NULL pointer.
+         * \param mix : the type of assumed mixing of data within the Buffer
+         *                  BY_VERTEX, ie. per vertex storage
+         *                  BY_ATTRIBUTE, ie. per attribute storage
+         * \param vertex_count : how many vertices are represented by
+         *                       the buffer object. A NON-ZERO positive integer.
          */
-        BufferVertexFetch(data_mix mix);
+        BufferVertexFetch(const Buffer* vertex_buffer,
+                          data_mix mix,
+                          GLuint vertex_count);
 
         /**
          * \brief Destructor.
@@ -81,58 +99,61 @@ class BufferVertexFetch
 
         /**
          * \brief Perform any data binding to the pipeline input.
-         *
-         * \param vertex_buffer : the ogl_utility buffer object containing
-         *                        the vertex data.
-         * \param vertex_count : how many vertices are represented by
-         *                       the buffer object.
          */
-        void attach(const Buffer& vertex_buffer, GLuint vertex_count);
-
+        void attach(void);
 
         /**
          * \brief Remove any data binding to the pipeline input.
+         *
+         *      Must be invoked after rendering using the provided buffer,
+         * and before any other pipeline activity, in order to properly reset
+         * the the vertex fetching state.
          */
         void detach(void);
 
         /**
-         * \brief Add a vertex attribute.
+         * \brief Add an attribute description.
          *
-         * \param shader_index : the index within the shader that this attribute
-         *                       loads into with each shader invocation.
-         * \param specification : structure indicating data layout within
-         *                        the attached buffer object & behaviour.
+         *      CRUCIAL : By sufficient calls to this method, present ALL
+         * attributes IN THEIR SEQUENCE of storage within the given buffer.
+         * ( The index specified within the 'attribute_spec' structure is not
+         * relevant to this ).
+         *
+         * \param specification : structure describing the attribute data.
          */
-        void addVertexAttribute(GLuint shader_index,
-                                attribute_spec specification);
+        void addAttributeDescription(attrib_spec specification);
 
     private :
+        // Pointer to a provided buffer.
+        const Buffer* m_vert_buffer;
+
         // How the data is mixed within the buffer.
         data_mix m_mix;
 
         // How many vertices are represented within the buffer.
         GLuint m_vertex_count;
 
-        struct attribute_record {attribute_spec a_spec;
-                                 GLsizei stride;
-                                 GLvoid* pointer;
-                                };
+        // Flag indicating if buffer attribute mapping has been done.
+        bool m_attributes_mapped;
+
+        GLuint m_attribute_length_sum;
+
+        struct attribute_record {attrib_spec a_spec;        // An attribute specification.
+                                 GLuint length;             // The byte length of this attribute.
+                                 GLsizei stride;            // The byte gap between this attribute type in the buffer.
+                                 GLvoid* pointer;           // The byte offset of the FIRST of this attribute in the buffer.
+                                 };
 
         // Storage for all the attribute specifications, sorted
-        // by shader index eg. within the vertex shader's GLSL code
-        //
-        // layout (location = index_0) in attribute_type0 attribute_name_in_shader0;
-        // layout (location = index_1) in attribute_type1 attribute_name_in_shader1;
-        // layout (location = index_2) in attribute_type2 attribute_name_in_shader2;
-        //
-        std::map<GLuint index, attribute_record> m_attribute_specs;
+        // by shader index.
+        std::vector<attribute_record> m_attribute_specs;
 
         /**
          * \brief Create full/detailed mapping of attribute positions within
-         *        the buffer, based upon any given vertex attribute specifications
-         *        choice of data mixing.
+         *        the buffer, based upon any given vertex attribute
+         *        specifications and choice of data mixing.
          */
-        void mapAttributes(void);
+        void prepareAttributeMapping(void);
     };
 
 /**
