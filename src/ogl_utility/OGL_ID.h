@@ -74,13 +74,14 @@ class OGL_ID {
          */
         virtual void release(void) = 0;
 
-    protected :
         /**
          * \brief Obtain the OpenGL resource identifier.
          *
          * \return the identifier.
          */
         GLuint ID(void) const;
+
+    protected :
 
         /**
          * \brief Set the OpenGL resource identifier.

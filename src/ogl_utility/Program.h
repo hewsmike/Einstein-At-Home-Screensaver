@@ -63,8 +63,8 @@ class Program : public OGL_ID {
          *                  desired fate of supplied shaders after any successful
          *                  linkage.
          */
-        Program(const Shader& vertex_shader,
-                const Shader& fragment_shader,
+        Program(Shader& vertex_shader,
+                Shader& fragment_shader,
                 shaderDisposition dispose);
 
         /**
@@ -122,10 +122,10 @@ class Program : public OGL_ID {
 
         // These are merely set during construction, though utilised during acquisition.
         /// The vertex shader reference.
-        const Shader& m_vertex_shader;
+        Shader& m_vertex_shader;
 
         /// The fragment shader reference.
-        const Shader& m_fragment_shader;
+        Shader& m_fragment_shader;
 
         /// Indicator of current linkage state.
         linkageState link_status;

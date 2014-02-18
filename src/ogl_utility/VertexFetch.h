@@ -21,6 +21,8 @@
 #ifndef VERTEX_FETCH_
 #define VERTEX_FETCH_
 
+#include "framework.h"
+
 /**
  * \addtogroup ogl_utility OGL_Utility
  * @{
@@ -37,7 +39,7 @@
  * \author Mike Hewson\n
  */
 
-class VertexFetch
+class VertexFetch {
     public :
         /**
          * \brief Constructor.

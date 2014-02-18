@@ -54,7 +54,7 @@ void BufferVertexFetch::attach(void) {
         for(std::vector<attribute_record>::iterator attrib = m_attribute_specs.begin();
             attrib != m_attribute_specs.end();
             ++attrib) {
-            glEnableVertexAttributeArray(attrib->a_spec.index);
+            glEnableVertexAttribArray(attrib->a_spec.index);
             glVertexAttribPointer(attrib->a_spec.index,
                                   attrib->a_spec.size,
                                   attrib->a_spec.type,
@@ -63,7 +63,7 @@ void BufferVertexFetch::attach(void) {
                                   attrib->pointer);
             }
         // Bind the given buffer object to pipeline state.
-        glBindBuffer(GL_ARRAY_BUFFER, vertex_buffer->ID());
+        glBindBuffer(GL_ARRAY_BUFFER, m_vert_buffer->ID());
         }
     else {
         // Mapping has not yet occurred. Do it.
@@ -81,7 +81,7 @@ void BufferVertexFetch::detach(void) {
         for(std::vector<attribute_record>::iterator attrib = m_attribute_specs.begin();
             attrib != m_attribute_specs.end();
             ++attrib) {
-            glDisableVertexAttributeArray(attrib->a_spec.index);
+            glDisableVertexAttribArray(attrib->a_spec.index);
             }
         // Unbind the given buffer object from pipeline state.
         glBindBuffer(GL_ARRAY_BUFFER, OGL_ID::NO_ID);
@@ -146,16 +146,16 @@ void BufferVertexFetch::prepareAttributeMapping(void) {
     // at most ONCE.
     if(m_attributes_mapped == false) {
         // Go through and examine all the given attribute specifications.
-        for(std::<attribute_record>::iterator attrib = m_attribute_specs.begin();
+        for(std::vector<attribute_record>::iterator attrib = m_attribute_specs.begin();
             attrib != m_attribute_specs.end();
             ++attrib) {
             if(m_mix == BY_VERTEX) {
                 attrib->stride = m_attribute_length_sum;
-                attrib->pointer =
+                attrib->pointer = 0;
                 }
             if(m_mix == BY_ATTRIBUTE) {
-                attrib->stride = m_vertex_count * attrib->length;
-                attrib->pointer =
+                attrib->stride = 0;
+                attrib->pointer = 0;
                 }
             }
 

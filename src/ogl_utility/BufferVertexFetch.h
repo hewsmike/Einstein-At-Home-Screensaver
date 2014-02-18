@@ -22,6 +22,7 @@
 #define BUFFER_VERTEX_FETCH_
 
 #include "Buffer.h"
+#include "VertexFetch.h"
 
 #include <vector>
 
@@ -36,7 +37,6 @@
  *
  *      This is the case where vertex attributes are supplied to the pipeline
  * sequentially from a buffer. The following sequence is strongly advised :
- *      - constructor to instantiate.
  *      - by sufficient calls to addAttributeDescription(), provide
  *        information about ALL attributes within the provided buffer,
  *        in the order that they are stored within the buffer.
@@ -50,7 +50,7 @@
  * \author Mike Hewson\n
  */
 
-class BufferVertexFetch
+class BufferVertexFetch : public VertexFetch {
     public :
         enum data_mix {BY_VERTEX,
                        BY_ATTRIBUTE};

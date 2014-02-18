@@ -25,8 +25,8 @@
 const GLint Program::GLSL_LINKAGE_FAILURE(GL_FALSE);
 const GLint Program::GLSL_LINKAGE_SUCCESS(GL_TRUE);
 
-Program::Program(const Shader& vertex_shader,
-                 const Shader& fragment_shader,
+Program::Program(Shader& vertex_shader,
+                 Shader& fragment_shader,
                  shaderDisposition dispose) :
                     m_vertex_shader(vertex_shader),
                     m_fragment_shader(fragment_shader),

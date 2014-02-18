@@ -73,7 +73,7 @@ Shader.o: $(DEPS) $(UTILITY_SRC)/Shader.cpp $(UTILITY_SRC)/Shader.h
 Texture.o: $(DEPS) $(UTILITY_SRC)/Texture.cpp $(UTILITY_SRC)/Texture.h
 	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/Texture.cpp
 
-VertexFetch.o: $(DEPS) $(UTILITY_SRC)/Vertexfetch.cpp $(UTILITY_SRC)/VertexFetch.h
+VertexFetch.o: $(DEPS) $(UTILITY_SRC)/VertexFetch.cpp $(UTILITY_SRC)/VertexFetch.h
 	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/VertexFetch.cpp
 
 # tools
