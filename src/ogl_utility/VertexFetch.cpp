@@ -39,3 +39,10 @@ void VertexFetch::trigger(GLenum primitive, GLsizei count) {
 	// Provokes vertex shader activity for count invocations.
 	glDrawArrays(primitive, 0, count);
 	}
+
+void VertexFetch::detach(void) {
+    // Ensure that the pipeline vertex fetch stage is NOT
+    // bound at all.
+    glBindBuffer(GL_ARRAY_BUFFER, OGL_ID::NO_ID);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, OGL_ID::NO_ID);
+    }

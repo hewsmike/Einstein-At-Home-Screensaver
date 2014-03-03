@@ -29,14 +29,18 @@ BufferVertexFetch::BufferVertexFetch(const Buffer* vertex_buffer,
                                         m_mix(mix),
                                         m_vertex_count(vertex_count) {
     if(vertex_count == 0) {
-        ErrorHandler::record("BufferVertexFetch::BufferVertexFetch() : vertex count is ZERO", ErrorHandler::FATAL);
+        ErrorHandler::record("BufferVertexFetch::BufferVertexFetch() : vertex count is ZERO !", ErrorHandler::FATAL);
         }
     if(vertex_buffer == NULL) {
-        ErrorHandler::record("BufferVertexFetch::BufferVertexFetch() : vertex count is ZERO", ErrorHandler::FATAL);
+        ErrorHandler::record("BufferVertexFetch::BufferVertexFetch() : Buffer pointer is NULL !", ErrorHandler::FATAL);
         }
 
     // Initially the total sum of attribute lengths is zero.
     m_attribute_length_sum = 0;
+
+    // This is only relevant for BY_ATTRIBUTE Buffer structure.
+    // Initially the offset into the Buffer of the first attribute is zero.
+    attribute_base_accum = 0;
 
     // Initially attributes are not mapped.
     m_attributes_mapped = false;
@@ -74,6 +78,14 @@ void BufferVertexFetch::attach(void) {
         }
     }
 
+void BufferVertexFetch::trigger(GLenum primitive, GLsizei count) {
+    // Pipeline triggering only occurs if mapping was ever completed.
+    if(m_attributes_mapped == true) {
+        // Provokes vertex shader activity for count invocations.
+        glDrawArrays(primitive, 0, count);
+        }
+	}
+
 void BufferVertexFetch::detach(void) {
     // Detachment only occurs if mapping was ever completed.
     if(m_attributes_mapped == true) {
@@ -83,9 +95,9 @@ void BufferVertexFetch::detach(void) {
             ++attrib) {
             glDisableVertexAttribArray(attrib->a_spec.index);
             }
-        // Unbind the given buffer object from pipeline state.
-        glBindBuffer(GL_ARRAY_BUFFER, OGL_ID::NO_ID);
         }
+    // Unbind the given buffer object from pipeline state.
+    glBindBuffer(GL_ARRAY_BUFFER, OGL_ID::NO_ID);
     }
 
 void BufferVertexFetch::addAttributeDescription(attrib_spec specification) {
@@ -127,9 +139,17 @@ void BufferVertexFetch::addAttributeDescription(attrib_spec specification) {
         // Add this attribute's length to the sum of same.
         m_attribute_length_sum += record.length;
 
-        // These must/will be calculated once all attributes have been described.
-        record.stride = 0;
-        record.pointer = 0;
+        if(m_mix == BY_VERTEX) {
+            // Start at first vertex ie. offset into buffer of zero.
+            record.pointer = 0;
+            }
+        if(m_mix == BY_ATTRIBUTE) {
+            //
+            record.pointer = attribute_base_accum;
+            // With attribute mixing type of buffer structure, then
+            // we offset by blocks of attribute data.
+            attribute_base_accum += record.length * m_vertex_count;
+            }
 
         // Insert into the attributes record.
         m_attribute_specs.push_back(record);
@@ -149,13 +169,17 @@ void BufferVertexFetch::prepareAttributeMapping(void) {
         for(std::vector<attribute_record>::iterator attrib = m_attribute_specs.begin();
             attrib != m_attribute_specs.end();
             ++attrib) {
+            /// TODO - collapse these cases on the assumption of tight packing ??
             if(m_mix == BY_VERTEX) {
+                // Each vertex entry's length is the total
+                // of all attributes. Alternatively one could use
+                // zero here as a declaration that the data is
+                // tightly packed ie. OpenGL should work out the
+                // stepping distance by itself.
                 attrib->stride = m_attribute_length_sum;
-                attrib->pointer = 0;
                 }
             if(m_mix == BY_ATTRIBUTE) {
                 attrib->stride = 0;
-                attrib->pointer = 0;
                 }
             }
 

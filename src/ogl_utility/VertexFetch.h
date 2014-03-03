@@ -54,7 +54,7 @@ class VertexFetch {
         /**
          * \brief Perform any data binding to the pipeline input.
          */
-        void attach(void);
+        virtual void attach(void);
 
         /**
          * \brief Trigger pipeline activity.
@@ -69,7 +69,16 @@ class VertexFetch {
          *          GL_TRIANGLES
          * \param count : how many times to invoke the vertex shader.
          */
-        void trigger(GLenum primitive, GLsizei count);
+        virtual void trigger(GLenum primitive, GLsizei count);
+
+        /**
+         * \brief Remove any data binding to the pipeline input.
+         *
+         *      Must be invoked after rendering using the provided buffer,
+         * and before any other pipeline activity, in order to properly reset
+         * the vertex fetching state.
+         */
+        virtual void detach(void);
     };
 
 /**

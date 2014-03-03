@@ -45,7 +45,10 @@
  *      - use detach(), when rendering is complete.
  *
  *      Note that the buffer must be populated elsewhere by data to
- * match the provided attribute specifications and data mixing.
+ * match the provided attribute specifications and data mixing. The data
+ * values are assumed to be tightly packed.
+ *
+ * /// TODO - address cases of non-tightly packed data ?
  *
  * \author Mike Hewson\n
  */
@@ -100,16 +103,33 @@ class BufferVertexFetch : public VertexFetch {
         /**
          * \brief Perform any data binding to the pipeline input.
          */
-        void attach(void);
+        virtual void attach(void);
+
+        /**
+         * \brief Trigger pipeline activity. It is the responsibility
+         *        of the calling routine to ensure that parameter choices
+         *        do not cause an over-run of the supplied buffer.
+         *
+         * \param primitive : one of the OpenGL ES 2.0 primitives
+         *          GL_POINTS
+         *          GL_LINE_STRIP
+         *          GL_LINE_LOOP
+         *          GL_LINES
+         *          GL_TRIANGLE_STRIP
+         *          GL_TRIANGLE_FAN
+         *          GL_TRIANGLES
+         * \param count : how many times to invoke the vertex shader.
+         */
+        virtual void trigger(GLenum primitive, GLsizei count);
 
         /**
          * \brief Remove any data binding to the pipeline input.
          *
          *      Must be invoked after rendering using the provided buffer,
          * and before any other pipeline activity, in order to properly reset
-         * the the vertex fetching state.
+         * the vertex fetching state.
          */
-        void detach(void);
+        virtual void detach(void);
 
         /**
          * \brief Add an attribute description.
@@ -138,6 +158,8 @@ class BufferVertexFetch : public VertexFetch {
 
         GLuint m_attribute_length_sum;
 
+        GLuint attribute_base_accum;
+
         struct attribute_record {attrib_spec a_spec;        // An attribute specification.
                                  GLuint length;             // The byte length of this attribute.
                                  GLsizei stride;            // The byte gap between this attribute type in the buffer.
@@ -150,7 +172,7 @@ class BufferVertexFetch : public VertexFetch {
 
         /**
          * \brief Create full/detailed mapping of attribute positions within
-         *        the buffer, based upon any given vertex attribute
+         *        the buffer, based upon the given vertex attribute
          *        specifications and choice of data mixing.
          */
         void prepareAttributeMapping(void);

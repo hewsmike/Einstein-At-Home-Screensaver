@@ -82,4 +82,3 @@ class IndexVertexFetch
  */
 
 #endif /*INDEX_VERTEX_FETCH_*/
-
