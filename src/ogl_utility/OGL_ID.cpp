@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2013 by Mike Hewson                                     *
+ *   Copyright (C) 2014 by Mike Hewson                                     *
  *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
@@ -20,7 +20,7 @@
 
 #include "OGL_ID.h"
 
-// An ID with value zero is neither used nor returned by OpenGL.
+// An ID with value zero is not returned by OpenGL.
 // Thus it may semantically indicate 'no identifier assigned'.
 const GLuint OGL_ID::NO_ID(0);
 

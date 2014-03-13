@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2013 by Mike Hewson                                     *
+ *   Copyright (C) 2014 by Mike Hewson                                     *
  *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
@@ -86,7 +86,7 @@ class OGL_ID {
         /**
          * \brief Set the OpenGL resource identifier.
          *
-         * \param value : the identifier value to set too
+         * \param value : the identifier value
          */
         void set_ID(GLuint value);
 
