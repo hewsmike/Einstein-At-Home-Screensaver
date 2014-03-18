@@ -108,6 +108,8 @@ bool Program::acquire(void) {
 void Program::release(void) {
     // Inform OpenGL that we no longer need this specific program handle.
     glDeleteProgram(this->ID());
+    // Reset linkage status.
+    link_status = Program::NEVER_LINKED;
     // Set our handle store to safe value.
     set_ID(OGL_ID::NO_ID);
     }

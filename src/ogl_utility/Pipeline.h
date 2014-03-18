@@ -55,6 +55,23 @@ class Pipeline {
          */
         virtual ~Pipeline();
 
+        /**
+         * \brief Trigger pipeline activity. It is the responsibility
+         *        of the calling routine to ensure that parameter choices
+         *        do not cause an over-run of the supplied buffer.
+         *
+         * \param primitive : one of the OpenGL ES 2.0 primitives
+         *          GL_POINTS
+         *          GL_LINE_STRIP
+         *          GL_LINE_LOOP
+         *          GL_LINES
+         *          GL_TRIANGLE_STRIP
+         *          GL_TRIANGLE_FAN
+         *          GL_TRIANGLES
+         * \param count : how many times to invoke the vertex shader.
+         */
+        void utilise(GLenum primitive, GLsizei count);
+
     private:
         // These are merely set during construction.
         /// The Program reference.

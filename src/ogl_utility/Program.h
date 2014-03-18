@@ -106,7 +106,6 @@ class Program : public OGL_ID {
          */
         Program::linkageState status(void) const;
 
-
     private:
         static const GLint GLSL_LINKAGE_FAILURE;
         static const GLint GLSL_LINKAGE_SUCCESS;
