@@ -21,8 +21,48 @@
 #include "Buffer.h"
 #include "ErrorHandler.h"
 
-Buffer::Buffer(GLenum target, GLsizeiptr size, GLenum usage, const GLvoid* data) :
-                m_target(target), m_size(size), m_usage(usage), m_data(data) {
+Buffer::Buffer(GLenum target, GLsizeiptr size, GLenum usage, const GLvoid* data) {
+    // Ensure compliance with OpenGL ES 2.x acceptable parameter types.
+    if((target == GL_ARRAY_BUFFER) ||
+       (target == GL_ELEMENT_ARRAY_BUFFER)) {
+        m_target = target;
+        }
+    else {
+        ErrorHandler::record("Buffer::Buffer() : Bad target type provided.",
+                             ErrorHandler::FATAL);
+        }
+
+    // Ensure strictly positive buffer size.
+    if(size > 0) {
+        m_size = size;
+        }
+    else {
+        ErrorHandler::record("Buffer::Buffer() : Strictly positive buffer size required.",
+                             ErrorHandler::FATAL);
+        }
+
+    // Ensure compliance with OpenGL ES 2.x acceptable parameter types.
+    if((usage == GL_STREAM_DRAW) ||
+       (usage == GL_STATIC_DRAW) ||
+       (usage == GL_DYNAMIC_DRAW)) {
+        m_usage = usage;
+        }
+    else {
+        ErrorHandler::record("Buffer::Buffer() : Bad usage type provided.",
+                             ErrorHandler::FATAL);
+        }
+
+    // Ensure an actual data source was provided.
+    if(data != NULL) {
+        m_data = data;
+        }
+    else {
+        ErrorHandler::record("Buffer::Buffer() : NULL data pointer provided.",
+                             ErrorHandler::FATAL);
+        }
+
+    // Initially nothing acquired.
+    acquire_flag = false;
     }
 
 Buffer::~Buffer() {
@@ -31,33 +71,36 @@ Buffer::~Buffer() {
     }
 
 bool Buffer::acquire(void) {
-    // Assume failure to acquire.
-    bool ret_val = false;
-
-    // Ask OpenGL for a single buffer handle.
-    GLuint temp;
-    glGenBuffers(1, &temp);
-    set_ID(temp);
-
-    // Failure to acquire a handle should be FATAL.
+    // Check and maybe acquire handle if we don't already have one.
     if(this->ID() == OGL_ID::NO_ID) {
-        ErrorHandler::record("Buffer::acquire() : failure to obtain identifier",
-                             ErrorHandler::FATAL);
+        // Ask OpenGL for a single buffer handle.
+        GLuint temp;
+        glGenBuffers(1, &temp);
+        set_ID(temp);
+
+        // Failure to acquire a handle should be FATAL.
+        if(this->ID() == OGL_ID::NO_ID) {
+            ErrorHandler::record("Buffer::acquire() : failure to obtain identifier",
+                                 ErrorHandler::FATAL);
+            }
         }
-    else {
+
+    // Only load if not already done.
+    if(acquire_flag == false) {
         // Use the handle and load data.
         loadBuffer();
-        ret_val = true;
+        // Remember that acquisition succeeded.
+        acquire_flag = true;
         }
 
-    return ret_val;
+    return acquire_flag;
     }
 
 void Buffer::release(void) {
     // Inform OpenGL that we no longer need this specific buffer handle.
     GLuint temp = this->ID();
     glDeleteBuffers(1, &temp);
-    // Set our handle store to safe value.
+    // Reset our handle store to safe value.
     set_ID(OGL_ID::NO_ID);
     }
 

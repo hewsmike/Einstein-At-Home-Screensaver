@@ -44,7 +44,10 @@
 class Buffer : public OGL_ID {
     public :
         /**
-         * \brief Constructor.
+         * \brief Constructor, will fail fatally
+         *          - if target and usage types are incorrect for OpenGL ES 2.x, and/or
+         *          - if size is not strictly positive, and/or
+         *          - if the data pointer is NULL.
          *
          * \param target : one of GL_ARRAY_BUFFER or GL_ELEMENT_ARRAY_BUFFER
          * \param size : number of bytes to allocate
@@ -84,6 +87,9 @@ class Buffer : public OGL_ID {
 
     private:
         // These are merely set during construction, though utilised during acquisition.
+        /// Flag indicating if resources have been acquired.
+        bool acquire_flag;
+
         /// The buffer target type ( binding point ).
         GLenum m_target;
 
