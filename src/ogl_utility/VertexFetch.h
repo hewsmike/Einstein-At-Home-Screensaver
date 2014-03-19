@@ -32,9 +32,24 @@
  * \brief This base class declares public methods to deal with the
  *        OpenGL ES 2.0 pipeline vertex fetch functionality.
  *
- *      As such, this is the 'bare' case where no vertex attributes are
- * supplied to the pipeline ie. any vertex attributes must be generated
- * by a vertex shader.
+ *  Common use cases of constructor :
+ *        (1) VertexFetch() - vertex and index buffers set to NULL, index type
+ *                        set but not used/relevant. Use if a vertex shader will
+ *                        provide vertex attributes.
+ *        (2) VertexFetch(NON-NULL) - vertex buffer set to the given NON-NULL
+ *                                    address, index buffer set to NULL, index
+ *                                    type set but not used/relevant.
+ *        (3) VertexFetch(NON-NULLA, NON-NULLB) - vertex buffer set to the
+ *                                                given NON-NULLA address, index
+ *                                                buffer set to the given
+ *                                                NON-NULLB address, index type
+ *                                                set to GL_UNSIGNED_SHORT
+ *        (4) VertexFetch(NON-NULLA, NON-NULLB, INDEX_TYPE)
+ *                          - vertex buffer set to the given NON-NULLA address,
+ *                            index buffer set to the given NON-NULLB address,
+ *                            index type set to INDEX_TYPE
+ *
+ * \see Buffer
  *
  * \author Mike Hewson\n
  */
@@ -43,8 +58,25 @@ class VertexFetch {
     public :
         /**
          * \brief Constructor.
+         *
+         * \param vertices : a pointer to vertex buffer. This may be NULL
+         *                   if a vertex shader is to generate vertex
+         *                   attributes, and defaults to NULL if not
+         *                   provided.
+         * \param indices : a pointer to an index buffer. This may be NULL
+         *                  if no indices are to be used, and defaults to
+         *                  NULL if not provided.
+         * \param index_type : one of the accepted OpenGL ES 2.x enumerants
+         *                     for index data type :
+         *                          GL_UNSIGNED_BYTE
+         *                          GL_UNSIGNED_SHORT
+         *                          GL_UNSIGNED_INT
+         *                     This field is ignored if indices = NULL, and
+         *                     defaults to GL_UNSIGNED_SHORT if not provided.
          */
-        VertexFetch(void);
+        VertexFetch(Buffer* vertices = NULL,
+                    Buffer* indices = NULL,
+                    GLenum index_type = GL_UNSIGNED_SHORT);
 
         /**
          * \brief Destructor.
@@ -57,7 +89,8 @@ class VertexFetch {
         virtual void attach(void);
 
         /**
-         * \brief Trigger pipeline activity.
+         * \brief Trigger pipeline activity. Attachment occurs automatically
+         *        if not already performed.
          *
          * \param primitive : one of the OpenGL ES 2.0 primitives
          *          GL_POINTS
@@ -79,6 +112,17 @@ class VertexFetch {
          * the vertex fetching state.
          */
         virtual void detach(void);
+
+    private :
+        // Attachment state. For our purposes any NULL buffers are deemed
+        // to be always attached. Covers the case of a vertex shader solely
+        // providing vertex attributes. A true value here indicates that
+        // the issue has been adressed successfully.
+        bool is_attached;
+
+        // The given Buffer pointers.
+        Buffer* m_vertices;
+        Buffer* m_indices;
     };
 
 /**

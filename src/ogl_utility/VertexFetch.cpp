@@ -22,27 +22,52 @@
 
 #include "OGL_ID.h"
 
-VertexFetch::VertexFetch(void) {
+VertexFetch::VertexFetch(Buffer* vertices, Buffer* indices) :
+                          m_vertices(vertices),
+                          m_indices(indices) {
+    is_attached = false;
     }
 
 VertexFetch::~VertexFetch() {
     }
 
 void VertexFetch::attach(void) {
-    // Ensure that the pipeline vertex fetch stage is NOT
-    // bound at all, regardless of any prior bindings.
-    glBindBuffer(GL_ARRAY_BUFFER, OGL_ID::NO_ID);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, OGL_ID::NO_ID);
+    // Bind only existing buffers.
+    if(vertices != NULL) {
+        glBindBuffer(GL_ARRAY_BUFFER, vertices->ID());
+        }
+    if(indices != NULL) {
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indices->ID());
+        }
+
+    // Indicate that Buffer attachment to targets has been addressed.
+    is_attached = true;
     }
 
 void VertexFetch::trigger(GLenum primitive, GLsizei count) {
-	// Provokes vertex shader activity for count invocations.
-	glDrawArrays(primitive, 0, count);
+    // If buffers are not attached to targets then do so.
+    if(is_attached == false) {
+        this->attach();
+        }
+
+	// Provokes vertex shader activity for count invocations,
+	// buffer use depending upon that which is bound.
+	if(indices != NULL) {
+	    // Both GL_ARRAY_BUFFER and GL_ELEMENT_ARRAY_BUFFER targets are bound.
+        glDrawElementArrays(primitive, 0, count);
+        }
+    else {
+        // Either only GL_ARRAY_BUFFER target bound, or none at all.
+        glDrawArrays(primitive, 0, count);
+        }
 	}
 
 void VertexFetch::detach(void) {
-    // Ensure that the pipeline vertex fetch stage is NOT
-    // bound at all.
+    // Ensure that the pipeline vertex fetch
+    // stage is not bound to any buffers at all.
     glBindBuffer(GL_ARRAY_BUFFER, OGL_ID::NO_ID);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, OGL_ID::NO_ID);
+
+    // Reset attachment state.
+    is_attached = false;
     }

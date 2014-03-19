@@ -97,7 +97,7 @@ void BufferVertexFetch::detach(void) {
             }
         }
     // Unbind the given buffer object from pipeline state.
-    glBindBuffer(GL_ARRAY_BUFFER, OGL_ID::NO_ID);
+    VertexFetch::detach();
     }
 
 void BufferVertexFetch::addAttributeDescription(attrib_spec specification) {
