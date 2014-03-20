@@ -23,10 +23,6 @@
 
 #include "OGL_ID.h"
 
-/// Not a pretty solution for a purist, but it gets the pointer type right.
-/// Used to represent an offset into an OpenGL buffer ( server side ) object.
-#define BUFFER_OFFSET(bytes)  ((GLubyte*)NULL + (bytes))
-
 /**
  * \addtogroup ogl_utility OGL_Utility
  * @{
@@ -34,9 +30,11 @@
 
 /**
  * \brief This interface declares public methods to deal with OpenGL ES 2.0
- *        buffer objects. It's a wrapper.
+ *        buffer objects. It's a wrapper. The buffer contents are treated as
+ *        byte granular, and further typing is enjoined in other classes.
  *
  * \see OGL_ID
+ * \see VertexFetch
  *
  * \author Mike Hewson\n
  */
@@ -44,16 +42,17 @@
 class Buffer : public OGL_ID {
     public :
         /**
-         * \brief Constructor, will fail fatally
-         *          - if target and usage types are incorrect for OpenGL ES 2.x, and/or
-         *          - if size is not strictly positive, and/or
-         *          - if the data pointer is NULL.
+         * \brief Constructor. Will fail fatally for the application if one or
+         *        more of the following applies :
+         *              - target type is incorrect for OpenGL ES 2.x
+         *              - usage type is incorrect for OpenGL ES 2.x
+         *              - size is not strictly positive
+         *              - the data pointer is NULL.
          *
-         * \param target : one of GL_ARRAY_BUFFER or GL_ELEMENT_ARRAY_BUFFER
-         * \param size : number of bytes to allocate
-         * \param usage : one of GL_STREAM_DRAW, GL_STATIC_DRAW or GL_DYNAMIC_DRAW
-         * \param data : pointer to the data to be stored, but
-         *               NOTE CAREFULLY : the data is only accessed when acquire() is called.
+         * \param target : one of GL_ARRAY_BUFFER or GL_ELEMENT_ARRAY_BUFFER.
+         * \param size : number of bytes to allocate.
+         * \param usage : one of GL_STREAM_DRAW, GL_STATIC_DRAW or GL_DYNAMIC_DRAW.
+         * \param data : pointer to the data to be stored.
          */
         Buffer(GLenum target, GLsizeiptr size, GLenum usage, const GLvoid* data);
 
@@ -85,8 +84,17 @@ class Buffer : public OGL_ID {
          */
         GLenum target(void) const;
 
+        /**
+         * \brief Obtains the buffer usage type.
+         *
+         * \return an enumerant indicating one of the allowed OpenGl ES 2.0 types :
+         *              GL_STREAM_DRAW
+         *              GL_STATIC_DRAW
+         *              GL_DYNAMIC_DRAW
+         */
+        GLenum usage(void) const;
+
     private:
-        // These are merely set during construction, though utilised during acquisition.
         /// Flag indicating if resources have been acquired.
         bool acquire_flag;
 
@@ -99,13 +107,13 @@ class Buffer : public OGL_ID {
         /// The usage hint.
         GLenum m_usage;
 
-        /// A pointer to untyped data.
+        /// A pointer to untyped but immutable data.
         const GLvoid* m_data;
 
         /**
          * \brief Write data to the buffer with the characteristics given at construction.
          */
-        void loadBuffer(void);
+        void loadBuffer(void) const;
     };
 
 /**

@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2013 by Mike Hewson                                     *
+ *   Copyright (C) 2014 by Mike Hewson                                     *
  *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
@@ -89,7 +89,7 @@ bool Buffer::acquire(void) {
     if(acquire_flag == false) {
         // Use the handle and load data.
         loadBuffer();
-        // Remember that acquisition succeeded.
+        // Denote that acquisition succeeded.
         acquire_flag = true;
         }
 
@@ -102,19 +102,26 @@ void Buffer::release(void) {
     glDeleteBuffers(1, &temp);
     // Reset our handle store to safe value.
     set_ID(OGL_ID::NO_ID);
+
+    // Reset acquisition status.
+    acquire_flag = false;
     }
 
-void Buffer::loadBuffer() {
-	// Bind the buffer ( of 'target' type ) to our identifier.
+GLenum Buffer::target(void) const {
+    return m_target;
+    }
+
+GLenum Buffer::usage(void) const {
+    return m_usage;
+    }
+
+void Buffer::loadBuffer(void) const {
+	// Bind this buffer to the specified target.
 	glBindBuffer(m_target, this->ID());
 
-	// Allocate space and transfer any data.
+	// Allocate space and transfer the data.
 	glBufferData(m_target, m_size, m_data, m_usage);
 
 	// Unbind the buffer.
 	glBindBuffer(m_target, Buffer::NO_ID);
 	}
-
-GLenum Buffer::target(void) const {
-    return m_target;
-    }
