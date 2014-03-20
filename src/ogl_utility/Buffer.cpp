@@ -21,40 +21,10 @@
 #include "Buffer.h"
 #include "ErrorHandler.h"
 
-Buffer::Buffer(GLenum target, GLsizeiptr size, GLenum usage, const GLvoid* data) {
-    // Ensure compliance with OpenGL ES 2.x acceptable parameter types.
-    if((target == GL_ARRAY_BUFFER) ||
-       (target == GL_ELEMENT_ARRAY_BUFFER)) {
-        m_target = target;
-        }
-    else {
-        ErrorHandler::record("Buffer::Buffer() : Bad target type provided.",
-                             ErrorHandler::FATAL);
-        }
-
-    // Ensure strictly positive buffer size.
-    if(size > 0) {
-        m_size = size;
-        }
-    else {
-        ErrorHandler::record("Buffer::Buffer() : Strictly positive buffer size required.",
-                             ErrorHandler::FATAL);
-        }
-
-    // Ensure compliance with OpenGL ES 2.x acceptable parameter types.
-    if((usage == GL_STREAM_DRAW) ||
-       (usage == GL_STATIC_DRAW) ||
-       (usage == GL_DYNAMIC_DRAW)) {
-        m_usage = usage;
-        }
-    else {
-        ErrorHandler::record("Buffer::Buffer() : Bad usage type provided.",
-                             ErrorHandler::FATAL);
-        }
-
+Buffer::Buffer(const GLvoid* buffer_data) {
     // Ensure an actual data source was provided.
     if(data != NULL) {
-        m_data = data;
+        m_data = buffer_data;
         }
     else {
         ErrorHandler::record("Buffer::Buffer() : NULL data pointer provided.",
@@ -66,8 +36,6 @@ Buffer::Buffer(GLenum target, GLsizeiptr size, GLenum usage, const GLvoid* data)
     }
 
 Buffer::~Buffer() {
-    // Must call this here in this derived class.
-    Buffer::release();
     }
 
 bool Buffer::acquire(void) {
@@ -75,7 +43,7 @@ bool Buffer::acquire(void) {
     if(this->ID() == OGL_ID::NO_ID) {
         // Ask OpenGL for a single buffer handle.
         GLuint temp;
-        glGenBuffers(1, &temp);
+        acquire_ID(&temp);
         set_ID(temp);
 
         // Failure to acquire a handle should be FATAL.
@@ -99,7 +67,8 @@ bool Buffer::acquire(void) {
 void Buffer::release(void) {
     // Inform OpenGL that we no longer need this specific buffer handle.
     GLuint temp = this->ID();
-    glDeleteBuffers(1, &temp);
+    release_ID(&temp);
+
     // Reset our handle store to safe value.
     set_ID(OGL_ID::NO_ID);
 
@@ -107,21 +76,6 @@ void Buffer::release(void) {
     acquire_flag = false;
     }
 
-GLenum Buffer::target(void) const {
-    return m_target;
+const GLvoid* Buffer::data(void) const {
+    return m_data;
     }
-
-GLenum Buffer::usage(void) const {
-    return m_usage;
-    }
-
-void Buffer::loadBuffer(void) const {
-	// Bind this buffer to the specified target.
-	glBindBuffer(m_target, this->ID());
-
-	// Allocate space and transfer the data.
-	glBufferData(m_target, m_size, m_data, m_usage);
-
-	// Unbind the buffer.
-	glBindBuffer(m_target, Buffer::NO_ID);
-	}

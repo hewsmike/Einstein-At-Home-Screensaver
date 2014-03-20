@@ -29,12 +29,16 @@
  */
 
 /**
- * \brief This interface declares public methods to deal with OpenGL ES 2.0
- *        buffer objects. It's a wrapper. The buffer contents are treated as
- *        byte granular, and further typing is enjoined in other classes.
+ * \brief This virtual interface declares public methods to deal with OpenGL
+ *        ES 2.0 buffer objects.
+ *
+ *    It's a generic wrapper where the buffer contents are treated as bland and
+ * byte granular. Further typing/behaviour is managed in detail in derived classes.
  *
  * \see OGL_ID
- * \see VertexFetch
+ * \see IndexBuffer
+ * \see TextureBuffer
+ * \see VertexBuffer
  *
  * \author Mike Hewson\n
  */
@@ -42,19 +46,11 @@
 class Buffer : public OGL_ID {
     public :
         /**
-         * \brief Constructor. Will fail fatally for the application if one or
-         *        more of the following applies :
-         *              - target type is incorrect for OpenGL ES 2.x
-         *              - usage type is incorrect for OpenGL ES 2.x
-         *              - size is not strictly positive
-         *              - the data pointer is NULL.
+         * \brief Constructor. Will fail fatally if data is NULL.
          *
-         * \param target : one of GL_ARRAY_BUFFER or GL_ELEMENT_ARRAY_BUFFER.
-         * \param size : number of bytes to allocate.
-         * \param usage : one of GL_STREAM_DRAW, GL_STATIC_DRAW or GL_DYNAMIC_DRAW.
          * \param data : pointer to the data to be stored.
          */
-        Buffer(GLenum target, GLsizeiptr size, GLenum usage, const GLvoid* data);
+        Buffer(const GLvoid* buffer_data);
 
         /**
          * \brief Destructor.
@@ -75,45 +71,38 @@ class Buffer : public OGL_ID {
          */
         void release(void);
 
+    protected:
         /**
-         * \brief Obtains the buffer target type.
-         *
-         * \return an enumerant indicating one of the allowed OpenGl ES 2.0 types :
-         *              GL_ARRAY_BUFFER
-         *              GL_ELEMENT_ARRAY_BUFFER
+         * \brief Obtain a pointer to immutable byte granular data.
+         *        By construction this is guaranteed to be non-NULL.
          */
-        GLenum target(void) const;
-
-        /**
-         * \brief Obtains the buffer usage type.
-         *
-         * \return an enumerant indicating one of the allowed OpenGl ES 2.0 types :
-         *              GL_STREAM_DRAW
-         *              GL_STATIC_DRAW
-         *              GL_DYNAMIC_DRAW
-         */
-        GLenum usage(void) const;
+        const GLvoid* data(void) const;
 
     private:
         /// Flag indicating if resources have been acquired.
         bool acquire_flag;
 
-        /// The buffer target type ( binding point ).
-        GLenum m_target;
-
-        /// The number of bytes to be allocated to the buffer.
-        GLsizeiptr m_size;
-
-        /// The usage hint.
-        GLenum m_usage;
-
         /// A pointer to untyped but immutable data.
         const GLvoid* m_data;
 
         /**
-         * \brief Write data to the buffer with the characteristics given at construction.
+         * \brief Get an OpenGL handle for the buffer.
+         *
+         * \param handle : pointer to a handle.
          */
-        void loadBuffer(void) const;
+        GLuint acquire_ID(GLuint* handle) const = 0;
+
+        /**
+         * \brief Release to pool the OpenGL handle for the buffer.
+         *
+         * \param handle : pointer to a handle.
+         */
+        GLuint release_ID(GLuint* handle) const = 0;
+
+        /**
+         * \brief Populate the buffer with data.
+         */
+        void loadBuffer(void) const = 0;
     };
 
 /**
