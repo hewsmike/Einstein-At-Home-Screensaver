@@ -42,18 +42,15 @@ class VertexBuffer : public Buffer {
         /**
          * \brief Constructor. Will fail fatally for the application if one or
          *        more of the following applies :
-         *          - target type is incorrect for OpenGL ES 2.x
          *          - usage type is incorrect for OpenGL ES 2.x
          *          - size is not strictly positive
          *          - the data pointer is NULL ( base class enforced ).
          *
-         * \param target : one of GL_ARRAY_BUFFER or GL_ELEMENT_ARRAY_BUFFER.
          * \param size : number of bytes to allocate.
          * \param usage : one of GL_STREAM_DRAW, GL_STATIC_DRAW or GL_DYNAMIC_DRAW.
          * \param data : pointer to the data to be stored.
          */
-        VertexBuffer(GLenum target,
-                     GLsizeiptr size,
+        VertexBuffer(GLsizeiptr size,
                      GLenum usage,
                      const GLvoid* buffer_data);
 
@@ -62,29 +59,7 @@ class VertexBuffer : public Buffer {
          */
         virtual ~VertexBuffer();
 
-        /**
-         * \brief Obtains the buffer target type.
-         *
-         * \return an enumerant indicating one of the allowed OpenGl ES 2.0 types :
-         *              GL_ARRAY_BUFFER
-         *              GL_ELEMENT_ARRAY_BUFFER
-         */
-        GLenum target(void) const;
-
-        /**
-         * \brief Obtains the buffer usage type.
-         *
-         * \return an enumerant indicating one of the allowed OpenGl ES 2.0 types :
-         *              GL_STREAM_DRAW
-         *              GL_STATIC_DRAW
-         *              GL_DYNAMIC_DRAW
-         */
-        GLenum usage(void) const;
-
     private:
-        /// The buffer target type ( binding point ).
-        GLenum m_target;
-
         /// The number of bytes to be allocated to the buffer.
         GLsizeiptr m_size;
 

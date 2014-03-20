@@ -18,63 +18,37 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "Texture.h"
-
-#include <iostream>
+#include "TextureBuffer.h"
 
 #include "ErrorHandler.h"
 
-Texture::Texture(bool mipmap,
-                 GLint format,
-                 GLsizei width,
-                 GLsizei height,
-                 GLenum data_type,
-                 const GLvoid* data) :
-                    m_mipmap(mipmap),
-                    m_format(format),
-                    m_width(width),
-                    m_height(height),
-                    m_data_type(data_type),
-                    m_data(data) {
+TextureBuffer::TextureBuffer(bool mipmap,
+                             GLint format,
+                             GLsizei width,
+                             GLsizei height,
+                             GLenum data_type,
+                             const GLvoid* texture_data) :
+                                Buffer(texture_data),
+                                m_mipmap(mipmap),
+                                m_format(format),
+                                m_width(width),
+                                m_height(height),
+                                m_data_type(data_type) {
     }
 
-Texture::~Texture() {
-    // Must call this here in this derived class.
-    Texture::release();
+TextureBuffer::~TextureBuffer() {
+    Buffer::release();
     }
 
-bool Texture::acquire(void) {
-    // Assume failure to acquire.
-    bool ret_val = false;
-
-    // Ask OpenGL to assign a texture object.
-    GLuint temp;
-    glGenTextures(1, &temp);
-    set_ID(temp);
-
-    // Failure to acquire a handle should be FATAL.
-    if(this->ID() == OGL_ID::NO_ID) {
-        ErrorHandler::record("Texture::acquire() : failure to obtain identifier",
-                             ErrorHandler::FATAL);
-        }
-    else {
-        // Use the handle and load the texture data.
-        loadTexture();
-        ret_val = true;
-        }
-
-    return ret_val;
+GLuint TextureBuffer::acquire_ID(GLuint* handle) const {
+    glGenTextures(1, handle);
     }
 
-void Texture::release(void) {
-    // Ask OpenGL to release the texture object.
-    GLuint temp = this->ID();
-    glDeleteTextures(1, &temp);
-    // Set our handle store to safe value.
-    set_ID(OGL_ID::NO_ID);
+GLuint TextureBuffer::release_ID(GLuint* handle) const {
+    glDeleteTextures(1, handle);
     }
 
-void Texture::loadTexture(void) {
+void TextureBuffer::loadTexture(void) {
     // Bind the texture ( of GL_TEXTURE_2D type ) to our identifier.
     glBindTexture(GL_TEXTURE_2D, this->ID());
 
@@ -86,7 +60,7 @@ void Texture::loadTexture(void) {
                  0,                      // No image border.
                  m_format,               // Rendering intent.
                  m_data_type,            // Binary data represetnation.
-                 m_data);                // The actual data.
+                 this->data());          // The actual data.
 
     // Specify 'reasonable' values for simple 'decal' like application.
 

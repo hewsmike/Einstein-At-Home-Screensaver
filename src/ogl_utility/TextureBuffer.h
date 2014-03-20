@@ -18,10 +18,10 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef TEXTURE_H_
-#define TEXTURE_H_
+#ifndef TEXTURE_BUFFER_H_
+#define TEXTURE_BUFFER_H_
 
-#include "OGL_ID.h"
+#include "Buffer.h"
 
 /**
  * \addtogroup ogl_utility OGL_Utility
@@ -32,15 +32,12 @@
  * \brief This interface declares public methods to deal with OpenGL
  *        texture objects.
  *
- *      It's a wrapper class to especially manage acquisition and
- * release of OpenGL resources.
- *
- * \see OGL_ID
+ * \see Buffer
  *
  * \author Mike Hewson\n
  */
 
-class Texture : public OGL_ID {
+class TextureBuffer : public Buffer {
     public :
         /**
          * \brief Constructor of an OpenGL ES 2.0 borderless GL_TEXTURE_2D
@@ -61,36 +58,21 @@ class Texture : public OGL_ID {
          *                      GL_UNSIGNED_SHORT_5_6_5
          *                      GL_UNSIGNED_SHORT_4_4_4_4
          *                      GL_UNSIGNED_SHORT_5_5_5_1
-         * \param data : a pointer to the image data
+         * \param texture_data : a pointer to the image data
          */
-        Texture(bool mipmap,
-                GLint format,
-                GLsizei width,
-                GLsizei height,
-                GLenum data_type,
-                const GLvoid* data);
+        TextureBuffer(bool mipmap,
+                      GLint format,
+                      GLsizei width,
+                      GLsizei height,
+                      GLenum data_type,
+                      const GLvoid* texture_data);
 
         /**
          * \brief Destructor
          */
-        virtual ~Texture();
-
-        /**
-         * \brief Acquire the texture object's OpenGL resources.
-         *
-         * \return a boolean indicating success of acquisition
-         *              TRUE - resources acquired without error
-         *              FALSE - resources were not acquired
-         */
-        virtual bool acquire(void);
-
-        /**
-         * \brief Release the texture object's OpenGL resources.
-         */
-        virtual void release(void);
+        virtual ~TextureBuffer();
 
     private :
-        // These are merely set during construction, though utilised during acquisition.
         /// Whether or not mipmaps are to be generated.
         bool m_mipmap;
 
@@ -106,17 +88,28 @@ class Texture : public OGL_ID {
         /// The binary representation of the data.
         GLenum m_data_type;
 
-        /// A pointer to the data.
-        const GLvoid* m_data;
+        /**
+         * \brief Get an OpenGL handle for the texture.
+         *
+         * \param handle : pointer to a handle.
+         */
+        GLuint acquire_ID(GLuint* handle) const;
 
         /**
-         * \brief Write data to the texture with the characteristics given at construction.
+         * \brief Release to pool the OpenGL handle for the texture.
+         *
+         * \param handle : pointer to a handle.
          */
-        void loadTexture(void);
+        GLuint release_ID(GLuint* handle) const;
+
+        /**
+         * \brief Populate the buffer with vertex data.
+         */
+        void loadBuffer(void);
     };
 
 /**
  * @}
  */
 
-#endif /*TEXTURE_H_*/
+#endif /*TEXTURE_BUFFER_H_*/

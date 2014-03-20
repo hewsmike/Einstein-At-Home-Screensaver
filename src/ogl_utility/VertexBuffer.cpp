@@ -19,23 +19,13 @@
  ***************************************************************************/
 
 #include "VertexBuffer.h"
+
 #include "ErrorHandler.h"
 
-VertexBuffer::VertexBuffer(GLenum target,
-                           GLsizeiptr size,
+VertexBuffer::VertexBuffer(GLsizeiptr size,
                            GLenum usage,
                            const GLvoid* buffer_data) :
                 Buffer(buffer_data) {
-    // Ensure compliance with OpenGL ES 2.x acceptable parameter types.
-    if((target == GL_ARRAY_BUFFER) ||
-       (target == GL_ELEMENT_ARRAY_BUFFER)) {
-        m_target = target;
-        }
-    else {
-        ErrorHandler::record("Buffer::Buffer() : Bad target type provided.",
-                             ErrorHandler::FATAL);
-        }
-
     // Ensure strictly positive buffer size.
     if(size > 0) {
         m_size = size;
@@ -61,14 +51,6 @@ VertexBuffer::~VertexBuffer() {
     Buffer::release();
     }
 
-GLenum VertexBuffer::target(void) const {
-    return m_target;
-    }
-
-GLenum VertexBuffer::usage(void) const {
-    return m_usage;
-    }
-
 GLuint VertexBuffer::acquire_ID(GLuint* handle) const {
     glGenBuffers(1, handle);
     }
@@ -79,11 +61,11 @@ GLuint VertexBuffer::release_ID(GLuint* handle) const {
 
 void VertexBuffer::loadBuffer(void) const {
     // Bind this buffer to the specified target.
-    glBindBuffer(m_target, this->ID());
+    glBindBuffer(GL_ARRAY_BUFFER, this->ID());
 
     // Allocate space and transfer the data.
-    glBufferData(m_target, m_size, m_data, m_usage);
+    glBufferData(GL_ARRAY_BUFFER, m_size, m_data, m_usage);
 
     // Unbind the buffer.
-    glBindBuffer(m_target, Buffer::NO_ID);
+    glBindBuffer(GL_ARRAY_BUFFER, Buffer::NO_ID);
     }
