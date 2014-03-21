@@ -22,6 +22,9 @@
 
 #include "ErrorHandler.h"
 
+const Glsizei TextureBuffer::MIN_TEX_WIDTH(64);
+const Glsizei TextureBuffer::MIN_TEX_HEIGHT(64);
+
 TextureBuffer::TextureBuffer(const GLvoid* texture_data,
                              GLsizei width,
                              GLsizei height,
@@ -29,12 +32,49 @@ TextureBuffer::TextureBuffer(const GLvoid* texture_data,
                              GLenum data_type,
                              bool mipmaps) :
                                 Buffer(texture_data),
-                                m_width(width),
-                                m_height(height),
-                                m_usage(usage),
-                                m_data_type(data_type),
                                 m_mipmaps(mipmaps) {
+    // Ensure sufficient width.
+    if(width >= TextureBuffer::MIN_TEX_WIDTH) {
+        m_width = width;
+        }
+    else {
+        ErrorHandler::record("TextureBuffer::TextureBuffer() : Insufficient texel width.",
+                             ErrorHandler::FATAL);
+        }
 
+    // Ensure sufficient height.
+    if(height >= TextureBuffer::MIN_TEX_HEIGHT) {
+        m_height = height;
+        }
+    else {
+        ErrorHandler::record("TextureBuffer::TextureBuffer() : Insufficient texel height.",
+                             ErrorHandler::FATAL);
+        }
+
+    // Ensure compliance with OpenGL ES 2.x acceptable parameter types.
+    if((usage == GL_ALPHA) ||
+       (usage == GL_LUMINANCE) ||
+       (usage == GL_LUMINANCE_ALPHA) ||
+       (usage == GL_RGB) ||
+       (usage == GL_RGBA)) {
+        m_usage = usage;
+        }
+    else {
+        ErrorHandler::record("TextureBuffer::TextureBuffer() : Bad usage type provided.",
+                             ErrorHandler::FATAL);
+        }
+
+    // Ensure compliance with OpenGL ES 2.x acceptable parameter types.
+    if((data_type == GL_UNSIGNED_BYTE) ||
+       (data_type == GL_UNSIGNED_SHORT_5_6_5) ||
+       (data_type == GL_UNSIGNED_SHORT_4_4_4_4) ||
+       (data_type == GL_UNSIGNED_SHORT_5_5_5_1)) {
+        m_data_type = data_type;
+        }
+    else {
+        ErrorHandler::record("TextureBuffer::TextureBuffer() : Bad data type provided.",
+                             ErrorHandler::FATAL);
+        }
     }
 
 TextureBuffer::~TextureBuffer() {
@@ -55,11 +95,11 @@ void TextureBuffer::loadBuffer(void) {
 
     glTexImage2D(GL_TEXTURE_2D,
                  0,                      // Mipmap level zero.
-                 m_format,               // Rendering intent.
+                 m_usage,                // Rendering intent.
                  m_width,                // image width in texels.
                  m_height,               // image height in texels.
                  0,                      // No image border.
-                 m_format,               // Rendering intent.
+                 m_usage,                // Rendering intent.
                  m_data_type,            // Binary data represetnation.
                  this->data());          // The actual data.
 

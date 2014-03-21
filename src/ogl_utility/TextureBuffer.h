@@ -72,6 +72,9 @@ class TextureBuffer : public Buffer {
         virtual ~TextureBuffer();
 
     private :
+        static const Glsizei MIN_TEX_WIDTH;
+        static const Glsizei MIN_TEX_HEIGHT;
+
         /// What the texture data represents in terms of rendering intent.
         GLint m_format;
 
