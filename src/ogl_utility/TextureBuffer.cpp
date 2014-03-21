@@ -22,18 +22,19 @@
 
 #include "ErrorHandler.h"
 
-TextureBuffer::TextureBuffer(bool mipmap,
-                             GLint format,
+TextureBuffer::TextureBuffer(const GLvoid* texture_data,
                              GLsizei width,
                              GLsizei height,
+                             GLint usage,
                              GLenum data_type,
-                             const GLvoid* texture_data) :
+                             bool mipmaps) :
                                 Buffer(texture_data),
-                                m_mipmap(mipmap),
-                                m_format(format),
                                 m_width(width),
                                 m_height(height),
-                                m_data_type(data_type) {
+                                m_usage(usage),
+                                m_data_type(data_type),
+                                m_mipmaps(mipmaps) {
+
     }
 
 TextureBuffer::~TextureBuffer() {
@@ -48,7 +49,7 @@ GLuint TextureBuffer::release_ID(GLuint* handle) const {
     glDeleteTextures(1, handle);
     }
 
-void TextureBuffer::loadTexture(void) {
+void TextureBuffer::loadBuffer(void) {
     // Bind the texture ( of GL_TEXTURE_2D type ) to our identifier.
     glBindTexture(GL_TEXTURE_2D, this->ID());
 
@@ -64,6 +65,7 @@ void TextureBuffer::loadTexture(void) {
 
     // Specify 'reasonable' values for simple 'decal' like application.
 
+    /// TODO - should we parameterise through the interface here ?
     // 'S' is the 'horizontal' texture coordinate direction. GL_REPEAT
     // chosen to cope with globes ie. the longitude = 0 modulus.
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -74,7 +76,7 @@ void TextureBuffer::loadTexture(void) {
     // when we do minification and magnification. That partly depends upon
     // whether we are mipmapping. GL_NEAREST ( Manhattan distance ) chosen
     // as faster than GL_LINEAR ( Pythagorus to hypotenuse ).
-    /// TODO - make these choices dependent upon rendering quality selection.
+    /// TODO - make these choices dependent upon rendering quality selection ?
     if(m_mipmap == true) {
         // With mipmapping intended.
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST_MIPMAP_NEAREST);
@@ -91,6 +93,7 @@ void TextureBuffer::loadTexture(void) {
         glGenerateMipmap(GL_TEXTURE_2D);
         }
 
+    /// TODO - Use glHint here to specify quality ?
     // Unbind the texture.
     glBindTexture(GL_TEXTURE_2D, OGL_ID::NO_ID);
     }

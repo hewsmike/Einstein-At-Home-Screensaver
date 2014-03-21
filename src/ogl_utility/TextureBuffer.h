@@ -43,29 +43,28 @@ class TextureBuffer : public Buffer {
          * \brief Constructor of an OpenGL ES 2.0 borderless GL_TEXTURE_2D
          *        texture type.
          *
-         * \param mipmaps : if true, all mipmaps generated down to 1x1
-         *
-         * \param format : one of the following ES 2.0 allowed enumerants
+         * \param texture_data : a pointer to the image data
+         * \param width : in texels, must be at least 64
+         * \param height : in texels, must be at least 64
+         * \param usage : one of the following ES 2.0 allowed enumerants
          *                      GL_ALPHA
          *                      GL_LUMINANCE
          *                      GL_LUMINANCE_ALPHA
          *                      GL_RGB
          *                      GL_RGBA
-         * \param width : in texels, must be at least 64
-         * \param height : in texels, must be at least 64
          * \param data_type : one of the following ES 2.0 allowed enumerants
          *                      GL_UNSIGNED_BYTE
          *                      GL_UNSIGNED_SHORT_5_6_5
          *                      GL_UNSIGNED_SHORT_4_4_4_4
          *                      GL_UNSIGNED_SHORT_5_5_5_1
-         * \param texture_data : a pointer to the image data
+         * \param mipmaps : if true, all mipmaps generated down to 1x1
          */
-        TextureBuffer(bool mipmap,
-                      GLint format,
+        TextureBuffer(const GLvoid* texture_data,
                       GLsizei width,
                       GLsizei height,
+                      GLint usage,
                       GLenum data_type,
-                      const GLvoid* texture_data);
+                      bool mipmaps = true);
 
         /**
          * \brief Destructor
@@ -73,9 +72,6 @@ class TextureBuffer : public Buffer {
         virtual ~TextureBuffer();
 
     private :
-        /// Whether or not mipmaps are to be generated.
-        bool m_mipmap;
-
         /// What the texture data represents in terms of rendering intent.
         GLint m_format;
 
@@ -85,8 +81,14 @@ class TextureBuffer : public Buffer {
         /// The height of the texture.
         GLsizei m_height;
 
+        /// What the texture data represents in terms of rendering intent.
+        GLint m_usage;
+
         /// The binary representation of the data.
         GLenum m_data_type;
+
+        /// Whether or not mipmaps are to be generated.
+        bool m_mipmaps;
 
         /**
          * \brief Get an OpenGL handle for the texture.
@@ -103,7 +105,7 @@ class TextureBuffer : public Buffer {
         GLuint release_ID(GLuint* handle) const;
 
         /**
-         * \brief Populate the buffer with vertex data.
+         * \brief Populate the buffer with texture data.
          */
         void loadBuffer(void);
     };

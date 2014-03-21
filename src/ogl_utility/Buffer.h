@@ -102,7 +102,7 @@ class Buffer : public OGL_ID {
         /**
          * \brief Populate the buffer with data.
          */
-        void loadBuffer(void) const = 0;
+        void loadBuffer() const = 0;
     };
 
 /**

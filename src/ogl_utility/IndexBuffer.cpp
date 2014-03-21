@@ -22,41 +22,25 @@
 
 #include "ErrorHandler.h"
 
-IndexBuffer::IndexBuffer(GLsizeiptr size,
+IndexBuffer::IndexBuffer(const GLvoid* buffer_data,
+                         GLsizeiptr size,
                          GLenum usage,
-                         const GLvoid* buffer_data) :
-                Buffer(buffer_data) {
-    // Ensure strictly positive buffer size.
-    if(size > 0) {
-        m_size = size;
-        }
-    else {
-        ErrorHandler::record("Buffer::Buffer() : Strictly positive buffer size required.",
-                             ErrorHandler::FATAL);
-        }
-
+                         GLenum index_type) :
+                VertexBuffer(buffer_data, size, usage) {
     // Ensure compliance with OpenGL ES 2.x acceptable parameter types.
-    if((usage == GL_STREAM_DRAW) ||
-       (usage == GL_STATIC_DRAW) ||
-       (usage == GL_DYNAMIC_DRAW)) {
-        m_usage = usage;
+    if((index_type == GL_UNSIGNED_BYTE)
+       (index_type == GL_UNSIGNED_SHORT)
+       (index_type == GL_UNISGNED_INT)) {
+        m_index_type = index_type;
         }
     else {
-        ErrorHandler::record("Buffer::Buffer() : Bad usage type provided.",
+        ErrorHandler::record("IndexBuffer::IndexBuffer() : Bad index type provided.",
                              ErrorHandler::FATAL);
         }
     }
 
 IndexBuffer::~IndexBuffer() {
     Buffer::release();
-    }
-
-GLuint IndexBuffer::acquire_ID(GLuint* handle) const {
-    glGenBuffers(1, handle);
-    }
-
-GLuint IndexBuffer::release_ID(GLuint* handle) const {
-    glDeleteBuffers(1, handle);
     }
 
 void IndexBuffer::loadBuffer(void) const {
@@ -67,5 +51,5 @@ void IndexBuffer::loadBuffer(void) const {
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_size, m_data, m_usage);
 
     // Unbind the buffer.
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Buffer::NO_ID);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, OGL::NO_ID);
     }

@@ -42,17 +42,17 @@ class VertexBuffer : public Buffer {
         /**
          * \brief Constructor. Will fail fatally for the application if one or
          *        more of the following applies :
-         *          - usage type is incorrect for OpenGL ES 2.x
-         *          - size is not strictly positive
          *          - the data pointer is NULL ( base class enforced ).
+         *          - size is not strictly positive.
+         *          - usage type is incorrect for OpenGL ES 2.x
          *
+         * \param data : pointer to the data to be stored.
          * \param size : number of bytes to allocate.
          * \param usage : one of GL_STREAM_DRAW, GL_STATIC_DRAW or GL_DYNAMIC_DRAW.
-         * \param data : pointer to the data to be stored.
          */
-        VertexBuffer(GLsizeiptr size,
-                     GLenum usage,
-                     const GLvoid* buffer_data);
+        VertexBuffer(const GLvoid* buffer_data,
+                     GLsizeiptr size,
+                     GLenum usage);
 
         /**
          * \brief Destructor.
@@ -80,7 +80,7 @@ class VertexBuffer : public Buffer {
          */
         GLuint release_ID(GLuint* handle) const;
 
-        /**
+         /**
          * \brief Populate the buffer with vertex data.
          */
         void loadBuffer(void) const;

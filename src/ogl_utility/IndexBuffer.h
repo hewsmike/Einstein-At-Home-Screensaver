@@ -21,7 +21,7 @@
 #ifndef INDEX_BUFFER_H_
 #define INDEX_BUFFER_H_
 
-#include "Buffer.h"
+#include "VertexBuffer.h"
 
 /**
 * \addtogroup ogl_utility OGL_Utility
@@ -37,22 +37,25 @@
 * \author Mike Hewson\n
 */
 
-class IndexBuffer : public Buffer {
+class IndexBuffer : public VertexBuffer {
     public :
         /**
          * \brief Constructor. Will fail fatally for the application if one or
          *        more of the following applies :
-         *          - usage type is incorrect for OpenGL ES 2.x
-         *          - size is not strictly positive
          *          - the data pointer is NULL ( base class enforced ).
+         *          - size is not strictly positive.
+         *          - usage type is incorrect for OpenGL ES 2.x
+         *          - index type is incorrect for OpenGL ES 2.x
          *
+         * \param data : pointer to the data to be stored.
          * \param size : number of bytes to allocate.
          * \param usage : one of GL_STREAM_DRAW, GL_STATIC_DRAW or GL_DYNAMIC_DRAW.
-         * \param data : pointer to the data to be stored.
+         * \param index_type : of GL_UNSIGNED_BYTE, GL_UNSIGNED_SHORT, GL_UNISGNED_INT.
          */
-        IndexBuffer(GLsizeiptr size,
-                    GLenum usage,
-                    const GLvoid* buffer_data);
+        IndexBuffer(const GLvoid* buffer_data,
+                    GLsizeiptr size,
+                    GLenum usage
+                    GLenum index_type);
 
         /**
          * \brief Destructor.
@@ -60,28 +63,11 @@ class IndexBuffer : public Buffer {
         virtual ~IndexBuffer();
 
     private:
-        /// The number of bytes to be allocated to the buffer.
-        GLsizeiptr m_size;
-
-        /// The usage hint.
-        GLenum m_usage;
+        /// The index data type.
+        GLenum m_index_type;
 
         /**
-         * \brief Get an OpenGL handle for the buffer.
-         *
-         * \param handle : pointer to a handle.
-         */
-        GLuint acquire_ID(GLuint* handle) const;
-
-        /**
-         * \brief Release to pool the OpenGL handle for the buffer.
-         *
-         * \param handle : pointer to a handle.
-         */
-        GLuint release_ID(GLuint* handle) const;
-
-        /**
-         * \brief Populate the buffer with vertex data.
+         * \brief Populate the buffer with index data.
          */
         void loadBuffer(void) const;
     };

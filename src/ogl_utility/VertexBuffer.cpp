@@ -22,16 +22,16 @@
 
 #include "ErrorHandler.h"
 
-VertexBuffer::VertexBuffer(GLsizeiptr size,
-                           GLenum usage,
-                           const GLvoid* buffer_data) :
+VertexBuffer::VertexBuffer(const GLvoid* buffer_data,
+                           GLsizeiptr size,
+                           GLenum usage) :
                 Buffer(buffer_data) {
     // Ensure strictly positive buffer size.
     if(size > 0) {
         m_size = size;
         }
     else {
-        ErrorHandler::record("Buffer::Buffer() : Strictly positive buffer size required.",
+        ErrorHandler::record("VertexBuffer::VertexBuffer() : Strictly positive buffer size required.",
                              ErrorHandler::FATAL);
         }
 
@@ -42,7 +42,7 @@ VertexBuffer::VertexBuffer(GLsizeiptr size,
         m_usage = usage;
         }
     else {
-        ErrorHandler::record("Buffer::Buffer() : Bad usage type provided.",
+        ErrorHandler::record("VertexBuffer::VertexBuffer() : Bad usage type provided.",
                              ErrorHandler::FATAL);
         }
     }
@@ -67,5 +67,5 @@ void VertexBuffer::loadBuffer(void) const {
     glBufferData(GL_ARRAY_BUFFER, m_size, m_data, m_usage);
 
     // Unbind the buffer.
-    glBindBuffer(GL_ARRAY_BUFFER, Buffer::NO_ID);
+    glBindBuffer(GL_ARRAY_BUFFER, OGL::NO_ID);
     }
