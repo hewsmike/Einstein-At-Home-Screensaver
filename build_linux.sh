@@ -309,6 +309,9 @@ build_libxml() {
     cd $ROOT/build/libxml2 || failure
     $ROOT/3rdparty/libxml2/configure --prefix=$ROOT/install --enable-shared=no --enable-static=yes --without-python >> $LOGFILE 2>&1 || failure
 
+    # To get around a lame error in the above config
+    cp -f $ROOT/3rdparty/libxml2/testapi.c $ROOT/build/libxml2/testapi.c
+
     log "Building libxml2 (this may take a while)..."
     make >> $LOGFILE 2>&1 || failure
     make install >> $LOGFILE 2>&1 || failure
