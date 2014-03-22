@@ -33,11 +33,12 @@ CPPFLAGS += -I$(FRAMEWORK_INSTALL)/include/SDL2
 
 DEPS = Makefile
 OBJS = Buffer.o
-OBJS += BufferVertexFetch.o
 OBJS += OGL_ID.o
 OBJS += Program.o
 OBJS += Shader.o
-OBJS += Texture.o
+OBJS += IndexBuffer.o
+OBJS += TextureBuffer.o
+OBJS += VertexBuffer.o
 OBJS += VertexFetch.o
 
 # primary role based tagets
@@ -58,9 +59,6 @@ liboglutility.a: $(OBJS) $(UTILITY_SRC)/vmath.h
 Buffer.o: $(DEPS) $(UTILITY_SRC)/Buffer.cpp $(UTILITY_SRC)/Buffer.h
 	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/Buffer.cpp
 
-BufferVertexFetch.o: $(DEPS) $(UTILITY_SRC)/BufferVertexFetch.cpp $(UTILITY_SRC)/BufferVertexFetch.h
-	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/BufferVertexFetch.cpp
-
 OGL_ID.o: $(DEPS) $(UTILITY_SRC)/OGL_ID.cpp $(UTILITY_SRC)/OGL_ID.h
 	$(CXX) -g $(CPPFLAGS) -c $(UTILITY_SRC)/OGL_ID.cpp
 
@@ -72,6 +70,15 @@ Shader.o: $(DEPS) $(UTILITY_SRC)/Shader.cpp $(UTILITY_SRC)/Shader.h
 
 Texture.o: $(DEPS) $(UTILITY_SRC)/Texture.cpp $(UTILITY_SRC)/Texture.h
 	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/Texture.cpp
+
+IndexBuffer.o: $(DEPS) $(UTILITY_SRC)/IndexBuffer.cpp $(UTILITY_SRC)/IndexBuffer.h
+	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/IndexBuffer.cpp
+
+TextureBuffer.o: $(DEPS) $(UTILITY_SRC)/TextureBuffer.cpp $(UTILITY_SRC)/TextureBuffer.h
+	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/TextureBuffer.cpp
+
+VertexBuffer.o: $(DEPS) $(UTILITY_SRC)/VertexBuffer.cpp $(UTILITY_SRC)/VertexBuffer.h
+	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/VertexBuffer.cpp
 
 VertexFetch.o: $(DEPS) $(UTILITY_SRC)/VertexFetch.cpp $(UTILITY_SRC)/VertexFetch.h
 	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/VertexFetch.cpp
