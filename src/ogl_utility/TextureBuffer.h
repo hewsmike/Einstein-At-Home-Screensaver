@@ -72,8 +72,8 @@ class TextureBuffer : public Buffer {
         virtual ~TextureBuffer();
 
     private :
-        static const Glsizei MIN_TEX_WIDTH;
-        static const Glsizei MIN_TEX_HEIGHT;
+        static const GLsizei MIN_TEX_WIDTH;
+        static const GLsizei MIN_TEX_HEIGHT;
 
         /// What the texture data represents in terms of rendering intent.
         GLint m_format;
@@ -98,19 +98,19 @@ class TextureBuffer : public Buffer {
          *
          * \param handle : pointer to a handle.
          */
-        GLuint acquire_ID(GLuint* handle) const;
+        virtual void acquire_ID(GLuint* handle) const;
 
         /**
          * \brief Release to pool the OpenGL handle for the texture.
          *
          * \param handle : pointer to a handle.
          */
-        GLuint release_ID(GLuint* handle) const;
+        virtual void release_ID(GLuint* handle) const;
 
         /**
          * \brief Populate the buffer with texture data.
          */
-        void loadBuffer(void);
+        virtual void loadBuffer(void);
     };
 
 /**

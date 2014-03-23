@@ -23,7 +23,7 @@
 
 Buffer::Buffer(const GLvoid* buffer_data) {
     // Ensure an actual data source was provided.
-    if(data != NULL) {
+    if(buffer_data != NULL) {
         m_data = buffer_data;
         }
     else {

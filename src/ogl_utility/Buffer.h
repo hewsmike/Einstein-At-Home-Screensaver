@@ -71,7 +71,6 @@ class Buffer : public OGL_ID {
          */
         void release(void);
 
-    protected:
         /**
          * \brief Obtain a pointer to immutable byte granular data.
          *        By construction this is guaranteed to be non-NULL.
@@ -90,19 +89,19 @@ class Buffer : public OGL_ID {
          *
          * \param handle : pointer to a handle.
          */
-        GLuint acquire_ID(GLuint* handle) const = 0;
+        virtual void acquire_ID(GLuint* handle) const = 0;
 
         /**
          * \brief Release to pool the OpenGL handle for the buffer.
          *
          * \param handle : pointer to a handle.
          */
-        GLuint release_ID(GLuint* handle) const = 0;
+        virtual void release_ID(GLuint* handle) const = 0;
 
         /**
          * \brief Populate the buffer with data.
          */
-        void loadBuffer() const = 0;
+        virtual void loadBuffer(void) const = 0;
     };
 
 /**

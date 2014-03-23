@@ -54,7 +54,7 @@ class IndexBuffer : public VertexBuffer {
          */
         IndexBuffer(const GLvoid* buffer_data,
                     GLsizeiptr size,
-                    GLenum usage
+                    GLenum usage,
                     GLenum index_type);
 
         /**
@@ -69,7 +69,7 @@ class IndexBuffer : public VertexBuffer {
         /**
          * \brief Populate the buffer with index data.
          */
-        void loadBuffer(void) const;
+        virtual void loadBuffer(void) const;
     };
 
 /**

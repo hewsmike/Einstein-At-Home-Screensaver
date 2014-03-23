@@ -59,6 +59,13 @@ class VertexBuffer : public Buffer {
          */
         virtual ~VertexBuffer();
 
+    protected :
+        /**
+         * \brief Populate the buffer with vertex data.
+         */
+        virtual void loadBuffer(GLenum target) const;
+
+
     private:
         /// The number of bytes to be allocated to the buffer.
         GLsizeiptr m_size;
@@ -71,19 +78,19 @@ class VertexBuffer : public Buffer {
          *
          * \param handle : pointer to a handle.
          */
-        GLuint acquire_ID(GLuint* handle) const;
+        virtual void acquire_ID(GLuint* handle) const;
 
         /**
          * \brief Release to pool the OpenGL handle for the buffer.
          *
          * \param handle : pointer to a handle.
          */
-        GLuint release_ID(GLuint* handle) const;
+        virtual void release_ID(GLuint* handle) const;
 
-         /**
+        /**
          * \brief Populate the buffer with vertex data.
          */
-        void loadBuffer(void) const;
+        virtual void loadBuffer(void) const;
     };
 
 /**

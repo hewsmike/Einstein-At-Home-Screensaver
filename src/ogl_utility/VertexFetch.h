@@ -23,6 +23,8 @@
 
 #include "framework.h"
 
+#include "Buffer.h"
+
 /**
  * \addtogroup ogl_utility OGL_Utility
  * @{
@@ -123,6 +125,8 @@ class VertexFetch {
         // The given Buffer pointers.
         Buffer* m_vertices;
         Buffer* m_indices;
+
+        GLenum m_index_type;
     };
 
 /**

@@ -22,8 +22,8 @@
 
 #include "ErrorHandler.h"
 
-const Glsizei TextureBuffer::MIN_TEX_WIDTH(64);
-const Glsizei TextureBuffer::MIN_TEX_HEIGHT(64);
+const GLsizei TextureBuffer::MIN_TEX_WIDTH(64);
+const GLsizei TextureBuffer::MIN_TEX_HEIGHT(64);
 
 TextureBuffer::TextureBuffer(const GLvoid* texture_data,
                              GLsizei width,
@@ -81,11 +81,11 @@ TextureBuffer::~TextureBuffer() {
     Buffer::release();
     }
 
-GLuint TextureBuffer::acquire_ID(GLuint* handle) const {
+void TextureBuffer::acquire_ID(GLuint* handle) const {
     glGenTextures(1, handle);
     }
 
-GLuint TextureBuffer::release_ID(GLuint* handle) const {
+void TextureBuffer::release_ID(GLuint* handle) const {
     glDeleteTextures(1, handle);
     }
 
@@ -117,7 +117,7 @@ void TextureBuffer::loadBuffer(void) {
     // whether we are mipmapping. GL_NEAREST ( Manhattan distance ) chosen
     // as faster than GL_LINEAR ( Pythagorus to hypotenuse ).
     /// TODO - make these choices dependent upon rendering quality selection ?
-    if(m_mipmap == true) {
+    if(m_mipmaps == true) {
         // With mipmapping intended.
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST_MIPMAP_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
@@ -129,7 +129,7 @@ void TextureBuffer::loadBuffer(void) {
         }
 
     // Make mipmaps if requested.
-    if(m_mipmap == true) {
+    if(m_mipmaps == true) {
         glGenerateMipmap(GL_TEXTURE_2D);
         }
 
