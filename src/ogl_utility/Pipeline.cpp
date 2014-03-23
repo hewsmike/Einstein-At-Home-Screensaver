@@ -43,8 +43,8 @@ void Pipeline::utilise(GLenum primitive, GLsizei count) {
 
         // Dynamic cast to determine most derived type of the
         // VertexFetch object provided at construction.
-        BufferVertexFetch* p_bvf;
-        p_bvf = dynamic_cast<BufferVertexFetch*>(&m_vertex_fetch);
+        VertexFetch* p_bvf;
+        p_bvf = dynamic_cast<VertexFetch*>(&m_vertex_fetch);
         if(p_bvf != NULL) {
             // So we have actually a BufferVertexFetch object.
             // Is it the same as the one currently bound to
