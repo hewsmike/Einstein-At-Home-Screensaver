@@ -44,8 +44,8 @@ class TextureBuffer : public Buffer {
          *        texture type.
          *
          * \param texture_data : a pointer to the image data
-         * \param width : in texels, must be at least 64
-         * \param height : in texels, must be at least 64
+         * \param width : in texels, must be a strictly positive power of 2
+         * \param height : in texels, must be a strictly positive power of 2
          * \param usage : one of the following ES 2.0 allowed enumerants
          *                      GL_ALPHA
          *                      GL_LUMINANCE
