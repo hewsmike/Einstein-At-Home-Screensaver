@@ -89,6 +89,7 @@ CXX ?= g++
 CPPFLAGS += -I$(PRODUCT_INSTALL)/include
 CPPFLAGS += $(shell $(PRODUCT_INSTALL)/bin/freetype-config --cflags)
 CPPFLAGS += $(shell $(PRODUCT_INSTALL)/bin/xml2-config --cflags)
+CPPFLAGS += $(shell $(PRODUCT_INSTALL)/bin/sdl-config --cflags)
 CPPFLAGS += -I$(PRODUCT_INSTALL)/include/boinc
 CPPFLAGS += -I$(FRAMEWORK_SRC) -I$(PRODUCT_SRC) -I$(PRODUCT_SRC)/../framework
 
@@ -118,6 +119,8 @@ ifeq ".$(SYSTEM)" ".linux"
     LIBS += -lframework -loglutility -lrt -L$(PRODUCT_INSTALL)/lib
     LIBS += $(shell $(PRODUCT_INSTALL)/bin/freetype-config --libs)
     LIBS += $(shell $(PRODUCT_INSTALL)/bin/xml2-config --libs)
+    LIBS += $(shell $(PRODUCT_INSTALL)/bin/sdl-config --libs)
+    LIBS += -lSDL_ttf
     LIBS += -lboinc_api -lboinc
     LIBS += -lXrandr -lXrender
     LIBS += -lstdc++
