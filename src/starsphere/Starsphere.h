@@ -304,16 +304,16 @@ protected:
    const Resource *m_FontResource;
 
    /// Font texture instance for logo title rendering
-   OGLFT::Translucent *m_FontLogo1;
+   TTF_Font* m_FontLogo1;
 
    /// Font texture instance for logo subtitle rendering
-   OGLFT::Translucent *m_FontLogo2;
+   TTF_Font* m_FontLogo2;
 
    /// Font texture instance for info box header rendering
-   OGLFT::Translucent *m_FontHeader;
+   TTF_Font* m_FontHeader;
 
    /// Font texture instance for info box content rendering
-   OGLFT::Translucent *m_FontText;
+   TTF_Font* m_FontText;
 
    // Graphics state info:
 

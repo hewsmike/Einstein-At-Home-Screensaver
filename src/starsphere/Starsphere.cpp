@@ -615,32 +615,27 @@ void Starsphere::initialize(const int width, const int height, const Resource *f
         }
 	else {
         // NB : initialization of logo font instances is done in subclasses!
+		// create medium font instances using font resource.
+		m_FontHeader = new TTF_OpenFontRW(SDL_RWFromMem(&m_FontResource->data()->at(0),
+                                                        m_FontResource->data()->size()),
+                                          0,
+                                          13);
 
-		// create medium font instances using font resource (base address + size)
-		m_FontHeader = new OGLFT::Translucent(
-									&m_FontResource->data()->at(0),
-									m_FontResource->data()->size(),
-									13, 78 );
-
-		if ( m_FontHeader == 0 || !m_FontHeader->isValid() ) {
+		if(m_FontHeader == 0) {
 		     cerr << "Could not construct header font face from in memory resource!" << endl;
 		     return;
-		}
-
-		m_FontHeader->setForegroundColor(1.0, 1.0, 0.0, 1.0);
+            }
 
 		// create small font instances using font resource (base address + size)
-		m_FontText = new OGLFT::Translucent(
-									&m_FontResource->data()->at(0),
-									m_FontResource->data()->size(),
-									11, 72 );
+		m_FontHeader = new TTF_OpenFontRW(SDL_RWFromMem(&m_FontResource->data()->at(0),
+                                                        m_FontResource->data()->size()),
+                                          0,
+                                          11);
 
-		if ( m_FontText == 0 || !m_FontText->isValid() ) {
+		if(m_FontText == 0) {
 		     cerr << "Could not construct text font face from in memory resource!" << endl;
 		     return;
-		}
-
-		m_FontText->setForegroundColor(0.75, 0.75, 0.75, 1.0);
+            }
         }
 
 	// setup initial dimensions
