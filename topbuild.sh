@@ -41,6 +41,7 @@ FREETYPE_VERSION=2.5.1
 GLEW_VERSION=1.10.0
 LIBXML_VERSION=2.7.2
 SDL_VERSION=2.0.1
+SDL_TTF_VERSION=2.0.12
 
 # Target variants.
 TARGET_NONE=0
@@ -76,6 +77,7 @@ TBS_FREETYPE_RETRIEVED=3
 TBS_GLEW_RETRIEVED=4
 TBS_LIBXML_RETRIEVED=5
 TBS_SDL_RETRIEVED=6
+TBS_SDL_TTF_RETRIEVED=7
 TBS_RETRIEVED=8
 
 # No topbuild state set initially.
@@ -205,6 +207,29 @@ retrieve_sdl() {
     return 0
     }
 
+retrieve_sdl_ttf() {
+    SDL_TTF_RETRIEVE_STR=SDL2_ttf-$SDL_TTF_VERSION
+    SDL_TTF_RETRIEVE_FILE=$SDL_TTF_RETRIEVE_STR.tar.gz
+    SDL_TTF_RETRIEVE_DOMAIN=http://www.libsdl.org/SDL_ttf/release/
+    SDL_TTF_RETRIEVE_PATH=$SDL_TTF_RETRIEVE_DOMAIN$SDL_TTF_RETRIEVE_FILE
+
+    log "Retrieving SDL2 TTF(this may take a while)..."
+    mkdir -p $ROOT/retrieval/sdl2-ttf >> $LOGFILE || failure
+
+    cd $ROOT/retrieval || failure
+    rm -f $SDL_TTF_RETRIEVE_FILE >> $LOGFILE 2>&1 || failure
+    wget $SDL_TTF_RETRIEVE_PATH >> $LOGFILE 2>&1 || failure
+    tar -xzf $SDL_TTF_RETRIEVE_FILE >> $LOGFILE 2>&1 || failure
+    rm $SDL_TTF_RETRIEVE_FILE >> $LOGFILE 2>&1 || failure
+    # substitute old source tree
+    rm -rf sdl2-ttf >> $LOGFILE 2>&1 || failure
+    mv $SDL_TTF_RETRIEVE_STR sdl2-ttf >> $LOGFILE 2>&1 || failure
+
+    save_topbuild_state $TBS_SDL_TTF_RETRIEVED
+
+    return 0
+    }
+
 ### functions (utility) ####################################################
 
 distclean() {
@@ -289,6 +314,11 @@ check_retrieval() {
     if [ $TOPBUILDSTATE -lt $TBS_SDL_RETRIEVED ]; then
         retrieve_sdl || failure
         save_topbuild_state $TBS_SDL_RETRIEVED
+    fi
+
+    if [ $TOPBUILDSTATE -lt $TBS_SDL_TTF_RETRIEVED ]; then
+        retrieve_sdl_ttf || failure
+        save_topbuild_state $TBS_SDL_TTF_RETRIEVED
     fi
 
     save_topbuild_state $TBS_RETRIEVED

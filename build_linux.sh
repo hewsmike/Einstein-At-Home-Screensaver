@@ -51,6 +51,7 @@ BS_BUILD_FREETYPE=3
 BS_BUILD_GLEW=4
 BS_BUILD_LIBXML=5
 BS_BUILD_SDL=6
+BS_BUILD_SDL_TTF=7
 
 # No buildstate set initially.
 BUILDSTATE=$BS_NONE
@@ -108,6 +109,7 @@ prepare_tree() {
     mkdir -p $ROOT/build/glew >> $LOGFILE || failure
     mkdir -p $ROOT/build/libxml2 >> $LOGFILE || failure
     mkdir -p $ROOT/build/sdl2 >> $LOGFILE || failure
+    mkdir -p $ROOT/build/sdl2-ttf >> $LOGFILE || failure
 
     mkdir -p $ROOT/install >> $LOGFILE || failure
     mkdir -p $ROOT/install/bin >> $LOGFILE || failure
@@ -347,6 +349,30 @@ build_sdl() {
     return 0
     }
 
+build_sdl_ttf() {
+    if [ $BUILDSTATE -ge $BS_BUILD_SDL_TTF ]; then
+        return 0
+    fi
+
+    cd $ROOT/3rdparty/sdl2-ttf || failure
+    chmod +x autogen.sh >> $LOGFILE 2>&1 || failure
+    ./autogen.sh >> $LOGFILE 2>&1 || failure
+    chmod +x configure >> $LOGFILE 2>&1 || failure
+    cd $ROOT/build/sdl2-ttf || failure
+    $ROOT/3rdparty/sdl2-ttf/configure --prefix=$ROOT/install --enable-shared=no --enable-static=yes --enable-screensaver=yes >> $LOGFILE 2>&1 || failure
+
+
+    log "Building SDL TTF(this may take a while)..."
+    make >> $LOGFILE 2>&1 || failure
+    make install >> $LOGFILE 2>&1 || failure
+
+    log "Successfully built and installed SDL TTF!"
+
+    save_build_state $BS_BUILD_SDL_TTF || failure
+
+    return 0
+    }
+
 ### specific build functions ###########################################################################################
 
 build_orc() {
@@ -415,6 +441,7 @@ build_linux() {
     build_glew || failure
     build_libxml || failure
     build_sdl || failure
+    build_sdl_ttf || failure
 
     # Now client code.
     build_orc || failure
