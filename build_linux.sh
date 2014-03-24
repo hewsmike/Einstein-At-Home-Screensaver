@@ -431,6 +431,20 @@ build_ogl_utility() {
     return 0
     }
 
+build_product() {
+    log "Building $PRODUCT_NAME [Application]..."
+    export PROJECT_ROOT=$ROOT || failure
+    cd $ROOT/build/$PRODUCT || failure
+    cp $ROOT/src/$PRODUCT/*.res . >> $LOGFILE 2>&1 || failure
+    cp -f $ROOT/src/$PRODUCT/Makefile.common Makefile >> $LOGFILE 2>&1 || failure
+    make SYSTEM="linux" PRODUCT=$PRODUCT_NAME >> $LOGFILE 2>&1 || failure
+
+    make install >> $LOGFILE 2>&1 || failure
+    log "Successfully built and installed $PRODUCT_NAME [Application]!"
+
+    return 0
+    }
+
 build_linux() {
     log "Important for an official build: let CC and CXX point to gcc/g++ 4.6+ !"
     mkdir -p $ROOT/build/$PRODUCT >> $LOGFILE || failure
@@ -447,6 +461,7 @@ build_linux() {
     build_orc || failure
     build_framework || failure
     build_ogl_utility || failure
+    build_product || failure
 
     return 0
     }
