@@ -210,7 +210,7 @@ retrieve_sdl() {
 retrieve_sdl_ttf() {
     SDL_TTF_RETRIEVE_STR=SDL2_ttf-$SDL_TTF_VERSION
     SDL_TTF_RETRIEVE_FILE=$SDL_TTF_RETRIEVE_STR.tar.gz
-    SDL_TTF_RETRIEVE_DOMAIN=http://www.libsdl.org/SDL_ttf/release/
+    SDL_TTF_RETRIEVE_DOMAIN=https://www.libsdl.org/projects/SDL_ttf/release/
     SDL_TTF_RETRIEVE_PATH=$SDL_TTF_RETRIEVE_DOMAIN$SDL_TTF_RETRIEVE_FILE
 
     log "Retrieving SDL2 TTF(this may take a while)..."
