@@ -33,13 +33,12 @@
 #include <iostream>
 #include <iomanip>
 #include <sstream>
-
-#include <oglft/OGLFT.h>
-
 #include <util.h>
 
 #include "AbstractGraphicsEngine.h"
 #include "EinsteinGravityAdapter.h"
+
+#include "SDL-ttf.h"
 
 // SIN and COS take arguments in DEGREES
 #define PI 3.14159265
