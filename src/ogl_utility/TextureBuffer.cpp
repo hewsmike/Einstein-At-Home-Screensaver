@@ -22,8 +22,8 @@
 
 #include "ErrorHandler.h"
 
-const GLsizei TextureBuffer::MIN_TEX_WIDTH(64);
-const GLsizei TextureBuffer::MIN_TEX_HEIGHT(64);
+const GLsizei TextureBuffer::MIN_TEX_WIDTH(2);
+const GLsizei TextureBuffer::MIN_TEX_HEIGHT(2);
 
 TextureBuffer::TextureBuffer(const GLvoid* texture_data,
                              GLsizei width,
