@@ -216,6 +216,18 @@ const std::string& ErrorHandler::check_SDL2_Error(void) {
     return last_SDL2_error;
     }
 
+const std::string& ErrorHandler::check_SDL2_TTF_Error(void) {
+    // Retrieve and store a message about the most recent error
+    // since call to SDL_SetError(). Repeated calls to TTF_GetError
+    // will only ever return the same last error.
+    last_SDL2_TTF_error = TTF_GetError();
+
+    // Clearout any message.
+    TTF_SetError("");
+
+    return last_SDL2_TTF_error;
+    }
+
 std::string ErrorHandler::convertGLstring(const GLubyte* glstring) {
     // gluErrorString(), and others, return 'const GLubyte *' - essentially
     // devolving to 'const unsigned char *'  - but string expects

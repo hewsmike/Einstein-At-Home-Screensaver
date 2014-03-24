@@ -99,6 +99,20 @@ class ErrorHandler {
         static const std::string& check_SDL2_Error(void);
 
         /**
+         * \brief Check the current SDL2 TTF state for error, and return any error
+         * message.
+         *
+         *      Only the most recent, if any, error is reported upon since
+         * the last call to TTF_SetError(). Return value will be an empty string
+         * if there is no error to report. Before using this function I recommended
+         * testing of any return value of a given SDL TTF function to see if any error
+         * occurred at all, before/if calling this method.
+         *
+         * \return : an std::string version of any SDL TTF error message.
+         */
+        static const std::string& check_SDL2_TTF_Error(void);
+
+        /**
          * \brief Transform an OpenGL string type to an STL string type.
          *
          * \param glstring : the OpenGL string
@@ -123,6 +137,9 @@ class ErrorHandler {
 
         /// Most recently polled SDL2 error.
         static std::string last_SDL2_error;
+
+        /// Most recently polled SDL2 TTF error.
+        static std::string last_SDL2_TTF_error
 
         /**
          * \brief Constructor ( private since this a static class )
