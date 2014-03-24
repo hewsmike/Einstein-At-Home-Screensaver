@@ -27,6 +27,7 @@
 #include <svn_version.h>
 
 #include "../erp_git_version.h"
+#include "SDL.h"
 
 #include "AbstractGraphicsEngine.h"
 #include "ErrorHandler.h"
@@ -83,17 +84,33 @@ int main(int argc, char **argv) {
     // using any other SDL function ! :-0
     SDL_SetMainReady();
     if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) != 0) {
-        stringstream init_error;
-        init_error << "\nUnable to initialize SDL:  "
-                   << ErrorHandler::check_SDL2_Error()
-                   << std::endl;
-        ErrorHandler::record(init_error.str(), ErrorHandler::FATAL);
+        // Failed, which is FATAL.
+        stringstream sdl_init_error;
+        sdl_init_error << "\nUnable to initialize SDL:  "
+                       << ErrorHandler::check_SDL2_Error()
+                       << std::endl;
+        ErrorHandler::record(sdl_init_error.str(), ErrorHandler::FATAL);
         }
 
     // At this point SDL initialisation will have succeeded, so make sure
     // that ( for whatever 'normal' exit modes later occur ) SDL will be
     // cleaned up.
     atexit(SDL_Quit);
+
+    // Attempt to initialise SDL TTF.
+    if(TTF_Init() != 0) {
+        // Failed, which is FATAL.
+        stringstream sdl_ttf_init_error;
+        sdl_ttf_init_error << "\nUnable to initialize SDL TTF:  "
+                           << << ErrorHandler::check_SDL2_TTF_Error()
+                           << std::endl;
+        ErrorHandler::record(sdl_ttf_init_error.str(), ErrorHandler::FATAL);
+        }
+
+    // At this point SDL TTF initialisation will have succeeded, so make sure
+    // that ( for whatever 'normal' exit modes later occur ) SDL TTF will be
+    // cleaned up.
+    atexit(TTF_Quit);
 
     // Enable BOINC diagnostics
     /// TODO: we might want to optimize this for glibc- and mingw-based stacktraces!
