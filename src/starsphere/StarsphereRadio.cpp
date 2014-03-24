@@ -231,8 +231,8 @@ void StarsphereRadio::renderSearchInformation()
 
 	// disable opt-in quality feature for power spectrum
 	if(m_QualitySetting == BOINCClientAdapter::HighGraphicsQualitySetting) {
-		glDisable(GL_POINT_SMOOTH);
-		glDisable(GL_LINE_SMOOTH);
+//		glDisable(GL_POINT_SMOOTH);
+//		glDisable(GL_LINE_SMOOTH);
 	}
 
 	// power spectrum (no alpha blending)

@@ -26,8 +26,7 @@
 #include "ErrorHandler.h"
 
 Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
-	AbstractGraphicsEngine(sharedMemoryAreaIdentifier)
-{
+	AbstractGraphicsEngine(sharedMemoryAreaIdentifier) {
 	m_FontResource = 0;
 	m_FontLogo1 = 0;
 	m_FontLogo2 = 0;
@@ -62,15 +61,14 @@ Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
 	m_CurrentRightAscension = -1.0;
 	m_CurrentDeclination = -1.0;
 	m_RefreshSearchMarker = true;
-}
+    }
 
-Starsphere::~Starsphere()
-{
+Starsphere::~Starsphere() {
 	if(m_FontLogo1) delete m_FontLogo1;
 	if(m_FontLogo2) delete m_FontLogo2;
 	if(m_FontHeader) delete m_FontHeader;
 	if(m_FontText) delete m_FontText;
-}
+    }
 
 void Starsphere::sphVertex3D(GLfloat RAdeg, GLfloat DEdeg, GLfloat radius)
 {
@@ -79,7 +77,7 @@ void Starsphere::sphVertex3D(GLfloat RAdeg, GLfloat DEdeg, GLfloat radius)
 	x = radius * COS(DEdeg) * COS(RAdeg);
 	z = -radius * COS(DEdeg) * SIN(RAdeg);
 	y = radius * SIN(DEdeg);
-	glVertex3f(x, y, z);
+//	glVertex3f(x, y, z);
 	return;
 }
 
@@ -595,12 +593,12 @@ void Starsphere::resize(const int width, const int height)
 	// make sure the search marker is updated (conditional rendering!)
 	m_RefreshSearchMarker = true;
 
-	// adjust aspect ratio and projection
-	glViewport(0, 0, (GLsizei) width, (GLsizei) height);
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	gluPerspective(95.0, aspect, 0.50, 25.0);
-	glMatrixMode(GL_MODELVIEW);
+//	// adjust aspect ratio and projection
+//	glViewport(0, 0, (GLsizei) width, (GLsizei) height);
+//	glMatrixMode(GL_PROJECTION);
+//	glLoadIdentity();
+//	gluPerspective(95.0, aspect, 0.50, 25.0);
+//	glMatrixMode(GL_MODELVIEW);
 }
 
 /**
@@ -643,9 +641,9 @@ void Starsphere::initialize(const int width, const int height, const Resource *f
 
 	// more font setup and optimizations
 	glPixelStorei( GL_UNPACK_ALIGNMENT, 1 );
-#if defined( GL_RASTER_POSITION_UNCLIPPED_IBM )
-	glEnable( GL_RASTER_POSITION_UNCLIPPED_IBM );
-#endif
+//#if defined( GL_RASTER_POSITION_UNCLIPPED_IBM )
+//	glEnable( GL_RASTER_POSITION_UNCLIPPED_IBM );
+//#endif
 
 	// drawing setup:
 	glClearColor(0.0, 0.0, 0.0, 0.0); // background is black
@@ -656,22 +654,22 @@ void Starsphere::initialize(const int width, const int height, const Resource *f
 	// enable opt-in quality feature
 	if(m_BoincAdapter.graphicsQualitySetting() == BOINCClientAdapter::HighGraphicsQualitySetting) {
 		// some polishing
-		glShadeModel(GL_SMOOTH);
-		glEnable(GL_POINT_SMOOTH);
-		glEnable(GL_LINE_SMOOTH);
-		glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
-		glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+//		glShadeModel(GL_SMOOTH);
+//		glEnable(GL_POINT_SMOOTH);
+//		glEnable(GL_LINE_SMOOTH);
+//		glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
+//		glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
 	}
 
 	// FSAA will be enabled explicitly when needed!
-	glDisable(GL_MULTISAMPLE_ARB);
+//	glDisable(GL_MULTISAMPLE_ARB);
 
 	// we need alpha blending for proper font rendering
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	// enable depth buffering for 3D graphics
-	glClearDepth(1.0f);
+//	glClearDepth(1.0f);
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
 
@@ -680,10 +678,10 @@ void Starsphere::initialize(const int width, const int height, const Resource *f
 	   m_BoincAdapter.graphicsQualitySetting() == BOINCClientAdapter::HighGraphicsQualitySetting)
 	{
 		// fog aids depth perception
-		glEnable(GL_FOG);
-		glFogi(GL_FOG_MODE, GL_EXP2);
-		glFogf(GL_FOG_DENSITY, 0.085);
-		glHint(GL_FOG_HINT, GL_DONT_CARE);
+//		glEnable(GL_FOG);
+//		glFogi(GL_FOG_MODE, GL_EXP2);
+//		glFogf(GL_FOG_DENSITY, 0.085);
+//		glHint(GL_FOG_HINT, GL_DONT_CARE);
 	}
 
 	// create pre-drawn display lists
@@ -694,7 +692,7 @@ void Starsphere::initialize(const int width, const int height, const Resource *f
 	make_axes();
 	make_globe();
 
-	glDisable(GL_CLIP_PLANE0);
+//	glDisable(GL_CLIP_PLANE0);
 	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 }
 
@@ -734,7 +732,7 @@ void Starsphere::render(const double timeOfDay)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// now draw the scene...
-	glLoadIdentity();
+//	glLoadIdentity();
 
 	// Vary the viewpoint with both a long period wobble of the elevation
 	// of the view and a longer period zoom in/out that might even penetrate
@@ -750,23 +748,23 @@ void Starsphere::render(const double timeOfDay)
 	zvp = vp_rad * SIN(vp_theta) * COS(vp_phi);
 	yvp = vp_rad * COS(vp_theta);
 
-	gluLookAt(xvp, yvp, zvp, // eyes position
-	        0.0, 0.0, 0.0, // looking toward here
-	        0.0, 1.0, 0.0); // which way is up?  y axis!
+//	gluLookAt(xvp, yvp, zvp, // eyes position
+//	        0.0, 0.0, 0.0, // looking toward here
+//	        0.0, 1.0, 0.0); // which way is up?  y axis!
 
 	// draw axes before any rotation so they stay put
-	if (isFeature(AXES)) glCallList(Axes);
-
-	// draw the sky sphere, with rotation:
-	glPushMatrix();
-	glRotatef(Zrot - rotation_offset, 0.0, 1.0, 0.0);
+//	if (isFeature(AXES)) glCallList(Axes);
+//
+//	// draw the sky sphere, with rotation:
+//	glPushMatrix();
+//	glRotatef(Zrot - rotation_offset, 0.0, 1.0, 0.0);
 
 	// stars, pulsars, supernovae, grid
-	if (isFeature(STARS))			glCallList(Stars);
-	if (isFeature(PULSARS))			glCallList(Pulsars);
-	if (isFeature(SNRS))			glCallList(SNRs);
-	if (isFeature(CONSTELLATIONS))	glCallList(Constellations);
-	if (isFeature(GLOBE))			glCallList(sphGrid);
+//	if (isFeature(STARS))			glCallList(Stars);
+//	if (isFeature(PULSARS))			glCallList(Pulsars);
+//	if (isFeature(SNRS))			glCallList(SNRs);
+//	if (isFeature(CONSTELLATIONS))	glCallList(Constellations);
+//	if (isFeature(GLOBE))			glCallList(sphGrid);
 
 	// observatories move an extra 15 degrees/hr since they were drawn
 //	if (isFeature(OBSERVATORIES)) {
