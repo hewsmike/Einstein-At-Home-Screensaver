@@ -73,7 +73,6 @@ class Pipeline {
         void utilise(GLenum primitive, GLsizei count);
 
     private:
-        // These are merely set during construction.
         /// The Program reference.
         Program& m_program;
 
@@ -86,4 +85,3 @@ class Pipeline {
  */
 
 #endif /*PIPELINE_H_*/
-

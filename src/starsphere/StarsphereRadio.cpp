@@ -73,30 +73,30 @@ void StarsphereRadio::initialize(const int width, const int height, const Resour
 //	}
 
 	// create large font instances using font resource (base address + size)
-	m_FontLogo1 = new OGLFT::Translucent(
-								&m_FontResource->data()->at(0),
-								m_FontResource->data()->size(),
-								26, 78 );
-
-	if ( m_FontLogo1 == 0 || !m_FontLogo1->isValid() ) {
-	     cerr << "Could not construct logo1 font face from in memory resource!" << endl;
-	     return;
-	}
-
-	m_FontLogo1->setForegroundColor(1.0, 1.0, 0.0, 1.0);
-
-	// create medium font instances using font resource (base address + size)
-	m_FontLogo2 = new OGLFT::Translucent(
-								&m_FontResource->data()->at(0),
-								m_FontResource->data()->size(),
-								12, 72 );
-
-	if ( m_FontLogo2 == 0 || !m_FontLogo2->isValid() ) {
-	     cerr << "Could not construct logo2 font face from in memory resource!" << endl;
-	     return;
-	}
-
-	m_FontLogo2->setForegroundColor(0.75, 0.75, 0.75, 1.0);
+//	m_FontLogo1 = new OGLFT::Translucent(
+//								&m_FontResource->data()->at(0),
+//								m_FontResource->data()->size(),
+//								26, 78 );
+//
+//	if ( m_FontLogo1 == 0 || !m_FontLogo1->isValid() ) {
+//	     cerr << "Could not construct logo1 font face from in memory resource!" << endl;
+//	     return;
+//	}
+//
+//	m_FontLogo1->setForegroundColor(1.0, 1.0, 0.0, 1.0);
+//
+//	// create medium font instances using font resource (base address + size)
+//	m_FontLogo2 = new OGLFT::Translucent(
+//								&m_FontResource->data()->at(0),
+//								m_FontResource->data()->size(),
+//								12, 72 );
+//
+//	if ( m_FontLogo2 == 0 || !m_FontLogo2->isValid() ) {
+//	     cerr << "Could not construct logo2 font face from in memory resource!" << endl;
+//	     return;
+//	}
+//
+//	m_FontLogo2->setForegroundColor(0.75, 0.75, 0.75, 1.0);
 
 	// prepare power spectrum
 	generatePowerSpectrumCoordSystem(m_PowerSpectrumXPos, m_PowerSpectrumYPos);
@@ -124,7 +124,7 @@ void StarsphereRadio::resize(const int width, const int height)
 }
 
 void StarsphereRadio::renderAdditionalObservatories() {
-	glCallList(m_areciboObservatory);
+//	glCallList(m_areciboObservatory);
 }
 
 void StarsphereRadio::refreshBOINCInformation()
@@ -208,26 +208,26 @@ void StarsphereRadio::refreshBOINCInformation()
 
 void StarsphereRadio::renderSearchInformation()
 {
-	// left info block
-	m_FontHeader->draw(m_XStartPosLeft, m_YStartPosBottom, "BOINC Information");
-	m_FontText->draw(m_XStartPosLeft, m_Y1StartPosBottom, m_UserName.c_str());
-	m_FontText->draw(m_XStartPosLeft, m_Y2StartPosBottom, m_TeamName.c_str());
-	m_FontText->draw(m_XStartPosLeft, m_Y3StartPosBottom, m_UserCredit.c_str());
-	m_FontText->draw(m_XStartPosLeft, m_Y4StartPosBottom, m_UserRACredit.c_str());
-	m_FontText->draw(m_XStartPosLeft, m_Y5StartPosBottom, m_WUPercentDone.c_str());
-	m_FontText->draw(m_XStartPosLeft, m_Y6StartPosBottom, m_WUCPUTime.c_str());
-
-	// right info block
-	m_FontHeader->draw(m_XStartPosRight, m_YStartPosBottom, "Search Information");
-	m_FontText->draw(m_XStartPosRight, m_Y1StartPosBottom, m_WUSkyPosRightAscension.c_str());
-	m_FontText->draw(m_XStartPosRight, m_Y2StartPosBottom, m_WUSkyPosDeclination.c_str());
-	m_FontText->draw(m_XStartPosRight, m_Y3StartPosBottom, m_WUDispersionMeasure.c_str());
-	m_FontText->draw(m_XStartPosRight, m_Y4StartPosBottom, m_WUTemplateOrbitalRadius.c_str());
-	m_FontText->draw(m_XStartPosRight, m_Y5StartPosBottom, m_WUTemplateOrbitalPeriod.c_str());
-	m_FontText->draw(m_XStartPosRight, m_Y6StartPosBottom, m_WUTemplateOrbitalPhase.c_str());
-
-	// power spectrum label
-	m_FontText->draw(m_PowerSpectrumLabelXPos, m_PowerSpectrumLabelYPos, "Radio Signal Power Spectrum");
+//	// left info block
+//	m_FontHeader->draw(m_XStartPosLeft, m_YStartPosBottom, "BOINC Information");
+//	m_FontText->draw(m_XStartPosLeft, m_Y1StartPosBottom, m_UserName.c_str());
+//	m_FontText->draw(m_XStartPosLeft, m_Y2StartPosBottom, m_TeamName.c_str());
+//	m_FontText->draw(m_XStartPosLeft, m_Y3StartPosBottom, m_UserCredit.c_str());
+//	m_FontText->draw(m_XStartPosLeft, m_Y4StartPosBottom, m_UserRACredit.c_str());
+//	m_FontText->draw(m_XStartPosLeft, m_Y5StartPosBottom, m_WUPercentDone.c_str());
+//	m_FontText->draw(m_XStartPosLeft, m_Y6StartPosBottom, m_WUCPUTime.c_str());
+//
+//	// right info block
+//	m_FontHeader->draw(m_XStartPosRight, m_YStartPosBottom, "Search Information");
+//	m_FontText->draw(m_XStartPosRight, m_Y1StartPosBottom, m_WUSkyPosRightAscension.c_str());
+//	m_FontText->draw(m_XStartPosRight, m_Y2StartPosBottom, m_WUSkyPosDeclination.c_str());
+//	m_FontText->draw(m_XStartPosRight, m_Y3StartPosBottom, m_WUDispersionMeasure.c_str());
+//	m_FontText->draw(m_XStartPosRight, m_Y4StartPosBottom, m_WUTemplateOrbitalRadius.c_str());
+//	m_FontText->draw(m_XStartPosRight, m_Y5StartPosBottom, m_WUTemplateOrbitalPeriod.c_str());
+//	m_FontText->draw(m_XStartPosRight, m_Y6StartPosBottom, m_WUTemplateOrbitalPhase.c_str());
+//
+//	// power spectrum label
+//	m_FontText->draw(m_PowerSpectrumLabelXPos, m_PowerSpectrumLabelYPos, "Radio Signal Power Spectrum");
 
 	// disable opt-in quality feature for power spectrum
 	if(m_QualitySetting == BOINCClientAdapter::HighGraphicsQualitySetting) {
@@ -236,18 +236,18 @@ void StarsphereRadio::renderSearchInformation()
 	}
 
 	// power spectrum (no alpha blending)
-	glDisable(GL_BLEND);
-	glPushMatrix();
-	glLoadIdentity();
-	glCallList(m_PowerSpectrumCoordSystemList);
-	glCallList(m_PowerSpectrumBinList);
-	glPopMatrix();
-	glEnable(GL_BLEND);
+//	glDisable(GL_BLEND);
+//	glPushMatrix();
+//	glLoadIdentity();
+//	glCallList(m_PowerSpectrumCoordSystemList);
+//	glCallList(m_PowerSpectrumBinList);
+//	glPopMatrix();
+//	glEnable(GL_BLEND);
 
 	// enable opt-in quality feature for power spectrum
-	if(m_QualitySetting == BOINCClientAdapter::HighGraphicsQualitySetting) {
-		glEnable(GL_POINT_SMOOTH);
-		glEnable(GL_LINE_SMOOTH);
+//	if(m_QualitySetting == BOINCClientAdapter::HighGraphicsQualitySetting) {
+//		glEnable(GL_POINT_SMOOTH);
+//		glEnable(GL_LINE_SMOOTH);
 	}
 }
 
@@ -257,31 +257,31 @@ void StarsphereRadio::generatePowerSpectrumCoordSystem(const int originX, const 
 	GLfloat offsetY = (GLfloat)originY;
 
 	// delete existing, create new (required for windoze)
-	if(m_PowerSpectrumCoordSystemList) glDeleteLists(m_PowerSpectrumCoordSystemList, 1);
-	m_PowerSpectrumCoordSystemList = glGenLists(1);
-	glNewList(m_PowerSpectrumCoordSystemList, GL_COMPILE);
-
-		glLineWidth(m_PowerSpectrumAxesWidth);
-
-		// draw coordinate system axes
-		glBegin(GL_LINE_STRIP);
-			glColor4f(1.0, 1.0, 0.0, 1.0);
-			glVertex2f(offsetX, offsetY + m_PowerSpectrumHeight);
-			glVertex2f(offsetX, offsetY);
-			glVertex2f(offsetX + m_PowerSpectrumWidth + 1, offsetY);
-		glEnd();
-
-		glPointSize(m_PowerSpectrumAxesWidth);
-
-		// draw origin (axes joint)
-		glBegin(GL_POINTS);
-			glColor4f(1.0, 1.0, 0.0, 1.0);
-			glVertex2f(offsetX, offsetY);
-		glEnd();
-
-		//TODO: for high quality mode: draw coord. system backdrop with alpha = ~0.3 (attn: alpha blend. deactivated!)
-
-	glEndList();
+//	if(m_PowerSpectrumCoordSystemList) glDeleteLists(m_PowerSpectrumCoordSystemList, 1);
+//	m_PowerSpectrumCoordSystemList = glGenLists(1);
+//	glNewList(m_PowerSpectrumCoordSystemList, GL_COMPILE);
+//
+//		glLineWidth(m_PowerSpectrumAxesWidth);
+//
+//		// draw coordinate system axes
+//		glBegin(GL_LINE_STRIP);
+//			glColor4f(1.0, 1.0, 0.0, 1.0);
+//			glVertex2f(offsetX, offsetY + m_PowerSpectrumHeight);
+//			glVertex2f(offsetX, offsetY);
+//			glVertex2f(offsetX + m_PowerSpectrumWidth + 1, offsetY);
+//		glEnd();
+//
+//		glPointSize(m_PowerSpectrumAxesWidth);
+//
+//		// draw origin (axes joint)
+//		glBegin(GL_POINTS);
+//			glColor4f(1.0, 1.0, 0.0, 1.0);
+//			glVertex2f(offsetX, offsetY);
+//		glEnd();
+//
+//		//TODO: for high quality mode: draw coord. system backdrop with alpha = ~0.3 (attn: alpha blend. deactivated!)
+//
+//	glEndList();
 }
 
 void StarsphereRadio::generatePowerSpectrumBins(const int originX, const int originY)
@@ -303,35 +303,35 @@ void StarsphereRadio::generatePowerSpectrumBins(const int originX, const int ori
 	}
 
 	// delete existing, create new (required for windoze)
-	if(m_PowerSpectrumBinList) glDeleteLists(m_PowerSpectrumBinList, 1);
-	m_PowerSpectrumBinList = glGenLists(1);
-	glNewList(m_PowerSpectrumBinList, GL_COMPILE);
-
-		glLineWidth(m_PowerSpectrumBinWidth);
-
-		// draw frequency bins
-		glBegin(GL_LINES);
-			// iterate over all bins
-			for(int i = 0; i < POWERSPECTRUM_BINS; ++i) {
-				// show potential candidates (power >= 100)...
-				if(m_PowerSpectrumFreqBins->at(i) >= 100) {
-					 // ...in bright white
-					glColor4f(1.0, 1.0, 1.0, 1.0);
-				}
-				else {
-					// ...in light grey
-					glColor4f(0.66, 0.66, 0.66, 1.0);
-				}
-				// lower vertex
-				glVertex2f(offsetX + axesXOffset + i*binXOffset,
-						   offsetY + axesYOffset);
-				// upper vertex
-				glVertex2f(offsetX + axesXOffset + i*binXOffset,
-						   offsetY + axesYOffset + m_PowerSpectrumFreqBins->at(i) / normalizationFactor);
-			}
-		glEnd();
-
-	glEndList();
+//	if(m_PowerSpectrumBinList) glDeleteLists(m_PowerSpectrumBinList, 1);
+//	m_PowerSpectrumBinList = glGenLists(1);
+//	glNewList(m_PowerSpectrumBinList, GL_COMPILE);
+//
+//		glLineWidth(m_PowerSpectrumBinWidth);
+//
+//		// draw frequency bins
+//		glBegin(GL_LINES);
+//			// iterate over all bins
+//			for(int i = 0; i < POWERSPECTRUM_BINS; ++i) {
+//				// show potential candidates (power >= 100)...
+//				if(m_PowerSpectrumFreqBins->at(i) >= 100) {
+//					 // ...in bright white
+//					glColor4f(1.0, 1.0, 1.0, 1.0);
+//				}
+//				else {
+//					// ...in light grey
+//					glColor4f(0.66, 0.66, 0.66, 1.0);
+//				}
+//				// lower vertex
+//				glVertex2f(offsetX + axesXOffset + i*binXOffset,
+//						   offsetY + axesYOffset);
+//				// upper vertex
+//				glVertex2f(offsetX + axesXOffset + i*binXOffset,
+//						   offsetY + axesYOffset + m_PowerSpectrumFreqBins->at(i) / normalizationFactor);
+//			}
+//		glEnd();
+//
+//	glEndList();
 }
 
 void StarsphereRadio::generateObservatories(float dimFactor)
@@ -367,88 +367,88 @@ void StarsphereRadio::generateObservatories(float dimFactor)
 	DEdeg= Lat;
 
 	// delete existing, create new (required for windoze)
-	if(m_areciboObservatory) glDeleteLists(m_areciboObservatory, 1);
-	m_areciboObservatory = glGenLists(1);
-	glNewList(m_areciboObservatory, GL_COMPILE);
-
-		// enable opt-in quality feature FSAA (GL_POLYGON_SMOOTH is discouraged)
-		if(m_QualitySetting == BOINCClientAdapter::HighGraphicsQualitySetting) {
-			glEnable(GL_MULTISAMPLE_ARB);
-		}
-
-		// we don't dim Arecibo, just IFOs
-		glColor3f(0.75, 0.75, 0.75);
-
-		// lines used to draw triangles
-		glLineWidth(1.0);
-
-		// draw antenna dish
-		float originX = RAdeg;
-		float originY = DEdeg;
-		float vectorY1 = originY;
-		float vectorX1 = originX;
-		float vectorX;
-		float vectorY;
-		float angle;
-
-		// make sure both side are visible
-		glDisable(GL_CULL_FACE);
-
-		glBegin(GL_TRIANGLES);
-			for(int i=0; i <= 360; i++) {
-				angle = ((double)i) * factorRadDeg;
-				vectorX = originX + dishRadius * (float)sin(angle);
-				vectorY = originY + dishRadius * (float)cos(angle);
-				sphVertex(originX, originY);
-				sphVertex(vectorX1, vectorY1);
-				sphVertex(vectorX, vectorY);
-				vectorY1 = vectorY;
-				vectorX1 = vectorX;
-			}
-		glEnd();
-
-		// draw receiver dome
-		glColor3f(0.5, 0.5, 0.5);
-		glBegin(GL_TRIANGLES);
-			for(int i=0; i <= 360; i++) {
-				angle = ((double)i) * factorRadDeg;
-				vectorX = originX + domeRadius * (float)sin(angle);
-				vectorY = originY + domeRadius * (float)cos(angle);
-				sphVertex(originX, originY);
-				sphVertex(vectorX1, vectorY1);
-				sphVertex(vectorX, vectorY);
-				vectorY1 = vectorY;
-				vectorX1 = vectorX;
-			}
-		glEnd();
-
-		// enable culling again
-		glEnable(GL_CULL_FACE);
-
-        // draw receiver struts
-		glColor3f(0.0, 0.0, 0.0);
-		glBegin(GL_LINES);
-			// north guide
-			sphVertex3D(RAdeg, DEdeg, radius);
-			sphVertex3D(RAdeg, DEdeg+1.0, radius);
-		glEnd();
-		glBegin(GL_LINE_STRIP);
-			// south-west & south-east guides:
-			sphVertex3D(RAdeg-0.7, DEdeg-0.7, radius);
-			sphVertex3D(RAdeg, DEdeg, radius);
-			sphVertex3D(RAdeg+0.7, DEdeg-0.7, radius);
-		glEnd();
-
-		// disable opt-in quality feature FSAA again
-		if(m_QualitySetting == BOINCClientAdapter::HighGraphicsQualitySetting) {
-			glDisable(GL_MULTISAMPLE_ARB);
-		}
-
-	glEndList();
+//	if(m_areciboObservatory) glDeleteLists(m_areciboObservatory, 1);
+//	m_areciboObservatory = glGenLists(1);
+//	glNewList(m_areciboObservatory, GL_COMPILE);
+//
+//		// enable opt-in quality feature FSAA (GL_POLYGON_SMOOTH is discouraged)
+//		if(m_QualitySetting == BOINCClientAdapter::HighGraphicsQualitySetting) {
+//			glEnable(GL_MULTISAMPLE_ARB);
+//		}
+//
+//		// we don't dim Arecibo, just IFOs
+//		glColor3f(0.75, 0.75, 0.75);
+//
+//		// lines used to draw triangles
+//		glLineWidth(1.0);
+//
+//		// draw antenna dish
+//		float originX = RAdeg;
+//		float originY = DEdeg;
+//		float vectorY1 = originY;
+//		float vectorX1 = originX;
+//		float vectorX;
+//		float vectorY;
+//		float angle;
+//
+//		// make sure both side are visible
+//		glDisable(GL_CULL_FACE);
+//
+//		glBegin(GL_TRIANGLES);
+//			for(int i=0; i <= 360; i++) {
+//				angle = ((double)i) * factorRadDeg;
+//				vectorX = originX + dishRadius * (float)sin(angle);
+//				vectorY = originY + dishRadius * (float)cos(angle);
+//				sphVertex(originX, originY);
+//				sphVertex(vectorX1, vectorY1);
+//				sphVertex(vectorX, vectorY);
+//				vectorY1 = vectorY;
+//				vectorX1 = vectorX;
+//			}
+//		glEnd();
+//
+//		// draw receiver dome
+//		glColor3f(0.5, 0.5, 0.5);
+//		glBegin(GL_TRIANGLES);
+//			for(int i=0; i <= 360; i++) {
+//				angle = ((double)i) * factorRadDeg;
+//				vectorX = originX + domeRadius * (float)sin(angle);
+//				vectorY = originY + domeRadius * (float)cos(angle);
+//				sphVertex(originX, originY);
+//				sphVertex(vectorX1, vectorY1);
+//				sphVertex(vectorX, vectorY);
+//				vectorY1 = vectorY;
+//				vectorX1 = vectorX;
+//			}
+//		glEnd();
+//
+//		// enable culling again
+//		glEnable(GL_CULL_FACE);
+//
+//        // draw receiver struts
+//		glColor3f(0.0, 0.0, 0.0);
+//		glBegin(GL_LINES);
+//			// north guide
+//			sphVertex3D(RAdeg, DEdeg, radius);
+//			sphVertex3D(RAdeg, DEdeg+1.0, radius);
+//		glEnd();
+//		glBegin(GL_LINE_STRIP);
+//			// south-west & south-east guides:
+//			sphVertex3D(RAdeg-0.7, DEdeg-0.7, radius);
+//			sphVertex3D(RAdeg, DEdeg, radius);
+//			sphVertex3D(RAdeg+0.7, DEdeg-0.7, radius);
+//		glEnd();
+//
+//		// disable opt-in quality feature FSAA again
+//		if(m_QualitySetting == BOINCClientAdapter::HighGraphicsQualitySetting) {
+//			glDisable(GL_MULTISAMPLE_ARB);
+//		}
+//
+//	glEndList();
 }
 
 void StarsphereRadio::renderLogo()
 {
-	m_FontLogo1->draw(m_XStartPosLeft, m_YStartPosTop, "Einstein@Home");
-	m_FontLogo2->draw(m_XStartPosLeft, m_YStartPosTop - m_YOffsetLarge, "International Year of Astronomy 2009");
+//	m_FontLogo1->draw(m_XStartPosLeft, m_YStartPosTop, "Einstein@Home");
+//	m_FontLogo2->draw(m_XStartPosLeft, m_YStartPosTop - m_YOffsetLarge, "International Year of Astronomy 2009");
 }

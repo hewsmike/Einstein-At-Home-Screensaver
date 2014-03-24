@@ -224,4 +224,3 @@ double EinsteinRadioAdapter::wuFractionDone() const {
 double EinsteinRadioAdapter::wuCPUTime() const {
    return m_WUCPUTime;
    }
-

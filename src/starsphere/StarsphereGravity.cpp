@@ -52,30 +52,30 @@ void StarsphereGravity::initialize(const int width, const int height, const Reso
 //	}
 
 	// create large font instances using font resource (base address + size)
-	m_FontLogo1 = new OGLFT::Translucent(&m_FontResource->data()->at(0),
-                                         m_FontResource->data()->size(),
-                                         24, 72 );
-
-	if ( m_FontLogo1 == 0 || !m_FontLogo1->isValid() ) {
-	     cerr << "Could not construct logo1 font face from in memory resource!" << endl;
-	     return;
-        }
-
-	m_FontLogo1->setForegroundColor(1.0, 1.0, 0.0, 1.0);
-
-	// create medium font instances using font resource (base address + size)
-	m_FontLogo2 = new OGLFT::Translucent(
-								&m_FontResource->data()->at(0),
-								m_FontResource->data()->size(),
-								13, 78 );
-
-	if ( m_FontLogo2 == 0 || !m_FontLogo2->isValid() ) {
-	     cerr << "Could not construct logo2 font face from in memory resource!" << endl;
-	     return;
-	}
-
-	m_FontLogo2->setForegroundColor(0.75, 0.75, 0.75, 1.0);
-
+//	m_FontLogo1 = new OGLFT::Translucent(&m_FontResource->data()->at(0),
+//                                         m_FontResource->data()->size(),
+//                                         24, 72 );
+//
+//	if ( m_FontLogo1 == 0 || !m_FontLogo1->isValid() ) {
+//	     cerr << "Could not construct logo1 font face from in memory resource!" << endl;
+//	     return;
+//        }
+//
+//	m_FontLogo1->setForegroundColor(1.0, 1.0, 0.0, 1.0);
+//
+//	// create medium font instances using font resource (base address + size)
+//	m_FontLogo2 = new OGLFT::Translucent(
+//								&m_FontResource->data()->at(0),
+//								m_FontResource->data()->size(),
+//								13, 78 );
+//
+//	if ( m_FontLogo2 == 0 || !m_FontLogo2->isValid() ) {
+//	     cerr << "Could not construct logo2 font face from in memory resource!" << endl;
+//	     return;
+//	}
+//
+//	m_FontLogo2->setForegroundColor(0.75, 0.75, 0.75, 1.0);
+//
 	// prepare base class observatories (not dimmed)
 	generateObservatories(1.0);
 }
@@ -151,22 +151,22 @@ void StarsphereGravity::refreshBOINCInformation()
 
 void StarsphereGravity::renderSearchInformation()
 {
-		// clock
-		m_FontLogo1->draw(m_XStartPosClock, m_YStartPosTop, m_CurrentTime.c_str());
-
-		// left info block
-		m_FontHeader->draw(m_XStartPosLeft, m_YStartPosBottom, "BOINC Statistics");
-		m_FontText->draw(m_XStartPosLeft, m_Y1StartPosBottom, m_UserName.c_str());
-		m_FontText->draw(m_XStartPosLeft, m_Y2StartPosBottom, m_TeamName.c_str());
-		m_FontText->draw(m_XStartPosLeft, m_Y3StartPosBottom, m_UserCredit.c_str());
-		m_FontText->draw(m_XStartPosLeft, m_Y4StartPosBottom, m_UserRACredit.c_str());
-
-		// right info block
-		m_FontHeader->draw(m_XStartPosRight, m_YStartPosBottom, "Search Information");
-		m_FontText->draw(m_XStartPosRight, m_Y1StartPosBottom, m_WUSkyPosRightAscension.c_str());
-		m_FontText->draw(m_XStartPosRight, m_Y2StartPosBottom, m_WUSkyPosDeclination.c_str());
-		m_FontText->draw(m_XStartPosRight, m_Y3StartPosBottom, m_WUPercentDone.c_str());
-		m_FontText->draw(m_XStartPosRight, m_Y4StartPosBottom, m_WUCPUTime.c_str());
+//		// clock
+//		m_FontLogo1->draw(m_XStartPosClock, m_YStartPosTop, m_CurrentTime.c_str());
+//
+//		// left info block
+//		m_FontHeader->draw(m_XStartPosLeft, m_YStartPosBottom, "BOINC Statistics");
+//		m_FontText->draw(m_XStartPosLeft, m_Y1StartPosBottom, m_UserName.c_str());
+//		m_FontText->draw(m_XStartPosLeft, m_Y2StartPosBottom, m_TeamName.c_str());
+//		m_FontText->draw(m_XStartPosLeft, m_Y3StartPosBottom, m_UserCredit.c_str());
+//		m_FontText->draw(m_XStartPosLeft, m_Y4StartPosBottom, m_UserRACredit.c_str());
+//
+//		// right info block
+//		m_FontHeader->draw(m_XStartPosRight, m_YStartPosBottom, "Search Information");
+//		m_FontText->draw(m_XStartPosRight, m_Y1StartPosBottom, m_WUSkyPosRightAscension.c_str());
+//		m_FontText->draw(m_XStartPosRight, m_Y2StartPosBottom, m_WUSkyPosDeclination.c_str());
+//		m_FontText->draw(m_XStartPosRight, m_Y3StartPosBottom, m_WUPercentDone.c_str());
+//		m_FontText->draw(m_XStartPosRight, m_Y4StartPosBottom, m_WUCPUTime.c_str());
 }
 
 void StarsphereGravity::generateObservatories(float dimFactor)
@@ -177,6 +177,6 @@ void StarsphereGravity::generateObservatories(float dimFactor)
 
 void StarsphereGravity::renderLogo()
 {
-	m_FontLogo1->draw(m_XStartPosLeft, m_YStartPosTop, "Einstein@Home");
-	m_FontLogo2->draw(m_XStartPosLeft, m_YStartPosTop - m_YOffsetLarge, "World Year of Physics 2005");
+//	m_FontLogo1->draw(m_XStartPosLeft, m_YStartPosTop, "Einstein@Home");
+//	m_FontLogo2->draw(m_XStartPosLeft, m_YStartPosTop - m_YOffsetLarge, "World Year of Physics 2005");
 }

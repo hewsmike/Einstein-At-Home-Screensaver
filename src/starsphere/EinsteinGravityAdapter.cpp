@@ -82,4 +82,3 @@ double EinsteinGravityAdapter::wuFractionDone() const {
 double EinsteinGravityAdapter::wuCPUTime() const {
    return m_WUCPUTime;
 	}
-
