@@ -231,6 +231,11 @@ class WindowManager {
         static const float MILLISECONDS_PER_SECOND;
 
         /**
+         * \brief Swap the buffers
+         */
+        void swap(void) const;
+
+        /**
          * \brief Timer callback to trigger render events
          *
          * This callback is used by an SDL timer registered in \ref eventLoop().

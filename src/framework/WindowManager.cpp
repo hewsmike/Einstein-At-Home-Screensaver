@@ -260,6 +260,8 @@ void WindowManager::eventLoop(void) {
                    (current_event.user.code == WindowManager::RenderEvent)) {
                     // Frame render falling due.
                     eventObservers.front()->render(dtime());
+                    //Swap the buffers.
+                    this->swap();
                     }
 
                 else if((current_event.type == SDL_USEREVENT) &&
@@ -673,4 +675,8 @@ void WindowManager::toggleFullscreen(void) {
 
 void WindowManager::setScreensaverMode(const bool enabled) {
     m_ScreensaverMode = enabled;
+    }
+
+void WindowManager::swap(void) const {
+    SDL_GL_SwapWindow(m_Window);
     }
