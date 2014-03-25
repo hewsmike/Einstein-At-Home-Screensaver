@@ -24,73 +24,74 @@
 
 StarsphereGravity::StarsphereGravity() :
 	Starsphere(EinsteinGravityAdapter::SharedMemoryIdentifier),
-	m_EinsteinAdapter(&m_BoincAdapter)
-{
+	m_EinsteinAdapter(&m_BoincAdapter) {
 	m_CurrentTime = "";
-}
+    }
 
-StarsphereGravity::~StarsphereGravity()
-{
-}
+StarsphereGravity::~StarsphereGravity() {
+    }
 
-void StarsphereGravity::initialize(const int width, const int height, const Resource* font) {
-	Starsphere::initialize(width, height, font);
+void StarsphereGravity::initialize(const int width, const int height, const Resource* font) :
+        Starsphere::initialize(width, height, font) {
 
-    /// TODO - retain this code ? Alternate method/flag ?
-//	// check whether we initialize the first time or have to recycle (required for windoze)
-//	if(!recycle) {
-//
-//		// adjust HUD config
-//		m_YOffsetMedium = 15;
-//		m_XStartPosRight = width - 125;
-//		m_XStartPosClock = width - 98;
-//		m_YStartPosBottom = 70;
-//		m_Y1StartPosBottom = m_YStartPosBottom  - m_YOffsetMedium;
-//		m_Y2StartPosBottom = m_Y1StartPosBottom - m_YOffsetMedium;
-//		m_Y3StartPosBottom = m_Y2StartPosBottom - m_YOffsetMedium;
-//		m_Y4StartPosBottom = m_Y3StartPosBottom - m_YOffsetMedium;
-//	}
+	// Fatal error if no font resource supplied.
+    if(!m_FontResource) {
+        ErrorHandler::record("StarsphereGravity::initialize()", ErrorHandler::FATAL);
+        }
+	else {
+        // Create two logo font instances using font resource, if not done already.
+		if(m_FontLogo1 == NULL) {
+            m_FontLogo1 = new TTF_OpenFontRW(SDL_RWFromMem(&m_FontResource->data()->at(0),
+                                                            m_FontResource->data()->size()),
+                                             0,
+                                             24);
 
-	// create large font instances using font resource (base address + size)
-//	m_FontLogo1 = new OGLFT::Translucent(&m_FontResource->data()->at(0),
-//                                         m_FontResource->data()->size(),
-//                                         24, 72 );
-//
-//	if ( m_FontLogo1 == 0 || !m_FontLogo1->isValid() ) {
-//	     cerr << "Could not construct logo1 font face from in memory resource!" << endl;
-//	     return;
-//        }
-//
-//	m_FontLogo1->setForegroundColor(1.0, 1.0, 0.0, 1.0);
-//
-//	// create medium font instances using font resource (base address + size)
-//	m_FontLogo2 = new OGLFT::Translucent(
-//								&m_FontResource->data()->at(0),
-//								m_FontResource->data()->size(),
-//								13, 78 );
-//
-//	if ( m_FontLogo2 == 0 || !m_FontLogo2->isValid() ) {
-//	     cerr << "Could not construct logo2 font face from in memory resource!" << endl;
-//	     return;
-//	}
-//
-//	m_FontLogo2->setForegroundColor(0.75, 0.75, 0.75, 1.0);
-//
+            if(m_FontLogo1 == NULL) {
+                stringstream font_logo1_error;
+                font_logo1_error << "StarsphereGravity::initialize() : "
+                                 << "Could not construct logo1 font face from in memory resource!"
+                                 << std::endl;
+                ErrorHandler::record(font_logo1_error.str(), ErrorHandler::FATAL);
+            }
+
+        if(m_FontLogo2 == NULL) {
+            m_FontLogo2 = new TTF_OpenFontRW(SDL_RWFromMem(&m_FontResource->data()->at(0),
+                                                            m_FontResource->data()->size()),
+                                              0,
+                                              13);
+
+            if(m_FontLogo2 == NULL) {
+                stringstream font_logo2_error;
+                font_logo2_error << "StarsphereGravity::initialize() : "
+                                 << "Could not construct logo2 font face from in memory resource!"
+                                 << std::endl;
+                ErrorHandler::record(font_logo2_error.str(), ErrorHandler::FATAL);
+            }
+		}
+
+    // adjust HUD config
+    m_YOffsetMedium = 15;
+    m_XStartPosRight = width - 125;
+    m_XStartPosClock = width - 98;
+    m_YStartPosBottom = 70;
+    m_Y1StartPosBottom = m_YStartPosBottom  - m_YOffsetMedium;
+    m_Y2StartPosBottom = m_Y1StartPosBottom - m_YOffsetMedium;
+    m_Y3StartPosBottom = m_Y2StartPosBottom - m_YOffsetMedium;
+    m_Y4StartPosBottom = m_Y3StartPosBottom - m_YOffsetMedium;
+
 	// prepare base class observatories (not dimmed)
 	generateObservatories(1.0);
-}
+    }
 
-void StarsphereGravity::resize(const int width, const int height)
-{
+void StarsphereGravity::resize(const int width, const int height) {
 	Starsphere::resize(width, height);
 
 	// adjust HUD config
-	m_XStartPosRight = width - 125;
-	m_XStartPosClock = width - 98;
-}
+	m_XStartPosRight = m_CurrentWidth - 125;
+	m_XStartPosClock = m_CurrentWidth - 98;
+    }
 
-void StarsphereGravity::refreshBOINCInformation()
-{
+void StarsphereGravity::refreshBOINCInformation() {
 	// call base class implementation
 	Starsphere::refreshLocalBOINCInformation();
 
@@ -112,7 +113,7 @@ void StarsphereGravity::refreshBOINCInformation()
 		buffer.str("");
 		buffer << "Ascension: " << fixed << m_CurrentRightAscension << " deg" << ends;
 		m_WUSkyPosRightAscension = buffer.str();
-	}
+        }
 
 	if(m_CurrentDeclination != m_EinsteinAdapter.wuSkyPosDeclination()) {
 		// we've got a new position, update search marker and HUD
@@ -121,7 +122,7 @@ void StarsphereGravity::refreshBOINCInformation()
 		buffer.str("");
 		buffer << "Declination: " << fixed << m_CurrentDeclination << " deg" << ends;
 		m_WUSkyPosDeclination = buffer.str();
-	}
+        }
 
 	buffer.str("");
 	buffer << "Completed: " << fixed << m_EinsteinAdapter.wuFractionDone() * 100 << " %" << ends;
@@ -147,10 +148,9 @@ void StarsphereGravity::refreshBOINCInformation()
 	strftime(cBuffer, sizeof(cBuffer) - 1, "%H:%M:%S", timeLocal);
 
 	m_CurrentTime = string(cBuffer);
-}
+    }
 
-void StarsphereGravity::renderSearchInformation()
-{
+void StarsphereGravity::renderSearchInformation() {
 //		// clock
 //		m_FontLogo1->draw(m_XStartPosClock, m_YStartPosTop, m_CurrentTime.c_str());
 //
@@ -167,16 +167,14 @@ void StarsphereGravity::renderSearchInformation()
 //		m_FontText->draw(m_XStartPosRight, m_Y2StartPosBottom, m_WUSkyPosDeclination.c_str());
 //		m_FontText->draw(m_XStartPosRight, m_Y3StartPosBottom, m_WUPercentDone.c_str());
 //		m_FontText->draw(m_XStartPosRight, m_Y4StartPosBottom, m_WUCPUTime.c_str());
-}
+    }
 
-void StarsphereGravity::generateObservatories(float dimFactor)
-{
+void StarsphereGravity::generateObservatories(float dimFactor) {
 	// we don't do anything special here, just call base class
 	Starsphere::generateObservatories(dimFactor);
-}
+    }
 
-void StarsphereGravity::renderLogo()
-{
+void StarsphereGravity::renderLogo() {
 //	m_FontLogo1->draw(m_XStartPosLeft, m_YStartPosTop, "Einstein@Home");
 //	m_FontLogo2->draw(m_XStartPosLeft, m_YStartPosTop - m_YOffsetLarge, "World Year of Physics 2005");
-}
+    }

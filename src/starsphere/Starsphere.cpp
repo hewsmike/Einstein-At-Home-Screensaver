@@ -21,6 +21,8 @@
  *                                                                         *
  ***************************************************************************/
 
+#include <sstream>
+
 #include "Starsphere.h"
 
 #include "ErrorHandler.h"
@@ -70,8 +72,7 @@ Starsphere::~Starsphere() {
 	if(m_FontText) delete m_FontText;
     }
 
-void Starsphere::sphVertex3D(GLfloat RAdeg, GLfloat DEdeg, GLfloat radius)
-{
+void Starsphere::sphVertex3D(GLfloat RAdeg, GLfloat DEdeg, GLfloat radius) {
 	GLfloat x, y, z;
 
 	x = radius * COS(DEdeg) * COS(RAdeg);
@@ -79,41 +80,33 @@ void Starsphere::sphVertex3D(GLfloat RAdeg, GLfloat DEdeg, GLfloat radius)
 	y = radius * SIN(DEdeg);
 //	glVertex3f(x, y, z);
 	return;
-}
+    }
 
-void Starsphere::sphVertex(GLfloat RAdeg, GLfloat DEdeg)
-{
+void Starsphere::sphVertex(GLfloat RAdeg, GLfloat DEdeg) {
 	sphVertex3D(RAdeg, DEdeg, sphRadius);
-}
+    }
 
 /**
  * Star Marker:
  * Makes a marker for one star at a given position and angular size.
  */
-void Starsphere::star_marker(float RAdeg, float DEdeg, float size)
-{
+void Starsphere::star_marker(float RAdeg, float DEdeg, float size) {
 //	glPointSize((GLfloat) size);
 //	glBegin(GL_POINTS);
 //	sphVertex((GLfloat) RAdeg, (GLfloat) DEdeg);
 //	glEnd();
 	return;
-}
+    }
 
 /**
  *  Create Stars: markers for each star
  */
-void Starsphere::make_stars()
-{
+void Starsphere::make_stars() {
 	GLfloat mag_size;
 	int i, j;
 	bool is_dupe;
 	int Ndupes=0;
 
-	// delete existing, create new (required for windoze)
-//	if(Stars) glDeleteLists(Stars, 1);
-//	Stars = glGenLists(1);
-//	glNewList(Stars, GL_COMPILE);
-//
 //		glColor3f(1.0, 1.0, 1.0);
 //
 //		/**
@@ -137,15 +130,12 @@ void Starsphere::make_stars()
 //				star_marker(star_info[i][0], star_info[i][1], mag_size);
 //			}
 //		}
-//
-//	glEndList();
-}
+    }
 
 /**
  *  Pulsar Markers:
  */
-void Starsphere::make_pulsars()
-{
+void Starsphere::make_pulsars() {
 	GLfloat mag_size=3.0;
 	int i;
 
@@ -161,13 +151,12 @@ void Starsphere::make_pulsars()
 //		}
 //
 //	glEndList();
-}
+    }
 
 /**
  * Super Novae Remenants (SNRs):
  */
-void Starsphere::make_snrs()
-{
+void Starsphere::make_snrs() {
 	GLfloat mag_size=3.0;
 	int i;
 
@@ -183,14 +172,13 @@ void Starsphere::make_snrs()
 //		}
 //
 //	glEndList();
-}
+    }
 
 /**
  * Create Constellations:
  * draws line links between pairs of stars in the list.
  */
-void Starsphere::make_constellations()
-{
+void Starsphere::make_constellations() {
 	GLint star_num=0;
 
 	// delete existing, create new (required for windoze)
@@ -210,15 +198,14 @@ void Starsphere::make_constellations()
 //		glEnd();
 //
 //	glEndList();
-}
+    }
 
 /**
  * Create markers on sky sphere for LLO, LHO, GEO and VIRGO
  * IFO corner positions are from Myers' personal GPS and are +/- 100m
  */
 
-GLfloat Starsphere::RAofZenith(double T, GLfloat LONdeg)
-{
+GLfloat Starsphere::RAofZenith(double T, GLfloat LONdeg) {
 
 	// unix epoch at 12h  1/1/2000
 	const double T_0 = 946728000.0;
@@ -240,13 +227,12 @@ GLfloat Starsphere::RAofZenith(double T, GLfloat LONdeg)
 	GLfloat alpha = (GMST/(24.0*3600.0))*360.0 - LONdeg;
 
 	return alpha;
-}
+    }
 
 /**
  * Draw the observatories at their zenith positions
  */
-void Starsphere::generateObservatories(float dimFactor)
-{
+void Starsphere::generateObservatories(float dimFactor) {
 	// sanity check
 	if(dimFactor < 0.0) dimFactor = 0.0;
 	if(dimFactor > 1.0) dimFactor = 1.0;
@@ -422,10 +408,9 @@ void Starsphere::generateObservatories(float dimFactor)
 //	glEndList();
 
 	return;
-}
+    }
 
-void Starsphere::make_search_marker(GLfloat RAdeg, GLfloat DEdeg, GLfloat size)
-{
+void Starsphere::make_search_marker(GLfloat RAdeg, GLfloat DEdeg, GLfloat size) {
 	GLfloat x, y;
 	GLfloat r1, r2, r3;
 	float theta;
@@ -497,14 +482,13 @@ void Starsphere::make_search_marker(GLfloat RAdeg, GLfloat DEdeg, GLfloat size)
 //		}
 //
 //	glEndList();
-}
+    }
 
 
 /**
  * XYZ coordinate axes: (if we want them - most useful for testing)
  */
-void Starsphere::make_axes()
-{
+void Starsphere::make_axes() {
 	GLfloat axl=10.0;
 
 	// delete existing, create new (required for windoze)
@@ -529,13 +513,12 @@ void Starsphere::make_axes()
 //		glEnd();
 //
 //	glEndList();
-}
+    }
 
 /**
  * RA/DEC coordinate grid on the sphere
  */
-void Starsphere::make_globe()
-{
+void Starsphere::make_globe() {
 	int hr, j, i, iMax=100;
 	GLfloat RAdeg, DEdeg;
 
@@ -575,75 +558,77 @@ void Starsphere::make_globe()
 //		}
 //
 //	glEndList();
-}
+    }
 
 /**
  * Window resize/remap
  */
-void Starsphere::resize(const int width, const int height)
-{
+void Starsphere::resize(const int width, const int height) {
 	// store current settings
 	m_CurrentWidth = width;
 	m_CurrentHeight = height;
-	aspect = (float)width / (float)height;
+	aspect = (float)m_CurrentWidth / (float)m_CurrentHeight;
 
 	// adjust HUD config
-	m_YStartPosTop = height - 25;
+	m_YStartPosTop = m_CurrentHeight - 25;
 
 	// make sure the search marker is updated (conditional rendering!)
 	m_RefreshSearchMarker = true;
 
-//	// adjust aspect ratio and projection
-//	glViewport(0, 0, (GLsizei) width, (GLsizei) height);
-//	glMatrixMode(GL_PROJECTION);
-//	glLoadIdentity();
-//	gluPerspective(95.0, aspect, 0.50, 25.0);
-//	glMatrixMode(GL_MODELVIEW);
-}
+    // adjust aspect ratio and projection
+    glViewport(0, 0, (GLsizei) m_CurrentWidth, (GLsizei) m_CurrentHeight);
+    //	gluPerspective(95.0, aspect, 0.50, 25.0);
+    }
 
 /**
  *  What to do when graphics are "initialized".
  */
-void Starsphere::initialize(const int width, const int height, const Resource *font) {
-    /// TODO - retain this code ? Alternate method/flag ?
-	// we might be called to recycle even before initialization
-	if(!m_FontResource) {
-        // Display a warning, this may/not be a problem ....
-        ErrorHandler::record("Starsphere::initialize()", ErrorHandler::WARN);
+void Starsphere::initialize(const int width, const int height, const Resource *font) :
+                            m_CurrentWidth(width),
+                            m_CurrentHeight(height),
+                            m_FontResource(font) {
+    // Fatal error if no font resource supplied.
+    if(!m_FontResource) {
+        ErrorHandler::record("Starsphere::initialize()", ErrorHandler::FATAL);
         }
 	else {
         // NB : initialization of logo font instances is done in subclasses!
-		// create medium font instances using font resource.
-		m_FontHeader = new TTF_OpenFontRW(SDL_RWFromMem(&m_FontResource->data()->at(0),
-                                                        m_FontResource->data()->size()),
-                                          0,
-                                          13);
+		// Create header and text font instances using font resource,
+		// if not done already.
+		if(m_FontHeader == NULL) {
+            m_FontHeader = new TTF_OpenFontRW(SDL_RWFromMem(&m_FontResource->data()->at(0),
+                                                            m_FontResource->data()->size()),
+                                              0,
+                                              13);
 
-		if(m_FontHeader == 0) {
-		     cerr << "Could not construct header font face from in memory resource!" << endl;
-		     return;
+            if(m_FontHeader == NULL) {
+                stringstream font_header_error;
+                font_header_error << "Starsphere::initialize() : "
+                                  << "Could not construct header font face from in memory resource!"
+                                  << std::endl;
+                ErrorHandler::record(font_header_error.str(), ErrorHandler::FATAL);
             }
 
-		// create small font instances using font resource (base address + size)
-		m_FontHeader = new TTF_OpenFontRW(SDL_RWFromMem(&m_FontResource->data()->at(0),
-                                                        m_FontResource->data()->size()),
-                                          0,
-                                          11);
+        if(m_FontText == NULL) {
+            m_FontText = new TTF_OpenFontRW(SDL_RWFromMem(&m_FontResource->data()->at(0),
+                                                            m_FontResource->data()->size()),
+                                              0,
+                                              11);
 
-		if(m_FontText == 0) {
-		     cerr << "Could not construct text font face from in memory resource!" << endl;
-		     return;
+            if(m_FontText == NULL) {
+                stringstream font_text_error;
+                font_text_error << "Starsphere::initialize() : "
+                                  << "Could not construct text font face from in memory resource!"
+                                  << std::endl;
+                ErrorHandler::record(font_text_error.str(), ErrorHandler::FATAL);
             }
-        }
+		}
 
 	// setup initial dimensions
-	resize(width, height);
+	resize(m_CurrentWidth, m_CurrentHeight);
 
 	// more font setup and optimizations
 	glPixelStorei( GL_UNPACK_ALIGNMENT, 1 );
-//#if defined( GL_RASTER_POSITION_UNCLIPPED_IBM )
-//	glEnable( GL_RASTER_POSITION_UNCLIPPED_IBM );
-//#endif
 
 	// drawing setup:
 	glClearColor(0.0, 0.0, 0.0, 0.0); // background is black
@@ -653,54 +638,40 @@ void Starsphere::initialize(const int width, const int height, const Resource *f
 
 	// enable opt-in quality feature
 	if(m_BoincAdapter.graphicsQualitySetting() == BOINCClientAdapter::HighGraphicsQualitySetting) {
-		// some polishing
-//		glShadeModel(GL_SMOOTH);
-//		glEnable(GL_POINT_SMOOTH);
-//		glEnable(GL_LINE_SMOOTH);
-//		glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
-//		glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-	}
-
-	// FSAA will be enabled explicitly when needed!
-//	glDisable(GL_MULTISAMPLE_ARB);
+		/// TODO - what OpenGL ES 2.x quality options available? In the shader code then ?
+        }
 
 	// we need alpha blending for proper font rendering
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	// enable depth buffering for 3D graphics
-//	glClearDepth(1.0f);
+    glClearDepthf(1.0f);
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
 
 	// enable opt-in quality feature
 	if(m_BoincAdapter.graphicsQualitySetting() == BOINCClientAdapter::MediumGraphicsQualitySetting ||
-	   m_BoincAdapter.graphicsQualitySetting() == BOINCClientAdapter::HighGraphicsQualitySetting)
-	{
+	   m_BoincAdapter.graphicsQualitySetting() == BOINCClientAdapter::HighGraphicsQualitySetting) {
 		// fog aids depth perception
-//		glEnable(GL_FOG);
-//		glFogi(GL_FOG_MODE, GL_EXP2);
-//		glFogf(GL_FOG_DENSITY, 0.085);
-//		glHint(GL_FOG_HINT, GL_DONT_CARE);
-	}
+		/// TODO - what OpenGL ES 2.x fog options available? In the shader code then ?
+        }
 
 	// create pre-drawn display lists
-	make_stars();
-	make_constellations();
-	make_pulsars();
-	make_snrs();
-	make_axes();
-	make_globe();
+//	make_stars();
+//	make_constellations();
+//	make_pulsars();
+//	make_snrs();
+//	make_axes();
+//	make_globe();
 
-//	glDisable(GL_CLIP_PLANE0);
 	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-}
+    }
 
 /**
  * Rendering routine:  this is what does the drawing:
  */
-void Starsphere::render(const double timeOfDay)
-{
+void Starsphere::render(const double timeOfDay) {
 	GLfloat xvp, yvp, zvp, vp_theta, vp_phi, vp_rad;
 	GLfloat Zrot = 0.0, Zobs=0.0;
 	double revs, t, dt = 0;
@@ -732,7 +703,6 @@ void Starsphere::render(const double timeOfDay)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// now draw the scene...
-//	glLoadIdentity();
 
 	// Vary the viewpoint with both a long period wobble of the elevation
 	// of the view and a longer period zoom in/out that might even penetrate
@@ -793,55 +763,29 @@ void Starsphere::render(const double timeOfDay)
 //	glPopMatrix();
 
 	// draw 2D vectorized HUD
-//	if(isFeature(LOGO) || isFeature(SEARCHINFO)) {
-//
-//		// disable depth testing since we're in 2D mode
-//		glDisable(GL_DEPTH_TEST);
-//
-//		// enable textured fonts
-//		glEnable(GL_TEXTURE_2D);
-//
-//		// save current state
-//		glMatrixMode(GL_PROJECTION);
-//		glPushMatrix();
-//		glLoadIdentity();
-//		glOrtho(0, m_CurrentWidth, 0, m_CurrentHeight, -1, 1);
-//		glMatrixMode(GL_MODELVIEW);
-//		glPushMatrix();
-//		glLoadIdentity();
-//
+    if(isFeature(LOGO) || isFeature(SEARCHINFO)) {
+
+		// disable depth testing since we're in 2D mode
+		glDisable(GL_DEPTH_TEST);
+
 //		if (isFeature(LOGO)) renderLogo();
 //		if (isFeature(SEARCHINFO)) renderSearchInformation();
-//
-//		// restore original state
-//		glMatrixMode(GL_PROJECTION);
-//		glPopMatrix();
-//		glMatrixMode(GL_MODELVIEW);
-//		glPopMatrix();
-//
-//		// disable font textures
-//		glDisable(GL_TEXTURE_2D);
-//
+
 //		// enable depth testing since we're leaving 2D mode
-//		glEnable(GL_DEPTH_TEST);
-//	}
-//
-//	glfwSwapBuffers();;
-}
+		glEnable(GL_DEPTH_TEST);
+        }
+    }
 
 void Starsphere::renderAdditionalObservatories() {
 	// default implementation doesn't do anything
-}
+    }
 
 void Starsphere::mouseButtonEvent(const int positionX, const int positionY,
-								  const AbstractGraphicsEngine::MouseButton buttonPressed)
-{
-
-}
+								  const AbstractGraphicsEngine::MouseButton buttonPressed) {
+    }
 
 void Starsphere::mouseMoveEvent(const int deltaX, const int deltaY,
-								const AbstractGraphicsEngine::MouseButton buttonPressed)
-{
+								const AbstractGraphicsEngine::MouseButton buttonPressed) {
 	switch(buttonPressed) {
 		case MouseButtonLeft:
 			rotateSphere(deltaX, deltaY);
@@ -851,15 +795,14 @@ void Starsphere::mouseMoveEvent(const int deltaX, const int deltaY,
 			break;
 		default:
 			break;
-	}
-}
+        }
+    }
 
 void Starsphere::mouseWheelEvent(const int pos) {
     // Currently no behaviours attached to mouse wheel events.
     }
 
-void Starsphere::keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey keyPressed)
-{
+void Starsphere::keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey keyPressed) {
 	switch(keyPressed) {
 		case KeyS:
 			setFeature(STARS, isFeature(STARS) ? false : true);
@@ -896,15 +839,14 @@ void Starsphere::keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey ke
 			break;
 		default:
 			break;
-	}
-}
+        }
+    }
 
 /**
  * View control
  */
 void Starsphere::rotateSphere(const int relativeRotation,
-        const int relativeElevation)
-{
+                              const int relativeElevation) {
 	// elevation
 	viewpt_elev += relativeElevation/10.0;
 	if (viewpt_elev > 89.0)
@@ -914,33 +856,29 @@ void Starsphere::rotateSphere(const int relativeRotation,
 
 	// rotation
 	rotation_offset -= relativeRotation/10.0;
-}
+    }
 
-void Starsphere::zoomSphere(const int relativeZoom)
-{
+void Starsphere::zoomSphere(const int relativeZoom) {
 	// zoom
 	viewpt_radius -= relativeZoom/10.0;
 	if (viewpt_radius > 15.0)
 		viewpt_radius = 15.0;
 	if (viewpt_radius < 0.5)
 		viewpt_radius = 0.5;
-}
+    }
 
 /**
  * Feature control
  */
-void Starsphere::setFeature(const Features feature, const bool enable)
-{
+void Starsphere::setFeature(const Features feature, const bool enable) {
 	featureFlags = enable ? (featureFlags | feature) : (featureFlags & ~feature);
-}
+    }
 
-bool Starsphere::isFeature(const Features feature)
-{
+bool Starsphere::isFeature(const Features feature) {
 	return ((featureFlags & feature) == feature ? true : false);
-}
+    }
 
-void Starsphere::refreshLocalBOINCInformation()
-{
+void Starsphere::refreshLocalBOINCInformation() {
 	// call base class implementation
 	AbstractGraphicsEngine::refreshLocalBOINCInformation();
 
@@ -962,4 +900,5 @@ void Starsphere::refreshLocalBOINCInformation()
 	buffer << "Project RAC: " << fixed << m_BoincAdapter.userRACredit() << ends;
 	m_UserRACredit = buffer.str();
 	buffer.str("");
-}
+    }
+
