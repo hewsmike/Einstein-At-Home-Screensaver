@@ -214,7 +214,7 @@ retrieve_sdl_ttf() {
     SDL_TTF_RETRIEVE_PATH=$SDL_TTF_RETRIEVE_DOMAIN$SDL_TTF_RETRIEVE_FILE
 
     log "Retrieving SDL2 TTF(this may take a while)..."
-    mkdir -p $ROOT/retrieval/sdl2-ttf >> $LOGFILE || failure
+    mkdir -p $ROOT/retrieval/sdl2_ttf >> $LOGFILE || failure
 
     cd $ROOT/retrieval || failure
     rm -f $SDL_TTF_RETRIEVE_FILE >> $LOGFILE 2>&1 || failure
@@ -222,8 +222,8 @@ retrieve_sdl_ttf() {
     tar -xzf $SDL_TTF_RETRIEVE_FILE >> $LOGFILE 2>&1 || failure
     rm $SDL_TTF_RETRIEVE_FILE >> $LOGFILE 2>&1 || failure
     # substitute old source tree
-    rm -rf sdl2-ttf >> $LOGFILE 2>&1 || failure
-    mv $SDL_TTF_RETRIEVE_STR sdl2-ttf >> $LOGFILE 2>&1 || failure
+    rm -rf sdl2_ttf >> $LOGFILE 2>&1 || failure
+    mv $SDL_TTF_RETRIEVE_STR sdl2_ttf >> $LOGFILE 2>&1 || failure
 
     save_topbuild_state $TBS_SDL_TTF_RETRIEVED
 

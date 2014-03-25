@@ -22,6 +22,8 @@
 
 #include <time.h>
 
+#include "ErrorHandler.h"
+
 StarsphereGravity::StarsphereGravity() :
 	Starsphere(EinsteinGravityAdapter::SharedMemoryIdentifier),
 	m_EinsteinAdapter(&m_BoincAdapter) {
@@ -31,8 +33,8 @@ StarsphereGravity::StarsphereGravity() :
 StarsphereGravity::~StarsphereGravity() {
     }
 
-void StarsphereGravity::initialize(const int width, const int height, const Resource* font) :
-        Starsphere::initialize(width, height, font) {
+void StarsphereGravity::initialize(const int width, const int height, const Resource* font) {
+    Starsphere::initialize(width, height, font);
 
 	// Fatal error if no font resource supplied.
     if(!m_FontResource) {
@@ -41,10 +43,10 @@ void StarsphereGravity::initialize(const int width, const int height, const Reso
 	else {
         // Create two logo font instances using font resource, if not done already.
 		if(m_FontLogo1 == NULL) {
-            m_FontLogo1 = new TTF_OpenFontRW(SDL_RWFromMem(&m_FontResource->data()->at(0),
+            m_FontLogo1 = TTF_OpenFontRW(SDL_RWFromConstMem(&m_FontResource->data()->at(0),
                                                             m_FontResource->data()->size()),
-                                             0,
-                                             24);
+                                         0,
+                                         24);
 
             if(m_FontLogo1 == NULL) {
                 stringstream font_logo1_error;
@@ -52,13 +54,14 @@ void StarsphereGravity::initialize(const int width, const int height, const Reso
                                  << "Could not construct logo1 font face from in memory resource!"
                                  << std::endl;
                 ErrorHandler::record(font_logo1_error.str(), ErrorHandler::FATAL);
+                }
             }
 
         if(m_FontLogo2 == NULL) {
-            m_FontLogo2 = new TTF_OpenFontRW(SDL_RWFromMem(&m_FontResource->data()->at(0),
+            m_FontLogo2 = TTF_OpenFontRW(SDL_RWFromConstMem(&m_FontResource->data()->at(0),
                                                             m_FontResource->data()->size()),
-                                              0,
-                                              13);
+                                         0,
+                                         13);
 
             if(m_FontLogo2 == NULL) {
                 stringstream font_logo2_error;
@@ -66,8 +69,9 @@ void StarsphereGravity::initialize(const int width, const int height, const Reso
                                  << "Could not construct logo2 font face from in memory resource!"
                                  << std::endl;
                 ErrorHandler::record(font_logo2_error.str(), ErrorHandler::FATAL);
+                }
             }
-		}
+        }
 
     // adjust HUD config
     m_YOffsetMedium = 15;

@@ -109,7 +109,7 @@ prepare_tree() {
     mkdir -p $ROOT/build/glew >> $LOGFILE || failure
     mkdir -p $ROOT/build/libxml2 >> $LOGFILE || failure
     mkdir -p $ROOT/build/sdl2 >> $LOGFILE || failure
-    mkdir -p $ROOT/build/sdl2-ttf >> $LOGFILE || failure
+    mkdir -p $ROOT/build/sdl2_ttf >> $LOGFILE || failure
 
     mkdir -p $ROOT/install >> $LOGFILE || failure
     mkdir -p $ROOT/install/bin >> $LOGFILE || failure
@@ -354,12 +354,12 @@ build_sdl_ttf() {
         return 0
     fi
 
-    cd $ROOT/3rdparty/sdl2-ttf || failure
+    cd $ROOT/3rdparty/sdl2_ttf || failure
     chmod +x autogen.sh >> $LOGFILE 2>&1 || failure
     ./autogen.sh >> $LOGFILE 2>&1 || failure
     chmod +x configure >> $LOGFILE 2>&1 || failure
-    cd $ROOT/build/sdl2-ttf || failure
-    $ROOT/3rdparty/sdl2-ttf/configure --prefix=$ROOT/install --enable-shared=no --enable-static=yes --enable-screensaver=yes >> $LOGFILE 2>&1 || failure
+    cd $ROOT/build/sdl2_ttf || failure
+    $ROOT/3rdparty/sdl2_ttf/configure --prefix=$ROOT/install --enable-shared=no --enable-static=yes --enable-screensaver=yes >> $LOGFILE 2>&1 || failure
 
 
     log "Building SDL TTF(this may take a while)..."

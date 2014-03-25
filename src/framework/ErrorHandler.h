@@ -25,6 +25,8 @@
 
 #include <string>
 
+#include "SDL_ttf.h"
+
 /**
  * \addtogroup framework Framework
  * @{
@@ -139,7 +141,7 @@ class ErrorHandler {
         static std::string last_SDL2_error;
 
         /// Most recently polled SDL2 TTF error.
-        static std::string last_SDL2_TTF_error
+        static std::string last_SDL2_TTF_error;
 
         /**
          * \brief Constructor ( private since this a static class )

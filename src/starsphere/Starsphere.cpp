@@ -583,10 +583,11 @@ void Starsphere::resize(const int width, const int height) {
 /**
  *  What to do when graphics are "initialized".
  */
-void Starsphere::initialize(const int width, const int height, const Resource *font) :
-                            m_CurrentWidth(width),
-                            m_CurrentHeight(height),
-                            m_FontResource(font) {
+void Starsphere::initialize(const int width, const int height, const Resource *font) {
+    m_CurrentWidth = width;
+    m_CurrentHeight = height;
+    m_FontResource = font;
+
     // Fatal error if no font resource supplied.
     if(!m_FontResource) {
         ErrorHandler::record("Starsphere::initialize()", ErrorHandler::FATAL);
@@ -596,10 +597,10 @@ void Starsphere::initialize(const int width, const int height, const Resource *f
 		// Create header and text font instances using font resource,
 		// if not done already.
 		if(m_FontHeader == NULL) {
-            m_FontHeader = new TTF_OpenFontRW(SDL_RWFromMem(&m_FontResource->data()->at(0),
-                                                            m_FontResource->data()->size()),
-                                              0,
-                                              13);
+            m_FontHeader = TTF_OpenFontRW(SDL_RWFromConstMem(&m_FontResource->data()->at(0),
+                                                             m_FontResource->data()->size()),
+                                          0,
+                                          13);
 
             if(m_FontHeader == NULL) {
                 stringstream font_header_error;
@@ -607,13 +608,14 @@ void Starsphere::initialize(const int width, const int height, const Resource *f
                                   << "Could not construct header font face from in memory resource!"
                                   << std::endl;
                 ErrorHandler::record(font_header_error.str(), ErrorHandler::FATAL);
+                }
             }
 
         if(m_FontText == NULL) {
-            m_FontText = new TTF_OpenFontRW(SDL_RWFromMem(&m_FontResource->data()->at(0),
-                                                            m_FontResource->data()->size()),
-                                              0,
-                                              11);
+            m_FontText = TTF_OpenFontRW(SDL_RWFromConstMem(&m_FontResource->data()->at(0),
+                                                           m_FontResource->data()->size()),
+                                        0,
+                                        11);
 
             if(m_FontText == NULL) {
                 stringstream font_text_error;
@@ -621,8 +623,9 @@ void Starsphere::initialize(const int width, const int height, const Resource *f
                                   << "Could not construct text font face from in memory resource!"
                                   << std::endl;
                 ErrorHandler::record(font_text_error.str(), ErrorHandler::FATAL);
+                }
             }
-		}
+        }
 
 	// setup initial dimensions
 	resize(m_CurrentWidth, m_CurrentHeight);
@@ -901,4 +904,3 @@ void Starsphere::refreshLocalBOINCInformation() {
 	m_UserRACredit = buffer.str();
 	buffer.str("");
     }
-

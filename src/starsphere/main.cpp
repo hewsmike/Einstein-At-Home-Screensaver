@@ -27,7 +27,7 @@
 #include <svn_version.h>
 
 #include "../erp_git_version.h"
-#include "SDL.h"
+#include "framework.h"
 
 #include "AbstractGraphicsEngine.h"
 #include "ErrorHandler.h"
@@ -102,7 +102,7 @@ int main(int argc, char **argv) {
         // Failed, which is FATAL.
         stringstream sdl_ttf_init_error;
         sdl_ttf_init_error << "\nUnable to initialize SDL TTF:  "
-                           << << ErrorHandler::check_SDL2_TTF_Error()
+                           << ErrorHandler::check_SDL2_TTF_Error()
                            << std::endl;
         ErrorHandler::record(sdl_ttf_init_error.str(), ErrorHandler::FATAL);
         }

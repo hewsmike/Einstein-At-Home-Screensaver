@@ -39,7 +39,7 @@
 #include "EinsteinGravityAdapter.h"
 #include "WindowManager.h"
 
-#include "SDL-ttf.h"
+#include "SDL_ttf.h"
 
 // SIN and COS take arguments in DEGREES
 #define PI 3.14159265
