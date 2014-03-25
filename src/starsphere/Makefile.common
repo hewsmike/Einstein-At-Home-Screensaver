@@ -239,8 +239,8 @@ endif
 $(PRODUCT_LOWER)_Einstein_$(GRAV): $(DEPS) $(PRODUCT_SRC)/main.cpp $(TARGET_XTRA_DEPS) $(OBJS)
 	$(CXX) -g $(CPPFLAGS) $(LDFLAGS) $(PRODUCT_SRC)/main.cpp -o "graphics_app=einstein_RUNLABEL_VERSION_graphics_$(TARGET_APPEND)" $(OBJS) $(LIBS)
 
-$(PRODUCT_LOWER)_Einstein_$(RADIO): $(DEPS) $(PRODUCT_SRC)/main.cpp $(TARGET_XTRA_DEPS) $(OBJS)
-	$(CXX) -g $(CPPFLAGS) $(LDFLAGS) $(PRODUCT_SRC)/main.cpp -o "graphics_app=einsteinbinary_RUNLABEL_VERSION_graphics_$(TARGET_APPEND)" $(OBJS) $(LIBS)
+#$(PRODUCT_LOWER)_Einstein_$(RADIO): $(DEPS) $(PRODUCT_SRC)/main.cpp $(TARGET_XTRA_DEPS) $(OBJS)
+#	$(CXX) -g $(CPPFLAGS) $(LDFLAGS) $(PRODUCT_SRC)/main.cpp -o "graphics_app=einsteinbinary_RUNLABEL_VERSION_graphics_$(TARGET_APPEND)" $(OBJS) $(LIBS)
 
 ###########################################################################
 # Target specific modules.
