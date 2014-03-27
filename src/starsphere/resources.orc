@@ -22,3 +22,6 @@
 
 FontSansSerif|LiberationSans-Regular.ttf.res
 AppIconBMP|EaH.bmp.res
+
+# Shaders
+TestShader|shader_test.res
