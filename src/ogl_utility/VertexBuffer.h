@@ -23,6 +23,8 @@
 
 #include "Buffer.h"
 
+#include <map>
+
 /**
 * \addtogroup ogl_utility OGL_Utility
 * @{
@@ -32,13 +34,45 @@
 * \brief This interface declares public methods to deal with OpenGL ES 2.0
 *        vertex buffer objects.
 *
+*    This is the case where vertex attributes are supplied to the pipeline
+* sequentially from a buffer. The following sequence is strongly advised :
+*       - by sufficient calls to addAttributeDescription(), provide
+*         information about ALL attributes within the provided buffer,
+*         in the order that they are stored within the buffer.
+*       - use attach(), to make buffer current for the pipeline.
+*       - use detach(), when rendering is complete.
+*
 * \see Buffer
+* \see Pipeline
 *
 * \author Mike Hewson\n
 */
 
 class VertexBuffer : public Buffer {
     public :
+        enum data_mix {BY_VERTEX,
+                       BY_ATTRIBUTE};
+
+        struct attribute_spec {
+            // Number of components for this attribute.
+            GLint size;
+            // The data type of each component of this attribute.
+            // Valid values are :
+            // GL_BYTE
+            // GL_UNSIGNED_BYTE
+            // GL_SHORT
+            // GL_UNSIGNED_SHORT
+            // GL_FIXED
+            // GL_FLOAT
+            GLenum type;
+            // For integer data types only, whether values are normalised
+            // with respect to the type range.
+            // GL_TRUE signed integers map to [-1, +1]
+            // unsigned integers map to [0, +1]
+            // GL_FALSE no normalisation, directly map to floats.
+            GLboolean normalised;
+            };
+
         /**
          * \brief Constructor. Will fail fatally for the application if one or
          *        more of the following applies :
@@ -49,15 +83,49 @@ class VertexBuffer : public Buffer {
          * \param data : pointer to the data to be stored.
          * \param size : number of bytes to allocate.
          * \param usage : one of GL_STREAM_DRAW, GL_STATIC_DRAW or GL_DYNAMIC_DRAW.
+         * \param vertex_count : how many vertices are represented by
+         *                       the buffer object. A NON-ZERO positive integer.
+         * \param mix : the pattern of storage of data
+         *                  BY_VERTEX ( default )
+         *                  BY_ATTRIBUTE
          */
         VertexBuffer(const GLvoid* buffer_data,
                      GLsizeiptr size,
-                     GLenum usage);
+                     GLenum usage,
+                     GLuint vertex_count,
+                     data_mix mix = BY_VERTEX);
 
         /**
          * \brief Destructor.
          */
         virtual ~VertexBuffer();
+
+        /**
+         * \brief The number of vertices represented in this buffer.
+         */
+        GLuint vertexCount(void) const;
+
+        /**
+         * \brief Add an attribute description.
+         *
+         * CRUCIAL : By sufficient calls to this method, present ALL
+         * attributes IN THEIR SEQUENCE of storage within the given buffer.
+         * ( The index specified within the 'attribute_spec' structure is not
+         * relevant to this ).
+         *
+         * \param specification : structure describing the attribute data.
+         */
+        void addAttributeDescription(attrib_spec specification);
+
+        /**
+         * \brief Perform any data binding to the pipeline input.
+         */
+        void attach(void);
+
+        /**
+         * \brief Remove any data binding to the pipeline input.
+         */
+        void detach(void);
 
     protected :
         /**
@@ -65,13 +133,24 @@ class VertexBuffer : public Buffer {
          */
         virtual void loadBuffer(GLenum target) const;
 
-
     private:
         /// The number of bytes to be allocated to the buffer.
         GLsizeiptr m_size;
 
         /// The usage hint.
         GLenum m_usage;
+
+        /// The number of vertices represented.
+        GLuint m_vertex_count;
+
+        /// The pattern of data distribution within.
+        data_mix m_mix;
+
+        /// Flag indicating if buffer attribute mapping has been done.
+        bool m_attributes_mapped;
+
+        /// The total length in bytes of all the attributes.
+        GLuint m_attribute_length_sum;
 
         /**
          * \brief Get an OpenGL handle for the buffer.
@@ -91,6 +170,28 @@ class VertexBuffer : public Buffer {
          * \brief Populate the buffer with vertex data.
          */
         virtual void loadBuffer(void) const;
+
+        struct attribute_record {attrib_spec a_spec;    // An attribute specification.
+                                 GLuint length;         // The byte length of this attribute.
+                                 GLsizei stride;        // The byte gap between this attribute type in the buffer.
+                                 GLvoid* pointer;       // The byte offset of the FIRST of this attribute in the buffer.
+                                 };
+
+        // Storage for all the attribute specifications, sorted
+        // by shader index eg. within the vertex shader's GLSL code
+        //
+        // layout (location = index_0) in attribute_type0 attribute_name_in_shader0;
+        // layout (location = index_1) in attribute_type1 attribute_name_in_shader1;
+        // layout (location = index_2) in attribute_type2 attribute_name_in_shader2;
+        //
+        std::map<attribute_record> m_attribute_specs;
+
+        /**
+         * \brief Create full/detailed mapping of attribute positions within
+         * the buffer, based upon any given vertex attribute
+         * specifications and choice of data mixing.
+         */
+        void prepareAttributeMapping(void);
     };
 
 /**

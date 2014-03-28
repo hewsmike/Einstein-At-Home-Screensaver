@@ -24,8 +24,11 @@
 
 VertexBuffer::VertexBuffer(const GLvoid* buffer_data,
                            GLsizeiptr size,
-                           GLenum usage) :
-                Buffer(buffer_data) {
+                           GLenum usage,
+                           GLuint vertex_count,
+                           data_mix mix) :
+                Buffer(buffer_data),
+                m_mix(mix) {
     // Ensure strictly positive buffer size.
     if(size > 0) {
         m_size = size;
@@ -45,10 +48,28 @@ VertexBuffer::VertexBuffer(const GLvoid* buffer_data,
         ErrorHandler::record("VertexBuffer::VertexBuffer() : Bad usage type provided.",
                              ErrorHandler::FATAL);
         }
+
+    if(vertex_count > 0) {
+        m_vertex_count = vertex_count;
+        }
+    else {
+        ErrorHandler::record("VertexBuffer::VertexBuffer() : vertex count is ZERO", ErrorHandler::FATAL);
+        }
+
+
+    // Initially the total sum of attribute lengths is zero.
+    m_attribute_length_sum = 0;
+
+    // Initially attributes are not mapped.
+    m_attributes_mapped = false;
     }
 
 VertexBuffer::~VertexBuffer() {
     Buffer::release();
+    }
+
+GLuint VertexBuffer::vertexCount(void) const {
+    return m_vertex_count;
     }
 
 void VertexBuffer::acquire_ID(GLuint* handle) const {
@@ -72,4 +93,127 @@ void VertexBuffer::loadBuffer(GLenum target) const {
 
 void VertexBuffer::loadBuffer(void) const {
     loadBuffer(GL_ARRAY_BUFFER);
+    }
+
+void VertexBuffer::attach(void) {
+    // Attachment only occurs if all preparations are complete.
+    if(m_attributes_mapped == true) {
+        // Enable fetching for all supplied vertex attribute indices,
+        // these corresponding to 'location' definitions within the
+        // vertex shader's GLSL code.
+        for(std::vector<attribute_record>::iterator attrib = m_attribute_specs.begin();
+            attrib != m_attribute_specs.end();
+            ++attrib) {
+            glEnableVertexAttribArray(attrib->a_spec.index);
+            glVertexAttribPointer(attrib->a_spec.index,
+                                  attrib->a_spec.size,
+                                  attrib->a_spec.type,
+                                  attrib->a_spec.normalised,
+                                  attrib->stride,
+                                  attrib->pointer);
+            }
+        // Bind the given buffer object to pipeline state.
+        glBindBuffer(GL_ARRAY_BUFFER, m_vert_buffer->ID());
+        }
+    else {
+        // Mapping has not yet occurred. Do it.
+        prepareAttributeMapping();
+
+        // RECURSION !! :-)
+        this->attach();
+        }
+    }
+
+void VertexBuffer::detach(void) {
+    // Detachment only occurs if mapping was ever completed.
+    if(m_attributes_mapped == true) {
+        // Disable fetching for all supplied vertex attribute indices.
+        for(std::vector<attribute_record>::iterator attrib = m_attribute_specs.begin();
+            attrib != m_attribute_specs.end();
+            ++attrib) {
+            glDisableVertexAttribArray(attrib->a_spec.index);
+            }
+        // Unbind the given buffer object from pipeline state.
+        glBindBuffer(GL_ARRAY_BUFFER, OGL_ID::NO_ID);
+        }
+    }
+
+void VertexBuffer::addAttributeDescription(attrib_spec specification) {
+    // May only enter new attribute descriptions if mapping has
+    // not yet been performed.
+    if(m_attributes_mapped == false) {
+        attribute_record record;
+        record.a_spec = specification;
+
+        // The length in bytes of an attribute is it's number
+        // of ( identically sized ) components times the size of
+        // a component.
+        record.length = record.a_spec.size;
+        switch (record.a_spec.type) {
+            case GL_BYTE:
+                record.length *= sizeof(GL_BYTE);
+                break;
+            case GL_UNSIGNED_BYTE:
+                record.length *= sizeof(GL_UNSIGNED_BYTE);
+                break;
+            case GL_SHORT:
+                record.length *= sizeof(GL_SHORT);
+                break;
+            case GL_UNSIGNED_SHORT:
+                record.length *= sizeof(GL_UNSIGNED_SHORT);
+                break;
+            case GL_FIXED:
+                record.length *= sizeof(GL_FIXED);
+                break;
+            case GL_FLOAT:
+                record.length *= sizeof(GL_FLOAT);
+                break;
+            default:
+                ErrorHandler::record("BufferVertexFetch::addVertexAttribute() : Bad switch case ( default )",
+                                     ErrorHandler::FATAL);
+                break;
+            }
+
+        // Add this attribute's length to the sum of same.
+        m_attribute_length_sum += record.length;
+
+        // These must/will be calculated once all attributes have been described.
+        record.stride = 0;
+        record.pointer = 0;
+
+        // Insert into the attributes record.
+        m_attribute_specs.push_back(record);
+        }
+    else {
+        ErrorHandler::record("VertexBuffer::addAttributeDescription() : attempt to add attribute after mapping completed",
+                              ErrorHandler::WARN);
+        }
+    }
+
+void VertexBuffer::prepareAttributeMapping(void) {
+    // Can only map attributes if it has never been done before in the lifetime
+    // a BufferVertexFetch instance ie. this method is only ever performed
+    // at most ONCE.
+    if(m_attributes_mapped == false) {
+        // Go through and examine all the given attribute specifications.
+        for(std::vector<attribute_record>::iterator attrib = m_attribute_specs.begin();
+            attrib != m_attribute_specs.end();
+            ++attrib) {
+            if(m_mix == BY_VERTEX) {
+                attrib->stride = m_attribute_length_sum;
+                attrib->pointer = 0;
+                }
+            if(m_mix == BY_ATTRIBUTE) {
+                attrib->stride = 0;
+                attrib->pointer = 0;
+                }
+            }
+
+        // Mark attribute mapping as completed.
+        m_attributes_mapped = true;
+        }
+    else {
+        ErrorHandler::record("VertexBuffer::prepareAttributeMapping() : called more than once",
+                              ErrorHandler::WARN);
+        }
     }
