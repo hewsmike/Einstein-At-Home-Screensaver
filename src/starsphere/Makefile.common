@@ -86,6 +86,7 @@ CXX ?= g++
 # Compiler variables.
 
 # Generic.
+CPPFLAGS += -static
 CPPFLAGS += -I$(PRODUCT_INSTALL)/include
 CPPFLAGS += $(shell $(PRODUCT_INSTALL)/bin/freetype-config --cflags)
 CPPFLAGS += $(shell $(PRODUCT_INSTALL)/bin/xml2-config --cflags)
@@ -117,18 +118,18 @@ endif
 
 # Target specific.
 ifeq ".$(SYSTEM)" ".linux"
-    LIBS += -Wl,-Bstatic
-    LIBS += -lframework -loglutility -lrt -L$(PRODUCT_INSTALL)/lib
+	LIBS += -Wl,-Bstatic
+    LIBS += -L$(PRODUCT_INSTALL)/lib -L$(PRODUCT_INSTALL)/lib64
+    LIBS += -lframework -lrt -lSDL2_ttf
     LIBS += $(shell $(PRODUCT_INSTALL)/bin/freetype-config --libs)
     LIBS += $(shell $(PRODUCT_INSTALL)/bin/xml2-config --libs)
     LIBS += $(shell $(PRODUCT_INSTALL)/bin/sdl2-config --libs)
-    LIBS += -lSDL2_ttf
     LIBS += -lboinc_api -lboinc
-    LIBS += -lXrandr -lXrender
+    LIBS += -L/usr/X11/lib -lX11 -lXrandr -lXrender
     LIBS += -lstdc++
     LIBS += -L/usr/lib
     LIBS += -Wl,-Bdynamic
-    LIBS += -lGL
+    LIBS += -lGLEW
     LIBS += -lpthread -lm -lc
 endif
 

@@ -126,8 +126,10 @@ endif
 ifeq ".$(SYSTEM)" ".linux"
     LIBS += -Wl,-Bstatic
     LIBS += -lframework -loglft -lglfw -lrt -L$(PRODUCT_INSTALL)/lib
+    LIBS += -L$(PRODUCT_INSTALL)/lib64
     LIBS += $(shell $(PRODUCT_INSTALL)/bin/freetype-config --libs)
     LIBS += $(shell $(PRODUCT_INSTALL)/bin/xml2-config --libs)
+    LIBS += $(shell $(PRODUCT_INSTALL)/bin/sdl2-config --libs)
     LIBS += -lboinc_api -lboinc
     LIBS += -L/usr/X11/lib -lX11 -lXrandr -lXrender
     LIBS += -lstdc++

@@ -158,7 +158,7 @@ void ErrorHandler::check_OpenGL_Error() {
         message << "ErrorHandler::check_OpenGL_Error() - Reported OpenGL error with code : "
                 << error_code
                 << " - "
-                << ErrorHandler::convertGLstring(gluErrorString(glGetError()))
+ //               << ErrorHandler::convertGLstring(gluErrorString(glGetError()))
                 << " : ";
         switch(error_code) {
             case GL_INVALID_ENUM :

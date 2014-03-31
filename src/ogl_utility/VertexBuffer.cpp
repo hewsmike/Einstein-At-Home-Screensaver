@@ -24,11 +24,8 @@
 
 VertexBuffer::VertexBuffer(const GLvoid* buffer_data,
                            GLsizeiptr size,
-                           GLenum usage,
-                           GLuint vertex_count,
-                           data_mix mix) :
-                Buffer(buffer_data),
-                m_mix(mix) {
+                           GLenum usage) :
+                Buffer(buffer_data) {
     // Ensure strictly positive buffer size.
     if(size > 0) {
         m_size = size;
@@ -48,14 +45,6 @@ VertexBuffer::VertexBuffer(const GLvoid* buffer_data,
         ErrorHandler::record("VertexBuffer::VertexBuffer() : Bad usage type provided.",
                              ErrorHandler::FATAL);
         }
-
-    if(vertex_count > 0) {
-        m_vertex_count = vertex_count;
-        }
-    else {
-        ErrorHandler::record("VertexBuffer::VertexBuffer() : vertex count is ZERO", ErrorHandler::FATAL);
-        }
-
 
     // Initially the total sum of attribute lengths is zero.
     m_attribute_length_sum = 0;
@@ -101,19 +90,19 @@ void VertexBuffer::attach(void) {
         // Enable fetching for all supplied vertex attribute indices,
         // these corresponding to 'location' definitions within the
         // vertex shader's GLSL code.
-        for(std::vector<attribute_record>::iterator attrib = m_attribute_specs.begin();
-            attrib != m_attribute_specs.end();
-            ++attrib) {
-            glEnableVertexAttribArray(attrib->a_spec.index);
-            glVertexAttribPointer(attrib->a_spec.index,
-                                  attrib->a_spec.size,
-                                  attrib->a_spec.type,
-                                  attrib->a_spec.normalised,
-                                  attrib->stride,
-                                  attrib->pointer);
-            }
+//        for(std::vector<attribute_record>::iterator attrib = m_attribute_specs.begin();
+//            attrib != m_attribute_specs.end();
+//            ++attrib) {
+//            glEnableVertexAttribArray(attrib->a_spec.index);
+//            glVertexAttribPointer(attrib->index,
+//                                  attrib->a_spec.size,
+//                                  attrib->a_spec.type,
+//                                  attrib->a_spec.normalised,
+//                                  attrib->stride,
+//                                  attrib->pointer);
+//            }
         // Bind the given buffer object to pipeline state.
-        glBindBuffer(GL_ARRAY_BUFFER, m_vert_buffer->ID());
+        glBindBuffer(GL_ARRAY_BUFFER, this->ID());
         }
     else {
         // Mapping has not yet occurred. Do it.
@@ -128,17 +117,17 @@ void VertexBuffer::detach(void) {
     // Detachment only occurs if mapping was ever completed.
     if(m_attributes_mapped == true) {
         // Disable fetching for all supplied vertex attribute indices.
-        for(std::vector<attribute_record>::iterator attrib = m_attribute_specs.begin();
-            attrib != m_attribute_specs.end();
-            ++attrib) {
-            glDisableVertexAttribArray(attrib->a_spec.index);
-            }
+//        for(std::vector<attribute_record>::iterator attrib = m_attribute_specs.begin();
+//            attrib != m_attribute_specs.end();
+//            ++attrib) {
+//            glDisableVertexAttribArray(attrib->a_spec.index);
+//            }
         // Unbind the given buffer object from pipeline state.
         glBindBuffer(GL_ARRAY_BUFFER, OGL_ID::NO_ID);
         }
     }
 
-void VertexBuffer::addAttributeDescription(attrib_spec specification) {
+void VertexBuffer::addAttributeDescription(attribute_spec specification) {
     // May only enter new attribute descriptions if mapping has
     // not yet been performed.
     if(m_attributes_mapped == false) {

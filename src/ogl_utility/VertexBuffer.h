@@ -23,7 +23,7 @@
 
 #include "Buffer.h"
 
-#include <map>
+#include <vector>
 
 /**
 * \addtogroup ogl_utility OGL_Utility
@@ -83,17 +83,10 @@ class VertexBuffer : public Buffer {
          * \param data : pointer to the data to be stored.
          * \param size : number of bytes to allocate.
          * \param usage : one of GL_STREAM_DRAW, GL_STATIC_DRAW or GL_DYNAMIC_DRAW.
-         * \param vertex_count : how many vertices are represented by
-         *                       the buffer object. A NON-ZERO positive integer.
-         * \param mix : the pattern of storage of data
-         *                  BY_VERTEX ( default )
-         *                  BY_ATTRIBUTE
          */
         VertexBuffer(const GLvoid* buffer_data,
                      GLsizeiptr size,
-                     GLenum usage,
-                     GLuint vertex_count,
-                     data_mix mix = BY_VERTEX);
+                     GLenum usage);
 
         /**
          * \brief Destructor.
@@ -115,7 +108,7 @@ class VertexBuffer : public Buffer {
          *
          * \param specification : structure describing the attribute data.
          */
-        void addAttributeDescription(attrib_spec specification);
+        void addAttributeDescription(attribute_spec specification);
 
         /**
          * \brief Perform any data binding to the pipeline input.
@@ -171,10 +164,11 @@ class VertexBuffer : public Buffer {
          */
         virtual void loadBuffer(void) const;
 
-        struct attribute_record {attrib_spec a_spec;    // An attribute specification.
-                                 GLuint length;         // The byte length of this attribute.
-                                 GLsizei stride;        // The byte gap between this attribute type in the buffer.
-                                 GLvoid* pointer;       // The byte offset of the FIRST of this attribute in the buffer.
+        struct attribute_record {attribute_spec a_spec;     // An attribute specification.
+
+                                 GLuint length;             // The byte length of this attribute.
+                                 GLsizei stride;            // The byte gap between this attribute type in the buffer.
+                                 GLvoid* pointer;           // The byte offset of the FIRST of this attribute in the buffer.
                                  };
 
         // Storage for all the attribute specifications, sorted
@@ -184,7 +178,7 @@ class VertexBuffer : public Buffer {
         // layout (location = index_1) in attribute_type1 attribute_name_in_shader1;
         // layout (location = index_2) in attribute_type2 attribute_name_in_shader2;
         //
-        std::map<attribute_record> m_attribute_specs;
+        std::vector<attribute_record> m_attribute_specs;
 
         /**
          * \brief Create full/detailed mapping of attribute positions within
