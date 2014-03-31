@@ -55,3 +55,13 @@ void IndexBuffer::loadBuffer(void) const {
     // Unbind the buffer.
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, OGL_ID::NO_ID);
     }
+
+void IndexBuffer::attach(void) {
+    // Bind the given buffer object to pipeline state.
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->ID());
+    }
+
+void IndexBuffer::detach(void) {
+    // Unbind the given buffer object from pipeline state.
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, OGL_ID::NO_ID);
+    }

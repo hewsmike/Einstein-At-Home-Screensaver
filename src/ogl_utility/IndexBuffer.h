@@ -62,6 +62,16 @@ class IndexBuffer : public Buffer {
          */
         virtual ~IndexBuffer();
 
+         /**
+         * \brief Perform any data binding to the pipeline input.
+         */
+        void attach(void);
+
+        /**
+         * \brief Remove any data binding to the pipeline input.
+         */
+        void detach(void);
+
     private:
         /// The number of bytes to be allocated to the buffer.
         GLsizeiptr m_size;
