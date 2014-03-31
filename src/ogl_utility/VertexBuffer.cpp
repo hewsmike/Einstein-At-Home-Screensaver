@@ -69,19 +69,15 @@ void VertexBuffer::release_ID(GLuint* handle) const {
     glDeleteBuffers(1, handle);
     }
 
-void VertexBuffer::loadBuffer(GLenum target) const {
+void VertexBuffer::loadBuffer(void) const {
     // Bind this buffer to the specified target.
-    glBindBuffer(target, this->ID());
+    glBindBuffer(GL_ARRAY_BUFFER, this->ID());
 
     // Allocate space and transfer the data.
-    glBufferData(target, m_size, this->data(), m_usage);
+    glBufferData(GL_ARRAY_BUFFER, m_size, this->data(), m_usage);
 
     // Unbind the buffer.
-    glBindBuffer(target, OGL_ID::NO_ID);
-    }
-
-void VertexBuffer::loadBuffer(void) const {
-    loadBuffer(GL_ARRAY_BUFFER);
+    glBindBuffer(GL_ARRAY_BUFFER, OGL_ID::NO_ID);
     }
 
 void VertexBuffer::attach(void) {

@@ -26,7 +26,9 @@ IndexBuffer::IndexBuffer(const GLvoid* buffer_data,
                          GLsizeiptr size,
                          GLenum usage,
                          GLenum index_type) :
-                VertexBuffer(buffer_data, size, usage) {
+                Buffer(buffer_data),
+                m_size(size),
+                m_usage(usage) {
     // Ensure compliance with OpenGL ES 2.x acceptable parameter types.
     if((index_type == GL_UNSIGNED_BYTE) ||
        (index_type == GL_UNSIGNED_SHORT) ||
@@ -44,5 +46,12 @@ IndexBuffer::~IndexBuffer() {
     }
 
 void IndexBuffer::loadBuffer(void) const {
-    VertexBuffer::loadBuffer(GL_ELEMENT_ARRAY_BUFFER);
+    // Bind this buffer to the specified target.
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->ID());
+
+    // Allocate space and transfer the data.
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_size, this->data(), m_usage);
+
+    // Unbind the buffer.
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, OGL_ID::NO_ID);
     }

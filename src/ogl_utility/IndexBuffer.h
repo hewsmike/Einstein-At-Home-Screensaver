@@ -37,7 +37,7 @@
 * \author Mike Hewson\n
 */
 
-class IndexBuffer : public VertexBuffer {
+class IndexBuffer : public Buffer {
     public :
         /**
          * \brief Constructor. Will fail fatally for the application if one or
@@ -63,6 +63,12 @@ class IndexBuffer : public VertexBuffer {
         virtual ~IndexBuffer();
 
     private:
+        /// The number of bytes to be allocated to the buffer.
+        GLsizeiptr m_size;
+
+        /// The usage hint.
+        GLenum m_usage;
+
         /// The index data type.
         GLenum m_index_type;
 

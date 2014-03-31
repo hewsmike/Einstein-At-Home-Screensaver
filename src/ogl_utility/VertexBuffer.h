@@ -120,12 +120,6 @@ class VertexBuffer : public Buffer {
          */
         void detach(void);
 
-    protected :
-        /**
-         * \brief Populate the buffer with vertex data.
-         */
-        virtual void loadBuffer(GLenum target) const;
-
     private:
         /// The number of bytes to be allocated to the buffer.
         GLsizeiptr m_size;
