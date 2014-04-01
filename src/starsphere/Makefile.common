@@ -98,7 +98,7 @@ CPPFLAGS += -I$(FRAMEWORK_SRC) -I$(PRODUCT_SRC) -I$(PRODUCT_SRC)/../framework
 
 # Target specific.
 ifeq ".$(SYSTEM)" ".linux"
-    CPPFLAGS += -I/usr/include
+    CPPFLAGS += -I/usr/include -I/usr/include/GL
     CPPFLAGS += -DGL_GLEXT_PROTOTYPES
 endif
 ifeq ".$(SYSTEM)" ".win32"
@@ -119,17 +119,17 @@ endif
 # Target specific.
 ifeq ".$(SYSTEM)" ".linux"
 	LIBS += -Wl,-Bstatic
-    LIBS += -L$(PRODUCT_INSTALL)/lib -L$(PRODUCT_INSTALL)/lib64
+    LIBS += -L$(PRODUCT_INSTALL)/lib
     LIBS += -lframework -lrt -lSDL2_ttf
     LIBS += $(shell $(PRODUCT_INSTALL)/bin/freetype-config --libs)
     LIBS += $(shell $(PRODUCT_INSTALL)/bin/xml2-config --libs)
     LIBS += $(shell $(PRODUCT_INSTALL)/bin/sdl2-config --libs)
     LIBS += -lboinc_api -lboinc
-    LIBS += -L/usr/X11/lib -lX11 -lXrandr -lXrender
+    LIBS += -L/usr/lib/X11 -lX11 -lXrandr -lXrender
     LIBS += -lstdc++
     LIBS += -L/usr/lib
-    LIBS += -Wl,-Bdynamic
-    LIBS += -lGLEW
+#    LIBS += -Wl,-Bdynamic
+    LIBS += -lGLEW -lGLU -lGL
     LIBS += -lpthread -lm -lc
 endif
 

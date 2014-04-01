@@ -58,6 +58,9 @@ const int WindowManager::RIGHT_MOUSE_BUTTON(3);
 const float WindowManager::TIMER_DELAY_BOINC(1000);
 const float WindowManager::MILLISECONDS_PER_SECOND(1000.0f);
 
+Sint32 WindowManager::RenderEvent(0);
+Sint32 WindowManager::BOINCUpdateEvent(0);
+
 WindowManager::WindowManager(void) {
     m_BoincAdapter = new BOINCClientAdapter("");
     }
