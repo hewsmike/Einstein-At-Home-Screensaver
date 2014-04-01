@@ -92,17 +92,17 @@ void VertexBuffer::attach(void) {
         // Enable fetching for all supplied vertex attribute indices,
         // these corresponding to 'location' definitions within the
         // vertex shader's GLSL code.
-//        for(std::vector<attribute_record>::iterator attrib = m_attribute_specs.begin();
-//            attrib != m_attribute_specs.end();
-//            ++attrib) {
-//            glEnableVertexAttribArray(attrib->a_spec.index);
-//            glVertexAttribPointer(attrib->index,
-//                                  attrib->a_spec.size,
-//                                  attrib->a_spec.type,
-//                                  attrib->a_spec.normalised,
-//                                  attrib->stride,
-//                                  attrib->pointer);
-//            }
+        for(std::vector<attribute_record>::iterator attrib = m_attribute_specs.begin();
+            attrib != m_attribute_specs.end();
+            ++attrib) {
+            glEnableVertexAttribArray(attrib->a_spec.location_index);
+            glVertexAttribPointer(attrib->a_spec.location_index,
+                                  attrib->a_spec.size,
+                                  attrib->a_spec.type,
+                                  attrib->a_spec.normalised,
+                                  attrib->stride,
+                                  attrib->pointer);
+            }
         // Bind the given buffer object to pipeline state.
         glBindBuffer(GL_ARRAY_BUFFER, this->ID());
         }
@@ -119,11 +119,11 @@ void VertexBuffer::detach(void) {
     // Detachment only occurs if mapping was ever completed.
     if(m_attributes_mapped == true) {
         // Disable fetching for all supplied vertex attribute indices.
-//        for(std::vector<attribute_record>::iterator attrib = m_attribute_specs.begin();
-//            attrib != m_attribute_specs.end();
-//            ++attrib) {
-//            glDisableVertexAttribArray(attrib->a_spec.index);
-//            }
+        for(std::vector<attribute_record>::iterator attrib = m_attribute_specs.begin();
+            attrib != m_attribute_specs.end();
+            ++attrib) {
+            glDisableVertexAttribArray(attrib->a_spec.location_index);
+            }
         // Unbind the given buffer object from pipeline state.
         glBindBuffer(GL_ARRAY_BUFFER, OGL_ID::NO_ID);
         }
@@ -135,6 +135,7 @@ void VertexBuffer::addAttributeDescription(attribute_spec specification) {
     if(m_attributes_mapped == false) {
         attribute_record record;
         record.a_spec = specification;
+        record.a_spec.location_index = specification.location_index;
 
         // The length in bytes of an attribute is it's number
         // of ( identically sized ) components times the size of
@@ -168,7 +169,7 @@ void VertexBuffer::addAttributeDescription(attribute_spec specification) {
         // Add this attribute's length to the sum of same.
         m_attribute_length_sum += record.length;
 
-        // These must/will be calculated once all attributes have been described.
+        // These must be calculated once all attributes have been described.
         record.stride = 0;
         record.pointer = 0;
 
@@ -189,17 +190,15 @@ void VertexBuffer::prepareAttributeMapping(void) {
     // a BufferVertexFetch instance ie. this method is only ever performed
     // at most ONCE.
     if(m_attributes_mapped == false) {
+        GLuint progressive_offset = 0;
         // Go through and examine all the given attribute specifications.
         for(std::vector<attribute_record>::iterator attrib = m_attribute_specs.begin();
             attrib != m_attribute_specs.end();
             ++attrib) {
-            if(m_mix == BY_VERTEX) {
                 attrib->stride = m_attribute_length_sum;
-                attrib->pointer = 0;
-                }
-            if(m_mix == BY_ATTRIBUTE) {
-                attrib->stride = 0;
-                attrib->pointer = 0;
+                attrib->pointer = progressive_offset;
+                // NB This assumes close packing of attributes.
+                progressive_offset += attrib->length;
                 }
             }
 

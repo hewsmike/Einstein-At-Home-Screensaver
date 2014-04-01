@@ -35,7 +35,8 @@
 *        vertex buffer objects.
 *
 *    This is the case where vertex attributes are supplied to the pipeline
-* sequentially from a buffer. The following sequence is strongly advised :
+* sequentially from a buffer. Assumes data is stored on a per vertex basis.
+* The following sequence is strongly advised :
 *       - by sufficient calls to addAttributeDescription(), provide
 *         information about ALL attributes within the provided buffer,
 *         in the order that they are stored within the buffer.
@@ -50,9 +51,6 @@
 
 class VertexBuffer : public Buffer {
     public :
-        enum data_mix {BY_VERTEX,
-                       BY_ATTRIBUTE};
-
         struct attribute_spec {
             // Number of components for this attribute.
             GLint size;
@@ -71,6 +69,8 @@ class VertexBuffer : public Buffer {
             // unsigned integers map to [0, +1]
             // GL_FALSE no normalisation, directly map to floats.
             GLboolean normalised;
+            // The location index as declared in associated vertex shader code.
+            GLuint location_index;
             };
 
         /**
@@ -130,9 +130,6 @@ class VertexBuffer : public Buffer {
         /// The number of vertices represented.
         GLuint m_vertex_count;
 
-        /// The pattern of data distribution within.
-        data_mix m_mix;
-
         /// Flag indicating if buffer attribute mapping has been done.
         bool m_attributes_mapped;
 
@@ -159,7 +156,6 @@ class VertexBuffer : public Buffer {
         virtual void loadBuffer(void) const;
 
         struct attribute_record {attribute_spec a_spec;     // An attribute specification.
-
                                  GLuint length;             // The byte length of this attribute.
                                  GLsizei stride;            // The byte gap between this attribute type in the buffer.
                                  GLvoid* pointer;           // The byte offset of the FIRST of this attribute in the buffer.
