@@ -23,17 +23,20 @@
 #include "ErrorHandler.h"
 
 VertexBuffer::VertexBuffer(const GLvoid* buffer_data,
-                           GLsizeiptr size,
+                           GLuint vertices,
                            GLenum usage) :
                 Buffer(buffer_data) {
-    // Ensure strictly positive buffer size.
-    if(size > 0) {
-        m_size = size;
+    // Ensure strictly positive vertex count.
+    if(vertices > 0) {
+        m_vertex_count = vertices;
         }
     else {
-        ErrorHandler::record("VertexBuffer::VertexBuffer() : Strictly positive buffer size required.",
+        ErrorHandler::record("VertexBuffer::VertexBuffer() : Strictly positive vertex count required.",
                              ErrorHandler::FATAL);
         }
+
+    // Initially buffer size is nil.
+    m_size = 0;
 
     // Ensure compliance with OpenGL ES 2.x acceptable parameter types.
     if((usage == GL_STREAM_DRAW) ||
@@ -83,6 +86,9 @@ void VertexBuffer::loadBuffer(void) const {
 void VertexBuffer::attach(void) {
     // Attachment only occurs if all preparations are complete.
     if(m_attributes_mapped == true) {
+        // Ensure resource acquisition first.
+        this->acquire();
+
         // Enable fetching for all supplied vertex attribute indices,
         // these corresponding to 'location' definitions within the
         // vertex shader's GLSL code.
@@ -136,22 +142,22 @@ void VertexBuffer::addAttributeDescription(attribute_spec specification) {
         record.length = record.a_spec.size;
         switch (record.a_spec.type) {
             case GL_BYTE:
-                record.length *= sizeof(GL_BYTE);
+                record.length *= sizeof(GLbyte);
                 break;
             case GL_UNSIGNED_BYTE:
-                record.length *= sizeof(GL_UNSIGNED_BYTE);
+                record.length *= sizeof(GLubyte);
                 break;
             case GL_SHORT:
-                record.length *= sizeof(GL_SHORT);
+                record.length *= sizeof(GLshort);
                 break;
             case GL_UNSIGNED_SHORT:
-                record.length *= sizeof(GL_UNSIGNED_SHORT);
+                record.length *= sizeof(GLushort);
                 break;
             case GL_FIXED:
-                record.length *= sizeof(GL_FIXED);
+                record.length *= sizeof(GLfixed);
                 break;
             case GL_FLOAT:
-                record.length *= sizeof(GL_FLOAT);
+                record.length *= sizeof(GLfloat);
                 break;
             default:
                 ErrorHandler::record("BufferVertexFetch::addVertexAttribute() : Bad switch case ( default )",
@@ -168,6 +174,9 @@ void VertexBuffer::addAttributeDescription(attribute_spec specification) {
 
         // Insert into the attributes record.
         m_attribute_specs.push_back(record);
+
+        // Recalculate total buffer length in bytes.
+        m_size = m_vertex_count * m_attribute_length_sum;
         }
     else {
         ErrorHandler::record("VertexBuffer::addAttributeDescription() : attempt to add attribute after mapping completed",

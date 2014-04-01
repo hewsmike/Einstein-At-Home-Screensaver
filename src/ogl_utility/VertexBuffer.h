@@ -77,15 +77,15 @@ class VertexBuffer : public Buffer {
          * \brief Constructor. Will fail fatally for the application if one or
          *        more of the following applies :
          *          - the data pointer is NULL ( base class enforced ).
-         *          - size is not strictly positive.
+         *          - vertices is not strictly positive.
          *          - usage type is incorrect for OpenGL ES 2.x
          *
          * \param data : pointer to the data to be stored.
-         * \param size : number of bytes to allocate.
+         * \param vertices : number of vertices.
          * \param usage : one of GL_STREAM_DRAW, GL_STATIC_DRAW or GL_DYNAMIC_DRAW.
          */
         VertexBuffer(const GLvoid* buffer_data,
-                     GLsizeiptr size,
+                     GLuint vertices,
                      GLenum usage);
 
         /**

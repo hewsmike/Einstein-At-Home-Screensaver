@@ -23,21 +23,39 @@
 #include "ErrorHandler.h"
 
 IndexBuffer::IndexBuffer(const GLvoid* buffer_data,
-                         GLsizeiptr size,
+                         GLuint indices,
                          GLenum usage,
                          GLenum index_type) :
                 Buffer(buffer_data),
-                m_size(size),
                 m_usage(usage) {
-    // Ensure compliance with OpenGL ES 2.x acceptable parameter types.
-    if((index_type == GL_UNSIGNED_BYTE) ||
-       (index_type == GL_UNSIGNED_SHORT) ||
-       (index_type == GL_UNSIGNED_INT)) {
-        m_index_type = index_type;
+    // Ensure strictly positive index count.
+    if(indices > 0) {
+        m_indices = indices;
         }
     else {
-        ErrorHandler::record("IndexBuffer::IndexBuffer() : Bad index type provided.",
+        ErrorHandler::record("IndexBuffer::IndexBuffer() : Strictly positive index count required.",
                              ErrorHandler::FATAL);
+        }
+
+    // Initially buffer size is nil.
+    m_size = 0;
+
+    // Ensure compliance with OpenGL ES 2.x acceptable parameter types.
+    m_index_type = index_type;
+    switch(index_type) {
+        case GL_UNSIGNED_BYTE:
+            m_size = indices * sizeof(GLubyte);
+            break;
+        case GL_UNSIGNED_SHORT:
+            m_size = indices * sizeof(GLushort);
+            break;
+        case GL_UNSIGNED_INT:
+            m_size = indices * sizeof(GLuint);
+            break;
+        default:
+            ErrorHandler::record("IndexBuffer::IndexBuffer() : Bad index type provided.",
+                                 ErrorHandler::FATAL);
+            break;
         }
     }
 
@@ -57,6 +75,8 @@ void IndexBuffer::loadBuffer(void) const {
     }
 
 void IndexBuffer::attach(void) {
+    // Ensure resource acquisition first.
+    this->acquire();
     // Bind the given buffer object to pipeline state.
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->ID());
     }

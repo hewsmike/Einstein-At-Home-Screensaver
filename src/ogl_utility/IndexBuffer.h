@@ -43,17 +43,17 @@ class IndexBuffer : public Buffer {
          * \brief Constructor. Will fail fatally for the application if one or
          *        more of the following applies :
          *          - the data pointer is NULL ( base class enforced ).
-         *          - size is not strictly positive.
+         *          - indices is not strictly positive.
          *          - usage type is incorrect for OpenGL ES 2.x
          *          - index type is incorrect for OpenGL ES 2.x
          *
          * \param data : pointer to the data to be stored.
-         * \param size : number of bytes to allocate.
+         * \param indices : number of indices.
          * \param usage : one of GL_STREAM_DRAW, GL_STATIC_DRAW or GL_DYNAMIC_DRAW.
          * \param index_type : of GL_UNSIGNED_BYTE, GL_UNSIGNED_SHORT, GL_UNISGNED_INT.
          */
         IndexBuffer(const GLvoid* buffer_data,
-                    GLsizeiptr size,
+                    GLuint indices,
                     GLenum usage,
                     GLenum index_type);
 
@@ -75,6 +75,9 @@ class IndexBuffer : public Buffer {
     private:
         /// The number of bytes to be allocated to the buffer.
         GLsizeiptr m_size;
+
+        /// The number of indices in the buffer.
+        GLuint m_indices;
 
         /// The usage hint.
         GLenum m_usage;
