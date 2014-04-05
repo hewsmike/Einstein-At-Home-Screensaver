@@ -196,11 +196,10 @@ void VertexBuffer::prepareAttributeMapping(void) {
             attrib != m_attribute_specs.end();
             ++attrib) {
                 attrib->stride = m_attribute_length_sum;
-                attrib->pointer = progressive_offset;
+                // attrib->pointer = static_cast<GLvoid*>(attrib) + progressive_offset;
                 // NB This assumes close packing of attributes.
                 progressive_offset += attrib->length;
-                }
-            }
+			}
 
         // Mark attribute mapping as completed.
         m_attributes_mapped = true;

@@ -158,7 +158,7 @@ class VertexBuffer : public Buffer {
         struct attribute_record {attribute_spec a_spec;     // An attribute specification.
                                  GLuint length;             // The byte length of this attribute.
                                  GLsizei stride;            // The byte gap between this attribute type in the buffer.
-                                 GLvoid* pointer;           // The byte offset of the FIRST of this attribute in the buffer.
+                                 GLvoid* pointer;           	// The byte offset of the FIRST of this attribute in the buffer.
                                  };
 
         // Storage for all the attribute specifications, sorted

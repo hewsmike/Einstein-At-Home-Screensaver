@@ -30,6 +30,7 @@ CPPFLAGS += -D$(PRODUCT_UPPER)
 CXX?=g++
 
 # variables
+CPPFLAGS += -m32
 CPPFLAGS += $(shell $(FRAMEWORK_INSTALL)/bin/freetype-config --cflags)
 CPPFLAGS += $(shell $(FRAMEWORK_INSTALL)/bin/xml2-config --cflags)
 CPPFLAGS += -I$(FRAMEWORK_INSTALL)/include/boinc

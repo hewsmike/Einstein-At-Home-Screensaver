@@ -26,11 +26,12 @@ ORC_INSTALL?=$(PWD)
 CXX?=g++
 
 # variables
-CPPFLAGS += -I/usr/include
+CPPFLAGS += -m32
+CPPFLAGS += -I/usr/include -I/usr/lib/i386-linux-gnu
 # Force search path for 'ld'
 CPPFLAGS += -B/usr/bin
 LDFLAGS +=
-LIBS += -L/usr/lib
+LIBS += -L/usr/lib -L/usr/lib/i386-linux-gnu
 
 OBJS=ResourceCompiler.o
 DEPS=Makefile

@@ -86,13 +86,14 @@ CXX ?= g++
 # Compiler variables.
 
 # Generic.
-CPPFLAGS += -static
+CPPFLAGS += -static -m32
 CPPFLAGS += -I$(PRODUCT_INSTALL)/include
 CPPFLAGS += $(shell $(PRODUCT_INSTALL)/bin/freetype-config --cflags)
 CPPFLAGS += $(shell $(PRODUCT_INSTALL)/bin/xml2-config --cflags)
 CPPFLAGS += $(shell $(PRODUCT_INSTALL)/bin/sdl2-config --cflags)
 CPPFLAGS += -I$(PRODUCT_INSTALL)/include/boinc
 CPPFLAGS += -I$(PRODUCT_INSTALL)/include/GL
+CPPFLAGS += -Iusr/include/GL
 CPPFLAGS += -I$(PRODUCT_INSTALL)/include/SDL2
 CPPFLAGS += -I$(FRAMEWORK_SRC) -I$(PRODUCT_SRC) -I$(PRODUCT_SRC)/../framework
 
@@ -126,10 +127,10 @@ ifeq ".$(SYSTEM)" ".linux"
     LIBS += $(shell $(PRODUCT_INSTALL)/bin/sdl2-config --libs)
     LIBS += -lboinc_api -lboinc
     LIBS += -L/usr/lib/X11 -lX11 -lXrandr -lXrender
-    LIBS += -lstdc++
-    LIBS += -L/usr/lib
-#    LIBS += -Wl,-Bdynamic
-    LIBS += -lGLEW -lGLU -lGL
+    LIBS += -lstdc++ -lGLEW
+    LIBS += -L/usr/lib/i386-linux-gnu/mesa
+    LIBS += -Wl,-Bdynamic
+    LIBS += -lGLU -lGL
     LIBS += -lpthread -lm -lc
 endif
 
