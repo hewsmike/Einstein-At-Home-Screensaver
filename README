@@ -12,3 +12,7 @@ Repository for development of screensaver code using a rather updated version of
     - use OpenGL ES 2.x ie. that subset of OpenGL forwards compatible contexts.
     - use sdl_ttf library for rendering, using font interface via FreeType.
     - expand build system ( initially by stubs ) for Android and iOS.
+
+07/04/2014
+    - Note to developers, set the BUILD_HOST variable in topbuild.sh ( around
+      line # 600 ) for proper operation of the build scripts.

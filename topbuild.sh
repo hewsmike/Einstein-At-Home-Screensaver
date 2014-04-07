@@ -599,6 +599,11 @@ log "Selected ${1:2} target ( using ${2:2} mode ) for product ${3:2}"
 
 # here we go...
 
+# Making this explicit gets around a few troubles with config.guess etc.
+# Will be used by config in target dependent build scripts.
+# HENCE this will need to be set by the developer as per their system !!
+export BUILD_HOST=
+
 case $TARGET in
     $TARGET_ANDROID)
         realtarget

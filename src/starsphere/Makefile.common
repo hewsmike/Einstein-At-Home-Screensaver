@@ -65,7 +65,7 @@ RADIO := Radio
 # Target variants.
 TARGET_APPEND=
 ifeq ".$(SYSTEM)" ".linux"
-    TARGET_APPEND := "i686-pc-linux-gnu"
+    TARGET_APPEND := ${TARGET_HOST}-pc-linux-gnu"
 endif
 ifeq ".$(SYSTEM)" ".win32"
     TARGET_APPEND := "windows_intelx86.exe"
