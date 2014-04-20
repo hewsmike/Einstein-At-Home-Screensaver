@@ -34,13 +34,13 @@ LOGFILE=$ROOT/topbuild.log
 # Required for correct access to the BOINC repository.
 TAG_GFXAPPS="current_gfx_apps"
 
-# For most source fetches I use version strings as I'm
+# For source fetches I use version strings as I'm
 # not entirely happy to commit to whatever some latest
 # library build might be.
 FREETYPE_VERSION=2.5.1
 GLEW_VERSION=1.10.0
 LIBXML_VERSION=2.7.2
-SDL_VERSION=2.0.1
+SDL_VERSION=2.0.3
 SDL_TTF_VERSION=2.0.12
 
 # Target variants.
