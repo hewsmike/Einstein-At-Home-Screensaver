@@ -293,32 +293,26 @@ check_retrieval() {
 
     if [ $TOPBUILDSTATE -lt $TBS_BOINC_RETRIEVED ]; then
         retrieve_boinc $TAG_GFXAPPS || failure
-        save_topbuild_state $TBS_BOINC_RETRIEVED
     fi
 
     if [ $TOPBUILDSTATE -lt $TBS_FREETYPE_RETRIEVED ]; then
         retrieve_freetype || failure
-        save_topbuild_state $TBS_FREETYPE_RETRIEVED
     fi
 
     if [ $TOPBUILDSTATE -lt $TBS_GLEW_RETRIEVED ]; then
         retrieve_glew || failure
-        save_topbuild_state $TBS_GLEW_RETRIEVED
     fi
 
     if [ $TOPBUILDSTATE -lt $TBS_LIBXML_RETRIEVED ]; then
         retrieve_libxml || failure
-        save_topbuild_state $TBS_LIBXML_RETRIEVED
     fi
 
     if [ $TOPBUILDSTATE -lt $TBS_SDL_RETRIEVED ]; then
         retrieve_sdl || failure
-        save_topbuild_state $TBS_SDL_RETRIEVED
     fi
 
     if [ $TOPBUILDSTATE -lt $TBS_SDL_TTF_RETRIEVED ]; then
         retrieve_sdl_ttf || failure
-        save_topbuild_state $TBS_SDL_TTF_RETRIEVED
     fi
 
     save_topbuild_state $TBS_RETRIEVED

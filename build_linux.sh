@@ -244,9 +244,9 @@ build_boinc() {
     cd $ROOT/build/boinc || failure
     if [ -d "/usr/local/ssl" ]; then
         log "Using local SSL library..."
-        $ROOT/3rdparty/boinc/configure --build=$BUILD_HOST --host=$TARGET_HOST --target=$TARGET_HOST --prefix=$ROOT/install --enable-shared=no --enable-static=yes --disable-server --disable-client --enable-install-headers --enable-libraries --disable-manager --disable-fcgi CPPFLAGS=-I/usr/local/ssl/include LDFLAGS=-L/usr/local/ssl/lib >> $LOGFILE 2>&1 || failure
+        $ROOT/3rdparty/boinc/configure --prefix=$ROOT/install --enable-shared=no --enable-static=yes --disable-server --disable-client --enable-install-headers --enable-libraries --disable-manager --disable-fcgi CPPFLAGS=-I/usr/local/ssl/include LDFLAGS=-L/usr/local/ssl/lib >> $LOGFILE 2>&1 || failure
     else
-        $ROOT/3rdparty/boinc/configure --build=$BUILD_HOST --host=$TARGET_HOST --target=$TARGET_HOST --prefix=$ROOT/install --enable-shared=no --enable-static=yes --disable-server --disable-client --enable-install-headers --enable-libraries --disable-manager --disable-fcgi >> $LOGFILE 2>&1 || failure
+        $ROOT/3rdparty/boinc/configure --prefix=$ROOT/install --enable-shared=no --enable-static=yes --disable-server --disable-client --enable-install-headers --enable-libraries --disable-manager --disable-fcgi >> $LOGFILE 2>&1 || failure
     fi
 
     log "Building BOINC (this may take a while)..."
@@ -270,7 +270,7 @@ build_freetype() {
     chmod +x configure >> $LOGFILE 2>&1 || failure
     cd $ROOT/build/freetype2 || failure
     # note: freetype probably doesn't need *no* configure when static -> ansi build, see readme!
-    $ROOT/3rdparty/freetype2/configure --build=$BUILD_HOST --host=$TARGET_HOST --target=$TARGET_HOST --prefix=$ROOT/install --enable-shared=no --enable-static=yes >> $LOGFILE 2>&1 || failure
+    $ROOT/3rdparty/freetype2/configure --prefix=$ROOT/install --enable-shared=no --enable-static=yes >> $LOGFILE 2>&1 || failure
 
     log "Building Freetype2 (this may take a while)..."
     make >> $LOGFILE 2>&1 || failure
@@ -309,7 +309,7 @@ build_libxml() {
     cd $ROOT/3rdparty/libxml2 || failure
     chmod +x configure >> $LOGFILE 2>&1 || failure
     cd $ROOT/build/libxml2 || failure
-    $ROOT/3rdparty/libxml2/configure --build=$BUILD_HOST --host=$TARGET_HOST --target=$TARGET_HOST --prefix=$ROOT/install --enable-shared=no --enable-static=yes --without-python >> $LOGFILE 2>&1 || failure
+    $ROOT/3rdparty/libxml2/configure --prefix=$ROOT/install --enable-shared=no --enable-static=yes --without-python >> $LOGFILE 2>&1 || failure
 
     # To get around a lame error in the above config
     cp -f $ROOT/3rdparty/libxml2/testapi.c $ROOT/build/libxml2/testapi.c
@@ -335,7 +335,7 @@ build_sdl() {
     ./autogen.sh >> $LOGFILE 2>&1 || failure
     chmod +x configure >> $LOGFILE 2>&1 || failure
     cd $ROOT/build/sdl2 || failure
-    $ROOT/3rdparty/sdl2/configure --build=$BUILD_HOST --host=$TARGET_HOST --target=$TARGET_HOST --prefix=$ROOT/install --enable-shared=no --enable-static=yes --enable-screensaver=yes >> $LOGFILE 2>&1 || failure
+    $ROOT/3rdparty/sdl2/configure --prefix=$ROOT/install --enable-shared=no --enable-static=yes --enable-screensaver=yes >> $LOGFILE 2>&1 || failure
 
 
     log "Building SDL (this may take a while)..."
@@ -359,7 +359,7 @@ build_sdl_ttf() {
     ./autogen.sh >> $LOGFILE 2>&1 || failure
     chmod +x configure >> $LOGFILE 2>&1 || failure
     cd $ROOT/build/sdl2_ttf || failure
-    $ROOT/3rdparty/sdl2_ttf/configure --build=$BUILD_HOST --host=$TARGET_HOST --target=$TARGET_HOST --prefix=$ROOT/install --enable-shared=no --enable-static=yes --enable-screensaver=yes >> $LOGFILE 2>&1 || failure
+    $ROOT/3rdparty/sdl2_ttf/configure --prefix=$ROOT/install --enable-shared=no --enable-static=yes --enable-screensaver=yes >> $LOGFILE 2>&1 || failure
 
     log "Building SDL TTF(this may take a while)..."
     make >> $LOGFILE 2>&1 || failure
@@ -386,12 +386,6 @@ build_orc() {
     export ORC_SRC=$ROOT/src/orc || failure
     export ORC_INSTALL=$ROOT/install || failure
 
-    # ORC runs on host, not target
-    OLD_CC=CC
-    OLD_CXX=CXX
-    export CC=`which ${BUILD_HOST}-gcc`
-    export CXX=`which ${BUILD_HOST}-g++`
-
     cd $ROOT/build/orc || failure
     cp $ROOT/src/orc/Makefile . >> $LOGFILE 2>&1 || failure
 
@@ -401,9 +395,6 @@ build_orc() {
 
     log "Successfully built and installed $PRODUCT_NAME [Object Resource Compiler]!"
     return 0
-
-    export CC=OLD_CC
-    export CXX=OLD_CXX
     }
 
 build_framework() {
@@ -458,14 +449,6 @@ build_product() {
 build_linux() {
     log "Important for an official build: let CC and CXX point to gcc/g++ 4.6+ !"
     mkdir -p $ROOT/build/$PRODUCT >> $LOGFILE || failure
-
-    # Making this explicit gets around a few troubles with config.guess etc.
-    # Will be used by config in target dependent build scripts.
-    # HENCE this will need to be set by the developer as per their system !!
-    export TARGET_HOST="i686"
-    export CC=`which ${TARGET_HOST}-linux-gnu-gcc`
-    export CXX=`which ${TARGET_HOST}-linux-gnu-g++`
-    export CPPFLAGS="-m32"
 
     # Make sure the base libraries are built.
     build_boinc || failure
