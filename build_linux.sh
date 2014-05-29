@@ -309,7 +309,7 @@ build_libxml() {
     cd $ROOT/3rdparty/libxml2 || failure
     chmod +x configure >> $LOGFILE 2>&1 || failure
     cd $ROOT/build/libxml2 || failure
-    $ROOT/3rdparty/libxml2/configure --prefix=$ROOT/install --enable-shared=no --enable-static=yes --without-python >> $LOGFILE 2>&1 || failure
+    $ROOT/3rdparty/libxml2/configure --build=x86_64-linux-gnu --host=i386-linux-gnu --prefix=$ROOT/install --enable-shared=no --enable-static=yes --without-python >> $LOGFILE 2>&1 || failure
 
     # To get around a lame error in the above config
     cp -f $ROOT/3rdparty/libxml2/testapi.c $ROOT/build/libxml2/testapi.c
