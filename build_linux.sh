@@ -270,7 +270,7 @@ build_freetype() {
     chmod +x configure >> $LOGFILE 2>&1 || failure
     cd $ROOT/build/freetype2 || failure
     # note: freetype probably doesn't need *no* configure when static -> ansi build, see readme!
-    $ROOT/3rdparty/freetype2/configure --prefix=$ROOT/install --enable-shared=no --enable-static=yes >> $LOGFILE 2>&1 || failure
+    CFLAGS=-m32 $ROOT/3rdparty/freetype2/configure --build=$BUILD_SYSTEM --host=$HOST_SYSTEM  --without-png --prefix=$ROOT/install --enable-shared=no --enable-static=yes >> $LOGFILE 2>&1 || failure
 
     log "Building Freetype2 (this may take a while)..."
     make >> $LOGFILE 2>&1 || failure
@@ -335,7 +335,7 @@ build_sdl() {
     ./autogen.sh >> $LOGFILE 2>&1 || failure
     chmod +x configure >> $LOGFILE 2>&1 || failure
     cd $ROOT/build/sdl2 || failure
-    $ROOT/3rdparty/sdl2/configure --prefix=$ROOT/install --enable-shared=no --enable-static=yes --enable-screensaver=yes >> $LOGFILE 2>&1 || failure
+    CFLAGS=-m32 $ROOT/3rdparty/sdl2/configure --build=$BUILD_SYSTEM --host=$HOST_SYSTEM --prefix=$ROOT/install --enable-shared=no --enable-static=yes --enable-screensaver=yes >> $LOGFILE 2>&1 || failure
 
 
     log "Building SDL (this may take a while)..."
@@ -359,7 +359,13 @@ build_sdl_ttf() {
     ./autogen.sh >> $LOGFILE 2>&1 || failure
     chmod +x configure >> $LOGFILE 2>&1 || failure
     cd $ROOT/build/sdl2_ttf || failure
-    $ROOT/3rdparty/sdl2_ttf/configure --prefix=$ROOT/install --enable-shared=no --enable-static=yes --enable-screensaver=yes >> $LOGFILE 2>&1 || failure
+
+    # To get around a lame error in the config below
+    cp -f $ROOT/build/freetype2/freetype-config $ROOT/build/sdl2_ttf/freetype-config
+
+    export PATH=$PATH:$ROOT/install/bin
+
+    CFLAGS=-m32 $ROOT/3rdparty/sdl2_ttf/configure --with-freetype-prefix=$ROOT/install --build=$BUILD_SYSTEM --host=$HOST_SYSTEM --prefix=$ROOT/install --enable-shared=no --enable-static=yes >> $LOGFILE 2>&1 || failure
 
     log "Building SDL TTF(this may take a while)..."
     make >> $LOGFILE 2>&1 || failure

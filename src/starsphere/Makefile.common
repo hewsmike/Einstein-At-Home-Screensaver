@@ -65,7 +65,7 @@ RADIO := Radio
 # Target variants.
 TARGET_APPEND=
 ifeq ".$(SYSTEM)" ".linux"
-    TARGET_APPEND := ${TARGET_HOST}-pc-linux-gnu"
+    TARGET_APPEND := "${TARGET_HOST}-pc-linux-gnu"
 endif
 ifeq ".$(SYSTEM)" ".win32"
     TARGET_APPEND := "windows_intelx86.exe"
@@ -119,19 +119,25 @@ endif
 
 # Target specific.
 ifeq ".$(SYSTEM)" ".linux"
-	LIBS += -Wl,-Bstatic
-    LIBS += -L$(PRODUCT_INSTALL)/lib
-    LIBS += -lframework -lrt -lSDL2_ttf
     LIBS += $(shell $(PRODUCT_INSTALL)/bin/freetype-config --libs)
     LIBS += $(shell $(PRODUCT_INSTALL)/bin/xml2-config --libs)
     LIBS += $(shell $(PRODUCT_INSTALL)/bin/sdl2-config --libs)
-    LIBS += -lboinc_api -lboinc
-    LIBS += -L/usr/lib/X11 -lX11 -lXrandr -lXrender
-    LIBS += -lstdc++ -lGLEW
-    LIBS += -L/usr/lib/i386-linux-gnu/mesa
+
     LIBS += -Wl,-Bdynamic
+    LIBS += -L/usr/lib/X11 -lX11 -lXrandr -lXrender
+    LIBS += -L/usr/lib/i386-linux-gnu/mesa
     LIBS += -lGLU -lGL
     LIBS += -lpthread -lm -lc
+    LIBS += -lstdc++
+
+	LIBS += -Wl,-Bstatic
+    LIBS += -L$(PRODUCT_INSTALL)/lib
+    LIBS += -lframework -lfreetype -lxml2 -lSLD2 -lrt -lSDL2_ttf
+
+    LIBS += -lboinc_api -lboinc
+    LIBS += -lGLEW
+
+
 endif
 
 ifeq ".$(SYSTEM)" ".win32"
@@ -159,7 +165,7 @@ endif
 ###########################################################################
 # Loader variables.
 # Generic.
-LDFLAGS += -static-libgcc
+LDFLAGS += -static-libgcc -m32
 
 # Target specific.
 
