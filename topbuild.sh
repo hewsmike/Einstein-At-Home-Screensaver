@@ -276,6 +276,7 @@ check_prerequisites() {
             exit 1
         fi
     done
+   
 
     save_topbuild_state $TBS_PREREQUISITES
     return 0
@@ -596,7 +597,7 @@ log "Selected ${1:2} target ( using ${2:2} mode ) for product ${3:2}"
 # Making this explicit gets around a few troubles with config.guess etc.
 # Will be used by config in target dependent build scripts.
 # HENCE this will need to be set by the developer as per their system !!
-export BUILD_SYSTEM="x86_64-linux-gnu"
+export BUILD_SYSTEM="x86_64-pc-linux"
 
 case $TARGET in
     $TARGET_ANDROID)
@@ -616,7 +617,7 @@ case $TARGET in
         ./build.sh $2 $3
         ;;
     $TARGET_LINUX)
-        export HOST_SYSTEM="i386-linux-gnu"
+        export HOST_SYSTEM="i686-pc-linux"
         realtarget
         prepare_directories linux
         cp -f $ROOT/build_linux.sh $ROOT/linux/build.sh

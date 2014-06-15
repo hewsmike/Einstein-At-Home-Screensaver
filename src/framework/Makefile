@@ -41,7 +41,7 @@ CPPFLAGS += -I/usr/include
 DEPS = Makefile
 OBJS = AbstractGraphicsEngine.o
 OBJS += ErrorHandler.o
-# OBJS += GraphicsEngineFactory.o
+OBJS += GraphicsEngineFactory.o
 OBJS += WindowManager.o
 OBJS += Resource.o ResourceFactory.o BOINCClientAdapter.o Libxml2Adapter.o
 

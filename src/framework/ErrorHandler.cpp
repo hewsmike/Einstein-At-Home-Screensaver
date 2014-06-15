@@ -31,6 +31,9 @@
 // The error messsage file's name, within local runtime directory.
 const std::string ErrorHandler::LOG_FILE_NAME("eahss_stderr.txt");
 
+std::string ErrorHandler::last_SDL2_error;
+std::string ErrorHandler::last_SDL2_TTF_error;
+
 ErrorHandler::ErrorHandler(void) {
     }
 
@@ -209,10 +212,10 @@ const std::string& ErrorHandler::check_SDL2_Error(void) {
     // since call to SDL_ClearError(). Repeated calls to SDL_GetError
     // will only ever return the same last error.
     last_SDL2_error = SDL_GetError();
-
+    
     // Clearout any message.
     SDL_ClearError();
-
+    
     return last_SDL2_error;
     }
 

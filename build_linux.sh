@@ -244,9 +244,9 @@ build_boinc() {
     cd $ROOT/build/boinc || failure
     if [ -d "/usr/local/ssl" ]; then
         log "Using local SSL library..."
-        CFLAGS=-m32 CPPFLAGS=-m32 CXXFLAGS=-m32 $ROOT/3rdparty/boinc/configure --prefix=$ROOT/install --enable-shared=no --enable-static=yes --disable-server --disable-client --enable-install-headers --enable-libraries --disable-manager --disable-fcgi CPPFLAGS=-I/usr/local/ssl/include LDFLAGS=-L/usr/local/ssl/lib >> $LOGFILE 2>&1 || failure
+        $ROOT/3rdparty/boinc/configure --prefix=$ROOT/install --build=$BUILD_SYSTEM  --host=$HOST_SYSTEM "CFLAGS=-m32" "CXXFLAGS=-m32" "LDFLAGS=-m32" --enable-shared=no --enable-static=yes --disable-server --disable-client --enable-install-headers --enable-libraries --disable-manager --disable-fcgi CPPFLAGS=-I/usr/local/ssl/include LDFLAGS=-L/usr/local/ssl/lib >> $LOGFILE 2>&1 || failure
     else
-        CFLAGS=-m32 CPPFLAGS=-m32 CXXFLAGS=-m32 $ROOT/3rdparty/boinc/configure --prefix=$ROOT/install --enable-shared=no --enable-static=yes --disable-server --disable-client --enable-install-headers --enable-libraries --disable-manager --disable-fcgi >> $LOGFILE 2>&1 || failure
+        $ROOT/3rdparty/boinc/configure --prefix=$ROOT/install --build=$BUILD_SYSTEM --host=$HOST_SYSTEM "CFLAGS=-m32" "CXXFLAGS=-m32" "LDFLAGS=-m32" --enable-shared=no --enable-static=yes --disable-server --disable-client --enable-install-headers --enable-libraries --disable-manager --disable-fcgi >> $LOGFILE 2>&1 || failure
     fi
 
     log "Building BOINC (this may take a while)..."
@@ -263,14 +263,14 @@ build_freetype() {
     if [ $BUILDSTATE -ge $BS_BUILD_FREETYPE ]; then
         return 0
     fi
-
+    log "Configuring freetype2"
     cd $ROOT/3rdparty/freetype2 || failure
     chmod +x autogen.sh >> $LOGFILE 2>&1 || failure
     ./autogen.sh >> $LOGFILE 2>&1 || failure
     chmod +x configure >> $LOGFILE 2>&1 || failure
     cd $ROOT/build/freetype2 || failure
     # note: freetype probably doesn't need *no* configure when static -> ansi build, see readme!
-    CFLAGS=-m32 CPPFLAGS=-m32 CXXFLAGS=-m32 $ROOT/3rdparty/freetype2/configure --build=$BUILD_SYSTEM --host=$HOST_SYSTEM  --without-png --prefix=$ROOT/install --enable-shared=no --enable-static=yes >> $LOGFILE 2>&1 || failure
+    $ROOT/3rdparty/freetype2/configure --build=$BUILD_SYSTEM --host=$HOST_SYSTEM "CFLAGS=-m32" "CXXFLAGS=-m32" "LDFLAGS=-m32" --without-png --prefix=$ROOT/install --enable-shared=no --enable-static=yes >> $LOGFILE 2>&1 || failure
 
     log "Building Freetype2 (this may take a while)..."
     make >> $LOGFILE 2>&1 || failure
@@ -291,8 +291,8 @@ build_glew() {
     cd $ROOT/3rdparty/glew
 
     log "Building GLEW (this may take a while)..."
-    CFLAGS=-m32 CPPFLAGS=-m32 CXXFLAGS=-m32 make >> $LOGFILE 2>&1 || failure
-    CFLAGS=-m32 CPPFLAGS=-m32 CXXFLAGS=-m32 make GLEW_DEST=$ROOT/install/ install >> $LOGFILE 2>&1 || failure
+    make glew.lib >> $LOGFILE 2>&1 || failure
+    make GLEW_DEST=$ROOT/install/ install >> $LOGFILE 2>&1 || failure
 
     log "Successfully built and installed GLEW!"
 
@@ -305,11 +305,11 @@ build_libxml() {
     if [ $BUILDSTATE -ge $BS_BUILD_LIBXML ]; then
         return 0
     fi
-
+    log "Configuring libxml2"
     cd $ROOT/3rdparty/libxml2 || failure
     chmod +x configure >> $LOGFILE 2>&1 || failure
     cd $ROOT/build/libxml2 || failure
-    CFLAGS=-m32 CPPFLAGS=-m32 CXXFLAGS=-m32 $ROOT/3rdparty/libxml2/configure --build=$BUILD_SYSTEM --host=$HOST_SYSTEM --prefix=$ROOT/install --enable-shared=no --enable-static=yes --without-python >> $LOGFILE 2>&1 || failure
+    $ROOT/3rdparty/libxml2/configure --build=$BUILD_SYSTEM --host=$HOST_SYSTEM "CFLAGS=-m32" "CXXFLAGS=-m32" "LDFLAGS=-m32" --prefix=$ROOT/install --enable-shared=no --enable-static=yes --without-python >> $LOGFILE 2>&1 || failure
 
     # To get around a lame error in the above config
     cp -f $ROOT/3rdparty/libxml2/testapi.c $ROOT/build/libxml2/testapi.c
@@ -330,13 +330,14 @@ build_sdl() {
         return 0
     fi
 
+    log "Configuring SDL"
+
     cd $ROOT/3rdparty/sdl2 || failure
     chmod +x autogen.sh >> $LOGFILE 2>&1 || failure
     ./autogen.sh >> $LOGFILE 2>&1 || failure
     chmod +x configure >> $LOGFILE 2>&1 || failure
     cd $ROOT/build/sdl2 || failure
-    CFLAGS=-m32 CPPFLAGS=-m32 CXXFLAGS=-m32 $ROOT/3rdparty/sdl2/configure --build=$BUILD_SYSTEM --host=$HOST_SYSTEM --prefix=$ROOT/install --enable-shared=no --enable-static=yes --enable-screensaver=yes >> $LOGFILE 2>&1 || failure
-
+    $ROOT/3rdparty/sdl2/configure --build=$BUILD_SYSTEM  --host=$HOST_SYSTEM "CFLAGS=-m32" "CXXFLAGS=-m32" "LDFLAGS=-m32" --prefix=$ROOT/install --enable-shared=no --enable-static=yes >> $LOGFILE 2>&1 || failure
 
     log "Building SDL (this may take a while)..."
     make >> $LOGFILE 2>&1 || failure
@@ -353,7 +354,7 @@ build_sdl_ttf() {
     if [ $BUILDSTATE -ge $BS_BUILD_SDL_TTF ]; then
         return 0
     fi
-
+    log "Configuring SDL TTF"
     cd $ROOT/3rdparty/sdl2_ttf || failure
     chmod +x autogen.sh >> $LOGFILE 2>&1 || failure
     ./autogen.sh >> $LOGFILE 2>&1 || failure
@@ -361,11 +362,12 @@ build_sdl_ttf() {
     cd $ROOT/build/sdl2_ttf || failure
 
     # To get around a lame error in the config below
-    cp -f $ROOT/build/freetype2/freetype-config $ROOT/build/sdl2_ttf/freetype-config
+    #cp -f $ROOT/build/freetype2/freetype-config $ROOT/build/sdl2_ttf/freetype-config
 
+    FREETYPE_LOC="$ROOT/install"
     export PATH=$PATH:$ROOT/install/bin
 
-    CFLAGS=-m32 CPPFLAGS=-m32 CXXFLAGS=-m32 $ROOT/3rdparty/sdl2_ttf/configure --with-freetype-prefix=$ROOT/install --build=$BUILD_SYSTEM --host=$HOST_SYSTEM --prefix=$ROOT/install --enable-shared=no --enable-static=yes >> $LOGFILE 2>&1 || failure
+    $ROOT/3rdparty/sdl2_ttf/configure --build=$BUILD_SYSTEM  --host=$HOST_SYSTEM "CFLAGS=-m32" "CXXFLAGS=-m32" "LDFLAGS=-m32" --with-freetype-prefix=$FREETYPE_LOC --prefix=$ROOT/install --enable-shared=no --enable-static=yes >> $LOGFILE 2>&1 || failure
 
     log "Building SDL TTF(this may take a while)..."
     make >> $LOGFILE 2>&1 || failure
