@@ -57,7 +57,7 @@ AbstractGraphicsEngine* GraphicsEngineFactory::createInstance(
                     return new StarsphereGravity();
                     break;
                 case EinsteinRadio :
-                    return new StarsphereRadio();
+                    // return new StarsphereRadio();
                     break;
                 default:
                     return NULL;
