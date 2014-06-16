@@ -89,6 +89,9 @@ void VertexBuffer::attach(void) {
         // Ensure resource acquisition first.
         this->acquire();
 
+        // Bind the given buffer object to pipeline state.
+        glBindBuffer(GL_ARRAY_BUFFER, this->ID());
+
         // Enable fetching for all supplied vertex attribute indices,
         // these corresponding to 'location' definitions within the
         // vertex shader's GLSL code.
@@ -103,8 +106,6 @@ void VertexBuffer::attach(void) {
                                   attrib->stride,
                                   attrib->pointer);
             }
-        // Bind the given buffer object to pipeline state.
-        glBindBuffer(GL_ARRAY_BUFFER, this->ID());
         }
     else {
         // Mapping has not yet occurred. Do it.
