@@ -62,6 +62,10 @@ Sint32 WindowManager::RenderEvent(0);
 Sint32 WindowManager::BOINCUpdateEvent(0);
 
 WindowManager::WindowManager(void) {
+    m_Mode = new SDL_DisplayMode();
+
+    // m_Window = new SDL_Window();
+
     m_BoincAdapter = new BOINCClientAdapter("");
     }
 
@@ -280,10 +284,10 @@ void WindowManager::eventLoop(void) {
                          (current_event.type == SDL_MOUSEWHEEL) ||
                          (current_event.type == SDL_KEYDOWN))) {
                     // Close window, terminate SDL and leave this window manager.
-                    ErrorHandler::record("WindowManager::eventLoop() : Exiting on account of user input", ErrorHandler::INFORM);
-                    SDL_DestroyWindow(m_Window);
-                    SDL_Quit();
-                    return;
+//                    ErrorHandler::record("WindowManager::eventLoop() : Exiting on account of user input", ErrorHandler::INFORM);
+//                    SDL_DestroyWindow(m_Window);
+//                    SDL_Quit();
+//                    return;
                     }
 
                 else if((current_event.type == SDL_MOUSEMOTION) &&
