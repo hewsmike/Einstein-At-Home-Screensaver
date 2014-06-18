@@ -64,12 +64,12 @@ Sint32 WindowManager::BOINCUpdateEvent(0);
 WindowManager::WindowManager(void) {
     m_Mode = new SDL_DisplayMode();
 
-    // m_Window = new SDL_Window();
-
     m_BoincAdapter = new BOINCClientAdapter("");
     }
 
 WindowManager::~WindowManager() {
+
+    delete m_Mode;
     delete m_BoincAdapter;
     }
 
@@ -207,7 +207,7 @@ bool WindowManager::initialize(const int width, const int height, const int fram
                                     SDL_WINDOWPOS_UNDEFINED,
                                     m_WindowedWidth,
                                     m_WindowedHeight,
-                                    SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_INPUT_GRABBED);
+                                    SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
 
         // Check that the window was successfully made.
         if (m_Window == NULL) {
@@ -284,10 +284,10 @@ void WindowManager::eventLoop(void) {
                          (current_event.type == SDL_MOUSEWHEEL) ||
                          (current_event.type == SDL_KEYDOWN))) {
                     // Close window, terminate SDL and leave this window manager.
-//                    ErrorHandler::record("WindowManager::eventLoop() : Exiting on account of user input", ErrorHandler::INFORM);
-//                    SDL_DestroyWindow(m_Window);
-//                    SDL_Quit();
-//                    return;
+                    ErrorHandler::record("WindowManager::eventLoop() : Exiting on account of user input", ErrorHandler::INFORM);
+                    SDL_DestroyWindow(m_Window);
+                    SDL_Quit();
+                    return;
                     }
 
                 else if((current_event.type == SDL_MOUSEMOTION) &&
