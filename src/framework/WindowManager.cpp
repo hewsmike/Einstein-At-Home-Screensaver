@@ -280,6 +280,7 @@ void WindowManager::eventLoop(void) {
                     }
 
                 // Check for ANY user input if in screensaver mode.
+
                 else if((m_ScreensaverMode == true) &&
                         ((current_event.type == SDL_MOUSEMOTION) ||
                          (current_event.type == SDL_MOUSEBUTTONDOWN) ||

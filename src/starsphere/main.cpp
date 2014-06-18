@@ -191,6 +191,9 @@ int main(int argc, char **argv) {
     // Get up to date BOINC information.
     graphics->refreshBOINCInformation();
 
+    // For testing keep out of screensaver mode.
+    window.setScreensaverMode(false);
+
     // Check other optional command line parameters
     if(argc == 2) {
         string param(argv[1]);
@@ -199,7 +202,9 @@ int main(int argc, char **argv) {
             // (must do this first on Apple).
             window.setScreensaverMode(true);
             }
-        if((param == "--fullscreen") || (param == "--demo")) {
+        if(param == "--demo") {
+            ErrorHandler::record("SolarSystem::main() : Fullscreen & demo mode ...", ErrorHandler::INFORM);
+            window.setScreensaverMode(false);
             // Initialised display is as a window,
             // so we transition to a fullscreen.
             window.toggleFullscreen();
