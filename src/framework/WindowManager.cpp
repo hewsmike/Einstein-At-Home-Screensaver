@@ -121,14 +121,16 @@ bool WindowManager::initialize(const int width, const int height, const int fram
         m_BoincAdapter->initialize();
 
         // Obtain BOINC preferred window width.
-        int preferredWidth = m_BoincAdapter->graphicsWindowWidth();
+        // int preferredWidth = m_BoincAdapter->graphicsWindowWidth();
+        int preferredWidth = 1024;
         stringstream msg_init_prefwidth;
         msg_init_prefwidth << "WindowManager::initialize() : BOINC preferred width = "
                            << preferredWidth;
         ErrorHandler::record(msg_init_prefwidth.str(), ErrorHandler::INFORM);
 
         // Obtain BOINC preferred window height.
-        int preferredHeight = m_BoincAdapter->graphicsWindowHeight();
+        // int preferredHeight = m_BoincAdapter->graphicsWindowHeight();
+        int preferredHeight = 768;
         stringstream msg_init_prefheight;
         msg_init_prefheight << "WindowManager::initialize() : BOINC preferred height = "
                             << preferredHeight;
