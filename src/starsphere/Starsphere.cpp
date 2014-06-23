@@ -22,13 +22,43 @@
  ***************************************************************************/
 
 #include <sstream>
+#include <string>
+#include <vector>
 
 #include "Starsphere.h"
 
 #include "ErrorHandler.h"
+#include "ResourceFactory.h"
 
 Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
 	AbstractGraphicsEngine(sharedMemoryAreaIdentifier) {
+	ResourceFactory factory;
+    m_vertex_shader_resource = factory.createInstance("TestShader");
+
+    const vector<unsigned char>* vertex_shader_data = m_vertex_shader_resource->data();
+
+    if(vertex_shader_data != NULL) {
+        std::string vertex_shader_string;
+
+        std::cout << "-------------------------" << std::endl;
+        for(int i = 0; i < vertex_shader_data->size(); ++i) {
+            std::cout << vertex_shader_data->at(i);
+            vertex_shader_string.push_back(vertex_shader_data->at(i));
+            }
+        std::cout << std::endl;
+        std::cout << "-------------------------" << std::endl;
+
+        std::cout << vertex_shader_string << std::endl;
+        std::cout << "-------------------------" << std::endl;
+
+        // m_vertex = new Shader(GL_VERTEX_SHADER, vertex_shader_string);
+        }
+    else {
+        ErrorHandler::record("Starsphere::Starsphere() : vertex shader code not retrieved !", ErrorHandler::FATAL);
+        }
+
+    // delete vertex_shader_data;
+
 	m_FontResource = 0;
 	m_FontLogo1 = 0;
 	m_FontLogo2 = 0;
@@ -66,6 +96,8 @@ Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
     }
 
 Starsphere::~Starsphere() {
+    if(m_vertex_shader_resource) delete m_vertex_shader_resource;
+    if(m_vertex) delete m_vertex;
 	if(m_FontLogo1) delete m_FontLogo1;
 	if(m_FontLogo2) delete m_FontLogo2;
 	if(m_FontHeader) delete m_FontHeader;

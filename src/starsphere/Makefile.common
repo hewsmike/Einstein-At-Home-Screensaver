@@ -95,7 +95,7 @@ CPPFLAGS += -I$(PRODUCT_INSTALL)/include/boinc
 CPPFLAGS += -I$(PRODUCT_INSTALL)/include/GL
 CPPFLAGS += -Iusr/include/GL
 CPPFLAGS += -I$(PRODUCT_INSTALL)/include/SDL2
-CPPFLAGS += -I$(FRAMEWORK_SRC) -I$(PRODUCT_SRC) -I$(PRODUCT_SRC)/../framework
+CPPFLAGS += -I$(FRAMEWORK_SRC) -I$(PROJECT_ROOT)/src/ -I$(PROJECT_ROOT)/src/framework -I$(PROJECT_ROOT)/src/ogl_utility
 
 # Target specific.
 ifeq ".$(SYSTEM)" ".linux"
@@ -125,7 +125,7 @@ ifeq ".$(SYSTEM)" ".linux"
     LIBS += -lGLU -lGL -ldl -lpthread -lm -lrt
     LIBS += -Wl,-Bstatic
     LIBS += -L$(PRODUCT_INSTALL)/lib -L$(PRODUCT_INSTALL)/lib64
-    LIBS += -lGLEW -lSDL2_ttf -lfreetype -lSDL2 -lxml2 -lz  -lframework -lboinc_api -lboinc
+    LIBS += -lGLEW -lSDL2_ttf -lfreetype -lSDL2 -lxml2 -lz  -lframework -loglutility -lboinc_api -lboinc
 
 endif
 

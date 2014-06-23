@@ -49,6 +49,8 @@ OBJS += Resource.o ResourceFactory.o BOINCClientAdapter.o Libxml2Adapter.o
 # need to change the structure! what about plugins?
 CPPFLAGS += -I$(FRAMEWORK_SRC)
 CPPFLAGS += -I$(FRAMEWORK_SRC)/../solarsystem
+CPPFLAGS += -I$(FRAMEWORK_SRC)/../starsphere
+CPPFLAGS += -I$(FRAMEWORK_SRC)/../ogl_utility
 CPPFLAGS += -I$(SOLARSYSTEM_INSTALL)/include/boinc
 
 # primary role based tagets

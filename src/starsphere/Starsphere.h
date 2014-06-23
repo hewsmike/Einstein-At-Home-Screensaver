@@ -37,6 +37,7 @@
 
 #include "AbstractGraphicsEngine.h"
 #include "EinsteinGravityAdapter.h"
+#include "Program.h"
 #include "WindowManager.h"
 
 #include "SDL_ttf.h"
@@ -303,6 +304,9 @@ class Starsphere : public AbstractGraphicsEngine {
         /// Font resource instance
         const Resource* m_FontResource;
 
+        /// Shader resource instance
+        const Resource* m_vertex_shader_resource;
+
         /// Font texture instance for logo title rendering
         TTF_Font* m_FontLogo1;
 
@@ -363,6 +367,9 @@ class Starsphere : public AbstractGraphicsEngine {
         bool m_RefreshSearchMarker;
 
     private:
+        /// OpenGL
+        Shader* m_vertex;
+
         /// Generate OpenGL display list for stars
         void make_stars();
 

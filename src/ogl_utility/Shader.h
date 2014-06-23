@@ -57,7 +57,7 @@ class Shader : public OGL_ID {
          *
          * \param source - pointer to the shader's SINGLE source code C-string.
          */
-        Shader(GLenum type, const GLchar* source);
+        Shader(GLenum type, const std::string source);
 
         /**
          * \brief Destructor
