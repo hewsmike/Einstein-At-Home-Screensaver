@@ -76,6 +76,17 @@ class Resource {
          */
         const vector<unsigned char>* data() const;
 
+        /**
+         * \brief Retrieve the data stored in this resource, interpreted as an
+         *        std::string.
+         *
+         *      An std::string is generated containing a byte wise copy of the
+         * Resource's contents, without any further interpretation.
+         *
+         * \return An std::string version
+         */
+        std::string std_string() const;
+
     private:
         /// The identifer of this resource
         string m_Identifier;

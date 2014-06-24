@@ -34,3 +34,15 @@ string Resource::identifier() const {
 const vector<unsigned char>* Resource::data() const {
     return &m_Data;
     }
+
+std::string std_string() const {
+    std::string ret_val;
+
+    for(std::vector<unsigned char>::const_iterator pos = m_Data.begin();
+        pos < m_Data.end();
+        ++pos) {
+        ret_val.push_back(*pos);
+        }
+
+    return ret_val;
+    }
