@@ -38,8 +38,6 @@ Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
     const vector<unsigned char>* vertex_shader_data = m_vertex_shader_resource->data();
 
     if(vertex_shader_data != NULL) {
-        std::string vertex_shader_string;
-
         std::cout << "-------------------------" << std::endl;
         for(int i = 0; i < vertex_shader_data->size(); ++i) {
             std::cout << vertex_shader_data->at(i);
@@ -51,7 +49,7 @@ Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
         std::cout << vertex_shader_string << std::endl;
         std::cout << "-------------------------" << std::endl;
 
-        // m_vertex = new Shader(GL_VERTEX_SHADER, vertex_shader_string);
+        m_vertex = new Shader(GL_VERTEX_SHADER, m_vertex_shader_resource.std_string());
         }
     else {
         ErrorHandler::record("Starsphere::Starsphere() : vertex shader code not retrieved !", ErrorHandler::FATAL);
