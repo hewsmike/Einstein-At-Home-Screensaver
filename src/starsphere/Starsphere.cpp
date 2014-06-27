@@ -32,31 +32,6 @@
 
 Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
 	AbstractGraphicsEngine(sharedMemoryAreaIdentifier) {
-	ResourceFactory factory;
-    m_vertex_shader_resource = factory.createInstance("TestShader");
-
-    const vector<unsigned char>* vertex_shader_data = m_vertex_shader_resource->data();
-
-    if(vertex_shader_data != NULL) {
-        std::cout << "-------------------------" << std::endl;
-        for(int i = 0; i < vertex_shader_data->size(); ++i) {
-            std::cout << vertex_shader_data->at(i);
-            vertex_shader_string.push_back(vertex_shader_data->at(i));
-            }
-        std::cout << std::endl;
-        std::cout << "-------------------------" << std::endl;
-
-        std::cout << vertex_shader_string << std::endl;
-        std::cout << "-------------------------" << std::endl;
-
-        m_vertex = new Shader(GL_VERTEX_SHADER, m_vertex_shader_resource.std_string());
-        }
-    else {
-        ErrorHandler::record("Starsphere::Starsphere() : vertex shader code not retrieved !", ErrorHandler::FATAL);
-        }
-
-    // delete vertex_shader_data;
-
 	m_FontResource = 0;
 	m_FontLogo1 = 0;
 	m_FontLogo2 = 0;
@@ -614,6 +589,44 @@ void Starsphere::resize(const int width, const int height) {
  *  What to do when graphics are "initialized".
  */
 void Starsphere::initialize(const int width, const int height, const Resource *font) {
+    ResourceFactory factory;
+    m_vertex_shader_resource = factory.createInstance("TestShader");
+
+    const vector<unsigned char>* vertex_shader_data = m_vertex_shader_resource->data();
+
+    if(vertex_shader_data != NULL) {
+        std::string vertex_shader_string = m_vertex_shader_resource->std_string();
+        std::cout << "-------------------------" << std::endl;
+
+        m_vertex = new Shader(GL_VERTEX_SHADER, m_vertex_shader_resource->std_string());
+        std::cout << m_vertex->source() << std::endl;
+        std::cout << "-------------------------" << std::endl;
+
+        m_vertex->acquire();
+
+        GLint source_len = 0;
+
+        glGetShaderiv(m_vertex->ID(), GL_SHADER_SOURCE_LENGTH, &source_len);
+
+        std::cout << "source_len = " << source_len << std::endl;
+
+        char* source_buffer = new char[source_len + 2];
+
+        glGetShaderSource(m_vertex->ID(),
+                          source_len + 2,
+                          NULL,
+                          source_buffer);
+        source_buffer[source_len + 1] = '/0';
+
+        std::cout << source_buffer << std::endl;
+        }
+    else {
+        ErrorHandler::record("Starsphere::Starsphere() : vertex shader code not retrieved !", ErrorHandler::FATAL);
+        }
+
+    // delete vertex_shader_data;
+
+
     m_CurrentWidth = width;
     m_CurrentHeight = height;
     m_FontResource = font;

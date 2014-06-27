@@ -39,7 +39,7 @@ Shader::Shader(GLenum type, const std::string source) {
         }
 
     // Retrieve and store shader source code, if provided.
-    while(source.size() != 0) {
+    if(source.size() != 0) {
         shader_source = source;
         }
 

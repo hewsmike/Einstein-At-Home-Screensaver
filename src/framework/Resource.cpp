@@ -35,7 +35,7 @@ const vector<unsigned char>* Resource::data() const {
     return &m_Data;
     }
 
-std::string std_string() const {
+std::string Resource::std_string() const {
     std::string ret_val;
 
     for(std::vector<unsigned char>::const_iterator pos = m_Data.begin();
