@@ -590,42 +590,35 @@ void Starsphere::resize(const int width, const int height) {
  */
 void Starsphere::initialize(const int width, const int height, const Resource *font) {
     ResourceFactory factory;
-    m_vertex_shader_resource = factory.createInstance("TestShader");
 
-    const vector<unsigned char>* vertex_shader_data = m_vertex_shader_resource->data();
+    m_vertex = new Shader(GL_VERTEX_SHADER, factory.createInstance("VertexTestShader")->std_string());
+    m_fragment = new Shader(GL_FRAGMENT_SHADER, factory.createInstance("FragmentTestShader")->std_string());
 
-    if(vertex_shader_data != NULL) {
-        std::string vertex_shader_string = m_vertex_shader_resource->std_string();
-        std::cout << "-------------------------" << std::endl;
+    m_vertex->acquire();
+    m_fragment->acquire();
 
-        m_vertex = new Shader(GL_VERTEX_SHADER, m_vertex_shader_resource->std_string());
-        std::cout << m_vertex->source() << std::endl;
-        std::cout << "-------------------------" << std::endl;
 
-        m_vertex->acquire();
+    stringstream vertex_log;
+    vertex_log << "Starsphere::initialize() : vertex shader did"
+               << ( (m_vertex->status() == Shader::COMPILE_SUCCEEDED) ? " " : " not " )
+               << "compile !!" << std::endl
+               << "shader compile log follows :\n"
+               << "------------------------------------------------------\n"
+               << m_vertex->compileLog()
+               << "------------------------------------------------------"
+               << std::endl;
+    ErrorHandler::record(vertex_log.str(), ErrorHandler::INFORM);
 
-        GLint source_len = 0;
-
-        glGetShaderiv(m_vertex->ID(), GL_SHADER_SOURCE_LENGTH, &source_len);
-
-        std::cout << "source_len = " << source_len << std::endl;
-
-        char* source_buffer = new char[source_len + 2];
-
-        glGetShaderSource(m_vertex->ID(),
-                          source_len + 2,
-                          NULL,
-                          source_buffer);
-        source_buffer[source_len + 1] = '/0';
-
-        std::cout << source_buffer << std::endl;
-        }
-    else {
-        ErrorHandler::record("Starsphere::Starsphere() : vertex shader code not retrieved !", ErrorHandler::FATAL);
-        }
-
-    // delete vertex_shader_data;
-
+    stringstream fragment_log;
+    fragment_log << "Starsphere::initialize() : fragment shader did"
+               << ( (m_fragment->status() == Shader::COMPILE_SUCCEEDED) ? " " : " not " )
+               << "compile !!" << std::endl
+               << "shader compile log follows :\n"
+               << "------------------------------------------------------\n"
+               << m_fragment->compileLog()
+               << "------------------------------------------------------"
+               << std::endl;
+    ErrorHandler::record(fragment_log.str(), ErrorHandler::INFORM);
 
     m_CurrentWidth = width;
     m_CurrentHeight = height;

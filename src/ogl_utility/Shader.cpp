@@ -18,6 +18,8 @@
  *                                                                         *
  ***************************************************************************/
 
+#include <iostream>
+
 #include "Shader.h"
 
 #include "ErrorHandler.h"
@@ -76,7 +78,7 @@ bool Shader::acquire(void) {
         glShaderSource(this->ID(), 1, StringHelper(shader_source), NULL);
 
         // Only compile if never attempted.
-        if(comp_status = Shader::NEVER_COMPILED) {
+        if(comp_status == Shader::NEVER_COMPILED) {
             ret_val = compile();
 
             // Examine the result.
@@ -98,12 +100,6 @@ bool Shader::acquire(void) {
             GLchar* temp_log = new GLchar[log_len+1];
             GLsizei returned_log_len;
             glGetShaderInfoLog(this->ID(), log_len+1, &returned_log_len, temp_log);
-
-            /// TODO - remove this after testing
-            if(log_len != returned_log_len) {
-                ErrorHandler::record("Shader::acquire() : expected and actual log lengths differ.",
-                                     ErrorHandler::WARN);
-                }
 
             // Account for null character terminator ( documentation unclear ).
             temp_log[log_len] = '\0';

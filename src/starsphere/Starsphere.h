@@ -306,6 +306,7 @@ class Starsphere : public AbstractGraphicsEngine {
 
         /// Shader resource instance
         const Resource* m_vertex_shader_resource;
+        const Resource* m_fragment_shader_resource;
 
         /// Font texture instance for logo title rendering
         TTF_Font* m_FontLogo1;
@@ -369,6 +370,7 @@ class Starsphere : public AbstractGraphicsEngine {
     private:
         /// OpenGL
         Shader* m_vertex;
+        Shader* m_fragment;
 
         /// Generate OpenGL display list for stars
         void make_stars();

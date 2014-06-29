@@ -42,8 +42,8 @@ const int WindowManager::ENABLE_DOUBLE_BUFFER(1);
 const int WindowManager::NUM_MULTISAMPLE_BUFFERS(1);
 const int WindowManager::NUM_MULTISAMPLES(2);
 
-const int WindowManager::OGL_MAJOR_VERSION(3);
-const int WindowManager::OGL_MINOR_VERSION(2);
+const int WindowManager::OGL_MAJOR_VERSION(2);
+const int WindowManager::OGL_MINOR_VERSION(0);
 
 const int WindowManager::DISPLAY_ZERO(0);
 
@@ -199,7 +199,7 @@ bool WindowManager::initialize(const int width, const int height, const int fram
         SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, WindowManager::HAS_DEPTH_BUFFER);
 
         /// TODO - Need to create compile switch here for use of ES with Android etc.
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, WindowManager::OGL_MAJOR_VERSION);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, WindowManager::OGL_MINOR_VERSION);
 
@@ -213,6 +213,7 @@ bool WindowManager::initialize(const int width, const int height, const int fram
 
         // Check that the window was successfully made.
         if (m_Window == NULL) {
+            ErrorHandler::check_OpenGL_Error();
             // In the event that the window could not be made...
             ErrorHandler::record("WindowManager::initialise() : Couldn't obtain window !!", ErrorHandler::FATAL);
             }
@@ -227,6 +228,15 @@ bool WindowManager::initialize(const int width, const int height, const int fram
         // noting the above attribute selections.
         /// TODO - Check error on return here, how ?
         m_Context = SDL_GL_CreateContext(m_Window);
+
+        if(m_Context == NULL) {
+            std::stringstream SDL_error_string;
+            SDL_error_string << "WindowManager::initialise() : Couldn't obtain context !!\n"
+                             << SDL_GetError() << std::endl;
+
+            ErrorHandler::check_OpenGL_Error();
+            ErrorHandler::record(SDL_error_string.str(), ErrorHandler::FATAL);
+            }
 
         // OK we have a window, so initialise GLEW. This matters especially if the
         // driver's function pointers need runtime linkage ie. Win32 target.
@@ -612,6 +622,10 @@ bool WindowManager::initializeGLEW(void) {
     // functionality with experimental drivers.
     glewExperimental = GL_TRUE;
 
+    std::cout << "pre GLEW " << std::endl;
+    ErrorHandler::check_OpenGL_Error();
+
+
     // Now initialise GLEW.
     if(glewInit() != GLEW_OK) {
         ErrorHandler::record("WindowManager::initializeGLEW() : GLEW initialisation fail", ErrorHandler::WARN);
@@ -622,7 +636,8 @@ bool WindowManager::initializeGLEW(void) {
         ErrorHandler::record(msg2, ErrorHandler::INFORM);
         ret_val = true;
         }
-
+    std::cout << "after glew: " << std::endl;
+    ErrorHandler::check_OpenGL_Error();
     return ret_val;
     }
 
