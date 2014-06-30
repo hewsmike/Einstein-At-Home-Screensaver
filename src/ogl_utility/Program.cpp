@@ -44,7 +44,7 @@ bool Program::acquire(void) {
     bool ret_val = false;
 
     // Provided a prior link attempt has not occurred.
-    if(link_status = Program::NEVER_LINKED) {
+    if(link_status == Program::NEVER_LINKED) {
         // Clear the linker log.
         linker_log = "";
 
@@ -108,11 +108,6 @@ bool Program::acquire(void) {
                 GLsizei returned_log_len;
                 glGetProgramInfoLog(this->ID(), log_len+1, &returned_log_len, temp_log);
 
-                /// TODO - remove this after testing
-                if(log_len != returned_log_len) {
-                    ErrorHandler::record("Program::acquire() : expected and actual log lengths differ.", ErrorHandler::WARN);
-                    }
-
                 // Account for null character terminator ( documentation unclear ).
                 temp_log[log_len] = '\0';
                 linker_log = temp_log;
@@ -169,4 +164,8 @@ bool Program::link(void) {
         }
 
     return ret_val;
+    }
+
+const std::string& Program::linkageLog(void) const {
+    return linker_log;
     }

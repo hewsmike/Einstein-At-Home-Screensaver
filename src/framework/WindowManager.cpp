@@ -622,10 +622,6 @@ bool WindowManager::initializeGLEW(void) {
     // functionality with experimental drivers.
     glewExperimental = GL_TRUE;
 
-    std::cout << "pre GLEW " << std::endl;
-    ErrorHandler::check_OpenGL_Error();
-
-
     // Now initialise GLEW.
     if(glewInit() != GLEW_OK) {
         ErrorHandler::record("WindowManager::initializeGLEW() : GLEW initialisation fail", ErrorHandler::WARN);
@@ -636,8 +632,7 @@ bool WindowManager::initializeGLEW(void) {
         ErrorHandler::record(msg2, ErrorHandler::INFORM);
         ret_val = true;
         }
-    std::cout << "after glew: " << std::endl;
-    ErrorHandler::check_OpenGL_Error();
+
     return ret_val;
     }
 

@@ -106,6 +106,13 @@ class Program : public OGL_ID {
          */
         Program::linkageState status(void) const;
 
+        /**
+         * \brief Obtain a reference to this program's linkage log.
+         *
+         * \return A string reference to the linker log. This may be empty.
+         */
+        const std::string& linkageLog(void) const;
+
     private:
         static const GLint GLSL_LINKAGE_FAILURE;
         static const GLint GLSL_LINKAGE_SUCCESS;

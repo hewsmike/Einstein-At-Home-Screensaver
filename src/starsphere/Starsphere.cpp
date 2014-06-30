@@ -594,9 +594,9 @@ void Starsphere::initialize(const int width, const int height, const Resource *f
     m_vertex = new Shader(GL_VERTEX_SHADER, factory.createInstance("VertexTestShader")->std_string());
     m_fragment = new Shader(GL_FRAGMENT_SHADER, factory.createInstance("FragmentTestShader")->std_string());
 
-    m_vertex->acquire();
-    m_fragment->acquire();
+    m_program = new Program(*m_vertex, *m_fragment, Program::KEEP_ON_GOOD_LINK);
 
+    m_program->acquire();
 
     stringstream vertex_log;
     vertex_log << "Starsphere::initialize() : vertex shader did"
@@ -611,14 +611,25 @@ void Starsphere::initialize(const int width, const int height, const Resource *f
 
     stringstream fragment_log;
     fragment_log << "Starsphere::initialize() : fragment shader did"
-               << ( (m_fragment->status() == Shader::COMPILE_SUCCEEDED) ? " " : " not " )
-               << "compile !!" << std::endl
-               << "shader compile log follows :\n"
-               << "------------------------------------------------------\n"
-               << m_fragment->compileLog()
-               << "------------------------------------------------------"
-               << std::endl;
+                 << ( (m_fragment->status() == Shader::COMPILE_SUCCEEDED) ? " " : " not " )
+                 << "compile !!" << std::endl
+                 << "shader compile log follows :\n"
+                 << "------------------------------------------------------\n"
+                 << m_fragment->compileLog()
+                 << "------------------------------------------------------"
+                 << std::endl;
     ErrorHandler::record(fragment_log.str(), ErrorHandler::INFORM);
+
+    stringstream linking_log;
+    linking_log << "Starsphere::initialize() : program did"
+                << ( (m_program->status() == Program::LINKAGE_SUCCEEDED) ? " " : " not " )
+                << "link !!" << std::endl
+                << "linker log follows :\n"
+                << "------------------------------------------------------\n"
+                << m_program->linkageLog()
+                << "------------------------------------------------------"
+                << std::endl;
+    ErrorHandler::record(linking_log.str(), ErrorHandler::INFORM);
 
     m_CurrentWidth = width;
     m_CurrentHeight = height;

@@ -371,6 +371,7 @@ class Starsphere : public AbstractGraphicsEngine {
         /// OpenGL
         Shader* m_vertex;
         Shader* m_fragment;
+        Program* m_program;
 
         /// Generate OpenGL display list for stars
         void make_stars();

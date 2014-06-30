@@ -119,7 +119,7 @@ class Shader : public OGL_ID {
         /**
          * \brief Obtain a reference to this shader's compile log.
          *
-         * \return A string reference to the compile log code. This may be empty.
+         * \return A string reference to the compile log. This may be empty.
          */
         const std::string& compileLog(void) const;
 
