@@ -21,7 +21,7 @@
 #ifndef INDEX_BUFFER_H_
 #define INDEX_BUFFER_H_
 
-#include "VertexBuffer.h"
+#include "Buffer.h"
 
 /**
 * \addtogroup ogl_utility OGL_Utility

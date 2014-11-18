@@ -23,7 +23,7 @@
 
 #include "OGL_ID.h"
 
-#include<string>
+#include <string>
 
 /**
  * \addtogroup ogl_utility OGL_Utility
