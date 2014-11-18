@@ -28,7 +28,7 @@ const GLsizei TextureBuffer::MIN_TEX_HEIGHT(2);
 TextureBuffer::TextureBuffer(const GLvoid* texture_data,
                              GLsizei width,
                              GLsizei height,
-                             GLint usage,
+                             GLenum format,
                              GLenum data_type,
                              bool mipmaps) :
                                 Buffer(texture_data),
@@ -52,15 +52,15 @@ TextureBuffer::TextureBuffer(const GLvoid* texture_data,
         }
 
     // Ensure compliance with OpenGL ES 2.x acceptable parameter types.
-    if((usage == GL_ALPHA) ||
-       (usage == GL_LUMINANCE) ||
-       (usage == GL_LUMINANCE_ALPHA) ||
-       (usage == GL_RGB) ||
-       (usage == GL_RGBA)) {
-        m_usage = usage;
+    if((format == GL_ALPHA) ||
+       (format == GL_LUMINANCE) ||
+       (format == GL_LUMINANCE_ALPHA) ||
+       (format == GL_RGB) ||
+       (format == GL_RGBA)) {
+        m_format = format;
         }
     else {
-        ErrorHandler::record("TextureBuffer::TextureBuffer() : Bad usage type provided.",
+        ErrorHandler::record("TextureBuffer::TextureBuffer() : Bad format type provided.",
                              ErrorHandler::FATAL);
         }
 
@@ -95,12 +95,12 @@ void TextureBuffer::loadBuffer(void) {
 
     glTexImage2D(GL_TEXTURE_2D,
                  0,                      // Mipmap level zero.
-                 m_usage,                // Rendering intent.
+                 m_format,               // Storage format.
                  m_width,                // image width in texels.
                  m_height,               // image height in texels.
                  0,                      // No image border.
-                 m_usage,                // Rendering intent.
-                 m_data_type,            // Binary data represetnation.
+                 m_format,               // Storage format.
+                 m_data_type,            // Binary data representation.
                  this->data());          // The actual data.
 
     // Specify 'reasonable' values for simple 'decal' like application.

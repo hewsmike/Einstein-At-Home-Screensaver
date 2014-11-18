@@ -46,7 +46,7 @@ class TextureBuffer : public Buffer {
          * \param texture_data : a pointer to the image data
          * \param width : in texels, must be a strictly positive power of 2
          * \param height : in texels, must be a strictly positive power of 2
-         * \param usage : one of the following ES 2.0 allowed enumerants
+         * \param format : one of the following ES 2.0 allowed enumerants
          *                      GL_ALPHA
          *                      GL_LUMINANCE
          *                      GL_LUMINANCE_ALPHA
@@ -62,7 +62,7 @@ class TextureBuffer : public Buffer {
         TextureBuffer(const GLvoid* texture_data,
                       GLsizei width,
                       GLsizei height,
-                      GLint usage,
+                      GLint format,
                       GLenum data_type,
                       bool mipmaps = true);
 
@@ -83,9 +83,6 @@ class TextureBuffer : public Buffer {
 
         /// The height of the texture.
         GLsizei m_height;
-
-        /// What the texture data represents in terms of rendering intent.
-        GLint m_usage;
 
         /// The binary representation of the data.
         GLenum m_data_type;
