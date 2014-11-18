@@ -30,7 +30,7 @@
 
 /**
  * \brief This virtual interface declares public methods to deal with OpenGL
- *        ES 2.0 buffer objects.
+ *        buffer objects.
  *
  *    It's a generic wrapper where the buffer contents are treated as bland and
  * byte granular. Further typing/behaviour is managed in detail in derived classes.
