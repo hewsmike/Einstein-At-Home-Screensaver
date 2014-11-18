@@ -20,7 +20,6 @@
 
 #include "Pipeline.h"
 
-
 Pipeline::Pipeline(Program& program, VertexFetch& vertex_fetch) :
                     m_program(program),
                     m_vertex_fetch(vertex_fetch) {
