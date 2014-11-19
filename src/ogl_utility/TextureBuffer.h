@@ -62,7 +62,7 @@ class TextureBuffer : public Buffer {
         TextureBuffer(const GLvoid* texture_data,
                       GLsizei width,
                       GLsizei height,
-                      GLint format,
+                      GLenum format,
                       GLenum data_type,
                       bool mipmaps = true);
 

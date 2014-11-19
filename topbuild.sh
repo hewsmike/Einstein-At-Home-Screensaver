@@ -268,7 +268,7 @@ check_prerequisites() {
     log "Checking prerequisites..."
 
     # required toolchain
-    TOOLS="ar automake autoconf cmake cvs doxygen g++ gcc hg ld lex libtool m4 patch pkg-config svn tar wget yacc"
+    TOOLS="ar automake autoconf cmake cvs doxygen g++ gcc hg ld lex libtool m4 patch pkg-config svn tar valgrind wget yacc"
 
     for tool in $TOOLS; do
         if ! ( type $tool >/dev/null 2>&1 ); then
@@ -276,7 +276,7 @@ check_prerequisites() {
             exit 1
         fi
     done
-   
+
 
     save_topbuild_state $TBS_PREREQUISITES
     return 0
@@ -472,7 +472,7 @@ realtarget() {
     }
 
 save_topbuild_state() {
-    log "Saving topbuild checkpoint..."
+    log "Saving topbuild checkpoint... $1"
 
     echo "$1" > $ROOT/.topbuildstate || failure
 
@@ -617,7 +617,7 @@ case $TARGET in
         ./build.sh $2 $3
         ;;
     $TARGET_LINUX)
-        export HOST_SYSTEM="i686-pc-linux"
+        export HOST_SYSTEM="x86_64-pc-linux"
         realtarget
         prepare_directories linux
         cp -f $ROOT/build_linux.sh $ROOT/linux/build.sh

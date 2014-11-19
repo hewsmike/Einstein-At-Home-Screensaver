@@ -67,7 +67,7 @@ GAMMA := Gamma
 # Target variants.
 TARGET_APPEND=
 ifeq ".$(SYSTEM)" ".linux"
-    TARGET_APPEND := "i686-pc-linux-gnu"
+    TARGET_APPEND := "x86_64-pc-linux-gnu"
 endif
 ifeq ".$(SYSTEM)" ".win32"
     TARGET_APPEND := "windows_intelx86.exe"
@@ -292,6 +292,7 @@ clean:
 # Target specific tools.
 ifeq ".$(SYSTEM)" ".linux"
 memcheck:
+    echo "BLATG"
 	valgrind --tool=memcheck --track-fds=yes --time-stamp=yes --log-file=$(PWD)/memcheck.out.%p --leak-check=full $(PWD)/graphics_app=einstein_RUNLABEL_VERSION_graphics_$(TARGET_APPEND)
 callgrind:
 	valgrind --tool=callgrind --track-fds=yes --time-stamp=yes $(PWD)/graphics_app=einstein_RUNLABEL_VERSION_graphics_$(TARGET_APPEND)

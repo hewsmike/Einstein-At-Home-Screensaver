@@ -34,4 +34,5 @@ topbuild.log
 *.cbp
 *.cbTemp
 *.layout
+*.save
 *~

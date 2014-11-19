@@ -86,7 +86,6 @@ CXX ?= g++
 # Compiler variables.
 
 # Generic.
-CPPFLAGS += -m32
 CPPFLAGS += -I$(PRODUCT_INSTALL)/include
 CPPFLAGS += $(shell $(PRODUCT_INSTALL)/bin/freetype-config --cflags)
 CPPFLAGS += $(shell $(PRODUCT_INSTALL)/bin/xml2-config --cflags)
@@ -121,7 +120,7 @@ endif
 ifeq ".$(SYSTEM)" ".linux"
     LIBS += -Wl,-Bdynamic
     LIBS += -L/usr/lib/X11 -lX11 -lXrandr -lXrender
-    LIBS += -L/usr/lib/i386-linux-gnu/mesa
+    LIBS += -L/usr/lib/x86_64-linux-gnu/mesa
     LIBS += -lGLU -lGL -ldl -lpthread -lm -lrt
     LIBS += -Wl,-Bstatic
     LIBS += -L$(PRODUCT_INSTALL)/lib -L$(PRODUCT_INSTALL)/lib64
@@ -154,7 +153,7 @@ endif
 ###########################################################################
 # Loader variables.
 # Generic.
-LDFLAGS += -static-libstdc++ -m32
+LDFLAGS += -static-libstdc++
 
 # Target specific.
 
@@ -277,7 +276,7 @@ clean:
 # Target specific tools.
 ifeq ".$(SYSTEM)" ".linux"
 memcheck:
-	valgrind --tool=memcheck --track-fds=yes --time-stamp=yes --log-file=$(PWD)/memcheck.out.%p --leak-check=full $(PWD)/graphics_app=einstein_RUNLABEL_VERSION_graphics_$(TARGET_APPEND)
+    valgrind --tool=memcheck --track-fds=yes --time-stamp=yes --log-file=$(PWD)/memcheck.out.%p --leak-check=full $(PWD)/graphics_app=einstein_RUNLABEL_VERSION_graphics_$(TARGET_APPEND)
 callgrind:
 	valgrind --tool=callgrind --track-fds=yes --time-stamp=yes $(PWD)/graphics_app=einstein_RUNLABEL_VERSION_graphics_$(TARGET_APPEND)
 endif
