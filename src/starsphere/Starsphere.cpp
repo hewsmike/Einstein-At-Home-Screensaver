@@ -582,7 +582,7 @@ void Starsphere::resize(const int width, const int height) {
 
     // adjust aspect ratio and projection
     glViewport(0, 0, (GLsizei) m_CurrentWidth, (GLsizei) m_CurrentHeight);
-    //	gluPerspective(95.0, aspect, 0.50, 25.0);
+    gluPerspective(95.0, aspect, 0.50, 25.0);
     }
 
 /**
@@ -594,7 +594,11 @@ void Starsphere::initialize(const int width, const int height, const Resource *f
     m_vertex = new Shader(GL_VERTEX_SHADER, factory.createInstance("VertexTestShader")->std_string());
     m_fragment = new Shader(GL_FRAGMENT_SHADER, factory.createInstance("FragmentTestShader")->std_string());
 
+    m_vertexfetch = new VertexFetch(NULL, NULL);
+
     m_program = new Program(*m_vertex, *m_fragment, Program::KEEP_ON_GOOD_LINK);
+
+    m_pipeline = new Pipeline(*m_program, *m_vertexfetch);
 
     m_program->acquire();
 
@@ -722,6 +726,8 @@ void Starsphere::initialize(const int width, const int height, const Resource *f
  * Rendering routine:  this is what does the drawing:
  */
 void Starsphere::render(const double timeOfDay) {
+    m_pipeline->utilise(GL_LINES, 1);
+
 	GLfloat xvp, yvp, zvp, vp_theta, vp_phi, vp_rad;
 	GLfloat Zrot = 0.0, Zobs=0.0;
 	double revs, t, dt = 0;

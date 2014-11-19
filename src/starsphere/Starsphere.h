@@ -37,7 +37,10 @@
 
 #include "AbstractGraphicsEngine.h"
 #include "EinsteinGravityAdapter.h"
+#include "Pipeline.h"
 #include "Program.h"
+#include "Shader.h"
+#include "VertexFetch.h"
 #include "WindowManager.h"
 
 #include "SDL_ttf.h"
@@ -372,6 +375,8 @@ class Starsphere : public AbstractGraphicsEngine {
         Shader* m_vertex;
         Shader* m_fragment;
         Program* m_program;
+        Pipeline* m_pipeline;
+        VertexFetch* m_vertexfetch;
 
         /// Generate OpenGL display list for stars
         void make_stars();
