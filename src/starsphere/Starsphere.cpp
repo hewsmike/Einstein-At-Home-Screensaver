@@ -704,6 +704,7 @@ void Starsphere::initialize(const int width, const int height, const Resource *f
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
 
+    glEnable( GL_PROGRAM_POINT_SIZE );
 	glPointSize(40.0f);
 
 	// enable opt-in quality feature

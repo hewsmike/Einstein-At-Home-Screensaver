@@ -40,8 +40,6 @@ void Pipeline::utilise(GLenum primitive, GLsizei count) {
 
     // Only if the program was successfully linked.
     if(m_program.status() == Program::LINKAGE_SUCCEEDED) {
-        m_vertex_fetch.attach();
-
         glUseProgram(m_program.ID());
 
         m_vertex_fetch.trigger(primitive, count);

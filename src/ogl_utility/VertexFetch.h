@@ -127,6 +127,8 @@ class VertexFetch {
         Buffer* m_indices;
 
         GLenum m_index_type;
+
+        GLuint VAO;
     };
 
 /**

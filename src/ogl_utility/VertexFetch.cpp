@@ -23,6 +23,8 @@
 #include "ErrorHandler.h"
 #include "OGL_ID.h"
 
+#include <iostream>
+
 VertexFetch::VertexFetch(Buffer* vertices, Buffer* indices, GLenum index_type) :
                           m_vertices(vertices),
                           m_indices(indices),
@@ -41,6 +43,11 @@ void VertexFetch::attach(void) {
     if(m_indices != NULL) {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indices->ID());
         }
+
+    glGenVertexArrays(1, &VAO);
+    glBindVertexArray(VAO);
+    std::cout << "VAO = " << VAO << std::endl;
+
 
     // Indicate that Buffer attachment to targets has been addressed.
     is_attached = true;
