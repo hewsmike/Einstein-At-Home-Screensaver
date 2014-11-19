@@ -90,6 +90,8 @@ bool Program::acquire(void) {
 //                        m_vertex_shader.release();
 //                        m_fragment_shader.release();
 //                        }
+                    ErrorHandler::record("Program::acquire() : success of GLSL link !",
+                                         ErrorHandler::WARN);
                     ret_val = true;
                     }
                 else {

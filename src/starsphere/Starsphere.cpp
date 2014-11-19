@@ -704,6 +704,8 @@ void Starsphere::initialize(const int width, const int height, const Resource *f
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
 
+	glPointSize(40.0f);
+
 	// enable opt-in quality feature
 	if(m_BoincAdapter.graphicsQualitySetting() == BOINCClientAdapter::MediumGraphicsQualitySetting ||
 	   m_BoincAdapter.graphicsQualitySetting() == BOINCClientAdapter::HighGraphicsQualitySetting) {
@@ -726,7 +728,7 @@ void Starsphere::initialize(const int width, const int height, const Resource *f
  * Rendering routine:  this is what does the drawing:
  */
 void Starsphere::render(const double timeOfDay) {
-    m_pipeline->utilise(GL_LINES, 1);
+    m_pipeline->utilise(GL_POINTS, 1);
 
 	GLfloat xvp, yvp, zvp, vp_theta, vp_phi, vp_rad;
 	GLfloat Zrot = 0.0, Zobs=0.0;

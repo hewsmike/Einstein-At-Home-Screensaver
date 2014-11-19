@@ -84,6 +84,8 @@ bool Shader::acquire(void) {
             // Examine the result.
             if(ret_val == true ) {
                 comp_status = COMPILE_SUCCEEDED;
+                ErrorHandler::record("Shader::acquire() : success of GLSL compile !",
+                                     ErrorHandler::WARN);
                 }
             else {
                 comp_status = COMPILE_FAILED;

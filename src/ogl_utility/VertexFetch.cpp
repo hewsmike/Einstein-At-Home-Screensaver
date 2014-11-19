@@ -20,6 +20,7 @@
 
 #include "VertexFetch.h"
 
+#include "ErrorHandler.h"
 #include "OGL_ID.h"
 
 VertexFetch::VertexFetch(Buffer* vertices, Buffer* indices, GLenum index_type) :
@@ -48,6 +49,8 @@ void VertexFetch::attach(void) {
 void VertexFetch::trigger(GLenum primitive, GLsizei count) {
     // If buffers are not attached to targets then do so.
     if(is_attached == false) {
+        ErrorHandler::record("VertexFetch::trigger() : buffers, if any, not attached, do so !",
+                                         ErrorHandler::WARN);
         this->attach();
         }
 
@@ -55,7 +58,7 @@ void VertexFetch::trigger(GLenum primitive, GLsizei count) {
 	// buffer use depending upon that which is bound.
 	if(m_indices != NULL) {
 	    // Both GL_ARRAY_BUFFER and GL_ELEMENT_ARRAY_BUFFER targets are bound.
-        glDrawElements(primitive, 0, count, m_indices->data());
+	    glDrawElements(primitive, 0, count, m_indices->data());
         }
     else {
         // Either only GL_ARRAY_BUFFER target bound, or none at all.
