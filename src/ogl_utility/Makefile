@@ -41,6 +41,7 @@ OBJS += IndexBuffer.o
 OBJS += TextureBuffer.o
 OBJS += VertexBuffer.o
 OBJS += VertexFetch.o
+OBJS += VertexArrayObject.o
 
 # primary role based tagets
 default: release
@@ -86,6 +87,9 @@ VertexBuffer.o: $(DEPS) $(UTILITY_SRC)/VertexBuffer.cpp $(UTILITY_SRC)/VertexBuf
 
 VertexFetch.o: $(DEPS) $(UTILITY_SRC)/VertexFetch.cpp $(UTILITY_SRC)/VertexFetch.h
 	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/VertexFetch.cpp
+
+VertexArrayObject.o: $(DEPS) $(UTILITY_SRC)/VertexArrayObject.cpp $(UTILITY_SRC)/VertexArrayObject.h
+	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/VertexArrayObject.cpp
 
 # tools
 install:

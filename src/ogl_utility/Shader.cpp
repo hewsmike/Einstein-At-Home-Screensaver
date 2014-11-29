@@ -44,6 +44,9 @@ Shader::Shader(GLenum type, const std::string source) {
     if(source.size() != 0) {
         shader_source = source;
         }
+    else {
+        ErrorHandler::record("Shader::Shader() : no shader source code provided !", ErrorHandler::FATAL);
+        }
 
     // Initially uncompiled.
     comp_status = Shader::NEVER_COMPILED;
@@ -57,23 +60,22 @@ bool Shader::acquire(void) {
     // Assume failure to acquire.
     bool ret_val = false;
 
-    // Clear the compilation log.
-    compile_log = "";
-
-    // Get an OpenGL handle for this shader object, if needed.
-    if(this->ID() == OGL_ID::NO_ID) {
-        // Get an OpenGL handle for this shader object.
-        set_ID(glCreateShader(shader_type));
-
-        // If that handle acquisition failed the we have no other option ...
-        if(this->ID() == OGL_ID::NO_ID)  {
-            ErrorHandler::record("Shader::acquire() : OpenGL handle acquisition failure !",
-                                 ErrorHandler::FATAL);
-            }
-        }
-
-    // Only manipulate this object if not currently marked for deletion.
+    // Only manipulate this object if not currently marked for deletion,
+    // and a Shader object with no OpengGL handle yet assigned will not
+    // be so marked.
     if(this->isDeleted() == false) {
+        // Get an OpenGL handle for this shader object, if needed.
+        if(this->ID() == OGL_ID::NO_ID) {
+            // Get an OpenGL handle for this shader object.
+            this->set_ID(glCreateShader(shader_type));
+
+            // If that handle acquisition failed the we have no other option ...
+            if(this->ID() == OGL_ID::NO_ID)  {
+                ErrorHandler::record("Shader::acquire() : OpenGL handle acquisition failure !",
+                                 ErrorHandler::FATAL);
+                }
+            }
+
         // Load the source code into the shader object.
         glShaderSource(this->ID(), 1, StringHelper(shader_source), NULL);
 
@@ -93,22 +95,7 @@ bool Shader::acquire(void) {
                                      ErrorHandler::WARN);
                 }
 
-            // Populate the compilation log ie. retrieve compiler error output.
-            // Copy to an std::string via temporary character array to avoid
-            // const semantic difficulties on the std::string c_str() method.
-            GLint log_len;
-            glGetShaderiv(this->ID(), GL_INFO_LOG_LENGTH, &log_len);
-            // Use extra character to account for null character terminator ( documentation unclear ).
-            GLchar* temp_log = new GLchar[log_len+1];
-            GLsizei returned_log_len;
-            glGetShaderInfoLog(this->ID(), log_len+1, &returned_log_len, temp_log);
 
-            // Account for null character terminator ( documentation unclear ).
-            temp_log[log_len] = '\0';
-            compile_log = temp_log;
-
-            // Dispose of the temporary character array.
-            delete[] temp_log;
             }
         }
 
@@ -146,6 +133,9 @@ bool Shader::compile(void) {
     // Assume compile failure
     bool ret_val = false;
 
+    // Clear the compilation log.
+    compile_log = "";
+
     // Only compile a valid handle.
     if(this->ID() != OGL_ID::NO_ID) {
         // Present shader's GLSL code to the GLSL compiler.
@@ -160,6 +150,26 @@ bool Shader::compile(void) {
         glGetShaderiv(this->ID(), GL_COMPILE_STATUS, &c_status);
         if(c_status == GL_TRUE) {
             ret_val = true;
+            }
+
+        // Populate the compilation log ie. retrieve compiler error output.
+        // Copy to an std::string via temporary character array to avoid
+        // const semantic difficulties on the std::string c_str() method.
+        GLint log_len;
+        glGetShaderiv(this->ID(), GL_INFO_LOG_LENGTH, &log_len);
+
+        if(log_len > 0) {
+            // Use extra character to account for null character terminator ( documentation unclear ).
+            GLchar* temp_log = new GLchar[log_len+1];
+            GLsizei returned_log_len = 0;
+            glGetShaderInfoLog(this->ID(), log_len+1, &returned_log_len, temp_log);
+
+            // Account for null character terminator ( documentation unclear ).
+            temp_log[log_len] = '\0';
+            compile_log = temp_log;
+
+            // Dispose of the temporary character array.
+            delete[] temp_log;
             }
         }
 

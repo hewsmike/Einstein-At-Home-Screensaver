@@ -21,6 +21,7 @@
  *                                                                         *
  ***************************************************************************/
 
+#include <iostream>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -612,6 +613,7 @@ void Starsphere::initialize(const int width, const int height, const Resource *f
                << "------------------------------------------------------"
                << std::endl;
     ErrorHandler::record(vertex_log.str(), ErrorHandler::INFORM);
+    std::cout << m_vertex->source() << std::endl;
 
     stringstream fragment_log;
     fragment_log << "Starsphere::initialize() : fragment shader did"
@@ -623,6 +625,7 @@ void Starsphere::initialize(const int width, const int height, const Resource *f
                  << "------------------------------------------------------"
                  << std::endl;
     ErrorHandler::record(fragment_log.str(), ErrorHandler::INFORM);
+    std::cout << m_fragment->source() << std::endl;
 
     stringstream linking_log;
     linking_log << "Starsphere::initialize() : program did"
