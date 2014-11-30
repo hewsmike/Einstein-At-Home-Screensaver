@@ -33,15 +33,16 @@ CPPFLAGS += -I$(FRAMEWORK_INSTALL)/include/SDL2
 
 DEPS = Makefile
 OBJS = Buffer.o
+OBJS += IndexBuffer.o
 OBJS += OGL_ID.o
 OBJS += Pipeline.o
 OBJS += Program.o
 OBJS += Shader.o
-OBJS += IndexBuffer.o
 OBJS += TextureBuffer.o
+OBJS += VertexArrayObject.o
 OBJS += VertexBuffer.o
 OBJS += VertexFetch.o
-OBJS += VertexArrayObject.o
+OBJS += VertexShader.o
 
 # primary role based tagets
 default: release
@@ -64,6 +65,9 @@ Buffer.o: $(DEPS) $(UTILITY_SRC)/Buffer.cpp $(UTILITY_SRC)/Buffer.h
 OGL_ID.o: $(DEPS) $(UTILITY_SRC)/OGL_ID.cpp $(UTILITY_SRC)/OGL_ID.h
 	$(CXX) -g $(CPPFLAGS) -c $(UTILITY_SRC)/OGL_ID.cpp
 
+IndexBuffer.o: $(DEPS) $(UTILITY_SRC)/IndexBuffer.cpp $(UTILITY_SRC)/IndexBuffer.h
+	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/IndexBuffer.cpp
+
 Pipeline.o: $(DEPS) $(UTILITY_SRC)/Pipeline.cpp $(UTILITY_SRC)/Pipeline.h
 	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/Pipeline.cpp
 
@@ -76,11 +80,11 @@ Shader.o: $(DEPS) $(UTILITY_SRC)/Shader.cpp $(UTILITY_SRC)/Shader.h
 Texture.o: $(DEPS) $(UTILITY_SRC)/Texture.cpp $(UTILITY_SRC)/Texture.h
 	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/Texture.cpp
 
-IndexBuffer.o: $(DEPS) $(UTILITY_SRC)/IndexBuffer.cpp $(UTILITY_SRC)/IndexBuffer.h
-	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/IndexBuffer.cpp
-
 TextureBuffer.o: $(DEPS) $(UTILITY_SRC)/TextureBuffer.cpp $(UTILITY_SRC)/TextureBuffer.h
 	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/TextureBuffer.cpp
+
+VertexArrayObject.o: $(DEPS) $(UTILITY_SRC)/VertexArrayObject.cpp $(UTILITY_SRC)/VertexArrayObject.h
+	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/VertexArrayObject.cpp
 
 VertexBuffer.o: $(DEPS) $(UTILITY_SRC)/VertexBuffer.cpp $(UTILITY_SRC)/VertexBuffer.h
 	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/VertexBuffer.cpp
@@ -88,8 +92,8 @@ VertexBuffer.o: $(DEPS) $(UTILITY_SRC)/VertexBuffer.cpp $(UTILITY_SRC)/VertexBuf
 VertexFetch.o: $(DEPS) $(UTILITY_SRC)/VertexFetch.cpp $(UTILITY_SRC)/VertexFetch.h
 	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/VertexFetch.cpp
 
-VertexArrayObject.o: $(DEPS) $(UTILITY_SRC)/VertexArrayObject.cpp $(UTILITY_SRC)/VertexArrayObject.h
-	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/VertexArrayObject.cpp
+VertexShader.o: $(DEPS) $(UTILITY_SRC)/VertexShader.cpp $(UTILITY_SRC)/VertexShader.h
+	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/VertexShader.cpp
 
 # tools
 install:

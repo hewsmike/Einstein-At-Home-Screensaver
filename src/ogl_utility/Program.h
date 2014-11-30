@@ -23,6 +23,7 @@
 
 #include "OGL_ID.h"
 #include "Shader.h"
+#include "VertexShader.h"
 
 /**
  * \addtogroup ogl_utility OGL_Utility
@@ -53,7 +54,7 @@ class Program : public OGL_ID {
         /**
          * \brief Constructor.
          *
-         * \param vertex_shader : reference to an existing Shader object,
+         * \param vertex_shader : reference to an existing VertexShader object,
          *                        assumed to take on the role of an
          *                        OpenGL ES 2.0 vertex shader.
          * \param fragment_shader : reference to an existing Shader object,
@@ -63,7 +64,7 @@ class Program : public OGL_ID {
          *                  desired fate of supplied shaders after any successful
          *                  linkage.
          */
-        Program(Shader& vertex_shader,
+        Program(VertexShader& vertex_shader,
                 Shader& fragment_shader,
                 shaderDisposition dispose);
 
@@ -128,7 +129,7 @@ class Program : public OGL_ID {
 
         // These are merely set during construction, though utilised during acquisition.
         /// The vertex shader reference.
-        Shader& m_vertex_shader;
+        VertexShader& m_vertex_shader;
 
         /// The fragment shader reference.
         Shader& m_fragment_shader;

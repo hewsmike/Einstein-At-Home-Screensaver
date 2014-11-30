@@ -51,9 +51,19 @@
 
 class VertexBuffer : public Buffer {
     public :
+        // Overall structure of data buffer :
+        //      BY_VERTEX - primary key is vertex, secondary is attribute,
+        //                  or if you like 'interleaved'.
+        //      BY_ATTRIBUTE - primary key is attribute, secondary is vertex,
+        //                     of if you like 'non-interleaved'.
+        enum data_mix {BY_VERTEX,
+                       BY_ATTRIBUTE};
+
         struct attribute_spec {
+            // The index of the attribute in the VAO.
+            GLuint vao_attrib_index;
             // Number of components for this attribute.
-            GLint size;
+            GLint multiplicity;
             // The data type of each component of this attribute.
             // Valid values are :
             // GL_BYTE
@@ -69,8 +79,6 @@ class VertexBuffer : public Buffer {
             // unsigned integers map to [0, +1]
             // GL_FALSE no normalisation, directly map to floats.
             GLboolean normalised;
-            // The location index as declared in associated vertex shader code.
-            GLuint location_index;
             };
 
         /**
@@ -83,10 +91,12 @@ class VertexBuffer : public Buffer {
          * \param data : pointer to the data to be stored.
          * \param vertices : number of vertices.
          * \param usage : one of GL_STREAM_DRAW, GL_STATIC_DRAW or GL_DYNAMIC_DRAW.
+         * \param mix : one of the data_mix enumerants.
          */
         VertexBuffer(const GLvoid* buffer_data,
                      GLuint vertices,
-                     GLenum usage);
+                     GLenum usage,
+                     data_mix mix);
 
         /**
          * \brief Destructor.
@@ -136,6 +146,9 @@ class VertexBuffer : public Buffer {
         /// The total length in bytes of all the attributes.
         GLuint m_attribute_length_sum;
 
+        /// The manner of data interleaving.
+        data_mix m_mix;
+
         /**
          * \brief Get an OpenGL handle for the buffer.
          *
@@ -156,18 +169,12 @@ class VertexBuffer : public Buffer {
         virtual void loadBuffer(void) const;
 
         struct attribute_record {attribute_spec a_spec;     // An attribute specification.
-                                 GLuint length;             // The byte length of this attribute.
+                                 GLuint length;             // The byte length of this attribute (how many x how long).
                                  GLsizei stride;            // The byte gap between this attribute type in the buffer.
-                                 GLvoid* pointer;           	// The byte offset of the FIRST of this attribute in the buffer.
+                                 GLvoid* pointer;           // The byte offset of the FIRST of this attribute in the buffer.
                                  };
 
-        // Storage for all the attribute specifications, sorted
-        // by shader index eg. within the vertex shader's GLSL code
-        //
-        // layout (location = index_0) in attribute_type0 attribute_name_in_shader0;
-        // layout (location = index_1) in attribute_type1 attribute_name_in_shader1;
-        // layout (location = index_2) in attribute_type2 attribute_name_in_shader2;
-        //
+        // Storage for all the attribute specifications.
         std::vector<attribute_record> m_attribute_specs;
 
         /**

@@ -372,7 +372,7 @@ class Starsphere : public AbstractGraphicsEngine {
 
     private:
         /// OpenGL
-        Shader* m_vertex;
+        VertexShader* m_vertex;
         Shader* m_fragment;
         Program* m_program;
         Pipeline* m_pipeline;

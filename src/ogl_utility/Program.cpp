@@ -25,7 +25,7 @@
 const GLint Program::GLSL_LINKAGE_FAILURE(GL_FALSE);
 const GLint Program::GLSL_LINKAGE_SUCCESS(GL_TRUE);
 
-Program::Program(Shader& vertex_shader,
+Program::Program(VertexShader& vertex_shader,
                  Shader& fragment_shader,
                  shaderDisposition dispose) :
                     m_vertex_shader(vertex_shader),
@@ -154,6 +154,13 @@ Program::linkageState Program::status(void) const {
 bool Program::link(void) {
     // Assume linkage failure
     bool ret_val = false;
+
+    // Before link need to access VertexShader attribute indices and variable names
+    // in order to bind the attributes to locations.
+    for(GLuint index = 0; index < m_vertex_shader.attribCount(); ++index) {
+        std::pair<GLuint, const std::string> temp;
+        glBindAttribLocation(this->ID(), temp.first, temp.second.c_str());
+        }
 
     // Attempt to link the program.
     glLinkProgram(this->ID());

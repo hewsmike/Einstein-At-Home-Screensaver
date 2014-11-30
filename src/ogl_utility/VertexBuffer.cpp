@@ -24,8 +24,10 @@
 
 VertexBuffer::VertexBuffer(const GLvoid* buffer_data,
                            GLuint vertices,
-                           GLenum usage) :
-                Buffer(buffer_data) {
+                           GLenum usage,
+                           data_mix mix) :
+                Buffer(buffer_data),
+                m_mix(mix) {
     // Ensure strictly positive vertex count.
     if(vertices > 0) {
         m_vertex_count = vertices;
@@ -98,9 +100,8 @@ void VertexBuffer::attach(void) {
         for(std::vector<attribute_record>::iterator attrib = m_attribute_specs.begin();
             attrib != m_attribute_specs.end();
             ++attrib) {
-            glEnableVertexAttribArray(attrib->a_spec.location_index);
-            glVertexAttribPointer(attrib->a_spec.location_index,
-                                  attrib->a_spec.size,
+            glVertexAttribPointer(attrib->a_spec.vao_attrib_index,
+                                  attrib->a_spec.multiplicity,
                                   attrib->a_spec.type,
                                   attrib->a_spec.normalised,
                                   attrib->stride,
@@ -123,7 +124,7 @@ void VertexBuffer::detach(void) {
         for(std::vector<attribute_record>::iterator attrib = m_attribute_specs.begin();
             attrib != m_attribute_specs.end();
             ++attrib) {
-            glDisableVertexAttribArray(attrib->a_spec.location_index);
+            glDisableVertexAttribArray(attrib->a_spec.vao_attrib_index);
             }
         // Unbind the given buffer object from pipeline state.
         glBindBuffer(GL_ARRAY_BUFFER, OGL_ID::NO_ID);
@@ -136,12 +137,12 @@ void VertexBuffer::addAttributeDescription(attribute_spec specification) {
     if(m_attributes_mapped == false) {
         attribute_record record;
         record.a_spec = specification;
-        record.a_spec.location_index = specification.location_index;
+        record.a_spec.vao_attrib_index = specification.vao_attrib_index;
 
         // The length in bytes of an attribute is it's number
         // of ( identically sized ) components times the size of
         // a component.
-        record.length = record.a_spec.size;
+        record.length = record.a_spec.multiplicity;
         switch (record.a_spec.type) {
             case GL_BYTE:
                 record.length *= sizeof(GLbyte);
@@ -182,7 +183,7 @@ void VertexBuffer::addAttributeDescription(attribute_spec specification) {
         }
     else {
         ErrorHandler::record("VertexBuffer::addAttributeDescription() : attempt to add attribute after mapping completed",
-                              ErrorHandler::WARN);
+                              ErrorHandler::FATAL);
         }
     }
 
@@ -191,22 +192,36 @@ void VertexBuffer::prepareAttributeMapping(void) {
     // a BufferVertexFetch instance ie. this method is only ever performed
     // at most ONCE.
     if(m_attributes_mapped == false) {
-        GLuint progressive_offset = 0;
+        GLuint interleave_progressive_offset = 0;
+        GLuint non_interleave_progressive_offset = 0;
         // Go through and examine all the given attribute specifications.
         for(std::vector<attribute_record>::iterator attrib = m_attribute_specs.begin();
             attrib != m_attribute_specs.end();
             ++attrib) {
-                attrib->stride = m_attribute_length_sum;
-                // attrib->pointer = static_cast<GLvoid*>(attrib) + progressive_offset;
-                // NB This assumes close packing of attributes.
-                progressive_offset += attrib->length;
-			}
+            switch(m_mix) {
+                case BY_VERTEX :
+                    attrib->stride = m_attribute_length_sum;
+                    attrib->pointer = interleave_progressive_offset;
+                    break;
+                case BY_ATTRIBUTE :
+                    attrib->stride = attrib->length;
+                    attrib->pointer = non_interleave_progressive_offset;
+                    break;
+                default:
+                    // Should never get here.
+                    ErrorHandler::record("VertexBuffer::prepareAttributeMapping() : bad switch case ( default ) !",
+                                  ErrorHandler::FATAL);
+                }
+                interleave_progressive_offset += attrib->length;
+
+                non_interleave_progressive_offset += attrib->length * m_vertex_count;
+            }
 
         // Mark attribute mapping as completed.
         m_attributes_mapped = true;
         }
     else {
         ErrorHandler::record("VertexBuffer::prepareAttributeMapping() : called more than once",
-                              ErrorHandler::WARN);
+                              ErrorHandler::FATAL);
         }
     }

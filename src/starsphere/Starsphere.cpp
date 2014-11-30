@@ -592,7 +592,10 @@ void Starsphere::resize(const int width, const int height) {
 void Starsphere::initialize(const int width, const int height, const Resource *font) {
     ResourceFactory factory;
 
-    m_vertex = new Shader(GL_VERTEX_SHADER, factory.createInstance("VertexTestShader")->std_string());
+    std::vector<std::pair<GLuint, std::string> > vertex_shader_matchings;
+    vertex_shader_matchings.push_back(std::make_pair(0, "in_position"));
+
+    m_vertex = new VertexShader(factory.createInstance("VertexTestShader")->std_string(), vertex_shader_matchings);
     m_fragment = new Shader(GL_FRAGMENT_SHADER, factory.createInstance("FragmentTestShader")->std_string());
 
     m_vertexfetch = new VertexFetch(NULL, NULL);
