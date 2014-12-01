@@ -749,9 +749,7 @@ void Starsphere::initialize(const int width, const int height, const Resource *f
  * Rendering routine:  this is what does the drawing:
  */
 void Starsphere::render(const double timeOfDay) {
-    m_pipeline->utilise(GL_TRIANGLES, 1);
-
-	GLfloat xvp, yvp, zvp, vp_theta, vp_phi, vp_rad;
+    GLfloat xvp, yvp, zvp, vp_theta, vp_phi, vp_rad;
 	GLfloat Zrot = 0.0, Zobs=0.0;
 	double revs, t, dt = 0;
 	static double start_time=-1.0, last_time=-1.0;
@@ -797,9 +795,11 @@ void Starsphere::render(const double timeOfDay) {
 	zvp = vp_rad * SIN(vp_theta) * COS(vp_phi);
 	yvp = vp_rad * COS(vp_theta);
 
-  	gluLookAt(xvp, yvp, zvp, // eyes position
+  	gluLookAt(0.0, 0.0, 5.0, // eyes position
               0.0, 0.0, 0.0, // looking toward here
   	          0.0, 1.0, 0.0); // which way is up?  y axis!
+
+  	m_pipeline->utilise(GL_TRIANGLES, 1);
 
 	// draw axes before any rotation so they stay put
 //	if (isFeature(AXES)) glCallList(Axes);

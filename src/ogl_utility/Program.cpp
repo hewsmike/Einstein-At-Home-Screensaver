@@ -21,6 +21,7 @@
 #include "Program.h"
 
 #include "ErrorHandler.h"
+#include <iostream>
 
 const GLint Program::GLSL_LINKAGE_FAILURE(GL_FALSE);
 const GLint Program::GLSL_LINKAGE_SUCCESS(GL_TRUE);
@@ -160,6 +161,8 @@ bool Program::link(void) {
     for(GLuint index = 0; index < m_vertex_shader.attribCount(); ++index) {
         std::pair<GLuint, std::string> temp;
         temp = m_vertex_shader.getAttrib(index);
+        std::cout << "\t\tm_vertex.first = " << temp.first << std::endl;
+        std::cout << "\t\tm_vertex.second.c_str() = " << "'" << temp.second.c_str() << "'" << std::endl;
         glBindAttribLocation(this->ID(), temp.first, temp.second.c_str());
         }
 

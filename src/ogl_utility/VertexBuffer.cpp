@@ -99,24 +99,25 @@ void VertexBuffer::attach(void) {
         // Enable fetching for all supplied vertex attribute indices,
         // these corresponding to 'location' definitions within the
         // vertex shader's GLSL code.
-        std::cout << "m_attribute_specs->size() = " << m_attribute_specs.size() << std::endl;
-        std::cout << "GL_FLOAT = " << GL_FLOAT << std::endl;
+//        std::cout << "m_attribute_specs->size() = " << m_attribute_specs.size() << std::endl;
+//        std::cout << "GL_FLOAT = " << GL_FLOAT << std::endl;
         for(std::vector<attribute_record>::iterator attrib = m_attribute_specs.begin();
             attrib != m_attribute_specs.end();
             ++attrib) {
-            std::cout << "attrib->a_spec.attrib_index = " << attrib->a_spec.attrib_index << std::endl;
-            std::cout << "\tattrib->a_spec.multiplicity = " << attrib->a_spec.multiplicity << std::endl;
-            std::cout << "\tattrib->a_spec.type = " << attrib->a_spec.type << std::endl;
-            std::cout << "\tattrib->a_spec.normalised = " << attrib->a_spec.normalised << std::endl;
-            std::cout << "\tattrib->stride = " << attrib->stride << std::endl;
-            std::cout << "\tattrib->pointer = " << attrib->pointer << std::endl;
-            glEnableVertexAttribArray(attrib->a_spec.attrib_index);
+//            std::cout << "attrib->a_spec.attrib_index = " << attrib->a_spec.attrib_index << std::endl;
+//            std::cout << "\tattrib->a_spec.multiplicity = " << attrib->a_spec.multiplicity << std::endl;
+//            std::cout << "\tattrib->a_spec.type = " << attrib->a_spec.type << std::endl;
+//            std::cout << "\tattrib->a_spec.normalised = " << attrib->a_spec.normalised << std::endl;
+//            std::cout << "\tattrib->stride = " << attrib->stride << std::endl;
+//            std::cout << "\tattrib->pointer = " << attrib->pointer << std::endl;
+
             glVertexAttribPointer(attrib->a_spec.attrib_index,
                                   attrib->a_spec.multiplicity,
                                   attrib->a_spec.type,
                                   attrib->a_spec.normalised,
                                   attrib->stride,
                                   attrib->pointer);
+            glEnableVertexAttribArray(attrib->a_spec.attrib_index);
             }
         }
     else {
