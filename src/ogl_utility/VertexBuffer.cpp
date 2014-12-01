@@ -77,11 +77,13 @@ void VertexBuffer::release_ID(GLuint* handle) const {
     }
 
 void VertexBuffer::loadBuffer(void) const {
+    std::cout << "Yup, loading the GL_ARRAY_BUFFER !" << std::endl;
     // Bind this buffer to the specified target.
     glBindBuffer(GL_ARRAY_BUFFER, this->ID());
 
     // Allocate space and transfer the data.
-    glBufferData(GL_ARRAY_BUFFER, m_size, this->data(), m_usage);
+    glBufferData(GL_ARRAY_BUFFER, m_size, NULL, m_usage);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, m_size, this->data());
 
     // Unbind the buffer.
     glBindBuffer(GL_ARRAY_BUFFER, OGL_ID::NO_ID);
