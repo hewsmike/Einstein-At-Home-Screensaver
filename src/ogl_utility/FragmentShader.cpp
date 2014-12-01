@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2014 by Mike Hewson                                     *
+ *   Copyright (C) 2013 by Mike Hewson                                     *
  *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
@@ -18,35 +18,11 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "Pipeline.h"
+#include "FragmentShader.h"
 
-#include "ErrorHandler.h"
-
-#include <iostream>
-
-Pipeline::Pipeline(Program& program, VertexFetch& vertex_fetch) :
-                    m_program(program),
-                    m_vertex_fetch(vertex_fetch) {
+FragmentShader::FragmentShader(const std::string& source) :
+              Shader(GL_FRAGMENT_SHADER, source) {
     }
 
-Pipeline::~Pipeline() {
-    }
-
-void Pipeline::utilise(GLenum primitive, GLsizei count) {
-    // Link program if not done.
-    if(m_program.status() == Program::NEVER_LINKED) {
-        m_program.acquire();
-        }
-
-    // Only if the program was successfully linked.
-    if(m_program.status() == Program::LINKAGE_SUCCEEDED) {
-        glUseProgram(m_program.ID());
-
-        m_vertex_fetch.trigger(primitive, count);
-
-        glUseProgram(OGL_ID::NO_ID);
-        }
-    else {
-        /// TODO - Error path if no program link.
-        }
+FragmentShader::~FragmentShader() {
     }

@@ -18,35 +18,50 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "Pipeline.h"
+#ifndef FRAGMENT_SHADER_H_
+#define FRAGMENT_SHADER_H_
 
-#include "ErrorHandler.h"
+#include "Shader.h"
 
-#include <iostream>
+#include <string>
 
-Pipeline::Pipeline(Program& program, VertexFetch& vertex_fetch) :
-                    m_program(program),
-                    m_vertex_fetch(vertex_fetch) {
-    }
+/**
+ * \addtogroup ogl_utility OGL_Utility
+ * @{
+ */
 
-Pipeline::~Pipeline() {
-    }
+/**
+ * \brief This interface declares public methods to deal with OpenGL
+ *        fragment shader objects.
+ *
+ *      It's a wrapper class to especially manage acquisition and
+ * release of OpenGL resources.
+ *
+ * \see OGL_ID
+ *
+ * \author Mike Hewson\n
+ */
 
-void Pipeline::utilise(GLenum primitive, GLsizei count) {
-    // Link program if not done.
-    if(m_program.status() == Program::NEVER_LINKED) {
-        m_program.acquire();
-        }
+class FragmentShader : public Shader {
+    public :
+        /**
+         * \brief Constructor
+         *
+         * \param source - pointer to the shader's SINGLE source code C-string.
+         */
+        FragmentShader(const std::string& source);
 
-    // Only if the program was successfully linked.
-    if(m_program.status() == Program::LINKAGE_SUCCEEDED) {
-        glUseProgram(m_program.ID());
+        /**
+         * \brief Destructor
+         */
+        virtual ~FragmentShader();
 
-        m_vertex_fetch.trigger(primitive, count);
+    private :
 
-        glUseProgram(OGL_ID::NO_ID);
-        }
-    else {
-        /// TODO - Error path if no program link.
-        }
-    }
+    };
+
+/**
+ * @}
+ */
+
+#endif /*FRAGMENT_SHADER_H_*/

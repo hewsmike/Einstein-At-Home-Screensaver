@@ -25,7 +25,7 @@
 
 #include <iostream>
 
-VertexFetch::VertexFetch(Buffer* vertices, Buffer* indices, GLenum index_type) :
+VertexFetch::VertexFetch(VertexBuffer* vertices, IndexBuffer* indices, GLenum index_type) :
                           m_vertices(vertices),
                           m_indices(indices),
                           m_index_type(index_type) {
@@ -38,22 +38,19 @@ VertexFetch::~VertexFetch() {
 void VertexFetch::attach(void) {
     // Bind only existing buffers.
     if(m_vertices != NULL) {
-        glBindBuffer(GL_ARRAY_BUFFER, m_vertices->ID());
+        m_vertices->attach();
         }
     if(m_indices != NULL) {
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indices->ID());
+        m_indices->attach();
         }
-
-    glGenVertexArrays(1, &VAO);
-    glBindVertexArray(VAO);
-    std::cout << "VAO = " << VAO << std::endl;
-
 
     // Indicate that Buffer attachment to targets has been addressed.
     is_attached = true;
     }
 
 void VertexFetch::trigger(GLenum primitive, GLsizei count) {
+    this->attach();
+
     // If buffers are not attached to targets then do so.
     if(is_attached == false) {
         ErrorHandler::record("VertexFetch::trigger() : buffers, if any, not attached, do so !",
@@ -64,20 +61,20 @@ void VertexFetch::trigger(GLenum primitive, GLsizei count) {
 	// Provokes vertex shader activity for count invocations,
 	// buffer use depending upon that which is bound.
 	if(m_indices != NULL) {
-	    // Both GL_ARRAY_BUFFER and GL_ELEMENT_ARRAY_BUFFER targets are bound.
+        // Both GL_ARRAY_BUFFER and GL_ELEMENT_ARRAY_BUFFER targets are bound.
 	    glDrawElements(primitive, 0, count, m_indices->data());
         }
     else {
         // Either only GL_ARRAY_BUFFER target bound, or none at all.
         glDrawArrays(primitive, 0, count);
         }
-	}
+    }
 
 void VertexFetch::detach(void) {
     // Ensure that the pipeline vertex fetch
     // stage is not bound to any buffers at all.
-    glBindBuffer(GL_ARRAY_BUFFER, OGL_ID::NO_ID);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, OGL_ID::NO_ID);
+    m_vertices->detach();
+    m_indices->detach();
 
     // Reset attachment state.
     is_attached = false;

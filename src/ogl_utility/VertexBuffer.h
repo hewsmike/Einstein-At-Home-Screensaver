@@ -53,15 +53,15 @@ class VertexBuffer : public Buffer {
     public :
         // Overall structure of data buffer :
         //      BY_VERTEX - primary key is vertex, secondary is attribute,
-        //                  or if you like 'interleaved'.
+        //                  if you like 'interleaved' or 'array of structures'.
         //      BY_ATTRIBUTE - primary key is attribute, secondary is vertex,
-        //                     of if you like 'non-interleaved'.
+        //                     if you like 'non-interleaved' or 'structure of arrays'.
         enum data_mix {BY_VERTEX,
                        BY_ATTRIBUTE};
 
         struct attribute_spec {
-            // The index of the attribute in the VAO.
-            GLuint vao_attrib_index;
+            // The index of the attribute in the vertex fetching.
+            GLuint attrib_index;
             // Number of components for this attribute.
             GLint multiplicity;
             // The data type of each component of this attribute.

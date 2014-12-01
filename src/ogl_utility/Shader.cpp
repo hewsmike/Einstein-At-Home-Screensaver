@@ -27,7 +27,7 @@
 const GLint Shader::GLSL_COMPILE_FAILURE(0);
 const GLint Shader::GLSL_COMPILE_SUCCESS(1);
 
-Shader::Shader(GLenum type, const std::string source) {
+Shader::Shader(GLenum type, const std::string& source) {
     // Check and store valid shader type.
     switch(type) {
         case GL_VERTEX_SHADER:

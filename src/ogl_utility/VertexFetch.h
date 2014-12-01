@@ -23,7 +23,8 @@
 
 #include "framework.h"
 
-#include "Buffer.h"
+#include "IndexBuffer.h"
+#include "VertexBuffer.h"
 
 /**
  * \addtogroup ogl_utility OGL_Utility
@@ -76,8 +77,8 @@ class VertexFetch {
          *                     This field is ignored if indices = NULL, and
          *                     defaults to GL_UNSIGNED_SHORT if not provided.
          */
-        VertexFetch(Buffer* vertices = NULL,
-                    Buffer* indices = NULL,
+        VertexFetch(VertexBuffer* vertices = NULL,
+                    IndexBuffer* indices = NULL,
                     GLenum index_type = GL_UNSIGNED_SHORT);
 
         /**
@@ -88,7 +89,7 @@ class VertexFetch {
         /**
          * \brief Perform any data binding to the pipeline input.
          */
-        virtual void attach(void);
+        void attach(void);
 
         /**
          * \brief Trigger pipeline activity. Attachment occurs automatically
@@ -104,7 +105,7 @@ class VertexFetch {
          *          GL_TRIANGLES
          * \param count : how many times to invoke the vertex shader.
          */
-        virtual void trigger(GLenum primitive, GLsizei count);
+        void trigger(GLenum primitive, GLsizei count);
 
         /**
          * \brief Remove any data binding to the pipeline input.
@@ -113,7 +114,7 @@ class VertexFetch {
          * and before any other pipeline activity, in order to properly reset
          * the vertex fetching state.
          */
-        virtual void detach(void);
+        void detach(void);
 
     private :
         // Attachment state. For our purposes any NULL buffers are deemed
@@ -123,12 +124,10 @@ class VertexFetch {
         bool is_attached;
 
         // The given Buffer pointers.
-        Buffer* m_vertices;
-        Buffer* m_indices;
+        VertexBuffer* m_vertices;
+        IndexBuffer* m_indices;
 
         GLenum m_index_type;
-
-        GLuint VAO;
     };
 
 /**

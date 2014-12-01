@@ -37,9 +37,10 @@
 
 #include "AbstractGraphicsEngine.h"
 #include "EinsteinGravityAdapter.h"
+#include "FragmentShader.h"
 #include "Pipeline.h"
 #include "Program.h"
-#include "Shader.h"
+#include "VertexBuffer.h"
 #include "VertexFetch.h"
 #include "WindowManager.h"
 
@@ -372,8 +373,9 @@ class Starsphere : public AbstractGraphicsEngine {
 
     private:
         /// OpenGL
+        VertexBuffer* m_vertex_buffer;
         VertexShader* m_vertex;
-        Shader* m_fragment;
+        FragmentShader* m_fragment;
         Program* m_program;
         Pipeline* m_pipeline;
         VertexFetch* m_vertexfetch;

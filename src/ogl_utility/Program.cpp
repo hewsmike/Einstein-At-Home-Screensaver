@@ -158,7 +158,8 @@ bool Program::link(void) {
     // Before link need to access VertexShader attribute indices and variable names
     // in order to bind the attributes to locations.
     for(GLuint index = 0; index < m_vertex_shader.attribCount(); ++index) {
-        std::pair<GLuint, const std::string> temp;
+        std::pair<GLuint, std::string> temp;
+        temp = m_vertex_shader.getAttrib(index);
         glBindAttribLocation(this->ID(), temp.first, temp.second.c_str());
         }
 

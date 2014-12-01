@@ -490,7 +490,6 @@ void Starsphere::make_search_marker(GLfloat RAdeg, GLfloat DEdeg, GLfloat size) 
 //	glEndList();
     }
 
-
 /**
  * XYZ coordinate axes: (if we want them - most useful for testing)
  */
@@ -592,13 +591,28 @@ void Starsphere::resize(const int width, const int height) {
 void Starsphere::initialize(const int width, const int height, const Resource *font) {
     ResourceFactory factory;
 
+    GLfloat vertex_data[] = {
+        // position ( x  ,   y  ) color ( R,    G,    B  )
+                     0.0f,  1.0f,        1.0f, 0.0f, 0.0f,
+                    -1.0f, -1.0f,        0.0f, 1.0f, 0.0f,
+                     1.0f, -1.0f,        0.0f, 0.0f, 1.0f,
+        };
+
+    struct VertexBuffer::attribute_spec pos_spec = {0, 2, GL_FLOAT, GL_FALSE};
+    struct VertexBuffer::attribute_spec color_spec = {1, 3, GL_FLOAT, GL_FALSE};
+
     std::vector<std::pair<GLuint, std::string> > vertex_shader_matchings;
-    vertex_shader_matchings.push_back(std::make_pair(0, "in_position"));
+    vertex_shader_matchings.push_back(std::make_pair(0, "position"));
+    vertex_shader_matchings.push_back(std::make_pair(1, "color"));
 
     m_vertex = new VertexShader(factory.createInstance("VertexTestShader")->std_string(), vertex_shader_matchings);
-    m_fragment = new Shader(GL_FRAGMENT_SHADER, factory.createInstance("FragmentTestShader")->std_string());
+    m_fragment = new FragmentShader(factory.createInstance("FragmentTestShader")->std_string());
 
-    m_vertexfetch = new VertexFetch(NULL, NULL);
+    m_vertex_buffer = new VertexBuffer(vertex_data, 3, GL_STATIC_DRAW, VertexBuffer::BY_VERTEX);
+    m_vertex_buffer->addAttributeDescription(pos_spec);
+    m_vertex_buffer->addAttributeDescription(color_spec);
+
+    m_vertexfetch = new VertexFetch(m_vertex_buffer, NULL);
 
     m_program = new Program(*m_vertex, *m_fragment, Program::KEEP_ON_GOOD_LINK);
 
@@ -735,7 +749,7 @@ void Starsphere::initialize(const int width, const int height, const Resource *f
  * Rendering routine:  this is what does the drawing:
  */
 void Starsphere::render(const double timeOfDay) {
-    m_pipeline->utilise(GL_POINTS, 1);
+    m_pipeline->utilise(GL_TRIANGLES, 1);
 
 	GLfloat xvp, yvp, zvp, vp_theta, vp_phi, vp_rad;
 	GLfloat Zrot = 0.0, Zobs=0.0;
@@ -783,9 +797,9 @@ void Starsphere::render(const double timeOfDay) {
 	zvp = vp_rad * SIN(vp_theta) * COS(vp_phi);
 	yvp = vp_rad * COS(vp_theta);
 
-//	gluLookAt(xvp, yvp, zvp, // eyes position
-//	        0.0, 0.0, 0.0, // looking toward here
-//	        0.0, 1.0, 0.0); // which way is up?  y axis!
+  	gluLookAt(xvp, yvp, zvp, // eyes position
+              0.0, 0.0, 0.0, // looking toward here
+  	          0.0, 1.0, 0.0); // which way is up?  y axis!
 
 	// draw axes before any rotation so they stay put
 //	if (isFeature(AXES)) glCallList(Axes);

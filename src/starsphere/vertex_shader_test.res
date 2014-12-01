@@ -2,14 +2,13 @@
 
 // This is a test of vertex shader source code.
 
-attribute vec4 in_position;
+attribute vec2 position;
 attribute vec3 color;
-
+// the "out" is now "varying"
 varying vec3 pass_color;
 
-void main(void)
+void main()
 {
-    gl_Position = in_position;
-    gl_PointSize = 40.0f;
-    pass_color = color;
+  gl_Position = vec4(position, 0, 1);
+  pass_color = color;
 }

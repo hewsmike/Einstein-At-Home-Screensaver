@@ -22,6 +22,8 @@
 
 #include "ErrorHandler.h"
 
+#include <iostream>
+
 VertexBuffer::VertexBuffer(const GLvoid* buffer_data,
                            GLuint vertices,
                            GLenum usage,
@@ -97,10 +99,19 @@ void VertexBuffer::attach(void) {
         // Enable fetching for all supplied vertex attribute indices,
         // these corresponding to 'location' definitions within the
         // vertex shader's GLSL code.
+        std::cout << "m_attribute_specs->size() = " << m_attribute_specs.size() << std::endl;
+        std::cout << "GL_FLOAT = " << GL_FLOAT << std::endl;
         for(std::vector<attribute_record>::iterator attrib = m_attribute_specs.begin();
             attrib != m_attribute_specs.end();
             ++attrib) {
-            glVertexAttribPointer(attrib->a_spec.vao_attrib_index,
+            std::cout << "attrib->a_spec.attrib_index = " << attrib->a_spec.attrib_index << std::endl;
+            std::cout << "\tattrib->a_spec.multiplicity = " << attrib->a_spec.multiplicity << std::endl;
+            std::cout << "\tattrib->a_spec.type = " << attrib->a_spec.type << std::endl;
+            std::cout << "\tattrib->a_spec.normalised = " << attrib->a_spec.normalised << std::endl;
+            std::cout << "\tattrib->stride = " << attrib->stride << std::endl;
+            std::cout << "\tattrib->pointer = " << attrib->pointer << std::endl;
+            glEnableVertexAttribArray(attrib->a_spec.attrib_index);
+            glVertexAttribPointer(attrib->a_spec.attrib_index,
                                   attrib->a_spec.multiplicity,
                                   attrib->a_spec.type,
                                   attrib->a_spec.normalised,
@@ -124,7 +135,7 @@ void VertexBuffer::detach(void) {
         for(std::vector<attribute_record>::iterator attrib = m_attribute_specs.begin();
             attrib != m_attribute_specs.end();
             ++attrib) {
-            glDisableVertexAttribArray(attrib->a_spec.vao_attrib_index);
+            glDisableVertexAttribArray(attrib->a_spec.attrib_index);
             }
         // Unbind the given buffer object from pipeline state.
         glBindBuffer(GL_ARRAY_BUFFER, OGL_ID::NO_ID);
@@ -137,7 +148,7 @@ void VertexBuffer::addAttributeDescription(attribute_spec specification) {
     if(m_attributes_mapped == false) {
         attribute_record record;
         record.a_spec = specification;
-        record.a_spec.vao_attrib_index = specification.vao_attrib_index;
+        record.a_spec.attrib_index = specification.attrib_index;
 
         // The length in bytes of an attribute is it's number
         // of ( identically sized ) components times the size of
@@ -201,11 +212,11 @@ void VertexBuffer::prepareAttributeMapping(void) {
             switch(m_mix) {
                 case BY_VERTEX :
                     attrib->stride = m_attribute_length_sum;
-                    attrib->pointer = interleave_progressive_offset;
+                    attrib->pointer = reinterpret_cast<GLvoid*>(interleave_progressive_offset);
                     break;
                 case BY_ATTRIBUTE :
                     attrib->stride = attrib->length;
-                    attrib->pointer = non_interleave_progressive_offset;
+                    attrib->pointer = reinterpret_cast<GLvoid*>(non_interleave_progressive_offset);
                     break;
                 default:
                     // Should never get here.

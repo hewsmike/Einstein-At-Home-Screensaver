@@ -21,7 +21,6 @@
 #ifndef VERTEX_SHADER_H_
 #define VERTEX_SHADER_H_
 
-#include "OGL_ID.h"
 #include "Shader.h"
 
 #include <string>
@@ -51,7 +50,7 @@ class VertexShader : public Shader {
          *
          * \param source - pointer to the shader's SINGLE source code C-string.
          */
-        VertexShader(const std::string source, std::vector<std::pair<GLuint, std::string> >& attribs);
+        VertexShader(const std::string& source, std::vector<std::pair<GLuint, std::string> >& attribs);
 
         /**
          * \brief Destructor

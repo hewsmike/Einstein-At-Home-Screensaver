@@ -22,7 +22,7 @@
 
 #include "ErrorHandler.h"
 
-VertexShader::VertexShader(const std::string source, std::vector<std::pair<GLuint, std::string> >& attribs ) :
+VertexShader::VertexShader(const std::string& source, std::vector<std::pair<GLuint, std::string> >& attribs ) :
               Shader(GL_VERTEX_SHADER, source),
               m_attribs(attribs) {
     }

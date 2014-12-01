@@ -33,13 +33,13 @@ CPPFLAGS += -I$(FRAMEWORK_INSTALL)/include/SDL2
 
 DEPS = Makefile
 OBJS = Buffer.o
+OBJS += FragmentShader.o
 OBJS += IndexBuffer.o
 OBJS += OGL_ID.o
 OBJS += Pipeline.o
 OBJS += Program.o
 OBJS += Shader.o
 OBJS += TextureBuffer.o
-OBJS += VertexArrayObject.o
 OBJS += VertexBuffer.o
 OBJS += VertexFetch.o
 OBJS += VertexShader.o
@@ -62,11 +62,14 @@ liboglutility.a: $(OBJS) $(UTILITY_SRC)/vmath.h
 Buffer.o: $(DEPS) $(UTILITY_SRC)/Buffer.cpp $(UTILITY_SRC)/Buffer.h
 	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/Buffer.cpp
 
-OGL_ID.o: $(DEPS) $(UTILITY_SRC)/OGL_ID.cpp $(UTILITY_SRC)/OGL_ID.h
-	$(CXX) -g $(CPPFLAGS) -c $(UTILITY_SRC)/OGL_ID.cpp
+FragmentShader.o: $(DEPS) $(UTILITY_SRC)/FragmentShader.cpp $(UTILITY_SRC)/FragmentShader.h
+	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/FragmentShader.cpp
 
 IndexBuffer.o: $(DEPS) $(UTILITY_SRC)/IndexBuffer.cpp $(UTILITY_SRC)/IndexBuffer.h
 	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/IndexBuffer.cpp
+
+OGL_ID.o: $(DEPS) $(UTILITY_SRC)/OGL_ID.cpp $(UTILITY_SRC)/OGL_ID.h
+	$(CXX) -g $(CPPFLAGS) -c $(UTILITY_SRC)/OGL_ID.cpp
 
 Pipeline.o: $(DEPS) $(UTILITY_SRC)/Pipeline.cpp $(UTILITY_SRC)/Pipeline.h
 	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/Pipeline.cpp
@@ -82,9 +85,6 @@ Texture.o: $(DEPS) $(UTILITY_SRC)/Texture.cpp $(UTILITY_SRC)/Texture.h
 
 TextureBuffer.o: $(DEPS) $(UTILITY_SRC)/TextureBuffer.cpp $(UTILITY_SRC)/TextureBuffer.h
 	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/TextureBuffer.cpp
-
-VertexArrayObject.o: $(DEPS) $(UTILITY_SRC)/VertexArrayObject.cpp $(UTILITY_SRC)/VertexArrayObject.h
-	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/VertexArrayObject.cpp
 
 VertexBuffer.o: $(DEPS) $(UTILITY_SRC)/VertexBuffer.cpp $(UTILITY_SRC)/VertexBuffer.h
 	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/VertexBuffer.cpp
