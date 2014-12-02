@@ -45,6 +45,9 @@ bool Buffer::acquire(void) {
         GLuint temp;
         acquire_ID(&temp);
         set_ID(temp);
+        std::cout << "Buffer::acquire() ID = "
+                  << this->ID()
+                  << std::endl;
 
         // Failure to acquire a handle should be FATAL.
         if(this->ID() == OGL_ID::NO_ID) {

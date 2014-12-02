@@ -20,6 +20,8 @@
 
 #include "OGL_ID.h"
 
+#include "ErrorHandler.h"
+
 // An ID with value zero is not returned by OpenGL.
 // Thus it may semantically indicate 'no identifier assigned'.
 const GLuint OGL_ID::NO_ID(0);
