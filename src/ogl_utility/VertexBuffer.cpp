@@ -69,12 +69,7 @@ GLuint VertexBuffer::vertexCount(void) const {
     }
 
 void VertexBuffer::acquire_ID(GLuint* handle) const {
-    std::cout << "VertexBuffer::acquire() get a handle ... "
-              << std::endl;
     glGenBuffers(1, handle);
-    std::cout << "VertexBuffer::acquire() handle = "
-              << *handle
-              << std::endl;
     }
 
 void VertexBuffer::release_ID(GLuint* handle) const {
@@ -82,14 +77,11 @@ void VertexBuffer::release_ID(GLuint* handle) const {
     }
 
 void VertexBuffer::loadBuffer(void) const {
-    std::cout << "Yup, loading the GL_ARRAY_BUFFER !" << std::endl;
-    // Bind this buffer to the specified target.
-    std::cout << "VertexBuffer::loadBuffer() this->ID() = "
-              << this->ID()
-              << std::endl;
-    ErrorHandler::check_OpenGL_Error();
+#ifndef NDEBUG
+    ErrorHandler::check_OpenGL_Error(__FILE__, __LINE__);
+#endif
     glBindBuffer(GL_ARRAY_BUFFER, this->ID());
-    ErrorHandler::check_OpenGL_Error();
+    ErrorHandler::check_OpenGL_Error(__FILE__, __LINE__);
 
     // Allocate space and transfer the data.
     std::cout << "VertexBuffer::loadBuffer() m_size = "
@@ -99,7 +91,7 @@ void VertexBuffer::loadBuffer(void) const {
               << this->data()
               << std::endl;
     glBufferData(GL_ARRAY_BUFFER, m_size, this->data(), m_usage);
-    ErrorHandler::check_OpenGL_Error();
+    ErrorHandler::check_OpenGL_Error(__FILE__, __LINE__);
 
     // Unbind the buffer.
     glBindBuffer(GL_ARRAY_BUFFER, OGL_ID::NO_ID);

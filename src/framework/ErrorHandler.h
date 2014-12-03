@@ -87,6 +87,14 @@ class ErrorHandler {
         static void check_OpenGL_Error(void);
 
         /**
+         * \brief Check the current OpenGL context for error.
+         *
+         * \param file : the filename ( typically compile time generated using __FILE__ )
+         * \param line : the line number ( typically compile time generated using __LINE__ )
+         */
+        static void check_OpenGL_Error(char* file, GLint line);
+
+        /**
          * \brief Check the current SDL2 state for error, and return any error
          * message.
          *

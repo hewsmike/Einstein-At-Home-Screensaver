@@ -47,8 +47,6 @@ OBJS += VertexShader.o
 # primary role based tagets
 default: release
 debug: liboglutility.a
-memcheck: clean debug
-callgrind: clean debug
 release: clean liboglutility.a
 
 # target specific options

@@ -21,6 +21,8 @@
 #include "Buffer.h"
 #include "ErrorHandler.h"
 
+#include <iostream>
+
 Buffer::Buffer(const GLvoid* buffer_data) {
     // Ensure an actual data source was provided.
     if(buffer_data != NULL) {

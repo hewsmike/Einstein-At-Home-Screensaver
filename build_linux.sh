@@ -433,6 +433,7 @@ build_ogl_utility() {
     cd $ROOT/build/ogl_utility || failure
     cp -f $ROOT/src/ogl_utility/Makefile . >> $LOGFILE 2>&1 || failure
 
+
     make ${2:2} PRODUCT=$PRODUCT_NAME >> $LOGFILE 2>&1 || failure
     make install >> $LOGFILE 2>&1 || failure
     log "Successfully built and installed $PRODUCT_NAME [OpenGL Utilities]!"

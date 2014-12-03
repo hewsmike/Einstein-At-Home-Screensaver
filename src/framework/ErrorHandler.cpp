@@ -207,15 +207,25 @@ void ErrorHandler::check_OpenGL_Error() {
         }
     }
 
+void ErrorHandler::check_OpenGL_Error(char* file, GLint line) {
+    std::stringstream message;
+    message << "ErrorHandler::check_OpenGL_Error() FILE = "
+            << file
+            << "\t LINE = "
+            << line;
+    ErrorHandler::record(message.str(), ErrorHandler::INFORM);
+    ErrorHandler::check_OpenGL_Error();
+    }
+
 const std::string& ErrorHandler::check_SDL2_Error(void) {
     // Retrieve and store a message about the most recent error
     // since call to SDL_ClearError(). Repeated calls to SDL_GetError
     // will only ever return the same last error.
     last_SDL2_error = SDL_GetError();
-    
+
     // Clearout any message.
     SDL_ClearError();
-    
+
     return last_SDL2_error;
     }
 
