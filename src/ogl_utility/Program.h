@@ -21,6 +21,8 @@
 #ifndef PROGRAM_H_
 #define PROGRAM_H_
 
+#include "ogl_utility.h"
+
 #include "OGL_ID.h"
 #include "Shader.h"
 #include "VertexShader.h"

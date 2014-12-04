@@ -80,7 +80,9 @@ bool Program::acquire(void) {
                 // The shaders have compiled without error, and are
                 // not marked for deletion, so attach them.
                 glAttachShader(this->ID(), m_vertex_shader.ID());
+                OGL_DEBUG
                 glAttachShader(this->ID(), m_fragment_shader.ID());
+                OGL_DEBUG
 
                 // Link program and check for success.
                 if(link() == true) {
@@ -106,10 +108,12 @@ bool Program::acquire(void) {
                 // const semantic difficulties on the std::string c_str() method.
                 GLint log_len;
                 glGetProgramiv(this->ID(), GL_INFO_LOG_LENGTH, &log_len);
+                OGL_DEBUG
                 // Use extra character to account for null character terminator ( documentation unclear ).
                 GLchar* temp_log = new GLchar[log_len+1];
                 GLsizei returned_log_len;
                 glGetProgramInfoLog(this->ID(), log_len+1, &returned_log_len, temp_log);
+                OGL_DEBUG
 
                 // Account for null character terminator ( documentation unclear ).
                 temp_log[log_len] = '\0';
@@ -127,6 +131,7 @@ bool Program::acquire(void) {
 void Program::release(void) {
     // Inform OpenGL that we no longer need this specific program handle.
     glDeleteProgram(this->ID());
+    OGL_DEBUG
     // Reset linkage status.
     link_status = Program::NEVER_LINKED;
     // Set our handle store to safe value.

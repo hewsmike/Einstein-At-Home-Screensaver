@@ -21,6 +21,8 @@
 #ifndef VERTEX_FETCH_
 #define VERTEX_FETCH_
 
+#include "ogl_utility.h"
+
 #include "framework.h"
 
 #include "IndexBuffer.h"

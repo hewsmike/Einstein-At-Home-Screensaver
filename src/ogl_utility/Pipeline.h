@@ -21,6 +21,8 @@
 #ifndef PIPELINE_H_
 #define PIPELINE_H_
 
+#include "ogl_utility.h"
+
 #include "Program.h"
 #include "VertexFetch.h"
 

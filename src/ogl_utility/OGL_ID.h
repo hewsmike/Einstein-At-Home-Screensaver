@@ -21,6 +21,8 @@
 #ifndef OGL_ID_H_
 #define OGL_ID_H_
 
+#include "ogl_utility.h"
+
 #include "framework.h"
 
 /**

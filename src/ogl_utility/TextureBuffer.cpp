@@ -83,15 +83,18 @@ TextureBuffer::~TextureBuffer() {
 
 void TextureBuffer::acquire_ID(GLuint* handle) const {
     glGenTextures(1, handle);
+    OGL_DEBUG
     }
 
 void TextureBuffer::release_ID(GLuint* handle) const {
     glDeleteTextures(1, handle);
+    OGL_DEBUG
     }
 
 void TextureBuffer::loadBuffer(void) {
     // Bind the texture ( of GL_TEXTURE_2D type ) to our identifier.
     glBindTexture(GL_TEXTURE_2D, this->ID());
+    OGL_DEBUG
 
     glTexImage2D(GL_TEXTURE_2D,
                  0,                      // Mipmap level zero.
@@ -102,6 +105,7 @@ void TextureBuffer::loadBuffer(void) {
                  m_format,               // Storage format.
                  m_data_type,            // Binary data representation.
                  this->data());          // The actual data.
+    OGL_DEBUG
 
     // Specify 'reasonable' values for simple 'decal' like application.
 
@@ -109,8 +113,10 @@ void TextureBuffer::loadBuffer(void) {
     // 'S' is the 'horizontal' texture coordinate direction. GL_REPEAT
     // chosen to cope with globes ie. the longitude = 0 modulus.
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    OGL_DEBUG
     // 'T' is the 'vertical' texture coordinate direction.
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    OGL_DEBUG
 
     // How it maps when texels and fragments/pixels areas don't match
     // when we do minification and magnification. That partly depends upon
@@ -120,20 +126,26 @@ void TextureBuffer::loadBuffer(void) {
     if(m_mipmaps == true) {
         // With mipmapping intended.
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+        OGL_DEBUG
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+        OGL_DEBUG
         }
     else {
         // Without mipmaps involved.
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        OGL_DEBUG
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        OGL_DEBUG
         }
 
     // Make mipmaps if requested.
     if(m_mipmaps == true) {
         glGenerateMipmap(GL_TEXTURE_2D);
+        OGL_DEBUG
         }
 
     /// TODO - Use glHint here to specify quality ?
     // Unbind the texture.
     glBindTexture(GL_TEXTURE_2D, OGL_ID::NO_ID);
+    OGL_DEBUG
     }

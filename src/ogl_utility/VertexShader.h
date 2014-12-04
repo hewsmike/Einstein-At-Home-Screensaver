@@ -21,6 +21,8 @@
 #ifndef VERTEX_SHADER_H_
 #define VERTEX_SHADER_H_
 
+#include "ogl_utility.h"
+
 #include "Shader.h"
 
 #include <string>

@@ -21,6 +21,8 @@
 #ifndef INDEX_BUFFER_H_
 #define INDEX_BUFFER_H_
 
+#include "ogl_utility.h"
+
 #include "Buffer.h"
 
 /**

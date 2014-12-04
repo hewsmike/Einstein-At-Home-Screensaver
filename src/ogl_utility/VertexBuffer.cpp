@@ -70,10 +70,12 @@ GLuint VertexBuffer::vertexCount(void) const {
 
 void VertexBuffer::acquire_ID(GLuint* handle) const {
     glGenBuffers(1, handle);
+    OGL_DEBUG
     }
 
 void VertexBuffer::release_ID(GLuint* handle) const {
     glDeleteBuffers(1, handle);
+    OGL_DEBUG
     }
 
 void VertexBuffer::loadBuffer(void) const {
@@ -81,6 +83,7 @@ void VertexBuffer::loadBuffer(void) const {
     ErrorHandler::check_OpenGL_Error(__FILE__, __LINE__);
 #endif
     glBindBuffer(GL_ARRAY_BUFFER, this->ID());
+    OGL_DEBUG
     ErrorHandler::check_OpenGL_Error(__FILE__, __LINE__);
 
     // Allocate space and transfer the data.
@@ -91,10 +94,11 @@ void VertexBuffer::loadBuffer(void) const {
               << this->data()
               << std::endl;
     glBufferData(GL_ARRAY_BUFFER, m_size, this->data(), m_usage);
-    ErrorHandler::check_OpenGL_Error(__FILE__, __LINE__);
+    OGL_DEBUG
 
     // Unbind the buffer.
     glBindBuffer(GL_ARRAY_BUFFER, OGL_ID::NO_ID);
+    OGL_DEBUG
     }
 
 void VertexBuffer::attach(void) {
@@ -107,6 +111,7 @@ void VertexBuffer::attach(void) {
         std::cout << "VertexBuffer::attach() binding the buffer object "
                   << std::endl;
         glBindBuffer(GL_ARRAY_BUFFER, this->ID());
+        OGL_DEBUG
 
         // Enable fetching for all supplied vertex attribute indices,
         // these corresponding to 'location' definitions within the
@@ -129,7 +134,9 @@ void VertexBuffer::attach(void) {
                                   attrib->a_spec.normalised,
                                   attrib->stride,
                                   attrib->pointer);
+            OGL_DEBUG
             glEnableVertexAttribArray(attrib->a_spec.attrib_index);
+            OGL_DEBUG
             }
         }
     else {
@@ -149,9 +156,11 @@ void VertexBuffer::detach(void) {
             attrib != m_attribute_specs.end();
             ++attrib) {
             glDisableVertexAttribArray(attrib->a_spec.attrib_index);
+            OGL_DEBUG
             }
         // Unbind the given buffer object from pipeline state.
         glBindBuffer(GL_ARRAY_BUFFER, OGL_ID::NO_ID);
+        OGL_DEBUG
         }
     }
 

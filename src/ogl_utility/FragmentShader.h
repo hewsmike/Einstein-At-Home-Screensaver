@@ -21,6 +21,8 @@
 #ifndef FRAGMENT_SHADER_H_
 #define FRAGMENT_SHADER_H_
 
+#include "ogl_utility.h"
+
 #include "Shader.h"
 
 #include <string>

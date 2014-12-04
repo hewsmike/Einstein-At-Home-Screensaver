@@ -21,6 +21,8 @@
 #ifndef SHADER_H_
 #define SHADER_H_
 
+#include "ogl_utility.h"
+
 #include "OGL_ID.h"
 
 #include <string>

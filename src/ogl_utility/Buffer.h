@@ -21,6 +21,7 @@
 #ifndef BUFFER_H_
 #define BUFFER_H_
 
+#include "ogl_utility.h"
 #include "OGL_ID.h"
 
 /**

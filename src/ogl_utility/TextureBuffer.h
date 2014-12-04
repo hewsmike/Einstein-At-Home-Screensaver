@@ -21,6 +21,8 @@
 #ifndef TEXTURE_BUFFER_H_
 #define TEXTURE_BUFFER_H_
 
+#include "ogl_utility.h"
+
 #include "Buffer.h"
 
 /**

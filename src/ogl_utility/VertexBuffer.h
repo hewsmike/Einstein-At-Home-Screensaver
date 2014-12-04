@@ -21,6 +21,8 @@
 #ifndef VERTEX_BUFFER_H_
 #define VERTEX_BUFFER_H_
 
+#include "ogl_utility.h"
+
 #include "Buffer.h"
 
 #include <vector>

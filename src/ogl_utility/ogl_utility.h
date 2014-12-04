@@ -18,37 +18,33 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "Pipeline.h"
+#ifndef OGL_UTILITY_H_
+#define OGL_UTILITY_H_
 
-#include "ErrorHandler.h"
+/**
+ * \addtogroup ogl_utility OGL_Utility
+ * @{
+ */
 
-#include <iostream>
+/**
+ * \brief Debug macro(s) for the ogl_utility group of classes.
+ *
+ * \author Mike Hewson\n
+ */
 
-Pipeline::Pipeline(Program& program, VertexFetch& vertex_fetch) :
-                    m_program(program),
-                    m_vertex_fetch(vertex_fetch) {
-    }
+//
+// If NDEBUG is NOT defined then the OGL_DEBUG macro is replaced with
+// a call to the check_OpenGL_Error static member function of the
+// the ErrorHandler class - which is in the 'framework' group. It provides
+// the file and line compiler macro values. Recommend placing after each
+// and every OpenGL function invocation.
+//
+#ifndef NDEBUG
+    #define OGL_DEBUG ErrorHandler::check_OpenGL_Error(__FILE_, __LINE__);
+#endif
 
-Pipeline::~Pipeline() {
-    }
+/**
+ * @}
+ */
 
-void Pipeline::utilise(GLenum primitive, GLsizei count) {
-    // Link program if not done.
-    if(m_program.status() == Program::NEVER_LINKED) {
-        m_program.acquire();
-        }
-
-    // Only if the program was successfully linked.
-    if(m_program.status() == Program::LINKAGE_SUCCEEDED) {
-        glUseProgram(m_program.ID());
-        OGL_DEBUG
-
-        m_vertex_fetch.trigger(primitive, count);
-
-        glUseProgram(OGL_ID::NO_ID);
-        OGL_DEBUG
-        }
-    else {
-        /// TODO - Error path if no program link.
-        }
-    }
+#endif /*OGL_UTILITY_H_*/
