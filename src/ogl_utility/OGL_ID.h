@@ -44,6 +44,16 @@
 
 class OGL_ID {
     public:
+        /// Enumerants correpsonding to OpenGL ES 2.0 identifer types.
+        enum id_type {INVALID_ID,
+                      NULL_ID
+                      BUFFER_ID,
+                      FRAME_BUFFER_ID,
+                      PROGRAM_ID,
+                      RENDER_BUFFER_ID,
+                      SHADER_ID,
+                      TEXTURE_ID};
+
         /// Default initialiser for the identifier.
         static const GLuint NO_ID;
 
@@ -82,6 +92,24 @@ class OGL_ID {
          * \return the identifier.
          */
         GLuint ID(void) const;
+
+        /**
+         * \brief Determine if identifier is non-null/zero.
+         *
+         * \return A boolean : TRUE if the OpenGL identifier is zero
+         *                     FALSE if the OpenGL identifier is non-zero.
+         */
+        bool isNull(void) const;
+
+        /**
+         * \brief Obtain the OpenGL resource identifier type.
+         *
+         * \param emit : If TRUE send message to ErrorHandler::record()
+         *               If FALSE no message sent.
+         *
+         * \return the identifier enumerant as above.
+         */
+        id_type type(bool emit) const;
 
     protected :
 
