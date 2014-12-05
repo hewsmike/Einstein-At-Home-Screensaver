@@ -44,9 +44,13 @@
 
 class OGL_ID {
     public:
-        /// Enumerants correpsonding to OpenGL ES 2.0 identifer types.
+        /// Enumerants corresponding to OpenGL ES 2.0 identifer types.
+        /// Note that an INVALID identifier is one which is non-null
+        /// but is assessed by the OpenGL state machine as not having
+        /// current allocation to a proper object in said machine ( at
+        /// least not at the time a status query is made ).
         enum id_type {INVALID_ID,
-                      NULL_ID
+                      NULL_ID,
                       BUFFER_ID,
                       FRAME_BUFFER_ID,
                       PROGRAM_ID,
@@ -102,7 +106,10 @@ class OGL_ID {
         bool isNull(void) const;
 
         /**
-         * \brief Obtain the OpenGL resource identifier type.
+         * \brief Obtain the OpenGL resource identifier type. Note carefully
+         *        that the returned value will only reflect it's status
+         *        with respect to the OpenGL state machine during
+         *        this method call.
          *
          * \param emit : If TRUE send message to ErrorHandler::record()
          *               If FALSE no message sent.
