@@ -52,9 +52,7 @@ class OGL_ID {
         enum id_type {INVALID_ID,
                       NULL_ID,
                       BUFFER_ID,
-                      FRAME_BUFFER_ID,
                       PROGRAM_ID,
-                      RENDER_BUFFER_ID,
                       SHADER_ID,
                       TEXTURE_ID};
 
