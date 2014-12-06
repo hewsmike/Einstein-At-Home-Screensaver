@@ -40,6 +40,7 @@ void Pipeline::utilise(GLenum primitive, GLsizei count) {
 
     // Only if the program was successfully linked.
     if(m_program.status() == Program::LINKAGE_SUCCEEDED) {
+        m_program.type(true);
         glUseProgram(m_program.ID());
         OGL_DEBUG;
 
