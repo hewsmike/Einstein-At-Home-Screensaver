@@ -84,7 +84,7 @@ class ErrorHandler {
         /**
          * \brief Check the current OpenGL context for error.
          */
-        static void check_OpenGL_Error(void);
+        static bool check_OpenGL_Error(void);
 
         /**
          * \brief Check the current OpenGL context for error.

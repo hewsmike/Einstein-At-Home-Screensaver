@@ -63,12 +63,12 @@ void VertexFetch::trigger(GLenum primitive, GLsizei count) {
 	if(m_indices != NULL) {
         // Both GL_ARRAY_BUFFER and GL_ELEMENT_ARRAY_BUFFER targets are bound.
 	    glDrawElements(primitive, 0, count, m_indices->data());
-	    OGL_DEBUG
+	    OGL_DEBUG;
         }
     else {
         // Either only GL_ARRAY_BUFFER target bound, or none at all.
         glDrawArrays(primitive, 0, count);
-        OGL_DEBUG
+        OGL_DEBUG;
         }
     }
 

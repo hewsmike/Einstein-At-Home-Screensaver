@@ -152,11 +152,14 @@ void ErrorHandler::record(std::string msg, message_type mt) {
     return;
     };
 
-void ErrorHandler::check_OpenGL_Error() {
+bool ErrorHandler::check_OpenGL_Error() {
+    bool ret_val = false;
+
     GLenum error_code = glGetError();
 
     // Hit glGetError() until it runs out of errors.
     while(error_code != GL_NO_ERROR) {
+        ret_val = true;
         std::stringstream message;
         message << "ErrorHandler::check_OpenGL_Error() - Reported OpenGL error with code : "
                 << error_code
@@ -205,16 +208,18 @@ void ErrorHandler::check_OpenGL_Error() {
         // Fetch any/next error code.
         error_code = glGetError();
         }
+    return ret_val;
     }
 
 void ErrorHandler::check_OpenGL_Error(char* file, GLint line) {
-    std::stringstream message;
-    message << "ErrorHandler::check_OpenGL_Error() FILE = "
-            << file
-            << "\t LINE = "
-            << line;
-    ErrorHandler::record(message.str(), ErrorHandler::INFORM);
-    ErrorHandler::check_OpenGL_Error();
+    if(ErrorHandler::check_OpenGL_Error()) {
+        std::stringstream message;
+        message << "ErrorHandler::check_OpenGL_Error() FILE = "
+                << file
+                << "\t LINE = "
+                << line;
+        ErrorHandler::record(message.str(), ErrorHandler::INFORM);
+        }
     }
 
 const std::string& ErrorHandler::check_SDL2_Error(void) {

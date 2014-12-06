@@ -33,15 +33,20 @@
  */
 
 //
-// If NDEBUG is NOT defined then the OGL_DEBUG macro is replaced with
+// Make sure we know of the ErrorHandler class.
+//
+
+#include "ErrorHandler.h"
+
+//
+// If NDEBUG is NOT defined then the OGL_DEBUG; macro is replaced with
 // a call to the check_OpenGL_Error static member function of the
 // the ErrorHandler class - which is in the 'framework' group. It provides
 // the file and line compiler macro values. Recommend placing after each
 // and every OpenGL function invocation.
 //
-#ifndef NDEBUG
-    #define OGL_DEBUG ErrorHandler::check_OpenGL_Error(__FILE_, __LINE__);
-#endif
+
+#define OGL_DEBUG ErrorHandler::check_OpenGL_Error(__FILE__, __LINE__)
 
 /**
  * @}
