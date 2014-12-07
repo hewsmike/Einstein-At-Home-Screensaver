@@ -75,6 +75,8 @@ class Pipeline {
         void utilise(GLenum primitive, GLsizei count);
 
     private:
+        GLuint methusaleh;
+
         /// The Program reference.
         Program& m_program;
 

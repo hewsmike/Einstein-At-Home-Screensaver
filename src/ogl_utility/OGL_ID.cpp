@@ -22,6 +22,8 @@
 
 #include "ErrorHandler.h"
 
+#include <sstream>
+
 // An ID with value zero is not returned by OpenGL.
 // Thus it may semantically indicate 'no identifier assigned'.
 const GLuint OGL_ID::NO_ID(0);
@@ -52,41 +54,50 @@ OGL_ID::id_type OGL_ID::type(bool emit) const {
     // Lazy evaluation by inquiry of OpenGL state machine.
     GLuint temp_ID = this->ID();
 
+    std::stringstream message;
+    message << "OpenGL identifier type for "
+            << temp_ID
+            << " is ";
+
     if(temp_ID == OGL_ID::NO_ID) {
         ret_val = OGL_ID::NULL_ID;
         if(emit){
-            ErrorHandler::record("OGL_ID::type() : NULL_ID", ErrorHandler::INFORM);
+            message << "NULL_ID";
             }
         }
     else if(glIsBuffer(temp_ID)) {
         ret_val = OGL_ID::BUFFER_ID;
         if(emit){
-            ErrorHandler::record("OGL_ID::type() : BUFFER_ID", ErrorHandler::INFORM);
+            message << "BUFFER_ID";
             }
         }
     else if(glIsProgram(temp_ID)) {
         ret_val = OGL_ID::PROGRAM_ID;
         if(emit){
-            ErrorHandler::record("OGL_ID::type() : PROGRAM_ID", ErrorHandler::INFORM);
+            message << "PROGRAM_ID";
             }
         }
     else if(glIsShader(temp_ID)) {
         ret_val = OGL_ID::SHADER_ID;
         if(emit){
-            ErrorHandler::record("OGL_ID::type() : SHADER_ID", ErrorHandler::INFORM);
+            message << "SHADER_ID";
             }
         }
     else if(glIsTexture(temp_ID)) {
         ret_val = OGL_ID::TEXTURE_ID;
         if(emit){
-            ErrorHandler::record("OGL_ID::type() : TEXTURE_ID", ErrorHandler::INFORM);
+            message << "TEXTURE_ID";
             }
         }
     else {
         ret_val = OGL_ID::INVALID_ID;
         if(emit){
-            ErrorHandler::record("OGL_ID::type() : INVALID_ID", ErrorHandler::INFORM);
+            message << "INVALID_ID";
             }
+        }
+
+    if(emit) {
+        ErrorHandler::record(message.str(), ErrorHandler::INFORM);
         }
 
     return ret_val;

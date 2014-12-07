@@ -27,19 +27,30 @@
 Pipeline::Pipeline(Program& program, VertexFetch& vertex_fetch) :
                     m_program(program),
                     m_vertex_fetch(vertex_fetch) {
+    methusaleh = 0;
     }
+
 
 Pipeline::~Pipeline() {
     }
 
 void Pipeline::utilise(GLenum primitive, GLsizei count) {
+    std::cout << "methusaleh = " << methusaleh << std::endl;
+    ++methusaleh;
+
     // Link program if not done.
     if(m_program.status() == Program::NEVER_LINKED) {
+        std::cout << "Pipeline::utilise() : I will acquire m_program's racehorses .... " << std::endl;
         m_program.acquire();
         }
 
     // Only if the program was successfully linked.
     if(m_program.status() == Program::LINKAGE_SUCCEEDED) {
+        std::cout << "Pipeline::utilise() m_program = "
+                  << m_program.ID()
+                  << " : is "
+                  << ( m_program.isDeleted() ? "" : "not " )
+                  << "deleted" << std::endl;
         m_program.type(true);
         glUseProgram(m_program.ID());
         OGL_DEBUG;

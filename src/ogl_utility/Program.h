@@ -117,9 +117,6 @@ class Program : public OGL_ID {
         const std::string& linkageLog(void) const;
 
     private:
-        static const GLint GLSL_LINKAGE_FAILURE;
-        static const GLint GLSL_LINKAGE_SUCCESS;
-
         /**
          * \brief Link the program.
          *
