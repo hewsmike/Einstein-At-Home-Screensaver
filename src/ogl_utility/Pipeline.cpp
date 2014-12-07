@@ -35,12 +35,8 @@ Pipeline::~Pipeline() {
     }
 
 void Pipeline::utilise(GLenum primitive, GLsizei count) {
-    std::cout << "methusaleh = " << methusaleh << std::endl;
-    ++methusaleh;
-
     // Link program if not done.
     if(m_program.status() == Program::NEVER_LINKED) {
-        std::cout << "Pipeline::utilise() : I will acquire m_program's racehorses .... " << std::endl;
         m_program.acquire();
         }
 
