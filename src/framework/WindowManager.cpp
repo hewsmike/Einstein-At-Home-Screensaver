@@ -27,6 +27,7 @@
 #include <string>
 
 #include "ErrorHandler.h"
+#include "ogl_utility.h"
 #include "SDL_events.h"
 
 const std::string WindowManager::m_WindowTitle("Einstein At Home");
@@ -68,9 +69,12 @@ WindowManager::WindowManager(void) {
     }
 
 WindowManager::~WindowManager() {
-
-    delete m_Mode;
-    delete m_BoincAdapter;
+    if(m_Mode != NULL) {
+        delete m_Mode;
+        }
+    if(m_BoincAdapter != NULL) {
+        delete m_BoincAdapter;
+        }
     }
 
 bool WindowManager::initialize(const int width, const int height, const int frameRate) {
@@ -213,7 +217,6 @@ bool WindowManager::initialize(const int width, const int height, const int fram
 
         // Check that the window was successfully made.
         if (m_Window == NULL) {
-            ErrorHandler::check_OpenGL_Error();
             // In the event that the window could not be made...
             ErrorHandler::record("WindowManager::initialise() : Couldn't obtain window !!", ErrorHandler::FATAL);
             }
@@ -233,8 +236,6 @@ bool WindowManager::initialize(const int width, const int height, const int fram
             std::stringstream SDL_error_string;
             SDL_error_string << "WindowManager::initialise() : Couldn't obtain context !!\n"
                              << SDL_GetError() << std::endl;
-
-            ErrorHandler::check_OpenGL_Error();
             ErrorHandler::record(SDL_error_string.str(), ErrorHandler::FATAL);
             }
 
@@ -250,7 +251,6 @@ bool WindowManager::initialize(const int width, const int height, const int fram
         msg_get_desktop_error << "WindowManager::initialize() : can't obtain current desktop mode : "
                               << ErrorHandler::check_SDL2_Error() << endl;
         ErrorHandler::record(msg_get_desktop_error.str(), ErrorHandler::WARN);
-
         }
 
     return ret_val;

@@ -398,7 +398,7 @@ build_orc() {
     cp $ROOT/src/orc/Makefile . >> $LOGFILE 2>&1 || failure
 
     log "Building $PRODUCT_NAME [Object Resource Compiler]..."
-    make >> $LOGFILE 2>&1 || failure
+    make $makemode >> $LOGFILE 2>&1 || failure
     make install >> $LOGFILE 2>&1 || failure
 
     log "Successfully built and installed $PRODUCT_NAME [Object Resource Compiler]!"
@@ -416,7 +416,7 @@ build_framework() {
     cd $ROOT/build/framework || failure
     cp -f $ROOT/src/framework/Makefile . >> $LOGFILE 2>&1 || failure
 
-    make ${2:2} PRODUCT=$PRODUCT_NAME >> $LOGFILE 2>&1 || failure
+    make $makemode PRODUCT=$PRODUCT_NAME >> $LOGFILE 2>&1 || failure
     make install >> $LOGFILE 2>&1 || failure
     log "Successfully built and installed $PRODUCT_NAME [Framework]!"
 
@@ -434,7 +434,7 @@ build_ogl_utility() {
     cp -f $ROOT/src/ogl_utility/Makefile . >> $LOGFILE 2>&1 || failure
 
 
-    make ${2:2} PRODUCT=$PRODUCT_NAME >> $LOGFILE 2>&1 || failure
+    make $makemode PRODUCT=$PRODUCT_NAME >> $LOGFILE 2>&1 || failure
     make install >> $LOGFILE 2>&1 || failure
     log "Successfully built and installed $PRODUCT_NAME [OpenGL Utilities]!"
 
@@ -447,7 +447,7 @@ build_product() {
     cd $ROOT/build/$PRODUCT || failure
     cp $ROOT/src/$PRODUCT/*.res . >> $LOGFILE 2>&1 || failure
     cp -f $ROOT/src/$PRODUCT/Makefile.common Makefile >> $LOGFILE 2>&1 || failure
-    make SYSTEM="linux" PRODUCT=$PRODUCT_NAME >> $LOGFILE 2>&1 || failure
+    make $makemode SYSTEM="linux" PRODUCT=$PRODUCT_NAME >> $LOGFILE 2>&1 || failure
 
     make install >> $LOGFILE 2>&1 || failure
     log "Successfully built and installed $PRODUCT_NAME [Application]!"
@@ -511,18 +511,22 @@ if [ $# -eq 2 ]; then
         "--debug")
             log "Debug build chosen"
             MODE=$MODE_DEBUG
+            makemode=debug
             ;;
         "--release")
             log "Release build chosen"
             MODE=$MODE_RELEASE
+            makemode=release
             ;;
         "--memcheck")
             log "Memcheck facility chosen"
             MODE=$MODE_MEMCHECK
+            makemode=memcheck
             ;;
         "--callgrind")
             log "Callgrind facility chosen"
             MODE=$MODE_CALLGRIND
+            makemode=callgrind
             ;;
         *)
             log "Incorrect second argument given !!"

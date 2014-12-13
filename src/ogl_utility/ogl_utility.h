@@ -46,7 +46,11 @@
 // and every OpenGL function invocation.
 //
 
-#define OGL_DEBUG ErrorHandler::check_OpenGL_Error(__FILE__, __LINE__)
+#ifdef NDEBUG
+    #define OGL_DEBUG(A) A
+#else
+    #define OGL_DEBUG(A) A; ErrorHandler::check_OpenGL_Error(__FILE__, __LINE__)
+#endif
 
 /**
  * @}

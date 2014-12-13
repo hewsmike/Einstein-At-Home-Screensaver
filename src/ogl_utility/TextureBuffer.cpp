@@ -82,19 +82,16 @@ TextureBuffer::~TextureBuffer() {
     }
 
 void TextureBuffer::acquire_ID(GLuint* handle) const {
-    glGenTextures(1, handle);
-    OGL_DEBUG;
+	OGL_DEBUG(glGenTextures(1, handle));
     }
 
 void TextureBuffer::release_ID(GLuint* handle) const {
-    glDeleteTextures(1, handle);
-    OGL_DEBUG;
+	OGL_DEBUG(glDeleteTextures(1, handle));
     }
 
 void TextureBuffer::loadBuffer(void) {
     // Bind the texture ( of GL_TEXTURE_2D type ) to our identifier.
-    glBindTexture(GL_TEXTURE_2D, this->ID());
-    OGL_DEBUG;
+	OGL_DEBUG(glBindTexture(GL_TEXTURE_2D, this->ID()));
 
     glTexImage2D(GL_TEXTURE_2D,
                  0,                      // Mipmap level zero.
@@ -105,18 +102,17 @@ void TextureBuffer::loadBuffer(void) {
                  m_format,               // Storage format.
                  m_data_type,            // Binary data representation.
                  this->data());          // The actual data.
-    OGL_DEBUG;
+    OGL_DEBUG();
 
     // Specify 'reasonable' values for simple 'decal' like application.
 
     /// TODO - should we parameterise through the interface here ?
     // 'S' is the 'horizontal' texture coordinate direction. GL_REPEAT
     // chosen to cope with globes ie. the longitude = 0 modulus.
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    OGL_DEBUG;
+    OGL_DEBUG(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT));
+
     // 'T' is the 'vertical' texture coordinate direction.
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    OGL_DEBUG;
+    OGL_DEBUG(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT));
 
     // How it maps when texels and fragments/pixels areas don't match
     // when we do minification and magnification. That partly depends upon
@@ -125,27 +121,21 @@ void TextureBuffer::loadBuffer(void) {
     /// TODO - make these choices dependent upon rendering quality selection ?
     if(m_mipmaps == true) {
         // With mipmapping intended.
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST_MIPMAP_NEAREST);
-        OGL_DEBUG;
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
-        OGL_DEBUG;
+    	OGL_DEBUG(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST_MIPMAP_NEAREST));
+    	OGL_DEBUG(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST));
         }
     else {
         // Without mipmaps involved.
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        OGL_DEBUG;
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        OGL_DEBUG;
+    	OGL_DEBUG(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
+    	OGL_DEBUG(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
         }
 
     // Make mipmaps if requested.
     if(m_mipmaps == true) {
-        glGenerateMipmap(GL_TEXTURE_2D);
-        OGL_DEBUG;
+    	OGL_DEBUG(glGenerateMipmap(GL_TEXTURE_2D));
         }
 
     /// TODO - Use glHint here to specify quality ?
     // Unbind the texture.
-    glBindTexture(GL_TEXTURE_2D, OGL_ID::NO_ID);
-    OGL_DEBUG;
+    OGL_DEBUG(glBindTexture(GL_TEXTURE_2D, OGL_ID::NO_ID));
     }

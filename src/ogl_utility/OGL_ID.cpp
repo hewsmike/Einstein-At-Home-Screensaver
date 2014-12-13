@@ -55,9 +55,9 @@ OGL_ID::id_type OGL_ID::type(bool emit) const {
     GLuint temp_ID = this->ID();
 
     std::stringstream message;
-    message << "OpenGL identifier type for "
+    message << "OpenGL identifier = "
             << temp_ID
-            << " is ";
+            << " has type ";
 
     if(temp_ID == OGL_ID::NO_ID) {
         ret_val = OGL_ID::NULL_ID;

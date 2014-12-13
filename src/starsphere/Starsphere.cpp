@@ -29,6 +29,7 @@
 #include "Starsphere.h"
 
 #include "ErrorHandler.h"
+#include "ogl_utility.h"
 #include "ResourceFactory.h"
 
 Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
@@ -581,8 +582,8 @@ void Starsphere::resize(const int width, const int height) {
 	m_RefreshSearchMarker = true;
 
     // adjust aspect ratio and projection
-    glViewport(0, 0, (GLsizei) m_CurrentWidth, (GLsizei) m_CurrentHeight);
-    gluPerspective(95.0, aspect, 0.50, 25.0);
+	OGL_DEBUG(glViewport(0, 0, (GLsizei) m_CurrentWidth, (GLsizei) m_CurrentHeight));
+    // gluPerspective(95.0, aspect, 0.50, 25.0);
     }
 
 /**
@@ -702,13 +703,13 @@ void Starsphere::initialize(const int width, const int height, const Resource *f
 	resize(m_CurrentWidth, m_CurrentHeight);
 
 	// more font setup and optimizations
-	glPixelStorei( GL_UNPACK_ALIGNMENT, 1 );
+	OGL_DEBUG(glPixelStorei( GL_UNPACK_ALIGNMENT, 1 ));
 
 	// drawing setup:
-	glClearColor(0.0, 0.0, 0.0, 0.0); // background is black
-	glEnable(GL_CULL_FACE);
-	glFrontFace(GL_CCW);
-	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+	OGL_DEBUG(glClearColor(0.0, 0.0, 0.0, 0.0)); // background is black
+	OGL_DEBUG(glEnable(GL_CULL_FACE));
+	OGL_DEBUG(glFrontFace(GL_CCW));
+	// OGL_DEBUG(glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST));
 
 	// enable opt-in quality feature
 	if(m_BoincAdapter.graphicsQualitySetting() == BOINCClientAdapter::HighGraphicsQualitySetting) {
@@ -716,16 +717,16 @@ void Starsphere::initialize(const int width, const int height, const Resource *f
         }
 
 	// we need alpha blending for proper font rendering
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	OGL_DEBUG(glEnable(GL_BLEND));
+	OGL_DEBUG(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
 	// enable depth buffering for 3D graphics
-    glClearDepthf(1.0f);
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LEQUAL);
+	OGL_DEBUG(glClearDepthf(1.0f));
+	OGL_DEBUG(glEnable(GL_DEPTH_TEST));
+	OGL_DEBUG(glDepthFunc(GL_LEQUAL));
 
-    glEnable( GL_PROGRAM_POINT_SIZE );
-	glPointSize(40.0f);
+	// OGL_DEBUG(glEnable( GL_PROGRAM_POINT_SIZE ));
+	// OGL_DEBUG(glPointSize(40.0f));
 
 	// enable opt-in quality feature
 	if(m_BoincAdapter.graphicsQualitySetting() == BOINCClientAdapter::MediumGraphicsQualitySetting ||
@@ -742,7 +743,7 @@ void Starsphere::initialize(const int width, const int height, const Resource *f
 //	make_axes();
 //	make_globe();
 
-	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
+	OGL_DEBUG(glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT));
     }
 
 /**
@@ -777,7 +778,7 @@ void Starsphere::render(const double timeOfDay) {
 	Zrot = -360.0 * (revs - (int)revs);
 
 	// and start drawing...
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	OGL_DEBUG(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
 	// now draw the scene...
 
@@ -795,9 +796,9 @@ void Starsphere::render(const double timeOfDay) {
 	zvp = vp_rad * SIN(vp_theta) * COS(vp_phi);
 	yvp = vp_rad * COS(vp_theta);
 
-  	gluLookAt(0.0, 0.0, 5.0, // eyes position
-              0.0, 0.0, 0.0, // looking toward here
-  	          0.0, 1.0, 0.0); // which way is up?  y axis!
+//  	gluLookAt(0.0, 0.0, 5.0, // eyes position
+//              0.0, 0.0, 0.0, // looking toward here
+//  	          0.0, 1.0, 0.0); // which way is up?  y axis!
 
   	m_pipeline->utilise(GL_TRIANGLES, 1);
 
@@ -845,13 +846,13 @@ void Starsphere::render(const double timeOfDay) {
     if(isFeature(LOGO) || isFeature(SEARCHINFO)) {
 
 		// disable depth testing since we're in 2D mode
-		glDisable(GL_DEPTH_TEST);
+    	OGL_DEBUG(glDisable(GL_DEPTH_TEST));
 
 //		if (isFeature(LOGO)) renderLogo();
 //		if (isFeature(SEARCHINFO)) renderSearchInformation();
 
 //		// enable depth testing since we're leaving 2D mode
-		glEnable(GL_DEPTH_TEST);
+    	OGL_DEBUG(glEnable(GL_DEPTH_TEST));
         }
     }
 

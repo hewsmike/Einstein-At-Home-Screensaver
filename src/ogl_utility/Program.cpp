@@ -50,7 +50,7 @@ bool Program::acquire(void) {
         if(this->ID() == OGL_ID::NO_ID) {
             // Get an OpenGL handle for this program object.
             this->type(true);
-            set_ID(glCreateProgram());
+            OGL_DEBUG(set_ID(glCreateProgram()));
             this->type(true);
             // If that handle acquisition failed the we have no other option ...
             if(this->ID() == OGL_ID::NO_ID)  {
@@ -78,10 +78,8 @@ bool Program::acquire(void) {
                (m_fragment_shader.status() == Shader::COMPILE_SUCCEEDED)) {
                 // The shaders have compiled without error, and are
                 // not marked for deletion, so attach them.
-                glAttachShader(this->ID(), m_vertex_shader.ID());
-                OGL_DEBUG;
-                glAttachShader(this->ID(), m_fragment_shader.ID());
-                OGL_DEBUG;
+            	OGL_DEBUG(glAttachShader(this->ID(), m_vertex_shader.ID()));
+            	OGL_DEBUG(glAttachShader(this->ID(), m_fragment_shader.ID()));
 
                 // Link program and check for success.
                 if(link() == true) {
@@ -106,13 +104,11 @@ bool Program::acquire(void) {
                 // Copy to an std::string via temporary character array to avoid
                 // const semantic difficulties on the std::string c_str() method.
                 GLint log_len;
-                glGetProgramiv(this->ID(), GL_INFO_LOG_LENGTH, &log_len);
-                OGL_DEBUG;
+                OGL_DEBUG(glGetProgramiv(this->ID(), GL_INFO_LOG_LENGTH, &log_len));
                 // Use extra character to account for null character terminator ( documentation unclear ).
                 GLchar* temp_log = new GLchar[log_len+1];
                 GLsizei returned_log_len;
-                glGetProgramInfoLog(this->ID(), log_len+1, &returned_log_len, temp_log);
-                OGL_DEBUG;
+                OGL_DEBUG(glGetProgramInfoLog(this->ID(), log_len+1, &returned_log_len, temp_log));
 
                 // Account for null character terminator ( documentation unclear ).
                 temp_log[log_len] = '\0';
@@ -130,8 +126,8 @@ bool Program::acquire(void) {
 void Program::release(void) {
     // Inform OpenGL that we no longer need this specific program handle.
     ErrorHandler::record("Program::release() : I am being called", ErrorHandler::INFORM);
-    glDeleteProgram(this->ID());
-    OGL_DEBUG;
+    OGL_DEBUG(glDeleteProgram(this->ID()));
+
     // Reset linkage status.
     link_status = Program::NEVER_LINKED;
     // Set our handle store to safe value.
@@ -144,7 +140,7 @@ bool Program::isDeleted(void) const {
 
     // Lazy evaluation through inquiry to OpenGL context.
     GLint d_status;
-    glGetProgramiv(this->ID(), GL_DELETE_STATUS, &d_status);
+    OGL_DEBUG(glGetProgramiv(this->ID(), GL_DELETE_STATUS, &d_status));
     if(d_status == GL_TRUE) {
         // It is marked for deletion.
         ret_val = true;
@@ -166,22 +162,16 @@ bool Program::link(void) {
     for(GLuint index = 0; index < m_vertex_shader.attribCount(); ++index) {
         std::pair<GLuint, std::string> temp;
         temp = m_vertex_shader.getAttrib(index);
-        std::cout << "\t\tm_vertex.first = " << temp.first << std::endl;
-        std::cout << "\t\tm_vertex.second.c_str() = " << "'" << temp.second.c_str() << "'" << std::endl;
-        glBindAttribLocation(this->ID(), temp.first, temp.second.c_str());
+        OGL_DEBUG(glBindAttribLocation(this->ID(), temp.first, temp.second.c_str()));
         }
 
     // Attempt to link the program.
-    glLinkProgram(this->ID());
+    OGL_DEBUG(glLinkProgram(this->ID()));
 
     // Check for linkage success.
     GLint link_state = GL_FALSE;
-    glGetProgramiv(this->ID(), GL_LINK_STATUS, &link_state);
+    OGL_DEBUG(glGetProgramiv(this->ID(), GL_LINK_STATUS, &link_state));
     if(link_state == GL_TRUE) {
-        std::cout << "Program::link() : link_state = '"
-                  << link_state << "' ie. "
-                  << (link_state == 0 ? "false" : "true ")
-                  << std::endl;
         ret_val = true;
         }
 

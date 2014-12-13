@@ -65,28 +65,23 @@ IndexBuffer::~IndexBuffer() {
 
 void IndexBuffer::loadBuffer(void) const {
     // Bind this buffer to the specified target.
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->ID());
-    OGL_DEBUG;
+    OGL_DEBUG(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->ID()));
 
     // Allocate space and transfer the data.
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_size, this->data(), m_usage);
-    OGL_DEBUG;
+    OGL_DEBUG(glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_size, this->data(), m_usage));
 
     // Unbind the buffer.
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, OGL_ID::NO_ID);
-    OGL_DEBUG;
+    OGL_DEBUG(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, OGL_ID::NO_ID));
     }
 
 void IndexBuffer::attach(void) {
     // Ensure resource acquisition first.
     this->acquire();
     // Bind the given buffer object to pipeline state.
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->ID());
-    OGL_DEBUG;
+    OGL_DEBUG(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->ID()));
     }
 
 void IndexBuffer::detach(void) {
     // Unbind the given buffer object from pipeline state.
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, OGL_ID::NO_ID);
-    OGL_DEBUG;
+	OGL_DEBUG(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, OGL_ID::NO_ID));
     }

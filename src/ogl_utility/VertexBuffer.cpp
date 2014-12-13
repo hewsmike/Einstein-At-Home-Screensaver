@@ -69,32 +69,21 @@ GLuint VertexBuffer::vertexCount(void) const {
     }
 
 void VertexBuffer::acquire_ID(GLuint* handle) const {
-    glGenBuffers(1, handle);
-    OGL_DEBUG;
+	OGL_DEBUG(glGenBuffers(1, handle));
     }
 
 void VertexBuffer::release_ID(GLuint* handle) const {
-    glDeleteBuffers(1, handle);
-    OGL_DEBUG;
+	OGL_DEBUG(glDeleteBuffers(1, handle));
     }
 
 void VertexBuffer::loadBuffer(void) const {
-    glBindBuffer(GL_ARRAY_BUFFER, this->ID());
-    OGL_DEBUG;
+	OGL_DEBUG(glBindBuffer(GL_ARRAY_BUFFER, this->ID()));
 
     // Allocate space and transfer the data.
-    std::cout << "VertexBuffer::loadBuffer() m_size = "
-              << m_size
-              << std::endl;
-    std::cout << "VertexBuffer::loadBuffer() this->data() = "
-              << this->data()
-              << std::endl;
-    glBufferData(GL_ARRAY_BUFFER, m_size, this->data(), m_usage);
-    OGL_DEBUG;
+    OGL_DEBUG(glBufferData(GL_ARRAY_BUFFER, m_size, this->data(), m_usage));
 
     // Unbind the buffer.
-    glBindBuffer(GL_ARRAY_BUFFER, OGL_ID::NO_ID);
-    OGL_DEBUG;
+    OGL_DEBUG(glBindBuffer(GL_ARRAY_BUFFER, OGL_ID::NO_ID));
     }
 
 void VertexBuffer::attach(void) {
@@ -104,8 +93,7 @@ void VertexBuffer::attach(void) {
         this->acquire();
 
         // Bind the given buffer object to pipeline state.
-        glBindBuffer(GL_ARRAY_BUFFER, this->ID());
-        OGL_DEBUG;
+        OGL_DEBUG(glBindBuffer(GL_ARRAY_BUFFER, this->ID()));
 
         // Enable fetching for all supplied vertex attribute indices,
         // these corresponding to 'location' definitions within the
@@ -128,9 +116,8 @@ void VertexBuffer::attach(void) {
                                   attrib->a_spec.normalised,
                                   attrib->stride,
                                   attrib->pointer);
-            OGL_DEBUG;
-            glEnableVertexAttribArray(attrib->a_spec.attrib_index);
-            OGL_DEBUG;
+            OGL_DEBUG();
+            OGL_DEBUG(glEnableVertexAttribArray(attrib->a_spec.attrib_index));
             }
         }
     else {
@@ -149,12 +136,10 @@ void VertexBuffer::detach(void) {
         for(std::vector<attribute_record>::iterator attrib = m_attribute_specs.begin();
             attrib != m_attribute_specs.end();
             ++attrib) {
-            glDisableVertexAttribArray(attrib->a_spec.attrib_index);
-            OGL_DEBUG;
+        	OGL_DEBUG(glDisableVertexAttribArray(attrib->a_spec.attrib_index));
             }
         // Unbind the given buffer object from pipeline state.
-        glBindBuffer(GL_ARRAY_BUFFER, OGL_ID::NO_ID);
-        OGL_DEBUG;
+        OGL_DEBUG(glBindBuffer(GL_ARRAY_BUFFER, OGL_ID::NO_ID));
         }
     }
 

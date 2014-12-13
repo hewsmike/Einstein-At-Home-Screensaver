@@ -27,7 +27,6 @@
 Pipeline::Pipeline(Program& program, VertexFetch& vertex_fetch) :
                     m_program(program),
                     m_vertex_fetch(vertex_fetch) {
-    methusaleh = 0;
     }
 
 
@@ -42,19 +41,12 @@ void Pipeline::utilise(GLenum primitive, GLsizei count) {
 
     // Only if the program was successfully linked.
     if(m_program.status() == Program::LINKAGE_SUCCEEDED) {
-        std::cout << "Pipeline::utilise() m_program = "
-                  << m_program.ID()
-                  << " : is "
-                  << ( m_program.isDeleted() ? "" : "not " )
-                  << "deleted" << std::endl;
         m_program.type(true);
-        glUseProgram(m_program.ID());
-        OGL_DEBUG;
+        OGL_DEBUG(glUseProgram(m_program.ID()));
 
         m_vertex_fetch.trigger(primitive, count);
 
-        glUseProgram(OGL_ID::NO_ID);
-        OGL_DEBUG;
+        // OGL_DEBUG(glUseProgram(OGL_ID::NO_ID));
         }
     else {
         /// TODO - Error path if no program link.
