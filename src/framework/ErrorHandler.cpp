@@ -219,7 +219,7 @@ void ErrorHandler::check_OpenGL_Error(const char* file, GLint line) {
             << file
             << "\t LINE = "
             << line;
-    ErrorHandler::record(message.str(), ErrorHandler::INFORM);
+    ErrorHandler::record(message.str(), ErrorHandler::WARN);
     }
 
 const std::string& ErrorHandler::check_SDL2_Error(void) {
