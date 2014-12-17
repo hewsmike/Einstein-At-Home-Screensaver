@@ -70,7 +70,7 @@ GLuint VertexBuffer::vertexCount(void) const {
 
 void VertexBuffer::acquire_ID(GLuint* handle) const {
 	OGL_DEBUG(glGenBuffers(1, handle));
-    }
+	}
 
 void VertexBuffer::release_ID(GLuint* handle) const {
 	OGL_DEBUG(glDeleteBuffers(1, handle));
@@ -80,10 +80,12 @@ void VertexBuffer::loadBuffer(void) const {
 	OGL_DEBUG(glBindBuffer(GL_ARRAY_BUFFER, this->ID()));
 
     // Allocate space and transfer the data.
-    OGL_DEBUG(glBufferData(GL_ARRAY_BUFFER, m_size, this->data(), m_usage));
+
+	OGL_DEBUG(glBufferData(GL_ARRAY_BUFFER, m_size, this->data(), m_usage));
 
     // Unbind the buffer.
     OGL_DEBUG(glBindBuffer(GL_ARRAY_BUFFER, OGL_ID::NO_ID));
+
     }
 
 void VertexBuffer::attach(void) {
@@ -110,14 +112,13 @@ void VertexBuffer::attach(void) {
 //            std::cout << "\tattrib->stride = " << attrib->stride << std::endl;
 //            std::cout << "\tattrib->pointer = " << attrib->pointer << std::endl;
 
+            OGL_DEBUG(glEnableVertexAttribArray(attrib->a_spec.attrib_index));
             glVertexAttribPointer(attrib->a_spec.attrib_index,
                                   attrib->a_spec.multiplicity,
                                   attrib->a_spec.type,
                                   attrib->a_spec.normalised,
                                   attrib->stride,
                                   attrib->pointer);
-            OGL_DEBUG();
-            OGL_DEBUG(glEnableVertexAttribArray(attrib->a_spec.attrib_index));
             }
         }
     else {

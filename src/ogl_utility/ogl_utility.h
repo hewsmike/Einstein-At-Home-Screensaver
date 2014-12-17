@@ -21,6 +21,9 @@
 #ifndef OGL_UTILITY_H_
 #define OGL_UTILITY_H_
 
+#include <iostream>
+#include <string>
+
 /**
  * \addtogroup ogl_utility OGL_Utility
  * @{
@@ -49,7 +52,9 @@
 #ifdef NDEBUG
     #define OGL_DEBUG(A) A
 #else
-    #define OGL_DEBUG(A) A; ErrorHandler::check_OpenGL_Error(__FILE__, __LINE__)
+    #define OGL_DEBUG(A) A;\
+						 ErrorHandler::check_OpenGL_Error((std::string(#A) + std::string("\t") + std::string(__FILE__).substr(std::string(__FILE__).rfind('/') + 1)).c_str(), __LINE__);\
+						 getchar()
 #endif
 
 /**

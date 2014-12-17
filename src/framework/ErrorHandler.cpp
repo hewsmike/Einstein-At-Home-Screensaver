@@ -211,15 +211,15 @@ bool ErrorHandler::check_OpenGL_Error() {
     return ret_val;
     }
 
-void ErrorHandler::check_OpenGL_Error(char* file, GLint line) {
-    if(ErrorHandler::check_OpenGL_Error()) {
-        std::stringstream message;
-        message << "ErrorHandler::check_OpenGL_Error() FILE = "
-                << file
-                << "\t LINE = "
-                << line;
-        ErrorHandler::record(message.str(), ErrorHandler::INFORM);
-        }
+void ErrorHandler::check_OpenGL_Error(const char* file, GLint line) {
+    ErrorHandler::check_OpenGL_Error();
+
+    std::stringstream message;
+    message << "FILE = "
+            << file
+            << "\t LINE = "
+            << line;
+    ErrorHandler::record(message.str(), ErrorHandler::INFORM);
     }
 
 const std::string& ErrorHandler::check_SDL2_Error(void) {

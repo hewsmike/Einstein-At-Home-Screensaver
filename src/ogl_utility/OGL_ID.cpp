@@ -65,36 +65,36 @@ OGL_ID::id_type OGL_ID::type(bool emit) const {
             message << "NULL_ID";
             }
         }
-    else if(glIsBuffer(temp_ID)) {
-        ret_val = OGL_ID::BUFFER_ID;
-        if(emit){
-            message << "BUFFER_ID";
-            }
-        }
-    else if(glIsProgram(temp_ID)) {
-        ret_val = OGL_ID::PROGRAM_ID;
-        if(emit){
-            message << "PROGRAM_ID";
-            }
-        }
-    else if(glIsShader(temp_ID)) {
+    if(glIsShader(temp_ID)) {
         ret_val = OGL_ID::SHADER_ID;
         if(emit){
             message << "SHADER_ID";
             }
         }
-    else if(glIsTexture(temp_ID)) {
+    if(glIsProgram(temp_ID)) {
+        ret_val = OGL_ID::PROGRAM_ID;
+        if(emit){
+            message << "PROGRAM_ID";
+            }
+        }
+    if(glIsBuffer(temp_ID)) {
+        ret_val = OGL_ID::BUFFER_ID;
+        if(emit){
+            message << "BUFFER_ID";
+            }
+        }
+    if(glIsTexture(temp_ID)) {
         ret_val = OGL_ID::TEXTURE_ID;
         if(emit){
             message << "TEXTURE_ID";
             }
         }
-    else {
-        ret_val = OGL_ID::INVALID_ID;
-        if(emit){
-            message << "INVALID_ID";
-            }
-        }
+//    else {
+//        ret_val = OGL_ID::INVALID_ID;
+//        if(emit){
+//            message << "INVALID_ID";
+//            }
+//        }
 
     if(emit) {
         ErrorHandler::record(message.str(), ErrorHandler::INFORM);

@@ -41,12 +41,12 @@ void Pipeline::utilise(GLenum primitive, GLsizei count) {
 
     // Only if the program was successfully linked.
     if(m_program.status() == Program::LINKAGE_SUCCEEDED) {
-        m_program.type(true);
+//        m_program.type(true);
         OGL_DEBUG(glUseProgram(m_program.ID()));
 
         m_vertex_fetch.trigger(primitive, count);
 
-        // OGL_DEBUG(glUseProgram(OGL_ID::NO_ID));
+        OGL_DEBUG(glUseProgram(OGL_ID::NO_ID));
         }
     else {
         /// TODO - Error path if no program link.

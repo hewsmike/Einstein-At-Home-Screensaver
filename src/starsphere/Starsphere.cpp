@@ -609,7 +609,7 @@ void Starsphere::initialize(const int width, const int height, const Resource *f
     m_vertex = new VertexShader(factory.createInstance("VertexTestShader")->std_string(), vertex_shader_matchings);
     m_fragment = new FragmentShader(factory.createInstance("FragmentTestShader")->std_string());
 
-    m_vertex_buffer = new VertexBuffer(vertex_data, 3, GL_STATIC_DRAW, VertexBuffer::BY_VERTEX);
+    m_vertex_buffer = new VertexBuffer(reinterpret_cast<const GLvoid*>(vertex_data), 3, GL_STATIC_DRAW, VertexBuffer::BY_VERTEX);
     m_vertex_buffer->addAttributeDescription(pos_spec);
     m_vertex_buffer->addAttributeDescription(color_spec);
 
@@ -619,42 +619,44 @@ void Starsphere::initialize(const int width, const int height, const Resource *f
 
     m_pipeline = new Pipeline(*m_program, *m_vertexfetch);
 
+    ErrorHandler::record("Starsphere::initialize() : before m_program->acquire()", ErrorHandler::INFORM);
     m_program->acquire();
+    ErrorHandler::record("Starsphere::initialize() : after m_program->acquire()", ErrorHandler::INFORM);
 
-    stringstream vertex_log;
-    vertex_log << "Starsphere::initialize() : vertex shader did"
-               << ( (m_vertex->status() == Shader::COMPILE_SUCCEEDED) ? " " : " not " )
-               << "compile !!" << std::endl
-               << "shader compile log follows :\n"
-               << "------------------------------------------------------\n"
-               << m_vertex->compileLog()
-               << "------------------------------------------------------"
-               << std::endl;
-    ErrorHandler::record(vertex_log.str(), ErrorHandler::INFORM);
-    std::cout << m_vertex->source() << std::endl;
+    if(m_vertex->status() != Shader::COMPILE_SUCCEEDED) {
+    	stringstream vertex_log;
+    	vertex_log << "Starsphere::initialize() : vertex shader did not compile !!" << std::endl
+                   << "Compile log is as follows :\n"
+                   << "------------------------------------------------------\n"
+                   << m_vertex->compileLog()
+                   << "------------------------------------------------------"
+                   << std::endl;
+        ErrorHandler::record(vertex_log.str(), ErrorHandler::INFORM);
+        std::cout << m_vertex->source() << std::endl;
+    	}
 
-    stringstream fragment_log;
-    fragment_log << "Starsphere::initialize() : fragment shader did"
-                 << ( (m_fragment->status() == Shader::COMPILE_SUCCEEDED) ? " " : " not " )
-                 << "compile !!" << std::endl
-                 << "shader compile log follows :\n"
-                 << "------------------------------------------------------\n"
-                 << m_fragment->compileLog()
-                 << "------------------------------------------------------"
-                 << std::endl;
-    ErrorHandler::record(fragment_log.str(), ErrorHandler::INFORM);
-    std::cout << m_fragment->source() << std::endl;
+    if(m_fragment->status() != Shader::COMPILE_SUCCEEDED) {
+    	stringstream fragment_log;
+    	fragment_log << "Starsphere::initialize() : fragment shader did not compile !!" << std::endl
+					 << "Compile log follows :\n"
+					 << "------------------------------------------------------\n"
+					 << m_fragment->compileLog()
+					 << "------------------------------------------------------"
+					 << std::endl;
+    	ErrorHandler::record(fragment_log.str(), ErrorHandler::INFORM);
+    	std::cout << m_fragment->source() << std::endl;
+    	}
 
-    stringstream linking_log;
-    linking_log << "Starsphere::initialize() : program did"
-                << ( (m_program->status() == Program::LINKAGE_SUCCEEDED) ? " " : " not " )
-                << "link !!" << std::endl
-                << "linker log follows :\n"
-                << "------------------------------------------------------\n"
-                << m_program->linkageLog()
-                << "------------------------------------------------------"
-                << std::endl;
-    ErrorHandler::record(linking_log.str(), ErrorHandler::INFORM);
+    if(m_program->status() != Program::LINKAGE_SUCCEEDED) {
+    	stringstream linking_log;
+    	linking_log << "Starsphere::initialize() : program did not link !!" << std::endl
+					<< "Linker log follows :\n"
+					<< "------------------------------------------------------\n"
+					<< m_program->linkageLog()
+					<< "------------------------------------------------------"
+					<< std::endl;
+    	ErrorHandler::record(linking_log.str(), ErrorHandler::INFORM);
+    	}
 
     m_CurrentWidth = width;
     m_CurrentHeight = height;
@@ -707,9 +709,9 @@ void Starsphere::initialize(const int width, const int height, const Resource *f
 
 	// drawing setup:
 	OGL_DEBUG(glClearColor(0.0, 0.0, 0.0, 0.0)); // background is black
-	OGL_DEBUG(glEnable(GL_CULL_FACE));
+//	OGL_DEBUG(glEnable(GL_CULL_FACE));
 	OGL_DEBUG(glFrontFace(GL_CCW));
-	// OGL_DEBUG(glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST));
+//	OGL_DEBUG(glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST));
 
 	// enable opt-in quality feature
 	if(m_BoincAdapter.graphicsQualitySetting() == BOINCClientAdapter::HighGraphicsQualitySetting) {
@@ -717,16 +719,13 @@ void Starsphere::initialize(const int width, const int height, const Resource *f
         }
 
 	// we need alpha blending for proper font rendering
-	OGL_DEBUG(glEnable(GL_BLEND));
-	OGL_DEBUG(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+//	OGL_DEBUG(glEnable(GL_BLEND));
+//	OGL_DEBUG(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
 	// enable depth buffering for 3D graphics
 	OGL_DEBUG(glClearDepthf(1.0f));
 	OGL_DEBUG(glEnable(GL_DEPTH_TEST));
 	OGL_DEBUG(glDepthFunc(GL_LEQUAL));
-
-	// OGL_DEBUG(glEnable( GL_PROGRAM_POINT_SIZE ));
-	// OGL_DEBUG(glPointSize(40.0f));
 
 	// enable opt-in quality feature
 	if(m_BoincAdapter.graphicsQualitySetting() == BOINCClientAdapter::MediumGraphicsQualitySetting ||
@@ -800,7 +799,7 @@ void Starsphere::render(const double timeOfDay) {
 //              0.0, 0.0, 0.0, // looking toward here
 //  	          0.0, 1.0, 0.0); // which way is up?  y axis!
 
-  	m_pipeline->utilise(GL_TRIANGLES, 1);
+  	m_pipeline->utilise(GL_TRIANGLES, 3);
 
 	// draw axes before any rotation so they stay put
 //	if (isFeature(AXES)) glCallList(Axes);

@@ -63,7 +63,7 @@ Sint32 WindowManager::RenderEvent(0);
 Sint32 WindowManager::BOINCUpdateEvent(0);
 
 WindowManager::WindowManager(void) {
-    m_Mode = new SDL_DisplayMode();
+	m_Mode = NULL;
 
     m_BoincAdapter = new BOINCClientAdapter("");
     }
@@ -78,6 +78,7 @@ WindowManager::~WindowManager() {
     }
 
 bool WindowManager::initialize(const int width, const int height, const int frameRate) {
+	m_Mode = new SDL_DisplayMode();
     // Assume failure of this method.
     bool ret_val = false;
 
@@ -194,7 +195,7 @@ bool WindowManager::initialize(const int width, const int height, const int fram
         SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, WindowManager::BLUE_BITS);
 
         // Request a specific alpha channnel.
-        SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, WindowManager::ALPHA_BITS);
+        SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, WindowManager::ALPHA_BITS);
 
         // Request a minimum number of bits in depth buffer.
         SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, WindowManager::DEPTH_BITS);
@@ -698,5 +699,6 @@ void WindowManager::setScreensaverMode(const bool enabled) {
     }
 
 void WindowManager::swap(void) const {
+//	ErrorHandler::record("BUFFER SWAPS GOIN ON UP IN DIS", ErrorHandler::INFORM);
     SDL_GL_SwapWindow(m_Window);
     }

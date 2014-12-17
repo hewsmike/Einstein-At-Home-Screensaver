@@ -49,9 +49,9 @@ bool Program::acquire(void) {
         // Only get a handle if none already.
         if(this->ID() == OGL_ID::NO_ID) {
             // Get an OpenGL handle for this program object.
-            this->type(true);
+//            this->type(true);
             OGL_DEBUG(set_ID(glCreateProgram()));
-            this->type(true);
+//            this->type(true);
             // If that handle acquisition failed the we have no other option ...
             if(this->ID() == OGL_ID::NO_ID)  {
                 ErrorHandler::record("Program::acquire() : OpenGL handle acquisition failure !",
@@ -90,8 +90,6 @@ bool Program::acquire(void) {
 //                        m_vertex_shader.release();
 //                        m_fragment_shader.release();
 //                        }
-                    ErrorHandler::record("Program::acquire() : success of GLSL link !",
-                                         ErrorHandler::INFORM);
                     ret_val = true;
                     }
                 else {
@@ -125,7 +123,6 @@ bool Program::acquire(void) {
 
 void Program::release(void) {
     // Inform OpenGL that we no longer need this specific program handle.
-    ErrorHandler::record("Program::release() : I am being called", ErrorHandler::INFORM);
     OGL_DEBUG(glDeleteProgram(this->ID()));
 
     // Reset linkage status.

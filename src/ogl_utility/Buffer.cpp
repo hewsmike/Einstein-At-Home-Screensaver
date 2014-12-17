@@ -44,12 +44,9 @@ bool Buffer::acquire(void) {
     // Check and maybe acquire handle if we don't already have one.
     if(this->ID() == OGL_ID::NO_ID) {
         // Ask OpenGL for a single buffer handle.
-        GLuint temp;
+        GLuint temp = 4;
         acquire_ID(&temp);
         set_ID(temp);
-        std::cout << "Buffer::acquire() ID = "
-                  << this->ID()
-                  << std::endl;
 
         // Failure to acquire a handle should be FATAL.
         if(this->ID() == OGL_ID::NO_ID) {
@@ -71,7 +68,7 @@ bool Buffer::acquire(void) {
 
 void Buffer::release(void) {
     // Inform OpenGL that we no longer need this specific buffer handle.
-    GLuint temp = this->ID();
+	GLuint temp = this->ID();
     release_ID(&temp);
 
     // Reset our handle store to safe value.

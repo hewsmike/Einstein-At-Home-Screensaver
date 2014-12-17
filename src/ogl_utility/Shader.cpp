@@ -81,15 +81,11 @@ bool Shader::acquire(void) {
 
         // Only compile if never attempted.
         if(comp_status == Shader::NEVER_COMPILED) {
+        	comp_status = COMPILE_SUCCEEDED;
             ret_val = compile();
 
             // Examine the result.
-            if(ret_val == true ) {
-                comp_status = COMPILE_SUCCEEDED;
-                ErrorHandler::record("Shader::acquire() : success of GLSL compile !",
-                                     ErrorHandler::WARN);
-                }
-            else {
+            if(ret_val != true ) {
                 comp_status = COMPILE_FAILED;
                 ErrorHandler::record("Shader::acquire() : failure to GLSL compile !",
                                      ErrorHandler::WARN);

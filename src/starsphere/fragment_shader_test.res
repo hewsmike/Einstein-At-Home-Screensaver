@@ -5,5 +5,5 @@ varying mediump vec3 pass_color;
 
 void main()
 {
-  gl_FragColor = vec4(pass_color, 1.0);
+	gl_FragColor = vec4(pass_color, 1.0);
 }
