@@ -42,8 +42,8 @@ const int WindowManager::ENABLE_DOUBLE_BUFFER(1);
 const int WindowManager::NUM_MULTISAMPLE_BUFFERS(1);
 const int WindowManager::NUM_MULTISAMPLES(2);
 
-const int WindowManager::OGL_MAJOR_VERSION(2);
-const int WindowManager::OGL_MINOR_VERSION(0);
+const int WindowManager::OGL_MAJOR_VERSION(3);
+const int WindowManager::OGL_MINOR_VERSION(2);
 
 const int WindowManager::DISPLAY_ZERO(0);
 

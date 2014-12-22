@@ -67,12 +67,13 @@ bool Shader::acquire(void) {
         // Get an OpenGL handle for this shader object, if needed.
         if(this->ID() == OGL_ID::NO_ID) {
             // Get an OpenGL handle for this shader object.
-        	OGL_DEBUG(this->set_ID(glCreateShader(shader_type)));
+        	GLuint temp = OGL_DEBUG(glCreateShader(shader_type));
+        	this->set_ID(temp);
 
             // If that handle acquisition failed the we have no other option ...
             if(this->ID() == OGL_ID::NO_ID)  {
                 ErrorHandler::record("Shader::acquire() : OpenGL handle acquisition failure !",
-                                 ErrorHandler::FATAL);
+                                 	 ErrorHandler::FATAL);
                 }
             }
 
@@ -136,10 +137,6 @@ bool Shader::compile(void) {
     if(this->ID() != OGL_ID::NO_ID) {
         // Present shader's GLSL code to the GLSL compiler.
     	OGL_DEBUG(glCompileShader(this->ID()));
-
-        /// TODO - remove after full testing.
-        // Check here proximally pro-tem.
-        ErrorHandler::check_OpenGL_Error();
 
         // See if the compilation was a success.
         GLint c_status;
