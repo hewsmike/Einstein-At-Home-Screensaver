@@ -350,8 +350,8 @@ class WindowManager {
           * \see timerCallbackRenderEvent()
           * \see timerCallbackBOINCUpdateEvent()
           */
-        static Sint32 RenderEvent;
-        static Sint32 BOINCUpdateEvent;
+        static Uint32 RenderEvent;
+        static Uint32 BOINCUpdateEvent;
 
         /// The event observer registry.
         list<AbstractGraphicsEngine*> eventObservers;

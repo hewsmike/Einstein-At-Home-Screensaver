@@ -83,7 +83,7 @@ int main(int argc, char **argv) {
     // NB : FWIW This order of usage ( as recommended in the SDL2 Wiki )
     // contradicts the statement that SDL_Init() must be called before
     // using any other SDL function ! :-0
-    SDL_DEBUG(SDL_SetMainReady());
+    // SDL_DEBUG(SDL_SetMainReady());
     int init_flag = SDL_DEBUG(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_EVENTS));
     if(init_flag != 0) {
         // Failed, which is FATAL.

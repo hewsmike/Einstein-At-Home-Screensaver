@@ -59,8 +59,8 @@ const int WindowManager::RIGHT_MOUSE_BUTTON(3);
 const float WindowManager::TIMER_DELAY_BOINC(1000);
 const float WindowManager::MILLISECONDS_PER_SECOND(1000.0f);
 
-Sint32 WindowManager::RenderEvent(0);
-Sint32 WindowManager::BOINCUpdateEvent(0);
+Uint32 WindowManager::RenderEvent(0);
+Uint32 WindowManager::BOINCUpdateEvent(0);
 
 WindowManager::WindowManager(void) {
 	m_Mode = NULL;
@@ -69,6 +69,12 @@ WindowManager::WindowManager(void) {
     }
 
 WindowManager::~WindowManager() {
+	if(m_Window != NULL){
+		SDL_DestroyWindow(m_Window);
+		}
+	if(m_Context != NULL){
+		SDL_GL_DeleteContext(m_Context);
+		}
     if(m_Mode != NULL) {
         delete m_Mode;
         }
@@ -91,15 +97,18 @@ bool WindowManager::initialize(const int width, const int height, const int fram
     // Get SDL to assign event codes for render and BOINC events. This occurs
     // dynamically to avoid runtime clashes ( an SDL Wiki recommendation ).
 
+    std::cout << "Uint32 - 1 = " << ((Uint32) - 1) << std::endl;
     RenderEvent = SDL_DEBUG(SDL_RegisterEvents(1));
+    std::cout << "RenderEvent = " << RenderEvent << std::endl;
     // Check if that succeeded.
     if(RenderEvent == ((Uint32)-1)) {
         // Make this a fatal, can't really proceed otherwise.
         ErrorHandler::record("WindowManager::initialize() : could not obtain RenderEvent code !", ErrorHandler::FATAL);
         }
 
-    BOINCUpdateEvent = SDL_RegisterEvents(1);
-     // Check if that succeeded.
+    BOINCUpdateEvent = SDL_DEBUG(SDL_RegisterEvents(1));
+    std::cout << "BOINCUpdateEvent = " << BOINCUpdateEvent << std::endl;
+    // Check if that succeeded.
     if(BOINCUpdateEvent == ((Uint32)-1)) {
         // Make this a fatal, can't really proceed otherwise.
         ErrorHandler::record("WindowManager::initialize() : could not obtain BOINCUpdateEvent code !", ErrorHandler::FATAL);
@@ -126,7 +135,7 @@ bool WindowManager::initialize(const int width, const int height, const int fram
         m_DesktopBitsPerPixel = SDL_BITSPERPIXEL(m_Mode->format);
         stringstream msg_init_current_desktop_bitsperpixel;
         msg_init_current_desktop_bitsperpixel << "WindowManager::initialize() : current desktop bits per pixel = "
-                                             << m_DesktopBitsPerPixel;
+                                              << m_DesktopBitsPerPixel;
         ErrorHandler::record(msg_init_current_desktop_bitsperpixel.str(), ErrorHandler::INFORM);
 
         // Get initial non-fullscreen resolution and frame rate from project preferences.
@@ -195,32 +204,65 @@ bool WindowManager::initialize(const int width, const int height, const int fram
         /// abstraction ?
 
         // Request a minimum number of multisample buffers.
+        int SDL_MultisampleBufferFlag = -2;
+        std::cout << "SDL_MultisampleBufferFlag = " << SDL_MultisampleBufferFlag << std::endl;
         SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, WindowManager::NUM_MULTISAMPLE_BUFFERS));
+        SDL_DEBUG(SDL_GL_GetAttribute(SDL_GL_MULTISAMPLEBUFFERS, &SDL_MultisampleBufferFlag));
+        std::cout << "SDL_MultisampleBufferFlag = " << SDL_MultisampleBufferFlag << std::endl;
 
         // Request a minimum of multisamples ( around a given pixel ).
+        int SDL_MultisampleSamplesFlag = -2;
+        std::cout << "SDL_MultisampleSamplesFlag = " << SDL_MultisampleSamplesFlag << std::endl;
         SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, WindowManager::NUM_MULTISAMPLES));
+        SDL_DEBUG(SDL_GL_GetAttribute(SDL_GL_MULTISAMPLESAMPLES, &SDL_MultisampleSamplesFlag));
+        std::cout << "SDL_MultisampleSamplesFlag = " << SDL_MultisampleSamplesFlag << std::endl;
 
         // Request double buffering.
+        int SDL_DoubleBufferFlag = -2;
+        std::cout << "SDL_DoubleBufferFlag = " << SDL_DoubleBufferFlag << std::endl;
         SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, WindowManager::ENABLE_DOUBLE_BUFFER));
+        SDL_DEBUG(SDL_GL_GetAttribute(SDL_GL_DOUBLEBUFFER, &SDL_DoubleBufferFlag));
+        std::cout << "SDL_DoubleBufferFlag = " << SDL_DoubleBufferFlag << std::endl;
 
         // Request a specific color depth.
+        int SDL_RedSizeFlag = -2;
+        std::cout << "SDL_RedSizeFlag = " << SDL_RedSizeFlag << std::endl;
         SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_RED_SIZE, WindowManager::RED_BITS));
+        SDL_DEBUG(SDL_GL_GetAttribute(SDL_GL_RED_SIZE, &SDL_RedSizeFlag));
+        std::cout << "SDL_RedSizeFlag = " << SDL_RedSizeFlag << std::endl;
+
+        int SDL_GreenSizeFlag = -2;
+        std::cout << "SDL_GreenSizeFlag = " << SDL_GreenSizeFlag << std::endl;
         SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, WindowManager::GREEN_BITS));
+        SDL_DEBUG(SDL_GL_GetAttribute(SDL_GL_GREEN_SIZE, &SDL_GreenSizeFlag));
+        std::cout << "SDL_GreenSizeFlag = " << SDL_GreenSizeFlag << std::endl;
+
+        int SDL_BlueSizeFlag = -2;
+        std::cout << "SDL_BlueSizeFlag = " << SDL_BlueSizeFlag << std::endl;
         SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, WindowManager::BLUE_BITS));
+        SDL_DEBUG(SDL_GL_GetAttribute(SDL_GL_BLUE_SIZE, &SDL_BlueSizeFlag));
+        std::cout << "SDL_BlueSizeFlag = " << SDL_BlueSizeFlag << std::endl;
 
         // Request a specific alpha channnel.
+        int SDL_AlphaSizeFlag = -2;
+        std::cout << "SDL_AlphaSizeFlag = " << SDL_AlphaSizeFlag << std::endl;
         SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, WindowManager::ALPHA_BITS));
+        SDL_DEBUG(SDL_GL_GetAttribute(SDL_GL_ALPHA_SIZE, &SDL_AlphaSizeFlag));
+        std::cout << "SDL_AlphaSizeFlag = " << SDL_AlphaSizeFlag << std::endl;
 
         // Request a minimum number of bits in depth buffer.
+        int SDL_DepthSizeFlag = -2;
+        std::cout << "SDL_DepthSizeFlag = " << SDL_DepthSizeFlag << std::endl;
         SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, WindowManager::DEPTH_BITS));
+        SDL_DEBUG(SDL_GL_GetAttribute(SDL_GL_DEPTH_SIZE, &SDL_DepthSizeFlag));
+        std::cout << "SDL_DepthSizeFlag = " << SDL_DepthSizeFlag << std::endl;
 
         // Request a depth buffer.
-        SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, WindowManager::HAS_DEPTH_BUFFER));
-
-        /// TODO - Need to create compile switch here for use of ES with Android etc.
-        SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES));
-        SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, WindowManager::OGL_MAJOR_VERSION));
-        SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, WindowManager::OGL_MINOR_VERSION));
+        //int SDL_DepthBufferFlag = -1;
+        //std::cout << "SDL_DepthBufferFlag = " << SDL_DepthBufferFlag << std::endl;
+        ///SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_DEPTHBUFFER, WindowManager::HAS_DEPTH_BUFFER));
+        //SDL_GL_GetAttribute(SDL_GL_DOUBLEBUFFER, &SDL_DoubleBufferFlag);
+        ///std::cout << "SDL_DoubleBufferFlag = " << SDL_DoubleBufferFlag << std::endl;
 
         // Start in windowed mode.
         m_Window = SDL_DEBUG(SDL_CreateWindow(m_WindowTitle.c_str(),
@@ -244,6 +286,10 @@ bool WindowManager::initialize(const int width, const int height, const int fram
 
         // Create a desired OpenGL context for use with that window,
         // noting the above attribute selections.
+        /// TODO - Need to create compile switch here for use of ES with Android etc.
+        SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES));
+        SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, WindowManager::OGL_MAJOR_VERSION));
+        SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, WindowManager::OGL_MINOR_VERSION));
         /// TODO - Check error on return here, how ?
         m_Context = SDL_DEBUG(SDL_GL_CreateContext(m_Window));
 
@@ -254,8 +300,10 @@ bool WindowManager::initialize(const int width, const int height, const int fram
             ErrorHandler::record(SDL_error_string.str(), ErrorHandler::FATAL);
             }
 
-        // OK we have a window, so initialise GLEW. This matters especially if the
-        // driver's function pointers need runtime linkage ie. Win32 target.
+
+        // OK we have a window and a valid context, so initialise GLEW.
+        // This matters especially if the installable device driver's function pointers need runtime
+        // linkage ie. Win32 target.
         initializeGLEW();
 
         ret_val = true;
