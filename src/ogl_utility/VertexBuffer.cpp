@@ -108,17 +108,17 @@ void VertexBuffer::attach(void) {
 //            std::cout << "attrib->a_spec.attrib_index = " << attrib->a_spec.attrib_index << std::endl;
 //            std::cout << "\tattrib->a_spec.multiplicity = " << attrib->a_spec.multiplicity << std::endl;
 //            std::cout << "\tattrib->a_spec.type = " << attrib->a_spec.type << std::endl;
-//            std::cout << "\tattrib->a_spec.normalised = " << attrib->a_spec.normalised << std::endl;
+//            std::cout << "\tattrib->a_spec.normalised = " << static_cast<int>(attrib->a_spec.normalised) << std::endl;
 //            std::cout << "\tattrib->stride = " << attrib->stride << std::endl;
 //            std::cout << "\tattrib->pointer = " << attrib->pointer << std::endl;
 
             OGL_DEBUG(glEnableVertexAttribArray(attrib->a_spec.attrib_index));
-            glVertexAttribPointer(attrib->a_spec.attrib_index,
+            OGL_DEBUG(glVertexAttribPointer(attrib->a_spec.attrib_index,
                                   attrib->a_spec.multiplicity,
                                   attrib->a_spec.type,
                                   attrib->a_spec.normalised,
                                   attrib->stride,
-                                  attrib->pointer);
+                                  attrib->pointer));
             }
         }
     else {
@@ -151,6 +151,7 @@ void VertexBuffer::addAttributeDescription(attribute_spec specification) {
         attribute_record record;
         record.a_spec = specification;
         record.a_spec.attrib_index = specification.attrib_index;
+        record.a_spec.normalised = specification.normalised;
 
         // The length in bytes of an attribute is it's number
         // of ( identically sized ) components times the size of
@@ -215,6 +216,10 @@ void VertexBuffer::prepareAttributeMapping(void) {
                 case BY_VERTEX :
                     attrib->stride = m_attribute_length_sum;
                     attrib->pointer = reinterpret_cast<GLvoid*>(interleave_progressive_offset);
+
+                    std::cout << "stride=" << attrib->stride << std::endl;
+                    std::cout << "Pointer=" << attrib->pointer << std::endl;
+
                     break;
                 case BY_ATTRIBUTE :
                     attrib->stride = attrib->length;

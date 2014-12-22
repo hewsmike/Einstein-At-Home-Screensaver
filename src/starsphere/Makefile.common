@@ -124,7 +124,7 @@ ifeq ".$(SYSTEM)" ".linux"
     LIBS += -lGL -ldl -lpthread -lm -lrt
     LIBS += -Wl,-Bstatic
     LIBS += -L$(PRODUCT_INSTALL)/lib -L$(PRODUCT_INSTALL)/lib64
-    LIBS += -lGLEW -lSDL2_ttf -lfreetype -lSDL2 -lxml2 -lz  -lframework -loglutility -lboinc_api -lboinc
+    LIBS += -lSDL2_ttf -lfreetype -lSDL2 -lxml2 -lz  -lframework -loglutility -lboinc_api -lboinc -lGLEW
 
 endif
 

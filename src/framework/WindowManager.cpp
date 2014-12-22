@@ -79,13 +79,19 @@ WindowManager::~WindowManager() {
 
 bool WindowManager::initialize(const int width, const int height, const int frameRate) {
 	m_Mode = new SDL_DisplayMode();
+	if(m_Mode == NULL){
+		// Make this a fatal, can't really proceed otherwise.
+		ErrorHandler::record("WindowManager::initialize() : could not obtain SDL_DisplayMode !", ErrorHandler::FATAL);
+		}
+	SDL_DEBUG();
+
     // Assume failure of this method.
     bool ret_val = false;
 
     // Get SDL to assign event codes for render and BOINC events. This occurs
     // dynamically to avoid runtime clashes ( an SDL Wiki recommendation ).
 
-    RenderEvent = SDL_RegisterEvents(1);
+    RenderEvent = SDL_DEBUG(SDL_RegisterEvents(1));
     // Check if that succeeded.
     if(RenderEvent == ((Uint32)-1)) {
         // Make this a fatal, can't really proceed otherwise.
@@ -99,7 +105,9 @@ bool WindowManager::initialize(const int width, const int height, const int fram
         ErrorHandler::record("WindowManager::initialize() : could not obtain BOINCUpdateEvent code !", ErrorHandler::FATAL);
         }
 
-    if(SDL_GetDesktopDisplayMode(WindowManager::DISPLAY_ZERO, m_Mode) == 0) {
+    int get_desktop_mode_flag = SDL_DEBUG(SDL_GetDesktopDisplayMode(WindowManager::DISPLAY_ZERO, m_Mode));
+
+    if(get_desktop_mode_flag == 0) {
         // Obtain current desktop width.
         m_DesktopWidth = m_Mode->w;
         stringstream msg_init_current_desktop_mode_width;
@@ -118,7 +126,7 @@ bool WindowManager::initialize(const int width, const int height, const int fram
         m_DesktopBitsPerPixel = SDL_BITSPERPIXEL(m_Mode->format);
         stringstream msg_init_current_desktop_bitsperpixel;
         msg_init_current_desktop_bitsperpixel << "WindowManager::initialize() : current desktop bits per pixel = "
-                                              << m_DesktopBitsPerPixel;
+                                             << m_DesktopBitsPerPixel;
         ErrorHandler::record(msg_init_current_desktop_bitsperpixel.str(), ErrorHandler::INFORM);
 
         // Get initial non-fullscreen resolution and frame rate from project preferences.
@@ -173,6 +181,12 @@ bool WindowManager::initialize(const int width, const int height, const int fram
         m_WindowedHeight = (preferredHeight != 0) ? preferredHeight : height;
         m_RenderEventInterval = WindowManager::MILLISECONDS_PER_SECOND / ((preferredFrameRate != 0) ? preferredFrameRate : frameRate);
 
+        std::cout << "windowed width: " << m_WindowedWidth << std::endl;
+        std::cout << "windowed height: " << m_WindowedHeight << std::endl;
+
+        m_CurrentWidth = m_WindowedWidth;
+        m_CurrentHeight = m_WindowedHeight;
+
         /// TODO - check after successful context creation to see if we got what we asked for.
         // Set desired OpenGL context attributes for our window.
 
@@ -181,49 +195,49 @@ bool WindowManager::initialize(const int width, const int height, const int fram
         /// abstraction ?
 
         // Request a minimum number of multisample buffers.
-        SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, WindowManager::NUM_MULTISAMPLE_BUFFERS);
+        SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, WindowManager::NUM_MULTISAMPLE_BUFFERS));
 
         // Request a minimum of multisamples ( around a given pixel ).
-        SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, WindowManager::NUM_MULTISAMPLES);
+        SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, WindowManager::NUM_MULTISAMPLES));
 
         // Request double buffering.
-        SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, WindowManager::ENABLE_DOUBLE_BUFFER);
+        SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, WindowManager::ENABLE_DOUBLE_BUFFER));
 
         // Request a specific color depth.
-        SDL_GL_SetAttribute(SDL_GL_RED_SIZE, WindowManager::RED_BITS);
-        SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, WindowManager::GREEN_BITS);
-        SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, WindowManager::BLUE_BITS);
+        SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_RED_SIZE, WindowManager::RED_BITS));
+        SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, WindowManager::GREEN_BITS));
+        SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, WindowManager::BLUE_BITS));
 
         // Request a specific alpha channnel.
-        SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, WindowManager::ALPHA_BITS);
+        SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, WindowManager::ALPHA_BITS));
 
         // Request a minimum number of bits in depth buffer.
-        SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, WindowManager::DEPTH_BITS);
+        SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, WindowManager::DEPTH_BITS));
 
         // Request a depth buffer.
-        SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, WindowManager::HAS_DEPTH_BUFFER);
+        SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, WindowManager::HAS_DEPTH_BUFFER));
 
         /// TODO - Need to create compile switch here for use of ES with Android etc.
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, WindowManager::OGL_MAJOR_VERSION);
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, WindowManager::OGL_MINOR_VERSION);
+        SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES));
+        SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, WindowManager::OGL_MAJOR_VERSION));
+        SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, WindowManager::OGL_MINOR_VERSION));
 
         // Start in windowed mode.
-        m_Window = SDL_CreateWindow(m_WindowTitle.c_str(),
-                                    SDL_WINDOWPOS_UNDEFINED,
-                                    SDL_WINDOWPOS_UNDEFINED,
+        m_Window = SDL_DEBUG(SDL_CreateWindow(m_WindowTitle.c_str(),
+                                    SDL_WINDOWPOS_CENTERED,
+                                    SDL_WINDOWPOS_CENTERED,
                                     m_WindowedWidth,
                                     m_WindowedHeight,
-                                    SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
+                                    SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE));
 
         // Check that the window was successfully made.
-        if (m_Window == NULL) {
+        if(m_Window == NULL) {
             // In the event that the window could not be made...
             ErrorHandler::record("WindowManager::initialise() : Couldn't obtain window !!", ErrorHandler::FATAL);
             }
 
-        // Get a window identifier, it may be needed.
-        m_WindowID = SDL_GetWindowID(m_Window);
+        // Get a window identifier, it is needed in the event loop.
+        m_WindowID = SDL_DEBUG(SDL_GetWindowID(m_Window));
 
         // Initial display is as a window, not fullscreen.
         m_CurrentScreenMode = WindowManager::WINDOWED;
@@ -231,7 +245,7 @@ bool WindowManager::initialize(const int width, const int height, const int fram
         // Create a desired OpenGL context for use with that window,
         // noting the above attribute selections.
         /// TODO - Check error on return here, how ?
-        m_Context = SDL_GL_CreateContext(m_Window);
+        m_Context = SDL_DEBUG(SDL_GL_CreateContext(m_Window));
 
         if(m_Context == NULL) {
             std::stringstream SDL_error_string;
@@ -250,7 +264,7 @@ bool WindowManager::initialize(const int width, const int height, const int fram
         // Could not get the desktop parameters.
         stringstream msg_get_desktop_error;
         msg_get_desktop_error << "WindowManager::initialize() : can't obtain current desktop mode : "
-                              << ErrorHandler::check_SDL2_Error() << endl;
+                              << ErrorHandler::check_SDL2_Error(__FILE__, __LINE__) << endl;
         ErrorHandler::record(msg_get_desktop_error.str(), ErrorHandler::WARN);
         }
 
@@ -261,8 +275,8 @@ void WindowManager::eventLoop(void) {
     // Provided we have at least one observer.
     if(!eventObservers.empty()) {
         // Set two main timers (interval in ms).
-        SDL_AddTimer(m_RenderEventInterval, &timerCallbackRenderEvent, NULL);
-        SDL_AddTimer(WindowManager::TIMER_DELAY_BOINC, &timerCallbackBOINCUpdateEvent, NULL);
+    	SDL_DEBUG(SDL_AddTimer(m_RenderEventInterval, &timerCallbackRenderEvent, NULL));
+    	SDL_DEBUG(SDL_AddTimer(WindowManager::TIMER_DELAY_BOINC, &timerCallbackBOINCUpdateEvent, NULL));
 
         // Holder of current event type.
         SDL_Event current_event;
@@ -299,7 +313,7 @@ void WindowManager::eventLoop(void) {
                          (current_event.type == SDL_KEYDOWN))) {
                     // Close window, terminate SDL and leave this window manager.
                     ErrorHandler::record("WindowManager::eventLoop() : Exiting on account of user input", ErrorHandler::INFORM);
-                    SDL_DestroyWindow(m_Window);
+                    SDL_DEBUG(SDL_DestroyWindow(m_Window));
                     SDL_Quit();
                     return;
                     }
@@ -602,7 +616,7 @@ void WindowManager::setWindowIcon(const unsigned char* data, const int size) con
         else {
             stringstream icon_surface_error_msg;
             icon_surface_error_msg << "Could not create window icon surface : "
-                                   << ErrorHandler::check_SDL2_Error() << endl;
+                                   << ErrorHandler::check_SDL2_Error(__FILE__, __LINE__) << endl;
             ErrorHandler::record(icon_surface_error_msg.str(), ErrorHandler::WARN);
             }
 
@@ -610,7 +624,7 @@ void WindowManager::setWindowIcon(const unsigned char* data, const int size) con
     else {
         stringstream icon_load_error_msg;
         icon_load_error_msg << "Could not prepare window icon data : "
-                            << ErrorHandler::check_SDL2_Error() << endl;
+                            << ErrorHandler::check_SDL2_Error(__FILE__, __LINE__) << endl;
         ErrorHandler::record(icon_load_error_msg.str(), ErrorHandler::WARN);
         }
     }
@@ -700,5 +714,5 @@ void WindowManager::setScreensaverMode(const bool enabled) {
 
 void WindowManager::swap(void) const {
 //	ErrorHandler::record("BUFFER SWAPS GOIN ON UP IN DIS", ErrorHandler::INFORM);
-    SDL_GL_SwapWindow(m_Window);
+    SDL_DEBUG(SDL_GL_SwapWindow(m_Window));
     }

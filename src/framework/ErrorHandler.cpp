@@ -222,11 +222,20 @@ void ErrorHandler::check_OpenGL_Error(const char* file, GLint line) {
     ErrorHandler::record(message.str(), ErrorHandler::WARN);
     }
 
-const std::string& ErrorHandler::check_SDL2_Error(void) {
+const std::string& ErrorHandler::check_SDL2_Error(const char* file, GLint line) {
     // Retrieve and store a message about the most recent error
     // since call to SDL_ClearError(). Repeated calls to SDL_GetError
     // will only ever return the same last error.
     last_SDL2_error = SDL_GetError();
+
+    std::stringstream message;
+    message << "FILE = "
+            << file
+            << "\t LINE = "
+            << line
+			<< "\t ERROR = "
+			<< last_SDL2_error;
+    ErrorHandler::record(message.str(), ErrorHandler::INFORM);
 
     // Clearout any message.
     SDL_ClearError();

@@ -582,7 +582,7 @@ void Starsphere::resize(const int width, const int height) {
 	m_RefreshSearchMarker = true;
 
     // adjust aspect ratio and projection
-	OGL_DEBUG(glViewport(0, 0, (GLsizei) m_CurrentWidth, (GLsizei) m_CurrentHeight));
+	OGL_DEBUG(glViewport(0, 0, m_CurrentWidth, m_CurrentHeight));
     // gluPerspective(95.0, aspect, 0.50, 25.0);
     }
 
@@ -657,7 +657,6 @@ void Starsphere::initialize(const int width, const int height, const Resource *f
 					<< std::endl;
     	ErrorHandler::record(linking_log.str(), ErrorHandler::INFORM);
     	}
-
     m_CurrentWidth = width;
     m_CurrentHeight = height;
     m_FontResource = font;
@@ -723,9 +722,9 @@ void Starsphere::initialize(const int width, const int height, const Resource *f
 //	OGL_DEBUG(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
 	// enable depth buffering for 3D graphics
-	OGL_DEBUG(glClearDepthf(1.0f));
-	OGL_DEBUG(glEnable(GL_DEPTH_TEST));
-	OGL_DEBUG(glDepthFunc(GL_LEQUAL));
+//	OGL_DEBUG(glClearDepthf(1.0f));
+//	OGL_DEBUG(glEnable(GL_DEPTH_TEST));
+//	OGL_DEBUG(glDepthFunc(GL_LEQUAL));
 
 	// enable opt-in quality feature
 	if(m_BoincAdapter.graphicsQualitySetting() == BOINCClientAdapter::MediumGraphicsQualitySetting ||

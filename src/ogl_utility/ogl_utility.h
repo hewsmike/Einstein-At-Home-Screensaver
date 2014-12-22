@@ -51,9 +51,13 @@
 
 #ifdef NDEBUG
     #define OGL_DEBUG(A) A
+	#define SDL_DEBUG(B) B
 #else
     #define OGL_DEBUG(A) A;\
 						 ErrorHandler::check_OpenGL_Error((std::string(#A) + std::string("\t") + std::string(__FILE__).substr(std::string(__FILE__).rfind('/') + 1)).c_str(), __LINE__);\
+						 getchar()
+	#define SDL_DEBUG(B) B;\
+						 ErrorHandler::check_SDL2_Error((std::string(#B) + std::string("\t") + std::string(__FILE__).substr(std::string(__FILE__).rfind('/') + 1)).c_str(), __LINE__);\
 						 getchar()
 #endif
 

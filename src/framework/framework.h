@@ -34,6 +34,7 @@
  * \author Mike Hewson\n
  */
 
+#define GLEW_STATIC
 #include "glew.h"
 
 // To circumvent potential later failure of SDL_Init(), as we are not

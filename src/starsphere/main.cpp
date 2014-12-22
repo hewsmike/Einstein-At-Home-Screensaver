@@ -28,6 +28,7 @@
 
 #include "../erp_git_version.h"
 #include "framework.h"
+#include "ogl_utility.h"
 
 #include "AbstractGraphicsEngine.h"
 #include "ErrorHandler.h"
@@ -82,12 +83,13 @@ int main(int argc, char **argv) {
     // NB : FWIW This order of usage ( as recommended in the SDL2 Wiki )
     // contradicts the statement that SDL_Init() must be called before
     // using any other SDL function ! :-0
-    SDL_SetMainReady();
-    if(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) != 0) {
+    SDL_DEBUG(SDL_SetMainReady());
+    int init_flag = SDL_DEBUG(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_EVENTS));
+    if(init_flag != 0) {
         // Failed, which is FATAL.
         stringstream sdl_init_error;
         sdl_init_error << "\nUnable to initialize SDL:  "
-                       << ErrorHandler::check_SDL2_Error()
+                       << ErrorHandler::check_SDL2_Error(__FILE__, __LINE__)
                        << std::endl;
         ErrorHandler::record(sdl_init_error.str(), ErrorHandler::FATAL);
         }

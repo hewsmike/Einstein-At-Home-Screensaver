@@ -68,6 +68,8 @@ void VertexFetch::trigger(GLenum primitive, GLsizei count) {
         // Either only GL_ARRAY_BUFFER target bound, or none at all.
     	OGL_DEBUG(glDrawArrays(primitive, 0, count));
         }
+	this->detach();
+
     }
 
 void VertexFetch::detach(void) {

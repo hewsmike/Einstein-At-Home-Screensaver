@@ -78,6 +78,8 @@ bool Program::acquire(void) {
                (m_fragment_shader.status() == Shader::COMPILE_SUCCEEDED)) {
                 // The shaders have compiled without error, and are
                 // not marked for deletion, so attach them.
+            	std::cout << "shader id: " << m_vertex_shader.ID() << std::endl;
+            	std::cout << "shader id: " << m_fragment_shader.ID() << std::endl;
             	OGL_DEBUG(glAttachShader(this->ID(), m_vertex_shader.ID()));
             	OGL_DEBUG(glAttachShader(this->ID(), m_fragment_shader.ID()));
 
@@ -159,6 +161,7 @@ bool Program::link(void) {
     for(GLuint index = 0; index < m_vertex_shader.attribCount(); ++index) {
         std::pair<GLuint, std::string> temp;
         temp = m_vertex_shader.getAttrib(index);
+        std::cout << "bind attr: index=" << temp.first << " name=" << temp.second << std::endl;
         OGL_DEBUG(glBindAttribLocation(this->ID(), temp.first, temp.second.c_str()));
         }
 
