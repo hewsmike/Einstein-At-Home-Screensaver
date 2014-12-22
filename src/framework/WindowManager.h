@@ -291,6 +291,16 @@ class WindowManager {
          */
         bool initializeGLEW(void);
 
+        /**
+         * \brief Set the desired attibutes for the OpenGL context.
+         */
+        void setContextAttributes(void);
+
+        /**
+         * \brief Check what the desired attibutes for the OpenGL context are.
+         */
+        void checkContextAttributes(void);
+
         /// The user's desktop mode.
         SDL_DisplayMode* m_Mode;
 

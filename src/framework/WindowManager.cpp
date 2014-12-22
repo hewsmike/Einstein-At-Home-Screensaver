@@ -37,7 +37,6 @@ const int WindowManager::GREEN_BITS(8);
 const int WindowManager::BLUE_BITS(8);
 const int WindowManager::ALPHA_BITS(8);
 const int WindowManager::DEPTH_BITS(16);
-const int WindowManager::HAS_DEPTH_BUFFER(1);
 const int WindowManager::ENABLE_VERTICAL_SYNC(1);
 const int WindowManager::ENABLE_DOUBLE_BUFFER(1);
 const int WindowManager::NUM_MULTISAMPLE_BUFFERS(1);
@@ -64,7 +63,18 @@ Uint32 WindowManager::BOINCUpdateEvent(0);
 
 WindowManager::WindowManager(void) {
 	m_Mode = NULL;
-
+	m_Window = NULL;
+	m_Context = NULL;
+	m_WindowID = 0;
+	m_RenderEventInterval = 0;
+	m_DesktopWidth = 0;
+	m_DesktopHeight = 0;
+	m_DesktopBitsPerPixel = 0;
+	m_CurrentWidth = 0;
+	m_CurrentHeight = 0;
+	m_WindowedWidth = 0;
+	m_WindowedHeight = 0;
+	m_ScreensaverMode = true;
     m_BoincAdapter = new BOINCClientAdapter("");
     }
 
@@ -89,17 +99,13 @@ bool WindowManager::initialize(const int width, const int height, const int fram
 		// Make this a fatal, can't really proceed otherwise.
 		ErrorHandler::record("WindowManager::initialize() : could not obtain SDL_DisplayMode !", ErrorHandler::FATAL);
 		}
-	SDL_DEBUG();
 
     // Assume failure of this method.
     bool ret_val = false;
 
     // Get SDL to assign event codes for render and BOINC events. This occurs
     // dynamically to avoid runtime clashes ( an SDL Wiki recommendation ).
-
-    std::cout << "Uint32 - 1 = " << ((Uint32) - 1) << std::endl;
     RenderEvent = SDL_DEBUG(SDL_RegisterEvents(1));
-    std::cout << "RenderEvent = " << RenderEvent << std::endl;
     // Check if that succeeded.
     if(RenderEvent == ((Uint32)-1)) {
         // Make this a fatal, can't really proceed otherwise.
@@ -107,7 +113,6 @@ bool WindowManager::initialize(const int width, const int height, const int fram
         }
 
     BOINCUpdateEvent = SDL_DEBUG(SDL_RegisterEvents(1));
-    std::cout << "BOINCUpdateEvent = " << BOINCUpdateEvent << std::endl;
     // Check if that succeeded.
     if(BOINCUpdateEvent == ((Uint32)-1)) {
         // Make this a fatal, can't really proceed otherwise.
@@ -190,79 +195,11 @@ bool WindowManager::initialize(const int width, const int height, const int fram
         m_WindowedHeight = (preferredHeight != 0) ? preferredHeight : height;
         m_RenderEventInterval = WindowManager::MILLISECONDS_PER_SECOND / ((preferredFrameRate != 0) ? preferredFrameRate : frameRate);
 
-        std::cout << "windowed width: " << m_WindowedWidth << std::endl;
-        std::cout << "windowed height: " << m_WindowedHeight << std::endl;
-
         m_CurrentWidth = m_WindowedWidth;
         m_CurrentHeight = m_WindowedHeight;
 
         /// TODO - check after successful context creation to see if we got what we asked for.
         // Set desired OpenGL context attributes for our window.
-
-        /// TODO - find a way to request vsync in platform independent way !!
-        /// Neither Open GL nor SDL ( cleanly ) provide this. Maybe roll my own
-        /// abstraction ?
-
-        // Request a minimum number of multisample buffers.
-        int SDL_MultisampleBufferFlag = -2;
-        std::cout << "SDL_MultisampleBufferFlag = " << SDL_MultisampleBufferFlag << std::endl;
-        SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, WindowManager::NUM_MULTISAMPLE_BUFFERS));
-        SDL_DEBUG(SDL_GL_GetAttribute(SDL_GL_MULTISAMPLEBUFFERS, &SDL_MultisampleBufferFlag));
-        std::cout << "SDL_MultisampleBufferFlag = " << SDL_MultisampleBufferFlag << std::endl;
-
-        // Request a minimum of multisamples ( around a given pixel ).
-        int SDL_MultisampleSamplesFlag = -2;
-        std::cout << "SDL_MultisampleSamplesFlag = " << SDL_MultisampleSamplesFlag << std::endl;
-        SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, WindowManager::NUM_MULTISAMPLES));
-        SDL_DEBUG(SDL_GL_GetAttribute(SDL_GL_MULTISAMPLESAMPLES, &SDL_MultisampleSamplesFlag));
-        std::cout << "SDL_MultisampleSamplesFlag = " << SDL_MultisampleSamplesFlag << std::endl;
-
-        // Request double buffering.
-        int SDL_DoubleBufferFlag = -2;
-        std::cout << "SDL_DoubleBufferFlag = " << SDL_DoubleBufferFlag << std::endl;
-        SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, WindowManager::ENABLE_DOUBLE_BUFFER));
-        SDL_DEBUG(SDL_GL_GetAttribute(SDL_GL_DOUBLEBUFFER, &SDL_DoubleBufferFlag));
-        std::cout << "SDL_DoubleBufferFlag = " << SDL_DoubleBufferFlag << std::endl;
-
-        // Request a specific color depth.
-        int SDL_RedSizeFlag = -2;
-        std::cout << "SDL_RedSizeFlag = " << SDL_RedSizeFlag << std::endl;
-        SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_RED_SIZE, WindowManager::RED_BITS));
-        SDL_DEBUG(SDL_GL_GetAttribute(SDL_GL_RED_SIZE, &SDL_RedSizeFlag));
-        std::cout << "SDL_RedSizeFlag = " << SDL_RedSizeFlag << std::endl;
-
-        int SDL_GreenSizeFlag = -2;
-        std::cout << "SDL_GreenSizeFlag = " << SDL_GreenSizeFlag << std::endl;
-        SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, WindowManager::GREEN_BITS));
-        SDL_DEBUG(SDL_GL_GetAttribute(SDL_GL_GREEN_SIZE, &SDL_GreenSizeFlag));
-        std::cout << "SDL_GreenSizeFlag = " << SDL_GreenSizeFlag << std::endl;
-
-        int SDL_BlueSizeFlag = -2;
-        std::cout << "SDL_BlueSizeFlag = " << SDL_BlueSizeFlag << std::endl;
-        SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, WindowManager::BLUE_BITS));
-        SDL_DEBUG(SDL_GL_GetAttribute(SDL_GL_BLUE_SIZE, &SDL_BlueSizeFlag));
-        std::cout << "SDL_BlueSizeFlag = " << SDL_BlueSizeFlag << std::endl;
-
-        // Request a specific alpha channnel.
-        int SDL_AlphaSizeFlag = -2;
-        std::cout << "SDL_AlphaSizeFlag = " << SDL_AlphaSizeFlag << std::endl;
-        SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, WindowManager::ALPHA_BITS));
-        SDL_DEBUG(SDL_GL_GetAttribute(SDL_GL_ALPHA_SIZE, &SDL_AlphaSizeFlag));
-        std::cout << "SDL_AlphaSizeFlag = " << SDL_AlphaSizeFlag << std::endl;
-
-        // Request a minimum number of bits in depth buffer.
-        int SDL_DepthSizeFlag = -2;
-        std::cout << "SDL_DepthSizeFlag = " << SDL_DepthSizeFlag << std::endl;
-        SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, WindowManager::DEPTH_BITS));
-        SDL_DEBUG(SDL_GL_GetAttribute(SDL_GL_DEPTH_SIZE, &SDL_DepthSizeFlag));
-        std::cout << "SDL_DepthSizeFlag = " << SDL_DepthSizeFlag << std::endl;
-
-        // Request a depth buffer.
-        //int SDL_DepthBufferFlag = -1;
-        //std::cout << "SDL_DepthBufferFlag = " << SDL_DepthBufferFlag << std::endl;
-        ///SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_DEPTHBUFFER, WindowManager::HAS_DEPTH_BUFFER));
-        //SDL_GL_GetAttribute(SDL_GL_DOUBLEBUFFER, &SDL_DoubleBufferFlag);
-        ///std::cout << "SDL_DoubleBufferFlag = " << SDL_DoubleBufferFlag << std::endl;
 
         // Start in windowed mode.
         m_Window = SDL_DEBUG(SDL_CreateWindow(m_WindowTitle.c_str(),
@@ -270,7 +207,7 @@ bool WindowManager::initialize(const int width, const int height, const int fram
                                     SDL_WINDOWPOS_CENTERED,
                                     m_WindowedWidth,
                                     m_WindowedHeight,
-                                    SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE));
+                                    SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE));
 
         // Check that the window was successfully made.
         if(m_Window == NULL) {
@@ -284,12 +221,9 @@ bool WindowManager::initialize(const int width, const int height, const int fram
         // Initial display is as a window, not fullscreen.
         m_CurrentScreenMode = WindowManager::WINDOWED;
 
-        // Create a desired OpenGL context for use with that window,
-        // noting the above attribute selections.
-        /// TODO - Need to create compile switch here for use of ES with Android etc.
-        SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES));
-        SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, WindowManager::OGL_MAJOR_VERSION));
-        SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, WindowManager::OGL_MINOR_VERSION));
+        setContextAttributes();
+
+
         /// TODO - Check error on return here, how ?
         m_Context = SDL_DEBUG(SDL_GL_CreateContext(m_Window));
 
@@ -300,6 +234,7 @@ bool WindowManager::initialize(const int width, const int height, const int fram
             ErrorHandler::record(SDL_error_string.str(), ErrorHandler::FATAL);
             }
 
+        checkContextAttributes();
 
         // OK we have a window and a valid context, so initialise GLEW.
         // This matters especially if the installable device driver's function pointers need runtime
@@ -761,6 +696,146 @@ void WindowManager::setScreensaverMode(const bool enabled) {
     }
 
 void WindowManager::swap(void) const {
-//	ErrorHandler::record("BUFFER SWAPS GOIN ON UP IN DIS", ErrorHandler::INFORM);
     SDL_DEBUG(SDL_GL_SwapWindow(m_Window));
     }
+
+void WindowManager::setContextAttributes(void) {
+	/// TODO - find a way to request vsync in platform independent way !!
+	/// Neither Open GL nor SDL ( cleanly ) provide this. Maybe roll my own
+	/// abstraction ?
+
+	// Request a minimum number of multisample buffers.
+	SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, WindowManager::NUM_MULTISAMPLE_BUFFERS));
+
+	// Request a minimum of multisamples ( around a given pixel ).
+	SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, WindowManager::NUM_MULTISAMPLES));
+
+	// Request a specific color depth.
+	SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_RED_SIZE, WindowManager::RED_BITS));
+	SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, WindowManager::GREEN_BITS));
+	SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, WindowManager::BLUE_BITS));
+
+	// Request a specific alpha channnel.
+	SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, WindowManager::ALPHA_BITS));
+
+	// Request double buffering.
+	SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, WindowManager::ENABLE_DOUBLE_BUFFER));
+
+	// Request a minimum number of bits in depth buffer.
+	SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, WindowManager::DEPTH_BITS));
+
+	// Create a desired OpenGL context for use with that window,
+	// noting the above attribute selections.
+	/// TODO - Need to create compile switch here for use of ES with Android etc.
+	SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE));
+	SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, WindowManager::OGL_MAJOR_VERSION));
+	SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, WindowManager::OGL_MINOR_VERSION));
+	}
+
+void WindowManager::checkContextAttributes(void) {
+	std::string prefix("WindowManager::checkContextAttributes() : ");
+
+	// Check the minimum number of multisample buffers.
+	int SDL_MultiSampleBufferFlag = -707;
+	SDL_DEBUG(SDL_GL_GetAttribute(SDL_GL_MULTISAMPLEBUFFERS, &SDL_MultiSampleBufferFlag));
+	stringstream msg_MultiSampleBuffer;
+	msg_MultiSampleBuffer << prefix
+						  << "SDL_GL_MULTISAMPLEBUFFERS = "
+						  << SDL_MultiSampleBufferFlag;
+	ErrorHandler::record(msg_MultiSampleBuffer.str(), ErrorHandler::INFORM);
+
+	// Check the minimum of multisamples ( around a given pixel ).
+	int SDL_MultiSampleSamplesFlag = -707;
+	SDL_DEBUG(SDL_GL_GetAttribute(SDL_GL_MULTISAMPLESAMPLES, &SDL_MultiSampleSamplesFlag));
+	stringstream msg_MultiSampleSample;
+	msg_MultiSampleSample << prefix
+						  << "SDL_GL_MULTISAMPLESAMPLES = " << SDL_MultiSampleSamplesFlag;
+	ErrorHandler::record(msg_MultiSampleSample.str(), ErrorHandler::INFORM);
+
+	// Check the specific color depths.
+	// Check the red color depth.
+	int SDL_RedSizeFlag = -707;
+	SDL_DEBUG(SDL_GL_GetAttribute(SDL_GL_RED_SIZE, &SDL_RedSizeFlag));
+	stringstream msg_RedSize;
+	msg_RedSize << prefix
+				<< "SDL_GL_RED_SIZE = " << SDL_RedSizeFlag;
+	ErrorHandler::record(msg_RedSize.str(), ErrorHandler::INFORM);
+
+	// Check the green color depth.
+	int SDL_GreenSizeFlag = -707;
+	SDL_DEBUG(SDL_GL_GetAttribute(SDL_GL_GREEN_SIZE, &SDL_GreenSizeFlag));
+	stringstream msg_GreenSize;
+	msg_GreenSize << prefix
+				  << "SDL_GL_GREEN_SIZE = " << SDL_GreenSizeFlag;
+	ErrorHandler::record(msg_GreenSize.str(), ErrorHandler::INFORM);
+
+	// Check the blue color depth.
+	int SDL_BlueSizeFlag = -707;
+	SDL_DEBUG(SDL_GL_GetAttribute(SDL_GL_BLUE_SIZE, &SDL_BlueSizeFlag));
+	stringstream msg_BlueSize;
+	msg_BlueSize << prefix
+				 << "SDL_GL_BLUE_SIZE = " << SDL_BlueSizeFlag;
+	ErrorHandler::record(msg_BlueSize.str(), ErrorHandler::INFORM);
+
+	// Check the alpha channnel.
+	int SDL_AlphaSizeFlag = -707;
+	SDL_DEBUG(SDL_GL_GetAttribute(SDL_GL_ALPHA_SIZE, &SDL_AlphaSizeFlag));
+	stringstream msg_AlphaSize;
+	msg_AlphaSize << prefix
+				  << "SDL_GL_ALPHA_SIZE = " << SDL_AlphaSizeFlag;
+	ErrorHandler::record(msg_AlphaSize.str(), ErrorHandler::INFORM);
+
+	// Check double buffering.
+	int SDL_DoubleBufferFlag = -707;
+	SDL_DEBUG(SDL_GL_GetAttribute(SDL_GL_DOUBLEBUFFER, &SDL_DoubleBufferFlag));
+	stringstream msg_DoubleBuffer;
+	msg_DoubleBuffer << prefix
+				  	 << "SDL_GL_DOUBLEBUFFER = " << SDL_DoubleBufferFlag;
+	ErrorHandler::record(msg_DoubleBuffer.str(), ErrorHandler::INFORM);
+
+	// Check the minimum number of bits in depth buffer.
+	int SDL_DepthSizeFlag = -707;
+	SDL_DEBUG(SDL_GL_GetAttribute(SDL_GL_DEPTH_SIZE, &SDL_DepthSizeFlag));
+	stringstream msg_DepthSize;
+	msg_DepthSize << prefix
+				  << "SDL_GL_DEPTH_SIZE = " << SDL_DepthSizeFlag;
+	ErrorHandler::record(msg_DepthSize.str(), ErrorHandler::INFORM);
+
+	// Check the OpenGL context profile achieved.
+	int SDL_ContextProfile = -707;
+    SDL_DEBUG(SDL_GL_GetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, &SDL_ContextProfile));
+    stringstream msg_ContextProfile;
+    msg_ContextProfile << prefix
+    				   << "SDL_GL_CONTEXT_PROFILE_MASK = ";
+    switch(SDL_ContextProfile) {
+    	case SDL_GL_CONTEXT_PROFILE_CORE:
+			msg_ContextProfile << "SDL_GL_CONTEXT_PROFILE_CORE";
+			break;
+    	case SDL_GL_CONTEXT_PROFILE_COMPATIBILITY:
+    		msg_ContextProfile << "SDL_GL_CONTEXT_PROFILE_COMPATIBILITY";
+    		break;
+    	case SDL_GL_CONTEXT_PROFILE_ES:
+    	    msg_ContextProfile << "SDL_GL_CONTEXT_PROFILE_ES";
+    	    break;
+	    default:
+	    	ErrorHandler::record("checkContextAttributes() : Bad switch case ( default ) !", ErrorHandler::FATAL);
+		    break;
+    	}
+    ErrorHandler::record(msg_ContextProfile.str(), ErrorHandler::INFORM);
+
+    // Check the OpenGL context major version achieved.
+    int SDL_ContextMajorVersion = -707;
+    SDL_DEBUG(SDL_GL_GetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, &SDL_ContextMajorVersion));
+    stringstream msg_ContextMajorVersion;
+    msg_ContextMajorVersion << prefix
+      				   	    << "SDL_GL_CONTEXT_MAJOR_VERSION = " << SDL_ContextMajorVersion;
+    ErrorHandler::record(msg_ContextMajorVersion.str(), ErrorHandler::INFORM);
+
+    // Check the OpenGL context minor version achieved.
+    int SDL_ContextMinorVersion = -707;
+    SDL_DEBUG(SDL_GL_GetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, &SDL_ContextMinorVersion));
+    stringstream msg_ContextMinorVersion;
+    msg_ContextMinorVersion << prefix
+      				   	    << "SDL_GL_CONTEXT_MINOR_VERSION = " << SDL_ContextMinorVersion;
+    ErrorHandler::record(msg_ContextMinorVersion.str(), ErrorHandler::INFORM);
+	}
