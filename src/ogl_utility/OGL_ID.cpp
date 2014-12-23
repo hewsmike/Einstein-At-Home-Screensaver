@@ -49,7 +49,7 @@ bool OGL_ID::isNull(void) const {
     return (ID() ? false : true);
     }
 
-OGL_ID::id_type OGL_ID::type(bool emit) const {
+OGL_ID::id_type OGL_ID::IDtype(bool emit) const {
     OGL_ID::id_type ret_val;
     // Lazy evaluation by inquiry of OpenGL state machine.
     GLuint temp_ID = this->ID();

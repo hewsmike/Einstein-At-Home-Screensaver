@@ -619,6 +619,7 @@ void Starsphere::initialize(const int width, const int height, const Resource *f
 
     m_pipeline = new Pipeline(*m_program, *m_vertexfetch);
 
+    OGL_DEBUG();
     ErrorHandler::record("Starsphere::initialize() : before m_program->acquire()", ErrorHandler::INFORM);
     m_program->acquire();
     ErrorHandler::record("Starsphere::initialize() : after m_program->acquire()", ErrorHandler::INFORM);
@@ -701,7 +702,7 @@ void Starsphere::initialize(const int width, const int height, const Resource *f
         }
 
 	// setup initial dimensions
-	resize(m_CurrentWidth, m_CurrentHeight);
+	// resize(m_CurrentWidth, m_CurrentHeight);
 
 	// more font setup and optimizations
 	OGL_DEBUG(glPixelStorei( GL_UNPACK_ALIGNMENT, 1 ));

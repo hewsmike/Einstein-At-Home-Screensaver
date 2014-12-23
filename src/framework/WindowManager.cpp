@@ -43,7 +43,7 @@ const int WindowManager::NUM_MULTISAMPLE_BUFFERS(1);
 const int WindowManager::NUM_MULTISAMPLES(2);
 
 const int WindowManager::OGL_MAJOR_VERSION(3);
-const int WindowManager::OGL_MINOR_VERSION(2);
+const int WindowManager::OGL_MINOR_VERSION(3);
 
 const int WindowManager::DISPLAY_ZERO(0);
 
@@ -203,11 +203,11 @@ bool WindowManager::initialize(const int width, const int height, const int fram
 
         // Start in windowed mode.
         m_Window = SDL_DEBUG(SDL_CreateWindow(m_WindowTitle.c_str(),
-                                    SDL_WINDOWPOS_CENTERED,
-                                    SDL_WINDOWPOS_CENTERED,
-                                    m_WindowedWidth,
-                                    m_WindowedHeight,
-                                    SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE));
+                                    		  SDL_WINDOWPOS_CENTERED,
+											  SDL_WINDOWPOS_CENTERED,
+											  m_WindowedWidth,
+											  m_WindowedHeight,
+											  SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE));
 
         // Check that the window was successfully made.
         if(m_Window == NULL) {
@@ -223,7 +223,6 @@ bool WindowManager::initialize(const int width, const int height, const int fram
 
         setContextAttributes();
 
-
         /// TODO - Check error on return here, how ?
         m_Context = SDL_DEBUG(SDL_GL_CreateContext(m_Window));
 
@@ -235,11 +234,16 @@ bool WindowManager::initialize(const int width, const int height, const int fram
             }
 
         checkContextAttributes();
+        std::cout << "WindowManager::initialize() glGetString(GL_VERSION) = " << glGetString(GL_VERSION) << std::endl;
+
+        // This will clear any initial error state.
+        ErrorHandler::check_OpenGL_Error(__FILE__, __LINE__);
 
         // OK we have a window and a valid context, so initialise GLEW.
         // This matters especially if the installable device driver's function pointers need runtime
         // linkage ie. Win32 target.
         initializeGLEW();
+        OGL_DEBUG();
 
         ret_val = true;
         }
@@ -621,12 +625,16 @@ bool WindowManager::initializeGLEW(void) {
     glewExperimental = GL_TRUE;
 
     // Now initialise GLEW.
-    if(glewInit() != GLEW_OK) {
+    OGL_DEBUG();
+    GLenum init_flag = glewInit();
+    OGL_DEBUG();
+    if(init_flag != GLEW_OK) {
         ErrorHandler::record("WindowManager::initializeGLEW() : GLEW initialisation fail", ErrorHandler::WARN);
         }
     else {
         std::string msg2 = "WindowManager::initializeGLEW() : Using GLEW version ";
         msg2 += ErrorHandler::convertGLstring(glewGetString(GLEW_VERSION));
+        OGL_DEBUG();
         ErrorHandler::record(msg2, ErrorHandler::INFORM);
         ret_val = true;
         }

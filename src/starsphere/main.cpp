@@ -139,7 +139,7 @@ int main(int argc, char **argv) {
     AbstractGraphicsEngine* graphics = GraphicsEngineFactory::createInstance(GraphicsEngineFactory::Starsphere,
                                                                              scienceApplication);
     if(graphics == NULL) {
-        ErrorHandler::record("SolarSystem::main() : Requested graphics engine could not be found/instantiated!", ErrorHandler::FATAL);
+        ErrorHandler::record("Starsphere::main() : Requested graphics engine could not be found/instantiated!", ErrorHandler::FATAL);
         }
 
     // Instantiate and then attempt to initialize our window manager.
@@ -148,7 +148,7 @@ int main(int argc, char **argv) {
         // Failure, so destroy the AbstractGraphicsEngine and ...
         delete graphics;
         // ... emit a message with exit.
-        ErrorHandler::record("SolarSystem::main() : Window manager could not be initialized!", ErrorHandler::FATAL);
+        ErrorHandler::record("Starsphere::main() : Window manager could not be initialized!", ErrorHandler::FATAL);
         }
 
     // Using a ResourceFactory instance, create font and icon resource instances.
@@ -160,7 +160,7 @@ int main(int argc, char **argv) {
     if(fontResource == NULL) {
         // No, so that's a fatal. Exit with appropriate deletions and message.
         delete graphics;
-        ErrorHandler::record("SolarSystem::main() : Font resource is NULL!", ErrorHandler::FATAL);
+        ErrorHandler::record("Starsphere::main() : Font resource is NULL!", ErrorHandler::FATAL);
         }
 
     // Given that you have a font resource, is the size meaningful?
@@ -168,7 +168,7 @@ int main(int argc, char **argv) {
         // No, so that's also a fatal. Exit with appropriate deletions and message.
         delete graphics;
         delete fontResource;
-        ErrorHandler::record("SolarSystem::main() : Font resource could not be loaded!", ErrorHandler::FATAL);
+        ErrorHandler::record("Starsphere::main() : Font resource could not be loaded!", ErrorHandler::FATAL);
         }
 
     // Check for an icon resource, but this is not fatal in the lack.
@@ -178,7 +178,7 @@ int main(int argc, char **argv) {
         delete iconResource;
         }
     else {
-        ErrorHandler::record("SolarSystem::main() : Icon resource could not be loaded! Continuing anyway...", ErrorHandler::WARN);
+        ErrorHandler::record("Starsphere::main() : Icon resource could not be loaded! Continuing anyway...", ErrorHandler::WARN);
         }
 
     // Set the caption or window title.
@@ -205,7 +205,7 @@ int main(int argc, char **argv) {
             window.setScreensaverMode(true);
             }
         if(param == "--demo") {
-            ErrorHandler::record("SolarSystem::main() : Fullscreen & demo mode ...", ErrorHandler::INFORM);
+            ErrorHandler::record("Starsphere::main() : Fullscreen & demo mode ...", ErrorHandler::INFORM);
             window.setScreensaverMode(false);
             // Initialised display is as a window,
             // so we transition to a fullscreen.

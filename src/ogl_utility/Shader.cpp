@@ -69,6 +69,7 @@ bool Shader::acquire(void) {
             // Get an OpenGL handle for this shader object.
         	GLuint temp = OGL_DEBUG(glCreateShader(shader_type));
         	this->set_ID(temp);
+        	this->IDtype(true);
 
             // If that handle acquisition failed the we have no other option ...
             if(this->ID() == OGL_ID::NO_ID)  {

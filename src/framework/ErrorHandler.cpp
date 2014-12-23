@@ -163,9 +163,7 @@ bool ErrorHandler::check_OpenGL_Error() {
         std::stringstream message;
         message << "ErrorHandler::check_OpenGL_Error() - Reported OpenGL error with code : "
                 << error_code
-                << " - "
- //               << ErrorHandler::convertGLstring(gluErrorString(glGetError()))
-                << " : ";
+                << " - ";
         switch(error_code) {
             case GL_INVALID_ENUM :
                 message << "An unacceptable value is specified for an enumerated argument";
@@ -219,7 +217,7 @@ void ErrorHandler::check_OpenGL_Error(const char* file, GLint line) {
             << file
             << "\t LINE = "
             << line;
-    ErrorHandler::record(message.str(), ErrorHandler::WARN);
+    ErrorHandler::record(message.str(), ErrorHandler::INFORM);
     }
 
 const std::string& ErrorHandler::check_SDL2_Error(const char* file, GLint line) {
@@ -234,7 +232,7 @@ const std::string& ErrorHandler::check_SDL2_Error(const char* file, GLint line) 
             << "\t LINE = "
             << line
 			<< "\t ERROR = "
-			<< last_SDL2_error;
+			<< ((last_SDL2_error.size() == 0) ? "NONE" : last_SDL2_error);
     ErrorHandler::record(message.str(), ErrorHandler::INFORM);
 
     // Clearout any message.

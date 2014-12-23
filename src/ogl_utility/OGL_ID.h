@@ -114,7 +114,7 @@ class OGL_ID {
          *
          * \return the identifier enumerant as above.
          */
-        id_type type(bool emit) const;
+        id_type IDtype(bool emit = false) const;
 
     protected :
 
