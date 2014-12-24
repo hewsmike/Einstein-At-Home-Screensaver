@@ -69,7 +69,6 @@ void VertexFetch::trigger(GLenum primitive, GLsizei count) {
     	OGL_DEBUG(glDrawArrays(primitive, 0, count));
         }
 	this->detach();
-
     }
 
 void VertexFetch::detach(void) {

@@ -23,6 +23,7 @@
 #include "ErrorHandler.h"
 
 #include <iostream>
+#include <sstream>
 
 VertexBuffer::VertexBuffer(const GLvoid* buffer_data,
                            GLuint vertices,
@@ -70,6 +71,10 @@ GLuint VertexBuffer::vertexCount(void) const {
 
 void VertexBuffer::acquire_ID(GLuint* handle) const {
 	OGL_DEBUG(glGenBuffers(1, handle));
+	std::cout << "VertexBuffer::acquire_ID() : handle = "
+			  << *handle << std::endl;
+	// Check and record identifier type.
+	this->IDtype(true);
 	}
 
 void VertexBuffer::release_ID(GLuint* handle) const {
@@ -114,11 +119,11 @@ void VertexBuffer::attach(void) {
 
             OGL_DEBUG(glEnableVertexAttribArray(attrib->a_spec.attrib_index));
             OGL_DEBUG(glVertexAttribPointer(attrib->a_spec.attrib_index,
-                                  attrib->a_spec.multiplicity,
-                                  attrib->a_spec.type,
-                                  attrib->a_spec.normalised,
-                                  attrib->stride,
-                                  attrib->pointer));
+                                  	  	    attrib->a_spec.multiplicity,
+											attrib->a_spec.type,
+											attrib->a_spec.normalised,
+											attrib->stride,
+											attrib->pointer));
             }
         }
     else {
@@ -212,14 +217,11 @@ void VertexBuffer::prepareAttributeMapping(void) {
         for(std::vector<attribute_record>::iterator attrib = m_attribute_specs.begin();
             attrib != m_attribute_specs.end();
             ++attrib) {
+        	std::stringstream map_msg;
             switch(m_mix) {
                 case BY_VERTEX :
                     attrib->stride = m_attribute_length_sum;
                     attrib->pointer = reinterpret_cast<GLvoid*>(interleave_progressive_offset);
-
-                    std::cout << "stride=" << attrib->stride << std::endl;
-                    std::cout << "Pointer=" << attrib->pointer << std::endl;
-
                     break;
                 case BY_ATTRIBUTE :
                     attrib->stride = attrib->length;
@@ -230,9 +232,17 @@ void VertexBuffer::prepareAttributeMapping(void) {
                     ErrorHandler::record("VertexBuffer::prepareAttributeMapping() : bad switch case ( default ) !",
                                   ErrorHandler::FATAL);
                 }
-                interleave_progressive_offset += attrib->length;
+            map_msg << "VertexBuffer::prepareAttributeMapping() : For attribute with index "
+               		<< (attrib->a_spec).attrib_index
+               		<< ", the pointer = "
+               		<< attrib->pointer
+            		<< " and the stride = "
+            		<< attrib->stride;
+            ErrorHandler::record(map_msg.str(), ErrorHandler::INFORM);
 
-                non_interleave_progressive_offset += attrib->length * m_vertex_count;
+            interleave_progressive_offset += attrib->length;
+
+            non_interleave_progressive_offset += attrib->length * m_vertex_count;
             }
 
         // Mark attribute mapping as completed.

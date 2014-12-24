@@ -21,7 +21,9 @@
 #include "Program.h"
 
 #include "ErrorHandler.h"
+
 #include <iostream>
+#include <sstream>
 
 Program::Program(VertexShader& vertex_shader,
                  Shader& fragment_shader,
@@ -49,9 +51,9 @@ bool Program::acquire(void) {
         // Only get a handle if none already.
         if(this->ID() == OGL_ID::NO_ID) {
             // Get an OpenGL handle for this program object.
-            this->IDtype(true);
             GLuint temp = OGL_DEBUG(glCreateProgram());
             set_ID(temp);
+            // Check and record identifier type.
             this->IDtype(true);
             // If that handle acquisition failed the we have no other option ...
             if(this->ID() == OGL_ID::NO_ID)  {
@@ -79,9 +81,20 @@ bool Program::acquire(void) {
                (m_fragment_shader.status() == Shader::COMPILE_SUCCEEDED)) {
                 // The shaders have compiled without error, and are
                 // not marked for deletion, so attach them.
-            	std::cout << "shader id: " << m_vertex_shader.ID() << std::endl;
-            	std::cout << "shader id: " << m_fragment_shader.ID() << std::endl;
+            	std::stringstream vshader_msg;
+            	vshader_msg << "Program::acquire() : attaching vertex shader with ID = "
+            				<< m_vertex_shader.ID()
+							<< " to program with ID = "
+							<< this->ID();
+            	ErrorHandler::record(vshader_msg.str(), ErrorHandler::INFORM);
             	OGL_DEBUG(glAttachShader(this->ID(), m_vertex_shader.ID()));
+
+            	std::stringstream fshader_msg;
+            	fshader_msg << "Program::acquire() : attaching fragment shader with ID = "
+            	            << m_fragment_shader.ID()
+							<< " to program with ID = "
+							<< this->ID();
+            	ErrorHandler::record(fshader_msg.str(), ErrorHandler::INFORM);
             	OGL_DEBUG(glAttachShader(this->ID(), m_fragment_shader.ID()));
 
                 // Link program and check for success.
@@ -160,10 +173,19 @@ bool Program::link(void) {
     // Before link need to access VertexShader attribute indices and variable names
     // in order to bind the attributes to locations.
     for(GLuint index = 0; index < m_vertex_shader.attribCount(); ++index) {
-        std::pair<GLuint, std::string> temp;
-        temp = m_vertex_shader.getAttrib(index);
-        std::cout << "bind attr: index=" << temp.first << " name=" << temp.second << std::endl;
-        OGL_DEBUG(glBindAttribLocation(this->ID(), temp.first, temp.second.c_str()));
+        std::pair<GLuint, std::string> attrib;
+        attrib = m_vertex_shader.getAttrib(index);
+
+        std::stringstream attrib_msg("");
+        attrib_msg << "Program::link() : For program with ID = "
+        		   << this->ID()
+				   << ", binding an attribute at index "
+        		   << attrib.first
+				   << " with the name '"
+				   << attrib.second
+				   << "'";
+        ErrorHandler::record(attrib_msg.str(), ErrorHandler::INFORM);
+        OGL_DEBUG(glBindAttribLocation(this->ID(), attrib.first, attrib.second.c_str()));
         }
 
     // Attempt to link the program.

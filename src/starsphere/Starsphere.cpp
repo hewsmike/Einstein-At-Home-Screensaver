@@ -73,6 +73,11 @@ Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
 Starsphere::~Starsphere() {
     if(m_vertex_shader_resource) delete m_vertex_shader_resource;
     if(m_vertex) delete m_vertex;
+    if(m_fragment) delete m_fragment;
+    if(m_vertex_buffer) delete m_vertex_buffer;
+    if(m_vertexfetch) delete m_vertexfetch;
+    if(m_program) delete m_program;
+    if(m_pipeline) delete m_pipeline;
 	if(m_FontLogo1) delete m_FontLogo1;
 	if(m_FontLogo2) delete m_FontLogo2;
 	if(m_FontHeader) delete m_FontHeader;
@@ -589,7 +594,7 @@ void Starsphere::resize(const int width, const int height) {
 /**
  *  What to do when graphics are "initialized".
  */
-void Starsphere::initialize(const int width, const int height, const Resource *font) {
+void Starsphere::initialize(const int width, const int height, const Resource* font) {
     ResourceFactory factory;
 
     GLfloat vertex_data[] = {
@@ -619,10 +624,7 @@ void Starsphere::initialize(const int width, const int height, const Resource *f
 
     m_pipeline = new Pipeline(*m_program, *m_vertexfetch);
 
-    OGL_DEBUG();
-    ErrorHandler::record("Starsphere::initialize() : before m_program->acquire()", ErrorHandler::INFORM);
     m_program->acquire();
-    ErrorHandler::record("Starsphere::initialize() : after m_program->acquire()", ErrorHandler::INFORM);
 
     if(m_vertex->status() != Shader::COMPILE_SUCCEEDED) {
     	stringstream vertex_log;
@@ -694,8 +696,8 @@ void Starsphere::initialize(const int width, const int height, const Resource *f
             if(m_FontText == NULL) {
                 stringstream font_text_error;
                 font_text_error << "Starsphere::initialize() : "
-                                  << "Could not construct text font face from in memory resource!"
-                                  << std::endl;
+                                << "Could not construct text font face from in memory resource!"
+                                << std::endl;
                 ErrorHandler::record(font_text_error.str(), ErrorHandler::FATAL);
                 }
             }

@@ -236,7 +236,7 @@ bool WindowManager::initialize(const int width, const int height, const int fram
         ErrorHandler::check_OpenGL_Error(__FILE__, __LINE__);
 
         std::stringstream init_version_msg;
-        init_version_msg << "WindowManager::initialize() Driver reported GL_VERSION = " << glGetString(GL_VERSION);
+        init_version_msg << "WindowManager::initialize() : Video driver reports GL_VERSION = " << glGetString(GL_VERSION);
         ErrorHandler::record(init_version_msg.str(), ErrorHandler::INFORM);
 
         // OK we have a window and a valid context, so initialise GLEW.
@@ -625,10 +625,9 @@ bool WindowManager::initializeGLEW(void) {
     // functionality with experimental drivers.
     glewExperimental = GL_TRUE;
 
-    // Now initialise GLEW. Oddly this triggers an OpenGL error with code 1280
-    // "An unacceptable value is specified for an enumerated argument"
+    // Now initialise GLEW.
     GLenum init_flag = glewInit();
-    // Clear the error from the context state.
+    // Check for any induced OpenGL error.
     ErrorHandler::check_OpenGL_Error(__FILE__, __LINE__);
 
     if(init_flag != GLEW_OK) {
