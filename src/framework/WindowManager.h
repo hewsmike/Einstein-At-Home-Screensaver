@@ -208,7 +208,8 @@ class WindowManager {
         static const int NUM_MULTISAMPLE_BUFFERS;
         static const int NUM_MULTISAMPLES;
 
-        /// OpenGL version
+        /// OpenGL type and version.
+        static const int CONTEXT_PROFILE_TYPE;
         static const int OGL_MAJOR_VERSION;
         static const int OGL_MINOR_VERSION;
 

@@ -90,11 +90,11 @@ class ErrorHandler {
          * \brief Check the current OpenGL context for error, possibly emitting FILE and LINE
          * 		  information.
          *
-         * \param file : a character string ( eg. compile time generated using __FILE__ )
+         * \param message : a character string ( eg. compile time generated using __FILE__ )
          * \param line : an integer ( eg. compile time generated using __LINE__ )
          *
          */
-        static void check_OpenGL_Error(const char* file, GLint line);
+        static void check_OpenGL_Error(const char* message, GLint line);
 
         /**
          * \brief Check the current SDL2 state for error, possibly emitting FILE and LINE
@@ -106,12 +106,12 @@ class ErrorHandler {
          * testing of any return value of a given SDL function to see if any error
          * occurred at all, before/if calling this method.
          *
-         * \param file : a character string ( eg. compile time generated using __FILE__ )
+         * \param message : a character string ( eg. compile time generated using __FILE__ )
          * \param line : an integer ( eg. compile time generated using __LINE__ )
          *
          * \return : an std::string version of any SDL error message.
          */
-        static const std::string& check_SDL2_Error(const char* file, GLint line);
+        static const std::string& check_SDL2_Error(const char* message, GLint line);
 
         /**
          * \brief Check the current SDL2 TTF state for error, and return any error

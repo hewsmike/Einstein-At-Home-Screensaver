@@ -209,31 +209,31 @@ bool ErrorHandler::check_OpenGL_Error() {
     return ret_val;
     }
 
-void ErrorHandler::check_OpenGL_Error(const char* file, GLint line) {
-    ErrorHandler::check_OpenGL_Error();
-
-    std::stringstream message;
-    message << "FILE = "
-            << file
-            << "\t LINE = "
-            << line;
-    ErrorHandler::record(message.str(), ErrorHandler::INFORM);
+void ErrorHandler::check_OpenGL_Error(const char* message, GLint line) {
+    if(ErrorHandler::check_OpenGL_Error() == true) {
+    	std::stringstream err_message;
+    	err_message << message
+    				<< "\t LINE = "
+					<< line;
+    	ErrorHandler::record(err_message.str(), ErrorHandler::INFORM);
+    	}
     }
 
-const std::string& ErrorHandler::check_SDL2_Error(const char* file, GLint line) {
+const std::string& ErrorHandler::check_SDL2_Error(const char* message, GLint line) {
     // Retrieve and store a message about the most recent error
     // since call to SDL_ClearError(). Repeated calls to SDL_GetError
     // will only ever return the same last error.
     last_SDL2_error = SDL_GetError();
 
-    std::stringstream message;
-    message << "FILE = "
-            << file
-            << "\t LINE = "
-            << line
-			<< "\t ERROR = "
-			<< ((last_SDL2_error.size() == 0) ? "NONE" : last_SDL2_error);
-    ErrorHandler::record(message.str(), ErrorHandler::INFORM);
+    if(last_SDL2_error.size() != 0) {
+    	std::stringstream err_message;
+    	err_message << message
+    				<< "\t LINE = "
+					<< line
+					<< "\t ERROR = "
+					<< last_SDL2_error;
+    	ErrorHandler::record(err_message.str(), ErrorHandler::INFORM);
+    	}
 
     // Clearout any message.
     SDL_ClearError();
