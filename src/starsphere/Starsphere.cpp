@@ -599,9 +599,9 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
 
     GLfloat vertex_data[] = {
         // position ( x  ,   y  ) color ( R,    G,    B  )
-                     0.0f,  1.0f,        1.0f, 0.0f, 0.0f,
-                    -1.0f, -1.0f,        0.0f, 1.0f, 0.0f,
-                     1.0f, -1.0f,        0.0f, 0.0f, 1.0f,
+                     0.0f,  0.5f,        1.0f, 0.0f, 0.0f,
+                    -0.5f, -0.5f,        0.0f, 1.0f, 0.0f,
+                     0.5f, -0.5f,        0.0f, 0.0f, 1.0f,
         };
 
     struct VertexBuffer::attribute_spec pos_spec = {0, 2, GL_FLOAT, GL_FALSE};
@@ -707,7 +707,7 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
 	// resize(m_CurrentWidth, m_CurrentHeight);
 
 	// more font setup and optimizations
-	OGL_DEBUG(glPixelStorei( GL_UNPACK_ALIGNMENT, 1 ));
+	OGL_DEBUG(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
 
 	// drawing setup:
 	OGL_DEBUG(glClearColor(0.0, 0.0, 0.0, 0.0)); // background is black
@@ -721,13 +721,13 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
         }
 
 	// we need alpha blending for proper font rendering
-//	OGL_DEBUG(glEnable(GL_BLEND));
-//	OGL_DEBUG(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+	OGL_DEBUG(glEnable(GL_BLEND));
+	OGL_DEBUG(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
 	// enable depth buffering for 3D graphics
-//	OGL_DEBUG(glClearDepthf(1.0f));
-//	OGL_DEBUG(glEnable(GL_DEPTH_TEST));
-//	OGL_DEBUG(glDepthFunc(GL_LEQUAL));
+	OGL_DEBUG(glClearDepthf(1.0f));
+	OGL_DEBUG(glEnable(GL_DEPTH_TEST));
+	OGL_DEBUG(glDepthFunc(GL_LEQUAL));
 
 	// enable opt-in quality feature
 	if(m_BoincAdapter.graphicsQualitySetting() == BOINCClientAdapter::MediumGraphicsQualitySetting ||
