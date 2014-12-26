@@ -42,7 +42,7 @@ const int WindowManager::ENABLE_DOUBLE_BUFFER(1);
 const int WindowManager::NUM_MULTISAMPLE_BUFFERS(1);
 const int WindowManager::NUM_MULTISAMPLES(2);
 
-const int WindowManager::CONTEXT_PROFILE_TYPE(SDL_GL_CONTEXT_PROFILE_ES);
+const int WindowManager::CONTEXT_PROFILE_TYPE(SDL_GL_CONTEXT_PROFILE_CORE);
 const int WindowManager::OGL_MAJOR_VERSION(2);
 const int WindowManager::OGL_MINOR_VERSION(0);
 

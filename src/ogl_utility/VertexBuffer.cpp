@@ -83,6 +83,8 @@ void VertexBuffer::release_ID(GLuint* handle) const {
 
 void VertexBuffer::loadBuffer(void) const {
 	OGL_DEBUG(glBindBuffer(GL_ARRAY_BUFFER, this->ID()));
+	std::cout << "VertexBuffer::loadBuffer() : +" << std::endl;
+	this->IDtype(true);
 
     // Allocate space and transfer the data.
 
