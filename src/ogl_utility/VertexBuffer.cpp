@@ -71,8 +71,6 @@ GLuint VertexBuffer::vertexCount(void) const {
 
 void VertexBuffer::acquire_ID(GLuint* handle) const {
 	OGL_DEBUG(glGenBuffers(1, handle));
-	std::cout << "VertexBuffer::acquire_ID() : handle = "
-			  << *handle << std::endl;
 	}
 
 void VertexBuffer::release_ID(GLuint* handle) const {
@@ -81,10 +79,8 @@ void VertexBuffer::release_ID(GLuint* handle) const {
 
 void VertexBuffer::loadBuffer(void) const {
 	OGL_DEBUG(glBindBuffer(GL_ARRAY_BUFFER, this->ID()));
-	std::cout << "VertexBuffer::loadBuffer() : +" << std::endl;
 
     // Allocate space and transfer the data.
-
 	OGL_DEBUG(glBufferData(GL_ARRAY_BUFFER, m_size, this->data(), m_usage));
 
     // Unbind the buffer.

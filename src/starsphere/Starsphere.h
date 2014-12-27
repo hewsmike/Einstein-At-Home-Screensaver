@@ -57,9 +57,6 @@
 #define MARKER_SHOW 1
 #define MARKER_NEW  2
 
-// needed to find OpenGL 1.4 prototypes in glext.h (alternatives?)
-#define GL_GLEXT_PROTOTYPES
-
 using namespace std;
 
 /**
@@ -82,7 +79,7 @@ using namespace std;
  * Note: all science run specific parts are implemented in specialized subclasses
  * of this engine.
  *
- * \todo The code of this implementaion is based on the former version of %Starsphere
+ * \todo The code of this implementation is based on the former version of %Starsphere
  * and there's still some refactoring, code cleanup and documenting left to be done.
  *
  * \author Oliver Bock\n

@@ -24,7 +24,6 @@
 #include "ogl_utility.h"
 
 #include "OGL_ID.h"
-#include "Shader.h"
 #include "VertexShader.h"
 
 /**
@@ -39,7 +38,6 @@
  * TODO : currently only enacting one each of vertex and fragment shaders. Extend ??
  *
  * \see OGL_ID
- * \see Shader
  * \see FragmentShader
  * \see VertexShader
  *
