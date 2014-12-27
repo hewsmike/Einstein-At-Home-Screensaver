@@ -235,7 +235,11 @@ void AutoPilot::getTraverse(const Traversable& trav, const CameraState& cam) {
     for(unsigned int way_point = 0;
         way_point < trav.numberOfWayPoints();
         ++way_point) {
+<<<<<<< HEAD
         current_traverse.addLookout(first);
+=======
+        // current_traverse.addLookout(first);
+>>>>>>> parent of 2690d47... Interim
         current_traverse.addLookout(trav.getView(way_point));
         }
     }
