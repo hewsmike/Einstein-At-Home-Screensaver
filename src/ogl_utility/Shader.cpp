@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2013 by Mike Hewson                                     *
+ *   Copyright (C) 2014 by Mike Hewson                                     *
  *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
@@ -69,8 +69,6 @@ bool Shader::acquire(void) {
             // Get an OpenGL handle for this shader object.
         	GLuint temp = OGL_DEBUG(glCreateShader(shader_type));
         	this->set_ID(temp);
-        	// Check and record identifier type.
-        	this->IDtype(true);
 
             // If that handle acquisition failed the we have no other option ...
             if(this->ID() == OGL_ID::NO_ID)  {
@@ -146,26 +144,27 @@ bool Shader::compile(void) {
         if(c_status == GL_TRUE) {
             ret_val = true;
             }
+        else {
+			// Populate the compilation log ie. retrieve compiler error output.
+			// Copy to an std::string via temporary character array to avoid
+			// const semantic difficulties on the std::string c_str() method.
+			GLint log_len;
+			OGL_DEBUG(glGetShaderiv(this->ID(), GL_INFO_LOG_LENGTH, &log_len));
 
-        // Populate the compilation log ie. retrieve compiler error output.
-        // Copy to an std::string via temporary character array to avoid
-        // const semantic difficulties on the std::string c_str() method.
-        GLint log_len;
-        OGL_DEBUG(glGetShaderiv(this->ID(), GL_INFO_LOG_LENGTH, &log_len));
+			if(log_len > 0) {
+				// Use extra character to account for null character terminator ( documentation unclear ).
+				GLchar* temp_log = new GLchar[log_len+1];
+				GLsizei returned_log_len = 0;
+				OGL_DEBUG(glGetShaderInfoLog(this->ID(), log_len+1, &returned_log_len, temp_log));
 
-        if(log_len > 0) {
-            // Use extra character to account for null character terminator ( documentation unclear ).
-            GLchar* temp_log = new GLchar[log_len+1];
-            GLsizei returned_log_len = 0;
-            OGL_DEBUG(glGetShaderInfoLog(this->ID(), log_len+1, &returned_log_len, temp_log));
+				// Account for null character terminator ( documentation unclear ).
+				temp_log[log_len] = '\0';
+				compile_log = temp_log;
 
-            // Account for null character terminator ( documentation unclear ).
-            temp_log[log_len] = '\0';
-            compile_log = temp_log;
-
-            // Dispose of the temporary character array.
-            delete[] temp_log;
-            }
+				// Dispose of the temporary character array.
+				delete[] temp_log;
+				}
+        	}
         }
 
     return ret_val;

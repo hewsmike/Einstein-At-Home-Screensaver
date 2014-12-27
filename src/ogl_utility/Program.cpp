@@ -53,8 +53,6 @@ bool Program::acquire(void) {
             // Get an OpenGL handle for this program object.
             GLuint temp = OGL_DEBUG(glCreateProgram());
             set_ID(temp);
-            // Check and record identifier type.
-            this->IDtype(true);
             // If that handle acquisition failed the we have no other option ...
             if(this->ID() == OGL_ID::NO_ID)  {
                 ErrorHandler::record("Program::acquire() : OpenGL handle acquisition failure !",

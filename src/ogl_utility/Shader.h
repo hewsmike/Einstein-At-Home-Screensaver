@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2013 by Mike Hewson                                     *
+ *   Copyright (C) 2014 by Mike Hewson                                     *
  *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
@@ -57,7 +57,8 @@ class Shader : public OGL_ID {
          *               GL_VERTEX_SHADER
          *               GL_FRAGMENT_SHADER
          *
-         * \param source - pointer to the shader's SINGLE source code C-string.
+         * \param source - the shader's source code. If null length then
+         * 				   construction will fail ( fatally ).
          */
         Shader(GLenum type, const std::string& source);
 
@@ -81,7 +82,8 @@ class Shader : public OGL_ID {
         virtual void release(void);
 
         /**
-         * \brief Determine if shader has been marked for deletion.
+         * \brief Determine if shader has been MARKED for deletion by the state
+         * 		  machine.
          *
          * \return a boolean indicating deletion status
          *              true - shader is marked for deletion
@@ -113,15 +115,15 @@ class Shader : public OGL_ID {
         /**
          * \brief Obtain a reference to this shader's source code.
          *
-         * \return A string reference to the source code. This maybe empty if
-         *         none was provided.
+         * \return A string reference to the source code.
          */
         const std::string& source(void) const;
 
         /**
          * \brief Obtain a reference to this shader's compile log.
          *
-         * \return A string reference to the compile log. This may be empty.
+         * \return A string reference to the compile log. This may be empty
+         *         in the instance that compilation was a complete success.
          */
         const std::string& compileLog(void) const;
 

@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2013 by Mike Hewson                                     *
+ *   Copyright (C) 2014 by Mike Hewson                                     *
  *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
@@ -50,7 +50,7 @@ class VertexShader : public Shader {
         /**
          * \brief Constructor
          *
-         * \param source - pointer to the shader's SINGLE source code C-string.
+         * \param source - the shader's source code.
          */
         VertexShader(const std::string& source, std::vector<std::pair<GLuint, std::string> >& attribs);
 

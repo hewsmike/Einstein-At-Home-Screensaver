@@ -39,7 +39,7 @@
  *      It's a wrapper class to especially manage acquisition and
  * release of OpenGL resources.
  *
- * \see OGL_ID
+ * \see Shader
  *
  * \author Mike Hewson\n
  */
@@ -49,7 +49,7 @@ class FragmentShader : public Shader {
         /**
          * \brief Constructor
          *
-         * \param source - pointer to the shader's SINGLE source code C-string.
+         * \param source - the shader's source code.
          */
         FragmentShader(const std::string& source);
 

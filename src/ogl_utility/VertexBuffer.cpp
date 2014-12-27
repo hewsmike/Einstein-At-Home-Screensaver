@@ -73,8 +73,6 @@ void VertexBuffer::acquire_ID(GLuint* handle) const {
 	OGL_DEBUG(glGenBuffers(1, handle));
 	std::cout << "VertexBuffer::acquire_ID() : handle = "
 			  << *handle << std::endl;
-	// Check and record identifier type.
-	this->IDtype(true);
 	}
 
 void VertexBuffer::release_ID(GLuint* handle) const {
@@ -84,7 +82,6 @@ void VertexBuffer::release_ID(GLuint* handle) const {
 void VertexBuffer::loadBuffer(void) const {
 	OGL_DEBUG(glBindBuffer(GL_ARRAY_BUFFER, this->ID()));
 	std::cout << "VertexBuffer::loadBuffer() : +" << std::endl;
-	this->IDtype(true);
 
     // Allocate space and transfer the data.
 

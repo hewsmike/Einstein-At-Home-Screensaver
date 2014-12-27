@@ -40,6 +40,8 @@
  *
  * \see OGL_ID
  * \see Shader
+ * \see FragmentShader
+ * \see VertexShader
  *
  * \author Mike Hewson\n
  */
@@ -90,7 +92,7 @@ class Program : public OGL_ID {
         void release(void);
 
         /**
-         * \brief Determine if program has been marked for deletion.
+         * \brief Determine if program has been MARKED for deletion.
          *
          * \return a boolean indicating deletion status
          *              true - shader is marked for deletion
@@ -112,7 +114,8 @@ class Program : public OGL_ID {
         /**
          * \brief Obtain a reference to this program's linkage log.
          *
-         * \return A string reference to the linker log. This may be empty.
+         * \return A string reference to the linker log. This may be empty
+         *         in the instance that linking was a complete success.
          */
         const std::string& linkageLog(void) const;
 

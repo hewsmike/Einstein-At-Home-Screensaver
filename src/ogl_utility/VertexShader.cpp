@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2013 by Mike Hewson                                     *
+ *   Copyright (C) 2014 by Mike Hewson                                     *
  *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
@@ -37,7 +37,7 @@ GLuint VertexShader::attribCount(void) const {
 std::pair<GLuint, std::string> VertexShader::getAttrib(GLuint index) const {
     // Check were are not asking an attribute we don't have.
     if(index >= this->attribCount()) {
-        ErrorHandler::record("VertexShader::getAttrib() : bad attribute request !", ErrorHandler::FATAL);
+        ErrorHandler::record("VertexShader::getAttrib() : bad attribute request !", ErrorHandler::WARN);
         }
 
     return m_attribs.at(index);
