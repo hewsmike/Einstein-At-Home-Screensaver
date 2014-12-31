@@ -33,32 +33,65 @@ VertexFetch::VertexFetch(VertexBuffer* vertices, IndexBuffer* indices, GLenum in
     }
 
 VertexFetch::~VertexFetch() {
+	release();
+	}
+
+bool VertexFetch::acquire(void) {
+	// Check and maybe acquire handle if we don't already have one.
+	if(this->ID() == OGL_ID::NO_ID) {
+		// Ask OpenGL for a single VAO handle.
+		GLuint temp = 0;
+		acquire_ID(&temp);
+		set_ID(temp);
+
+		// Failure to acquire a handle should be FATAL.
+		if(this->ID() == OGL_ID::NO_ID) {
+			ErrorHandler::record("VertexFetch::acquire() : failure to obtain identifier",
+								 ErrorHandler::FATAL);
+			}
+		}
+    }
+
+void VertexFetch::release(void) {
+	// Inform OpenGL that we no longer need this specific buffer handle.
+	GLuint temp = this->ID();
+	release_ID(&temp);
+
+	// Reset our handle store to safe value.
+	set_ID(OGL_ID::NO_ID);
     }
 
 void VertexFetch::attach(void) {
-    // Bind only existing buffers.
-    if(m_vertices != NULL) {
-        m_vertices->attach();
-        }
-    if(m_indices != NULL) {
-        m_indices->attach();
-        }
+	// Ensure resource acquisition first.
+	this->acquire();
 
-    // Indicate that Buffer attachment to targets has been addressed.
-    is_attached = true;
-    }
+	OGL_DEBUG(glBindVertexArray(this->ID()));
+
+	// Bind only existing buffers.
+	if(m_vertices != NULL) {
+		m_vertices->attach();
+		}
+	if(m_indices != NULL) {
+		m_indices->attach();
+		}
+
+	OGL_DEBUG(glBindVertexArray(OGL_ID::NO_ID));
+
+	// Indicate that Buffer attachment to targets has been addressed.
+	is_attached = true;
+	}
 
 void VertexFetch::trigger(GLenum primitive, GLsizei count) {
-    this->attach();
-
     // If buffers are not attached to targets then do so.
     if(is_attached == false) {
         ErrorHandler::record("VertexFetch::trigger() : buffers, if any, not attached, do so !",
-                                         ErrorHandler::WARN);
+                              ErrorHandler::FATAL);
         this->attach();
         }
 
-	// Provokes vertex shader activity for count invocations,
+    OGL_DEBUG(glBindVertexArray(this->ID()));
+
+    // Provokes vertex shader activity for count invocations,
 	// buffer use depending upon that which is bound.
 	if(m_indices != NULL) {
         // Both GL_ARRAY_BUFFER and GL_ELEMENT_ARRAY_BUFFER targets are bound.
@@ -68,8 +101,9 @@ void VertexFetch::trigger(GLenum primitive, GLsizei count) {
         // Either only GL_ARRAY_BUFFER target bound, or none at all.
     	OGL_DEBUG(glDrawArrays(primitive, 0, count));
         }
-	this->detach();
-    }
+
+	OGL_DEBUG(glBindVertexArray(OGL_ID::NO_ID));
+	}
 
 void VertexFetch::detach(void) {
     // Ensure that the pipeline vertex fetch
@@ -80,3 +114,15 @@ void VertexFetch::detach(void) {
     // Reset attachment state.
     is_attached = false;
     }
+
+void VertexFetch::acquire_ID(GLuint* handle) const {
+	OGL_DEBUG(glGenVertexArrays(1, handle));
+	}
+
+void VertexFetch::release_ID(GLuint* handle) const {
+	OGL_DEBUG(glDeleteVertexArrays(1, handle));
+    }
+
+bool VertexFetch::isBound(void) const {
+	return is_attached;
+	}

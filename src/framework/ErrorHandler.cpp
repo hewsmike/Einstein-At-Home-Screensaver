@@ -210,7 +210,7 @@ bool ErrorHandler::check_OpenGL_Error() {
     }
 
 void ErrorHandler::check_OpenGL_Error(const char* message, GLint line) {
-    if(ErrorHandler::check_OpenGL_Error() == true) {
+	if(ErrorHandler::check_OpenGL_Error() == true) {
     	std::stringstream err_message;
     	err_message << message
     				<< "\t LINE = "

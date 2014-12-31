@@ -707,27 +707,30 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
 	// resize(m_CurrentWidth, m_CurrentHeight);
 
 	// more font setup and optimizations
-	OGL_DEBUG(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
-
-	// drawing setup:
-	OGL_DEBUG(glClearColor(0.0, 0.0, 0.0, 0.0)); // background is black
-//	OGL_DEBUG(glEnable(GL_CULL_FACE));
-	OGL_DEBUG(glFrontFace(GL_CCW));
-//	OGL_DEBUG(glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST));
-
-	// enable opt-in quality feature
-	if(m_BoincAdapter.graphicsQualitySetting() == BOINCClientAdapter::HighGraphicsQualitySetting) {
-		/// TODO - what OpenGL ES 2.x quality options available? In the shader code then ?
-        }
-
-	// we need alpha blending for proper font rendering
-	OGL_DEBUG(glEnable(GL_BLEND));
-	OGL_DEBUG(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
-
-	// enable depth buffering for 3D graphics
-	OGL_DEBUG(glClearDepthf(1.0f));
-	OGL_DEBUG(glEnable(GL_DEPTH_TEST));
-	OGL_DEBUG(glDepthFunc(GL_LEQUAL));
+//	OGL_DEBUG(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
+//
+//	// drawing setup:
+//	OGL_DEBUG(glClearColor(0.0, 0.0, 0.0, 0.0)); // background is black
+////	OGL_DEBUG(glEnable(GL_CULL_FACE));
+//	OGL_DEBUG(glFrontFace(GL_CCW));
+////	OGL_DEBUG(glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST));
+//
+//	// enable opt-in quality feature
+//	if(m_BoincAdapter.graphicsQualitySetting() == BOINCClientAdapter::HighGraphicsQualitySetting) {
+//		/// TODO - what OpenGL ES 2.x quality options available? In the shader code then ?
+//        }
+//
+//	// we need alpha blending for proper font rendering
+//	OGL_DEBUG(glEnable(GL_BLEND));
+//	OGL_DEBUG(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+//
+//	// enable depth buffering for 3D graphics
+//	OGL_DEBUG(glClearDepthf(1.0f));
+//	OGL_DEBUG(glEnable(GL_DEPTH_TEST));
+//	OGL_DEBUG(glDepthFunc(GL_LEQUAL));
+//
+//	OGL_DEBUG(glEnable(GL_PROGRAM_POINT_SIZE));
+//	OGL_DEBUG(glPointSize(40));
 
 	// enable opt-in quality feature
 	if(m_BoincAdapter.graphicsQualitySetting() == BOINCClientAdapter::MediumGraphicsQualitySetting ||
@@ -743,9 +746,7 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
 //	make_snrs();
 //	make_axes();
 //	make_globe();
-
-	OGL_DEBUG(glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT));
-    }
+	}
 
 /**
  * Rendering routine:  this is what does the drawing:
@@ -779,7 +780,7 @@ void Starsphere::render(const double timeOfDay) {
 	Zrot = -360.0 * (revs - (int)revs);
 
 	// and start drawing...
-	OGL_DEBUG(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+	OGL_DEBUG(glClear(GL_COLOR_BUFFER_BIT));
 
 	// now draw the scene...
 

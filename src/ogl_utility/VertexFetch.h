@@ -26,6 +26,7 @@
 #include "framework.h"
 
 #include "IndexBuffer.h"
+#include "OGL_ID.h"
 #include "VertexBuffer.h"
 
 /**
@@ -59,7 +60,7 @@
  * \author Mike Hewson\n
  */
 
-class VertexFetch {
+class VertexFetch : public OGL_ID {
     public :
         /**
          * \brief Constructor.
@@ -87,6 +88,24 @@ class VertexFetch {
          * \brief Destructor.
          */
         virtual ~VertexFetch();
+
+        /**
+		 * \brief Obtain the OpenGL resource.
+		 *
+		 * \return a boolean indicating success of acquisition
+		 *              TRUE - resources acquired without error
+		 *              FALSE - resources were not acquired
+		 */
+		bool acquire(void);
+
+		/**
+		 * \brief Release the OpenGL resource.
+		 *
+		 * \return a boolean indicating success of release
+		 *              TRUE - resources released without error
+		 *              FALSE - resources were not released
+		 */
+		void release(void);
 
         /**
          * \brief Perform any data binding to the pipeline input.
@@ -118,6 +137,8 @@ class VertexFetch {
          */
         void detach(void);
 
+        bool isBound(void) const;
+
     private :
         // Attachment state. For our purposes any NULL buffers are deemed
         // to be always attached. Covers the case of a vertex shader solely
@@ -129,7 +150,22 @@ class VertexFetch {
         VertexBuffer* m_vertices;
         IndexBuffer* m_indices;
 
+        // The type of the/any indices used.
         GLenum m_index_type;
+
+        /**
+		 * \brief Get an OpenGL handle for this vertex array object.
+		 *
+		 * \param handle : pointer to a handle.
+		 */
+		virtual void acquire_ID(GLuint* handle) const;
+
+		/**
+		 * \brief Release to pool the OpenGL handle for the vertex array object.
+		 *
+		 * \param handle : pointer to a handle.
+		 */
+		virtual void release_ID(GLuint* handle) const;
     };
 
 /**

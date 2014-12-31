@@ -35,7 +35,7 @@
  */
 
 #define GLEW_STATIC
-#include "glew.h"
+#include <GL/glew.h>
 
 // To circumvent potential later failure of SDL_Init(), as we are not
 // not using SDL_main() as a program entry point. The SDL2 Wiki entries

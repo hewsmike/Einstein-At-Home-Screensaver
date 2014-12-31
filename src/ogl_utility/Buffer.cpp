@@ -44,7 +44,7 @@ bool Buffer::acquire(void) {
     // Check and maybe acquire handle if we don't already have one.
     if(this->ID() == OGL_ID::NO_ID) {
         // Ask OpenGL for a single buffer handle.
-        GLuint temp = 4;
+        GLuint temp = 0;
         acquire_ID(&temp);
         set_ID(temp);
 

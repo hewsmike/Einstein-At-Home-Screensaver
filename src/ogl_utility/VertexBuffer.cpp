@@ -90,44 +90,40 @@ void VertexBuffer::loadBuffer(void) const {
 
 void VertexBuffer::attach(void) {
     // Attachment only occurs if all preparations are complete.
-    if(m_attributes_mapped == true) {
-        // Ensure resource acquisition first.
-        this->acquire();
-
-        // Bind the given buffer object to pipeline state.
-        OGL_DEBUG(glBindBuffer(GL_ARRAY_BUFFER, this->ID()));
-
-        // Enable fetching for all supplied vertex attribute indices,
-        // these corresponding to 'location' definitions within the
-        // vertex shader's GLSL code.
-//        std::cout << "m_attribute_specs->size() = " << m_attribute_specs.size() << std::endl;
-//        std::cout << "GL_FLOAT = " << GL_FLOAT << std::endl;
-        for(std::vector<attribute_record>::iterator attrib = m_attribute_specs.begin();
-            attrib != m_attribute_specs.end();
-            ++attrib) {
-//            std::cout << "attrib->a_spec.attrib_index = " << attrib->a_spec.attrib_index << std::endl;
-//            std::cout << "\tattrib->a_spec.multiplicity = " << attrib->a_spec.multiplicity << std::endl;
-//            std::cout << "\tattrib->a_spec.type = " << attrib->a_spec.type << std::endl;
-//            std::cout << "\tattrib->a_spec.normalised = " << static_cast<int>(attrib->a_spec.normalised) << std::endl;
-//            std::cout << "\tattrib->stride = " << attrib->stride << std::endl;
-//            std::cout << "\tattrib->pointer = " << attrib->pointer << std::endl;
-
-            OGL_DEBUG(glEnableVertexAttribArray(attrib->a_spec.attrib_index));
-            OGL_DEBUG(glVertexAttribPointer(attrib->a_spec.attrib_index,
-                                  	  	    attrib->a_spec.multiplicity,
-											attrib->a_spec.type,
-											attrib->a_spec.normalised,
-											attrib->stride,
-											attrib->pointer));
-            }
-        }
-    else {
+    if(m_attributes_mapped == false) {
         // Mapping has not yet occurred. Do it.
         prepareAttributeMapping();
+    	}
 
-        // RECURSION !! :-)
-        this->attach();
-        }
+    // Ensure resource acquisition first.
+    this->acquire();
+
+	// Bind the given buffer object to pipeline state.
+	OGL_DEBUG(glBindBuffer(GL_ARRAY_BUFFER, this->ID()));
+
+//	OGL_DEBUG(glDisableVertexAttribArray(0));
+//	glVertexAttrib3f(0, 0.0f, 0.0f, 0.0f);
+//
+//	OGL_DEBUG(glDisableVertexAttribArray(1));
+//	glVertexAttrib3f(1, 1.0f, 1.0f, 1.0f);
+
+	// Enable fetching for all supplied vertex attribute indices,
+	// these corresponding to 'location' definitions within the
+	// vertex shader's GLSL code.
+	for(std::vector<attribute_record>::iterator attrib = m_attribute_specs.begin();
+		attrib != m_attribute_specs.end();
+		++attrib) {
+		OGL_DEBUG(glEnableVertexAttribArray(attrib->a_spec.attrib_index));
+		OGL_DEBUG(glVertexAttribPointer(attrib->a_spec.attrib_index,
+										attrib->a_spec.multiplicity,
+										attrib->a_spec.type,
+										attrib->a_spec.normalised,
+										attrib->stride,
+										attrib->pointer));
+
+		}
+	// Unbind the given buffer object from the pipeline state.
+	OGL_DEBUG(glBindBuffer(GL_ARRAY_BUFFER, OGL_ID::NO_ID));
     }
 
 void VertexBuffer::detach(void) {

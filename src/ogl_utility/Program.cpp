@@ -48,18 +48,6 @@ bool Program::acquire(void) {
         // Clear the linker log.
         linker_log = "";
 
-        // Only get a handle if none already.
-        if(this->ID() == OGL_ID::NO_ID) {
-            // Get an OpenGL handle for this program object.
-            GLuint temp = OGL_DEBUG(glCreateProgram());
-            set_ID(temp);
-            // If that handle acquisition failed the we have no other option ...
-            if(this->ID() == OGL_ID::NO_ID)  {
-                ErrorHandler::record("Program::acquire() : OpenGL handle acquisition failure !",
-                                     ErrorHandler::FATAL);
-                }
-            }
-
         // Attaching and linking shaders only occurs if both have compiled
         // successfully and neither have been marked for deletion ( which
         // includes the possibility that they may have been deleted ).
@@ -77,6 +65,19 @@ bool Program::acquire(void) {
             // Attach only if both pass muster.
             if((m_vertex_shader.status() == Shader::COMPILE_SUCCEEDED) &&
                (m_fragment_shader.status() == Shader::COMPILE_SUCCEEDED)) {
+
+            	// Only get a handle if none already.
+				if(this->ID() == OGL_ID::NO_ID) {
+					// Get an OpenGL handle for this program object.
+					GLuint temp = OGL_DEBUG(glCreateProgram());
+					set_ID(temp);
+					// If that handle acquisition failed the we have no other option ...
+					if(this->ID() == OGL_ID::NO_ID)  {
+						ErrorHandler::record("Program::acquire() : OpenGL handle acquisition failure !",
+											 ErrorHandler::FATAL);
+						}
+					}
+
                 // The shaders have compiled without error, and are
                 // not marked for deletion, so attach them.
             	std::stringstream vshader_msg;
@@ -110,24 +111,23 @@ bool Program::acquire(void) {
                     link_status = Program::LINKAGE_FAILED;
                     ErrorHandler::record("Program::acquire() : failure to GLSL link !",
                                          ErrorHandler::WARN);
-                    }
+                    // Populate the linkage log ie. retrieve linker error output.
+					// Copy to an std::string via temporary character array to avoid
+					// const semantic difficulties on the std::string c_str() method.
+					GLint log_len;
+					OGL_DEBUG(glGetProgramiv(this->ID(), GL_INFO_LOG_LENGTH, &log_len));
+					// Use extra character to account for null character terminator ( documentation unclear ).
+					GLchar* temp_log = new GLchar[log_len+1];
+					GLsizei returned_log_len;
+					OGL_DEBUG(glGetProgramInfoLog(this->ID(), log_len+1, &returned_log_len, temp_log));
 
-                // Populate the linkage log ie. retrieve linker error output.
-                // Copy to an std::string via temporary character array to avoid
-                // const semantic difficulties on the std::string c_str() method.
-                GLint log_len;
-                OGL_DEBUG(glGetProgramiv(this->ID(), GL_INFO_LOG_LENGTH, &log_len));
-                // Use extra character to account for null character terminator ( documentation unclear ).
-                GLchar* temp_log = new GLchar[log_len+1];
-                GLsizei returned_log_len;
-                OGL_DEBUG(glGetProgramInfoLog(this->ID(), log_len+1, &returned_log_len, temp_log));
+					// Account for null character terminator ( documentation unclear ).
+					temp_log[log_len] = '\0';
+					linker_log = temp_log;
 
-                // Account for null character terminator ( documentation unclear ).
-                temp_log[log_len] = '\0';
-                linker_log = temp_log;
-
-                // Dispose of the temporary character array.
-                delete[] temp_log;
+					// Dispose of the temporary character array.
+					delete[] temp_log;
+            		}
                 }
             }
         }
