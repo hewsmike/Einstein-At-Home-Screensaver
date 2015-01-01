@@ -76,6 +76,7 @@ WindowManager::WindowManager(void) {
 	m_WindowedWidth = 0;
 	m_WindowedHeight = 0;
 	m_ScreensaverMode = true;
+	m_CurrentScreenMode = WINDOWED;
     m_BoincAdapter = new BOINCClientAdapter("");
     }
 

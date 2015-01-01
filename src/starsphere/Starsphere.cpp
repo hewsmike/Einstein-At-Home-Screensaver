@@ -34,11 +34,35 @@
 
 Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
 	AbstractGraphicsEngine(sharedMemoryAreaIdentifier) {
-	m_FontResource = 0;
-	m_FontLogo1 = 0;
-	m_FontLogo2 = 0;
-	m_FontHeader = 0;
-	m_FontText = 0;
+	m_vertex_buffer = NULL;
+    m_index_buffer = NULL;
+	m_vertex = NULL;
+	m_fragment = NULL;
+	m_program = NULL;
+	m_pipeline = NULL;
+	m_vertexfetch = NULL;
+
+	m_ObservatoryDrawTimeLocal = 0;
+
+	m_FontResource = NULL;
+
+	m_vertex_shader_resource = NULL;
+	m_fragment_shader_resource = NULL;
+
+	m_FontLogo1 = NULL;
+	m_FontLogo2 = NULL;
+	m_FontHeader = NULL;
+	m_FontText = NULL;
+
+	m_CurrentWidth = 0;
+	m_CurrentHeight = 0;
+	aspect = 0;
+	m_XStartPosLeft = 0;
+	m_YStartPosTop = 0;
+	m_YOffsetLarge = 0;
+	m_CurrentRightAscension = 0;
+	m_CurrentDeclination = 0;
+	m_RefreshSearchMarker = false;
 
 	Axes=0, Stars=0, Constellations=0, Pulsars=0;
 	LLOmarker=0, LHOmarker=0, GEOmarker=0, VIRGOmarker=0;
@@ -93,7 +117,6 @@ void Starsphere::sphVertex3D(GLfloat RAdeg, GLfloat DEdeg, GLfloat radius) {
 //	glVertex3f(x, y, z);
 	return;
     }
-
 void Starsphere::sphVertex(GLfloat RAdeg, GLfloat DEdeg) {
 	sphVertex3D(RAdeg, DEdeg, sphRadius);
     }
@@ -604,6 +627,11 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
                      0.5f, -0.5f,        0.0f, 0.0f, 1.0f,
         };
 
+    GLuint index_data[] =
+    	{
+        0, 1, 2,
+    	};
+
     struct VertexBuffer::attribute_spec pos_spec = {0, 2, GL_FLOAT, GL_FALSE};
     struct VertexBuffer::attribute_spec color_spec = {1, 3, GL_FLOAT, GL_FALSE};
 
@@ -617,6 +645,8 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
     m_vertex_buffer = new VertexBuffer(&vertex_data, 3, GL_STATIC_DRAW, VertexBuffer::BY_VERTEX);
     m_vertex_buffer->addAttributeDescription(pos_spec);
     m_vertex_buffer->addAttributeDescription(color_spec);
+
+    m_index_buffer = new IndexBuffer(&index_data, 3, GL_STATIC_DRAW, GL_UNSIGNED_INT);
 
     m_vertex_buffer->acquire();
 
