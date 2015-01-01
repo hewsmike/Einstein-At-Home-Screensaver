@@ -220,7 +220,7 @@ bool WindowManager::initialize(const int width, const int height, const int fram
             }
 
         // Get a window identifier, it is needed in the event loop.
-        // m_WindowID = SDL_DEBUG(SDL_GetWindowID(m_Window));
+        m_WindowID = SDL_DEBUG(SDL_GetWindowID(m_Window));
 
         // Initial display is as a window, not fullscreen.
         m_CurrentScreenMode = WindowManager::WINDOWED;
@@ -237,7 +237,7 @@ bool WindowManager::initialize(const int width, const int height, const int fram
             ErrorHandler::record(SDL_error_string.str(), ErrorHandler::FATAL);
             }
 
-        initializeGLEW();
+
 
         std::stringstream init_version_msg;
         init_version_msg << "WindowManager::initialize() : Video driver reports GL_VERSION = " << glGetString(GL_VERSION);
@@ -246,9 +246,10 @@ bool WindowManager::initialize(const int width, const int height, const int fram
         // OK we have a window and a valid context, so initialise GLEW.
         // This matters especially if the installable device driver's function pointers need runtime
         // linkage ie. Win32 target.
+        initializeGLEW();
 
-
-        // checkContextAttributes();
+        // Display the comparison between what was requested versus what was delivered.
+        checkContextAttributes();
 
         ret_val = true;
         }
@@ -722,55 +723,55 @@ void WindowManager::setContextAttributes(void) {
 	/// abstraction ?
 
 	// Request a minimum number of multisample buffers.
-	// SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, WindowManager::NUM_MULTISAMPLE_BUFFERS));
+	SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, WindowManager::NUM_MULTISAMPLE_BUFFERS));
 
 	// Request a minimum of multisamples ( around a given pixel ).
-	// SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, WindowManager::NUM_MULTISAMPLES));
+	SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, WindowManager::NUM_MULTISAMPLES));
 
 	// Request a specific color depth.
-//	SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_RED_SIZE, WindowManager::RED_BITS));
-//	SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, WindowManager::GREEN_BITS));
-//	SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, WindowManager::BLUE_BITS));
+	SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_RED_SIZE, WindowManager::RED_BITS));
+	SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, WindowManager::GREEN_BITS));
+	SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, WindowManager::BLUE_BITS));
 
 	// Request a specific alpha channnel.
-	//SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, WindowManager::ALPHA_BITS));
+	SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, WindowManager::ALPHA_BITS));
 
 	// Request double buffering.
 	SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, WindowManager::ENABLE_DOUBLE_BUFFER));
 
 	// Request a minimum number of bits in depth buffer.
-//	SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, WindowManager::DEPTH_BITS));
+	SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, WindowManager::DEPTH_BITS));
 
 	// Create a desired OpenGL context for use with that window,
 	// noting the above attribute selections.
 	/// TODO - Need to create compile switch here for use of ES with Android etc.
-//	SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, WindowManager::CONTEXT_PROFILE_TYPE));
+	SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, WindowManager::CONTEXT_PROFILE_TYPE));
 	SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, WindowManager::OGL_MAJOR_VERSION));
 	SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, WindowManager::OGL_MINOR_VERSION));
 	}
 
 void WindowManager::checkContextAttributes(void) {
 	// Check the minimum number of multisample buffers.
-//	int SDL_MultiSampleBufferFlag = -707;
-//	SDL_DEBUG(SDL_GL_GetAttribute(SDL_GL_MULTISAMPLEBUFFERS, &SDL_MultiSampleBufferFlag));
-//	stringstream msg_MultiSampleBuffer;
-//	msg_MultiSampleBuffer << "SDL_GL_MULTISAMPLEBUFFERS granted = "
-//						  << SDL_MultiSampleBufferFlag
-//						  << " ( "
-//						  << WindowManager::NUM_MULTISAMPLE_BUFFERS
-//						  << " requested )";
-//	ErrorHandler::record(msg_MultiSampleBuffer.str(), ErrorHandler::INFORM);
-//
-//	// Check the minimum of multisamples ( around a given pixel ).
-//	int SDL_MultiSampleSamplesFlag = -707;
-//	SDL_DEBUG(SDL_GL_GetAttribute(SDL_GL_MULTISAMPLESAMPLES, &SDL_MultiSampleSamplesFlag));
-//	stringstream msg_MultiSampleSample;
-//	msg_MultiSampleSample << "SDL_GL_MULTISAMPLESAMPLES granted = "
-//						  << SDL_MultiSampleSamplesFlag
-//						  << " ( "
-//						  << WindowManager::NUM_MULTISAMPLES
-//						  << " requested )";
-//	ErrorHandler::record(msg_MultiSampleSample.str(), ErrorHandler::INFORM);
+	int SDL_MultiSampleBufferFlag = -707;
+	SDL_DEBUG(SDL_GL_GetAttribute(SDL_GL_MULTISAMPLEBUFFERS, &SDL_MultiSampleBufferFlag));
+	stringstream msg_MultiSampleBuffer;
+	msg_MultiSampleBuffer << "SDL_GL_MULTISAMPLEBUFFERS granted = "
+						  << SDL_MultiSampleBufferFlag
+						  << " ( "
+						  << WindowManager::NUM_MULTISAMPLE_BUFFERS
+						  << " requested )";
+	ErrorHandler::record(msg_MultiSampleBuffer.str(), ErrorHandler::INFORM);
+
+	// Check the minimum of multisamples ( around a given pixel ).
+	int SDL_MultiSampleSamplesFlag = -707;
+	SDL_DEBUG(SDL_GL_GetAttribute(SDL_GL_MULTISAMPLESAMPLES, &SDL_MultiSampleSamplesFlag));
+	stringstream msg_MultiSampleSample;
+	msg_MultiSampleSample << "SDL_GL_MULTISAMPLESAMPLES granted = "
+						  << SDL_MultiSampleSamplesFlag
+						  << " ( "
+						  << WindowManager::NUM_MULTISAMPLES
+						  << " requested )";
+	ErrorHandler::record(msg_MultiSampleSample.str(), ErrorHandler::INFORM);
 
 	// Check the specific color depths.
 	// Check the red color depth.
@@ -807,15 +808,15 @@ void WindowManager::checkContextAttributes(void) {
 	ErrorHandler::record(msg_BlueSize.str(), ErrorHandler::INFORM);
 
 	// Check the alpha channnel.
-//	int SDL_AlphaSizeFlag = -707;
-//	SDL_DEBUG(SDL_GL_GetAttribute(SDL_GL_ALPHA_SIZE, &SDL_AlphaSizeFlag));
-//	stringstream msg_AlphaSize;
-//	msg_AlphaSize << "SDL_GL_ALPHA_SIZE granted = "
-//				  << SDL_AlphaSizeFlag
-//				  << " ( "
-//				  << WindowManager::ALPHA_BITS
-//				  << " requested )";
-//	ErrorHandler::record(msg_AlphaSize.str(), ErrorHandler::INFORM);
+	int SDL_AlphaSizeFlag = -707;
+	SDL_DEBUG(SDL_GL_GetAttribute(SDL_GL_ALPHA_SIZE, &SDL_AlphaSizeFlag));
+	stringstream msg_AlphaSize;
+	msg_AlphaSize << "SDL_GL_ALPHA_SIZE granted = "
+				  << SDL_AlphaSizeFlag
+				  << " ( "
+				  << WindowManager::ALPHA_BITS
+				  << " requested )";
+	ErrorHandler::record(msg_AlphaSize.str(), ErrorHandler::INFORM);
 
 	// Check double buffering.
 	int SDL_DoubleBufferFlag = -707;

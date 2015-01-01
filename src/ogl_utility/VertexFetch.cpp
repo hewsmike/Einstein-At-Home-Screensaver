@@ -37,6 +37,9 @@ VertexFetch::~VertexFetch() {
 	}
 
 bool VertexFetch::acquire(void) {
+	// Assume failure.
+	bool ret_val = false;
+
 	// Check and maybe acquire handle if we don't already have one.
 	if(this->ID() == OGL_ID::NO_ID) {
 		// Ask OpenGL for a single VAO handle.
@@ -49,7 +52,10 @@ bool VertexFetch::acquire(void) {
 			ErrorHandler::record("VertexFetch::acquire() : failure to obtain identifier",
 								 ErrorHandler::FATAL);
 			}
+		ret_val = true;
 		}
+
+	return ret_val;
     }
 
 void VertexFetch::release(void) {
