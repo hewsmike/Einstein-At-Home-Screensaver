@@ -83,6 +83,10 @@ void VertexBuffer::loadBuffer(void) const {
     // Allocate space and transfer the data.
 	OGL_DEBUG(glBufferData(GL_ARRAY_BUFFER, m_size, this->data(), m_usage));
 
+	std::cout << "VertexBuffer::loadBuffer() : m_size = " << m_size << std::endl;
+
+	//OGL_DEBUG(glBufferSubData(GL_ARRAY_BUFFER,  0,  m_size, this->data()));
+
     // Unbind the buffer.
     OGL_DEBUG(glBindBuffer(GL_ARRAY_BUFFER, OGL_ID::NO_ID));
 
@@ -96,7 +100,7 @@ void VertexBuffer::attach(void) {
     	}
 
     // Ensure resource acquisition first.
-    this->acquire();
+    //this->acquire();
 
 	// Bind the given buffer object to pipeline state.
 	OGL_DEBUG(glBindBuffer(GL_ARRAY_BUFFER, this->ID()));

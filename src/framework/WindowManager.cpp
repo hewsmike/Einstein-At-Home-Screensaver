@@ -728,9 +728,9 @@ void WindowManager::setContextAttributes(void) {
 	// SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, WindowManager::NUM_MULTISAMPLES));
 
 	// Request a specific color depth.
-	SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_RED_SIZE, WindowManager::RED_BITS));
-	SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, WindowManager::GREEN_BITS));
-	SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, WindowManager::BLUE_BITS));
+//	SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_RED_SIZE, WindowManager::RED_BITS));
+//	SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, WindowManager::GREEN_BITS));
+//	SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, WindowManager::BLUE_BITS));
 
 	// Request a specific alpha channnel.
 	//SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, WindowManager::ALPHA_BITS));
@@ -739,12 +739,12 @@ void WindowManager::setContextAttributes(void) {
 	SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, WindowManager::ENABLE_DOUBLE_BUFFER));
 
 	// Request a minimum number of bits in depth buffer.
-	SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, WindowManager::DEPTH_BITS));
+//	SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, WindowManager::DEPTH_BITS));
 
 	// Create a desired OpenGL context for use with that window,
 	// noting the above attribute selections.
 	/// TODO - Need to create compile switch here for use of ES with Android etc.
-	SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, WindowManager::CONTEXT_PROFILE_TYPE));
+//	SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, WindowManager::CONTEXT_PROFILE_TYPE));
 	SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, WindowManager::OGL_MAJOR_VERSION));
 	SDL_DEBUG(SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, WindowManager::OGL_MINOR_VERSION));
 	}

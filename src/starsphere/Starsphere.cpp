@@ -614,9 +614,11 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
     m_vertex = new VertexShader(factory.createInstance("VertexTestShader")->std_string(), vertex_shader_matchings);
     m_fragment = new FragmentShader(factory.createInstance("FragmentTestShader")->std_string());
 
-    m_vertex_buffer = new VertexBuffer(reinterpret_cast<const GLvoid*>(vertex_data), 3, GL_STATIC_DRAW, VertexBuffer::BY_VERTEX);
+    m_vertex_buffer = new VertexBuffer(&vertex_data, 3, GL_STATIC_DRAW, VertexBuffer::BY_VERTEX);
     m_vertex_buffer->addAttributeDescription(pos_spec);
     m_vertex_buffer->addAttributeDescription(color_spec);
+
+    m_vertex_buffer->acquire();
 
     m_vertexfetch = new VertexFetch(m_vertex_buffer, NULL);
 
@@ -710,7 +712,7 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
 //	OGL_DEBUG(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
 //
 //	// drawing setup:
-//	OGL_DEBUG(glClearColor(0.0, 0.0, 0.0, 0.0)); // background is black
+//	OGL_DEBUG(glClearColor(1.0, 1.0, 1.0, 0.0)); // background is black
 ////	OGL_DEBUG(glEnable(GL_CULL_FACE));
 //	OGL_DEBUG(glFrontFace(GL_CCW));
 ////	OGL_DEBUG(glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST));
