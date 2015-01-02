@@ -76,22 +76,7 @@ void IndexBuffer::loadBuffer(void) const {
     OGL_DEBUG(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->ID()));
 
     // Allocate space and transfer the data.
-    std::cout << "IndexBuffer::loadBuffer() : index buffer data is (pre-load) : " << std::endl;
-
-        for(unsigned int index = 0; index < m_indices; ++index) {
-        	std::cout << "\t value = " << *(static_cast<const GLuint*>(this->data()) + index) << std::endl;
-        	}
     OGL_DEBUG(glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_size, this->data(), m_usage));
-
-    void* m_data = glMapBuffer(GL_ELEMENT_ARRAY_BUFFER,  GL_READ_ONLY);
-
-    std::cout << "IndexBuffer::loadBuffer() : index buffer data is (post-load) : " << std::endl;
-
-    for(unsigned int index = 0; index < m_indices; ++index) {
-    	std::cout << "\t value = " << *(static_cast<GLuint*>(m_data) + index) << std::endl;
-    	}
-
-    glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER);
 
     // Unbind the buffer.
     OGL_DEBUG(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, OGL_ID::NO_ID));
