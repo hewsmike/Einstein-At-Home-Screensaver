@@ -58,9 +58,9 @@
     #define SDL_MAIN_HANDLED
 #endif
 
-#include "SDL.h"
+#include <SDL2/SDL.h>
 
-#include "SDL_ttf.h"
+#include <SDL_ttf.h>
 
 /**
  * @}

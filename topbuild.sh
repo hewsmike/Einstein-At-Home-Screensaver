@@ -42,6 +42,7 @@ GLEW_VERSION=1.10.0
 LIBXML_VERSION=2.7.2
 SDL_VERSION=2.0.3
 SDL_TTF_VERSION=2.0.12
+GLM_VERSION=0.9.6.1
 
 # Target variants.
 TARGET_NONE=0
@@ -78,7 +79,8 @@ TBS_GLEW_RETRIEVED=4
 TBS_LIBXML_RETRIEVED=5
 TBS_SDL_RETRIEVED=6
 TBS_SDL_TTF_RETRIEVED=7
-TBS_RETRIEVED=8
+TBS_GLM_RETRIEVED=8
+TBS_RETRIEVED=9
 
 # No topbuild state set initially.
 TOPBUILDSTATE=$TBS_NONE
@@ -229,6 +231,30 @@ retrieve_sdl_ttf() {
 
     return 0
     }
+    
+retrieve_glm() {
+	GLM_RETRIEVE_STR=glm-$GLM_VERSION
+    GLM_RETRIEVE_FILE=$GLM_RETRIEVE_STR.zip
+    GLM_RETRIEVE_DOMAIN=http://internode.dl.sourceforge.net/projects/ogl-math/$GLM_VERSION/
+    GLM_RETRIEVE_PATH=$GLM_RETRIEVE_DOMAIN$GLM_RETRIEVE_FILE
+
+    log "Preparing GLM..."
+    mkdir -p $ROOT/retrieval/glm >> $LOGFILE || failure
+
+    cd $ROOT/retrieval || failure
+    wget $GLM_RETRIEVE_PATH >> $LOGFILE 2>&1 || failure
+    
+    # unrem this section later when I sort out 7z and zip file uncompression
+    # unzip $GLM_RETRIEVE_FILE >> $LOGFILE 2>&1 || failure
+    # rm $GLM_RETRIEVE_FILE >> $LOGFILE 2>&1 || failure
+    # substitute old source tree
+    # rm -rf glm >> $LOGFILE 2>&1 || failure
+    # mv $GLM_RETRIEVE_STR glm >> $LOGFILE 2>&1 || failure
+
+    save_topbuild_state $TBS_GLM_RETRIEVED
+
+    return 0
+    }    
 
 ### functions (utility) ####################################################
 
@@ -268,7 +294,7 @@ check_prerequisites() {
     log "Checking prerequisites..."
 
     # required toolchain
-    TOOLS="ar automake autoconf cmake cvs doxygen g++ gcc hg ld lex libtool m4 patch pkg-config svn tar valgrind wget yacc"
+    TOOLS="ar automake autoconf cmake cvs doxygen g++ gcc hg ld lex libtool m4 patch pkg-config svn tar unzip valgrind wget yacc"
 
     for tool in $TOOLS; do
         if ! ( type $tool >/dev/null 2>&1 ); then
@@ -314,6 +340,10 @@ check_retrieval() {
 
     if [ $TOPBUILDSTATE -lt $TBS_SDL_TTF_RETRIEVED ]; then
         retrieve_sdl_ttf || failure
+    fi
+    
+    if [ $TOPBUILDSTATE -lt $TBS_GLM_RETRIEVED ]; then
+        retrieve_glm || failure
     fi
 
     save_topbuild_state $TBS_RETRIEVED

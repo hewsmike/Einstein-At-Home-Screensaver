@@ -30,6 +30,7 @@ CPPFLAGS += -I$(UTILITY_SRC)
 CPPFLAGS += -I$(FRAMEWORK_SRC)
 CPPFLAGS += -I$(FRAMEWORK_INSTALL)/include/GL
 CPPFLAGS += -I$(FRAMEWORK_INSTALL)/include/SDL2
+CPPFLAGS += -I$(FRAMEWORK_INSTALL)/include/glm
 
 DEPS = Makefile
 OBJS = Buffer.o
@@ -54,8 +55,11 @@ debug: CPPFLAGS += -pg -ggdb3 -O0 -Wall -Wno-switch-enum
 release: CPPFLAGS += -DNDEBUG -ggdb3 -O3 -Wall -Wno-switch-enum
 
 # file based targets
-liboglutility.a: $(OBJS) $(UTILITY_SRC)/vmath.h
-	ar rcs liboglutility.a $(OBJS)
+#liboglutility.a: $(OBJS) $(UTILITY_SRC)/vmath.h
+#	ar rcs liboglutility.a $(OBJS)
+	
+liboglutility.a: $(OBJS)
+	ar rcs liboglutility.a $(OBJS)	
 
 Buffer.o: $(DEPS) $(UTILITY_SRC)/Buffer.cpp $(UTILITY_SRC)/Buffer.h
 	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/Buffer.cpp

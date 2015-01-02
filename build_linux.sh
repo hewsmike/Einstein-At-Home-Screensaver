@@ -52,6 +52,7 @@ BS_BUILD_GLEW=4
 BS_BUILD_LIBXML=5
 BS_BUILD_SDL=6
 BS_BUILD_SDL_TTF=7
+BS_BUILD_GLM=8
 
 # No buildstate set initially.
 BUILDSTATE=$BS_NONE
@@ -379,6 +380,24 @@ build_sdl_ttf() {
 
     return 0
     }
+    
+build_glm() {
+    if [ $BUILDSTATE -ge $BS_BUILD_GLM ]; then
+        return 0
+    fi
+
+    cd $ROOT/3rdparty/glm
+
+    log "Building GLM (this may take a while)..."
+    
+    cp -f glm.hpp $ROOT/install/include/glm/glm.hpp
+    
+    log "Successfully built and installed GLEW!"
+
+    save_build_state $BS_BUILD_GLM || failure
+
+    return 0
+    }    
 
 ### specific build functions ###########################################################################################
 

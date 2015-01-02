@@ -62,6 +62,13 @@
 						 //getchar()
 #endif
 
+///
+///	Make the glm namespace available.
+///
+
+// #include <glm/fwd.hpp>
+// #include <glm/glm.hpp>
+
 /**
  * @}
  */
