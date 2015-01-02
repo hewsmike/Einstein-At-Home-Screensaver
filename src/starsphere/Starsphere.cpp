@@ -627,8 +627,7 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
                      0.5f, -0.5f,        0.0f, 0.0f, 1.0f,
         };
 
-    GLuint index_data[] =
-    	{
+    GLuint index_data[] = {
         0, 1, 2,
     	};
 
@@ -642,17 +641,17 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
     m_vertex = new VertexShader(factory.createInstance("VertexTestShader")->std_string(), vertex_shader_matchings);
     m_fragment = new FragmentShader(factory.createInstance("FragmentTestShader")->std_string());
 
-    m_vertex_buffer = new VertexBuffer(&vertex_data, 3, GL_STATIC_DRAW, VertexBuffer::BY_VERTEX);
+    m_program = new Program(*m_vertex, *m_fragment, Program::KEEP_ON_GOOD_LINK);
+
+    m_vertex_buffer = new VertexBuffer(vertex_data, 3, GL_STATIC_DRAW, VertexBuffer::BY_VERTEX);
     m_vertex_buffer->addAttributeDescription(pos_spec);
     m_vertex_buffer->addAttributeDescription(color_spec);
-
-    m_index_buffer = new IndexBuffer(&index_data, 3, GL_STATIC_DRAW, GL_UNSIGNED_INT);
-
     m_vertex_buffer->acquire();
 
-    m_vertexfetch = new VertexFetch(m_vertex_buffer, NULL);
+    m_index_buffer = new IndexBuffer(index_data, 3, GL_STATIC_DRAW, GL_UNSIGNED_INT);
+    m_index_buffer->acquire();
 
-    m_program = new Program(*m_vertex, *m_fragment, Program::KEEP_ON_GOOD_LINK);
+    m_vertexfetch = new VertexFetch(m_vertex_buffer, m_index_buffer);
 
     m_pipeline = new Pipeline(*m_program, *m_vertexfetch);
 

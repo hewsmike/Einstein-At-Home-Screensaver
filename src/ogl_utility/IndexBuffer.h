@@ -52,12 +52,12 @@ class IndexBuffer : public Buffer {
          * \param data : pointer to the data to be stored.
          * \param indices : number of indices.
          * \param usage : one of GL_STREAM_DRAW, GL_STATIC_DRAW or GL_DYNAMIC_DRAW.
-         * \param index_type : of GL_UNSIGNED_BYTE, GL_UNSIGNED_SHORT, GL_UNISGNED_INT.
+         * \param index_type : one of GL_UNSIGNED_BYTE, GL_UNSIGNED_SHORT, GL_UNSIGNED_INT ( default ).
          */
         IndexBuffer(const GLvoid* buffer_data,
                     GLuint indices,
                     GLenum usage,
-                    GLenum index_type);
+                    GLenum index_type = GL_UNSIGNED_INT);
 
         /**
          * \brief Destructor.
@@ -74,6 +74,11 @@ class IndexBuffer : public Buffer {
          */
         void detach(void);
 
+        /*
+         * \brief The type of index used.
+         */
+        GLenum indexType(void) const;
+
     private:
         /// The number of bytes to be allocated to the buffer.
         GLsizeiptr m_size;
@@ -86,6 +91,20 @@ class IndexBuffer : public Buffer {
 
         /// The index data type.
         GLenum m_index_type;
+
+        /**
+		 * \brief Get an OpenGL handle for the buffer.
+		 *
+		 * \param handle : pointer to a handle.
+		 */
+		void acquire_ID(GLuint* handle) const;
+
+		/**
+		 * \brief Release to pool the OpenGL handle for the buffer.
+		 *
+		 * \param handle : pointer to a handle.
+		 */
+		void release_ID(GLuint* handle) const;
 
         /**
          * \brief Populate the buffer with index data.

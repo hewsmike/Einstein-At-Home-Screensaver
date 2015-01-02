@@ -63,12 +63,35 @@ IndexBuffer::~IndexBuffer() {
     Buffer::release();
     }
 
+void IndexBuffer::acquire_ID(GLuint* handle) const {
+	OGL_DEBUG(glGenBuffers(1, handle));
+	}
+
+void IndexBuffer::release_ID(GLuint* handle) const {
+	OGL_DEBUG(glDeleteBuffers(1, handle));
+    }
+
 void IndexBuffer::loadBuffer(void) const {
     // Bind this buffer to the specified target.
     OGL_DEBUG(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->ID()));
 
     // Allocate space and transfer the data.
+    std::cout << "IndexBuffer::loadBuffer() : index buffer data is (pre-load) : " << std::endl;
+
+        for(unsigned int index = 0; index < m_indices; ++index) {
+        	std::cout << "\t value = " << *(static_cast<const GLuint*>(this->data()) + index) << std::endl;
+        	}
     OGL_DEBUG(glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_size, this->data(), m_usage));
+
+    void* m_data = glMapBuffer(GL_ELEMENT_ARRAY_BUFFER,  GL_READ_ONLY);
+
+    std::cout << "IndexBuffer::loadBuffer() : index buffer data is (post-load) : " << std::endl;
+
+    for(unsigned int index = 0; index < m_indices; ++index) {
+    	std::cout << "\t value = " << *(static_cast<GLuint*>(m_data) + index) << std::endl;
+    	}
+
+    glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER);
 
     // Unbind the buffer.
     OGL_DEBUG(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, OGL_ID::NO_ID));
@@ -85,3 +108,7 @@ void IndexBuffer::detach(void) {
     // Unbind the given buffer object from pipeline state.
 	OGL_DEBUG(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, OGL_ID::NO_ID));
     }
+
+GLenum IndexBuffer::indexType(void) const {
+	return m_index_type;
+	}

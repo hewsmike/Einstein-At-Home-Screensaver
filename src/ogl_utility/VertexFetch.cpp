@@ -25,11 +25,16 @@
 
 #include <iostream>
 
-VertexFetch::VertexFetch(VertexBuffer* vertices, IndexBuffer* indices, GLenum index_type) :
+VertexFetch::VertexFetch(VertexBuffer* vertices, IndexBuffer* indices) :
                           m_vertices(vertices),
-                          m_indices(indices),
-                          m_index_type(index_type) {
-    is_attached = false;
+                          m_indices(indices) {
+	// Check to see that at least a vertex buffer was provided.
+	if(m_vertices == NULL) {
+		ErrorHandler::record("VertexFetch::VertexFetch() : NULL VertexBuffer pointer provided !",
+		                     ErrorHandler::FATAL);
+		}
+
+	is_attached = false;
     }
 
 VertexFetch::~VertexFetch() {
@@ -99,9 +104,9 @@ void VertexFetch::trigger(GLenum primitive, GLsizei count) {
 
     // Provokes vertex shader activity for count invocations,
 	// buffer use depending upon that which is bound.
-	if(m_indices != NULL) {
+	if((m_vertices != NULL) && (m_indices != NULL)) {
         // Both GL_ARRAY_BUFFER and GL_ELEMENT_ARRAY_BUFFER targets are bound.
-		OGL_DEBUG(glDrawElements(primitive, 0, count, m_indices->data()));
+		OGL_DEBUG(glDrawElements(primitive, count, GL_UNSIGNED_INT, 0));
 	    }
     else {
         // Either only GL_ARRAY_BUFFER target bound, or none at all.

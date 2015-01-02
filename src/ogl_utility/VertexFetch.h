@@ -43,17 +43,14 @@
  *                        set but not used/relevant. Use if a vertex shader will
  *                        provide vertex attributes.
  *        (2) VertexFetch(NON-NULL) - vertex buffer set to the given NON-NULL
- *                                    address, index buffer set to NULL, index
- *                                    type set but not used/relevant.
+ *                                    address, index buffer set to NULL. Use if
+ *                                    geometry is straightforward.
  *        (3) VertexFetch(NON-NULLA, NON-NULLB) - vertex buffer set to the
  *                                                given NON-NULLA address, index
  *                                                buffer set to the given
- *                                                NON-NULLB address, index type
- *                                                set to GL_UNSIGNED_SHORT
- *        (4) VertexFetch(NON-NULLA, NON-NULLB, INDEX_TYPE)
- *                          - vertex buffer set to the given NON-NULLA address,
- *                            index buffer set to the given NON-NULLB address,
- *                            index type set to INDEX_TYPE
+ *                                                NON-NULLB address. Use if a
+ *                                                complex geometry needs a
+ *                                                selection of vertices.
  *
  * \see Buffer
  *
@@ -72,17 +69,9 @@ class VertexFetch : public OGL_ID {
          * \param indices : a pointer to an index buffer. This may be NULL
          *                  if no indices are to be used, and defaults to
          *                  NULL if not provided.
-         * \param index_type : one of the accepted OpenGL ES 2.x enumerants
-         *                     for index data type :
-         *                          GL_UNSIGNED_BYTE
-         *                          GL_UNSIGNED_SHORT
-         *                          GL_UNSIGNED_INT
-         *                     This field is ignored if indices = NULL, and
-         *                     defaults to GL_UNSIGNED_SHORT if not provided.
          */
         VertexFetch(VertexBuffer* vertices = NULL,
-                    IndexBuffer* indices = NULL,
-                    GLenum index_type = GL_UNSIGNED_SHORT);
+                    IndexBuffer* indices = NULL);
 
         /**
          * \brief Destructor.
@@ -149,9 +138,6 @@ class VertexFetch : public OGL_ID {
         // The given Buffer pointers.
         VertexBuffer* m_vertices;
         IndexBuffer* m_indices;
-
-        // The type of the/any indices used.
-        GLenum m_index_type;
 
         /**
 		 * \brief Get an OpenGL handle for this vertex array object.

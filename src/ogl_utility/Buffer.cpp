@@ -41,7 +41,7 @@ Buffer::~Buffer() {
     }
 
 bool Buffer::acquire(void) {
-    // Check and maybe acquire handle if we don't already have one.
+	// Check and maybe acquire handle if we don't already have one.
     if(this->ID() == OGL_ID::NO_ID) {
         // Ask OpenGL for a single buffer handle.
         GLuint temp = 0;
@@ -58,6 +58,7 @@ bool Buffer::acquire(void) {
     // Only load if not already done.
     if(acquire_flag == false) {
         // Use the handle and load data.
+    	/// TODO - check return value to see if load did succeed !
         loadBuffer();
         // Denote that acquisition succeeded.
         acquire_flag = true;

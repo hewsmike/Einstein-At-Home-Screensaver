@@ -44,7 +44,6 @@ void Pipeline::utilise(GLenum primitive, GLsizei count) {
 
     	if(m_vertex_fetch.isBound() != true) {
     		m_vertex_fetch.attach();
-
     		}
 
         OGL_DEBUG(glUseProgram(m_program.ID()));
