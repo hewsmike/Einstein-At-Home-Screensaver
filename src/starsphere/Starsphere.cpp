@@ -641,7 +641,7 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
     m_vertex = new VertexShader(factory.createInstance("VertexTestShader")->std_string(), vertex_shader_matchings);
     m_fragment = new FragmentShader(factory.createInstance("FragmentTestShader")->std_string());
 
-    m_program = new Program(*m_vertex, *m_fragment, Program::KEEP_ON_GOOD_LINK);
+    m_program = new Program(*m_vertex, *m_fragment, Program::RELEASE_ON_GOOD_LINK);
 
     m_vertex_buffer = new VertexBuffer(vertex_data, 3, GL_STATIC_DRAW, VertexBuffer::BY_VERTEX);
     m_vertex_buffer->addAttributeDescription(pos_spec);
