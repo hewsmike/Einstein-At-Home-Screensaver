@@ -153,12 +153,12 @@ bool Shader::compile(void) {
 
 			if(log_len > 0) {
 				// Use extra character to account for null character terminator ( documentation unclear ).
-				GLchar* temp_log = new GLchar[log_len+1];
+				GLchar* temp_log = new GLchar[log_len];
 				GLsizei returned_log_len = 0;
-				OGL_DEBUG(glGetShaderInfoLog(this->ID(), log_len+1, &returned_log_len, temp_log));
+				OGL_DEBUG(glGetShaderInfoLog(this->ID(), log_len, &returned_log_len, temp_log));
 
 				// Account for null character terminator ( documentation unclear ).
-				temp_log[log_len] = '\0';
+				// temp_log[log_len] = '\0';
 				compile_log = temp_log;
 
 				// Dispose of the temporary character array.

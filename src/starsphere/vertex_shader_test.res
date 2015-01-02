@@ -7,6 +7,8 @@ in vec3 color;
 // the "out" is now "varying"
 out vec3 pass_color;
 
+blah
+
 void main()
 {
   gl_Position = vec4(position, 0.0, 1.0);
