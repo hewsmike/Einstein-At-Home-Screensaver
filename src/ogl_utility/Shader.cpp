@@ -19,6 +19,7 @@
  ***************************************************************************/
 
 #include <iostream>
+#include <sstream>
 
 #include "Shader.h"
 
@@ -82,17 +83,7 @@ bool Shader::acquire(void) {
 
         // Only compile if never attempted.
         if(comp_status == Shader::NEVER_COMPILED) {
-        	comp_status = COMPILE_SUCCEEDED;
-            ret_val = compile();
-
-            // Examine the result.
-            if(ret_val != true ) {
-                comp_status = COMPILE_FAILED;
-                ErrorHandler::record("Shader::acquire() : failure to GLSL compile !",
-                                     ErrorHandler::WARN);
-                }
-
-
+        	ret_val = compile();
             }
         }
 
@@ -129,6 +120,7 @@ bool Shader::isDeleted(void) const {
 bool Shader::compile(void) {
     // Assume compile failure
     bool ret_val = false;
+    comp_status = COMPILE_FAILED;
 
     // Clear the compilation log.
     compile_log = "";
@@ -142,23 +134,47 @@ bool Shader::compile(void) {
         GLint c_status;
         OGL_DEBUG(glGetShaderiv(this->ID(), GL_COMPILE_STATUS, &c_status));
         if(c_status == GL_TRUE) {
-            ret_val = true;
+        	// Compile good.
+        	comp_status = COMPILE_SUCCEEDED;
+        	ret_val = true;
             }
         else {
-			// Populate the compilation log ie. retrieve compiler error output.
+        	// Populate the compilation log ie. retrieve compiler error output.
 			// Copy to an std::string via temporary character array to avoid
 			// const semantic difficulties on the std::string c_str() method.
+        	// The log length established by this call INCLUDES a null-termination.
 			GLint log_len;
 			OGL_DEBUG(glGetShaderiv(this->ID(), GL_INFO_LOG_LENGTH, &log_len));
 
+			// Strictly positive log length indicates an error log is available
 			if(log_len > 0) {
-				// Use extra character to account for null character terminator ( documentation unclear ).
+				// Create temporary character array to receive the error log.
 				GLchar* temp_log = new GLchar[log_len];
+
+				// The returned log length DOES NOT INCLUDE a null temination.
 				GLsizei returned_log_len = 0;
+				// Having log-len as the second parameter here limits the write to temp_log
+				// ie. stops buffer over-run.
 				OGL_DEBUG(glGetShaderInfoLog(this->ID(), log_len, &returned_log_len, temp_log));
 
-				// Account for null character terminator ( documentation unclear ).
-				// temp_log[log_len] = '\0';
+				// Is the returned error log of expected length ?
+				// Bear in mind that we expect a difference of one character for null termination.
+				if(log_len != returned_log_len + 1) {
+					std::stringstream error_log_len_msg;
+					error_log_len_msg << "Shader::compile() : error log length = "
+									  << returned_log_len + 1
+									  << "("
+									  << log_len
+									  << " expected)";
+					/// TODO - should this be FATAL ?
+					ErrorHandler::record(error_log_len_msg.str(),
+					                     ErrorHandler::WARN);
+					}
+
+				// Paranoia !
+				temp_log[log_len -1] = '\0';
+
+				// Store the log.
 				compile_log = temp_log;
 
 				// Dispose of the temporary character array.
@@ -166,6 +182,40 @@ bool Shader::compile(void) {
 				}
         	}
         }
+
+    // Some improved reporting.
+    ErrorHandler::message_type info_level = ErrorHandler::INFORM;
+    std::stringstream shader_compile_error_msg;
+    shader_compile_error_msg << "Shader::compile() : ";
+
+    if(this->type() == GL_VERTEX_SHADER) {
+        	shader_compile_error_msg << "GL_VERTEX_SHADER";
+        	}
+	if(this->type() == GL_FRAGMENT_SHADER) {
+            shader_compile_error_msg << "GL_FRAGMENT_SHADER";
+        	}
+
+	shader_compile_error_msg << " ( ID = "
+    						 << this->ID()
+							 << " ) did ";
+
+    if(this->status() != Shader::COMPILE_SUCCEEDED) {
+    	info_level = ErrorHandler::WARN;
+		shader_compile_error_msg <<	"not compile !!\n"
+								 << "Compile log is as follows :\n"
+								 << "++++++++++++++++++++++++++++++++++++++++++++++++++++++\n"
+								 << this->compileLog()
+								 << "------------------------------------------------------\n"
+								 << "Shader source code is as follows :\n"
+								 << "------------------------------------------------------\n"
+								 << this->source()
+								 << "++++++++++++++++++++++++++++++++++++++++++++++++++++++";
+		}
+    else {
+    	shader_compile_error_msg <<	"compile ... ";
+    	}
+
+    ErrorHandler::record(shader_compile_error_msg.str(), info_level);
 
     return ret_val;
     }
