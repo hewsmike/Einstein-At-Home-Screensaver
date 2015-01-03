@@ -101,10 +101,10 @@ bool Program::acquire(void) {
                     link_status = Program::LINKAGE_SUCCEEDED;
                     // If this behaviour previously selected, then release the shaders.
                     /// TODO - enable this after other testing.
-//                    if(m_dispose == Program::RELEASE_ON_GOOD_LINK) {
-//                        m_vertex_shader.release();
-//                        m_fragment_shader.release();
-//                        }
+                    if(m_dispose == Program::DELETE_ON_GOOD_LINK) {
+                        m_vertex_shader.release();
+                        m_fragment_shader.release();
+                        }
                     ret_val = true;
                     }
                 else {

@@ -50,8 +50,10 @@ class Program : public OGL_ID {
                            LINKAGE_FAILED,
                            LINKAGE_SUCCEEDED};
 
+        // NB DELETE_ON_GOOD_LINK means the OpenGL state machine marks an OpenGL shader
+        // object for deletion. This does not refer to any client source code entity.
         enum shaderDisposition {KEEP_ON_GOOD_LINK,
-                                RELEASE_ON_GOOD_LINK};
+                                DELETE_ON_GOOD_LINK};
 
         /**
          * \brief Constructor.

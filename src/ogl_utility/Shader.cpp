@@ -91,7 +91,8 @@ bool Shader::acquire(void) {
     }
 
 void Shader::release(void) {
-    // Inform OpenGL that we no longer need this specific shader handle.
+    // NB This means the OpenGL state machine marks an OpenGL shader object
+	// for deletion. This does not refer to any client source code entity.
 	OGL_DEBUG(glDeleteShader(this->ID()));
     // Set our handle store to safe value.
     set_ID(OGL_ID::NO_ID);
