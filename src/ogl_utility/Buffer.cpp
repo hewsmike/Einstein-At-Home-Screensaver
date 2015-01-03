@@ -23,7 +23,7 @@
 
 #include <iostream>
 
-Buffer::Buffer(const GLvoid* buffer_data) {
+Buffer::Buffer(const GLvoid& buffer_data, GLuint bytes) {
     // Ensure an actual data source was provided.
     if(buffer_data != NULL) {
         m_data = buffer_data;
@@ -32,6 +32,9 @@ Buffer::Buffer(const GLvoid* buffer_data) {
         ErrorHandler::record("Buffer::Buffer() : NULL data pointer provided.",
                              ErrorHandler::FATAL);
         }
+
+    // Remember the buffer size in bytes.
+    m_size = bytes;
 
     // Initially nothing acquired.
     acquire_flag = false;
@@ -79,6 +82,10 @@ void Buffer::release(void) {
     acquire_flag = false;
     }
 
-const GLvoid* Buffer::data(void) const {
+const GLvoid& Buffer::data(void) const {
     return m_data;
+    }
+
+GLuint Buffer::size(void) const {
+    return m_size;
     }
