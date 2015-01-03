@@ -61,28 +61,6 @@ class VertexBuffer : public Buffer {
         enum data_mix {BY_VERTEX,
                        BY_ATTRIBUTE};
 
-        struct attribute_spec {
-            // The index of the attribute in the vertex fetching.
-            GLuint attrib_index;
-            // Number of components for this attribute.
-            GLint multiplicity;
-            // The data type of each component of this attribute.
-            // Valid values are :
-            // GL_BYTE
-            // GL_UNSIGNED_BYTE
-            // GL_SHORT
-            // GL_UNSIGNED_SHORT
-            // GL_FIXED
-            // GL_FLOAT
-            GLenum type;
-            // For integer data types only, whether values are normalised
-            // with respect to the type range.
-            // GL_TRUE signed integers map to [-1, +1]
-            // unsigned integers map to [0, +1]
-            // GL_FALSE no normalisation, directly map to floats.
-            GLboolean normalised;
-            };
-
         /**
          * \brief Constructor. Will fail fatally for the application if one or
          *        more of the following applies :
@@ -108,29 +86,22 @@ class VertexBuffer : public Buffer {
         /**
          * \brief The number of vertices represented in this buffer.
          */
-        GLuint vertexCount(void) const;
-
-        /**
-         * \brief Add an attribute description.
-         *
-         * CRUCIAL : By sufficient calls to this method, present ALL
-         * attributes IN THEIR SEQUENCE of storage within the given buffer.
-         * ( The index specified within the 'attribute_spec' structure is not
-         * relevant to this ).
-         *
-         * \param specification : structure describing the attribute data.
-         */
-        void addAttributeDescription(attribute_spec specification);
+        GLuint size(void) const;
 
         /**
          * \brief Perform any data binding to the pipeline input.
          */
-        void attach(void);
+        void bind(void);
 
         /**
          * \brief Remove any data binding to the pipeline input.
          */
-        void detach(void);
+        void unbind(void);
+
+        /**
+		 * \brief What is the type of data mixing in this buffer?
+		 */
+        enum data_mix mix(void) const;
 
     private:
         /// The number of bytes to be allocated to the buffer.
@@ -141,12 +112,6 @@ class VertexBuffer : public Buffer {
 
         /// The number of vertices represented.
         GLuint m_vertex_count;
-
-        /// Flag indicating if buffer attribute mapping has been done.
-        bool m_attributes_mapped;
-
-        /// The total length in bytes of all the attributes.
-        GLuint m_attribute_length_sum;
 
         /// The manner of data interleaving.
         data_mix m_mix;
@@ -169,22 +134,6 @@ class VertexBuffer : public Buffer {
          * \brief Populate the buffer with vertex data.
          */
         virtual void loadBuffer(void) const;
-
-        struct attribute_record {attribute_spec a_spec;     // An attribute specification.
-                                 GLuint length;             // The byte length of this attribute (how many x how long).
-                                 GLsizei stride;            // The byte gap between this attribute type in the buffer.
-                                 GLvoid* pointer;           // The byte offset of the FIRST of this attribute in the buffer.
-                                 };
-
-        // Storage for all the attribute specifications.
-        std::vector<attribute_record> m_attribute_specs;
-
-        /**
-         * \brief Create full/detailed mapping of attribute positions within
-         * the buffer, based upon any given vertex attribute
-         * specifications and choice of data mixing.
-         */
-        void prepareAttributeMapping(void);
     };
 
 /**

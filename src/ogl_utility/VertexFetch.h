@@ -25,6 +25,7 @@
 
 #include "framework.h"
 
+#include "AttributeInputAdapter.h"
 #include "IndexBuffer.h"
 #include "OGL_ID.h"
 #include "VertexBuffer.h"
@@ -36,7 +37,8 @@
 
 /**
  * \brief This base class declares public methods to deal with the
- *        OpenGL ES 2.0 pipeline vertex fetch functionality.
+ *        OpenGL ES 2.0 pipeline vertex fetch functionality ie.
+ *        this wraps Vertex Array Objects (VAO's).
  *
  *  Common use cases of constructor :
  *        (1) VertexFetch() - vertex and index buffers set to NULL, index type
@@ -59,7 +61,7 @@
 
 class VertexFetch : public OGL_ID {
     public :
-        /**
+		/**
          * \brief Constructor.
          *
          * \param vertices : a pointer to vertex buffer. This may be NULL
@@ -69,9 +71,13 @@ class VertexFetch : public OGL_ID {
          * \param indices : a pointer to an index buffer. This may be NULL
          *                  if no indices are to be used, and defaults to
          *                  NULL if not provided.
+         * \param adapter : a reference to a suitable AttributeInputAdapter
+         * 					which contains the relevant correspondences b/w
+         * 					vertex buffers and
          */
         VertexFetch(VertexBuffer* vertices = NULL,
-                    IndexBuffer* indices = NULL);
+                    IndexBuffer* indices = NULL,
+					AttributeInputAdapter* adapter);
 
         /**
          * \brief Destructor.
@@ -99,7 +105,16 @@ class VertexFetch : public OGL_ID {
         /**
          * \brief Perform any data binding to the pipeline input.
          */
-        void attach(void);
+        void bind(void);
+
+        /**
+         * \brief Remove any data binding to the pipeline input.
+         *
+         *      Must be invoked after rendering using the provided buffer,
+         * and before any other pipeline activity, in order to properly reset
+         * the vertex fetching state.
+         */
+        void unbind(void);
 
         /**
          * \brief Trigger pipeline activity. Attachment occurs automatically
@@ -118,14 +133,12 @@ class VertexFetch : public OGL_ID {
         void trigger(GLenum primitive, GLsizei count);
 
         /**
-         * \brief Remove any data binding to the pipeline input.
-         *
-         *      Must be invoked after rendering using the provided buffer,
-         * and before any other pipeline activity, in order to properly reset
-         * the vertex fetching state.
-         */
-        void detach(void);
-
+		 * \brief Is the underlying vertex array object
+		 *
+		 * \return a boolean indicating success of release
+		 *              TRUE - resources released without error
+		 *              FALSE - resources were not released
+		 */
         bool isBound(void) const;
 
     private :
@@ -133,11 +146,16 @@ class VertexFetch : public OGL_ID {
         // to be always attached. Covers the case of a vertex shader solely
         // providing vertex attributes. A true value here indicates that
         // the issue has been adressed successfully.
-        bool is_attached;
+        bool m_bound_flag;
 
         // The given Buffer pointers.
         VertexBuffer* m_vertices;
         IndexBuffer* m_indices;
+
+        AttributeInputAdapter& m_adapter;
+
+        /// The total length in bytes of all the attributes.
+		GLuint m_attribute_length_sum;
 
         /**
 		 * \brief Get an OpenGL handle for this vertex array object.
@@ -152,6 +170,27 @@ class VertexFetch : public OGL_ID {
 		 * \param handle : pointer to a handle.
 		 */
 		virtual void release_ID(GLuint* handle) const;
+
+		struct attribute_record {AttributeInputAdapter::attribute_spec a_spec;     // An attribute specification.
+								 GLuint length;             // The byte length of this attribute (how many x how long).
+								 GLsizei stride;            // The byte gap between this attribute type in the buffer.
+								 GLvoid* pointer;           // The byte offset of the FIRST of this attribute in the buffer.
+								 };
+
+		// Storage for all the attribute specifications.
+		std::vector<attribute_record> m_attribute_specs;
+
+		/*
+		 * \brief
+		 */
+		void processAttributeDescriptions(void);
+
+		/**
+		 * \brief Create full/detailed mapping of attribute positions within
+		 * the vertex buffer, based upon any given vertex attribute
+		 * specifications and choice of data mixing.
+		 */
+		void prepareAttributeMapping(void);
     };
 
 /**

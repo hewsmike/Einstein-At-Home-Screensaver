@@ -22,23 +22,9 @@
 
 #include "ErrorHandler.h"
 
-VertexShader::VertexShader(const std::string& source, std::vector<std::pair<GLuint, std::string> >& attribs ) :
-              Shader(GL_VERTEX_SHADER, source),
-              m_attribs(attribs) {
+VertexShader::VertexShader(const std::string& source) :
+              Shader(GL_VERTEX_SHADER, source) {
     }
 
 VertexShader::~VertexShader() {
-    }
-
-GLuint VertexShader::attribCount(void) const {
-    return m_attribs.size();
-    }
-
-std::pair<GLuint, std::string> VertexShader::getAttrib(GLuint index) const {
-    // Check were are not asking an attribute we don't have.
-    if(index >= this->attribCount()) {
-        ErrorHandler::record("VertexShader::getAttrib() : bad attribute request !", ErrorHandler::WARN);
-        }
-
-    return m_attribs.at(index);
     }

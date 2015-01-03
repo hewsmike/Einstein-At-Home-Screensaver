@@ -43,6 +43,7 @@
 #include "Program.h"
 #include "VertexBuffer.h"
 #include "VertexFetch.h"
+#include "VertexShader.h"
 #include "WindowManager.h"
 
 #include "SDL_ttf.h"

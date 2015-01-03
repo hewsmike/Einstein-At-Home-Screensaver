@@ -23,6 +23,8 @@
 
 #include "ogl_utility.h"
 
+#include "AttributeInputAdapter.h"
+#include "FragmentShader.h"
 #include "OGL_ID.h"
 #include "VertexShader.h"
 
@@ -64,18 +66,30 @@ class Program : public OGL_ID {
          * \param fragment_shader : reference to an existing Shader object,
          *                          assumed to take on the role of an
          *                          OpenGL ES 2.0 fragment shader.
+         * \param adapter : a reference to an AttributeInputAdapter.
          * \param dispose : one of the shaderDisposition enumerants indicating
          *                  desired fate of supplied shaders after any successful
          *                  linkage.
          */
         Program(VertexShader& vertex_shader,
                 Shader& fragment_shader,
+				AttributeInputAdapter& adapter,
                 shaderDisposition dispose);
 
         /**
          * \brief Destructor.
          */
         virtual ~Program();
+
+        /**
+		 * \brief Use the underlying OpenGL program object.
+		 */
+		void bind(void) const;
+
+		/**
+		 * \brief Don't use the underlying OpenGL program object.
+		 */
+		void unbind(void) const;
 
         /**
          * \brief Obtains the program object resources.
@@ -134,7 +148,10 @@ class Program : public OGL_ID {
         VertexShader& m_vertex_shader;
 
         /// The fragment shader reference.
-        Shader& m_fragment_shader;
+        FragmentShader& m_fragment_shader;
+
+        /// The AttributeInputAdapter reference.
+        AttributeInputAdapter& m_adapter;
 
         /// Indicator of current linkage state.
         linkageState link_status;

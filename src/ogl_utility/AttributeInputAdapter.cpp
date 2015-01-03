@@ -18,56 +18,33 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef VERTEX_SHADER_H_
-#define VERTEX_SHADER_H_
-
-#include "ogl_utility.h"
-
-#include "Shader.h"
-
-#include <string>
-#include <vector>
+#include <iostream>
+#include <sstream>
 
 #include "AttributeInputAdapter.h"
 
-/**
- * \addtogroup ogl_utility OGL_Utility
- * @{
- */
+#include "ErrorHandler.h"
 
-/**
- * \brief This interface declares public methods to deal with OpenGL
- *        vertex shader objects.
- *
- *      It's a wrapper class to especially manage acquisition and
- * release of OpenGL resources.
- *
- * \see Shader
- *
- * \author Mike Hewson\n
- */
+AttributeInputAdapter::AttributeInputAdapter(void) {
 
-class VertexShader : public Shader {
-    public :
-        /**
-         * \brief Constructor
-         *
-         * \param source - the shader's source code.
-         * \param attribs - a
-         */
-        VertexShader(const std::string& source);
+    }
 
-        /**
-         * \brief Destructor
-         */
-        virtual ~VertexShader();
+AttributeInputAdapter::~AttributeInputAdapter() {
 
-    private :
+    }
 
-	};
+void AttributeInputAdapter::addMatching(struct attribute_spec& spec) {
+	m_matchings.push_back(spec);
+	}
 
-/**
- * @}
- */
+bool AttributeInputAdapter::getAttributeSpecAt(GLuint index, struct attribute_spec* spec) const {
+    bool ret_val = false;
 
-#endif /*VERTEX_SHADER_H_*/
+    spec = m_matchings[index];
+
+    return ret_val;
+	}
+
+GLuint AttributeInputAdapter::size(void) const {
+	return m_matchings.size();
+	}

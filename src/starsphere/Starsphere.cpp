@@ -28,9 +28,16 @@
 
 #include "Starsphere.h"
 
+#include "AttributeInputAdapter.h"
 #include "ErrorHandler.h"
-#include "ogl_utility.h"
+#include "FragmentShader.h"
+#include "IndexBuffer.h"
+#include "Pipeline.h"
+#include "Program.h"
 #include "ResourceFactory.h"
+#include "VertexBuffer.h"
+#include "VertexFetch.h"
+#include "VertexShader.h"
 
 Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
 	AbstractGraphicsEngine(sharedMemoryAreaIdentifier) {
@@ -620,6 +627,7 @@ void Starsphere::resize(const int width, const int height) {
 void Starsphere::initialize(const int width, const int height, const Resource* font) {
     ResourceFactory factory;
 
+    // The vertex data in client space.
     GLfloat vertex_data[] = {
         // position ( x  ,   y  ) color ( R,    G,    B  )
                      0.0f,  0.5f,        1.0f, 0.0f, 0.0f,
@@ -627,59 +635,47 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
                      0.5f, -0.5f,        0.0f, 0.0f, 1.0f,
         };
 
+    // Specify the attributes of the position data for each vertex. Within the VAO this appears at
+	// attribute location 0, it maps to the input variable 'position' within the vertex shader,
+    // has 2 elements ( x & y ) of float type with no normalisation.
+	struct AttributeInputAdapter::attribute_spec pos_spec = {0, "position", 2, GL_FLOAT, GL_FALSE};
+
+	// Specify the attributes of the color data for each vertex. Within the VAO this appears at
+	// attribute location 1, it maps to the variable 'color' within the vertex shader,
+	// has 3 elements ( RGB ) of float type with no normalisation.
+	struct AttributeInputAdapter::attribute_spec color_spec = {1, "color", 3, GL_FLOAT, GL_FALSE};
+
+	// Create and populate an AttributeInputAdapter.
+	AttributeInputAdapter* m_adapter = new AttributeInputAdapter();
+	m_adapter->addMatching(pos_spec);
+	m_adapter->addMatching(color_spec);
+
+    // The index data in client space ie. the order in which the above vertices are rendered.
     GLuint index_data[] = {
         0, 1, 2,
     	};
 
-    struct VertexBuffer::attribute_spec pos_spec = {0, 2, GL_FLOAT, GL_FALSE};
-    struct VertexBuffer::attribute_spec color_spec = {1, 3, GL_FLOAT, GL_FALSE};
+    // Make a vertex shader from a string in our resource cache, with knowledge of the attribute/variable links.
+    m_vertex = new VertexShader(factory.createInstance("VertexTestShader")->std_string());
 
-    std::vector<std::pair<GLuint, std::string> > vertex_shader_matchings;
-    vertex_shader_matchings.push_back(std::make_pair(0, "position"));
-    vertex_shader_matchings.push_back(std::make_pair(1, "color"));
-
-    m_vertex = new VertexShader(factory.createInstance("VertexTestShader")->std_string(), vertex_shader_matchings);
+    // This is a pass through fragment shader. We need one to have a functioning pipeline at all.
     m_fragment = new FragmentShader(factory.createInstance("FragmentTestShader")->std_string());
 
-    m_program = new Program(*m_vertex, *m_fragment, Program::RELEASE_ON_GOOD_LINK);
+    // Make a program using the above shaders, mark the corresponding OpenGL shader objects for deletion.
+    m_program = new Program(*m_vertex, *m_fragment, m_adapter, Program::DELETE_ON_GOOD_LINK);
 
+    // This creates an OpenGL Vertex Array Object ( VAO ) and includes the
     m_vertex_buffer = new VertexBuffer(vertex_data, 3, GL_STATIC_DRAW, VertexBuffer::BY_VERTEX);
-    m_vertex_buffer->addAttributeDescription(pos_spec);
-    m_vertex_buffer->addAttributeDescription(color_spec);
     m_vertex_buffer->acquire();
 
     m_index_buffer = new IndexBuffer(index_data, 3, GL_STATIC_DRAW, GL_UNSIGNED_INT);
     m_index_buffer->acquire();
 
-    m_vertexfetch = new VertexFetch(m_vertex_buffer, m_index_buffer);
+    m_vertexfetch = new VertexFetch(m_vertex_buffer, m_index_buffer, m_adapter);
 
     m_pipeline = new Pipeline(*m_program, *m_vertexfetch);
 
     m_program->acquire();
-
-    if(m_vertex->status() != Shader::COMPILE_SUCCEEDED) {
-    	stringstream vertex_log;
-    	vertex_log << "Starsphere::initialize() : vertex shader did not compile !!" << std::endl
-                   << "Compile log is as follows :\n"
-                   << "------------------------------------------------------\n"
-                   << m_vertex->compileLog()
-                   << "------------------------------------------------------"
-                   << std::endl;
-        ErrorHandler::record(vertex_log.str(), ErrorHandler::INFORM);
-        std::cout << m_vertex->source() << std::endl;
-    	}
-
-    if(m_fragment->status() != Shader::COMPILE_SUCCEEDED) {
-    	stringstream fragment_log;
-    	fragment_log << "Starsphere::initialize() : fragment shader did not compile !!" << std::endl
-					 << "Compile log follows :\n"
-					 << "------------------------------------------------------\n"
-					 << m_fragment->compileLog()
-					 << "------------------------------------------------------"
-					 << std::endl;
-    	ErrorHandler::record(fragment_log.str(), ErrorHandler::INFORM);
-    	std::cout << m_fragment->source() << std::endl;
-    	}
 
     if(m_program->status() != Program::LINKAGE_SUCCEEDED) {
     	stringstream linking_log;
@@ -691,6 +687,7 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
 					<< std::endl;
     	ErrorHandler::record(linking_log.str(), ErrorHandler::INFORM);
     	}
+
     m_CurrentWidth = width;
     m_CurrentHeight = height;
     m_FontResource = font;

@@ -27,9 +27,11 @@
 
 Program::Program(VertexShader& vertex_shader,
                  Shader& fragment_shader,
+				 AttributeInputAdapter& adapter,
                  shaderDisposition dispose) :
                     m_vertex_shader(vertex_shader),
                     m_fragment_shader(fragment_shader),
+					m_adapter(adapter),
                     m_dispose(dispose) {
     // Initially unlinked.
     link_status = Program::NEVER_LINKED;
@@ -38,6 +40,15 @@ Program::Program(VertexShader& vertex_shader,
 Program::~Program() {
     Program::release();
     }
+
+void Program::bind(void) const {
+	OGL_DEBUG(glUseProgram(this->ID()));
+
+	}
+
+void Program::unbind(void)const {
+	OGL_DEBUG(glUseProgram(OGL_ID::NO_ID));
+	}
 
 bool Program::acquire(void) {
     // Assume failure.
@@ -170,20 +181,24 @@ bool Program::link(void) {
 
     // Before link need to access VertexShader attribute indices and variable names
     // in order to bind the attributes to locations.
-    for(GLuint index = 0; index < m_vertex_shader.attribCount(); ++index) {
-        std::pair<GLuint, std::string> attrib;
-        attrib = m_vertex_shader.getAttrib(index);
-
-        std::stringstream attrib_msg("");
-        attrib_msg << "Program::link() : For program with ID = "
-        		   << this->ID()
-				   << ", binding an attribute at index "
-        		   << attrib.first
-				   << " with the name '"
-				   << attrib.second
-				   << "'";
-        ErrorHandler::record(attrib_msg.str(), ErrorHandler::INFORM);
-        OGL_DEBUG(glBindAttribLocation(this->ID(), attrib.first, attrib.second.c_str()));
+    for(GLuint index = 0; index < m_adapter.size(); ++index) {
+    	struct AttributeInputAdapter::attribute_spec temp_spec;
+        if(m_adapter.getAttributeSpecAt(index, &temp_spec)) {
+			std::stringstream attrib_msg("");
+			attrib_msg << "Program::link() : For program with ID = "
+					   << this->ID()
+					   << ", binding an attribute at index "
+					   << temp_spec.attrib_index
+					   << " with the name '"
+					   << temp_spec.name
+					   << "'";
+			ErrorHandler::record(attrib_msg.str(), ErrorHandler::INFORM);
+			OGL_DEBUG(glBindAttribLocation(this->ID(), temp_spec.attrib_index, temp_spec.name.c_str()));
+        	}
+        else {
+        	ErrorHandler::record("Program::link() : attempt made to access out of range attribute index !",
+        	                     ErrorHandler::WARN);
+        	}
         }
 
     // Attempt to link the program.

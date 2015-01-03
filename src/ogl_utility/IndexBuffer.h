@@ -67,12 +67,12 @@ class IndexBuffer : public Buffer {
          /**
          * \brief Perform any data binding to the pipeline input.
          */
-        void attach(void);
+        void bind(void);
 
         /**
          * \brief Remove any data binding to the pipeline input.
          */
-        void detach(void);
+        void unbind(void);
 
         /*
          * \brief The type of index used.

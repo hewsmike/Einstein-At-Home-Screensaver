@@ -82,14 +82,14 @@ void IndexBuffer::loadBuffer(void) const {
     OGL_DEBUG(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, OGL_ID::NO_ID));
     }
 
-void IndexBuffer::attach(void) {
+void IndexBuffer::bind(void) {
     // Ensure resource acquisition first.
     this->acquire();
     // Bind the given buffer object to pipeline state.
     OGL_DEBUG(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->ID()));
     }
 
-void IndexBuffer::detach(void) {
+void IndexBuffer::unbind(void) {
     // Unbind the given buffer object from pipeline state.
 	OGL_DEBUG(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, OGL_ID::NO_ID));
     }
