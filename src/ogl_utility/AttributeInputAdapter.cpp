@@ -26,21 +26,31 @@
 #include "ErrorHandler.h"
 
 AttributeInputAdapter::AttributeInputAdapter(void) {
-
-    }
+	}
 
 AttributeInputAdapter::~AttributeInputAdapter() {
+	}
 
-    }
-
-void AttributeInputAdapter::addMatching(struct attribute_spec& spec) {
+void AttributeInputAdapter::addSpecification(struct attribute_spec& spec) {
+	// Add this to the store.
 	m_matchings.push_back(spec);
 	}
 
 bool AttributeInputAdapter::getAttributeSpecAt(GLuint index, struct attribute_spec* spec) const {
+	// Assume failure.
     bool ret_val = false;
 
-    spec = m_matchings[index];
+    // Is the index within range ?
+    if(index < m_matchings.size()) {
+    	// Yes, copy to the given structure.
+    	spec = m_matchings[index];
+    	ret_val = true;
+    	}
+    else {
+    	// No, emit a warning.
+    	ErrorHandler::record("AttributeInputAdapter::getAttributeSpecAt() : out of range index to attribute store.",
+    	                     ErrorHandler::WARN);
+    	}
 
     return ret_val;
 	}

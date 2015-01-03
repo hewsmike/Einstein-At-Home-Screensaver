@@ -81,7 +81,7 @@ class AttributeInputAdapter {
         /**
          * \brief Add another correspondence between buffer data and the vertex shader.
          */
-        void addMatching(struct attribute_spec& spec);
+        void addSpecification(struct attribute_spec& spec);
 
         /**
 		 * \brief Retrieve an attribute specification at a given index into this store.
@@ -91,8 +91,8 @@ class AttributeInputAdapter {
 		 * \param spec - a reference to an attribute specification to fill.
 		 *
 		 * \return a boolean indicating success of the retrieval
-		 *              TRUE - OK, attribute specification has been filled with valid data.
-		 *              FALSE - NOT OK, attribute specification has not been filled,
+		 *              TRUE - attribute specification has been filled with valid data.
+		 *              FALSE - attribute specification has not been altered,
 		 *               		for instance if the index is out of range.
 		 */
         bool getAttributeSpecAt(GLuint index, struct attribute_spec* spec) const;
