@@ -144,16 +144,6 @@ class VertexFetch : public OGL_ID {
 		 */
         bool isBound(void) const;
 
-        /**
-		 * \brief Has the VAO s the underlying vertex array object properly configured
-		 *        ie. all attribute specifications accounted for ?
-		 *
-		 * \return a boolean indicating configuration state
-		 *              TRUE - VAO is configured
-		 *              FALSE - VAO is not configured.
-		 */
-        bool isConfigured(void) const;
-
     private :
         // Attachment state. For our purposes any NULL buffers are deemed
         // to be always attached. Covers the case of a vertex shader solely

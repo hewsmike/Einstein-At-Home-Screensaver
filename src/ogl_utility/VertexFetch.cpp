@@ -87,7 +87,8 @@ void VertexFetch::release(void) {
 
 void VertexFetch::bind(void) {
 	// Can only bind if configured.
-	if(!isConfigured()) {
+	if(m_configure_flag == false) {
+		/// TODO - failure mode path for configure fail.
 		configure();
 	    }
 
@@ -95,6 +96,7 @@ void VertexFetch::bind(void) {
 	if(m_indices != NULL) {
 		// Is it not bound already ?
 		if(!m_indices->isBound()) {
+			// No, then bind it.
 			m_indices->bind();
 			}
 		}
@@ -105,14 +107,7 @@ void VertexFetch::bind(void) {
 	}
 
 void VertexFetch::unbind(void) {
-	// Disable fetching for all supplied vertex attribute indices.
-	for(std::vector<attribute_record>::iterator attrib = m_attribute_specs.begin();
-		attrib != m_attribute_specs.end();
-		++attrib) {
-		glDisableVertexAttribArray(attrib->a_spec.attrib_index);
-		}
-
-	// NB the index array - if any - is not unbound as that requires persistence.
+	glBindVertexArray(OGL_ID::NO_ID);
 
 	// Reset attachment state.
     m_bound_flag = false;
@@ -142,7 +137,7 @@ bool VertexFetch::configure(void) {
 		if(m_indices != NULL) {
 			m_indices->bind();
 			}
-    // Enable fetching for all supplied vertex attribute indices,
+		// Enable fetching for all supplied vertex attribute indices,
     	// these corresponding to 'location' definitions within the
     	// vertex shader's GLSL code.
     	for(std::vector<attribute_record>::iterator attrib = m_attribute_specs.begin();
@@ -159,25 +154,27 @@ bool VertexFetch::configure(void) {
     		}
 
     	// Ensure that the pipeline vertex fetch
-    	    // stage is not bound to any buffers at all.
-    	    m_vertices->unbind();
-    	    m_indices->unbind();
-    glBindVertexArray(OGL_ID::NO_ID);
+		// stage is not bound to any buffers at all.
+		m_vertices->unbind();
+
+		// NB the index array - if any - is not unbound as that requires persistence.
+
+		glBindVertexArray(OGL_ID::NO_ID);
 		}
+
+	m_configure_flag = true;
 
     return ret_val;
 	}
 
 
 void VertexFetch::trigger(GLenum primitive, GLsizei count) {
-    // If buffers are not attached to targets then do so.
+    // If VAO is not bound then do so.
     if(m_bound_flag == false) {
-        ErrorHandler::record("VertexFetch::trigger() : buffers, if any, not attached, do so !",
-                              ErrorHandler::FATAL);
+        ErrorHandler::record("VertexFetch::trigger() : VAO not attached !",
+                              ErrorHandler::WARN);
         this->bind();
         }
-
-    glBindVertexArray(this->ID());
 
     // Provokes vertex shader activity for count invocations,
 	// buffer use depending upon that which exist.
@@ -189,8 +186,6 @@ void VertexFetch::trigger(GLenum primitive, GLsizei count) {
         // Either only GL_ARRAY_BUFFER target bound, or none at all.
     	glDrawArrays(primitive, 0, count);
         }
-
-	glBindVertexArray(OGL_ID::NO_ID);
 	}
 
 void VertexFetch::acquire_ID(GLuint* handle) const {
@@ -203,10 +198,6 @@ void VertexFetch::release_ID(GLuint* handle) const {
 
 bool VertexFetch::isBound(void) const {
 	return m_bound_flag;
-	}
-
-bool VertexFetch::isConfigured(void) const {
-	return m_configure_flag;
 	}
 
 void VertexFetch::processAttributeDescriptions(void) {

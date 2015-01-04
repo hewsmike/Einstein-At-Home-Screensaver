@@ -44,6 +44,10 @@ bool AttributeInputAdapter::getAttributeSpecAt(GLuint index, attribute_spec* spe
     if(index < m_matchings.size()) {
     	// Yes, copy to the given structure.
     	spec->attrib_index = m_matchings[index].attrib_index;
+    	spec->multiplicity = m_matchings[index].multiplicity;
+    	spec->name = m_matchings[index].name;
+    	spec->normalised= m_matchings[index].normalised;
+    	spec->type = m_matchings[index].type;
     	ret_val = true;
     	}
     else {
