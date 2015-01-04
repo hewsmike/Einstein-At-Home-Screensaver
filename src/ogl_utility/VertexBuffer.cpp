@@ -62,21 +62,21 @@ GLuint VertexBuffer::vertexCount(void) const {
     }
 
 void VertexBuffer::acquire_ID(GLuint* handle) const {
-	OGL_DEBUG(glGenBuffers(1, handle));
+	glGenBuffers(1, handle);
 	}
 
 void VertexBuffer::release_ID(GLuint* handle) const {
-	OGL_DEBUG(glDeleteBuffers(1, handle));
+	glDeleteBuffers(1, handle);
     }
 
 void VertexBuffer::loadBuffer(void) const {
-	OGL_DEBUG(glBindBuffer(GL_ARRAY_BUFFER, this->ID()));
+	glBindBuffer(GL_ARRAY_BUFFER, this->ID());
 
     // Allocate space and transfer the data.
-	OGL_DEBUG(glBufferData(GL_ARRAY_BUFFER, m_size, this->data(), m_usage));
+	glBufferData(GL_ARRAY_BUFFER, this->size(), this->data(), m_usage);
 
     // Unbind the buffer.
-    OGL_DEBUG(glBindBuffer(GL_ARRAY_BUFFER, OGL_ID::NO_ID));
+    glBindBuffer(GL_ARRAY_BUFFER, OGL_ID::NO_ID);
 	}
 
 void VertexBuffer::bind(void) {
@@ -84,12 +84,12 @@ void VertexBuffer::bind(void) {
     this->acquire();
 
 	// Bind the given buffer object to pipeline state.
-	OGL_DEBUG(glBindBuffer(GL_ARRAY_BUFFER, this->ID()));
+	glBindBuffer(GL_ARRAY_BUFFER, this->ID());
 	}
 
 void VertexBuffer::unbind(void) {
     // Unbind the given buffer object from pipeline state.
-    OGL_DEBUG(glBindBuffer(GL_ARRAY_BUFFER, OGL_ID::NO_ID));
+    glBindBuffer(GL_ARRAY_BUFFER, OGL_ID::NO_ID);
 	}
 
 VertexBuffer::data_mix VertexBuffer::mix(void) const {

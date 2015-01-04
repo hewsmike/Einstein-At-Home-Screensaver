@@ -617,7 +617,7 @@ void Starsphere::resize(const int width, const int height) {
 	m_RefreshSearchMarker = true;
 
     // adjust aspect ratio and projection
-	OGL_DEBUG(glViewport(0, 0, m_CurrentWidth, m_CurrentHeight));
+	glViewport(0, 0, m_CurrentWidth, m_CurrentHeight);
     // gluPerspective(95.0, aspect, 0.50, 25.0);
     }
 
@@ -647,8 +647,8 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
 
 	// Create and populate an AttributeInputAdapter.
 	AttributeInputAdapter* m_adapter = new AttributeInputAdapter();
-	m_adapter->addMatching(pos_spec);
-	m_adapter->addMatching(color_spec);
+	m_adapter->addSpecification(pos_spec);
+	m_adapter->addSpecification(color_spec);
 
     // The index data in client space ie. the order in which the above vertices are rendered.
     GLuint index_data[] = {
@@ -662,13 +662,13 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
     m_fragment = new FragmentShader(factory.createInstance("FragmentTestShader")->std_string());
 
     // Make a program using the above shaders, mark the corresponding OpenGL shader objects for deletion.
-    m_program = new Program(*m_vertex, *m_fragment, m_adapter, Program::DELETE_ON_GOOD_LINK);
+    m_program = new Program(m_vertex, m_fragment, m_adapter, Program::DELETE_ON_GOOD_LINK);
 
     // This creates an OpenGL Vertex Array Object ( VAO ) and includes the
-    m_vertex_buffer = new VertexBuffer(vertex_data, 3, GL_STATIC_DRAW, VertexBuffer::BY_VERTEX);
+    m_vertex_buffer = new VertexBuffer(vertex_data, sizeof(vertex_data) , 3, GL_STATIC_DRAW, VertexBuffer::BY_VERTEX);
     m_vertex_buffer->acquire();
 
-    m_index_buffer = new IndexBuffer(index_data, 3, GL_STATIC_DRAW, GL_UNSIGNED_INT);
+    m_index_buffer = new IndexBuffer(index_data, sizeof(index_data), 3, GL_STATIC_DRAW, GL_UNSIGNED_INT);
     m_index_buffer->acquire();
 
     m_vertexfetch = new VertexFetch(m_vertex_buffer, m_index_buffer, m_adapter);
@@ -735,13 +735,13 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
 	// resize(m_CurrentWidth, m_CurrentHeight);
 
 	// more font setup and optimizations
-//	OGL_DEBUG(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
+//	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 //
 //	// drawing setup:
-//	OGL_DEBUG(glClearColor(1.0, 1.0, 1.0, 0.0)); // background is black
-////	OGL_DEBUG(glEnable(GL_CULL_FACE));
-//	OGL_DEBUG(glFrontFace(GL_CCW));
-////	OGL_DEBUG(glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST));
+//	glClearColor(1.0, 1.0, 1.0, 0.0); // background is black
+////	glEnable(GL_CULL_FACE;
+//	glFrontFace(GL_CCW;
+////	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST;
 //
 //	// enable opt-in quality feature
 //	if(m_BoincAdapter.graphicsQualitySetting() == BOINCClientAdapter::HighGraphicsQualitySetting) {
@@ -749,16 +749,16 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
 //        }
 //
 //	// we need alpha blending for proper font rendering
-//	OGL_DEBUG(glEnable(GL_BLEND));
-//	OGL_DEBUG(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+//	glEnable(GL_BLEND;
+//	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA;
 //
 //	// enable depth buffering for 3D graphics
-//	OGL_DEBUG(glClearDepthf(1.0f));
-//	OGL_DEBUG(glEnable(GL_DEPTH_TEST));
-//	OGL_DEBUG(glDepthFunc(GL_LEQUAL));
+//	glClearDepthf(1.0f);
+//	glEnable(GL_DEPTH_TEST;
+//	glDepthFunc(GL_LEQUAL;
 //
-//	OGL_DEBUG(glEnable(GL_PROGRAM_POINT_SIZE));
-//	OGL_DEBUG(glPointSize(40));
+//	glEnable(GL_PROGRAM_POINT_SIZE;
+//	glPointSize(40);
 
 	// enable opt-in quality feature
 	if(m_BoincAdapter.graphicsQualitySetting() == BOINCClientAdapter::MediumGraphicsQualitySetting ||
@@ -808,7 +808,7 @@ void Starsphere::render(const double timeOfDay) {
 	Zrot = -360.0 * (revs - (int)revs);
 
 	// and start drawing...
-	OGL_DEBUG(glClear(GL_COLOR_BUFFER_BIT));
+	glClear(GL_COLOR_BUFFER_BIT);
 
 	// now draw the scene...
 
@@ -876,13 +876,13 @@ void Starsphere::render(const double timeOfDay) {
     if(isFeature(LOGO) || isFeature(SEARCHINFO)) {
 
 		// disable depth testing since we're in 2D mode
-    	OGL_DEBUG(glDisable(GL_DEPTH_TEST));
+    	glDisable(GL_DEPTH_TEST);
 
 //		if (isFeature(LOGO)) renderLogo();
 //		if (isFeature(SEARCHINFO)) renderSearchInformation();
 
 //		// enable depth testing since we're leaving 2D mode
-    	OGL_DEBUG(glEnable(GL_DEPTH_TEST));
+    	glEnable(GL_DEPTH_TEST);
         }
     }
 

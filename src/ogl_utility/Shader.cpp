@@ -68,7 +68,7 @@ bool Shader::acquire(void) {
         // Get an OpenGL handle for this shader object, if needed.
         if(this->ID() == OGL_ID::NO_ID) {
             // Get an OpenGL handle for this shader object.
-        	GLuint temp = OGL_DEBUG(glCreateShader(shader_type));
+        	GLuint temp = glCreateShader(shader_type);
         	this->set_ID(temp);
 
             // If that handle acquisition failed the we have no other option ...
@@ -79,7 +79,7 @@ bool Shader::acquire(void) {
             }
 
         // Load the source code into the shader object.
-        OGL_DEBUG(glShaderSource(this->ID(), 1, StringHelper(shader_source), NULL));
+        glShaderSource(this->ID(), 1, StringHelper(shader_source), NULL);
 
         // Only compile if never attempted.
         if(comp_status == Shader::NEVER_COMPILED) {
@@ -93,7 +93,7 @@ bool Shader::acquire(void) {
 void Shader::release(void) {
     // NB This means the OpenGL state machine marks an OpenGL shader object
 	// for deletion. This does not refer to any client source code entity.
-	OGL_DEBUG(glDeleteShader(this->ID()));
+	glDeleteShader(this->ID());
     // Set our handle store to safe value.
     set_ID(OGL_ID::NO_ID);
     // Reset compilation status.
@@ -108,7 +108,7 @@ bool Shader::isDeleted(void) const {
     if(this->ID() != OGL_ID::NO_ID) {
         // Lazy evaluation through inquiry to OpenGL context.
         GLint d_status;
-        OGL_DEBUG(glGetShaderiv(this->ID(), GL_DELETE_STATUS, &d_status));
+        glGetShaderiv(this->ID(), GL_DELETE_STATUS, &d_status);
         if(d_status == GL_TRUE) {
             // It is marked for deletion.
             ret_val = true;
@@ -129,11 +129,11 @@ bool Shader::compile(void) {
     // Only compile a valid handle.
     if(this->ID() != OGL_ID::NO_ID) {
         // Present shader's GLSL code to the GLSL compiler.
-    	OGL_DEBUG(glCompileShader(this->ID()));
+    	glCompileShader(this->ID());
 
         // See if the compilation was a success.
         GLint c_status;
-        OGL_DEBUG(glGetShaderiv(this->ID(), GL_COMPILE_STATUS, &c_status));
+        glGetShaderiv(this->ID(), GL_COMPILE_STATUS, &c_status);
         if(c_status == GL_TRUE) {
         	// Compile good.
         	comp_status = COMPILE_SUCCEEDED;
@@ -145,7 +145,7 @@ bool Shader::compile(void) {
 			// const semantic difficulties on the std::string c_str() method.
         	// The log length established by this call INCLUDES a null-termination.
 			GLint log_len;
-			OGL_DEBUG(glGetShaderiv(this->ID(), GL_INFO_LOG_LENGTH, &log_len));
+			glGetShaderiv(this->ID(), GL_INFO_LOG_LENGTH, &log_len);
 
 			// Strictly positive log length indicates an error log is available
 			if(log_len > 0) {
@@ -156,7 +156,7 @@ bool Shader::compile(void) {
 				GLsizei returned_log_len = 0;
 				// Having log-len as the second parameter here limits the write to temp_log
 				// ie. stops buffer over-run.
-				OGL_DEBUG(glGetShaderInfoLog(this->ID(), log_len, &returned_log_len, temp_log));
+				glGetShaderInfoLog(this->ID(), log_len, &returned_log_len, temp_log);
 
 				// Is the returned error log of expected length ?
 				// Bear in mind that we expect a difference of one character for null termination.

@@ -42,11 +42,11 @@ Program::~Program() {
     }
 
 void Program::use(void) const {
-	OGL_DEBUG(glUseProgram(this->ID()));
+	glUseProgram(this->ID());
 	}
 
 void Program::stopUse(void)const {
-	OGL_DEBUG(glUseProgram(OGL_ID::NO_ID));
+	glUseProgram(OGL_ID::NO_ID);
 	}
 
 bool Program::acquire(void) {
@@ -79,7 +79,7 @@ bool Program::acquire(void) {
             	// Only get a handle if none already.
 				if(this->ID() == OGL_ID::NO_ID) {
 					// Get an OpenGL handle for this program object.
-					GLuint temp = OGL_DEBUG(glCreateProgram());
+					GLuint temp = glCreateProgram();
 					set_ID(temp);
 					// If that handle acquisition failed the we have no other option ...
 					if(this->ID() == OGL_ID::NO_ID)  {
@@ -96,7 +96,7 @@ bool Program::acquire(void) {
 							<< " to program with ID = "
 							<< this->ID();
             	ErrorHandler::record(vshader_msg.str(), ErrorHandler::INFORM);
-            	OGL_DEBUG(glAttachShader(this->ID(), m_vertex_shader->ID()));
+            	glAttachShader(this->ID(), m_vertex_shader->ID());
 
             	std::stringstream fshader_msg;
             	fshader_msg << "Program::acquire() : attaching fragment shader with ID = "
@@ -104,7 +104,7 @@ bool Program::acquire(void) {
 							<< " to program with ID = "
 							<< this->ID();
             	ErrorHandler::record(fshader_msg.str(), ErrorHandler::INFORM);
-            	OGL_DEBUG(glAttachShader(this->ID(), m_fragment_shader->ID()));
+            	glAttachShader(this->ID(), m_fragment_shader->ID());
 
                 // Link program and check for success.
                 if(link() == true) {
@@ -125,11 +125,11 @@ bool Program::acquire(void) {
 					// Copy to an std::string via temporary character array to avoid
 					// const semantic difficulties on the std::string c_str() method.
 					GLint log_len;
-					OGL_DEBUG(glGetProgramiv(this->ID(), GL_INFO_LOG_LENGTH, &log_len));
+					glGetProgramiv(this->ID(), GL_INFO_LOG_LENGTH, &log_len);
 					// Use extra character to account for null character terminator ( documentation unclear ).
 					GLchar* temp_log = new GLchar[log_len+1];
 					GLsizei returned_log_len;
-					OGL_DEBUG(glGetProgramInfoLog(this->ID(), log_len+1, &returned_log_len, temp_log));
+					glGetProgramInfoLog(this->ID(), log_len+1, &returned_log_len, temp_log);
 
 					// Account for null character terminator ( documentation unclear ).
 					temp_log[log_len] = '\0';
@@ -147,7 +147,7 @@ bool Program::acquire(void) {
 
 void Program::release(void) {
     // Inform OpenGL that we no longer need this specific program handle.
-    OGL_DEBUG(glDeleteProgram(this->ID()));
+    glDeleteProgram(this->ID());
 
     // Reset linkage status.
     link_status = Program::NEVER_LINKED;
@@ -161,7 +161,7 @@ bool Program::isDeleted(void) const {
 
     // Lazy evaluation through inquiry to OpenGL context.
     GLint d_status;
-    OGL_DEBUG(glGetProgramiv(this->ID(), GL_DELETE_STATUS, &d_status));
+    glGetProgramiv(this->ID(), GL_DELETE_STATUS, &d_status);
     if(d_status == GL_TRUE) {
         // It is marked for deletion.
         ret_val = true;
@@ -192,7 +192,7 @@ bool Program::link(void) {
 					   << temp_spec.name
 					   << "'";
 			ErrorHandler::record(attrib_msg.str(), ErrorHandler::INFORM);
-			OGL_DEBUG(glBindAttribLocation(this->ID(), temp_spec.attrib_index, temp_spec.name.c_str()));
+			glBindAttribLocation(this->ID(), temp_spec.attrib_index, temp_spec.name.c_str());
         	}
         else {
         	ErrorHandler::record("Program::link() : attempt made to access out of range attribute index !",
@@ -201,11 +201,11 @@ bool Program::link(void) {
         }
 
     // Attempt to link the program.
-    OGL_DEBUG(glLinkProgram(this->ID()));
+    glLinkProgram(this->ID());
 
     // Check for linkage success.
     GLint link_state = GL_FALSE;
-    OGL_DEBUG(glGetProgramiv(this->ID(), GL_LINK_STATUS, &link_state));
+    glGetProgramiv(this->ID(), GL_LINK_STATUS, &link_state);
     if(link_state == GL_TRUE) {
         ret_val = true;
         }

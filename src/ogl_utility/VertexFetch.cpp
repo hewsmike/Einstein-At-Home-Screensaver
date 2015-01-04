@@ -24,11 +24,12 @@
 #include "OGL_ID.h"
 
 #include <iostream>
+#include <sstream>
 
 VertexFetch::VertexFetch(VertexBuffer* vertices, IndexBuffer* indices, AttributeInputAdapter* adapter) :
-                          m_vertices(vertices),
-                          m_indices(indices),
-						  m_adapter(adapter){
+                         m_vertices(vertices),
+                         m_indices(indices),
+						 m_adapter(adapter){
 	// Check to see that at least a vertex buffer was provided.
 	if(m_vertices == NULL) {
 		ErrorHandler::record("VertexFetch::VertexFetch() : NULL VertexBuffer pointer provided !",
@@ -98,7 +99,7 @@ void VertexFetch::bind(void) {
 			}
 		}
 
-	OGL_DEBUG(glBindVertexArray(this->ID()));
+	glBindVertexArray(this->ID());
 
 	m_bound_flag = true;
 	}
@@ -108,7 +109,7 @@ void VertexFetch::unbind(void) {
 	for(std::vector<attribute_record>::iterator attrib = m_attribute_specs.begin();
 		attrib != m_attribute_specs.end();
 		++attrib) {
-		OGL_DEBUG(glDisableVertexAttribArray(attrib->a_spec.attrib_index));
+		glDisableVertexAttribArray(attrib->a_spec.attrib_index);
 		}
 
 	// NB the index array - if any - is not unbound as that requires persistence.
@@ -133,7 +134,7 @@ bool VertexFetch::configure(void) {
 		prepareAttributeMapping();
 
 		//
-		OGL_DEBUG(glBindVertexArray(this->ID()));
+		glBindVertexArray(this->ID());
 		// Bind only existing buffers.
 		if(m_vertices != NULL) {
 			m_vertices->bind();
@@ -147,13 +148,13 @@ bool VertexFetch::configure(void) {
     	for(std::vector<attribute_record>::iterator attrib = m_attribute_specs.begin();
     		attrib != m_attribute_specs.end();
     		++attrib) {
-    		OGL_DEBUG(glEnableVertexAttribArray(attrib->a_spec.attrib_index));
-    		OGL_DEBUG(glVertexAttribPointer(attrib->a_spec.attrib_index,
-    										attrib->a_spec.multiplicity,
-    										attrib->a_spec.type,
-    										attrib->a_spec.normalised,
-    										attrib->stride,
-    										attrib->pointer));
+    		glEnableVertexAttribArray(attrib->a_spec.attrib_index);
+    		glVertexAttribPointer(attrib->a_spec.attrib_index,
+    							  attrib->a_spec.multiplicity,
+    							  attrib->a_spec.type,
+    							  attrib->a_spec.normalised,
+    							  attrib->stride,
+    							  attrib->pointer);
 
     		}
 
@@ -161,7 +162,7 @@ bool VertexFetch::configure(void) {
     	    // stage is not bound to any buffers at all.
     	    m_vertices->unbind();
     	    m_indices->unbind();
-    OGL_DEBUG(glBindVertexArray(OGL_ID::NO_ID));
+    glBindVertexArray(OGL_ID::NO_ID);
 		}
 
     return ret_val;
@@ -176,28 +177,28 @@ void VertexFetch::trigger(GLenum primitive, GLsizei count) {
         this->bind();
         }
 
-    OGL_DEBUG(glBindVertexArray(this->ID()));
+    glBindVertexArray(this->ID());
 
     // Provokes vertex shader activity for count invocations,
 	// buffer use depending upon that which exist.
 	if((m_vertices != NULL) && (m_indices != NULL)) {
         // Both GL_ARRAY_BUFFER and GL_ELEMENT_ARRAY_BUFFER targets are bound.
-		OGL_DEBUG(glDrawElements(primitive, count, GL_UNSIGNED_INT, 0));
+		glDrawElements(primitive, count, GL_UNSIGNED_INT, 0);
 	    }
     else {
         // Either only GL_ARRAY_BUFFER target bound, or none at all.
-    	OGL_DEBUG(glDrawArrays(primitive, 0, count));
+    	glDrawArrays(primitive, 0, count);
         }
 
-	OGL_DEBUG(glBindVertexArray(OGL_ID::NO_ID));
+	glBindVertexArray(OGL_ID::NO_ID);
 	}
 
 void VertexFetch::acquire_ID(GLuint* handle) const {
-	OGL_DEBUG(glGenVertexArrays(1, handle));
+	glGenVertexArrays(1, handle);
 	}
 
 void VertexFetch::release_ID(GLuint* handle) const {
-	OGL_DEBUG(glDeleteVertexArrays(1, handle));
+	glDeleteVertexArrays(1, handle);
     }
 
 bool VertexFetch::isBound(void) const {
@@ -210,10 +211,10 @@ bool VertexFetch::isConfigured(void) const {
 
 void VertexFetch::processAttributeDescriptions(void) {
 	// Access the AttributeInputAdapter and look at each attribute specification.
-	for(GLuint index = 0; index < m_adapter.size(); ++index) {
+	for(GLuint index = 0; index < m_adapter->size(); ++index) {
 		// Get an attribute specification.
 		AttributeInputAdapter::attribute_spec specification;
-		m_adapter.getAttributeSpecAt(index, &specification);
+		m_adapter->getAttributeSpecAt(index, &specification);
 
 		// Populate an attribute record.
         attribute_record record;

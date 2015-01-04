@@ -167,7 +167,7 @@ class VertexFetch : public OGL_ID {
         VertexBuffer* m_vertices;
         IndexBuffer* m_indices;
 
-        AttributeInputAdapter& m_adapter;
+        AttributeInputAdapter* m_adapter;
 
         /// The total length in bytes of all the attributes.
 		GLuint m_attribute_length_sum;
