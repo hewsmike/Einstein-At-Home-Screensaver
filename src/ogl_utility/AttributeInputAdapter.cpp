@@ -36,18 +36,18 @@ void AttributeInputAdapter::addSpecification(const attribute_spec& spec) {
 	m_matchings.push_back(spec);
 	}
 
-bool AttributeInputAdapter::getAttributeSpecAt(GLuint index, attribute_spec* spec) const {
+bool AttributeInputAdapter::getAttributeSpecAt(GLuint index, attribute_spec& spec) const {
 	// Assume failure.
     bool ret_val = false;
 
     // Is the index within range ?
     if(index < m_matchings.size()) {
     	// Yes, copy to the given structure.
-    	spec->attrib_index = m_matchings[index].attrib_index;
-    	spec->multiplicity = m_matchings[index].multiplicity;
-    	spec->name = m_matchings[index].name;
-    	spec->normalised= m_matchings[index].normalised;
-    	spec->type = m_matchings[index].type;
+    	spec.attrib_index = m_matchings[index].attrib_index;
+    	spec.multiplicity = m_matchings[index].multiplicity;
+    	spec.name = m_matchings[index].name;
+    	spec.normalised= m_matchings[index].normalised;
+    	spec.type = m_matchings[index].type;
     	ret_val = true;
     	}
     else {

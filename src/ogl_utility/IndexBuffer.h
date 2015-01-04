@@ -31,8 +31,8 @@
 */
 
 /**
-* \brief This interface declares public methods to deal with OpenGL ES 2.0
-*        index buffer objects.
+* \brief This interface declares public methods to deal with
+*        OpenGL ES 2.0 index buffer objects.
 *
 * \see Buffer
 *
@@ -76,6 +76,9 @@ class IndexBuffer : public Buffer {
          */
         void unbind(void);
 
+        /**
+         * \brief Query if the buffer is bound.
+         */
         bool isBound(void) const;
 
         /*

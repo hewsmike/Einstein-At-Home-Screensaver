@@ -62,10 +62,10 @@ class Program : public OGL_ID {
          *
          * \param vertex_shader : a pointer to an existing VertexShader object,
          *                        assumed to take on the role of an
-         *                        OpenGL ES 2.0 vertex shader.
+         *                        OpenGL vertex shader.
          * \param fragment_shader : a pointer to an existing Shader object,
          *                          assumed to take on the role of an
-         *                          OpenGL ES 2.0 fragment shader.
+         *                          OpenGL fragment shader.
          * \param adapter : a pointer to an AttributeInputAdapter.
          * \param dispose : one of the shaderDisposition enumerants indicating
          *                  desired fate of supplied shaders after any successful

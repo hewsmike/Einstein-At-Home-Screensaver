@@ -181,8 +181,8 @@ bool Program::link(void) {
     // Before link need to access VertexShader attribute indices and variable names
     // in order to bind the attributes to locations.
     for(GLuint index = 0; index < m_adapter->size(); ++index) {
-    	struct AttributeInputAdapter::attribute_spec temp_spec;
-        if(m_adapter->getAttributeSpecAt(index, &temp_spec)) {
+    	AttributeInputAdapter::attribute_spec temp_spec;
+        if(m_adapter->getAttributeSpecAt(index, temp_spec)) {
 			std::stringstream attrib_msg("");
 			attrib_msg << "Program::link() : For program with ID = "
 					   << this->ID()

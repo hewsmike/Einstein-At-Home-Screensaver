@@ -64,7 +64,7 @@ class AttributeInputAdapter {
 			// with respect to the type range.
 			// GL_TRUE signed integers map to [-1, +1]
 			// unsigned integers map to [0, +1]
-			// GL_FALSE no normalisation, directly map to floats.
+			// GL_FALSE no normalisation.
 			GLboolean normalised;
 			};
 
@@ -79,14 +79,14 @@ class AttributeInputAdapter {
         virtual ~AttributeInputAdapter();
 
         /**
-         * \brief Add another correspondence between buffer data and the vertex shader.
+         * \brief Add another correspondence between vertex buffer and the vertex shader.
          */
         void addSpecification(const attribute_spec& spec);
 
         /**
 		 * \brief Retrieve an attribute specification at a given index into this store.
 		 *
-		 * \param index - an integer ranging from 0 to [attributeCount() - 1]. This is
+		 * \param index - a positive integer ranging from 0 to [attributeCount() - 1]. This is
 		 * 				  NOT the location field of a given attribute specification.
 		 * \param spec - a reference to an attribute specification to fill.
 		 *
@@ -95,7 +95,7 @@ class AttributeInputAdapter {
 		 *              FALSE - attribute specification has not been altered,
 		 *               		for instance if the index is out of range.
 		 */
-        bool getAttributeSpecAt(GLuint index, attribute_spec* spec) const;
+        bool getAttributeSpecAt(GLuint index, attribute_spec& spec) const;
 
         /**
 		 * \brief How many attribute specifications are stored ?

@@ -37,7 +37,7 @@
 
 /**
  * \brief This base class declares public methods to deal with the
- *        OpenGL ES 2.0 pipeline vertex fetch functionality ie.
+ *        OpenGL pipeline vertex fetch functionality ie.
  *        this wraps Vertex Array Objects (VAO's).
  *
  *  Common use cases of constructor :
@@ -122,7 +122,7 @@ class VertexFetch : public OGL_ID {
          * \brief Trigger pipeline activity. Attachment occurs automatically
          *        if not already performed.
          *
-         * \param primitive : one of the OpenGL ES 2.0 primitives
+         * \param primitive : one of the OpenGL primitives
          *          GL_POINTS
          *          GL_LINE_STRIP
          *          GL_LINE_LOOP

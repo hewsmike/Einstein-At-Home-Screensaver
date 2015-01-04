@@ -101,9 +101,13 @@ bool VertexBuffer::isBound(void) const {
 	bool ret_val = false;
 
 	// Discover which array buffer, if any, is bound to the OpenGL state.
-	GLint temp;
+	GLuint temp;
 
-	// OGL_DEBUG(glGetIntegerv(GL_ARRAY_BUFFER_BINDING​, &temp​));
+	glGetIntegerv(GL_ARRAY_BUFFER_BINDING, (GLint*) &temp);
+
+	if((this->ID() == temp) && (this->ID() != OGL_ID::NO_ID)) {
+		ret_val = true;
+		}
 
 	return ret_val;
 	}

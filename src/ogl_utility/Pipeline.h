@@ -62,7 +62,7 @@ class Pipeline {
          *        of the calling routine to ensure that parameter choices
          *        do not cause an over-run of the supplied buffer.
          *
-         * \param primitive : one of the OpenGL ES 2.0 primitives
+         * \param primitive : one of the OpenGL primitives
          *          GL_POINTS
          *          GL_LINE_STRIP
          *          GL_LINE_LOOP

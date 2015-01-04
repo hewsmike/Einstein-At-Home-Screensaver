@@ -39,8 +39,6 @@ void Pipeline::utilise(GLenum primitive, GLsizei count) {
         m_program.acquire();
         }
 
-
-
     // Only if the program was successfully linked.
     if(m_program.status() == Program::LINKAGE_SUCCEEDED) {
     	m_program.use();
@@ -54,6 +52,6 @@ void Pipeline::utilise(GLenum primitive, GLsizei count) {
         m_program.stopUse();
         }
     else {
-        /// TODO - Error path if no program link.
+        /// TODO - Error path if no program link ?
         }
     }

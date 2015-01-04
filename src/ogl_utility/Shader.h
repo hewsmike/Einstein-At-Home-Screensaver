@@ -53,7 +53,7 @@ class Shader : public OGL_ID {
         /**
          * \brief Constructor
          *
-         * \param type - one of the following OpenGL ES 2.0 supported shader types :
+         * \param type - one of the following OpenGL supported shader types :
          *               GL_VERTEX_SHADER
          *               GL_FRAGMENT_SHADER
          *
@@ -148,7 +148,7 @@ class Shader : public OGL_ID {
             operator const char**() { return &p; }
             };
 
-        /// One of the OpenGL ES 2.0 supported shader types.
+        /// One of the OpenGL supported shader types.
         GLenum shader_type;
 
         /// Indicator of current compilation state.

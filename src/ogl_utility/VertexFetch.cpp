@@ -205,7 +205,7 @@ void VertexFetch::processAttributeDescriptions(void) {
 	for(GLuint index = 0; index < m_adapter->size(); ++index) {
 		// Get an attribute specification.
 		AttributeInputAdapter::attribute_spec specification;
-		m_adapter->getAttributeSpecAt(index, &specification);
+		m_adapter->getAttributeSpecAt(index, specification);
 
 		// Populate an attribute record.
         attribute_record record;

@@ -139,3 +139,19 @@ void TextureBuffer::loadBuffer(void) {
     // Unbind the texture.
     glBindTexture(GL_TEXTURE_2D, OGL_ID::NO_ID);
     }
+
+bool TextureBuffer::isBound(void) const {
+	// Assume failure.
+	bool ret_val = false;
+
+	// Discover which array buffer, if any, is bound to the OpenGL state.
+	GLuint temp;
+
+	glGetIntegerv(GL_ARRAY_BUFFER_BINDING, (GLint*) &temp);
+
+	if((this->ID() == temp) && (this->ID() != OGL_ID::NO_ID)) {
+		ret_val = true;
+		}
+
+	return ret_val;
+	}

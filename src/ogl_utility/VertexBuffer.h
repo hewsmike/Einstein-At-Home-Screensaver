@@ -33,7 +33,7 @@
 */
 
 /**
-* \brief This interface declares public methods to deal with OpenGL ES 2.0
+* \brief This interface declares public methods to deal with OpenGL
 *        vertex buffer objects.
 *
 *    This is the case where vertex attributes are supplied to the pipeline
