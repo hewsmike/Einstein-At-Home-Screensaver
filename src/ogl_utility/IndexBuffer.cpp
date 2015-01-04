@@ -23,10 +23,11 @@
 #include "ErrorHandler.h"
 
 IndexBuffer::IndexBuffer(const GLvoid* buffer_data,
+						 GLuint bytes,
                          GLuint indices,
                          GLenum usage,
                          GLenum index_type) :
-                Buffer(buffer_data),
+                Buffer(buffer_data, bytes),
                 m_usage(usage) {
     // Ensure strictly positive index count.
     if(indices > 0) {
@@ -93,6 +94,10 @@ void IndexBuffer::unbind(void) {
     // Unbind the given buffer object from pipeline state.
 	OGL_DEBUG(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, OGL_ID::NO_ID));
     }
+
+bool IndexBuffer::isBound(void) const {
+	return true;
+	}
 
 GLenum IndexBuffer::indexType(void) const {
 	return m_index_type;

@@ -81,7 +81,7 @@ class AttributeInputAdapter {
         /**
          * \brief Add another correspondence between buffer data and the vertex shader.
          */
-        void addSpecification(struct attribute_spec& spec);
+        void addSpecification(const attribute_spec& spec);
 
         /**
 		 * \brief Retrieve an attribute specification at a given index into this store.
@@ -95,7 +95,7 @@ class AttributeInputAdapter {
 		 *              FALSE - attribute specification has not been altered,
 		 *               		for instance if the index is out of range.
 		 */
-        bool getAttributeSpecAt(GLuint index, struct attribute_spec* spec) const;
+        bool getAttributeSpecAt(GLuint index, attribute_spec* spec) const;
 
         /**
 		 * \brief How many attribute specifications are stored ?

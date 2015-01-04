@@ -38,12 +38,6 @@
 *
 *    This is the case where vertex attributes are supplied to the pipeline
 * sequentially from a buffer. Assumes data is stored on a per vertex basis.
-* The following sequence is strongly advised :
-*       - by sufficient calls to addAttributeDescription(), provide
-*         information about ALL attributes within the provided buffer,
-*         in the order that they are stored within the buffer.
-*       - use attach(), to make buffer current for the pipeline.
-*       - use detach(), when rendering is complete.
 *
 * \see Buffer
 * \see Pipeline
@@ -66,14 +60,16 @@ class VertexBuffer : public Buffer {
          *        more of the following applies :
          *          - the data pointer is NULL ( base class enforced ).
          *          - vertices is not strictly positive.
-         *          - usage type is incorrect for OpenGL ES 2.x
+         *          - usage type is incorrect.
          *
-         * \param data : pointer to the data to be stored.
+         * \param data : reference to the data to be stored.
+         * \param bytes : the number of bytes of data.
          * \param vertices : number of vertices.
          * \param usage : one of GL_STREAM_DRAW, GL_STATIC_DRAW or GL_DYNAMIC_DRAW.
          * \param mix : one of the data_mix enumerants.
          */
         VertexBuffer(const GLvoid* buffer_data,
+        			 GLuint bytes,
                      GLuint vertices,
                      GLenum usage,
                      data_mix mix);
@@ -86,7 +82,7 @@ class VertexBuffer : public Buffer {
         /**
          * \brief The number of vertices represented in this buffer.
          */
-        GLuint size(void) const;
+        GLuint vertexCount(void) const;
 
         /**
          * \brief Perform any data binding to the pipeline input.
@@ -98,15 +94,14 @@ class VertexBuffer : public Buffer {
          */
         void unbind(void);
 
+        bool isBound(void) const;
+
         /**
 		 * \brief What is the type of data mixing in this buffer?
 		 */
         enum data_mix mix(void) const;
 
     private:
-        /// The number of bytes to be allocated to the buffer.
-        GLsizeiptr m_size;
-
         /// The usage hint.
         GLenum m_usage;
 

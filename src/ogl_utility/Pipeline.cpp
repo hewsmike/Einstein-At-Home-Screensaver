@@ -39,13 +39,19 @@ void Pipeline::utilise(GLenum primitive, GLsizei count) {
         m_program.acquire();
         }
 
+
+
     // Only if the program was successfully linked.
     if(m_program.status() == Program::LINKAGE_SUCCEEDED) {
-    	m_program.bind();
+    	m_program.use();
+
+    	m_vertex_fetch.bind();
 
         m_vertex_fetch.trigger(primitive, count);
 
-        m_program.unbind();
+        m_vertex_fetch.unbind();
+
+        m_program.stopUse();
         }
     else {
         /// TODO - Error path if no program link.

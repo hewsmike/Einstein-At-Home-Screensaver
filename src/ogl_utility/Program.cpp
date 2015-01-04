@@ -25,9 +25,9 @@
 #include <iostream>
 #include <sstream>
 
-Program::Program(VertexShader& vertex_shader,
-                 Shader& fragment_shader,
-				 AttributeInputAdapter& adapter,
+Program::Program(VertexShader* vertex_shader,
+                 FragmentShader* fragment_shader,
+				 AttributeInputAdapter* adapter,
                  shaderDisposition dispose) :
                     m_vertex_shader(vertex_shader),
                     m_fragment_shader(fragment_shader),
@@ -41,12 +41,11 @@ Program::~Program() {
     Program::release();
     }
 
-void Program::bind(void) const {
+void Program::use(void) const {
 	OGL_DEBUG(glUseProgram(this->ID()));
-
 	}
 
-void Program::unbind(void)const {
+void Program::stopUse(void)const {
 	OGL_DEBUG(glUseProgram(OGL_ID::NO_ID));
 	}
 
@@ -62,20 +61,20 @@ bool Program::acquire(void) {
         // Attaching and linking shaders only occurs if both have compiled
         // successfully and neither have been marked for deletion ( which
         // includes the possibility that they may have been deleted ).
-        if((m_vertex_shader.isDeleted() == false ) &&
-           (m_fragment_shader.isDeleted() == false )) {
+        if((m_vertex_shader->isDeleted() == false ) &&
+           (m_fragment_shader->isDeleted() == false )) {
             // No deletions marked, so compile if needed.
-            if(m_vertex_shader.status() == Shader::NEVER_COMPILED) {
-                m_vertex_shader.acquire();
+            if(m_vertex_shader->status() == Shader::NEVER_COMPILED) {
+                m_vertex_shader->acquire();
                 }
 
-            if(m_fragment_shader.status() == Shader::NEVER_COMPILED) {
-                m_fragment_shader.acquire();
+            if(m_fragment_shader->status() == Shader::NEVER_COMPILED) {
+                m_fragment_shader->acquire();
                 }
 
             // Attach only if both pass muster.
-            if((m_vertex_shader.status() == Shader::COMPILE_SUCCEEDED) &&
-               (m_fragment_shader.status() == Shader::COMPILE_SUCCEEDED)) {
+            if((m_vertex_shader->status() == Shader::COMPILE_SUCCEEDED) &&
+               (m_fragment_shader->status() == Shader::COMPILE_SUCCEEDED)) {
 
             	// Only get a handle if none already.
 				if(this->ID() == OGL_ID::NO_ID) {
@@ -93,19 +92,19 @@ bool Program::acquire(void) {
                 // not marked for deletion, so attach them.
             	std::stringstream vshader_msg;
             	vshader_msg << "Program::acquire() : attaching vertex shader with ID = "
-            				<< m_vertex_shader.ID()
+            				<< m_vertex_shader->ID()
 							<< " to program with ID = "
 							<< this->ID();
             	ErrorHandler::record(vshader_msg.str(), ErrorHandler::INFORM);
-            	OGL_DEBUG(glAttachShader(this->ID(), m_vertex_shader.ID()));
+            	OGL_DEBUG(glAttachShader(this->ID(), m_vertex_shader->ID()));
 
             	std::stringstream fshader_msg;
             	fshader_msg << "Program::acquire() : attaching fragment shader with ID = "
-            	            << m_fragment_shader.ID()
+            	            << m_fragment_shader->ID()
 							<< " to program with ID = "
 							<< this->ID();
             	ErrorHandler::record(fshader_msg.str(), ErrorHandler::INFORM);
-            	OGL_DEBUG(glAttachShader(this->ID(), m_fragment_shader.ID()));
+            	OGL_DEBUG(glAttachShader(this->ID(), m_fragment_shader->ID()));
 
                 // Link program and check for success.
                 if(link() == true) {
@@ -113,8 +112,8 @@ bool Program::acquire(void) {
                     // If this behaviour previously selected, then release the shaders.
                     /// TODO - enable this after other testing.
                     if(m_dispose == Program::DELETE_ON_GOOD_LINK) {
-                        m_vertex_shader.release();
-                        m_fragment_shader.release();
+                        m_vertex_shader->release();
+                        m_fragment_shader->release();
                         }
                     ret_val = true;
                     }
@@ -181,9 +180,9 @@ bool Program::link(void) {
 
     // Before link need to access VertexShader attribute indices and variable names
     // in order to bind the attributes to locations.
-    for(GLuint index = 0; index < m_adapter.size(); ++index) {
+    for(GLuint index = 0; index < m_adapter->size(); ++index) {
     	struct AttributeInputAdapter::attribute_spec temp_spec;
-        if(m_adapter.getAttributeSpecAt(index, &temp_spec)) {
+        if(m_adapter->getAttributeSpecAt(index, &temp_spec)) {
 			std::stringstream attrib_msg("");
 			attrib_msg << "Program::link() : For program with ID = "
 					   << this->ID()

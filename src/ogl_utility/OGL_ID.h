@@ -77,13 +77,6 @@ class OGL_ID {
         virtual void release(void) = 0;
 
         /**
-         * \brief Obtain the OpenGL resource identifier.
-         *
-         * \return the identifier.
-         */
-        GLuint ID(void) const;
-
-        /**
          * \brief Determine if identifier is non-null/zero.
          *
          * \return A boolean : TRUE if the OpenGL identifier is zero
@@ -91,14 +84,20 @@ class OGL_ID {
          */
         bool isNull(void) const;
 
-    protected :
-
         /**
-         * \brief Set the OpenGL resource identifier.
-         *
-         * \param value : the identifier value
-         */
-        void set_ID(GLuint value);
+		 * \brief Obtain the OpenGL resource identifier.
+		 *
+		 * \return the identifier.
+		 */
+		GLuint ID(void) const;
+
+    protected :
+        /**
+		 * \brief Set the OpenGL resource identifier.
+		 *
+		 * \param value : the identifier value
+		 */
+		void set_ID(GLuint value);
 
     private:
         /// The identifier as allocated by OpenGL.

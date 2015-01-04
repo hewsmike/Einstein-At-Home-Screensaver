@@ -71,13 +71,15 @@ class VertexFetch : public OGL_ID {
          * \param indices : a pointer to an index buffer. This may be NULL
          *                  if no indices are to be used, and defaults to
          *                  NULL if not provided.
-         * \param adapter : a reference to a suitable AttributeInputAdapter
+         * \param adapter : a pointer to a suitable AttributeInputAdapter
          * 					which contains the relevant correspondences b/w
-         * 					vertex buffers and
+         * 					vertex buffer contents and shader variables.
+         * 					This may be NULL if no vertices are to be used,
+         * 					and defaults to NULL if not provided.
          */
         VertexFetch(VertexBuffer* vertices = NULL,
                     IndexBuffer* indices = NULL,
-					AttributeInputAdapter* adapter);
+					AttributeInputAdapter* adapter = NULL);
 
         /**
          * \brief Destructor.
@@ -133,13 +135,24 @@ class VertexFetch : public OGL_ID {
         void trigger(GLenum primitive, GLsizei count);
 
         /**
-		 * \brief Is the underlying vertex array object
+		 * \brief Is the underlying vertex array object ( VAO ) bound to the
+		 * 	      state machine ?
 		 *
-		 * \return a boolean indicating success of release
-		 *              TRUE - resources released without error
-		 *              FALSE - resources were not released
+		 * \return a boolean indicating binding
+		 *              TRUE - VAO is bound
+		 *              FALSE - VAO is not bound
 		 */
         bool isBound(void) const;
+
+        /**
+		 * \brief Has the VAO s the underlying vertex array object properly configured
+		 *        ie. all attribute specifications accounted for ?
+		 *
+		 * \return a boolean indicating configuration state
+		 *              TRUE - VAO is configured
+		 *              FALSE - VAO is not configured.
+		 */
+        bool isConfigured(void) const;
 
     private :
         // Attachment state. For our purposes any NULL buffers are deemed
@@ -147,6 +160,8 @@ class VertexFetch : public OGL_ID {
         // providing vertex attributes. A true value here indicates that
         // the issue has been adressed successfully.
         bool m_bound_flag;
+
+        bool m_configure_flag;
 
         // The given Buffer pointers.
         VertexBuffer* m_vertices;
@@ -156,6 +171,8 @@ class VertexFetch : public OGL_ID {
 
         /// The total length in bytes of all the attributes.
 		GLuint m_attribute_length_sum;
+
+		bool configure(void);
 
         /**
 		 * \brief Get an OpenGL handle for this vertex array object.
@@ -187,8 +204,8 @@ class VertexFetch : public OGL_ID {
 
 		/**
 		 * \brief Create full/detailed mapping of attribute positions within
-		 * the vertex buffer, based upon any given vertex attribute
-		 * specifications and choice of data mixing.
+		 * 		  he vertex buffer, based upon any given vertex attribute
+		 * 		  specifications and choice of data mixing.
 		 */
 		void prepareAttributeMapping(void);
     };

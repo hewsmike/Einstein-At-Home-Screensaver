@@ -23,7 +23,7 @@
 
 #include <iostream>
 
-Buffer::Buffer(const GLvoid& buffer_data, GLuint bytes) {
+Buffer::Buffer(const GLvoid* buffer_data, GLuint bytes) {
     // Ensure an actual data source was provided.
     if(buffer_data != NULL) {
         m_data = buffer_data;
@@ -82,7 +82,7 @@ void Buffer::release(void) {
     acquire_flag = false;
     }
 
-const GLvoid& Buffer::data(void) const {
+const GLvoid* Buffer::data(void) const {
     return m_data;
     }
 

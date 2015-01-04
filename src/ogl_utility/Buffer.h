@@ -52,7 +52,7 @@ class Buffer : public OGL_ID {
          * \param data : pointer to the data to be stored.
          * \param bytes : the number of bytes of data.
          */
-        Buffer(const GLvoid& buffer_data, GLuint bytes);
+        Buffer(const GLvoid* buffer_data, GLuint bytes);
 
         /**
          * \brief Destructor.
@@ -77,7 +77,7 @@ class Buffer : public OGL_ID {
          * \brief Obtain a pointer to immutable byte granular data.
          *        By construction this is guaranteed to be non-NULL.
          */
-        const GLvoid& data(void) const;
+        const GLvoid* data(void) const;
 
         /**
 		 * \brief The number of bytes stored within the buffer.
@@ -89,7 +89,7 @@ class Buffer : public OGL_ID {
         bool acquire_flag;
 
         /// A pointer to untyped but immutable data.
-        const GLvoid& m_data;
+        const GLvoid* m_data;
 
         /// The number of bytes to be allocated to the buffer.
         GLsizeiptr m_size;

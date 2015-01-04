@@ -26,12 +26,13 @@ const GLsizei TextureBuffer::MIN_TEX_WIDTH(2);
 const GLsizei TextureBuffer::MIN_TEX_HEIGHT(2);
 
 TextureBuffer::TextureBuffer(const GLvoid* texture_data,
+							 GLuint bytes,
                              GLsizei width,
                              GLsizei height,
                              GLenum format,
                              GLenum data_type,
                              bool mipmaps) :
-                                Buffer(texture_data),
+                                Buffer(texture_data, bytes),
                                 m_mipmaps(mipmaps) {
     // Ensure sufficient width.
     if(width >= TextureBuffer::MIN_TEX_WIDTH) {

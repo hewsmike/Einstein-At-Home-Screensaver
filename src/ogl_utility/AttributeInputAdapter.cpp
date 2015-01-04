@@ -31,19 +31,19 @@ AttributeInputAdapter::AttributeInputAdapter(void) {
 AttributeInputAdapter::~AttributeInputAdapter() {
 	}
 
-void AttributeInputAdapter::addSpecification(struct attribute_spec& spec) {
+void AttributeInputAdapter::addSpecification(const attribute_spec& spec) {
 	// Add this to the store.
 	m_matchings.push_back(spec);
 	}
 
-bool AttributeInputAdapter::getAttributeSpecAt(GLuint index, struct attribute_spec* spec) const {
+bool AttributeInputAdapter::getAttributeSpecAt(GLuint index, attribute_spec* spec) const {
 	// Assume failure.
     bool ret_val = false;
 
     // Is the index within range ?
     if(index < m_matchings.size()) {
     	// Yes, copy to the given structure.
-    	spec = m_matchings[index];
+    	spec->attrib_index = m_matchings[index].attrib_index;
     	ret_val = true;
     	}
     else {

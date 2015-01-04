@@ -41,9 +41,10 @@ VertexFetch::VertexFetch(VertexBuffer* vertices, IndexBuffer* indices, Attribute
 							 ErrorHandler::FATAL);
 		}
 
-	processAttributeDescriptions();
+	// Initially the total sum of attribute lengths is zero.
+	m_attribute_length_sum = 0;
 
-    prepareAttributeMapping();
+	m_configure_flag = false;
 
 	m_bound_flag = false;
     }
@@ -75,7 +76,7 @@ bool VertexFetch::acquire(void) {
     }
 
 void VertexFetch::release(void) {
-	// Inform OpenGL that we no longer need this specific buffer handle.
+	// Inform OpenGL that we no longer need this specific VAO handle.
 	GLuint temp = this->ID();
 	release_ID(&temp);
 
@@ -84,34 +85,88 @@ void VertexFetch::release(void) {
     }
 
 void VertexFetch::bind(void) {
-	// Ensure resource acquisition first.
-	this->acquire();
+	// Can only bind if configured.
+	if(!isConfigured()) {
+		configure();
+	    }
+
+	// If we have an index array ...
+	if(m_indices != NULL) {
+		// Is it not bound already ?
+		if(!m_indices->isBound()) {
+			m_indices->bind();
+			}
+		}
 
 	OGL_DEBUG(glBindVertexArray(this->ID()));
 
-	// Bind only existing buffers.
-	if(m_vertices != NULL) {
-		m_vertices->bind();
-		}
-	if(m_indices != NULL) {
-		m_indices->bind();
-		}
-
-	OGL_DEBUG(glBindVertexArray(OGL_ID::NO_ID));
-
-	// Indicate that Buffer attachment to targets has been addressed.
 	m_bound_flag = true;
 	}
 
 void VertexFetch::unbind(void) {
-    // Ensure that the pipeline vertex fetch
-    // stage is not bound to any buffers at all.
-    m_vertices->unbind();
-    m_indices->unbind();
+	// Disable fetching for all supplied vertex attribute indices.
+	for(std::vector<attribute_record>::iterator attrib = m_attribute_specs.begin();
+		attrib != m_attribute_specs.end();
+		++attrib) {
+		OGL_DEBUG(glDisableVertexAttribArray(attrib->a_spec.attrib_index));
+		}
 
-    // Reset attachment state.
+	// NB the index array - if any - is not unbound as that requires persistence.
+
+	// Reset attachment state.
     m_bound_flag = false;
     }
+
+bool VertexFetch::configure(void) {
+	// Assume failure.
+	bool ret_val = false;
+
+	// Ensure resource acquisition first.
+	this->acquire();
+
+	//
+	if(m_adapter != NULL) {
+		//
+		processAttributeDescriptions();
+
+		//
+		prepareAttributeMapping();
+
+		//
+		OGL_DEBUG(glBindVertexArray(this->ID()));
+		// Bind only existing buffers.
+		if(m_vertices != NULL) {
+			m_vertices->bind();
+			}
+		if(m_indices != NULL) {
+			m_indices->bind();
+			}
+    // Enable fetching for all supplied vertex attribute indices,
+    	// these corresponding to 'location' definitions within the
+    	// vertex shader's GLSL code.
+    	for(std::vector<attribute_record>::iterator attrib = m_attribute_specs.begin();
+    		attrib != m_attribute_specs.end();
+    		++attrib) {
+    		OGL_DEBUG(glEnableVertexAttribArray(attrib->a_spec.attrib_index));
+    		OGL_DEBUG(glVertexAttribPointer(attrib->a_spec.attrib_index,
+    										attrib->a_spec.multiplicity,
+    										attrib->a_spec.type,
+    										attrib->a_spec.normalised,
+    										attrib->stride,
+    										attrib->pointer));
+
+    		}
+
+    	// Ensure that the pipeline vertex fetch
+    	    // stage is not bound to any buffers at all.
+    	    m_vertices->unbind();
+    	    m_indices->unbind();
+    OGL_DEBUG(glBindVertexArray(OGL_ID::NO_ID));
+		}
+
+    return ret_val;
+	}
+
 
 void VertexFetch::trigger(GLenum primitive, GLsizei count) {
     // If buffers are not attached to targets then do so.
@@ -124,7 +179,7 @@ void VertexFetch::trigger(GLenum primitive, GLsizei count) {
     OGL_DEBUG(glBindVertexArray(this->ID()));
 
     // Provokes vertex shader activity for count invocations,
-	// buffer use depending upon that which is bound.
+	// buffer use depending upon that which exist.
 	if((m_vertices != NULL) && (m_indices != NULL)) {
         // Both GL_ARRAY_BUFFER and GL_ELEMENT_ARRAY_BUFFER targets are bound.
 		OGL_DEBUG(glDrawElements(primitive, count, GL_UNSIGNED_INT, 0));
@@ -149,15 +204,20 @@ bool VertexFetch::isBound(void) const {
 	return m_bound_flag;
 	}
 
+bool VertexFetch::isConfigured(void) const {
+	return m_configure_flag;
+	}
+
 void VertexFetch::processAttributeDescriptions(void) {
+	// Access the AttributeInputAdapter and look at each attribute specification.
+	for(GLuint index = 0; index < m_adapter.size(); ++index) {
+		// Get an attribute specification.
+		AttributeInputAdapter::attribute_spec specification;
+		m_adapter.getAttributeSpecAt(index, &specification);
 
-    	// Initially the total sum of attribute lengths is zero.
-    	m_attribute_length_sum = 0;
-
+		// Populate an attribute record.
         attribute_record record;
         record.a_spec = specification;
-        record.a_spec.attrib_index = specification->;
-        record.a_spec.normalised = specification.normalised;
 
         // The length in bytes of an attribute is it's number
         // of ( identically sized ) components times the size of
@@ -183,10 +243,10 @@ void VertexFetch::processAttributeDescriptions(void) {
                 record.length *= sizeof(GLfloat);
                 break;
             default:
-                ErrorHandler::record("BufferVertexFetch::addVertexAttribute() : Bad switch case ( default )",
+                ErrorHandler::record("VertexFetch::processAttributeDescriptions() : Bad switch case ( default )",
                                      ErrorHandler::FATAL);
                 break;
-
+        	}
 
         // Add this attribute's length to the sum of same.
         m_attribute_length_sum += record.length;
@@ -197,58 +257,42 @@ void VertexFetch::processAttributeDescriptions(void) {
 
         // Insert into the attributes record.
         m_attribute_specs.push_back(record);
-
-        // Recalculate total buffer length in bytes.
-        m_size = m_vertex_count * m_attribute_length_sum;
-
-
+        }
     }
 
 void VertexFetch::prepareAttributeMapping(void) {
-    // Can only map attributes if it has never been done before in the lifetime
-    // a BufferVertexFetch instance ie. this method is only ever performed
-    // at most ONCE.
-    if(m_attributes_mapped == false) {
-        GLuint interleave_progressive_offset = 0;
-        GLuint non_interleave_progressive_offset = 0;
-        // Go through and examine all the given attribute specifications.
-        for(std::vector<attribute_record>::iterator attrib = m_attribute_specs.begin();
-            attrib != m_attribute_specs.end();
-            ++attrib) {
-        	std::stringstream map_msg;
-            switch(m_vertices->mix()) {
-                case VertexBuffer::BY_VERTEX :
-                    attrib->stride = m_attribute_length_sum;
-                    attrib->pointer = reinterpret_cast<GLvoid*>(interleave_progressive_offset);
-                    break;
-                case VertexBuffer::BY_ATTRIBUTE :
-                    attrib->stride = attrib->length;
-                    attrib->pointer = reinterpret_cast<GLvoid*>(non_interleave_progressive_offset);
-                    break;
-                default:
-                    // Should never get here.
-                    ErrorHandler::record("VertexBuffer::prepareAttributeMapping() : bad switch case ( default ) !",
-                                  ErrorHandler::FATAL);
-                }
-            map_msg << "VertexBuffer::prepareAttributeMapping() : For attribute with index "
-               		<< (attrib->a_spec).attrib_index
-               		<< ", the pointer = "
-               		<< attrib->pointer
-            		<< " and the stride = "
-            		<< attrib->stride;
-            ErrorHandler::record(map_msg.str(), ErrorHandler::INFORM);
+	GLuint interleave_progressive_offset = 0;
+	GLuint non_interleave_progressive_offset = 0;
+	// Go through and examine all the given attribute specifications.
+	for(std::vector<attribute_record>::iterator attrib = m_attribute_specs.begin();
+		attrib != m_attribute_specs.end();
+		++attrib) {
+		std::stringstream map_msg;
+		switch(m_vertices->mix()) {
+			case VertexBuffer::BY_VERTEX :
+				attrib->stride = m_attribute_length_sum;
+				attrib->pointer = reinterpret_cast<GLvoid*>(interleave_progressive_offset);
+				break;
+			case VertexBuffer::BY_ATTRIBUTE :
+				attrib->stride = attrib->length;
+				attrib->pointer = reinterpret_cast<GLvoid*>(non_interleave_progressive_offset);
+				break;
+			default:
+				// Should never get here.
+				ErrorHandler::record("VertexBuffer::prepareAttributeMapping() : bad switch case ( default ) !",
+							  ErrorHandler::FATAL);
+			}
+		map_msg << "VertexFetch::prepareAttributeMapping() : For attribute with index "
+				<< (attrib->a_spec).attrib_index
+				<< ", the pointer = "
+				<< attrib->pointer
+				<< " and the stride = "
+				<< attrib->stride;
+		ErrorHandler::record(map_msg.str(), ErrorHandler::INFORM);
 
-            interleave_progressive_offset += attrib->length;
+		interleave_progressive_offset += attrib->length;
 
-            non_interleave_progressive_offset += attrib->length * m_vertices->size();
-            }
-
-        // Mark attribute mapping as completed.
-        m_attributes_mapped = true;
-        }
-    else {
-        ErrorHandler::record("VertexBuffer::prepareAttributeMapping() : called more than once",
-                              ErrorHandler::FATAL);
-        }
+		non_interleave_progressive_offset += attrib->length * m_vertices->size();
+		}
     }
 

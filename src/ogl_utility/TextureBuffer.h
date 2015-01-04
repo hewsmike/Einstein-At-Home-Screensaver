@@ -46,6 +46,7 @@ class TextureBuffer : public Buffer {
          *        texture type.
          *
          * \param texture_data : a pointer to the image data
+         * \param bytes : the number of bytes of data.
          * \param width : in texels, must be a strictly positive power of 2
          * \param height : in texels, must be a strictly positive power of 2
          * \param format : one of the following ES 2.0 allowed enumerants
@@ -62,6 +63,7 @@ class TextureBuffer : public Buffer {
          * \param mipmaps : if true, all mipmaps generated down to 1x1
          */
         TextureBuffer(const GLvoid* texture_data,
+        			  GLuint bytes,
                       GLsizei width,
                       GLsizei height,
                       GLenum format,

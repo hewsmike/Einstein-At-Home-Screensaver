@@ -50,11 +50,13 @@ class IndexBuffer : public Buffer {
          *          - index type is incorrect for OpenGL ES 2.x
          *
          * \param data : pointer to the data to be stored.
+         * \param bytes : the number of bytes of data.
          * \param indices : number of indices.
          * \param usage : one of GL_STREAM_DRAW, GL_STATIC_DRAW or GL_DYNAMIC_DRAW.
          * \param index_type : one of GL_UNSIGNED_BYTE, GL_UNSIGNED_SHORT, GL_UNSIGNED_INT ( default ).
          */
         IndexBuffer(const GLvoid* buffer_data,
+        			GLuint bytes,
                     GLuint indices,
                     GLenum usage,
                     GLenum index_type = GL_UNSIGNED_INT);
@@ -73,6 +75,8 @@ class IndexBuffer : public Buffer {
          * \brief Remove any data binding to the pipeline input.
          */
         void unbind(void);
+
+        bool isBound(void) const;
 
         /*
          * \brief The type of index used.

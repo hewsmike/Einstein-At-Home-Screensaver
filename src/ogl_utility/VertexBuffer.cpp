@@ -26,10 +26,11 @@
 #include <sstream>
 
 VertexBuffer::VertexBuffer(const GLvoid* buffer_data,
-                           GLuint vertices,
+						   GLuint bytes,
+		                   GLuint vertices,
                            GLenum usage,
                            data_mix mix) :
-                Buffer(buffer_data),
+                Buffer(buffer_data, bytes),
                 m_mix(mix) {
     // Ensure strictly positive vertex count.
     if(vertices > 0) {
@@ -40,10 +41,7 @@ VertexBuffer::VertexBuffer(const GLvoid* buffer_data,
                              ErrorHandler::FATAL);
         }
 
-    // Initially buffer size is nil.
-    m_size = 0;
-
-    // Ensure compliance with OpenGL ES 2.x acceptable parameter types.
+    // Ensure compliance with OpenGL acceptable parameter types.
     if((usage == GL_STREAM_DRAW) ||
        (usage == GL_STATIC_DRAW) ||
        (usage == GL_DYNAMIC_DRAW)) {
@@ -59,7 +57,7 @@ VertexBuffer::~VertexBuffer() {
     Buffer::release();
     }
 
-GLuint VertexBuffer::size(void) const {
+GLuint VertexBuffer::vertexCount(void) const {
     return m_vertex_count;
     }
 
@@ -79,8 +77,7 @@ void VertexBuffer::loadBuffer(void) const {
 
     // Unbind the buffer.
     OGL_DEBUG(glBindBuffer(GL_ARRAY_BUFFER, OGL_ID::NO_ID));
-
-    }
+	}
 
 void VertexBuffer::bind(void) {
     // Ensure resource acquisition first.
@@ -88,41 +85,25 @@ void VertexBuffer::bind(void) {
 
 	// Bind the given buffer object to pipeline state.
 	OGL_DEBUG(glBindBuffer(GL_ARRAY_BUFFER, this->ID()));
-
-	// Enable fetching for all supplied vertex attribute indices,
-	// these corresponding to 'location' definitions within the
-	// vertex shader's GLSL code.
-	for(std::vector<attribute_record>::iterator attrib = m_attribute_specs.begin();
-		attrib != m_attribute_specs.end();
-		++attrib) {
-		OGL_DEBUG(glEnableVertexAttribArray(attrib->a_spec.attrib_index));
-		OGL_DEBUG(glVertexAttribPointer(attrib->a_spec.attrib_index,
-										attrib->a_spec.multiplicity,
-										attrib->a_spec.type,
-										attrib->a_spec.normalised,
-										attrib->stride,
-										attrib->pointer));
-
-		}
-	// Unbind the given buffer object from the pipeline state.
-	OGL_DEBUG(glBindBuffer(GL_ARRAY_BUFFER, OGL_ID::NO_ID));
-    }
+	}
 
 void VertexBuffer::unbind(void) {
-    // Detachment only occurs if mapping was ever completed.
-    if(m_attributes_mapped == true) {
-        // Disable fetching for all supplied vertex attribute indices.
-        for(std::vector<attribute_record>::iterator attrib = m_attribute_specs.begin();
-            attrib != m_attribute_specs.end();
-            ++attrib) {
-        	OGL_DEBUG(glDisableVertexAttribArray(attrib->a_spec.attrib_index));
-            }
-        // Unbind the given buffer object from pipeline state.
-        OGL_DEBUG(glBindBuffer(GL_ARRAY_BUFFER, OGL_ID::NO_ID));
-        }
-    }
+    // Unbind the given buffer object from pipeline state.
+    OGL_DEBUG(glBindBuffer(GL_ARRAY_BUFFER, OGL_ID::NO_ID));
+	}
 
 VertexBuffer::data_mix VertexBuffer::mix(void) const {
 	return m_mix;
 	}
 
+bool VertexBuffer::isBound(void) const {
+	// Assume failure.
+	bool ret_val = false;
+
+	// Discover which array buffer, if any, is bound to the OpenGL state.
+	GLint temp;
+
+	// OGL_DEBUG(glGetIntegerv(GL_ARRAY_BUFFER_BINDING​, &temp​));
+
+	return ret_val;
+	}
