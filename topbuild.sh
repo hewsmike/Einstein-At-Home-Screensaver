@@ -234,19 +234,25 @@ retrieve_sdl_ttf() {
     
 retrieve_glm() {
 	GLM_RETRIEVE_STR=glm-$GLM_VERSION
-    GLM_RETRIEVE_FILE=$GLM_RETRIEVE_STR.zip
-    GLM_RETRIEVE_DOMAIN=http://internode.dl.sourceforge.net/projects/ogl-math/$GLM_VERSION/
+    GLM_RETRIEVE_FILE=$GLM_RETRIEVE_STR.tar.gz
+    GLM_RETRIEVE_DOMAIN=https://github.com/g-truc/glm/archive/
     GLM_RETRIEVE_PATH=$GLM_RETRIEVE_DOMAIN$GLM_RETRIEVE_FILE
+    
+    # https://github.com/g-truc/glm/archive/0.9.6.1.tar.gz
 
     log "Preparing GLM..."
     mkdir -p $ROOT/retrieval/glm >> $LOGFILE || failure
 
     cd $ROOT/retrieval || failure
-    wget $GLM_RETRIEVE_PATH >> $LOGFILE 2>&1 || failure
+    # wget $GLM_RETRIEVE_PATH >> $LOGFILE 2>&1 || failure
     
-    # unrem this section later when I sort out 7z and zip file uncompression
-    # unzip $GLM_RETRIEVE_FILE >> $LOGFILE 2>&1 || failure
+    git clone https://github.com/g-truc/glm.git $ROOT/retrieval/glm >> $LOGFILE 2>&1 || failure
+    
+    git checkout $GLM_VERSION
+    
+    # tar -xzf $GLM_RETRIEVE_FILE >> $LOGFILE 2>&1 || failure
     # rm $GLM_RETRIEVE_FILE >> $LOGFILE 2>&1 || failure
+    
     # substitute old source tree
     # rm -rf glm >> $LOGFILE 2>&1 || failure
     # mv $GLM_RETRIEVE_STR glm >> $LOGFILE 2>&1 || failure
