@@ -84,6 +84,8 @@ int main(int argc, char **argv) {
     // contradicts the statement that SDL_Init() must be called before
     // using any other SDL function ! :-0
     // SDL_DEBUG(SDL_SetMainReady());
+    // Works with no discernable error as of 05/01/15 with the line above REM'ed.
+
     int init_flag = SDL_DEBUG(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_EVENTS));
     if(init_flag != 0) {
         // Failed, which is FATAL.

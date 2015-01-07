@@ -106,7 +106,7 @@ retrieve_boinc() {
         # workaround for old git versions
         rm -rf $ROOT/retrieval/boinc >> $LOGFILE || failure
 
-        log "Retrieving BOINC (tag: $1) (this may take a while)..."
+        log "Retrieving BOINC (tag: $1) (this WILL take a while)..."
         cd $ROOT/retrieval || failure
         git clone git://git.aei.uni-hannover.de/shared/einsteinathome/boinc.git boinc >> $LOGFILE 2>&1 || failure
         cd $ROOT/retrieval/boinc || failure
@@ -146,7 +146,7 @@ retrieve_glew() {
     GLEW_RETRIEVE_DOMAIN=http://sourceforge.net/projects/glew/files/glew/$GLEW_VERSION/
     GLEW_RETRIEVE_PATH=$GLEW_RETRIEVE_DOMAIN$GLEW_RETRIEVE_FILE
 
-    log "Preparing GLEW..."
+    log "Retrieving GLEW (this may take a while)..."
     mkdir -p $ROOT/retrieval/glew >> $LOGFILE || failure
 
     cd $ROOT/retrieval || failure
@@ -244,19 +244,9 @@ retrieve_glm() {
     mkdir -p $ROOT/retrieval/glm >> $LOGFILE || failure
 
     cd $ROOT/retrieval || failure
-    # wget $GLM_RETRIEVE_PATH >> $LOGFILE 2>&1 || failure
-    
-    git clone https://github.com/g-truc/glm.git $ROOT/retrieval/glm >> $LOGFILE 2>&1 || failure
-    
-    git checkout $GLM_VERSION
-    
-    # tar -xzf $GLM_RETRIEVE_FILE >> $LOGFILE 2>&1 || failure
-    # rm $GLM_RETRIEVE_FILE >> $LOGFILE 2>&1 || failure
-    
-    # substitute old source tree
-    # rm -rf glm >> $LOGFILE 2>&1 || failure
-    # mv $GLM_RETRIEVE_STR glm >> $LOGFILE 2>&1 || failure
-
+        
+    git clone --branch $GLM_VERSION https://github.com/g-truc/glm.git $ROOT/retrieval/glm >> $LOGFILE 2>&1 || failure
+     
     save_topbuild_state $TBS_GLM_RETRIEVED
 
     return 0
@@ -300,7 +290,7 @@ check_prerequisites() {
     log "Checking prerequisites..."
 
     # required toolchain
-    TOOLS="ar automake autoconf cmake cvs doxygen g++ gcc hg ld lex libtool m4 patch pkg-config svn tar unzip valgrind wget yacc"
+    TOOLS="ar automake autoconf cmake cvs doxygen g++ gcc hg ld lex libtool m4 patch pkg-config svn tar valgrind wget yacc"
 
     for tool in $TOOLS; do
         if ! ( type $tool >/dev/null 2>&1 ); then
@@ -425,7 +415,7 @@ prepare_directories() {
     # For common source retrieval only update
     # ( replace if newer, copy if non-existent )
     cp -rfu $ROOT/retrieval/* $ROOT/$1/3rdparty
-
+    
     # Populate with latest developer ( ie. YOU ) source code.
     rm -rf $ROOT/$1/src
     cp -rf $ROOT/src $ROOT/$1/src

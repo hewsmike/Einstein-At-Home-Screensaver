@@ -97,7 +97,7 @@ void VertexFetch::bind(void) {
 		// Is it not bound already ?
 		if(!m_indices->isBound()) {
 			// No, then bind it.
-			m_indices->bind();
+			// m_indices->bind();
 			}
 		}
 

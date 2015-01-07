@@ -116,6 +116,7 @@ prepare_tree() {
     mkdir -p $ROOT/install/bin >> $LOGFILE || failure
     mkdir -p $ROOT/install/include >> $LOGFILE || failure
     mkdir -p $ROOT/install/include/GL >> @LOGFILE || failure
+    mkdir -p $ROOT/install/include/glm >> @LOGFILE || failure
     mkdir -p $ROOT/install/lib >> $LOGFILE || failure
 
     save_build_state $BS_PREPARE_TREE
@@ -251,7 +252,8 @@ build_boinc() {
     fi
 
     log "Building BOINC (this may take a while)..."
-    make >> $LOGFILE 2>&1 || failure
+
+	make >> $LOGFILE 2>&1 || failure
     make install >> $LOGFILE 2>&1 || failure
 
     log "Successfully built and installed BOINC!"
@@ -386,11 +388,12 @@ build_glm() {
         return 0
     fi
 
-    cd $ROOT/3rdparty/glm
+    cd $ROOT/install/include || failure
 
     log "Building GLM (this may take a while)..."
     
-    cp -f glm.hpp $ROOT/install/include/glm/glm.hpp
+    # Special instance here as glm is not a build but header only inclusion.
+    cp -rfu $ROOT/3rdparty/glm/glm/* $ROOT/install/include/glm >> $LOGFILE 2>&1 || failure 
     
     log "Successfully built and installed GLEW!"
 
@@ -485,6 +488,7 @@ build_linux() {
     build_libxml || failure
     build_sdl || failure
     build_sdl_ttf || failure
+    build_glm || failure
 
     # Now client code.
     build_orc || failure

@@ -58,6 +58,8 @@
     #define SDL_MAIN_HANDLED
 #endif
 
+#include "glm.hpp"
+
 #include <SDL2/SDL.h>
 
 #include <SDL_ttf.h>
