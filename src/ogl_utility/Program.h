@@ -23,6 +23,8 @@
 
 #include "ogl_utility.h"
 
+#include <map>
+
 #include "AttributeInputAdapter.h"
 #include "FragmentShader.h"
 #include "OGL_ID.h"
@@ -134,6 +136,11 @@ class Program : public OGL_ID {
         const std::string& linkageLog(void) const;
 
     private:
+        /// Maximum length ( in characters, including null terminator )
+        /// of the storage allocated for the name of a uniform
+        /// variable.
+        const int UNIFORM_NAME_BUFFER_SIZE;
+
         /**
          * \brief Link the program.
          *
@@ -142,6 +149,20 @@ class Program : public OGL_ID {
          *              false - program linkage failed
          */
         bool link(void);
+
+        /**
+         * \brief For uniform variables, determine the correspondence between
+         *        it's name ( as declared within an attached shader ) and
+         *        it's location in the program object. This ought only be done
+         *        if the program has been successfully linked, if not this
+         *        method will return a false value.
+         *
+         * \return a boolean indicating success.
+         *              true - map is valid.
+         *              false - map is not valid ( program wasn't linked
+         *                      successfully ).
+         */
+        bool mapUniforms(void);
 
         // These are merely set during construction, though utilised during acquisition.
         /// The vertex shader reference.
@@ -161,7 +182,15 @@ class Program : public OGL_ID {
 
         /// The linker log for this shader.
         std::string linker_log;
-    };
+
+        /// Map to track the active uniform variables within the OpenGL
+        /// program entity. Active means those declared and used within
+        /// the shader code. Inactive uniforms are those that are declared
+        /// but not otherwise usefully referenced ie. the OpenGL compiler
+        /// may ( and probably will ) ignore them and thus discard any
+        /// reference to them.
+        std::map<std::string, GLuint> uniforms;
+  };
 
 /**
  * @}

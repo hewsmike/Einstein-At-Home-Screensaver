@@ -25,6 +25,8 @@
 #include <iostream>
 #include <sstream>
 
+const int Program::UNIFORM_NAME_BUFFER_SIZE(50);
+
 Program::Program(VertexShader* vertex_shader,
                  FragmentShader* fragment_shader,
 				 AttributeInputAdapter* adapter,
@@ -215,4 +217,57 @@ bool Program::link(void) {
 
 const std::string& Program::linkageLog(void) const {
     return linker_log;
+    }
+
+bool Program::mapUniforms(void) {
+    // Assume failure.
+    bool ret_val = false;
+
+    // Clear the map structure.
+    uniforms.clear();
+
+    // Only proceed if linkage was attempted and succeeded.
+    if(this->status() == LINKAGE_SUCCEEDED) {
+        // How many uniforms does this program entity have ?
+        GLuint temp;
+        glGetProgramiv(this->ID(), GL_ACTIVE_UNIFORMS, (GLint*)(&temp));
+
+        // Retrieve their names and locations.
+        for(GLuint index = 0; index < temp; ++index) {
+            GLchar u_name = char[UNIFORM_NAME_BUFFER_SIZE];
+            // Paranoia.
+            u_name[UNIFORM_NAME_BUFFER_SIZE - 1] = '\0';
+            GLuint written_length;
+            GLuint uniform_size;
+            GLenum uniform_type;
+
+            glGetActiveUniform(this->ID(),
+                               index,
+                               UNIFORM_NAME_BUFFER_SIZE - 1,
+                               (GLint*)(&written_length),
+                               (GLint*)&uniform_size,
+                               &uniform_type,
+                               &u_name);
+
+            stringstream uname_msg;
+            uname_msg << "Program::mapUniforms() : programId = "
+                      << this->ID()
+                      << "\tindex = "
+                      << index
+                      << "\tname = '"
+                      << u_name
+                      << "'"
+                      << "\t of size = "
+                      << uniform_size;
+
+            ErrorHandler::record(uname_msg.str(), ErrorHandler::INFORM);
+
+            // Save the values.
+            uniforms.insert(std::make_pair(std::string(u_name), index));
+            }
+
+        ret_val = true;
+        }
+
+    return ret_val;
     }
