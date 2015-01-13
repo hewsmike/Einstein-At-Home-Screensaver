@@ -36,6 +36,7 @@ CPPFLAGS += -I$(FRAMEWORK_INSTALL)/include/boinc
 CPPFLAGS += -I$(FRAMEWORK_INSTALL)/include/GL
 CPPFLAGS += -I$(FRAMEWORK_INSTALL)/include/SDL2
 CPPFLAGS += -I$(FRAMEWORK_INSTALL)/include/glm
+CPPFLAGS += -I$(FRAMEWORK_INSTALL)/include/glm/gtc
 CPPFLAGS += -I/usr/include
 
 DEPS = Makefile

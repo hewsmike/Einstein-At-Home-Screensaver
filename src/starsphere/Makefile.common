@@ -93,6 +93,7 @@ CPPFLAGS += $(shell $(PRODUCT_INSTALL)/bin/sdl2-config --cflags)
 CPPFLAGS += -I$(PRODUCT_INSTALL)/include/boinc
 CPPFLAGS += -I$(PRODUCT_INSTALL)/include/GL
 CPPFLAGS += -I$(PRODUCT_INSTALL)/include/glm
+CPPFLAGS += -I$(PRODUCT_INSTALL)/include/glm/gtc
 CPPFLAGS += -Iusr/include/GL
 CPPFLAGS += -I$(PRODUCT_INSTALL)/include/SDL2
 CPPFLAGS += -I$(FRAMEWORK_SRC) -I$(PROJECT_ROOT)/src/ -I$(PROJECT_ROOT)/src/framework -I$(PROJECT_ROOT)/src/ogl_utility

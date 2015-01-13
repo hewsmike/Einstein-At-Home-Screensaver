@@ -30,11 +30,13 @@ const int Program::UNIFORM_NAME_BUFFER_SIZE(50);
 Program::Program(VertexShader* vertex_shader,
                  FragmentShader* fragment_shader,
 				 AttributeInputAdapter* adapter,
-                 shaderDisposition dispose) :
+				 shaderDisposition dispose,
+				 void (*frame_callback)(GLuint)) :
                     m_vertex_shader(vertex_shader),
                     m_fragment_shader(fragment_shader),
 					m_adapter(adapter),
-                    m_dispose(dispose) {
+					m_dispose(dispose),
+					m_frame_callback(frame_callback){
     // Initially unlinked.
     link_status = Program::NEVER_LINKED;
     }
@@ -110,7 +112,6 @@ bool Program::acquire(void) {
 
                 // Link program and check for success.
                 if(link() == true) {
-                    link_status = Program::LINKAGE_SUCCEEDED;
                     // If this behaviour previously selected, then release the shaders.
                     /// TODO - enable this after other testing.
                     if(m_dispose == Program::DELETE_ON_GOOD_LINK) {
@@ -209,6 +210,8 @@ bool Program::link(void) {
     GLint link_state = GL_FALSE;
     glGetProgramiv(this->ID(), GL_LINK_STATUS, &link_state);
     if(link_state == GL_TRUE) {
+    	link_status = Program::LINKAGE_SUCCEEDED;
+    	mapUniforms();
         ret_val = true;
         }
 
@@ -218,6 +221,15 @@ bool Program::link(void) {
 const std::string& Program::linkageLog(void) const {
     return linker_log;
     }
+
+void Program::frameCallBack(void) {
+	// Only call back if we have a non-NULL target.
+	if(m_frame_callback != NULL)
+		{
+		// Provide the program's OpenGL identifier.
+		m_frame_callback(this->ID());
+		}
+	}
 
 bool Program::mapUniforms(void) {
     // Assume failure.
@@ -234,7 +246,7 @@ bool Program::mapUniforms(void) {
 
         // Retrieve their names and locations.
         for(GLuint index = 0; index < temp; ++index) {
-            GLchar u_name = char[UNIFORM_NAME_BUFFER_SIZE];
+            GLchar u_name[UNIFORM_NAME_BUFFER_SIZE];
             // Paranoia.
             u_name[UNIFORM_NAME_BUFFER_SIZE - 1] = '\0';
             GLuint written_length;
@@ -247,9 +259,9 @@ bool Program::mapUniforms(void) {
                                (GLint*)(&written_length),
                                (GLint*)&uniform_size,
                                &uniform_type,
-                               &u_name);
+                               u_name);
 
-            stringstream uname_msg;
+            std::stringstream uname_msg;
             uname_msg << "Program::mapUniforms() : programId = "
                       << this->ID()
                       << "\tindex = "
@@ -257,8 +269,10 @@ bool Program::mapUniforms(void) {
                       << "\tname = '"
                       << u_name
                       << "'"
-                      << "\t of size = "
-                      << uniform_size;
+                      << "\tsize = "
+                      << uniform_size
+					  << "\ttype = "
+					  << checkUniform(uniform_type) ;
 
             ErrorHandler::record(uname_msg.str(), ErrorHandler::INFORM);
 
@@ -271,3 +285,338 @@ bool Program::mapUniforms(void) {
 
     return ret_val;
     }
+
+GLuint Program::getUniform(std::string name) const {
+	std::map<std::string, GLuint>::const_iterator pos = uniforms.find(name);
+	return pos->second;
+	}
+
+std::string Program::checkUniform(GLenum type) {
+	std::string ret_val("");
+	switch(type) {
+		case GL_FLOAT:
+			ret_val = "GL_FLOAT";
+			break;
+		case GL_FLOAT_VEC2:
+			ret_val = "GL_FLOAT_VEC2";
+			break;
+		case GL_FLOAT_VEC3:
+			ret_val = "GL_FLOAT_VEC3";
+			break;
+		case GL_FLOAT_VEC4:
+			ret_val = "GL_FLOAT_VEC4";
+			break;
+		case GL_DOUBLE:
+			ret_val = "GL_DOUBLE";
+			break;
+		case GL_DOUBLE_VEC2:
+			ret_val = "GL_DOUBLE_VEC2";
+			break;
+		case GL_DOUBLE_VEC3:
+			ret_val = "GL_DOUBLE_VEC3";
+			break;
+		case GL_DOUBLE_VEC4:
+			ret_val = "GL_DOUBLE_VEC24";
+			break;
+		case GL_INT:
+			ret_val = "GL_INT";
+			break;
+		case GL_INT_VEC2:
+			ret_val = "GL_INT_VEC2";
+			break;
+		case GL_INT_VEC3:
+			ret_val = "GL_INT_VEC3";
+			break;
+		case GL_INT_VEC4:
+			ret_val = "GL_INT_VEC4";
+			break;
+		case GL_UNSIGNED_INT:
+			ret_val = "GL_UNSIGNED_INT";
+			break;
+		case GL_UNSIGNED_INT_VEC2:
+			ret_val = "UNSIGNED_INT_VEC2";
+			break;
+		case GL_UNSIGNED_INT_VEC3:
+			ret_val = "UNSIGNED_INT_VEC3";
+			break;
+		case GL_UNSIGNED_INT_VEC4:
+			ret_val = "UNSIGNED_INT_VEC4";
+			break;
+		case GL_BOOL:
+			ret_val = "GL_BOOL";
+			break;
+		case GL_BOOL_VEC2:
+			ret_val = "GL_BOOL_VEC2";
+			break;
+		case GL_BOOL_VEC3:
+			ret_val = "GL_BOOL_VEC3";
+			break;
+		case GL_BOOL_VEC4:
+			ret_val = "GL_BOOL_VEC4";
+			break;
+		case GL_FLOAT_MAT2:
+			ret_val = "GL_FLOAT_MAT2";
+			break;
+		case GL_FLOAT_MAT3:
+			ret_val = "GL_FLOAT_MAT3";
+			break;
+		case GL_FLOAT_MAT4:
+			ret_val = "GL_FLOAT_MAT4";
+			break;
+		case GL_FLOAT_MAT2x3:
+			ret_val = "GL_FLOAT_MAT2x3";
+			break;
+		case GL_FLOAT_MAT2x4:
+			ret_val = "GL_FLOAT_MAT2x4";
+			break;
+		case GL_FLOAT_MAT3x2:
+			ret_val = "GL_FLOAT_MAT3x2";
+			break;
+		case GL_FLOAT_MAT3x4:
+			ret_val = "GL_FLOAT_MAT3x4";
+			break;
+		case GL_FLOAT_MAT4x2:
+			ret_val = "GL_FLOAT_MAT4x2";
+			break;
+		case GL_FLOAT_MAT4x3:
+			ret_val = "GL_FLOAT_MAT4x3";
+			break;
+		case GL_DOUBLE_MAT2:
+			ret_val = "GL_DOUBLE_MAT2";
+			break;
+		case GL_DOUBLE_MAT3:
+			ret_val = "GL_DOUBLE_MAT3";
+			break;
+		case GL_DOUBLE_MAT4:
+			ret_val = "GL_DOUBLE_MAT4";
+			break;
+		case GL_DOUBLE_MAT2x3:
+			ret_val = "GL_DOUBLE_MAT2x3";
+			break;
+		case GL_DOUBLE_MAT2x4:
+			ret_val = "GL_DOUBLE_MAT2x4";
+			break;
+		case GL_DOUBLE_MAT3x2:
+			ret_val = "GL_DOUBLE_MAT3x2";
+			break;
+		case GL_DOUBLE_MAT3x4:
+			ret_val = "GL_DOUBLE_MAT3x4";
+			break;
+		case GL_DOUBLE_MAT4x2:
+			ret_val = "GL_DOUBLE_MAT4x2";
+			break;
+		case GL_DOUBLE_MAT4x3:
+			ret_val = "GL_DOUBLE_MAT4x3";
+			break;
+		case GL_SAMPLER_1D:
+			ret_val = "GL_SAMPLER_1D";
+			break;
+		case GL_SAMPLER_2D:
+			ret_val = "GL_SAMPLER_2D";
+			break;
+		case GL_SAMPLER_3D:
+			ret_val = "SAMPLER_3D";
+			break;
+		case GL_SAMPLER_CUBE:
+			ret_val = "GL_SAMPLER_CUBE";
+			break;
+		case GL_SAMPLER_1D_SHADOW:
+			ret_val = "GL_SAMPLER_1D_SHADOW";
+			break;
+		case GL_SAMPLER_2D_SHADOW:
+			ret_val = "GL_SAMPLER_2D_SHADOW";
+			break;
+		case GL_SAMPLER_1D_ARRAY:
+			ret_val = "GL_SAMPLER_1D_ARRAY";
+			break;
+		case GL_SAMPLER_2D_ARRAY:
+			ret_val = "GL_SAMPLER_2D_ARRAY";
+			break;
+		case GL_SAMPLER_1D_ARRAY_SHADOW:
+			ret_val = "GL_SAMPLER_1D_ARRAY_SHADOW";
+			break;
+		case GL_SAMPLER_2D_ARRAY_SHADOW:
+			ret_val = "GL_SAMPLER_2D_ARRAY_SHADOW";
+			break;
+		case GL_SAMPLER_2D_MULTISAMPLE:
+			ret_val = "GL_SAMPLER_2D_MULTISAMPLE";
+			break;
+		case GL_SAMPLER_2D_MULTISAMPLE_ARRAY:
+			ret_val = "GL_SAMPLER_2D_MULTISAMPLE_ARRAY";
+			break;
+		case GL_SAMPLER_CUBE_SHADOW:
+			ret_val = "GL_SAMPLER_CUBE_SHADOW";
+			break;
+		case GL_SAMPLER_BUFFER:
+			ret_val = "GL_SAMPLER_BUFFER";
+			break;
+		case GL_SAMPLER_2D_RECT:
+			ret_val = "GL_SAMPLER_2D_RECT";
+			break;
+		case GL_SAMPLER_2D_RECT_SHADOW:
+			ret_val = "GL_SAMPLER_2D_RECT_SHADOW";
+			break;
+		case GL_INT_SAMPLER_1D:
+			ret_val = "GL_INT_SAMPLER_1D";
+			break;
+		case GL_INT_SAMPLER_2D:
+			ret_val = "GL_INT_SAMPLER_2D";
+			break;
+		case GL_INT_SAMPLER_3D:
+			ret_val = "GL_INT_SAMPLER_3D";
+			break;
+		case GL_INT_SAMPLER_CUBE:
+			ret_val = "GL_INT_SAMPLER_CUBE";
+			break;
+		case GL_INT_SAMPLER_1D_ARRAY:
+			ret_val = "GL_INT_SAMPLER_1D_ARRAY";
+			break;
+		case GL_INT_SAMPLER_2D_ARRAY:
+			ret_val = "GL_INT_SAMPLER_2D_ARRAY";
+			break;
+		case GL_INT_SAMPLER_2D_MULTISAMPLE:
+			ret_val = "GL_INT_SAMPLER_2D_MULTISAMPLE";
+			break;
+		case GL_INT_SAMPLER_2D_MULTISAMPLE_ARRAY:
+			ret_val = "GL_INT_SAMPLER_2D_MULTISMAPLE_ARRAY";
+			break;
+		case GL_INT_SAMPLER_BUFFER:
+			ret_val = "GL_INT_SAMPLER_BUFFER";
+			break;
+		case GL_INT_SAMPLER_2D_RECT:
+			ret_val = "GL_INT_SAMPLER_2D_RECT";
+			break;
+		case GL_UNSIGNED_INT_SAMPLER_1D:
+			ret_val = "GL_UNSIGNED_INT_SAMPLER_1D";
+			break;
+		case GL_UNSIGNED_INT_SAMPLER_2D:
+			ret_val = "GL_UNSIGNED_INT_SAMPLER_2D";
+			break;
+		case GL_UNSIGNED_INT_SAMPLER_3D:
+			ret_val = "GL_UNSIGNED_INT_SAMPLER_3D";
+			break;
+		case GL_UNSIGNED_INT_SAMPLER_CUBE:
+			ret_val = "GL_UNSIGNED_INT_SAMPLER_CUBE";
+			break;
+		case GL_UNSIGNED_INT_SAMPLER_1D_ARRAY:
+			ret_val = "GL_UNSIGNED_INT_SAMPLER_1D_ARRAY";
+			break;
+		case GL_UNSIGNED_INT_SAMPLER_2D_ARRAY:
+			ret_val = "GL_DOUBLE_UNSIGNED_INT_SAMPLER_2D_ARRAY";
+			break;
+		case GL_UNSIGNED_INT_SAMPLER_2D_MULTISAMPLE:
+			ret_val = "GL_UNSIGNED_INT_SAMPLER_2D_MULTISAMPLE";
+			break;
+		case GL_UNSIGNED_INT_SAMPLER_2D_MULTISAMPLE_ARRAY:
+			ret_val = "GL_UNSIGNED_INT_SAMPLER_2D_MULTISAMPLE_ARRAY";
+			break;
+		case GL_UNSIGNED_INT_SAMPLER_BUFFER:
+			ret_val = "GL_UNSIGNED_INT_SAMPLER_BUFFER";
+			break;
+		case GL_UNSIGNED_INT_SAMPLER_2D_RECT:
+			ret_val = "GL_UNSIGNED_INT_SAMPLER_2D_RECT";
+			break;
+		case GL_IMAGE_1D:
+			ret_val = "GL_IMAGE_1D";
+			break;
+		case GL_IMAGE_2D:
+			ret_val = "GL_IMAGE_2D";
+			break;
+		case GL_IMAGE_3D:
+			ret_val = "GL_IMAGE_3D";
+			break;
+		case GL_IMAGE_2D_RECT:
+			ret_val = "GL_IMAGE_2D_RECT";
+			break;
+		case GL_IMAGE_CUBE:
+			ret_val = "GL_IMAGE_CUBE";
+			break;
+		case GL_IMAGE_BUFFER:
+			ret_val = "GL_IMAGE_BUFFER";
+			break;
+		case GL_IMAGE_1D_ARRAY:
+			ret_val = "GL_IMAGE_1D_ARRAY";
+			break;
+		case GL_IMAGE_2D_ARRAY:
+			ret_val = "GL_IMAGE_2D_ARRAY";
+			break;
+		case GL_IMAGE_2D_MULTISAMPLE:
+			ret_val = "GL_IMAGE_2D_MULTISAMPLE";
+			break;
+		case GL_IMAGE_2D_MULTISAMPLE_ARRAY:
+			ret_val = "GL_IMAGE_2D_MULTISAMPLE_ARRAY";
+			break;
+		case GL_INT_IMAGE_1D:
+			ret_val = "GL_INT_IMAGE_1D";
+			break;
+		case GL_INT_IMAGE_2D:
+			ret_val = "GL_INT_IMAGE_2D";
+			break;
+		case GL_INT_IMAGE_3D:
+			ret_val = "GL_INT_IMAGE_3D";
+			break;
+		case GL_INT_IMAGE_2D_RECT:
+			ret_val = "GL_INT_IMAGE_2D_RECT";
+			break;
+		case GL_INT_IMAGE_CUBE:
+			ret_val = "GL_INT_IMAGE_CUBE";
+			break;
+		case GL_INT_IMAGE_BUFFER:
+			ret_val = "GL_INT_IMAGE_BUFFER";
+			break;
+		case GL_INT_IMAGE_1D_ARRAY:
+			ret_val = "GL_INT_IMAGE_1D_ARRAY";
+			break;
+		case GL_INT_IMAGE_2D_ARRAY:
+			ret_val = "GL_INT_IMAGE_2D_ARRAY";
+			break;
+		case GL_INT_IMAGE_2D_MULTISAMPLE:
+			ret_val = "GL_INT_IMAGE_2D_MULTISAMPLE";
+			break;
+		case GL_INT_IMAGE_2D_MULTISAMPLE_ARRAY:
+			ret_val = "GL_INT_IMAGE_2D_MULTISAMPLE_ARRAY";
+			break;
+		case GL_UNSIGNED_INT_IMAGE_1D:
+			ret_val = "GL_UNSIGNED_INT_IMAGE_1D";
+			break;
+		case GL_UNSIGNED_INT_IMAGE_2D:
+			ret_val = "GL_UNSIGNED_INT_IMAGE_2D";
+			break;
+		case GL_UNSIGNED_INT_IMAGE_3D:
+			ret_val = "GL_UNSIGNED_INT_IMAGE_3D";
+			break;
+		case GL_UNSIGNED_INT_IMAGE_2D_RECT:
+			ret_val = "GL_UNSIGNED_INT_IMAGE_2D_RECT";
+			break;
+		case GL_UNSIGNED_INT_IMAGE_CUBE:
+			ret_val = "GL_UNSIGNED_INT_IMAGE_CUBE";
+			break;
+		case GL_UNSIGNED_INT_IMAGE_BUFFER:
+			ret_val = "GL_UNSIGNED_INT_IMAGE_BUFFER";
+			break;
+		case GL_UNSIGNED_INT_IMAGE_1D_ARRAY:
+			ret_val = "GL_UNSIGNED_INT_IMAGE_1D_ARRAY";
+			break;
+		case GL_UNSIGNED_INT_IMAGE_2D_ARRAY:
+			ret_val = "GL_UNSIGNED_INT_IMAGE_2D_ARRAY";
+			break;
+		case GL_UNSIGNED_INT_IMAGE_2D_MULTISAMPLE:
+			ret_val = "GL_UNSIGNED_INT_IMAGE_2D_MULTISAMPLE";
+			break;
+		case GL_UNSIGNED_INT_IMAGE_2D_MULTISAMPLE_ARRAY:
+			ret_val = "GL_UNSIGNED_INT_IMAGE_2D_MULTISAMPLE_ARRAY";
+			break;
+		case GL_UNSIGNED_INT_ATOMIC_COUNTER:
+			ret_val = "UNSIGNED_INT_ATOMIC_COUNTER";
+			break;
+		default:
+			std::stringstream chk_uni_msg;
+			chk_uni_msg << "Program::checkUniform() : unknown type ( default case ) = "
+						<< type;
+			ErrorHandler::record(chk_uni_msg.str(), ErrorHandler::WARN);
+			ret_val = "UNKNOWN";
+			break;
+		}
+
+	return ret_val;
+	}

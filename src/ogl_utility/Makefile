@@ -31,6 +31,7 @@ CPPFLAGS += -I$(FRAMEWORK_SRC)
 CPPFLAGS += -I$(FRAMEWORK_INSTALL)/include/GL
 CPPFLAGS += -I$(FRAMEWORK_INSTALL)/include/SDL2
 CPPFLAGS += -I$(FRAMEWORK_INSTALL)/include/glm
+CPPFLAGS += -I$(FRAMEWORK_INSTALL)/include/glm/gtc
 
 DEPS = Makefile
 OBJS = AttributeInputAdapter.o

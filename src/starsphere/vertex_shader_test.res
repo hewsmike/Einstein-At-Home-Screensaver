@@ -11,6 +11,6 @@ uniform mat4 RotationMatrix;
 
 void main()
 {
-  gl_Position = vec4(position, 0.0, 1.0);
+  gl_Position = RotationMatrix * vec4(position, 0.0, 1.0);
   pass_color = color;
 }

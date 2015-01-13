@@ -380,6 +380,8 @@ class Starsphere : public AbstractGraphicsEngine {
         Pipeline* m_pipeline;
         VertexFetch* m_vertexfetch;
 
+        glm::mat4 m_rotation;
+
         /// Generate OpenGL display list for stars
         void make_stars();
 
@@ -483,6 +485,8 @@ class Starsphere : public AbstractGraphicsEngine {
         * \see Starsphere::mouseMoveEvent()
         */
         void zoomSphere(const int relativeZoom);
+
+        static void test_call_back(GLuint prog);
     };
 
 /// Constellation & star coordinates (starlist.C)

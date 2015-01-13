@@ -49,6 +49,8 @@ Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
 	m_pipeline = NULL;
 	m_vertexfetch = NULL;
 
+	m_rotation = glm::mat4(1.0f);
+
 	m_ObservatoryDrawTimeLocal = 0;
 
 	m_FontResource = NULL;
@@ -662,7 +664,7 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
     m_fragment = new FragmentShader(factory.createInstance("FragmentTestShader")->std_string());
 
     // Make a program using the above shaders, mark the corresponding OpenGL shader objects for deletion.
-    m_program = new Program(m_vertex, m_fragment, m_adapter, Program::DELETE_ON_GOOD_LINK);
+    m_program = new Program(m_vertex, m_fragment, m_adapter, Program::DELETE_ON_GOOD_LINK, this->test_call_back);
 
     // This creates an OpenGL Vertex Array Object ( VAO ) and includes the
     m_vertex_buffer = new VertexBuffer(vertex_data, sizeof(vertex_data) , 3, GL_STATIC_DRAW, VertexBuffer::BY_VERTEX);
@@ -976,6 +978,16 @@ void Starsphere::zoomSphere(const int relativeZoom) {
 	if (viewpt_radius < 0.5)
 		viewpt_radius = 0.5;
     }
+
+void Starsphere::test_call_back(GLuint prog) {
+
+	if(m_program->ID() == prog){
+		glUniformMatrix4fv(m_program->getUniform("RotationMatrix"),
+	                       1,
+			    		   false,
+				    	   glm::value_ptr(m_rotation));
+		}
+	}
 
 /**
  * Feature control

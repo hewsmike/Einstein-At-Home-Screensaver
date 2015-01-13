@@ -72,11 +72,19 @@ class Program : public OGL_ID {
          * \param dispose : one of the shaderDisposition enumerants indicating
          *                  desired fate of supplied shaders after any successful
          *                  linkage.
+         * \param frame_callback : pointer to a function to be called eg. on a frame
+         * 						   by frame basis to set, say, uniform variable values.
+         * 						   The function has the signature:
+         *
+         * 						   void somename(GLuint)
+         *
+         * 						   that is has a single GLuint argument and returns nothing.
          */
         Program(VertexShader* vertex_shader,
                 FragmentShader* fragment_shader,
 				AttributeInputAdapter* adapter,
-                shaderDisposition dispose);
+				shaderDisposition dispose,
+				void (*frame_callback)(GLuint) = NULL);
 
         /**
          * \brief Destructor.
@@ -135,11 +143,19 @@ class Program : public OGL_ID {
          */
         const std::string& linkageLog(void) const;
 
+        /**
+		 * \brief Invoke the callback function with the GLuint argument being the
+		 * 		  (underlying) OpenGL program entity's OpenGL identifier.
+		 */
+        void frameCallBack(void);
+
+        GLuint getUniform(std::string name) const;
+
     private:
         /// Maximum length ( in characters, including null terminator )
         /// of the storage allocated for the name of a uniform
         /// variable.
-        const int UNIFORM_NAME_BUFFER_SIZE;
+        static const int UNIFORM_NAME_BUFFER_SIZE;
 
         /**
          * \brief Link the program.
@@ -164,6 +180,8 @@ class Program : public OGL_ID {
          */
         bool mapUniforms(void);
 
+        std::string checkUniform(GLenum type);
+
         // These are merely set during construction, though utilised during acquisition.
         /// The vertex shader reference.
         VertexShader* m_vertex_shader;
@@ -173,6 +191,8 @@ class Program : public OGL_ID {
 
         /// The AttributeInputAdapter reference.
         AttributeInputAdapter* m_adapter;
+
+        void (*m_frame_callback)(GLuint);
 
         /// Indicator of current linkage state.
         linkageState link_status;

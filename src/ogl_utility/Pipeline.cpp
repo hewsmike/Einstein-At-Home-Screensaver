@@ -45,6 +45,8 @@ void Pipeline::utilise(GLenum primitive, GLsizei count) {
 
     	m_vertex_fetch.bind();
 
+    	m_program.frameCallBack();
+
         m_vertex_fetch.trigger(primitive, count);
 
         m_vertex_fetch.unbind();

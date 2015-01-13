@@ -60,6 +60,9 @@
 
 #include "glm.hpp"
 
+#include "matrix_transform.hpp"
+#include "type_ptr.hpp"
+
 #include <SDL2/SDL.h>
 
 #include <SDL_ttf.h>
