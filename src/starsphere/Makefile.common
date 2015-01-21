@@ -178,7 +178,7 @@ ifeq ".$(SYSTEM)" ".mac"
 endif
 
 # Product specific.
-OBJS += pulsar_list.o starlist.o snr_list.o
+OBJS += pulsar_list.o starlist.o snr_list.o TestProgram.o
 
 # Rules for object builds from sources.
 

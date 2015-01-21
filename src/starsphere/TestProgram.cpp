@@ -18,42 +18,23 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "Pipeline.h"
+#include "TestProgram.h"
 
-#include "ErrorHandler.h"
-
-#include <iostream>
-
-Pipeline::Pipeline(Program& program, VertexFetch& vertex_fetch) :
-                    m_program(program),
-                    m_vertex_fetch(vertex_fetch) {
+TestProgram::TestProgram(VertexShader* vertex_shader,
+                 	 	 FragmentShader* fragment_shader,
+						 AttributeInputAdapter* adapter,
+						 UniformInputAdapter* uniforms,
+						 Program::shaderDisposition dispose) :
+				Program(vertex_shader,
+						fragment_shader,
+						adapter,
+						uniforms,
+						dispose){
     }
 
-
-Pipeline::~Pipeline() {
+TestProgram::~TestProgram() {
     }
 
-void Pipeline::utilise(GLenum primitive, GLsizei count) {
-    // Link program if not done.
-    if(m_program.status() == Program::NEVER_LINKED) {
-        m_program.acquire();
-        }
+void TestProgram::frameCallback(void) {
 
-    // Only if the program was successfully linked.
-    if(m_program.status() == Program::LINKAGE_SUCCEEDED) {
-    	m_program.use();
-
-    	m_vertex_fetch.bind();
-
-    	m_program.frameCallback();
-
-        m_vertex_fetch.trigger(primitive, count);
-
-        m_vertex_fetch.unbind();
-
-        m_program.stopUse();
-        }
-    else {
-        /// TODO - Error path if no program link ?
-        }
-    }
+	}

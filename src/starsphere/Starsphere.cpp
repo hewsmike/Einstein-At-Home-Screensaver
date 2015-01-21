@@ -41,12 +41,14 @@
 
 Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
 	AbstractGraphicsEngine(sharedMemoryAreaIdentifier) {
+	m_adapter = NULL;
 	m_vertex_buffer = NULL;
     m_index_buffer = NULL;
 	m_vertex = NULL;
 	m_fragment = NULL;
-	m_program = NULL;
+	m_test_program = NULL;
 	m_pipeline = NULL;
+	m_uniform_input_adapter = NULL;
 	m_vertexfetch = NULL;
 
 	m_rotation = glm::mat4(1.0f);
@@ -105,11 +107,13 @@ Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
 
 Starsphere::~Starsphere() {
     if(m_vertex_shader_resource) delete m_vertex_shader_resource;
+    if(m_adapter) delete m_adapter;
+    if(m_uniform_input_adapter) delete m_uniform_input_adapter;
     if(m_vertex) delete m_vertex;
     if(m_fragment) delete m_fragment;
     if(m_vertex_buffer) delete m_vertex_buffer;
     if(m_vertexfetch) delete m_vertexfetch;
-    if(m_program) delete m_program;
+    if(m_test_program) delete m_test_program;
     if(m_pipeline) delete m_pipeline;
 	if(m_FontLogo1) delete m_FontLogo1;
 	if(m_FontLogo2) delete m_FontLogo2;
@@ -648,7 +652,7 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
 	struct AttributeInputAdapter::attribute_spec color_spec = {1, "color", 3, GL_FLOAT, GL_FALSE};
 
 	// Create and populate an AttributeInputAdapter.
-	AttributeInputAdapter* m_adapter = new AttributeInputAdapter();
+	m_adapter = new AttributeInputAdapter();
 	m_adapter->addSpecification(pos_spec);
 	m_adapter->addSpecification(color_spec);
 
@@ -663,8 +667,12 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
     // This is a pass through fragment shader. We need one to have a functioning pipeline at all.
     m_fragment = new FragmentShader(factory.createInstance("FragmentTestShader")->std_string());
 
+    m_uniform_input_adapter = new UniformInputAdapter();
+    struct UniformInputAdapter::uniform_spec u_spec = {"RotationMatrix", &m_rotation};
+    m_uniform_input_adapter->addSpecification(u_spec);
+
     // Make a program using the above shaders, mark the corresponding OpenGL shader objects for deletion.
-    m_program = new Program(m_vertex, m_fragment, m_adapter, Program::DELETE_ON_GOOD_LINK, this->test_call_back);
+    m_test_program = new TestProgram(m_vertex, m_fragment, m_adapter, m_uniform_input_adapter, Program::DELETE_ON_GOOD_LINK);
 
     // This creates an OpenGL Vertex Array Object ( VAO ) and includes the
     m_vertex_buffer = new VertexBuffer(vertex_data, sizeof(vertex_data) , 3, GL_STATIC_DRAW, VertexBuffer::BY_VERTEX);
@@ -675,16 +683,16 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
 
     m_vertexfetch = new VertexFetch(m_vertex_buffer, m_index_buffer, m_adapter);
 
-    m_pipeline = new Pipeline(*m_program, *m_vertexfetch);
+    m_pipeline = new Pipeline(*m_test_program, *m_vertexfetch);
 
-    m_program->acquire();
+    m_test_program->acquire();
 
-    if(m_program->status() != Program::LINKAGE_SUCCEEDED) {
+    if(m_test_program->status() != Program::LINKAGE_SUCCEEDED) {
     	stringstream linking_log;
     	linking_log << "Starsphere::initialize() : program did not link !!" << std::endl
 					<< "Linker log follows :\n"
 					<< "------------------------------------------------------\n"
-					<< m_program->linkageLog()
+					<< m_test_program->linkageLog()
 					<< "------------------------------------------------------"
 					<< std::endl;
     	ErrorHandler::record(linking_log.str(), ErrorHandler::INFORM);
@@ -978,16 +986,6 @@ void Starsphere::zoomSphere(const int relativeZoom) {
 	if (viewpt_radius < 0.5)
 		viewpt_radius = 0.5;
     }
-
-void Starsphere::test_call_back(GLuint prog) {
-
-	if(m_program->ID() == prog){
-		glUniformMatrix4fv(m_program->getUniform("RotationMatrix"),
-	                       1,
-			    		   false,
-				    	   glm::value_ptr(m_rotation));
-		}
-	}
 
 /**
  * Feature control

@@ -40,7 +40,8 @@
 #include "FragmentShader.h"
 #include "IndexBuffer.h"
 #include "Pipeline.h"
-#include "Program.h"
+#include "TestProgram.h"
+#include "UniformInputAdapter.h"
 #include "VertexBuffer.h"
 #include "VertexFetch.h"
 #include "VertexShader.h"
@@ -372,12 +373,14 @@ class Starsphere : public AbstractGraphicsEngine {
 
     private:
         /// OpenGL
+        AttributeInputAdapter* m_adapter;
         VertexBuffer* m_vertex_buffer;
         IndexBuffer* m_index_buffer;
         VertexShader* m_vertex;
         FragmentShader* m_fragment;
-        Program* m_program;
+        TestProgram* m_test_program;
         Pipeline* m_pipeline;
+        UniformInputAdapter* m_uniform_input_adapter;
         VertexFetch* m_vertexfetch;
 
         glm::mat4 m_rotation;
@@ -485,8 +488,6 @@ class Starsphere : public AbstractGraphicsEngine {
         * \see Starsphere::mouseMoveEvent()
         */
         void zoomSphere(const int relativeZoom);
-
-        static void test_call_back(GLuint prog);
     };
 
 /// Constellation & star coordinates (starlist.C)

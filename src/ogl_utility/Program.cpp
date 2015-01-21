@@ -30,13 +30,13 @@ const int Program::UNIFORM_NAME_BUFFER_SIZE(50);
 Program::Program(VertexShader* vertex_shader,
                  FragmentShader* fragment_shader,
 				 AttributeInputAdapter* adapter,
-				 shaderDisposition dispose,
-				 void (*frame_callback)(GLuint)) :
+				 UniformInputAdapter* uniforms,
+				 shaderDisposition dispose) :
                     m_vertex_shader(vertex_shader),
                     m_fragment_shader(fragment_shader),
 					m_adapter(adapter),
-					m_dispose(dispose),
-					m_frame_callback(frame_callback){
+					m_uniforms(uniforms),
+					m_dispose(dispose){
     // Initially unlinked.
     link_status = Program::NEVER_LINKED;
     }
@@ -222,15 +222,6 @@ const std::string& Program::linkageLog(void) const {
     return linker_log;
     }
 
-void Program::frameCallBack(void) {
-	// Only call back if we have a non-NULL target.
-	if(m_frame_callback != NULL)
-		{
-		// Provide the program's OpenGL identifier.
-		m_frame_callback(this->ID());
-		}
-	}
-
 bool Program::mapUniforms(void) {
     // Assume failure.
     bool ret_val = false;
@@ -290,6 +281,13 @@ GLuint Program::getUniform(std::string name) const {
 	std::map<std::string, GLuint>::const_iterator pos = uniforms.find(name);
 	return pos->second;
 	}
+
+bool Program::loadUniform(std::string u_name) const {
+	GLuint location = getUniform(u_name);
+
+
+
+}
 
 std::string Program::checkUniform(GLenum type) {
 	std::string ret_val("");

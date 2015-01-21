@@ -28,6 +28,7 @@
 #include "AttributeInputAdapter.h"
 #include "FragmentShader.h"
 #include "OGL_ID.h"
+#include "UniformInputAdapter.h"
 #include "VertexShader.h"
 
 /**
@@ -69,27 +70,23 @@ class Program : public OGL_ID {
          *                          assumed to take on the role of an
          *                          OpenGL fragment shader.
          * \param adapter : a pointer to an AttributeInputAdapter.
+         * \param uniforms : a pointer to a UniformInputAdapter.
          * \param dispose : one of the shaderDisposition enumerants indicating
          *                  desired fate of supplied shaders after any successful
          *                  linkage.
-         * \param frame_callback : pointer to a function to be called eg. on a frame
-         * 						   by frame basis to set, say, uniform variable values.
-         * 						   The function has the signature:
-         *
-         * 						   void somename(GLuint)
-         *
-         * 						   that is has a single GLuint argument and returns nothing.
          */
         Program(VertexShader* vertex_shader,
                 FragmentShader* fragment_shader,
 				AttributeInputAdapter* adapter,
-				shaderDisposition dispose,
-				void (*frame_callback)(GLuint) = NULL);
+				UniformInputAdapter* uniforms,
+				shaderDisposition dispose);
 
         /**
          * \brief Destructor.
          */
         virtual ~Program();
+
+        virtual void frameCallback(void) = 0;
 
         /**
 		 * \brief Use the underlying OpenGL program object.
@@ -151,6 +148,8 @@ class Program : public OGL_ID {
 
         GLuint getUniform(std::string name) const;
 
+        bool loadUniform(std::string u_name) const;
+
     private:
         /// Maximum length ( in characters, including null terminator )
         /// of the storage allocated for the name of a uniform
@@ -192,7 +191,8 @@ class Program : public OGL_ID {
         /// The AttributeInputAdapter reference.
         AttributeInputAdapter* m_adapter;
 
-        void (*m_frame_callback)(GLuint);
+        /// The UniformInputAdapter reference.
+        UniformInputAdapter* m_uniforms;
 
         /// Indicator of current linkage state.
         linkageState link_status;

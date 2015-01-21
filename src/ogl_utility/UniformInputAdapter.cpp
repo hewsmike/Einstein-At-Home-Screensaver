@@ -18,42 +18,48 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "Pipeline.h"
+#include <iostream>
+#include <sstream>
+
+#include "UniformInputAdapter.h"
 
 #include "ErrorHandler.h"
 
-#include <iostream>
+UniformInputAdapter::UniformInputAdapter(void) {
+	}
 
-Pipeline::Pipeline(Program& program, VertexFetch& vertex_fetch) :
-                    m_program(program),
-                    m_vertex_fetch(vertex_fetch) {
-    }
+UniformInputAdapter::~UniformInputAdapter() {
+	}
 
+void UniformInputAdapter::addSpecification(uniform_spec spec) {
+	full_uniform_spec temp;
+	temp.uniform = spec;
+	temp.type = GLvoid;
 
-Pipeline::~Pipeline() {
-    }
+	// Add this to the store.
+	m_matchings.push_back(temp);
+	}
 
-void Pipeline::utilise(GLenum primitive, GLsizei count) {
-    // Link program if not done.
-    if(m_program.status() == Program::NEVER_LINKED) {
-        m_program.acquire();
-        }
+bool UniformInputAdapter::getUniformSpecAt(GLuint index, uniform_spec spec) const {
+	// Assume failure.
+    bool ret_val = false;
 
-    // Only if the program was successfully linked.
-    if(m_program.status() == Program::LINKAGE_SUCCEEDED) {
-    	m_program.use();
-
-    	m_vertex_fetch.bind();
-
-    	m_program.frameCallback();
-
-        m_vertex_fetch.trigger(primitive, count);
-
-        m_vertex_fetch.unbind();
-
-        m_program.stopUse();
-        }
+    // Is the index within range ?
+    if(index < m_matchings.size()) {
+    	// Yes, copy to the given structure.
+    	spec.name = m_matchings[index].uniform.name;
+    	spec.client_where = m_matchings[index].uniform.client_where;
+    	ret_val = true;
+    	}
     else {
-        /// TODO - Error path if no program link ?
-        }
-    }
+    	// No, emit a warning.
+    	ErrorHandler::record("UniformInputAdapter::getUniformSpecAt() : out of range index to uniform store.",
+    	                     ErrorHandler::WARN);
+    	}
+
+    return ret_val;
+	}
+
+GLuint UniformInputAdapter::size(void) const {
+	return m_matchings.size();
+	}

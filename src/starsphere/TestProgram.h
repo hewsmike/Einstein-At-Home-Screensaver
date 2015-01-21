@@ -18,42 +18,61 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "Pipeline.h"
+#ifndef TEST_PROGRAM_H_
+#define TEST_PROGRAM_H_
 
-#include "ErrorHandler.h"
+#include "ogl_utility.h"
 
-#include <iostream>
+#include "Program.h"
 
-Pipeline::Pipeline(Program& program, VertexFetch& vertex_fetch) :
-                    m_program(program),
-                    m_vertex_fetch(vertex_fetch) {
-    }
+/**
+ * \addtogroup ogl_utility OGL_Utility
+ * @{
+ */
 
+/**
+ * \brief 
+ *
+ * \see Program
+ *
+ * \author Mike Hewson\n
+ */
 
-Pipeline::~Pipeline() {
-    }
+class TestProgram : public Program {
+    public :
+        /**
+         * \brief Constructor.
+         *
+         * \param vertex_shader : a pointer to an existing VertexShader object,
+         *                        assumed to take on the role of an
+         *                        OpenGL vertex shader.
+         * \param fragment_shader : a pointer to an existing Shader object,
+         *                          assumed to take on the role of an
+         *                          OpenGL fragment shader.
+         * \param adapter : a pointer to an AttributeInputAdapter.
+         * \param dispose : one of the shaderDisposition enumerants indicating
+         *                  desired fate of supplied shaders after any successful
+         *                  linkage.
+         */
+        TestProgram(VertexShader* vertex_shader,
+                	FragmentShader* fragment_shader,
+					AttributeInputAdapter* adapter,
+					UniformInputAdapter* uniforms,
+					Program::shaderDisposition dispose);
 
-void Pipeline::utilise(GLenum primitive, GLsizei count) {
-    // Link program if not done.
-    if(m_program.status() == Program::NEVER_LINKED) {
-        m_program.acquire();
-        }
+        /**
+         * \brief Destructor.
+         */
+        virtual ~TestProgram();
 
-    // Only if the program was successfully linked.
-    if(m_program.status() == Program::LINKAGE_SUCCEEDED) {
-    	m_program.use();
+        virtual void frameCallback(void);
 
-    	m_vertex_fetch.bind();
+    private:
+        
+  	};
 
-    	m_program.frameCallback();
+/**
+ * @}
+ */
 
-        m_vertex_fetch.trigger(primitive, count);
-
-        m_vertex_fetch.unbind();
-
-        m_program.stopUse();
-        }
-    else {
-        /// TODO - Error path if no program link ?
-        }
-    }
+#endif /*TEST_PROGRAM_H_*/
