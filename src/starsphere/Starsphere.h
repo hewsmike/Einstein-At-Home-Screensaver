@@ -41,7 +41,6 @@
 #include "IndexBuffer.h"
 #include "Pipeline.h"
 #include "TestProgram.h"
-#include "UniformInputAdapter.h"
 #include "VertexBuffer.h"
 #include "VertexFetch.h"
 #include "VertexShader.h"
@@ -380,7 +379,6 @@ class Starsphere : public AbstractGraphicsEngine {
         FragmentShader* m_fragment;
         TestProgram* m_test_program;
         Pipeline* m_pipeline;
-        UniformInputAdapter* m_uniform_input_adapter;
         VertexFetch* m_vertexfetch;
 
         glm::mat4 m_rotation;

@@ -57,7 +57,6 @@ class TestProgram : public Program {
         TestProgram(VertexShader* vertex_shader,
                 	FragmentShader* fragment_shader,
 					AttributeInputAdapter* adapter,
-					UniformInputAdapter* uniforms,
 					Program::shaderDisposition dispose);
 
         /**

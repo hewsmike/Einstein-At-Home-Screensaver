@@ -48,10 +48,9 @@ Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
 	m_fragment = NULL;
 	m_test_program = NULL;
 	m_pipeline = NULL;
-	m_uniform_input_adapter = NULL;
 	m_vertexfetch = NULL;
 
-	m_rotation = glm::mat4(1.0f);
+	m_rotation = glm::mat4(1.0);
 
 	m_ObservatoryDrawTimeLocal = 0;
 
@@ -108,7 +107,6 @@ Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
 Starsphere::~Starsphere() {
     if(m_vertex_shader_resource) delete m_vertex_shader_resource;
     if(m_adapter) delete m_adapter;
-    if(m_uniform_input_adapter) delete m_uniform_input_adapter;
     if(m_vertex) delete m_vertex;
     if(m_fragment) delete m_fragment;
     if(m_vertex_buffer) delete m_vertex_buffer;
@@ -667,12 +665,11 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
     // This is a pass through fragment shader. We need one to have a functioning pipeline at all.
     m_fragment = new FragmentShader(factory.createInstance("FragmentTestShader")->std_string());
 
-    m_uniform_input_adapter = new UniformInputAdapter();
-    struct UniformInputAdapter::uniform_spec u_spec = {"RotationMatrix", &m_rotation};
-    m_uniform_input_adapter->addSpecification(u_spec);
-
     // Make a program using the above shaders, mark the corresponding OpenGL shader objects for deletion.
-    m_test_program = new TestProgram(m_vertex, m_fragment, m_adapter, m_uniform_input_adapter, Program::DELETE_ON_GOOD_LINK);
+    m_test_program = new TestProgram(m_vertex, m_fragment, m_adapter, Program::DELETE_ON_GOOD_LINK);
+    m_test_program->setUniformLoadPoint("RotationMatrix", &m_rotation[0][0]);
+    std::cout << "Starsphere::initialize : &m_rotation = "
+    		  << &m_rotation[0][0] << std::endl;
 
     // This creates an OpenGL Vertex Array Object ( VAO ) and includes the
     m_vertex_buffer = new VertexBuffer(vertex_data, sizeof(vertex_data) , 3, GL_STATIC_DRAW, VertexBuffer::BY_VERTEX);

@@ -28,7 +28,6 @@
 #include "AttributeInputAdapter.h"
 #include "FragmentShader.h"
 #include "OGL_ID.h"
-#include "UniformInputAdapter.h"
 #include "VertexShader.h"
 
 /**
@@ -70,7 +69,6 @@ class Program : public OGL_ID {
          *                          assumed to take on the role of an
          *                          OpenGL fragment shader.
          * \param adapter : a pointer to an AttributeInputAdapter.
-         * \param uniforms : a pointer to a UniformInputAdapter.
          * \param dispose : one of the shaderDisposition enumerants indicating
          *                  desired fate of supplied shaders after any successful
          *                  linkage.
@@ -78,7 +76,6 @@ class Program : public OGL_ID {
         Program(VertexShader* vertex_shader,
                 FragmentShader* fragment_shader,
 				AttributeInputAdapter* adapter,
-				UniformInputAdapter* uniforms,
 				shaderDisposition dispose);
 
         /**
@@ -146,9 +143,25 @@ class Program : public OGL_ID {
 		 */
         void frameCallBack(void);
 
-        GLuint getUniform(std::string name) const;
+        bool setUniformLoadPoint(std::string u_name, GLvoid* source);
 
-        bool loadUniform(std::string u_name) const;
+    protected:
+
+        struct uniform_data {
+        	// The uniform variable type as known to OpenGL.
+        	GLenum m_type;
+
+        	// Untyped pointer to location of persistent data in client space
+        	// which will be used to refresh the in-program value.
+        	GLvoid* m_load_point;
+
+        	// The location of the uniform within the OpenGL program object.
+        	GLint m_location;
+        	};
+
+        uniform_data getUniform(std::string u_name);
+
+        bool loadUniform(std::string u_name);
 
     private:
         /// Maximum length ( in characters, including null terminator )
@@ -191,9 +204,6 @@ class Program : public OGL_ID {
         /// The AttributeInputAdapter reference.
         AttributeInputAdapter* m_adapter;
 
-        /// The UniformInputAdapter reference.
-        UniformInputAdapter* m_uniforms;
-
         /// Indicator of current linkage state.
         linkageState link_status;
 
@@ -209,7 +219,7 @@ class Program : public OGL_ID {
         /// but not otherwise usefully referenced ie. the OpenGL compiler
         /// may ( and probably will ) ignore them and thus discard any
         /// reference to them.
-        std::map<std::string, GLuint> uniforms;
+        std::map<std::string, uniform_data> uniforms;
   };
 
 /**

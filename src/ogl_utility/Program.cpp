@@ -30,12 +30,10 @@ const int Program::UNIFORM_NAME_BUFFER_SIZE(50);
 Program::Program(VertexShader* vertex_shader,
                  FragmentShader* fragment_shader,
 				 AttributeInputAdapter* adapter,
-				 UniformInputAdapter* uniforms,
 				 shaderDisposition dispose) :
                     m_vertex_shader(vertex_shader),
                     m_fragment_shader(fragment_shader),
 					m_adapter(adapter),
-					m_uniforms(uniforms),
 					m_dispose(dispose){
     // Initially unlinked.
     link_status = Program::NEVER_LINKED;
@@ -222,12 +220,28 @@ const std::string& Program::linkageLog(void) const {
     return linker_log;
     }
 
+bool Program::setUniformLoadPoint(std::string u_name, GLvoid* source) {
+	uniform_data current;
+
+	std::map<std::string, Program::uniform_data>::const_iterator pos = uniforms.find(u_name);
+	current = pos->second;
+	current.m_load_point = source;
+
+	std::cout << "Program::setUniformLoadPoint() : current.m_load_point = "
+			  << current.m_load_point << std::endl;
+
+	// Save the values.
+	uniforms.insert(std::make_pair(std::string(u_name), current));
+
+    return true;
+	}
+
 bool Program::mapUniforms(void) {
     // Assume failure.
     bool ret_val = false;
 
     // Clear the map structure.
-    uniforms.clear();
+    // uniforms.clear();
 
     // Only proceed if linkage was attempted and succeeded.
     if(this->status() == LINKAGE_SUCCEEDED) {
@@ -244,12 +258,15 @@ bool Program::mapUniforms(void) {
             GLuint uniform_size;
             GLenum uniform_type;
 
+            uniform_data current;
+            current.m_location = (GLint)(index);
+
             glGetActiveUniform(this->ID(),
                                index,
                                UNIFORM_NAME_BUFFER_SIZE - 1,
                                (GLint*)(&written_length),
                                (GLint*)&uniform_size,
-                               &uniform_type,
+                               &current.m_type,
                                u_name);
 
             std::stringstream uname_msg;
@@ -263,12 +280,12 @@ bool Program::mapUniforms(void) {
                       << "\tsize = "
                       << uniform_size
 					  << "\ttype = "
-					  << checkUniform(uniform_type) ;
+					  << checkUniform(current.m_type) ;
 
             ErrorHandler::record(uname_msg.str(), ErrorHandler::INFORM);
 
             // Save the values.
-            uniforms.insert(std::make_pair(std::string(u_name), index));
+            uniforms.insert(std::make_pair(std::string(u_name), current));
             }
 
         ret_val = true;
@@ -277,17 +294,39 @@ bool Program::mapUniforms(void) {
     return ret_val;
     }
 
-GLuint Program::getUniform(std::string name) const {
-	std::map<std::string, GLuint>::const_iterator pos = uniforms.find(name);
+Program::uniform_data Program::getUniform(std::string u_name) {
+	std::map<std::string, Program::uniform_data>::const_iterator pos = uniforms.find(u_name);
 	return pos->second;
 	}
 
-bool Program::loadUniform(std::string u_name) const {
-	GLuint location = getUniform(u_name);
+bool Program::loadUniform(std::string u_name) {
+	// Assume success.
+	bool ret_val = true;
 
+	Program::uniform_data current = this->getUniform(u_name);
 
+	switch(current.m_type) {
+		case GL_FLOAT_MAT4:
+			std::cout << "Program::getUniform() : u_name = "
+					  << u_name << std::endl;
+			std::cout << "Program::getUniform() : current.m_location = "
+					  << current.m_location << std::endl;
+			std::cout << "Program::getUniform() : current.m_type = "
+					  << checkUniform(current.m_type) << std::endl;
+			std::cout << "Program::getUniform() : current.m_load_point = "
+					  << static_cast<const GLfloat*>(current.m_load_point) << std::endl;
 
-}
+			glUniformMatrix4fv(current.m_location, 1, false, static_cast<const GLfloat*>(current.m_load_point));
+			ErrorHandler::record("Program::getUniform() : woo woo, I'm loading a uniform ... ", ErrorHandler::INFORM);
+			break;
+		default:
+			ErrorHandler::record("Program::getUniform() : bad switch case ( default ).", ErrorHandler::WARN);
+			ret_val = false;
+			break;
+		}
+
+	return ret_val;
+	}
 
 std::string Program::checkUniform(GLenum type) {
 	std::string ret_val("");

@@ -23,12 +23,10 @@
 TestProgram::TestProgram(VertexShader* vertex_shader,
                  	 	 FragmentShader* fragment_shader,
 						 AttributeInputAdapter* adapter,
-						 UniformInputAdapter* uniforms,
 						 Program::shaderDisposition dispose) :
 				Program(vertex_shader,
 						fragment_shader,
 						adapter,
-						uniforms,
 						dispose){
     }
 
@@ -36,5 +34,5 @@ TestProgram::~TestProgram() {
     }
 
 void TestProgram::frameCallback(void) {
-
+	this->loadUniform("RotationMatrix");
 	}

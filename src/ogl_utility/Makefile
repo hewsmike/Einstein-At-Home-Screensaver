@@ -43,7 +43,6 @@ OBJS += Pipeline.o
 OBJS += Program.o
 OBJS += Shader.o
 OBJS += TextureBuffer.o
-OBJS += UniformInputAdapter.o
 OBJS += VertexBuffer.o
 OBJS += VertexFetch.o
 OBJS += VertexShader.o
@@ -91,11 +90,8 @@ Texture.o: $(DEPS) $(UTILITY_SRC)/Texture.cpp $(UTILITY_SRC)/Texture.h
 TextureBuffer.o: $(DEPS) $(UTILITY_SRC)/TextureBuffer.cpp $(UTILITY_SRC)/TextureBuffer.h
 	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/TextureBuffer.cpp
 
-UniformInputAdapter.o: $(DEPS) $(UTILITY_SRC)/UniformInputAdapter.cpp $(UTILITY_SRC)/UniformInputAdapter.h
-	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/UniformInputAdapter.cpp		
-
-VertexBuffer.o: $(DEPS) $(UTILITY_SRC)/VertexBuffer.cpp $(UTILITY_SRC)/VertexBuffer.h
-	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/VertexBuffer.cpp
+UniformVariable.o: $(DEPS) $(UTILITY_SRC)/UniformVariable.cpp $(UTILITY_SRC)/UniformVariable.h
+	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/UniformVariable.cpp		
 
 VertexFetch.o: $(DEPS) $(UTILITY_SRC)/VertexFetch.cpp $(UTILITY_SRC)/VertexFetch.h
 	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/VertexFetch.cpp
