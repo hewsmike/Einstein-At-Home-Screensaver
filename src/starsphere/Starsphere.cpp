@@ -41,6 +41,8 @@
 
 Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
 	AbstractGraphicsEngine(sharedMemoryAreaIdentifier) {
+	m_framecount = 0;
+
 	m_adapter = NULL;
 	m_vertex_buffer = NULL;
     m_index_buffer = NULL;
@@ -51,6 +53,7 @@ Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
 	m_vertexfetch = NULL;
 
 	m_rotation = glm::mat4(1.0);
+	m_axis = glm::vec3(1.0f, 0.0f, 0.0f);
 
 	m_ObservatoryDrawTimeLocal = 0;
 
@@ -834,8 +837,23 @@ void Starsphere::render(const double timeOfDay) {
 	yvp = vp_rad * COS(vp_theta);
 
 //  	gluLookAt(0.0, 0.0, 5.0, // eyes position
+
 //              0.0, 0.0, 0.0, // looking toward here
 //  	          0.0, 1.0, 0.0); // which way is up?  y axis!
+
+	GLuint stagger = m_framecount % 300;
+
+	if(stagger == 100) {
+		m_axis = glm::vec3(0.0f, 1.0f, 0.0f);
+		}
+	else if(stagger == 200){
+		m_axis = glm::vec3(0.0f, 0.0f, 1.0f);
+		}
+	else if(stagger == 0) {
+		m_axis = glm::vec3(1.0f, 0.0f, 0.0f);
+		}
+
+	m_rotation = glm::rotate(m_rotation, 0.01f, m_axis);
 
   	m_pipeline->utilise(GL_TRIANGLES, 3);
 
@@ -891,6 +909,9 @@ void Starsphere::render(const double timeOfDay) {
 //		// enable depth testing since we're leaving 2D mode
     	glEnable(GL_DEPTH_TEST);
         }
+
+    // Mark off another frame done.
+    ++m_framecount;
     }
 
 void Starsphere::renderAdditionalObservatories() {

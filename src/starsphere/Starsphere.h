@@ -41,6 +41,7 @@
 #include "IndexBuffer.h"
 #include "Pipeline.h"
 #include "TestProgram.h"
+#include "ogl_utility.h"
 #include "VertexBuffer.h"
 #include "VertexFetch.h"
 #include "VertexShader.h"
@@ -371,6 +372,9 @@ class Starsphere : public AbstractGraphicsEngine {
         bool m_RefreshSearchMarker;
 
     private:
+        /// Cumulative frame count.
+        GLuint m_framecount;
+
         /// OpenGL
         AttributeInputAdapter* m_adapter;
         VertexBuffer* m_vertex_buffer;
@@ -382,6 +386,7 @@ class Starsphere : public AbstractGraphicsEngine {
         VertexFetch* m_vertexfetch;
 
         glm::mat4 m_rotation;
+        glm::vec3 m_axis;
 
         /// Generate OpenGL display list for stars
         void make_stars();

@@ -222,16 +222,15 @@ const std::string& Program::linkageLog(void) const {
 
 bool Program::setUniformLoadPoint(std::string u_name, GLvoid* source) {
 	uniform_data current;
-
-	std::map<std::string, Program::uniform_data>::const_iterator pos = uniforms.find(u_name);
-	current = pos->second;
 	current.m_load_point = source;
 
-	std::cout << "Program::setUniformLoadPoint() : current.m_load_point = "
-			  << current.m_load_point << std::endl;
-
-	// Save the values.
-	uniforms.insert(std::make_pair(std::string(u_name), current));
+	std::map<std::string, Program::uniform_data>::iterator pos = uniforms.find(u_name);
+	if(pos == uniforms.end()) {
+		uniforms.insert(std::make_pair(std::string(u_name), current));
+		}
+	else {
+		pos->second = current;
+		}
 
     return true;
 	}
@@ -239,9 +238,6 @@ bool Program::setUniformLoadPoint(std::string u_name, GLvoid* source) {
 bool Program::mapUniforms(void) {
     // Assume failure.
     bool ret_val = false;
-
-    // Clear the map structure.
-    // uniforms.clear();
 
     // Only proceed if linkage was attempted and succeeded.
     if(this->status() == LINKAGE_SUCCEEDED) {
@@ -259,33 +255,26 @@ bool Program::mapUniforms(void) {
             GLenum uniform_type;
 
             uniform_data current;
-            current.m_location = (GLint)(index);
 
             glGetActiveUniform(this->ID(),
                                index,
                                UNIFORM_NAME_BUFFER_SIZE - 1,
                                (GLint*)(&written_length),
                                (GLint*)&uniform_size,
-                               &current.m_type,
+                               &uniform_type,
                                u_name);
 
-            std::stringstream uname_msg;
-            uname_msg << "Program::mapUniforms() : programId = "
-                      << this->ID()
-                      << "\tindex = "
-                      << index
-                      << "\tname = '"
-                      << u_name
-                      << "'"
-                      << "\tsize = "
-                      << uniform_size
-					  << "\ttype = "
-					  << checkUniform(current.m_type) ;
+            current.m_location = (GLint)(index);
+            current.m_type = uniform_type;
 
-            ErrorHandler::record(uname_msg.str(), ErrorHandler::INFORM);
-
-            // Save the values.
-            uniforms.insert(std::make_pair(std::string(u_name), current));
+            std::map<std::string, Program::uniform_data>::iterator pos = uniforms.find(u_name);
+			if(pos != uniforms.end()) {
+				pos->second.m_type = uniform_type;
+				pos->second.m_location = index;
+				}
+			else {
+				uniforms.insert(std::make_pair(std::string(u_name), current));
+				}
             }
 
         ret_val = true;
@@ -295,7 +284,7 @@ bool Program::mapUniforms(void) {
     }
 
 Program::uniform_data Program::getUniform(std::string u_name) {
-	std::map<std::string, Program::uniform_data>::const_iterator pos = uniforms.find(u_name);
+	std::map<std::string, Program::uniform_data>::iterator pos = uniforms.find(u_name);
 	return pos->second;
 	}
 
@@ -307,20 +296,10 @@ bool Program::loadUniform(std::string u_name) {
 
 	switch(current.m_type) {
 		case GL_FLOAT_MAT4:
-			std::cout << "Program::getUniform() : u_name = "
-					  << u_name << std::endl;
-			std::cout << "Program::getUniform() : current.m_location = "
-					  << current.m_location << std::endl;
-			std::cout << "Program::getUniform() : current.m_type = "
-					  << checkUniform(current.m_type) << std::endl;
-			std::cout << "Program::getUniform() : current.m_load_point = "
-					  << static_cast<const GLfloat*>(current.m_load_point) << std::endl;
-
 			glUniformMatrix4fv(current.m_location, 1, false, static_cast<const GLfloat*>(current.m_load_point));
-			ErrorHandler::record("Program::getUniform() : woo woo, I'm loading a uniform ... ", ErrorHandler::INFORM);
 			break;
 		default:
-			ErrorHandler::record("Program::getUniform() : bad switch case ( default ).", ErrorHandler::WARN);
+			ErrorHandler::record("Program::loadUniform() : bad switch case ( default ).", ErrorHandler::WARN);
 			ret_val = false;
 			break;
 		}

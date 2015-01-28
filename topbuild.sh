@@ -643,7 +643,7 @@ case $TARGET in
         ./build.sh $2 $3
         ;;
     $TARGET_LINUX)
-        export HOST_SYSTEM="x86_64-pc-linux"
+        export HOST_SYSTEM="i686-pc-linux"
         realtarget
         prepare_directories linux
         cp -f $ROOT/build_linux.sh $ROOT/linux/build.sh

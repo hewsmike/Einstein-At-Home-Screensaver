@@ -58,8 +58,8 @@
     #define SDL_MAIN_HANDLED
 #endif
 
+#include "fwd.hpp"
 #include "glm.hpp"
-
 #include "matrix_transform.hpp"
 #include "type_ptr.hpp"
 
