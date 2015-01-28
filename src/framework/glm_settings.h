@@ -40,8 +40,8 @@
 // may significantly increase the compile time for files that use GLM.
 #include "fwd.hpp"
 
-// The optional defines as subsequently listed must be mentioned prior to the inclusion
-// of the core include file "glm.hpp"
+// The optional defines as subsequently listed must be mentioned PRIOR to the inclusion
+// of ANY glm include file.
 
 // Enabling swizzle operators will massively increase the size of compiled files and the
 // compilation time. Swizzle is disabled by default.
