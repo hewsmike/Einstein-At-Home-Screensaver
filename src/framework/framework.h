@@ -58,10 +58,8 @@
     #define SDL_MAIN_HANDLED
 #endif
 
-#include "fwd.hpp"
-#include "glm.hpp"
-#include "matrix_transform.hpp"
-#include "type_ptr.hpp"
+// Capture project wide glm library setting choices.
+#include "glm_settings.h"
 
 #include <SDL2/SDL.h>
 

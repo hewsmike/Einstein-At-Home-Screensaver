@@ -54,23 +54,18 @@
 
 
 	#define SDL_DEBUG(B) B;
-						 // ErrorHandler::check_SDL2_Error((std::string(#B) + std::string("\t") + std::string(__FILE__).substr(std::string(__FILE__).rfind('/') + 1)).c_str(), __LINE__);\
+						 // ErrorHandler::check_SDL2_Error((std::string(#B) + std::string("\t") + std::string(__FILE__).substr(std::string(__FILE__).rfind('/') + 1)).c_str(), __LINE__);
 						 // OGL_DEBUG();
 						 //getchar()
 #else
 	#define SDL_DEBUG(B) B;
-						 // ErrorHandler::check_SDL2_Error((std::string(#B) + std::string("\t") + std::string(__FILE__).substr(std::string(__FILE__).rfind('/') + 1)).c_str(), __LINE__);\
+						 // ErrorHandler::check_SDL2_Error((std::string(#B) + std::string("\t") + std::string(__FILE__).substr(std::string(__FILE__).rfind('/') + 1)).c_str(), __LINE__);
 						 // OGL_DEBUG();
 						 //getchar()
 #endif
 
-///
-///	Make the glm namespace available.
-///
-
-//#include <glm/fwd.hpp>
-//#include <glm/glm.hpp>
-//<glm/gtc/matrix_transform.hpp>
+// Capture project wide glm library setting choices.
+#include "glm_settings.h"
 
 /**
  * @}

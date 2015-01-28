@@ -108,26 +108,34 @@ Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
     }
 
 Starsphere::~Starsphere() {
+    if(m_FontResource) delete m_FontResource;
     if(m_vertex_shader_resource) delete m_vertex_shader_resource;
-    if(m_adapter) delete m_adapter;
-    if(m_vertex) delete m_vertex;
-    if(m_fragment) delete m_fragment;
-    if(m_vertex_buffer) delete m_vertex_buffer;
-    if(m_vertexfetch) delete m_vertexfetch;
-    if(m_test_program) delete m_test_program;
-    if(m_pipeline) delete m_pipeline;
-	if(m_FontLogo1) delete m_FontLogo1;
-	if(m_FontLogo2) delete m_FontLogo2;
-	if(m_FontHeader) delete m_FontHeader;
-	if(m_FontText) delete m_FontText;
-    }
+    if(m_fragment_shader_resource) delete m_fragment_shader_resource;
+
+    /// TODO - longstanding unhappiness ( but compiles )
+    /// "warning: invalid use of incomplete type ‘struct _TTF_Font’"
+    /// "warning: forward declaration of ‘struct _TTF_Font’"
+//    if(m_FontLogo1) delete m_FontLogo1;
+//    if(m_FontLogo2) delete m_FontLogo2;
+//	if(m_FontHeader) delete m_FontHeader;
+//	if(m_FontText) delete m_FontText;
+
+	if(m_adapter) delete m_adapter;
+	if(m_vertex_buffer) delete m_vertex_buffer;
+	if(m_index_buffer) delete m_index_buffer;
+	if(m_vertex) delete m_vertex;
+	if(m_fragment) delete m_fragment;
+	if(m_test_program) delete m_test_program;
+	if(m_pipeline) delete m_pipeline;
+	if(m_vertexfetch) delete m_vertexfetch;
+	}
 
 void Starsphere::sphVertex3D(GLfloat RAdeg, GLfloat DEdeg, GLfloat radius) {
-	GLfloat x, y, z;
-
-	x = radius * COS(DEdeg) * COS(RAdeg);
-	z = -radius * COS(DEdeg) * SIN(RAdeg);
-	y = radius * SIN(DEdeg);
+//	GLfloat x, y, z;
+//
+//	x = radius * COS(DEdeg) * COS(RAdeg);
+//	z = -radius * COS(DEdeg) * SIN(RAdeg);
+//	y = radius * SIN(DEdeg);
 //	glVertex3f(x, y, z);
 	return;
     }
@@ -151,10 +159,10 @@ void Starsphere::star_marker(float RAdeg, float DEdeg, float size) {
  *  Create Stars: markers for each star
  */
 void Starsphere::make_stars() {
-	GLfloat mag_size;
-	int i, j;
-	bool is_dupe;
-	int Ndupes=0;
+//	GLfloat mag_size;
+//	int i, j;
+//	bool is_dupe;
+//	int Ndupes=0;
 
 //		glColor3f(1.0, 1.0, 1.0);
 //
@@ -185,8 +193,8 @@ void Starsphere::make_stars() {
  *  Pulsar Markers:
  */
 void Starsphere::make_pulsars() {
-	GLfloat mag_size=3.0;
-	int i;
+//	GLfloat mag_size=3.0;
+//	int i;
 
 	// delete existing, create new (required for windoze)
 //	if(Pulsars) glDeleteLists(Pulsars, 1);
@@ -206,8 +214,8 @@ void Starsphere::make_pulsars() {
  * Super Novae Remenants (SNRs):
  */
 void Starsphere::make_snrs() {
-	GLfloat mag_size=3.0;
-	int i;
+//	GLfloat mag_size=3.0;
+//	int i;
 
 	// delete existing, create new (required for windoze)
 //	if(SNRs) glDeleteLists(SNRs, 1);
@@ -228,7 +236,7 @@ void Starsphere::make_snrs() {
  * draws line links between pairs of stars in the list.
  */
 void Starsphere::make_constellations() {
-	GLint star_num=0;
+//	GLint star_num=0;
 
 	// delete existing, create new (required for windoze)
 //	if(Constellations) glDeleteLists(Constellations, 1);
@@ -283,157 +291,157 @@ GLfloat Starsphere::RAofZenith(double T, GLfloat LONdeg) {
  */
 void Starsphere::generateObservatories(float dimFactor) {
 	// sanity check
-	if(dimFactor < 0.0) dimFactor = 0.0;
-	if(dimFactor > 1.0) dimFactor = 1.0;
-
-	GLfloat Lat, Lon; // Latitute/Longitude of IFO is
-	GLfloat RAdeg, DEdeg; // converted to RA/DEC of sky sphere position
-	GLfloat radius; // radius of sphere for obs
-
-	GLfloat arm_len_deg=3.000; // lenght of arms, in degrees (not to scale)
-	GLfloat h2=0.400; // slight offset for H2 arms
-
-	// get current time and UTC offset (for zenith position)
-	m_ObservatoryDrawTimeLocal = dtime();
-	time_t local = m_ObservatoryDrawTimeLocal;
-	tm *utc = gmtime(&local);
-	double utcOffset = difftime(local, mktime(utc));
-	double observatoryDrawTimeGMT = m_ObservatoryDrawTimeLocal - utcOffset;
-
-	radius = 1.0*sphRadius; // radius of sphere on which they are drawn
-
-	float lineSize = 4.0;
-
-	/**
-	 * LIGO Livingston Observatory:
-	 */
-
-	Lat= 30.56377;
-	Lon= 90.77408;
-
-	RAdeg= RAofZenith(observatoryDrawTimeGMT, Lon);
-	DEdeg= Lat;
-
-	// delete existing, create new (required for windoze)
-//	if(LLOmarker) glDeleteLists(LLOmarker, 1);
-//	LLOmarker = glGenLists(1);
-//	glNewList(LLOmarker, GL_COMPILE);
+//	if(dimFactor < 0.0) dimFactor = 0.0;
+//	if(dimFactor > 1.0) dimFactor = 1.0;
 //
-//		glColor3f(dimFactor * 0.0, dimFactor * 1.0, dimFactor * 0.0);
-//		glLineWidth(lineSize);
+//	GLfloat Lat, Lon; // Latitute/Longitude of IFO is
+//	GLfloat RAdeg, DEdeg; // converted to RA/DEC of sky sphere position
+//	GLfloat radius; // radius of sphere for obs
 //
-//		glBegin(GL_LINE_STRIP);
-//			//  North/South arm:
-//			sphVertex3D(RAdeg, DEdeg-arm_len_deg, radius);
-//			sphVertex3D(RAdeg, DEdeg, radius);
-//			// East/West arm:
-//			sphVertex3D(RAdeg-arm_len_deg, DEdeg, radius);
-//		glEnd();
+//	GLfloat arm_len_deg=3.000; // lenght of arms, in degrees (not to scale)
+//	GLfloat h2=0.400; // slight offset for H2 arms
 //
-//		// arm joint H2
-//		glPointSize((GLfloat) lineSize);
-//		glBegin(GL_POINTS);
-//			sphVertex3D(RAdeg, DEdeg, radius);
-//		glEnd();
+//	// get current time and UTC offset (for zenith position)
+//	m_ObservatoryDrawTimeLocal = dtime();
+//	time_t local = m_ObservatoryDrawTimeLocal;
+//	tm *utc = gmtime(&local);
+//	double utcOffset = difftime(local, mktime(utc));
+//	double observatoryDrawTimeGMT = m_ObservatoryDrawTimeLocal - utcOffset;
 //
-//	glEndList();
-
-	/**
-	 * LIGO Hanford Observatory: H1 and H2
-	 */
-
-	Lat= 46.45510;
-	Lon= 119.40627;
-
-	RAdeg= RAofZenith(observatoryDrawTimeGMT, Lon);
-	DEdeg= Lat;
-
-	// delete existing, create new (required for windoze)
-//	if(LHOmarker) glDeleteLists(LHOmarker, 1);
-//	LHOmarker = glGenLists(1);
-//	glNewList(LHOmarker, GL_COMPILE);
+//	radius = 1.0*sphRadius; // radius of sphere on which they are drawn
 //
-//		glColor3f(dimFactor * 0.0, dimFactor * 0.0, dimFactor * 1.0);
-//		glLineWidth(lineSize);
+//	float lineSize = 4.0;
 //
-//		glBegin(GL_LINE_STRIP);
-//			// North/South arm:
-//			sphVertex3D(RAdeg, DEdeg+arm_len_deg, radius);
-//			sphVertex3D(RAdeg, DEdeg, radius);
-//			// East/West arm:
-//			sphVertex3D(RAdeg-arm_len_deg, DEdeg, radius);
-//		glEnd();
+//	/**
+//	 * LIGO Livingston Observatory:
+//	 */
 //
-//		glBegin(GL_LINE_STRIP);
-//			// North/South arm, H2:
-//			sphVertex3D(RAdeg-h2, DEdeg+arm_len_deg/2.0+h2/2.0, radius);
-//			sphVertex3D(RAdeg-h2, DEdeg+h2/2.0, radius);
-//			// East/West arm, H2;
-//			sphVertex3D(RAdeg-arm_len_deg/2.0-h2, DEdeg+h2/2.0, radius);
-//		glEnd();
+//	Lat= 30.56377;
+//	Lon= 90.77408;
 //
-//		// arm joint H1
-//		glPointSize((GLfloat) lineSize);
-//		glBegin(GL_POINTS);
-//			sphVertex3D(RAdeg, DEdeg, radius);
-//		glEnd();
+//	RAdeg= RAofZenith(observatoryDrawTimeGMT, Lon);
+//	DEdeg= Lat;
 //
-//		// arm joint H2
-//		glPointSize((GLfloat) lineSize);
-//		glBegin(GL_POINTS);
-//			sphVertex3D(RAdeg-h2, DEdeg+h2/2.0, radius);
-//		glEnd();
+//	// delete existing, create new (required for windoze)
+////	if(LLOmarker) glDeleteLists(LLOmarker, 1);
+////	LLOmarker = glGenLists(1);
+////	glNewList(LLOmarker, GL_COMPILE);
+////
+////		glColor3f(dimFactor * 0.0, dimFactor * 1.0, dimFactor * 0.0);
+////		glLineWidth(lineSize);
+////
+////		glBegin(GL_LINE_STRIP);
+////			//  North/South arm:
+////			sphVertex3D(RAdeg, DEdeg-arm_len_deg, radius);
+////			sphVertex3D(RAdeg, DEdeg, radius);
+////			// East/West arm:
+////			sphVertex3D(RAdeg-arm_len_deg, DEdeg, radius);
+////		glEnd();
+////
+////		// arm joint H2
+////		glPointSize((GLfloat) lineSize);
+////		glBegin(GL_POINTS);
+////			sphVertex3D(RAdeg, DEdeg, radius);
+////		glEnd();
+////
+////	glEndList();
 //
-//	glEndList();
-
-	/**
-	 *  GEO600 Interferometer:
-	 */
-
-	Lat= 52.24452;
-	Lon= -9.80683;
-	arm_len_deg=1.50; // not to scale
-
-	RAdeg= RAofZenith(observatoryDrawTimeGMT, Lon);
-	DEdeg= Lat;
-
-	// delete existing, create new (required for windoze)
-//	if(GEOmarker) glDeleteLists(GEOmarker, 1);
-//	GEOmarker = glGenLists(1);
-//	glNewList(GEOmarker, GL_COMPILE);
+//	/**
+//	 * LIGO Hanford Observatory: H1 and H2
+//	 */
 //
-//		glColor3f(dimFactor * 1.0, dimFactor * 0.0, dimFactor * 0.0);
-//		glLineWidth(lineSize);
+//	Lat= 46.45510;
+//	Lon= 119.40627;
 //
-//		glBegin(GL_LINE_STRIP);
-//			// North/South arm:
-//			sphVertex3D(RAdeg, DEdeg+arm_len_deg, radius);
-//			sphVertex3D(RAdeg, DEdeg, radius);
-//			// West/East arm:
-//			sphVertex3D(RAdeg+arm_len_deg, DEdeg, radius);
-//		glEnd();
+//	RAdeg= RAofZenith(observatoryDrawTimeGMT, Lon);
+//	DEdeg= Lat;
 //
-//		// arm joint
-//		glPointSize((GLfloat) lineSize);
-//		glBegin(GL_POINTS);
-//			sphVertex3D(RAdeg, DEdeg, radius);
-//		glEnd();
+//	// delete existing, create new (required for windoze)
+////	if(LHOmarker) glDeleteLists(LHOmarker, 1);
+////	LHOmarker = glGenLists(1);
+////	glNewList(LHOmarker, GL_COMPILE);
+////
+////		glColor3f(dimFactor * 0.0, dimFactor * 0.0, dimFactor * 1.0);
+////		glLineWidth(lineSize);
+////
+////		glBegin(GL_LINE_STRIP);
+////			// North/South arm:
+////			sphVertex3D(RAdeg, DEdeg+arm_len_deg, radius);
+////			sphVertex3D(RAdeg, DEdeg, radius);
+////			// East/West arm:
+////			sphVertex3D(RAdeg-arm_len_deg, DEdeg, radius);
+////		glEnd();
+////
+////		glBegin(GL_LINE_STRIP);
+////			// North/South arm, H2:
+////			sphVertex3D(RAdeg-h2, DEdeg+arm_len_deg/2.0+h2/2.0, radius);
+////			sphVertex3D(RAdeg-h2, DEdeg+h2/2.0, radius);
+////			// East/West arm, H2;
+////			sphVertex3D(RAdeg-arm_len_deg/2.0-h2, DEdeg+h2/2.0, radius);
+////		glEnd();
+////
+////		// arm joint H1
+////		glPointSize((GLfloat) lineSize);
+////		glBegin(GL_POINTS);
+////			sphVertex3D(RAdeg, DEdeg, radius);
+////		glEnd();
+////
+////		// arm joint H2
+////		glPointSize((GLfloat) lineSize);
+////		glBegin(GL_POINTS);
+////			sphVertex3D(RAdeg-h2, DEdeg+h2/2.0, radius);
+////		glEnd();
+////
+////	glEndList();
 //
-//	glEndList();
-
-	/**
-	 *  VIRGO Interferometer:
-	 */
-
-	Lat= 43.63139;
-	Lon= -10.505;
-	arm_len_deg=3.000; // not to scale
-
-	RAdeg= RAofZenith(observatoryDrawTimeGMT, Lon);
-	DEdeg= Lat;
-
-	// delete existing, create new (required for windoze)
-//	if(VIRGOmarker) glDeleteLists(VIRGOmarker, 1);
+//	/**
+//	 *  GEO600 Interferometer:
+//	 */
+//
+//	Lat= 52.24452;
+//	Lon= -9.80683;
+//	arm_len_deg=1.50; // not to scale
+//
+//	RAdeg= RAofZenith(observatoryDrawTimeGMT, Lon);
+//	DEdeg= Lat;
+//
+//	// delete existing, create new (required for windoze)
+////	if(GEOmarker) glDeleteLists(GEOmarker, 1);
+////	GEOmarker = glGenLists(1);
+////	glNewList(GEOmarker, GL_COMPILE);
+////
+////		glColor3f(dimFactor * 1.0, dimFactor * 0.0, dimFactor * 0.0);
+////		glLineWidth(lineSize);
+////
+////		glBegin(GL_LINE_STRIP);
+////			// North/South arm:
+////			sphVertex3D(RAdeg, DEdeg+arm_len_deg, radius);
+////			sphVertex3D(RAdeg, DEdeg, radius);
+////			// West/East arm:
+////			sphVertex3D(RAdeg+arm_len_deg, DEdeg, radius);
+////		glEnd();
+////
+////		// arm joint
+////		glPointSize((GLfloat) lineSize);
+////		glBegin(GL_POINTS);
+////			sphVertex3D(RAdeg, DEdeg, radius);
+////		glEnd();
+////
+////	glEndList();
+//
+//	/**
+//	 *  VIRGO Interferometer:
+//	 */
+//
+//	Lat= 43.63139;
+//	Lon= -10.505;
+//	arm_len_deg=3.000; // not to scale
+//
+//	RAdeg= RAofZenith(observatoryDrawTimeGMT, Lon);
+//	DEdeg= Lat;
+//
+//	// delete existing, create new (required for windoze)
+////	if(VIRGOmarker) glDeleteLists(VIRGOmarker, 1);
 //	VIRGOmarker = glGenLists(1);
 //	glNewList(VIRGOmarker, GL_COMPILE);
 //
@@ -460,13 +468,13 @@ void Starsphere::generateObservatories(float dimFactor) {
     }
 
 void Starsphere::make_search_marker(GLfloat RAdeg, GLfloat DEdeg, GLfloat size) {
-	GLfloat x, y;
-	GLfloat r1, r2, r3;
-	float theta;
-	int i, Nstep=20;
-
-	// r1 is inner circle, r2 is outer circle, r3 is crosshairs
-	r1 = size, r2=3*size, r3=4*size;
+//	GLfloat x, y;
+//	GLfloat r1, r2, r3;
+//	float theta;
+//	int i, Nstep=20;
+//
+//	// r1 is inner circle, r2 is outer circle, r3 is crosshairs
+//	r1 = size, r2=3*size, r3=4*size;
 
 	// delete existing, create new (required for windoze)
 //	if(SearchMarker) glDeleteLists(SearchMarker, 1);
@@ -537,7 +545,7 @@ void Starsphere::make_search_marker(GLfloat RAdeg, GLfloat DEdeg, GLfloat size) 
  * XYZ coordinate axes: (if we want them - most useful for testing)
  */
 void Starsphere::make_axes() {
-	GLfloat axl=10.0;
+//	GLfloat axl=10.0;
 
 	// delete existing, create new (required for windoze)
 //	if(Axes) glDeleteLists(Axes, 1);
@@ -567,8 +575,8 @@ void Starsphere::make_axes() {
  * RA/DEC coordinate grid on the sphere
  */
 void Starsphere::make_globe() {
-	int hr, j, i, iMax=100;
-	GLfloat RAdeg, DEdeg;
+//	int hr, j, i, iMax=100;
+//	GLfloat RAdeg, DEdeg;
 
 	// delete existing, create new (required for windoze)
 //	if(sphGrid) glDeleteLists(sphGrid, 1);
@@ -790,32 +798,32 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
  * Rendering routine:  this is what does the drawing:
  */
 void Starsphere::render(const double timeOfDay) {
-    GLfloat xvp, yvp, zvp, vp_theta, vp_phi, vp_rad;
-	GLfloat Zrot = 0.0, Zobs=0.0;
-	double revs, t, dt = 0;
-	static double start_time=-1.0, last_time=-1.0;
-
-	// Calculate the real time t since we started (or reset) and the
-	// time dt since the last render() call.    Both may be useful
-	// for timing animations.  Note that time_of_day is dtime().
-
-	if (start_time < 0.0)
-		start_time = timeOfDay;
-	t = timeOfDay - start_time;
-
-	if (last_time < 0.0)
-		last_time = timeOfDay - 0.01;
-	dt = timeOfDay - last_time;
-
-	last_time = timeOfDay; // remember for next time
-
-	// Now determine the rotation angle based on the time since start
-	// It is negative to get the rotation direction correct (the sun
-	// rises in the East, so the sky sphere rotates E to W).
-
-	Zrot = t*rotation_speed/60.0;
-	revs = Zrot/360.0;
-	Zrot = -360.0 * (revs - (int)revs);
+//    GLfloat xvp, yvp, zvp, vp_theta, vp_phi, vp_rad;
+//	GLfloat Zrot = 0.0, Zobs=0.0;
+//	double revs, t, dt = 0;
+//	static double start_time=-1.0, last_time=-1.0;
+//
+//	// Calculate the real time t since we started (or reset) and the
+//	// time dt since the last render() call.    Both may be useful
+//	// for timing animations.  Note that time_of_day is dtime().
+//
+//	if (start_time < 0.0)
+//		start_time = timeOfDay;
+//	t = timeOfDay - start_time;
+//
+//	if (last_time < 0.0)
+//		last_time = timeOfDay - 0.01;
+//	dt = timeOfDay - last_time;
+//
+//	last_time = timeOfDay; // remember for next time
+//
+//	// Now determine the rotation angle based on the time since start
+//	// It is negative to get the rotation direction correct (the sun
+//	// rises in the East, so the sky sphere rotates E to W).
+//
+//	Zrot = t*rotation_speed/60.0;
+//	revs = Zrot/360.0;
+//	Zrot = -360.0 * (revs - (int)revs);
 
 	// and start drawing...
 	glClear(GL_COLOR_BUFFER_BIT);
@@ -826,15 +834,15 @@ void Starsphere::render(const double timeOfDay) {
 	// of the view and a longer period zoom in/out that might even penetrate
 	// The starsphere for a brief time.   Increase the power in pow(,) to
 	// make the visit inside briefer.
-	vp_theta = 90.0 - viewpt_elev + wobble_amp*sin(PI2*t/(wobble_period*60.0));
-	vp_phi = viewpt_azimuth;
-	vp_rad = viewpt_radius - zoom_amp*sin(PI2*t/(zoom_period*60.0));
-	if(vp_rad <0.0) vp_rad = 0.0; // cannot pass origin (confusing)
-
-	// TRIED THIS TOO: -zoom_amp*pow(fabs(sin(PI2*t/(zoom_period*60.0))),3);
-	xvp = vp_rad * SIN(vp_theta) * SIN(vp_phi);
-	zvp = vp_rad * SIN(vp_theta) * COS(vp_phi);
-	yvp = vp_rad * COS(vp_theta);
+//	vp_theta = 90.0 - viewpt_elev + wobble_amp*sin(PI2*t/(wobble_period*60.0));
+//	vp_phi = viewpt_azimuth;
+//	vp_rad = viewpt_radius - zoom_amp*sin(PI2*t/(zoom_period*60.0));
+//	if(vp_rad <0.0) vp_rad = 0.0; // cannot pass origin (confusing)
+//
+//	// TRIED THIS TOO: -zoom_amp*pow(fabs(sin(PI2*t/(zoom_period*60.0))),3);
+//	xvp = vp_rad * SIN(vp_theta) * SIN(vp_phi);
+//	zvp = vp_rad * SIN(vp_theta) * COS(vp_phi);
+//	yvp = vp_rad * COS(vp_theta);
 
 //  	gluLookAt(0.0, 0.0, 5.0, // eyes position
 

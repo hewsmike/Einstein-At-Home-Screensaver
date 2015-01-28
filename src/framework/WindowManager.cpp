@@ -285,7 +285,8 @@ void WindowManager::eventLoop(void) {
                 // NB Having pulled the event off queue, what is
                 // subsequently not handled here is thus ignored.
                 if((current_event.type == SDL_USEREVENT) &&
-                   (current_event.user.code == WindowManager::RenderEvent)) {
+                   (current_event.user.code == (Sint32)(WindowManager::RenderEvent))) {
+                	// Sint32 is an SDL type.
                     // Frame render falling due.
                     eventObservers.front()->render(dtime());
                     //Swap the buffers.
@@ -293,7 +294,8 @@ void WindowManager::eventLoop(void) {
                     }
 
                 else if((current_event.type == SDL_USEREVENT) &&
-                        (current_event.user.code == WindowManager::BOINCUpdateEvent)) {
+                        (current_event.user.code == (Sint32)(WindowManager::BOINCUpdateEvent))) {
+                	// Sint32 is an SDL type.
                     // BOINC update falling due.
                     eventObservers.front()->refreshBOINCInformation();
                     }
