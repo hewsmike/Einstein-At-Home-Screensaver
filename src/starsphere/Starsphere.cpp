@@ -108,18 +108,17 @@ Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
     }
 
 Starsphere::~Starsphere() {
-    if(m_FontResource) delete m_FontResource;
     if(m_vertex_shader_resource) delete m_vertex_shader_resource;
     if(m_fragment_shader_resource) delete m_fragment_shader_resource;
-
-    /// TODO - longstanding unhappiness ( but compiles )
-    /// "warning: invalid use of incomplete type ‘struct _TTF_Font’"
-    /// "warning: forward declaration of ‘struct _TTF_Font’"
-//    if(m_FontLogo1) delete m_FontLogo1;
-//    if(m_FontLogo2) delete m_FontLogo2;
-//	if(m_FontHeader) delete m_FontHeader;
-//	if(m_FontText) delete m_FontText;
-
+//
+//    /// TODO - longstanding unhappiness ( but compiles )
+//    /// "warning: invalid use of incomplete type ‘struct _TTF_Font’"
+//    /// "warning: forward declaration of ‘struct _TTF_Font’"
+    if(m_FontLogo1) delete m_FontLogo1;
+    if(m_FontLogo2) delete m_FontLogo2;
+	if(m_FontHeader) delete m_FontHeader;
+	if(m_FontText) delete m_FontText;
+//
 	if(m_adapter) delete m_adapter;
 	if(m_vertex_buffer) delete m_vertex_buffer;
 	if(m_index_buffer) delete m_index_buffer;
@@ -140,7 +139,7 @@ void Starsphere::sphVertex3D(GLfloat RAdeg, GLfloat DEdeg, GLfloat radius) {
 	return;
     }
 void Starsphere::sphVertex(GLfloat RAdeg, GLfloat DEdeg) {
-	sphVertex3D(RAdeg, DEdeg, sphRadius);
+//	sphVertex3D(RAdeg, DEdeg, sphRadius);
     }
 
 /**
@@ -264,26 +263,26 @@ void Starsphere::make_constellations() {
 
 GLfloat Starsphere::RAofZenith(double T, GLfloat LONdeg) {
 
-	// unix epoch at 12h  1/1/2000
-	const double T_0 = 946728000.0;
-
-	//  UT seconds of the day
-	double T_s = fmod(T, 24.0*3600.0);
-
-	// Julian centuries since 12h 1/1/2000 and 0h today
-	double T_c = (T - T_s - T_0)/3155760000.0;
-
-	// GMST at 0h today in seconds
-	double GMST0 = 6.0*3600.0 + 41.0*60.0 + 50.54841 + (8640184.812866
-	        + 0.093104*T_c)*T_c;
-
-	// GMST now in seconds
-	double GMST = GMST0 + 1.002738*T_s;
-
-	// longitude defined as west positive
-	GLfloat alpha = (GMST/(24.0*3600.0))*360.0 - LONdeg;
-
-	return alpha;
+//	// unix epoch at 12h  1/1/2000
+//	const double T_0 = 946728000.0;
+//
+//	//  UT seconds of the day
+//	double T_s = fmod(T, 24.0*3600.0);
+//
+//	// Julian centuries since 12h 1/1/2000 and 0h today
+//	double T_c = (T - T_s - T_0)/3155760000.0;
+//
+//	// GMST at 0h today in seconds
+//	double GMST0 = 6.0*3600.0 + 41.0*60.0 + 50.54841 + (8640184.812866
+//	        + 0.093104*T_c)*T_c;
+//
+//	// GMST now in seconds
+//	double GMST = GMST0 + 1.002738*T_s;
+//
+//	// longitude defined as west positive
+//	GLfloat alpha = (GMST/(24.0*3600.0))*360.0 - LONdeg;
+//
+//	return alpha;
     }
 
 /**
@@ -906,17 +905,17 @@ void Starsphere::render(const double timeOfDay) {
 //	glPopMatrix();
 
 	// draw 2D vectorized HUD
-    if(isFeature(LOGO) || isFeature(SEARCHINFO)) {
-
-		// disable depth testing since we're in 2D mode
-    	glDisable(GL_DEPTH_TEST);
-
-//		if (isFeature(LOGO)) renderLogo();
-//		if (isFeature(SEARCHINFO)) renderSearchInformation();
-
-//		// enable depth testing since we're leaving 2D mode
-    	glEnable(GL_DEPTH_TEST);
-        }
+//    if(isFeature(LOGO) || isFeature(SEARCHINFO)) {
+//
+//		// disable depth testing since we're in 2D mode
+//    	glDisable(GL_DEPTH_TEST);
+//
+////		if (isFeature(LOGO)) renderLogo();
+////		if (isFeature(SEARCHINFO)) renderSearchInformation();
+//
+////		// enable depth testing since we're leaving 2D mode
+//    	glEnable(GL_DEPTH_TEST);
+//        }
 
     // Mark off another frame done.
     ++m_framecount;
