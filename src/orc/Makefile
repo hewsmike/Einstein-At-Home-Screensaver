@@ -40,6 +40,9 @@ default: release
 debug: orc
 release: clean orc
 
+memcheck: clean debug
+callgrind: clean debug
+
 # target specific options
 debug: CPPFLAGS += -pg -ggdb3 -O0 -Wall -Wno-switch-enum
 release: CPPFLAGS += -DNDEBUG -ggdb3 -O3 -Wall -Wno-switch-enum
