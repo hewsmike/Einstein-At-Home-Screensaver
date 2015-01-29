@@ -52,6 +52,9 @@ default: release
 debug: liboglutility.a
 release: clean liboglutility.a
 
+memcheck: clean debug
+callgrind: clean debug
+
 # target specific options
 debug: CPPFLAGS += -pg -ggdb3 -O0 -Wall -Wno-switch-enum
 release: CPPFLAGS += -DNDEBUG -ggdb3 -O3 -Wall -Wno-switch-enum
@@ -90,8 +93,8 @@ Texture.o: $(DEPS) $(UTILITY_SRC)/Texture.cpp $(UTILITY_SRC)/Texture.h
 TextureBuffer.o: $(DEPS) $(UTILITY_SRC)/TextureBuffer.cpp $(UTILITY_SRC)/TextureBuffer.h
 	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/TextureBuffer.cpp
 
-UniformVariable.o: $(DEPS) $(UTILITY_SRC)/UniformVariable.cpp $(UTILITY_SRC)/UniformVariable.h
-	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/UniformVariable.cpp		
+VertexBuffer.o: $(DEPS) $(UTILITY_SRC)/VertexBuffer.cpp $(UTILITY_SRC)/VertexBuffer.h
+	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/VertexBuffer.cpp	
 
 VertexFetch.o: $(DEPS) $(UTILITY_SRC)/VertexFetch.cpp $(UTILITY_SRC)/VertexFetch.h
 	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/VertexFetch.cpp
