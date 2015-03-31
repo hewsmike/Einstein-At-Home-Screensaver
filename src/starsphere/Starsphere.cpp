@@ -677,7 +677,7 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
 
     // Make a program using the above shaders, mark the corresponding OpenGL shader objects for deletion.
     m_test_program = new TestProgram(m_vertex, m_fragment, m_adapter, Program::DELETE_ON_GOOD_LINK);
-    m_test_program->setUniformLoadPoint("RotationMatrix", &m_rotation[0][0]);
+    m_test_program->setUniformLoadPoint("RotationMatrix", &m_rotation[0][0], true);
     std::cout << "Starsphere::initialize : &m_rotation = "
     		  << &m_rotation[0][0] << std::endl;
 

@@ -74,12 +74,12 @@ class Shader : public OGL_ID {
          *              true - resources acquired without error
          *              false - resources were not acquired
          */
-        virtual bool acquire(void);
+        bool acquire(void);
 
         /**
          * \brief Release the shader object's OpenGL resources.
          */
-        virtual void release(void);
+        void release(void);
 
         /**
          * \brief Determine if shader has been MARKED for deletion by the state
