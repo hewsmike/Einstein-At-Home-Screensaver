@@ -83,8 +83,6 @@ class Program : public OGL_ID {
          */
         virtual ~Program();
 
-        virtual void frameCallback(void) = 0;
-
         /**
 		 * \brief Use the underlying OpenGL program object.
 		 */
@@ -107,7 +105,7 @@ class Program : public OGL_ID {
         /**
          * \brief Releases the program object resources.
          */
-        void release(void);
+        bool release(void);
 
         /**
          * \brief Determine if program has been MARKED for deletion.
@@ -145,7 +143,7 @@ class Program : public OGL_ID {
 
         bool setUniformLoadPoint(std::string u_name, GLvoid* source);
 
-    protected:
+    private:
 
         struct uniform_data {
         	// The uniform variable type as known to OpenGL.
@@ -161,9 +159,8 @@ class Program : public OGL_ID {
 
         uniform_data getUniform(std::string u_name);
 
-        bool loadUniform(std::string u_name);
+        bool loadUniform(Program::uniform_data current);
 
-    private:
         /// Maximum length ( in characters, including null terminator )
         /// of the storage allocated for the name of a uniform
         /// variable.

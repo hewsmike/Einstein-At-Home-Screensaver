@@ -287,4 +287,3 @@ void VertexFetch::prepareAttributeMapping(void) {
 		non_interleave_progressive_offset += attrib->length * m_vertices->size();
 		}
     }
-

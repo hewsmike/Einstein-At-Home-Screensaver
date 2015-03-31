@@ -288,11 +288,9 @@ Program::uniform_data Program::getUniform(std::string u_name) {
 	return pos->second;
 	}
 
-bool Program::loadUniform(std::string u_name) {
+bool Program::loadUniform(Program::uniform_data current) {
 	// Assume success.
 	bool ret_val = true;
-
-	Program::uniform_data current = this->getUniform(u_name);
 
 	switch(current.m_type) {
 		case GL_FLOAT_MAT4:
@@ -635,4 +633,13 @@ std::string Program::checkUniform(GLenum type) {
 		}
 
 	return ret_val;
+	}
+
+void Program::frameCallback(void) {
+	// this->loadUniform("RotationMatrix");
+	for(std::map<std::string, uniform_data>::const_iterator uniform = uniforms.begin();
+        uniform != uniforms.end();
+        ++uniform) {
+        this->loadUniform(uniform->second);
+        }
 	}
