@@ -65,7 +65,7 @@ RADIO := Radio
 # Target variants.
 TARGET_APPEND=
 ifeq ".$(SYSTEM)" ".linux"
-    TARGET_APPEND := "${TARGET_HOST}-pc-linux-gnu"
+    TARGET_APPEND := "${TARGET_SYSTEM}-pc-linux-gnu"
 endif
 ifeq ".$(SYSTEM)" ".win32"
     TARGET_APPEND := "windows_intelx86.exe"
@@ -105,7 +105,6 @@ ifeq ".$(SYSTEM)" ".linux"
 endif
 ifeq ".$(SYSTEM)" ".win32"
     CPPFLAGS += -DGL_GLEXT_PROTOTYPES
-    CPPFLAGS += -D_WIN32_WINDOWS=0x0410
     CPPFLAGS += -DWIN32_GLEXT_LINKS
     CPPFLAGS += -DGLEW_STATIC
 endif
@@ -178,7 +177,7 @@ ifeq ".$(SYSTEM)" ".mac"
 endif
 
 # Product specific.
-OBJS += pulsar_list.o starlist.o snr_list.o TestProgram.o
+OBJS += pulsar_list.o starlist.o snr_list.o
 
 # Rules for object builds from sources.
 

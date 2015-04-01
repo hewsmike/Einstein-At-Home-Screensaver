@@ -1,0 +1,21 @@
+--- Makefile.mingw
++++ Makefile.mingw	2009-07-07 15:03:03.000000000 +0200
+@@ -1,14 +1,14 @@
+-BOINCDIR = ./boinc
++BOINCDIR = $(BOINC_SRC)
+ DEBUG = -D__DEBUG__ -g3
+-OBJ  = boinc_api.o util.o win_util.o app_ipc.o diagnostics.o diagnostics_win.o filesys.o hostinfo.o md5.o md5_file.o mem_usage.o mfile.o miofile.o parse.o prefs.o proxy_info.o str_util.o shmem.o stackwalker_win.o base64.o
++OBJ  = graphics2.o graphics2_util.o boinc_api.o util.o win_util.o app_ipc.o diagnostics.o diagnostics_win.o filesys.o hostinfo.o md5.o md5_file.o mem_usage.o mfile.o miofile.o parse.o prefs.o proxy_info.o str_util.o shmem.o stackwalker_win.o base64.o
+ LINKOBJ  = $(OBJ)
+ LDFLAGS = -lwinmm -march=i386
+ INCS = -I"$(BOINCDIR)" -I"$(BOINCDIR)/db" -I"$(BOINCDIR)" -I"$(BOINCDIR)/lib" -I"$(BOINCDIR)/api" 
+ CXXINCS = $(INCS)
+ BIN  = libboinc.a
+ #
+-CXXFLAGS = $(CXXINCS) $(DEBUG) --include $(BOINCDIR)/version.h -DWIN32 -D_WIN32 -D_WIN32_WINDOWS=0x0501 -D_MT -DNDEBUG -D_WINDOWS  -DBOINC -DCLIENT -DNODB -D_CONSOLE -Wall -mtune=pentium-m   -fexceptions -march=i386 -O1
+-CFLAGS = $(INCS) $(DEBUG) --include $(BOINCDIR)/version.h -DWIN32 -D_WIN32 -D_WIN32_WINDOWS=0x0501 -D_MT -DNDEBUG -D_WINDOWS  -DBOINC -DCLIENT -DNODB -D_CONSOLE -Wall -mtune=pentium-m   -fexceptions -march=i386 -O1
++CXXFLAGS = $(CXXINCS) $(DEBUG) --include $(BOINCDIR)/version.h -DWIN32 -D_WIN32 -D_WIN32_WINDOWS=0x0410 -D_MT -DNDEBUG -D_WINDOWS  -DBOINC -DCLIENT -DNODB -D_CONSOLE -Wall -mtune=pentium-m   -fexceptions -march=i386 -O1
++CFLAGS = $(INCS) $(DEBUG) --include $(BOINCDIR)/version.h -DWIN32 -D_WIN32 -D_WIN32_WINDOWS=0x0410 -D_MT -DNDEBUG -D_WINDOWS  -DBOINC -DCLIENT -DNODB -D_CONSOLE -Wall -mtune=pentium-m   -fexceptions -march=i386 -O1
+ 
+ 
+ .PHONY: all all-before all-after clean clean-custom

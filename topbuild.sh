@@ -39,7 +39,7 @@ TAG_GFXAPPS="current_gfx_apps"
 # library build might be.
 FREETYPE_VERSION=2.5.1
 GLEW_VERSION=1.10.0
-LIBXML_VERSION=2.7.2
+LIBXML_VERSION=2.9.2
 SDL_VERSION=2.0.3
 SDL_TTF_VERSION=2.0.12
 GLM_VERSION=0.9.6.1
@@ -90,7 +90,6 @@ TOPBUILDSTATE=$TBS_NONE
 retrieve_boinc() {
     log "Retrieving BOINC..."
     mkdir -p $ROOT/retrieval/boinc >> $LOGFILE || failure
-
 
     cd $ROOT/retrieval/boinc || failure
     if [ -d .git ]; then
@@ -643,13 +642,13 @@ case $TARGET in
         ./build.sh $2 $3
         ;;
     $TARGET_LINUX)
-        export HOST_SYSTEM="x86_64-pc-linux"
+        export TARGET_SYSTEM="x86_64-pc-linux"
         realtarget
         prepare_directories linux
         cp -f $ROOT/build_linux.sh $ROOT/linux/build.sh
         log "For $PRODUCT_NAME : invoking Linux build script ... "
         log "BUILD_SYSTEM = $BUILD_SYSTEM"
-        log "HOST_SYSTEM = $HOST_SYSTEM"
+        log "TARGET_SYSTEM = $TARGET_SYSTEM"
 
         cd $ROOT/linux
         ./build.sh $2 $3
@@ -665,10 +664,14 @@ case $TARGET in
         cd ..
         ;;
     $TARGET_WIN32)
+    	export TARGET_SYSTEM="i686-w64-mingw32"
         realtarget
         prepare_directories win32
         cp -f $ROOT/build_win32.sh $ROOT/win32/build.sh
         log "For $PRODUCT_NAME : invoking Win32 build script ... "
+        log "BUILD_SYSTEM = $BUILD_SYSTEM"
+        log "TARGET_SYSTEM = $TARGET_SYSTEM"
+                
         cd $ROOT/win32
         ./build.sh $2 $3
         cd ..

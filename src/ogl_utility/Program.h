@@ -105,7 +105,7 @@ class Program : public OGL_ID {
         /**
          * \brief Releases the program object resources.
          */
-        bool release(void);
+        void release(void);
 
         /**
          * \brief Determine if program has been MARKED for deletion.

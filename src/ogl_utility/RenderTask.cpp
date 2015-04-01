@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2014 by Mike Hewson                                     *
+ *   Copyright (C) 2015 by Mike Hewson                                     *
  *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
@@ -18,42 +18,13 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "Pipeline.h"
+#include "RenderTask.h"
 
-#include "ErrorHandler.h"
-
-#include <iostream>
-
-Pipeline::Pipeline(Program& program, VertexFetch& vertex_fetch) :
-                    m_program(program),
-                    m_vertex_fetch(vertex_fetch) {
+RenderTask::RenderTask(RenderTask::shader_group s_group,
+        			   RenderTask::index_buffer_group i_group,
+		               RenderTask::vertex_buffer_group v_group) {
     }
 
 
-Pipeline::~Pipeline() {
-    }
-
-void Pipeline::utilise(GLenum primitive, GLsizei count) {
-    // Link program if not done.
-    if(m_program.status() == Program::NEVER_LINKED) {
-        m_program.acquire();
-        }
-
-    // Only if the program was successfully linked.
-    if(m_program.status() == Program::LINKAGE_SUCCEEDED) {
-    	m_program.use();
-
-    	m_vertex_fetch.bind();
-
-    	m_program.frameCallBack();
-
-        m_vertex_fetch.trigger(primitive, count);
-
-        m_vertex_fetch.unbind();
-
-        m_program.stopUse();
-        }
-    else {
-        /// TODO - Error path if no program link ?
-        }
+RenderTask::~RenderTask() {
     }

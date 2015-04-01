@@ -633,7 +633,7 @@ std::string Program::checkUniform(GLenum type) {
 	return ret_val;
 	}
 
-void Program::frameCallback(void) {
+void Program::frameCallBack(void) {
 	// Load each known uniform variable upon referring to an earlier constructed map.
 	for(uniformMap::const_iterator uniform = uniforms.begin();
         uniform != uniforms.end();
