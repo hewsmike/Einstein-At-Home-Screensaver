@@ -224,7 +224,7 @@ void Program::setUniformLoadPoint(std::string u_name, GLvoid* source) {
 	uniform_data current;
 	current.m_load_point = source;
 
-	std::map<std::string, Program::uniform_data>::iterator pos = uniforms.find(u_name);
+	uniformMap::iterator pos = uniforms.find(u_name);
 	if(pos == uniforms.end()) {
 		uniforms.insert(std::make_pair(std::string(u_name), current));
 		}
@@ -265,7 +265,7 @@ bool Program::mapUniforms(void) {
             current.m_location = (GLint)(index);
             current.m_type = uniform_type;
 
-            std::map<std::string, Program::uniform_data>::iterator pos = uniforms.find(u_name);
+            uniformMap::iterator pos = uniforms.find(u_name);
 			if(pos != uniforms.end()) {
 				pos->second.m_type = uniform_type;
 				pos->second.m_location = index;
@@ -282,7 +282,7 @@ bool Program::mapUniforms(void) {
     }
 
 Program::uniform_data Program::getUniform(std::string u_name) {
-	std::map<std::string, Program::uniform_data>::iterator pos = uniforms.find(u_name);
+	uniformMap::iterator pos = uniforms.find(u_name);
 	return pos->second;
 	}
 
@@ -635,7 +635,7 @@ std::string Program::checkUniform(GLenum type) {
 
 void Program::frameCallback(void) {
 	// Load each known uniform variable upon referring to an earlier constructed map.
-	for(std::map<std::string, uniform_data>::const_iterator uniform = uniforms.begin();
+	for(uniformMap::const_iterator uniform = uniforms.begin();
         uniform != uniforms.end();
         ++uniform) {
         this->loadUniform(uniform->second);

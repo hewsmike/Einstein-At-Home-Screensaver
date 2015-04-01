@@ -228,7 +228,8 @@ class Program : public OGL_ID {
         /// but not otherwise usefully referenced ie. the OpenGL compiler
         /// may ( and probably will ) ignore them and thus discard any
         /// reference to them.
-        std::map<std::string, uniform_data> uniforms;
+        typedef std::map<std::string, Program::uniform_data> uniformMap;
+        uniformMap uniforms;
   };
 
 /**
