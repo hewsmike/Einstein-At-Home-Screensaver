@@ -40,7 +40,7 @@
 #include "FragmentShader.h"
 #include "IndexBuffer.h"
 #include "Pipeline.h"
-#include "TestProgram.h"
+#include "Program.h"
 #include "ogl_utility.h"
 #include "VertexBuffer.h"
 #include "VertexFetch.h"
@@ -381,8 +381,9 @@ class Starsphere : public AbstractGraphicsEngine {
         IndexBuffer* m_index_buffer;
         VertexShader* m_vertex;
         FragmentShader* m_fragment;
-        TestProgram* m_test_program;
+
         Pipeline* m_pipeline;
+        Program* m_program;
         VertexFetch* m_vertexfetch;
 
         glm::mat4 m_rotation;

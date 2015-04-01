@@ -48,7 +48,7 @@ Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
     m_index_buffer = NULL;
 	m_vertex = NULL;
 	m_fragment = NULL;
-	m_test_program = NULL;
+	m_program = NULL;
 	m_pipeline = NULL;
 	m_vertexfetch = NULL;
 
@@ -124,7 +124,7 @@ Starsphere::~Starsphere() {
 	if(m_index_buffer) delete m_index_buffer;
 	if(m_vertex) delete m_vertex;
 	if(m_fragment) delete m_fragment;
-	if(m_test_program) delete m_test_program;
+	if(m_program) delete m_program;
 	if(m_pipeline) delete m_pipeline;
 	if(m_vertexfetch) delete m_vertexfetch;
 	}
@@ -676,8 +676,8 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
     m_fragment = new FragmentShader(factory.createInstance("FragmentTestShader")->std_string());
 
     // Make a program using the above shaders, mark the corresponding OpenGL shader objects for deletion.
-    m_test_program = new TestProgram(m_vertex, m_fragment, m_adapter, Program::DELETE_ON_GOOD_LINK);
-    m_test_program->setUniformLoadPoint("RotationMatrix", &m_rotation[0][0], true);
+    m_program = new Program(m_vertex, m_fragment, m_adapter, Program::DELETE_ON_GOOD_LINK);
+    m_program->setUniformLoadPoint("RotationMatrix", &m_rotation[0][0], true);
     std::cout << "Starsphere::initialize : &m_rotation = "
     		  << &m_rotation[0][0] << std::endl;
 
@@ -690,16 +690,16 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
 
     m_vertexfetch = new VertexFetch(m_vertex_buffer, m_index_buffer, m_adapter);
 
-    m_pipeline = new Pipeline(*m_test_program, *m_vertexfetch);
+    m_pipeline = new Pipeline(*m_program, *m_vertexfetch);
 
-    m_test_program->acquire();
+    m_program->acquire();
 
-    if(m_test_program->status() != Program::LINKAGE_SUCCEEDED) {
+    if(m_program->status() != Program::LINKAGE_SUCCEEDED) {
     	stringstream linking_log;
     	linking_log << "Starsphere::initialize() : program did not link !!" << std::endl
 					<< "Linker log follows :\n"
 					<< "------------------------------------------------------\n"
-					<< m_test_program->linkageLog()
+					<< m_program->linkageLog()
 					<< "------------------------------------------------------"
 					<< std::endl;
     	ErrorHandler::record(linking_log.str(), ErrorHandler::INFORM);
