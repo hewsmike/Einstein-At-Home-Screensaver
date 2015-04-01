@@ -150,7 +150,6 @@ bool VertexFetch::configure(void) {
     							  attrib->a_spec.normalised,
     							  attrib->stride,
     							  attrib->pointer);
-
     		}
 
     	// Ensure that the pipeline vertex fetch

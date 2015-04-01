@@ -99,7 +99,7 @@ class VertexBuffer : public Buffer {
         /**
 		 * \brief What is the type of data mixing in this buffer?
 		 */
-        enum data_mix mix(void) const;
+        VertexBuffer::data_mix mix(void) const;
 
     private:
         /// The usage hint.

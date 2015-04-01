@@ -220,7 +220,7 @@ const std::string& Program::linkageLog(void) const {
     return linker_log;
     }
 
-bool Program::setUniformLoadPoint(std::string u_name, GLvoid* source) {
+void Program::setUniformLoadPoint(std::string u_name, GLvoid* source) {
 	uniform_data current;
 	current.m_load_point = source;
 
@@ -231,8 +231,6 @@ bool Program::setUniformLoadPoint(std::string u_name, GLvoid* source) {
 	else {
 		pos->second = current;
 		}
-
-    return true;
 	}
 
 bool Program::mapUniforms(void) {
@@ -636,7 +634,7 @@ std::string Program::checkUniform(GLenum type) {
 	}
 
 void Program::frameCallback(void) {
-	// this->loadUniform("RotationMatrix");
+	// Load each known uniform variable upon referring to an earlier constructed map.
 	for(std::map<std::string, uniform_data>::const_iterator uniform = uniforms.begin();
         uniform != uniforms.end();
         ++uniform) {

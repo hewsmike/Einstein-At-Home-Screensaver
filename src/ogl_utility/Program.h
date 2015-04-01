@@ -141,10 +141,19 @@ class Program : public OGL_ID {
 		 */
         void frameCallBack(void);
 
-        bool setUniformLoadPoint(std::string u_name, GLvoid* source);
+        /**
+         * \brief Create a correspondence between a uniform variable, as known
+         *        by an OpenGL program object, and a position within client code.
+         * \param u_name : the name of the uniform variable.
+         * \param source : an untyped pointer to client code where the value
+         *                 may be uploaded from.
+         */
+        void setUniformLoadPoint(std::string u_name, GLvoid* source);
 
     private:
 
+        // Data structure containing the relevant parameters for
+        // a uniform variable.
         struct uniform_data {
         	// The uniform variable type as known to OpenGL.
         	GLenum m_type;
@@ -157,6 +166,9 @@ class Program : public OGL_ID {
         	GLint m_location;
         	};
 
+        /**
+         * \brief Obtain the uniform_data instance corresponding to the given
+         */
         uniform_data getUniform(std::string u_name);
 
         bool loadUniform(Program::uniform_data current);
