@@ -78,7 +78,7 @@ class RenderTask {
 			GLuint bytes;
 			GLuint vertices;
 			GLenum usage;
-			VertexBuffer::data_mix;
+			VertexBuffer::data_mix mix;
         	};
 
         /**
@@ -104,9 +104,27 @@ class RenderTask {
          */
         virtual ~RenderTask();
 
+        /**
+         * \brief Add another correspondence between vertex buffer and the vertex shader.
+         */
+        void addSpecification(const AttributeInputAdapter::attribute_spec& spec);
+
+        /**
+         * \brief Create a correspondence between a uniform variable, as known
+         *        by an OpenGL program object, and a position within client code.
+         * \param u_name : the name of the uniform variable.
+         * \param source : an untyped pointer to client code where the value
+         *                 may be uploaded from.
+         */
+        void setUniformLoadPoint(std::string u_name, GLvoid* source);
+
+        void utilise(GLenum primitive, GLsizei count);
+
+        void acquire(void);
+
     private:
 
-        AttributeInputAdapter* m_atrib_adapt;
+        AttributeInputAdapter* m_attrib_adapt;
         FragmentShader* m_frag_shader;
         IndexBuffer* m_index_buffer;
         Pipeline* m_pipeline;
