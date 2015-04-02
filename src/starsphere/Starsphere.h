@@ -37,14 +37,8 @@
 
 #include "AbstractGraphicsEngine.h"
 #include "EinsteinGravityAdapter.h"
-#include "FragmentShader.h"
-#include "IndexBuffer.h"
-#include "Pipeline.h"
-#include "Program.h"
 #include "ogl_utility.h"
-#include "VertexBuffer.h"
-#include "VertexFetch.h"
-#include "VertexShader.h"
+#include "RenderTask.h"
 #include "WindowManager.h"
 
 #include "SDL_ttf.h"
@@ -376,15 +370,7 @@ class Starsphere : public AbstractGraphicsEngine {
         GLuint m_framecount;
 
         /// OpenGL
-        AttributeInputAdapter* m_adapter;
-        VertexBuffer* m_vertex_buffer;
-        IndexBuffer* m_index_buffer;
-        VertexShader* m_vertex;
-        FragmentShader* m_fragment;
-
-        Pipeline* m_pipeline;
-        Program* m_program;
-        VertexFetch* m_vertexfetch;
+        RenderTask* m_render_task1;
 
         glm::mat4 m_rotation;
         glm::vec3 m_axis;

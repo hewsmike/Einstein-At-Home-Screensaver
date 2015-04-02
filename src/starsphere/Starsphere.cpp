@@ -119,14 +119,7 @@ Starsphere::~Starsphere() {
 	if(m_FontHeader) delete m_FontHeader;
 	if(m_FontText) delete m_FontText;
 //
-	if(m_adapter) delete m_adapter;
-	if(m_vertex_buffer) delete m_vertex_buffer;
-	if(m_index_buffer) delete m_index_buffer;
-	if(m_vertex) delete m_vertex;
-	if(m_fragment) delete m_fragment;
-	if(m_program) delete m_program;
-	if(m_pipeline) delete m_pipeline;
-	if(m_vertexfetch) delete m_vertexfetch;
+	if(m_render_task) delete m_render_task;
 	}
 
 void Starsphere::sphVertex3D(GLfloat RAdeg, GLfloat DEdeg, GLfloat radius) {
@@ -649,61 +642,35 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
                      0.5f, -0.5f,        0.0f, 0.0f, 1.0f,
         };
 
-    // Specify the attributes of the position data for each vertex. Within the VAO this appears at
-	// attribute location 0, it maps to the input variable 'position' within the vertex shader,
-    // has 2 elements ( x & y ) of float type with no normalisation.
-	struct AttributeInputAdapter::attribute_spec pos_spec = {0, "position", 2, GL_FLOAT, GL_FALSE};
-
-	// Specify the attributes of the color data for each vertex. Within the VAO this appears at
-	// attribute location 1, it maps to the variable 'color' within the vertex shader,
-	// has 3 elements ( RGB ) of float type with no normalisation.
-	struct AttributeInputAdapter::attribute_spec color_spec = {1, "color", 3, GL_FLOAT, GL_FALSE};
-
-	// Create and populate an AttributeInputAdapter.
-	m_adapter = new AttributeInputAdapter();
-	m_adapter->addSpecification(pos_spec);
-	m_adapter->addSpecification(color_spec);
-
     // The index data in client space ie. the order in which the above vertices are rendered.
     GLuint index_data[] = {
         0, 1, 2,
     	};
 
-    // Make a vertex shader from a string in our resource cache, with knowledge of the attribute/variable links.
-    m_vertex = new VertexShader(factory.createInstance("VertexTestShader")->std_string());
+    RenderTask::shader_group s_group1 = {factory.createInstance("VertexTestShader")->std_string(),
+                                         factory.createInstance("FragmentTestShader")->std_string(),
+                                         Program::KEEP_ON_GOOD_LINK};
 
-    // This is a pass through fragment shader. We need one to have a functioning pipeline at all.
-    m_fragment = new FragmentShader(factory.createInstance("FragmentTestShader")->std_string());
+    RenderTask::vertex_buffer_group i_group1 = {index_data,
+                                                sizeof(index_data),
+                                                3,
+                                                GL_STATIC_DRAW,
+                                                GL_UNSIGNED_INT};
 
-    // Make a program using the above shaders, mark the corresponding OpenGL shader objects for deletion.
-    m_program = new Program(m_vertex, m_fragment, m_adapter, Program::DELETE_ON_GOOD_LINK);
-    m_program->setUniformLoadPoint("RotationMatrix", &m_rotation[0][0]);
-    std::cout << "Starsphere::initialize : &m_rotation = "
-    		  << &m_rotation[0][0] << std::endl;
+    RenderTask::index_buffer_group v_group1 = {vertex_data,
+                                               sizeof(vertex_data),
+                                               3,
+                                               GL_STATIC_DRAW,
+                                               VertexBuffer::BY_VERTEX};
 
-    // This creates an OpenGL Vertex Array Object ( VAO ) and includes the
-    m_vertex_buffer = new VertexBuffer(vertex_data, sizeof(vertex_data) , 3, GL_STATIC_DRAW, VertexBuffer::BY_VERTEX);
-    m_vertex_buffer->acquire();
+    m_render_task1 = new RenderTask(s_group1, i_group1, v_group1);
 
-    m_index_buffer = new IndexBuffer(index_data, sizeof(index_data), 3, GL_STATIC_DRAW, GL_UNSIGNED_INT);
-    m_index_buffer->acquire();
+    m_render_task1.addSpecification({0, "position", 2, GL_FLOAT, GL_FALSE});
+    m_render_task1.addSpecification({1, "color", 3, GL_FLOAT, GL_FALSE});
 
-    m_vertexfetch = new VertexFetch(m_vertex_buffer, m_index_buffer, m_adapter);
+    m_render_task->setUniformLoadPoint("RotationMatrix", &m_rotation[0][0]);
 
-    m_pipeline = new Pipeline(*m_program, *m_vertexfetch);
-
-    m_program->acquire();
-
-    if(m_program->status() != Program::LINKAGE_SUCCEEDED) {
-    	stringstream linking_log;
-    	linking_log << "Starsphere::initialize() : program did not link !!" << std::endl
-					<< "Linker log follows :\n"
-					<< "------------------------------------------------------\n"
-					<< m_program->linkageLog()
-					<< "------------------------------------------------------"
-					<< std::endl;
-    	ErrorHandler::record(linking_log.str(), ErrorHandler::INFORM);
-    	}
+    m_render_task1.acquire();
 
     m_CurrentWidth = width;
     m_CurrentHeight = height;
