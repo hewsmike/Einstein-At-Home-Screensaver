@@ -668,7 +668,7 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
     m_render_task1.addSpecification({0, "position", 2, GL_FLOAT, GL_FALSE});
     m_render_task1.addSpecification({1, "color", 3, GL_FLOAT, GL_FALSE});
 
-    m_render_task->setUniformLoadPoint("RotationMatrix", &m_rotation[0][0]);
+    m_render_task1->setUniformLoadPoint("RotationMatrix", &m_rotation[0][0]);
 
     m_render_task1.acquire();
 
