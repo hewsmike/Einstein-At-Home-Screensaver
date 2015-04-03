@@ -279,7 +279,7 @@ class Starsphere : public AbstractGraphicsEngine {
         * \param DEdeg The declination of the new vertex
         * \param radius The radius of the sky sphere
         */
-        void sphVertex3D(GLfloat RAdeg, GLfloat DEdeg, GLfloat radius);
+        glm::vec3 sphVertex3D(GLfloat RAdeg, GLfloat DEdeg, GLfloat radius);
 
         /**
         * \brief Creates a GL vertex on the surface of the sky sphere.
@@ -370,7 +370,7 @@ class Starsphere : public AbstractGraphicsEngine {
         GLuint m_framecount;
 
         /// OpenGL
-        RenderTask* m_render_task1;
+        RenderTask* m_render_task_snr;
 
         glm::mat4 m_rotation;
         glm::vec3 m_axis;
@@ -382,7 +382,7 @@ class Starsphere : public AbstractGraphicsEngine {
         void make_pulsars();
 
         /// Generate OpenGL display list for SNRs
-        void make_snrs();
+        void make_snrs(RenderTask*);
 
         /// Generate OpenGL display list for constellations
         void make_constellations();

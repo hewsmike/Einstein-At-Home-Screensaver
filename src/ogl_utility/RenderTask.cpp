@@ -20,6 +20,10 @@
 
 #include "RenderTask.h"
 
+#include "ErrorHandler.h"
+
+#include <sstream>
+
 RenderTask::RenderTask(RenderTask::shader_group s_group,
         			   RenderTask::index_buffer_group i_group,
 		               RenderTask::vertex_buffer_group v_group) {
@@ -81,7 +85,7 @@ void RenderTask::acquire(void) {
     m_program->acquire();
 
     if(m_program->status() != Program::LINKAGE_SUCCEEDED) {
-    	stringstream linking_log;
+    	std::stringstream linking_log;
     	linking_log << "RenderTask::acquire() : program did not link !!" << std::endl
 					<< "Linker log follows :\n"
 					<< "------------------------------------------------------\n"

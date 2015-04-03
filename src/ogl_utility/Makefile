@@ -41,6 +41,7 @@ OBJS += IndexBuffer.o
 OBJS += OGL_ID.o
 OBJS += Pipeline.o
 OBJS += Program.o
+OBJS += RenderTask.o
 OBJS += Shader.o
 OBJS += TextureBuffer.o
 OBJS += VertexBuffer.o
@@ -83,6 +84,9 @@ Pipeline.o: $(DEPS) $(UTILITY_SRC)/Pipeline.cpp $(UTILITY_SRC)/Pipeline.h
 
 Program.o: $(DEPS) $(UTILITY_SRC)/Program.cpp $(UTILITY_SRC)/Program.h
 	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/Program.cpp
+
+RenderTask.o: $(DEPS) $(UTILITY_SRC)/RenderTask.cpp $(UTILITY_SRC)/RenderTask.h
+	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/RenderTask.cpp
 
 Shader.o: $(DEPS) $(UTILITY_SRC)/Shader.cpp $(UTILITY_SRC)/Shader.h
 	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/Shader.cpp

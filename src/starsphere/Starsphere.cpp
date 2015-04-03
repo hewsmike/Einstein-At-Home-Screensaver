@@ -28,6 +28,8 @@
 
 #include "Starsphere.h"
 
+#include "ogl_utility.h"
+
 #include "AttributeInputAdapter.h"
 #include "ErrorHandler.h"
 #include "FragmentShader.h"
@@ -43,14 +45,7 @@ Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
 	AbstractGraphicsEngine(sharedMemoryAreaIdentifier) {
 	m_framecount = 0;
 
-	m_adapter = NULL;
-	m_vertex_buffer = NULL;
-    m_index_buffer = NULL;
-	m_vertex = NULL;
-	m_fragment = NULL;
-	m_program = NULL;
-	m_pipeline = NULL;
-	m_vertexfetch = NULL;
+	m_render_task_snr = NULL;
 
 	m_rotation = glm::mat4(1.0);
 	m_axis = glm::vec3(1.0f, 0.0f, 0.0f);
@@ -119,17 +114,15 @@ Starsphere::~Starsphere() {
 	if(m_FontHeader) delete m_FontHeader;
 	if(m_FontText) delete m_FontText;
 //
-	if(m_render_task) delete m_render_task;
+	if(m_render_task_snr) delete m_render_task_snr;
 	}
 
-void Starsphere::sphVertex3D(GLfloat RAdeg, GLfloat DEdeg, GLfloat radius) {
-//	GLfloat x, y, z;
-//
-//	x = radius * COS(DEdeg) * COS(RAdeg);
-//	z = -radius * COS(DEdeg) * SIN(RAdeg);
-//	y = radius * SIN(DEdeg);
-//	glVertex3f(x, y, z);
-	return;
+glm::vec3 Starsphere::sphVertex3D(GLfloat RAdeg, GLfloat DEdeg, GLfloat radius) {
+	GLfloat x = radius * COS(DEdeg) * COS(RAdeg);
+	GLfloat z = -radius * COS(DEdeg) * SIN(RAdeg);
+	GLfloat y = radius * SIN(DEdeg);
+
+	return glm::vec3(x,y,z);
     }
 void Starsphere::sphVertex(GLfloat RAdeg, GLfloat DEdeg) {
 //	sphVertex3D(RAdeg, DEdeg, sphRadius);
@@ -205,23 +198,48 @@ void Starsphere::make_pulsars() {
 /**
  * Super Novae Remenants (SNRs):
  */
-void Starsphere::make_snrs() {
-//	GLfloat mag_size=3.0;
-//	int i;
+void Starsphere::make_snrs(RenderTask* task) {
+	ResourceFactory factory;
 
-	// delete existing, create new (required for windoze)
-//	if(SNRs) glDeleteLists(SNRs, 1);
-//	SNRs = glGenLists(1);
-//	glNewList(SNRs, GL_COMPILE);
-//
-//		glColor3f(0.7, 0.176, 0.0); // _S_NRs are _S_ienna
-//
-//		for (i=0; i < NSNRs; i++) {
-//			star_marker(SNR_info[i][0], SNR_info[i][1], mag_size);
-//		}
-//
-//	glEndList();
-    }
+	RenderTask::shader_group s_group1 = {factory.createInstance("VertexShader_Single_Color")->std_string(),
+	                                     factory.createInstance("FragmentShader_Pass")->std_string(),
+	                                     Program::KEEP_ON_GOOD_LINK};
+
+	RenderTask::index_buffer_group i_group1 = {NULL, 0, 0, 0, 0};		// With no index data remaining fields irrelevant.
+
+	GLfloat vertex_data[NSNRs * 3] = { };
+
+	RenderTask::vertex_buffer_group v_group1 = {vertex_data,
+	                                            sizeof(vertex_data),
+	                                            NSNRs,
+	                                            GL_STATIC_DRAW,
+	                                            VertexBuffer::BY_VERTEX};
+
+
+
+	glm::vec3 snr_color = glm::vec3(0.7, 0.176, 0.0);		// Supernovae are Sienna.
+
+	// GLfloat mag_size=3.0;
+	// int i;
+
+	for(int i=0; i < NSNRs; ++i) {
+		glm::vec3 temp = sphVertex3D(SNR_info[i][0], SNR_info[i][1], sphRadius);
+
+		vertex_data[i*3] = temp.x;
+		vertex_data[i*3 + 1] = temp.y;
+		vertex_data[i*3 + 2] = temp.z;
+	}
+
+	task = new RenderTask(s_group1, i_group1, v_group1);
+
+	task->addSpecification({0, "position", 3, GL_FLOAT, GL_FALSE});
+
+	task->setUniformLoadPoint("color", &snr_color);
+
+	task->setUniformLoadPoint("RotationMatrix", &m_rotation[0][0]);
+
+	task->acquire();
+	}
 
 /**
  * Create Constellations:
@@ -635,42 +653,42 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
     ResourceFactory factory;
 
     // The vertex data in client space.
-    GLfloat vertex_data[] = {
+    //GLfloat vertex_data[] = {
         // position ( x  ,   y  ) color ( R,    G,    B  )
-                     0.0f,  0.5f,        1.0f, 0.0f, 0.0f,
-                    -0.5f, -0.5f,        0.0f, 1.0f, 0.0f,
-                     0.5f, -0.5f,        0.0f, 0.0f, 1.0f,
-        };
+    //                 0.0f,  0.5f,        1.0f, 0.0f, 0.0f,
+     //               -0.5f, -0.5f,        0.0f, 1.0f, 0.0f,
+      //               0.5f, -0.5f,        0.0f, 0.0f, 1.0f,
+       // };
 
     // The index data in client space ie. the order in which the above vertices are rendered.
-    GLuint index_data[] = {
-        0, 1, 2,
-    	};
+    //GLuint index_data[] = {
+      //  0, 1, 2,
+//    	};
 
-    RenderTask::shader_group s_group1 = {factory.createInstance("VertexTestShader")->std_string(),
-                                         factory.createInstance("FragmentTestShader")->std_string(),
-                                         Program::KEEP_ON_GOOD_LINK};
-
-    RenderTask::vertex_buffer_group i_group1 = {index_data,
-                                                sizeof(index_data),
-                                                3,
-                                                GL_STATIC_DRAW,
-                                                GL_UNSIGNED_INT};
-
-    RenderTask::index_buffer_group v_group1 = {vertex_data,
-                                               sizeof(vertex_data),
-                                               3,
-                                               GL_STATIC_DRAW,
-                                               VertexBuffer::BY_VERTEX};
-
-    m_render_task1 = new RenderTask(s_group1, i_group1, v_group1);
-
-    m_render_task1.addSpecification({0, "position", 2, GL_FLOAT, GL_FALSE});
-    m_render_task1.addSpecification({1, "color", 3, GL_FLOAT, GL_FALSE});
-
-    m_render_task1->setUniformLoadPoint("RotationMatrix", &m_rotation[0][0]);
-
-    m_render_task1.acquire();
+//    RenderTask::shader_group s_group1 = {factory.createInstance("VertexTestShader")->std_string(),
+//                                         factory.createInstance("FragmentTestShader")->std_string(),
+//                                         Program::KEEP_ON_GOOD_LINK};
+//
+//    RenderTask::index_buffer_group i_group1 = {index_data,
+//                                               sizeof(index_data),
+//                                               3,
+//                                               GL_STATIC_DRAW,
+//                                               GL_UNSIGNED_INT};
+//
+//    RenderTask::vertex_buffer_group v_group1 = {vertex_data,
+//                                               sizeof(vertex_data),
+//                                               3,
+//                                               GL_STATIC_DRAW,
+//                                               VertexBuffer::BY_VERTEX};
+//
+//    m_render_task_snr = new RenderTask(s_group1, i_group1, v_group1);
+//
+//    m_render_task_snr->addSpecification({0, "position", 2, GL_FLOAT, GL_FALSE});
+//    m_render_task_snr->addSpecification({1, "color", 3, GL_FLOAT, GL_FALSE});
+//
+//    m_render_task_snr->setUniformLoadPoint("RotationMatrix", &m_rotation[0][0]);
+//
+//    m_render_task_snr->acquire();
 
     m_CurrentWidth = width;
     m_CurrentHeight = height;
@@ -829,7 +847,7 @@ void Starsphere::render(const double timeOfDay) {
 
 	m_rotation = glm::rotate(m_rotation, 0.01f, m_axis);
 
-  	m_pipeline->utilise(GL_TRIANGLES, 3);
+  	m_render_task_snr->utilise(GL_POINTS, NSNRs);
 
 	// draw axes before any rotation so they stay put
 //	if (isFeature(AXES)) glCallList(Axes);
