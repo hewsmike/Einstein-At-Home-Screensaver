@@ -82,7 +82,7 @@ void RenderTask::setUniformLoadPoint(std::string u_name, GLvoid* source) {
 void RenderTask::utilise(GLenum primitive, GLsizei count) {
 	// Pass on to the underlying pipeline object.
 	ErrorHandler::record("RenderTask::utilise() : triggering ...", ErrorHandler::INFORM);
-    m_pipeline->utilise(primitive, count);
+	m_pipeline->utilise(primitive, count);
     ErrorHandler::record("RenderTask::utilise() : post-triggering ...", ErrorHandler::INFORM);
     }
 

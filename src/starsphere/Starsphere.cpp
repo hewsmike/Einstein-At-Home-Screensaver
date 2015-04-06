@@ -201,21 +201,7 @@ void Starsphere::make_pulsars() {
 void Starsphere::make_snrs(RenderTask* task) {
 	static glm::vec3 snr_color = glm::vec3(0.7, 0.176, 0.0);		// Supernovae are Sienna.
 
-	ResourceFactory factory;
-
-	RenderTask::shader_group s_group1 = {factory.createInstance("VertexShader_Single_Color")->std_string(),
-	                                     factory.createInstance("FragmentShader_Pass")->std_string(),
-	                                     Program::KEEP_ON_GOOD_LINK};
-
-	RenderTask::index_buffer_group i_group1 = {NULL, 0, 0, 0, 0};		// With no index data remaining fields irrelevant.
-
 	GLfloat vertex_data[NSNRs * 3];
-
-	RenderTask::vertex_buffer_group v_group1 = {vertex_data,
-	                                            sizeof(vertex_data),
-	                                            NSNRs,
-	                                            GL_STATIC_DRAW,
-	                                            VertexBuffer::BY_VERTEX};
 
 	// GLfloat mag_size=3.0;
 
@@ -226,6 +212,20 @@ void Starsphere::make_snrs(RenderTask* task) {
 		vertex_data[i*3 + 1] = temp.y;
 		vertex_data[i*3 + 2] = temp.z;
 	}
+
+	ResourceFactory factory;
+
+	RenderTask::shader_group s_group1 = {factory.createInstance("VertexShader_Single_Color")->std_string(),
+	                                     factory.createInstance("FragmentShader_Pass")->std_string(),
+	                                     Program::KEEP_ON_GOOD_LINK};
+
+	RenderTask::index_buffer_group i_group1 = {NULL, 0, 0, 0, 0};		// With no index data remaining fields irrelevant.
+
+	RenderTask::vertex_buffer_group v_group1 = {vertex_data,
+	                                            sizeof(vertex_data),
+	                                            NSNRs,
+	                                            GL_STATIC_DRAW,
+	                                            VertexBuffer::BY_VERTEX};
 
 	task = new RenderTask(s_group1, i_group1, v_group1);
 
