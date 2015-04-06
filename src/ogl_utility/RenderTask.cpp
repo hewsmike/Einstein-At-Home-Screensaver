@@ -50,7 +50,12 @@ RenderTask::RenderTask(RenderTask::shader_group s_group,
     m_vertex_fetch = new VertexFetch(m_vertex_buffer, m_index_buffer, m_attrib_adapt);
 
     m_pipeline = new Pipeline(*m_program, *m_vertex_fetch);
-
+//    if(m_pipeline == NULL){
+//    	ErrorHandler::record("RenderTask::RenderTask() : NULL pointer returned for m_pipeline ...", ErrorHandler::INFORM);
+//    	}
+//    else {
+//    	ErrorHandler::record("RenderTask::RenderTask() : valid pointer returned for m_pipeline ...", ErrorHandler::INFORM);
+//    	}
     }
 
 RenderTask::~RenderTask() {
@@ -75,13 +80,21 @@ void RenderTask::setUniformLoadPoint(std::string u_name, GLvoid* source) {
     }
 
 void RenderTask::utilise(GLenum primitive, GLsizei count) {
-    // Pass on to the underlying pipeline object.
+	// Pass on to the underlying pipeline object.
+	ErrorHandler::record("RenderTask::utilise() : triggering ...", ErrorHandler::INFORM);
     m_pipeline->utilise(primitive, count);
+    ErrorHandler::record("RenderTask::utilise() : post-triggering ...", ErrorHandler::INFORM);
     }
 
 void RenderTask::acquire(void) {
+
+
     m_vertex_buffer->acquire();
-    m_index_buffer->acquire();
+
+    if(m_index_buffer != NULL) {
+    	m_index_buffer->acquire();
+    	}
+
     m_program->acquire();
 
     if(m_program->status() != Program::LINKAGE_SUCCEEDED) {

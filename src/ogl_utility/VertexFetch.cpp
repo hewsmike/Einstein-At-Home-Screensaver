@@ -179,10 +179,12 @@ void VertexFetch::trigger(GLenum primitive, GLsizei count) {
 	// buffer use depending upon that which exist.
 	if((m_vertices != NULL) && (m_indices != NULL)) {
         // Both GL_ARRAY_BUFFER and GL_ELEMENT_ARRAY_BUFFER targets are bound.
+		ErrorHandler::record("VertexFetch::trigger() : Both vertex & index arrays active ...", ErrorHandler::INFORM);
 		glDrawElements(primitive, count, GL_UNSIGNED_INT, 0);
 	    }
     else {
         // Either only GL_ARRAY_BUFFER target bound, or none at all.
+    	ErrorHandler::record("VertexFetch::trigger() : Index array NULL...", ErrorHandler::INFORM);
     	glDrawArrays(primitive, 0, count);
         }
 	}

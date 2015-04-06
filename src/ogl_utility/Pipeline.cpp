@@ -34,13 +34,18 @@ Pipeline::~Pipeline() {
     }
 
 void Pipeline::utilise(GLenum primitive, GLsizei count) {
+	ErrorHandler::record("Pipeline::utilise() : triggering ...", ErrorHandler::INFORM);
     // Link program if not done.
     if(m_program.status() == Program::NEVER_LINKED) {
+    	ErrorHandler::record("Pipeline::utilise() : program needs acqusition ...", ErrorHandler::INFORM);
         m_program.acquire();
         }
 
+    ErrorHandler::record("Pipeline::utilise() : program is linked ...", ErrorHandler::INFORM);
     // Only if the program was successfully linked.
     if(m_program.status() == Program::LINKAGE_SUCCEEDED) {
+    	ErrorHandler::record("Pipeline::utilise() : triggered ...", ErrorHandler::INFORM);
+
     	m_program.use();
 
     	m_vertex_fetch.bind();
