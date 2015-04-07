@@ -198,7 +198,7 @@ void Starsphere::make_pulsars() {
 /**
  * Super Novae Remenants (SNRs):
  */
-void Starsphere::make_snrs(RenderTask* task) {
+RenderTask* Starsphere::make_snrs(void) {
 	static glm::vec3 snr_color = glm::vec3(0.7, 0.176, 0.0);		// Supernovae are Sienna.
 
 	GLfloat vertex_data[NSNRs * 3];
@@ -227,7 +227,7 @@ void Starsphere::make_snrs(RenderTask* task) {
 	                                            GL_STATIC_DRAW,
 	                                            VertexBuffer::BY_VERTEX};
 
-	task = new RenderTask(s_group1, i_group1, v_group1);
+	RenderTask* task = new RenderTask(s_group1, i_group1, v_group1);
 
 	task->addSpecification({0, "position", 3, GL_FLOAT, GL_FALSE});
 
@@ -236,6 +236,8 @@ void Starsphere::make_snrs(RenderTask* task) {
 	task->setUniformLoadPoint("RotationMatrix", &m_rotation[0][0]);
 
 	task->acquire();
+
+	return task;
 	}
 
 /**
@@ -649,7 +651,7 @@ void Starsphere::resize(const int width, const int height) {
 void Starsphere::initialize(const int width, const int height, const Resource* font) {
     ResourceFactory factory;
 
-    make_snrs(m_render_task_snr);
+    m_render_task_snr = make_snrs();
 
     m_CurrentWidth = width;
     m_CurrentHeight = height;
