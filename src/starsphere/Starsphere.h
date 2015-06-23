@@ -369,7 +369,7 @@ class Starsphere : public AbstractGraphicsEngine {
         /// Cumulative frame count.
         GLuint m_framecount;
 
-        /// OpenGL
+        /// Pointers to rendering tasks.
         RenderTask* m_render_task_snr;
 
         glm::mat4 m_rotation;
@@ -382,7 +382,7 @@ class Starsphere : public AbstractGraphicsEngine {
         void make_pulsars();
 
         /// Generate OpenGL display list for SNRs
-        RenderTask* make_snrs(void);
+        void make_snrs(RenderTask* r_task);
 
         /// Generate OpenGL display list for constellations
         void make_constellations();
