@@ -45,6 +45,15 @@
  *        that being a specific collection of ogl_utility objects to render an entire vertex
  *        buffer data set.
  *
+ *        The minimum to be provided is :
+ *          - GLSL source code for both vertex and fragment shaders
+ *            ( even if only of pass-through nature ).
+ *          - a specification for a VertexBuffer object.
+ *
+ *        General usage :
+ *          - construct instance with desired level of specification ( minimum as above )
+ *          -
+ *
  * \see AttributeInputAdapter
  * \see FragmentShader
  * \see IndexBuffer
@@ -84,16 +93,12 @@ class RenderTask {
         /**
          * \brief Constructor.
          *
-         * \param vertex_shader : a pointer to an existing VertexShader object,
-         *                        assumed to take on the role of an
-         *                        OpenGL vertex shader.
-         * \param fragment_shader : a pointer to an existing Shader object,
-         *                          assumed to take on the role of an
-         *                          OpenGL fragment shader.
-         * \param adapter : a pointer to an AttributeInputAdapter.
-         * \param dispose : one of the shaderDisposition enumerants indicating
-         *                  desired fate of supplied shaders after any successful
-         *                  linkage.
+         * \param s_group : a shader_group structure that specifies the key parameters
+         *                  to construct Shader objects for this rendering task.
+         * \param i_group : an index_buffer_group structure that specifies the key parameters
+         *                  to possibly construct an IndexBuffer object for this rendering task.
+         * \param v_group : a vertex_buffer_group structure that specifies the key parameters
+         *                  to construct a VertexBuffer object for this rendering task.
          */
         RenderTask(RenderTask::shader_group s_group,
                    RenderTask::index_buffer_group i_group,
@@ -106,6 +111,8 @@ class RenderTask {
 
         /**
          * \brief Add another correspondence between vertex buffer and the vertex shader.
+         *
+         * \param spec : an attribute specification as defined in the AttributeInputAdapter class.
          */
         void addSpecification(const AttributeInputAdapter::attribute_spec& spec);
 
@@ -118,8 +125,14 @@ class RenderTask {
          */
         void setUniformLoadPoint(std::string u_name, GLvoid* source);
 
+        /**
+         * \brief utilise this task ie. trigger rendering as per setup.
+         */
         void utilise(GLenum primitive, GLsizei count);
 
+        /**
+         * \brief Acquire the OpenGL state resources for this task.
+         */
         void acquire(void);
 
     private:
