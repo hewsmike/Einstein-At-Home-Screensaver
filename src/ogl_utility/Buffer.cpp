@@ -26,6 +26,7 @@
 Buffer::Buffer(const GLvoid* buffer_data, GLuint bytes) {
     // Ensure an actual data source was provided.
     if(buffer_data != NULL) {
+        // Pointer copy only, not deep.
         m_data = buffer_data;
         }
     else {
@@ -48,8 +49,8 @@ bool Buffer::acquire(void) {
     if(this->ID() == OGL_ID::NO_ID) {
         // Ask OpenGL for a single buffer handle.
         GLuint temp = 0;
-        acquire_ID(&temp);
-        set_ID(temp);
+        this->acquire_ID(&temp);
+        OGL_ID::set_ID(temp);
 
         // Failure to acquire a handle should be FATAL.
         if(this->ID() == OGL_ID::NO_ID) {
@@ -62,7 +63,7 @@ bool Buffer::acquire(void) {
     if(acquire_flag == false) {
         // Use the handle and load data.
     	/// TODO - check return value to see if load did succeed !
-        loadBuffer();
+        this->loadBuffer();
         // Denote that acquisition succeeded.
         acquire_flag = true;
         }
@@ -73,10 +74,10 @@ bool Buffer::acquire(void) {
 void Buffer::release(void) {
     // Inform OpenGL that we no longer need this specific buffer handle.
 	GLuint temp = this->ID();
-    release_ID(&temp);
+    OGL_ID::release_ID(&temp);
 
     // Reset our handle store to safe value.
-    set_ID(OGL_ID::NO_ID);
+    OGL_ID::set_ID(OGL_ID::NO_ID);
 
     // Reset acquisition status.
     acquire_flag = false;

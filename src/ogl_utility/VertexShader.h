@@ -53,7 +53,6 @@ class VertexShader : public Shader {
          * \brief Constructor
          *
          * \param source - the shader's source code.
-         * \param attribs - a
          */
         VertexShader(const std::string& source);
 
