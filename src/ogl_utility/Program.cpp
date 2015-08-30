@@ -25,8 +25,6 @@
 #include <iostream>
 #include <sstream>
 
-const int Program::UNIFORM_NAME_BUFFER_SIZE(50);
-
 Program::Program(VertexShader* vertex_shader,
                  FragmentShader* fragment_shader,
 				 AttributeInputAdapter* adapter,
@@ -243,24 +241,30 @@ bool Program::mapUniforms(void) {
         GLuint temp;
         glGetProgramiv(this->ID(), GL_ACTIVE_UNIFORMS, (GLint*)(&temp));
 
+        // What is the maximum uniform name length for this program entity ?
+        GLsizei max_name_len;
+        glGetProgramiv(this->ID(), GL_ACTIVE_UNIFORM_MAX_LENGTH, &max_name_len);
+
+        GLchar* u_name= new GLchar[max_name_len + 1];
+
         // Retrieve their names and locations.
         for(GLuint index = 0; index < temp; ++index) {
-            GLchar u_name[UNIFORM_NAME_BUFFER_SIZE];
-            // Paranoia.
-            u_name[UNIFORM_NAME_BUFFER_SIZE - 1] = '\0';
-            GLuint written_length;
-            GLuint uniform_size;
+            GLsizei written_length;
+            GLint uniform_size;
             GLenum uniform_type;
 
             uniform_data current;
 
             glGetActiveUniform(this->ID(),
                                index,
-                               UNIFORM_NAME_BUFFER_SIZE - 1,
-                               (GLint*)(&written_length),
-                               (GLint*)&uniform_size,
+							   max_name_len,
+                               &written_length,
+                               &uniform_size,
                                &uniform_type,
                                u_name);
+
+            // Paranoia.
+            u_name[max_name_len] = '\0';
 
             current.m_location = (GLint)(index);
             current.m_type = uniform_type;
@@ -273,7 +277,8 @@ bool Program::mapUniforms(void) {
 			else {
 				uniforms.insert(std::make_pair(std::string(u_name), current));
 				}
-            }
+			}
+        delete u_name;
 
         ret_val = true;
         }

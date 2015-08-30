@@ -50,12 +50,12 @@ RenderTask::RenderTask(RenderTask::shader_group s_group,
     m_vertex_fetch = new VertexFetch(m_vertex_buffer, m_index_buffer, m_attrib_adapt);
 
     m_pipeline = new Pipeline(*m_program, *m_vertex_fetch);
-//    if(m_pipeline == NULL){
-//    	ErrorHandler::record("RenderTask::RenderTask() : NULL pointer returned for m_pipeline ...", ErrorHandler::INFORM);
-//    	}
-//    else {
-//    	ErrorHandler::record("RenderTask::RenderTask() : valid pointer returned for m_pipeline ...", ErrorHandler::INFORM);
-//    	}
+    if(m_pipeline == NULL){
+    	ErrorHandler::record("RenderTask::RenderTask() : NULL pointer returned for m_pipeline ...", ErrorHandler::INFORM);
+    	}
+    else {
+    	ErrorHandler::record("RenderTask::RenderTask() : valid pointer returned for m_pipeline ...", ErrorHandler::INFORM);
+    	}
     }
 
 RenderTask::~RenderTask() {

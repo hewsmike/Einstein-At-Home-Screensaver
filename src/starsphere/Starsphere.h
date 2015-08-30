@@ -382,7 +382,7 @@ class Starsphere : public AbstractGraphicsEngine {
         void make_pulsars();
 
         /// Generate OpenGL display list for SNRs
-        void make_snrs(RenderTask* r_task);
+        void make_snrs();
 
         /// Generate OpenGL display list for constellations
         void make_constellations();

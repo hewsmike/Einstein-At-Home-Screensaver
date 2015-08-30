@@ -107,7 +107,8 @@ retrieve_boinc() {
 
         log "Retrieving BOINC (tag: $1) (this WILL take a while)..."
         cd $ROOT/retrieval || failure
-        git clone git://git.aei.uni-hannover.de/shared/einsteinathome/boinc.git boinc >> $LOGFILE 2>&1 || failure
+        git clone git://github.com/BOINC/boinc.git boinc >> $LOGFILE 2>&1 || failure
+        # git clone git://git.aei.uni-hannover.de/shared/einsteinathome/boinc.git boinc >> $LOGFILE 2>&1 || failure
         cd $ROOT/retrieval/boinc || failure
         git checkout $1 >> $LOGFILE  2>&1 || failure
     fi
@@ -310,8 +311,8 @@ check_retrieval() {
 
     log "Retrieving common library/sources..."
 
-    purge_toptree
-    prepare_toptree
+    # purge_toptree
+    # prepare_toptree
 
     if [ $TOPBUILDSTATE -lt $TBS_BOINC_RETRIEVED ]; then
         retrieve_boinc $TAG_GFXAPPS || failure

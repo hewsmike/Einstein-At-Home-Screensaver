@@ -173,11 +173,6 @@ class Program : public OGL_ID {
 
         bool loadUniform(Program::uniform_data current);
 
-        /// Maximum length ( in characters, including null terminator )
-        /// of the storage allocated for the name of a uniform
-        /// variable.
-        static const int UNIFORM_NAME_BUFFER_SIZE;
-
         /**
          * \brief Link the program.
          *

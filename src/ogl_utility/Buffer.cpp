@@ -74,7 +74,7 @@ bool Buffer::acquire(void) {
 void Buffer::release(void) {
     // Inform OpenGL that we no longer need this specific buffer handle.
 	GLuint temp = this->ID();
-    OGL_ID::release_ID(&temp);
+    release_ID(&temp);
 
     // Reset our handle store to safe value.
     OGL_ID::set_ID(OGL_ID::NO_ID);
