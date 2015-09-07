@@ -34,13 +34,13 @@ RenderTask::RenderTask(RenderTask::shader_group s_group,
     m_program = new Program(m_vertex_shader, m_frag_shader, m_attrib_adapt, s_group.disposition);
 
     m_vertex_buffer = new VertexBuffer(v_group.buffer_data, v_group.bytes, v_group.vertices, v_group.usage, v_group.mix);
-    // m_vertex_buffer->acquire();
+    m_vertex_buffer->acquire();
 
     // Is an index buffer being used ?
     if(i_group.buffer_data) {
         // Yep, an index buffer is being used.
         m_index_buffer = new IndexBuffer(i_group.buffer_data, i_group.bytes, i_group.indices, i_group.usage, i_group.index_type);
-        // m_index_buffer->acquire();
+        m_index_buffer->acquire();
         }
     else {
         // Not using an index buffer then.
@@ -50,12 +50,6 @@ RenderTask::RenderTask(RenderTask::shader_group s_group,
     m_vertex_fetch = new VertexFetch(m_vertex_buffer, m_index_buffer, m_attrib_adapt);
 
     m_pipeline = new Pipeline(*m_program, *m_vertex_fetch);
-    if(m_pipeline == NULL){
-    	ErrorHandler::record("RenderTask::RenderTask() : NULL pointer returned for m_pipeline ...", ErrorHandler::INFORM);
-    	}
-    else {
-    	ErrorHandler::record("RenderTask::RenderTask() : valid pointer returned for m_pipeline ...", ErrorHandler::INFORM);
-    	}
     }
 
 RenderTask::~RenderTask() {
@@ -81,15 +75,11 @@ void RenderTask::setUniformLoadPoint(std::string u_name, GLvoid* source) {
 
 void RenderTask::utilise(GLenum primitive, GLsizei count) {
 	// Pass on to the underlying pipeline object.
-	ErrorHandler::record("RenderTask::utilise() : triggering ...", ErrorHandler::INFORM);
 	m_pipeline->utilise(primitive, count);
-    ErrorHandler::record("RenderTask::utilise() : post-triggering ...", ErrorHandler::INFORM);
     }
 
 void RenderTask::acquire(void) {
-
-
-    m_vertex_buffer->acquire();
+	m_vertex_buffer->acquire();
 
     if(m_index_buffer != NULL) {
     	m_index_buffer->acquire();

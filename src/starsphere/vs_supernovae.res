@@ -1,16 +1,15 @@
 #version 150
 
-// This is a vertex shader. Single color as uniform.
+// This is a vertex shader. Color as literal.
 
 in vec3 position;
 
 out vec3 pass_color;
 
 uniform mat4 CameraMatrix;
-uniform vec3 color;
 
 void main()
 {
   gl_Position = CameraMatrix * vec4(position, 1.0f);
-  pass_color = color;
+  pass_color = vec3(0.7, 0.176, 0.0);
 }

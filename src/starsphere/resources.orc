@@ -25,4 +25,5 @@ AppIconBMP|EaH.bmp.res
 
 # Shaders
 FragmentShader_Pass|fs_pass.res
-VertexShader_Single_Color|vs_single_color.res
+VertexShader_Pulsars|vs_pulsars.res
+VertexShader_Supernovae|vs_supernovae.res

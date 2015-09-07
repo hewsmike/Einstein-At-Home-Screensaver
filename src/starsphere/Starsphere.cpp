@@ -124,8 +124,8 @@ glm::vec3 Starsphere::sphVertex3D(GLfloat RAdeg, GLfloat DEdeg, GLfloat radius) 
 
 	return glm::vec3(x,y,z);
     }
-void Starsphere::sphVertex(GLfloat RAdeg, GLfloat DEdeg) {
-//	sphVertex3D(RAdeg, DEdeg, sphRadius);
+glm::vec3 Starsphere::sphVertex(GLfloat RAdeg, GLfloat DEdeg) {
+	sphVertex3D(RAdeg, DEdeg, sphRadius);
     }
 
 /**
@@ -178,21 +178,39 @@ void Starsphere::make_stars() {
  *  Pulsar Markers:
  */
 void Starsphere::make_pulsars() {
-//	GLfloat mag_size=3.0;
-//	int i;
+	GLfloat pulsar_vertex_data[Npulsars * 3];
 
-	// delete existing, create new (required for windoze)
-//	if(Pulsars) glDeleteLists(Pulsars, 1);
-//	Pulsars = glGenLists(1);
-//	glNewList(Pulsars, GL_COMPILE);
-//
-//		glColor3f(0.80, 0.0, 0.85); // _P_ulsars are _P_urple
-//
-//		for (i=0; i < Npulsars; i++) {
-//			star_marker(pulsar_info[i][0], pulsar_info[i][1], mag_size);
-//		}
-//
-//	glEndList();
+	for(int i=0; i < Npulsars; ++i) {
+		glm::vec3 temp = sphVertex3D(pulsar_info[i][0], pulsar_info[i][1], sphRadius);
+
+		pulsar_vertex_data[i*3] = temp.x;
+		pulsar_vertex_data[i*3 + 1] = temp.y;
+		pulsar_vertex_data[i*3 + 2] = temp.z;
+		}
+
+	ResourceFactory factory;
+
+	RenderTask::shader_group s_group1 = {factory.createInstance("VertexShader_Pulsars")->std_string(),
+	                                     factory.createInstance("FragmentShader_Pass")->std_string(),
+	                                     Program::KEEP_ON_GOOD_LINK};
+
+	RenderTask::index_buffer_group i_group1 = {NULL, 0, 0, 0, 0};		// With no index data remaining fields irrelevant.
+
+	RenderTask::vertex_buffer_group v_group1 = {pulsar_vertex_data,
+	                                            sizeof(pulsar_vertex_data),
+	                                            NSNRs,
+	                                            GL_STATIC_DRAW,
+	                                            VertexBuffer::BY_VERTEX};
+
+	m_render_task_psr = new RenderTask(s_group1, i_group1, v_group1);
+
+	m_render_task_psr->addSpecification({0, "position", 3, GL_FLOAT, GL_FALSE});
+
+	m_render_task_psr->setUniformLoadPoint("CameraMatrix", &m_camera[0][0]);
+
+	m_render_task_psr->acquire();
+
+	return;
     }
 
 /**
@@ -201,28 +219,28 @@ void Starsphere::make_pulsars() {
 void Starsphere::make_snrs() {
 	static glm::vec3 snr_color = glm::vec3(0.7, 0.176, 0.0);		// Supernovae are Sienna.
 
-	GLfloat vertex_data[NSNRs * 3];
+	GLfloat snr_vertex_data[NSNRs * 3];
 
 	// GLfloat mag_size=3.0;
 
 	for(int i=0; i < NSNRs; ++i) {
 		glm::vec3 temp = sphVertex3D(SNR_info[i][0], SNR_info[i][1], sphRadius);
 
-		vertex_data[i*3] = temp.x;
-		vertex_data[i*3 + 1] = temp.y;
-		vertex_data[i*3 + 2] = temp.z;
+		snr_vertex_data[i*3] = temp.x;
+		snr_vertex_data[i*3 + 1] = temp.y;
+		snr_vertex_data[i*3 + 2] = temp.z;
 	}
 
 	ResourceFactory factory;
 
-	RenderTask::shader_group s_group1 = {factory.createInstance("VertexShader_Single_Color")->std_string(),
+	RenderTask::shader_group s_group1 = {factory.createInstance("VertexShader_Supernovae")->std_string(),
 	                                     factory.createInstance("FragmentShader_Pass")->std_string(),
 	                                     Program::KEEP_ON_GOOD_LINK};
 
 	RenderTask::index_buffer_group i_group1 = {NULL, 0, 0, 0, 0};		// With no index data remaining fields irrelevant.
 
-	RenderTask::vertex_buffer_group v_group1 = {vertex_data,
-	                                            sizeof(vertex_data),
+	RenderTask::vertex_buffer_group v_group1 = {snr_vertex_data,
+	                                            sizeof(snr_vertex_data),
 	                                            NSNRs,
 	                                            GL_STATIC_DRAW,
 	                                            VertexBuffer::BY_VERTEX};
@@ -231,9 +249,7 @@ void Starsphere::make_snrs() {
 
 	m_render_task_snr->addSpecification({0, "position", 3, GL_FLOAT, GL_FALSE});
 
-	m_render_task_snr->setUniformLoadPoint("color", &snr_color);
-
-	m_render_task_snr->setUniformLoadPoint("RotationMatrix", &m_rotation[0][0]);
+	m_render_task_snr->setUniformLoadPoint("CameraMatrix", &m_camera[0][0]);
 
 	m_render_task_snr->acquire();
 
@@ -652,6 +668,7 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
     ResourceFactory factory;
 
     make_snrs();
+    make_pulsars();
 
     m_CurrentWidth = width;
     m_CurrentHeight = height;
@@ -697,8 +714,7 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
         }
 
     // Test setting
-    glPointSize(3.5);
-
+    glPointSize(1.5f);
 
 	// setup initial dimensions
 	// resize(m_CurrentWidth, m_CurrentHeight);
@@ -812,10 +828,22 @@ void Starsphere::render(const double timeOfDay) {
 		m_axis = glm::vec3(1.0f, 0.0f, 0.0f);
 		}
 
+	// glm::mat4 Projection = glm::perspective(45.0f, 4.0f / 3.0f, 0.1f, 100.f);
+	/// glm::mat4 View = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -Translate));
+	// View = glm::rotate(View, Rotate.y, glm::vec3(-1.0f, 0.0f, 0.0f));
+	//View = glm::rotate(View, Rotate.x, glm::vec3(0.0f, 1.0f, 0.0f));
+	///glm::mat4 Model = glm::scale(glm::mat4(1.0f), glm::vec3(0.5f));
+
+	m_projection = glm::perspective(45.0f, 4.0f / 3.0f, 0.1f, 100.f);
+
+	m_view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -15.0f));
+
 	m_rotation = glm::rotate(m_rotation, 0.01f, m_axis);
 
-	std::cout << "Starsphere::render() : about to trigger utilise for m_render_task_snr" << std::endl;
-  	m_render_task_snr->utilise(GL_POINTS, NSNRs);
+	m_camera = m_projection * m_view * m_rotation;
+
+	m_render_task_psr->utilise(GL_POINTS, Npulsars);
+	m_render_task_snr->utilise(GL_POINTS, NSNRs);
 
 	// draw axes before any rotation so they stay put
 //	if (isFeature(AXES)) glCallList(Axes);

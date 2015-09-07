@@ -145,8 +145,7 @@ class RenderTask {
         VertexBuffer* m_vertex_buffer;
         VertexFetch* m_vertex_fetch;
         VertexShader* m_vertex_shader;
-
-  };
+    };
 
 /**
  * @}

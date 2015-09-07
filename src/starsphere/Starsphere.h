@@ -289,7 +289,7 @@ class Starsphere : public AbstractGraphicsEngine {
         * \param RAdeg The right ascension of the new vertex
         * \param DEdeg The declination of the new vertex
         */
-        void sphVertex(GLfloat RAdeg, GLfloat DEdeg);
+        glm::vec3 sphVertex(GLfloat RAdeg, GLfloat DEdeg);
 
         /// Radius of the celestial sphere
         GLfloat sphRadius;
@@ -371,9 +371,13 @@ class Starsphere : public AbstractGraphicsEngine {
 
         /// Pointers to rendering tasks.
         RenderTask* m_render_task_snr;
+        RenderTask* m_render_task_psr;
 
+        glm::mat4 m_projection;
+        glm::mat4 m_view;
         glm::mat4 m_rotation;
         glm::vec3 m_axis;
+        glm::mat4 m_camera;
 
         /// Generate OpenGL display list for stars
         void make_stars();
