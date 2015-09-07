@@ -124,6 +124,7 @@ glm::vec3 Starsphere::sphVertex3D(GLfloat RAdeg, GLfloat DEdeg, GLfloat radius) 
 
 	return glm::vec3(x,y,z);
     }
+
 glm::vec3 Starsphere::sphVertex(GLfloat RAdeg, GLfloat DEdeg) {
 	sphVertex3D(RAdeg, DEdeg, sphRadius);
     }
@@ -658,7 +659,7 @@ void Starsphere::resize(const int width, const int height) {
 
     // adjust aspect ratio and projection
 	glViewport(0, 0, m_CurrentWidth, m_CurrentHeight);
-    // gluPerspective(95.0, aspect, 0.50, 25.0);
+	m_projection = glm::perspective(45.0f, aspect, 0.1f, 100.f);
     }
 
 /**
@@ -717,7 +718,7 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
     glPointSize(1.5f);
 
 	// setup initial dimensions
-	// resize(m_CurrentWidth, m_CurrentHeight);
+	resize(m_CurrentWidth, m_CurrentHeight);
 
 	// more font setup and optimizations
 //	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -833,8 +834,6 @@ void Starsphere::render(const double timeOfDay) {
 	// View = glm::rotate(View, Rotate.y, glm::vec3(-1.0f, 0.0f, 0.0f));
 	//View = glm::rotate(View, Rotate.x, glm::vec3(0.0f, 1.0f, 0.0f));
 	///glm::mat4 Model = glm::scale(glm::mat4(1.0f), glm::vec3(0.5f));
-
-	m_projection = glm::perspective(45.0f, 4.0f / 3.0f, 0.1f, 100.f);
 
 	m_view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -15.0f));
 

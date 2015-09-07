@@ -326,7 +326,7 @@ class Starsphere : public AbstractGraphicsEngine {
         /// Current window height (y-resolution)
         int m_CurrentHeight;
 
-        /// Current window aspect ration
+        /// Current window aspect ratio
         float aspect;
 
         // HUD text rendering config (maybe overridden in subclasses)
