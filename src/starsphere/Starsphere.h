@@ -373,6 +373,14 @@ class Starsphere : public AbstractGraphicsEngine {
         RenderTask* m_render_task_snr;
         RenderTask* m_render_task_psr;
 
+        /// Colors.
+        glm::vec3 m_pulsar_color = glm::vec3(0.80, 0.0, 0.85);    // Pulsars are Purple.
+        glm::vec3 m_supernova_color = glm::vec3(0.7, 0.176, 0.0); // Supernovae are Sienna.
+
+        /// Point sizes.
+        GLfloat m_pulsar_point_size = 3.0f;
+        GLfloat m_supernova_point_size = 3.0f;
+
         glm::mat4 m_projection;
         glm::mat4 m_view;
         glm::mat4 m_rotation;

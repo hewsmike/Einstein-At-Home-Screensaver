@@ -50,6 +50,7 @@
 
 class Program : public OGL_ID {
     public :
+        // These are the possible link states.
         enum linkageState {NEVER_LINKED,
                            LINKAGE_FAILED,
                            LINKAGE_SUCCEEDED};

@@ -145,70 +145,87 @@ void Starsphere::star_marker(float RAdeg, float DEdeg, float size) {
  *  Create Stars: markers for each star
  */
 void Starsphere::make_stars() {
-//	GLfloat mag_size;
-//	int i, j;
-//	bool is_dupe;
-//	int Ndupes=0;
+	GLfloat mag_size;
+	int i, j;
+	bool is_dupe;
+	int Ndupes=0;
 
-//		glColor3f(1.0, 1.0, 1.0);
-//
-//		/**
-//		 * At some point in the future star_info[][] will also contain
-//		 * star magnitude and the marker size will vary with this.
-//		 */
-//		for (i=0; i < Nstars; i++) {
-//			// same stars appear more than once in constallations so ignore dupes
-//			is_dupe=false;
-//			for (j=0; j< i; j++) {
-//				if (star_info[j][0] == star_info[i][0] && star_info[j][0]
-//				        == star_info[i][0]) {
-//					is_dupe=true;
-//					Ndupes++;
-//					break;
-//				}
-//			}
-//			if (!is_dupe) {
-//				// mag_size = 0.05 + 0.50*rand()/RAND_MAX;
-//				mag_size = 4.0;
-//				star_marker(star_info[i][0], star_info[i][1], mag_size);
-//			}
-//		}
+		glColor3f(1.0, 1.0, 1.0);
+
+		/**
+		 * At some point in the future star_info[][] will also contain
+		 * star magnitude and the marker size will vary with this.
+		 * MAH [08/09/2015]- this can be achieved via code in vertex shader
+		 * using glPointSize.
+		 */
+		for (i=0; i < Nstars; i++) {
+			// same stars appear more than once in constallations so ignore dupes
+			is_dupe=false;
+			for (j=0; j< i; j++) {
+				if (star_info[j][0] == star_info[i][0] && star_info[j][0]
+				        == star_info[i][0]) {
+					is_dupe=true;
+					Ndupes++;
+					break;
+				}
+			}
+			if (!is_dupe) {
+				// mag_size = 0.05 + 0.50*rand()/RAND_MAX;
+				mag_size = 4.0;
+				star_marker(star_info[i][0], star_info[i][1], mag_size);
+			}
+		}
     }
 
 /**
  *  Pulsar Markers:
  */
 void Starsphere::make_pulsars() {
+    // Temporary array for vertex data, to populate a vertex buffer object.
 	GLfloat pulsar_vertex_data[Npulsars * 3];
 
-	for(int i=0; i < Npulsars; ++i) {
+    // Go through the pulsar position data and convert to cartesian
+    // coordinates at the radius of the sphere.
+	for(int i = 0; i < Npulsars; ++i) {
+	    // Vector for a single position.
 		glm::vec3 temp = sphVertex3D(pulsar_info[i][0], pulsar_info[i][1], sphRadius);
 
+        // Each position is at successive locations as x, y then z
 		pulsar_vertex_data[i*3] = temp.x;
 		pulsar_vertex_data[i*3 + 1] = temp.y;
 		pulsar_vertex_data[i*3 + 2] = temp.z;
 		}
 
+    // Create factory instance to then access the shader strings.
 	ResourceFactory factory;
 
+    // Populate data structure indicating GLSL code use.
 	RenderTask::shader_group s_group1 = {factory.createInstance("VertexShader_Pulsars")->std_string(),
 	                                     factory.createInstance("FragmentShader_Pass")->std_string(),
 	                                     Program::KEEP_ON_GOOD_LINK};
 
-	RenderTask::index_buffer_group i_group1 = {NULL, 0, 0, 0, 0};		// With no index data remaining fields irrelevant.
+    // Populate data structure for indices, in this case none is used.
+	RenderTask::index_buffer_group i_group1 = {NULL, 0, 0, 0, 0};
 
+    // Populate data structure for vertices.
 	RenderTask::vertex_buffer_group v_group1 = {pulsar_vertex_data,
 	                                            sizeof(pulsar_vertex_data),
 	                                            NSNRs,
 	                                            GL_STATIC_DRAW,
 	                                            VertexBuffer::BY_VERTEX};
 
+    // Instantiate a rendering task with the provided information.
 	m_render_task_psr = new RenderTask(s_group1, i_group1, v_group1);
 
+    // For vertex input need to correlate with vertex shader code.
 	m_render_task_psr->addSpecification({0, "position", 3, GL_FLOAT, GL_FALSE});
 
+    // For program uniforms need client side pointers.
 	m_render_task_psr->setUniformLoadPoint("CameraMatrix", &m_camera[0][0]);
+	m_render_task_psr->setUniformLoadPoint("color", &m_pulsar_color);
+	m_render_task_psr->setUniformLoadPoint("point_size", &m_pulsar_point_size);
 
+    // Claim all required state machine resources for this rendering task.
 	m_render_task_psr->acquire();
 
 	return;
@@ -218,40 +235,51 @@ void Starsphere::make_pulsars() {
  * Super Novae Remenants (SNRs):
  */
 void Starsphere::make_snrs() {
-	static glm::vec3 snr_color = glm::vec3(0.7, 0.176, 0.0);		// Supernovae are Sienna.
-
+	// Temporary array for vertex data, to populate a vertex buffer object.
 	GLfloat snr_vertex_data[NSNRs * 3];
 
-	// GLfloat mag_size=3.0;
-
-	for(int i=0; i < NSNRs; ++i) {
+    // Go through the supernovae position data and convert to cartesian
+    // coordinates at the radius of the sphere.
+	for(int i = 0; i < NSNRs; ++i) {
+	    // Vector for a single position.
 		glm::vec3 temp = sphVertex3D(SNR_info[i][0], SNR_info[i][1], sphRadius);
 
+        // Each position is at successive locations as x, y then z
 		snr_vertex_data[i*3] = temp.x;
 		snr_vertex_data[i*3 + 1] = temp.y;
 		snr_vertex_data[i*3 + 2] = temp.z;
 	}
 
+    // Create factory instance to then access the shader strings.
 	ResourceFactory factory;
 
+    // Populate data structure indicating GLSL code use.
 	RenderTask::shader_group s_group1 = {factory.createInstance("VertexShader_Supernovae")->std_string(),
 	                                     factory.createInstance("FragmentShader_Pass")->std_string(),
 	                                     Program::KEEP_ON_GOOD_LINK};
 
+    // Populate data structure for indices, in this case none is used.
 	RenderTask::index_buffer_group i_group1 = {NULL, 0, 0, 0, 0};		// With no index data remaining fields irrelevant.
 
+    // Instantiate a rendering task with the provided information.
 	RenderTask::vertex_buffer_group v_group1 = {snr_vertex_data,
 	                                            sizeof(snr_vertex_data),
 	                                            NSNRs,
 	                                            GL_STATIC_DRAW,
 	                                            VertexBuffer::BY_VERTEX};
 
+    // Instantiate a rendering task with the provided information.
 	m_render_task_snr = new RenderTask(s_group1, i_group1, v_group1);
 
+    // For vertex input need to correlate with vertex shader code.
 	m_render_task_snr->addSpecification({0, "position", 3, GL_FLOAT, GL_FALSE});
 
+    // For program uniforms need client side pointers.
 	m_render_task_snr->setUniformLoadPoint("CameraMatrix", &m_camera[0][0]);
+	m_render_task_snr->setUniformLoadPoint("color", &m_supernova_color);
+	m_render_task_snr->setUniformLoadPoint("point_size", &m_supernova_point_size);
 
+    // Claim all required state machine resources for this rendering task.
 	m_render_task_snr->acquire();
 
 	return;
@@ -743,8 +771,8 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
 //	glEnable(GL_DEPTH_TEST;
 //	glDepthFunc(GL_LEQUAL;
 //
-//	glEnable(GL_PROGRAM_POINT_SIZE;
-//	glPointSize(40);
+    // Currently point size in managed within vertex shaders using gl_PointSize.
+    // glEnable(GL_PROGRAM_POINT_SIZE);
 
 	// enable opt-in quality feature
 	if(m_BoincAdapter.graphicsQualitySetting() == BOINCClientAdapter::MediumGraphicsQualitySetting ||

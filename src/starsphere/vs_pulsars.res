@@ -1,6 +1,6 @@
 #version 150
 
-// This is a vertex shader. Color as literal.
+// This is a vertex shader. Color as literal. Point size fixed.
 
 in vec3 position;
 
@@ -12,4 +12,5 @@ void main()
 {
   gl_Position = CameraMatrix * vec4(position, 1.0f);
   pass_color = vec3(0.80, 0.0, 0.85);
+  gl_PointSize  = 3.0f;
 }
