@@ -370,16 +370,21 @@ class Starsphere : public AbstractGraphicsEngine {
         GLuint m_framecount;
 
         /// Pointers to rendering tasks.
-        RenderTask* m_render_task_snr;
         RenderTask* m_render_task_psr;
+        RenderTask* m_render_task_star;
+        RenderTask* m_render_task_snr;
+
 
         /// Colors.
-        glm::vec3 m_pulsar_color = glm::vec3(0.80, 0.0, 0.85);    // Pulsars are Purple.
-        glm::vec3 m_supernova_color = glm::vec3(0.7, 0.176, 0.0); // Supernovae are Sienna.
+        glm::vec3 m_pulsar_color = glm::vec3(0.80, 0.0, 0.85);      // Pulsars are Purple.
+        glm::vec3 m_star_color = glm::vec3(1.0, 1.0, 1.0);          // Stars are White.
+        glm::vec3 m_supernova_color = glm::vec3(0.7, 0.176, 0.0);   // Supernovae are Sienna.
 
         /// Point sizes.
         GLfloat m_pulsar_point_size = 3.0f;
+        GLfloat m_star_point_size = 4.0f;
         GLfloat m_supernova_point_size = 3.0f;
+
 
         glm::mat4 m_projection;
         glm::mat4 m_view;
@@ -413,16 +418,6 @@ class Starsphere : public AbstractGraphicsEngine {
         * \param size Base size (radius/length) of the marker
         */
         void make_search_marker(GLfloat RAdeg, GLfloat DEdeg, GLfloat size);
-
-        /**
-        * \brief Generate a single star vertex
-        *
-        * \param RAdeg Right ascension in degrees
-        * \param DEdeg Declination in degrees
-        * \param size Point size of the star
-        */
-        void star_marker(float RAdeg, float DEdeg, float size);
-
 
         /// Feature display list ID's
         GLuint Axes, Stars, Constellations, Pulsars, SNRs;
