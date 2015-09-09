@@ -296,6 +296,9 @@ bool Program::loadUniform(Program::uniform_data current) {
 	bool ret_val = true;
 
 	switch(current.m_type) {
+		case GL_FLOAT:
+			glUniform1f(current.m_location, *(static_cast<const GLfloat*>(current.m_load_point)));
+			break;
 		case GL_FLOAT_MAT4:
 			glUniformMatrix4fv(current.m_location, 1, false, static_cast<const GLfloat*>(current.m_load_point));
 			break;

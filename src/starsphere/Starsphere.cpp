@@ -133,7 +133,9 @@ glm::vec3 Starsphere::sphVertex(GLfloat RAdeg, GLfloat DEdeg) {
  *  Create Stars: markers for each star
  */
 void Starsphere::make_stars() {
-    // Temporary array for vertex data, to populate a vertex buffer object.
+	m_distinct_stars = 0;
+
+	// Temporary array for vertex data, to populate a vertex buffer object.
 	GLfloat star_vertex_data[Nstars * 3];
 
 	bool is_dupe = false;
@@ -145,25 +147,26 @@ void Starsphere::make_stars() {
 	 * using gl_PointSize coupled with a per-vertex attribute.
 	 */
 
-	for(i = 0; i < Nstars; ++i) {
+	for(int i = 0; i < Nstars; ++i) {
         // As same stars appear more than once in constellations
         // then ignore duplicates.
 		is_dupe = false;
-		for(j = 0; j< i; ++j) {
+		for(int j = 0; j< i; ++j) {
 			if(star_info[j][0] == star_info[i][0] &&
                star_info[j][0] == star_info[i][0]) {
                 is_dupe = true;
-				break;
+                break;
 				}
 			}
 		if (!is_dupe) {
+			++m_distinct_stars;
             // Vector for a single position.
             glm::vec3 temp = sphVertex3D(star_info[i][0], star_info[i][1], sphRadius);
 
             // Each position is at successive locations as x, y then z
-            star_vertex_data[i*3] = temp.x;
-            star_vertex_data[i*3 + 1] = temp.y;
-            star_vertex_data[i*3 + 2] = temp.z;
+            star_vertex_data[m_distinct_stars*3] = temp.x;
+            star_vertex_data[m_distinct_stars*3 + 1] = temp.y;
+            star_vertex_data[m_distinct_stars*3 + 2] = temp.z;
 			}
 		}
 
@@ -180,8 +183,8 @@ void Starsphere::make_stars() {
 
     // Populate data structure for vertices.
 	RenderTask::vertex_buffer_group v_group1 = {star_vertex_data,
-	                                            sizeof(star_vertex_data),
-	                                            Nstars,
+	                                            m_distinct_stars*3*sizeof(GLfloat),
+												m_distinct_stars,
 	                                            GL_STATIC_DRAW,
 	                                            VertexBuffer::BY_VERTEX};
 
@@ -723,6 +726,7 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
 
     make_snrs();
     make_pulsars();
+    make_stars();
 
     m_CurrentWidth = width;
     m_CurrentHeight = height;
@@ -882,12 +886,6 @@ void Starsphere::render(const double timeOfDay) {
 		m_axis = glm::vec3(1.0f, 0.0f, 0.0f);
 		}
 
-	// glm::mat4 Projection = glm::perspective(45.0f, 4.0f / 3.0f, 0.1f, 100.f);
-	/// glm::mat4 View = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -Translate));
-	// View = glm::rotate(View, Rotate.y, glm::vec3(-1.0f, 0.0f, 0.0f));
-	//View = glm::rotate(View, Rotate.x, glm::vec3(0.0f, 1.0f, 0.0f));
-	///glm::mat4 Model = glm::scale(glm::mat4(1.0f), glm::vec3(0.5f));
-
 	m_view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -15.0f));
 
 	m_rotation = glm::rotate(m_rotation, 0.01f, m_axis);
@@ -896,6 +894,7 @@ void Starsphere::render(const double timeOfDay) {
 
 	m_render_task_psr->utilise(GL_POINTS, Npulsars);
 	m_render_task_snr->utilise(GL_POINTS, NSNRs);
+	m_render_task_star->utilise(GL_POINTS, m_distinct_stars);
 
 	// draw axes before any rotation so they stay put
 //	if (isFeature(AXES)) glCallList(Axes);

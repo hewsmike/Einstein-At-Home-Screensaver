@@ -385,6 +385,8 @@ class Starsphere : public AbstractGraphicsEngine {
         GLfloat m_star_point_size = 4.0f;
         GLfloat m_supernova_point_size = 3.0f;
 
+        // Number of distinct stars;
+        GLuint m_distinct_stars;
 
         glm::mat4 m_projection;
         glm::mat4 m_view;
