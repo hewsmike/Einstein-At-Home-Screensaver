@@ -163,7 +163,7 @@ void Starsphere::make_stars() {
             // Vector for a single position.
             glm::vec3 temp = sphVertex3D(star_info[i][0], star_info[i][1], sphRadius);
 
-            // Each position is at successive locations as x, y then z
+            // Each array position is at successive locations as x, y then z
             star_vertex_data[m_distinct_stars*3] = temp.x;
             star_vertex_data[m_distinct_stars*3 + 1] = temp.y;
             star_vertex_data[m_distinct_stars*3 + 2] = temp.z;
@@ -218,7 +218,7 @@ void Starsphere::make_pulsars() {
 	    // Vector for a single position.
 		glm::vec3 temp = sphVertex3D(pulsar_info[i][0], pulsar_info[i][1], sphRadius);
 
-        // Each position is at successive locations as x, y then z
+        // Each array position is at successive locations as x, y then z
 		pulsar_vertex_data[i*3] = temp.x;
 		pulsar_vertex_data[i*3 + 1] = temp.y;
 		pulsar_vertex_data[i*3 + 2] = temp.z;
@@ -272,7 +272,7 @@ void Starsphere::make_snrs() {
 	    // Vector for a single position.
 		glm::vec3 temp = sphVertex3D(SNR_info[i][0], SNR_info[i][1], sphRadius);
 
-        // Each position is at successive locations as x, y then z
+        // Each array position is at successive locations as x, y then z
 		snr_vertex_data[i*3] = temp.x;
 		snr_vertex_data[i*3 + 1] = temp.y;
 		snr_vertex_data[i*3 + 2] = temp.z;
@@ -318,25 +318,68 @@ void Starsphere::make_snrs() {
  * draws line links between pairs of stars in the list.
  */
 void Starsphere::make_constellations() {
-//	GLint star_num=0;
+    // Ensure that we only deal in pairs, so singles will be ignored.
+    m_constellation_lines = Nstars/2;
 
-	// delete existing, create new (required for windoze)
-//	if(Constellations) glDeleteLists(Constellations, 1);
-//	Constellations = glGenLists(1);
-//	glNewList(Constellations, GL_COMPILE);
-//
-//		glLineWidth(1.0);
-//		glColor3f(0.7, 0.7, 0.0); // light yellow
-//
-//		glBegin(GL_LINES); // draws lines between *pairs* of vertices
-//			for (star_num=0; star_num < Nstars; ++star_num) {
-//				sphVertex(star_info[star_num][0], star_info[star_num][1]);
-//				star_num++;
-//				sphVertex(star_info[star_num][0], star_info[star_num][1]);
-//			}
-//		glEnd();
-//
-//	glEndList();
+    GLfloat offset = 0.05f;
+
+    // Temporary array for vertex data, to populate a vertex buffer object.
+	GLfloat star_vertex_data[m_constellation_lines * 2 * 3];
+
+    // Note assess stars in pairs.
+	for(int line = 0; line < m_constellation_lines; ++line) {
+        // Vectors for each point at the ends of a constellation line.
+        glm::vec3 temp1 = sphVertex3D(star_info[line*2][0], star_info[line*2][1], sphRadius);
+        glm::vec3 temp2 = sphVertex3D(star_info[line*2+1][0], star_info[line*2+1][1], sphRadius);
+
+        // The offset from either star.
+        glm::vec3 diff = (temp2 - temp1) * offset;
+
+        // Each array position is at successive locations as x, y then z
+        star_vertex_data[line*6] = (temp1 + diff).x;
+        star_vertex_data[line*6 + 1] = (temp1 + diff).y;
+        star_vertex_data[line*6 + 2] = (temp1 + diff).z;
+
+        // Offset from second star to end the line.
+        // Each array position is at successive locations as x, y then z
+        star_vertex_data[line*6 + 3] = (temp2 - diff).x;
+        star_vertex_data[line*6 + 4] = (temp2 - diff).y;
+        star_vertex_data[line*6 + 5] = (temp2 - diff).z;
+		}
+
+	// Create factory instance to then access the shader strings.
+	ResourceFactory factory;
+
+    // Populate data structure indicating GLSL code use.
+	RenderTask::shader_group s_group1 = {factory.createInstance("VertexShader_Stars")->std_string(),
+	                                     factory.createInstance("FragmentShader_Pass")->std_string(),
+	                                     Program::KEEP_ON_GOOD_LINK};
+
+    // Populate data structure for indices, in this case none is used.
+	RenderTask::index_buffer_group i_group1 = {NULL, 0, 0, 0, 0};
+
+    // Populate data structure for vertices.
+	RenderTask::vertex_buffer_group v_group1 = {star_vertex_data,
+	                                            m_constellation_lines*2*3*sizeof(GLfloat),
+												m_constellation_lines,
+	                                            GL_STATIC_DRAW,
+	                                            VertexBuffer::BY_VERTEX};
+
+    // Instantiate a rendering task with the provided information.
+	m_render_task_cons = new RenderTask(s_group1, i_group1, v_group1);
+
+    // For vertex input need to correlate with vertex shader code.
+	m_render_task_cons->addSpecification({0, "position", 3, GL_FLOAT, GL_FALSE});
+
+    // For program uniforms need client side pointers.
+	m_render_task_cons->setUniformLoadPoint("CameraMatrix", &m_camera[0][0]);
+	m_render_task_cons->setUniformLoadPoint("color", &m_constellation_line_color);
+	m_render_task_cons->setUniformLoadPoint("point_size", &m_constellation_line_width);
+
+    // Claim all required state machine resources for this rendering task.
+	m_render_task_cons->acquire();
+
+	return;
     }
 
 /**
@@ -895,6 +938,7 @@ void Starsphere::render(const double timeOfDay) {
 	m_render_task_psr->utilise(GL_POINTS, Npulsars);
 	m_render_task_snr->utilise(GL_POINTS, NSNRs);
 	m_render_task_star->utilise(GL_POINTS, m_distinct_stars);
+	m_render_task_cons->utilise(GL_LINES, m_constellation_lines);
 
 	// draw axes before any rotation so they stay put
 //	if (isFeature(AXES)) glCallList(Axes);

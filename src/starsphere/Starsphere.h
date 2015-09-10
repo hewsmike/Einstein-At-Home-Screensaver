@@ -370,23 +370,28 @@ class Starsphere : public AbstractGraphicsEngine {
         GLuint m_framecount;
 
         /// Pointers to rendering tasks.
+        RenderTask* m_render_task_cons;
         RenderTask* m_render_task_psr;
         RenderTask* m_render_task_star;
         RenderTask* m_render_task_snr;
 
-
         /// Colors.
-        glm::vec3 m_pulsar_color = glm::vec3(0.80, 0.0, 0.85);      // Pulsars are Purple.
-        glm::vec3 m_star_color = glm::vec3(1.0, 1.0, 1.0);          // Stars are White.
-        glm::vec3 m_supernova_color = glm::vec3(0.7, 0.176, 0.0);   // Supernovae are Sienna.
+        const glm::vec3 m_pulsar_color = glm::vec3(0.80, 0.0, 0.85);          // Pulsars are Purple.
+        const glm::vec3 m_star_color = glm::vec3(1.0, 1.0, 1.0);              // Stars are White.
+        const glm::vec3 m_supernova_color = glm::vec3(0.7, 0.176, 0.0);       // Supernovae are Sienna.
+        const glm::vec3 m_constellation_line_color = glm::vec3(0.7, 0.7, 0.0)          // Lines are light yellow.
 
-        /// Point sizes.
-        GLfloat m_pulsar_point_size = 3.0f;
-        GLfloat m_star_point_size = 4.0f;
-        GLfloat m_supernova_point_size = 3.0f;
+        /// Point & line sizes.
+        const GLfloat m_pulsar_point_size = 3.0f;
+        const GLfloat m_star_point_size = 4.0f;
+        const GLfloat m_supernova_point_size = 3.0f;
+        const GLfloat m_constellation_line_width = 1.0f;
 
-        // Number of distinct stars;
+        // Number of distinct stars.
         GLuint m_distinct_stars;
+
+        // Number of constellation lines.
+        GLuint m_constellation_lines;
 
         glm::mat4 m_projection;
         glm::mat4 m_view;
