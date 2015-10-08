@@ -20,8 +20,6 @@
 
 #include "Program.h"
 
-#include "ErrorHandler.h"
-
 #include <iostream>
 #include <sstream>
 

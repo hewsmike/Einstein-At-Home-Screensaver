@@ -41,6 +41,9 @@
 
 #include "ErrorHandler.h"
 
+// Capture project wide glew and other settings.
+#include "framework.h"
+
 //
 // If NDEBUG is NOT defined then the OGL_DEBUG; macro is replaced with
 // a call to the check_OpenGL_Error static member function of the
@@ -63,9 +66,6 @@
 						 // OGL_DEBUG();
 						 //getchar()
 #endif
-
-// Capture project wide glm library setting choices.
-#include "glm_settings.h"
 
 /**
  * @}

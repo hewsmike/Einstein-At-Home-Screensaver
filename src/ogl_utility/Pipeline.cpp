@@ -20,8 +20,6 @@
 
 #include "Pipeline.h"
 
-#include "ErrorHandler.h"
-
 #include <iostream>
 
 Pipeline::Pipeline(Program& program, VertexFetch& vertex_fetch) :

@@ -105,6 +105,7 @@ Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
 Starsphere::~Starsphere() {
     if(m_vertex_shader_resource) delete m_vertex_shader_resource;
     if(m_fragment_shader_resource) delete m_fragment_shader_resource;
+
 //
 //    /// TODO - longstanding unhappiness ( but compiles )
 //    /// "warning: invalid use of incomplete type ‘struct _TTF_Font’"
@@ -114,7 +115,12 @@ Starsphere::~Starsphere() {
 	if(m_FontHeader) delete m_FontHeader;
 	if(m_FontText) delete m_FontText;
 //
+
+	if(m_render_task_cons) delete m_render_task_cons;
+	if(m_render_task_psr) delete m_render_task_psr;
+	if(m_render_task_star) delete m_render_task_star;
 	if(m_render_task_snr) delete m_render_task_snr;
+
 	}
 
 glm::vec3 Starsphere::sphVertex3D(GLfloat RAdeg, GLfloat DEdeg, GLfloat radius) {
@@ -159,14 +165,14 @@ void Starsphere::make_stars() {
 				}
 			}
 		if (!is_dupe) {
-			++m_distinct_stars;
-            // Vector for a single position.
+			// Vector for a single position.
             glm::vec3 temp = sphVertex3D(star_info[i][0], star_info[i][1], sphRadius);
 
             // Each array position is at successive locations as x, y then z
             star_vertex_data[m_distinct_stars*3] = temp.x;
             star_vertex_data[m_distinct_stars*3 + 1] = temp.y;
             star_vertex_data[m_distinct_stars*3 + 2] = temp.z;
+            ++m_distinct_stars;
 			}
 		}
 
@@ -321,7 +327,7 @@ void Starsphere::make_constellations() {
     // Ensure that we only deal in pairs, so singles will be ignored.
     m_constellation_lines = Nstars/2;
 
-    GLfloat offset = 0.05f;
+    GLfloat offset = 0.10f;
 
     // Temporary array for vertex data, to populate a vertex buffer object.
 	GLfloat star_vertex_data[m_constellation_lines * 2 * 3];
@@ -361,7 +367,7 @@ void Starsphere::make_constellations() {
     // Populate data structure for vertices.
 	RenderTask::vertex_buffer_group v_group1 = {star_vertex_data,
 	                                            m_constellation_lines*2*3*sizeof(GLfloat),
-												m_constellation_lines,
+												m_constellation_lines*2,
 	                                            GL_STATIC_DRAW,
 	                                            VertexBuffer::BY_VERTEX};
 
@@ -770,6 +776,7 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
     make_snrs();
     make_pulsars();
     make_stars();
+    make_constellations();
 
     m_CurrentWidth = width;
     m_CurrentHeight = height;
@@ -814,8 +821,11 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
             }
         }
 
-    // Test setting
+    // Default point size.
     glPointSize(1.5f);
+
+    // Default line width.
+    glLineWidth(8.0f);
 
 	// setup initial dimensions
 	resize(m_CurrentWidth, m_CurrentHeight);
@@ -938,7 +948,7 @@ void Starsphere::render(const double timeOfDay) {
 	m_render_task_psr->utilise(GL_POINTS, Npulsars);
 	m_render_task_snr->utilise(GL_POINTS, NSNRs);
 	m_render_task_star->utilise(GL_POINTS, m_distinct_stars);
-	m_render_task_cons->utilise(GL_LINES, m_constellation_lines);
+	m_render_task_cons->utilise(GL_LINES, m_constellation_lines*2);
 
 	// draw axes before any rotation so they stay put
 //	if (isFeature(AXES)) glCallList(Axes);

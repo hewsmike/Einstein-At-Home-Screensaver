@@ -20,8 +20,6 @@
 
 #include "VertexBuffer.h"
 
-#include "ErrorHandler.h"
-
 #include <iostream>
 #include <sstream>
 

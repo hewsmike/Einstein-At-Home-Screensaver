@@ -20,8 +20,6 @@
 
 #include "RenderTask.h"
 
-#include "ErrorHandler.h"
-
 #include <sstream>
 
 RenderTask::RenderTask(RenderTask::shader_group s_group,
@@ -47,7 +45,7 @@ RenderTask::RenderTask(RenderTask::shader_group s_group,
         m_index_buffer = NULL;
         }
 
-    m_vertex_fetch = new VertexFetch(m_vertex_buffer, m_index_buffer, m_attrib_adapt);
+    // m_vertex_fetch = new VertexFetch(m_vertex_buffer, m_index_buffer, m_attrib_adapt);
 
     m_pipeline = new Pipeline(*m_program, *m_vertex_fetch);
     }

@@ -18,12 +18,10 @@
  *                                                                         *
  ***************************************************************************/
 
-#include <iostream>
-#include <sstream>
-
 #include "AttributeInputAdapter.h"
 
-#include "ErrorHandler.h"
+#include <iostream>
+#include <sstream>
 
 AttributeInputAdapter::AttributeInputAdapter(void) {
 	}

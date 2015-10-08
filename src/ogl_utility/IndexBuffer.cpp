@@ -20,8 +20,6 @@
 
 #include "IndexBuffer.h"
 
-#include "ErrorHandler.h"
-
 IndexBuffer::IndexBuffer(const GLvoid* buffer_data,
 						 GLuint bytes,
                          GLuint indices,

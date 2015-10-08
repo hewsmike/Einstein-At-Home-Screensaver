@@ -20,8 +20,6 @@
 
 #include "OGL_ID.h"
 
-#include "ErrorHandler.h"
-
 #include <sstream>
 
 // An ID with value zero is not returned by OpenGL.

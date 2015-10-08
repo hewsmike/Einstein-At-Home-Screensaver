@@ -18,12 +18,10 @@
  *                                                                         *
  ***************************************************************************/
 
-#include <iostream>
-#include <sstream>
-
 #include "Shader.h"
 
-#include "ErrorHandler.h"
+#include <iostream>
+#include <sstream>
 
 const GLint Shader::GLSL_COMPILE_FAILURE(0);
 const GLint Shader::GLSL_COMPILE_SUCCESS(1);

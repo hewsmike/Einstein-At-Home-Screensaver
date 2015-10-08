@@ -20,8 +20,6 @@
 
 #include "TextureBuffer.h"
 
-#include "ErrorHandler.h"
-
 const GLsizei TextureBuffer::MIN_TEX_WIDTH(2);
 const GLsizei TextureBuffer::MIN_TEX_HEIGHT(2);
 

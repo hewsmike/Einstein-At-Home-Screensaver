@@ -19,7 +19,6 @@
  ***************************************************************************/
 
 #include "Buffer.h"
-#include "ErrorHandler.h"
 
 #include <iostream>
 
