@@ -69,10 +69,6 @@ class OGL_ID {
 
         /**
          * \brief Release the OpenGL resource.
-         *
-         * \return a boolean indicating success of release
-         *              TRUE - resources released without error
-         *              FALSE - resources were not released
          */
         virtual void release(void) = 0;
 

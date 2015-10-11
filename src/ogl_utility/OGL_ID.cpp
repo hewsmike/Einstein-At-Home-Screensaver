@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2014 by Mike Hewson                                     *
+ *   Copyright (C) 2015 by Mike Hewson                                     *
  *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
@@ -20,10 +20,9 @@
 
 #include "OGL_ID.h"
 
-#include <sstream>
-
-// An ID with value zero is not returned by OpenGL.
-// Thus it may semantically indicate 'no identifier assigned'.
+// An ID with value zero is never returned by OpenGL, and if passed to
+// OpenGL then it indicates unbinding and like semantics.
+// Thus it may be used to indicate 'no identifier assigned', 'null' etc.
 const GLuint OGL_ID::NO_ID(0);
 
 // Make sure you start with an un-assigned identifier,
