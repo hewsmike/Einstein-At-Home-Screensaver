@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2014 by Mike Hewson                                     *
+ *   Copyright (C) 2015 by Mike Hewson                                     *
  *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
@@ -33,13 +33,10 @@
  * \brief This virtual interface declares public methods to deal with OpenGL
  *        buffer objects.
  *
- *    It's a generic wrapper where the buffer contents are treated as bland and
- * byte granular. Further typing/behaviour is managed in detail in derived classes.
+ *    It's a generic wrapper, with further typing/behaviour is managed in
+ * detail in derived classes.
  *
  * \see OGL_ID
- * \see IndexBuffer
- * \see TextureBuffer
- * \see VertexBuffer
  *
  * \author Mike Hewson\n
  */
@@ -47,9 +44,10 @@
 class Buffer : public OGL_ID {
     public :
         /**
-         * \brief Constructor. Will fail fatally if data is NULL.
+         * \brief Constructor.
          *
-         * \param data : pointer to the data to be stored.
+         * \param buffer_data : pointer to the data to be stored. Will fail
+         *                      fatally if NULL.
          * \param bytes : the number of bytes of data.
          */
         Buffer(const GLvoid* buffer_data, GLuint bytes);
@@ -81,6 +79,8 @@ class Buffer : public OGL_ID {
 
         /**
 		 * \brief The number of bytes stored within the buffer.
+		 *
+		 * \return The size of the buffer in bytes.
 		 */
 		GLuint size(void) const;
 

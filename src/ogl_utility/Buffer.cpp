@@ -49,6 +49,7 @@ bool Buffer::acquire(void) {
         // Ask OpenGL for a single buffer handle.
         GLuint temp = 0;
         this->acquire_ID(&temp);
+        // Store this value in the base class.
         OGL_ID::set_ID(temp);
 
         // Failure to acquire a handle should be FATAL.
@@ -58,7 +59,7 @@ bool Buffer::acquire(void) {
             }
         }
 
-    // Only load if not already done.
+    // Only load if not already done ie. no multiple acquisition.
     if(acquire_flag == false) {
         // Use the handle and load data.
     	/// TODO - check return value to see if load did succeed !
