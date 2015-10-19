@@ -20,8 +20,6 @@
 
 #include "Buffer.h"
 
-#include "ErrorHandler.h"
-
 Buffer::Buffer(const GLvoid* buffer_data, GLuint bytes) {
     // Ensure an actual data source was provided.
     if(buffer_data != NULL) {

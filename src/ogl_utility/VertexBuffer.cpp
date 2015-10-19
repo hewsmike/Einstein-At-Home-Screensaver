@@ -20,9 +20,6 @@
 
 #include "VertexBuffer.h"
 
-#include <iostream>
-#include <sstream>
-
 VertexBuffer::VertexBuffer(const GLvoid* buffer_data,
 						   GLuint bytes,
 		                   GLuint vertices,
@@ -55,6 +52,21 @@ VertexBuffer::~VertexBuffer() {
     Buffer::release();
     }
 
+bool VertexBuffer::acquire(void) {
+    // Get a handle from the state machine.
+    GLuint handle;
+    glGenBuffers(1, &handle);
+    // Remember the value for later.
+    OGL_ID::set_ID(handle);
+
+    // Copy the data from client side to be stored in the state
+    // machine object.
+    loadBuffer();
+
+
+    Buffer::setAcquisitionState(true)
+    }
+
 GLuint VertexBuffer::vertexCount(void) const {
     return m_vertex_count;
     }
@@ -66,16 +78,6 @@ void VertexBuffer::acquire_ID(GLuint* handle) const {
 void VertexBuffer::release_ID(GLuint* handle) const {
 	glDeleteBuffers(1, handle);
     }
-
-void VertexBuffer::loadBuffer(void) const {
-	glBindBuffer(GL_ARRAY_BUFFER, this->ID());
-
-    // Allocate space and transfer the data.
-	glBufferData(GL_ARRAY_BUFFER, this->size(), this->data(), m_usage);
-
-    // Unbind the buffer.
-    glBindBuffer(GL_ARRAY_BUFFER, OGL_ID::NO_ID);
-	}
 
 void VertexBuffer::bind(void) {
     // Ensure resource acquisition first.
@@ -108,4 +110,14 @@ bool VertexBuffer::isBound(void) const {
 		}
 
 	return ret_val;
+	}
+
+void VertexBuffer::loadBuffer(void) const {
+	glBindBuffer(GL_ARRAY_BUFFER, this->ID());
+
+    // Allocate space and transfer the data.
+	glBufferData(GL_ARRAY_BUFFER, this->size(), this->data(), m_usage);
+
+    // Unbind the buffer.
+    glBindBuffer(GL_ARRAY_BUFFER, OGL_ID::NO_ID);
 	}

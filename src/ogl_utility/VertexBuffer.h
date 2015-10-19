@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2014 by Mike Hewson                                     *
+ *   Copyright (C) 2015 by Mike Hewson                                     *
  *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
@@ -25,8 +25,6 @@
 
 #include "Buffer.h"
 
-#include <vector>
-
 /**
 * \addtogroup ogl_utility OGL_Utility
 * @{
@@ -37,10 +35,10 @@
 *        vertex buffer objects.
 *
 *    This is the case where vertex attributes are supplied to the pipeline
-* sequentially from a buffer. Assumes data is stored on a per vertex basis.
+* input end from a linear buffer.
 *
 * \see Buffer
-* \see Pipeline
+* \see RenderTask
 *
 * \author Mike Hewson\n
 */
@@ -59,10 +57,11 @@ class VertexBuffer : public Buffer {
          * \brief Constructor. Will fail fatally for the application if one or
          *        more of the following applies :
          *          - the data pointer is NULL ( base class enforced ).
+         *          - the buffer size in bytes is zero ( base class enforced ).
          *          - vertices is not strictly positive.
          *          - usage type is incorrect.
          *
-         * \param data : reference to the data to be stored.
+         * \param data : pointer to the data to be stored.
          * \param bytes : the number of bytes of data.
          * \param vertices : number of vertices.
          * \param usage : one of GL_STREAM_DRAW, GL_STATIC_DRAW or GL_DYNAMIC_DRAW.
@@ -80,21 +79,40 @@ class VertexBuffer : public Buffer {
         virtual ~VertexBuffer();
 
         /**
+         * \brief Obtains the underlying OpenGL buffer object resources
+         *        from the OpenGL state machine.
+         *
+         * \return a boolean indicating success of acquisition
+         *              true - resources acquired without error
+         *              false - resources were not acquired
+         */
+        virtual bool acquire(void);
+
+        /**
+         * \brief Releases the underlying OpenGL buffer object resources
+         *        from the OpenGL state machine.
+         */
+        virtual void release(void);
+
+        /**
+         * \brief Perform any binding to the OpenGL pipeline.
+         */
+        virtual void bind(void);
+
+        /**
+         * \brief Remove any binding to the OpenGL pipeline.
+         */
+        virtual void unbind(void);
+
+        /**
+		 * \brief What is the usage type for this buffer?
+		 */
+        GLenum usage(void) const;
+
+        /**
          * \brief The number of vertices represented in this buffer.
          */
         GLuint vertexCount(void) const;
-
-        /**
-         * \brief Perform any data binding to the pipeline input.
-         */
-        void bind(void);
-
-        /**
-         * \brief Remove any data binding to the pipeline input.
-         */
-        void unbind(void);
-
-        bool isBound(void) const;
 
         /**
 		 * \brief What is the type of data mixing in this buffer?
@@ -110,20 +128,6 @@ class VertexBuffer : public Buffer {
 
         /// The manner of data interleaving.
         data_mix m_mix;
-
-        /**
-         * \brief Get an OpenGL handle for the buffer.
-         *
-         * \param handle : pointer to a handle.
-         */
-        virtual void acquire_ID(GLuint* handle) const;
-
-        /**
-         * \brief Release to pool the OpenGL handle for the buffer.
-         *
-         * \param handle : pointer to a handle.
-         */
-        virtual void release_ID(GLuint* handle) const;
 
         /**
          * \brief Populate the buffer with vertex data.
