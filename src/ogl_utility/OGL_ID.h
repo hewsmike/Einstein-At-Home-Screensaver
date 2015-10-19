@@ -80,6 +80,7 @@ class OGL_ID {
          */
         bool isNull(void) const;
 
+    protected :
         /**
 		 * \brief Obtain the OpenGL resource identifier.
 		 *
@@ -87,7 +88,6 @@ class OGL_ID {
 		 */
 		GLuint ID(void) const;
 
-    protected :
         /**
 		 * \brief Set the OpenGL resource identifier.
 		 *
