@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2014 by Mike Hewson                                     *
+ *   Copyright (C) 2015 by Mike Hewson                                     *
  *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
@@ -20,7 +20,7 @@
 
 #include "Buffer.h"
 
-#include <iostream>
+#include "ErrorHandler.h"
 
 Buffer::Buffer(const GLvoid* buffer_data, GLuint bytes) {
     // Ensure an actual data source was provided.
@@ -38,55 +38,30 @@ Buffer::Buffer(const GLvoid* buffer_data, GLuint bytes) {
 
     // Initially nothing acquired.
     acquire_flag = false;
+
+    // NOr anyhting bound.
+    bound_flag = false.
     }
 
 Buffer::~Buffer() {
     }
 
-bool Buffer::acquire(void) {
-	// Check and maybe acquire handle if we don't already have one.
-    if(this->ID() == OGL_ID::NO_ID) {
-        // Ask OpenGL for a single buffer handle.
-        GLuint temp = 0;
-        this->acquire_ID(&temp);
-        // Store this value in the base class.
-        OGL_ID::set_ID(temp);
-
-        // Failure to acquire a handle should be FATAL.
-        if(this->ID() == OGL_ID::NO_ID) {
-            ErrorHandler::record("Buffer::acquire() : failure to obtain identifier",
-                                 ErrorHandler::FATAL);
-            }
-        }
-
-    // Only load if not already done ie. no multiple acquisition.
-    if(acquire_flag == false) {
-        // Use the handle and load data.
-    	/// TODO - check return value to see if load did succeed !
-        this->loadBuffer();
-        // Denote that acquisition succeeded.
-        acquire_flag = true;
-        }
-
+bool Buffer::isAcquired(void) const {
     return acquire_flag;
     }
 
-void Buffer::release(void) {
-    // Inform OpenGL that we no longer need this specific buffer handle.
-	GLuint temp = this->ID();
-    release_ID(&temp);
-
-    // Reset our handle store to safe value.
-    OGL_ID::set_ID(OGL_ID::NO_ID);
-
-    // Reset acquisition status.
-    acquire_flag = false;
+bool Buffer::isBound(void) const {
+    return bound_flag;
     }
 
 const GLvoid* Buffer::data(void) const {
     return m_data;
     }
 
-GLuint Buffer::size(void) const {
-    return m_size;
+void Buffer::setBoundState(bool state) {
+    bound_flag = state;
+    }
+
+void Buffer::setAcquisitionState(bool state) {
+    acquire_flag = state;
     }
