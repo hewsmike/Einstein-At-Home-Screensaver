@@ -79,13 +79,13 @@ class VertexBuffer : public Buffer {
         virtual ~VertexBuffer();
 
         /**
-         * \brief Obtains the underlying OpenGL buffer object resources
-         *        from the OpenGL state machine.
-         *
-         * \return a boolean indicating success of acquisition
-         *              true - resources acquired without error
-         *              false - resources were not acquired
-         */
+		 * \brief Obtains the underlying OpenGL buffer object resources
+		 *        from the OpenGL state machine.
+		 *
+		 * \return a boolean indicating success of acquisition
+		 *              true - resources acquired without error
+		 *              false - resources were not acquired
+		 */
         virtual bool acquire(void);
 
         /**
@@ -103,6 +103,17 @@ class VertexBuffer : public Buffer {
          * \brief Remove any binding to the OpenGL pipeline.
          */
         virtual void unbind(void);
+
+        /**
+         * \brief The binding state of the underlying OpenGL buffer
+         *        object to the OpenGL state machine. This is a
+         *        dynamic inquiry.
+         *
+         * \return a boolean indicating binding state :
+         *          true - the object is bound
+         *          false - the object is not bound
+         */
+        virtual bool isBound(void) const;
 
         /**
 		 * \brief What is the usage type for this buffer?

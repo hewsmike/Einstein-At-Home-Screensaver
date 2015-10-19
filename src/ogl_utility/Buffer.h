@@ -68,22 +68,6 @@ class Buffer : public OGL_ID {
         virtual ~Buffer();
 
         /**
-         * \brief Obtains the underlying OpenGL buffer object resources
-         *        from the OpenGL state machine.
-         *
-         * \return a boolean indicating success of acquisition
-         *              true - resources acquired without error
-         *              false - resources were not acquired
-         */
-        virtual bool acquire(void) = 0;
-
-        /**
-         * \brief Releases the underlying OpenGL buffer object resources
-         *        from the OpenGL state machine.
-         */
-        virtual void release(void) = 0;
-
-        /**
          * \brief The acquisition state of the underlying OpenGL buffer
          *        object with respect to the OpenGL state machine. That is,
          *        have the OpenGL state machine resources been acquired ?
@@ -119,7 +103,7 @@ class Buffer : public OGL_ID {
          *          true - the object is bound
          *          false - the object is not bound
          */
-        bool isBound(void) const;
+        virtual bool isBound(void) const = 0;
 
     protected :
         /**
@@ -136,15 +120,6 @@ class Buffer : public OGL_ID {
         const GLvoid* data(void) const;
 
         /**
-         * \brief Set the binding state flag for this object.
-         *
-         * \param state : the desired binding state.
-         *                  true - the object is bound
-         *                  false - the object is not bound
-         */
-        void setBoundState(bool state);
-
-        /**
          * \brief Set the acquisition state flag for this object.
          *
          * \param state : the desired acquisition state.
@@ -153,20 +128,25 @@ class Buffer : public OGL_ID {
          */
         void setAcquisitionState(bool state);
 
+        /**
+		 * \brief Set the number of bytes to be acquired for this object.
+		 *
+		 * \param bytes : the desired acquisition state.
+		 *                  true - the object has acquired resources
+		 *                  false - the object does not have acquired resources
+		 */
+        virtual void setSize(GLuint bytes) = 0;
+
     private:
         /// Flag indicating if OpenGL resources have been acquired.
         bool m_acquire_flag;
-
-        /// Flag indicating if the underlying OpenGL object is bound
-        /// to the OpenGL state machine.
-        bool m_bound_flag;
 
         /// The number of bytes to be allocated to the buffer.
         GLsizeiptr m_size;
 
         /// A valid pointer to untyped data in client memory. Note other
         /// comments regarding persistence.
-        GLvoid* m_data;
+        const GLvoid* m_data;
 
         /**
          * \brief Populate the buffer with data. This is the where a valid

@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2014 by Mike Hewson                                     *
+ *   Copyright (C) 2015 by Mike Hewson                                     *
  *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
@@ -36,10 +36,18 @@ IndexBuffer::IndexBuffer(const GLvoid* buffer_data,
                              ErrorHandler::FATAL);
         }
 
-    // Initially buffer size is nil.
-    m_size = 0;
+    // Ensure compliance with OpenGL acceptable parameter types.
+	if((usage == GL_STREAM_DRAW) ||
+	   (usage == GL_STATIC_DRAW) ||
+	   (usage == GL_DYNAMIC_DRAW)) {
+		m_usage = usage;
+		}
+	else {
+		ErrorHandler::record("IndexBuffer::IndexBuffer() : Bad usage type provided.",
+							 ErrorHandler::FATAL);
+		}
 
-    // Ensure compliance with OpenGL ES 2.x acceptable parameter types.
+    // Ensure compliance with OpenGL acceptable parameter types.
     m_index_type = index_type;
     switch(index_type) {
         case GL_UNSIGNED_BYTE:
@@ -59,11 +67,28 @@ IndexBuffer::IndexBuffer(const GLvoid* buffer_data,
     }
 
 IndexBuffer::~IndexBuffer() {
-    Buffer::release();
+    this->release();
     }
 
-void IndexBuffer::acquire_ID(GLuint* handle) const {
-	glGenBuffers(1, handle);
+bool IndexBuffer::acquire(void) const {
+	// Only acquire if not already so.
+	if(this->isAcquired() == false) {
+		// Get a handle from the state machine.
+		GLuint handle;
+		glGenBuffers(1, &handle);
+		// Remember the value for later.
+		OGL_ID::set_ID(handle);
+
+		// Copy the data from client side to be stored in the state
+		// machine object.
+		loadBuffer();
+
+		// Record resources as acquired.
+		Buffer::setAcquisitionState(true);
+		}
+
+	/// TODO  Oddly we can't determine if the above worked via straight forward API calls.
+	return true;
 	}
 
 void IndexBuffer::release_ID(GLuint* handle) const {

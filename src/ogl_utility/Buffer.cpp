@@ -43,10 +43,7 @@ Buffer::Buffer(const GLvoid* buffer_data, GLuint bytes) {
 
     // Initially nothing acquired from the OpenGL state machine.
     m_acquire_flag = false;
-
-    // Nor anything bound to the OpenGL state machine.
-    m_bound_flag = false.
-    }
+	}
 
 Buffer::~Buffer() {
     }
@@ -55,16 +52,8 @@ bool Buffer::isAcquired(void) const {
     return m_acquire_flag;
     }
 
-bool Buffer::isBound(void) const {
-    return m_bound_flag;
-    }
-
 const GLvoid* Buffer::data(void) const {
     return m_data;
-    }
-
-void Buffer::setBoundState(bool state) {
-    m_bound_flag = state;
     }
 
 void Buffer::setAcquisitionState(bool state) {

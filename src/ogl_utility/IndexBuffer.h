@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2014 by Mike Hewson                                     *
+ *   Copyright (C) 2015 by Mike Hewson                                     *
  *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
@@ -31,10 +31,16 @@
 */
 
 /**
-* \brief This interface declares public methods to deal with
-*        OpenGL ES 2.0 index buffer objects.
+* \brief This interface declares public methods to deal with OpenGL
+*        index buffer objects.
+*
+*    This is the case where vertex attributes are supplied to the pipeline
+* input end from a linear buffer, with a buffer of this type supplying
+* indices into those.
 *
 * \see Buffer
+* \see RenderTask
+* \see VertexBuffer
 *
 * \author Mike Hewson\n
 */
@@ -45,9 +51,10 @@ class IndexBuffer : public Buffer {
          * \brief Constructor. Will fail fatally for the application if one or
          *        more of the following applies :
          *          - the data pointer is NULL ( base class enforced ).
-         *          - indices is not strictly positive.
-         *          - usage type is incorrect for OpenGL ES 2.x
-         *          - index type is incorrect for OpenGL ES 2.x
+         *          - the buffer size in bytes is zero ( base class enforced ).
+         *          - number of indices is not strictly positive.
+         *          - usage type is incorrect.
+         *          - index type is incorrect.
          *
          * \param data : pointer to the data to be stored.
          * \param bytes : the number of bytes of data.
@@ -66,7 +73,23 @@ class IndexBuffer : public Buffer {
          */
         virtual ~IndexBuffer();
 
-         /**
+        /**
+		 * \brief Obtains the underlying OpenGL buffer object resources
+		 *        from the OpenGL state machine.
+		 *
+		 * \return a boolean indicating success of acquisition
+		 *              true - resources acquired without error
+		 *              false - resources were not acquired
+		 */
+		virtual bool acquire(void);
+
+		/**
+		 * \brief Releases the underlying OpenGL buffer object resources
+		 *        from the OpenGL state machine.
+		 */
+		virtual void release(void);
+
+        /**
          * \brief Perform any data binding to the pipeline input.
          */
         void bind(void);
@@ -87,9 +110,6 @@ class IndexBuffer : public Buffer {
         GLenum indexType(void) const;
 
     private:
-        /// The number of bytes to be allocated to the buffer.
-        GLsizeiptr m_size;
-
         /// The number of indices in the buffer.
         GLuint m_indices;
 
@@ -98,20 +118,6 @@ class IndexBuffer : public Buffer {
 
         /// The index data type.
         GLenum m_index_type;
-
-        /**
-		 * \brief Get an OpenGL handle for the buffer.
-		 *
-		 * \param handle : pointer to a handle.
-		 */
-		void acquire_ID(GLuint* handle) const;
-
-		/**
-		 * \brief Release to pool the OpenGL handle for the buffer.
-		 *
-		 * \param handle : pointer to a handle.
-		 */
-		void release_ID(GLuint* handle) const;
 
         /**
          * \brief Populate the buffer with index data.

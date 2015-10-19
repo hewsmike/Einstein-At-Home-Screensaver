@@ -49,39 +49,52 @@ VertexBuffer::VertexBuffer(const GLvoid* buffer_data,
     }
 
 VertexBuffer::~VertexBuffer() {
-    Buffer::release();
+    this->release();
     }
 
 bool VertexBuffer::acquire(void) {
-    // Get a handle from the state machine.
-    GLuint handle;
-    glGenBuffers(1, &handle);
-    // Remember the value for later.
-    OGL_ID::set_ID(handle);
+	// Only acquire if not already so.
+	if(this->isAcquired() == false) {
+		// Get a handle from the state machine.
+		GLuint handle;
+		glGenBuffers(1, &handle);
+		// Remember the value for later.
+		OGL_ID::set_ID(handle);
 
-    // Copy the data from client side to be stored in the state
-    // machine object.
-    loadBuffer();
+		// Copy the data from client side to be stored in the state
+		// machine object.
+		loadBuffer();
 
+		// Record resources as acquired.
+		Buffer::setAcquisitionState(true);
+    	}
 
-    Buffer::setAcquisitionState(true)
+	/// TODO Oddly we can't determine if the above worked via straight forward API calls.
+	return true;
     }
+
+void VertexBuffer::release(void) {
+	// Only release if already acquired.
+	if(this->isAcquired() == true) {
+		GLuint handle = this->ID();
+		glDeleteBuffers(1, &handle);
+		// Reset to the null case.
+		OGL_ID::set_ID(OGL_ID::NO_ID);
+		// Mark as not acquired.
+		Buffer::setAcquisitionState(false);
+		}
+	}
 
 GLuint VertexBuffer::vertexCount(void) const {
     return m_vertex_count;
     }
 
-void VertexBuffer::acquire_ID(GLuint* handle) const {
-	glGenBuffers(1, handle);
-	}
-
-void VertexBuffer::release_ID(GLuint* handle) const {
-	glDeleteBuffers(1, handle);
-    }
-
 void VertexBuffer::bind(void) {
-    // Ensure resource acquisition first.
-    this->acquire();
+	// Only acquire if not already.
+	if(this->isAcquired() == false) {
+		// Ensure resource acquisition first.
+		this->acquire();
+		}
 
 	// Bind the given buffer object to pipeline state.
 	glBindBuffer(GL_ARRAY_BUFFER, this->ID());
@@ -105,6 +118,7 @@ bool VertexBuffer::isBound(void) const {
 
 	glGetIntegerv(GL_ARRAY_BUFFER_BINDING, (GLint*) &temp);
 
+	// Only bound if non-null and the same as this object.
 	if((this->ID() == temp) && (this->ID() != OGL_ID::NO_ID)) {
 		ret_val = true;
 		}

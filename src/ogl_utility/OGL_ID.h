@@ -59,18 +59,20 @@ class OGL_ID {
         virtual ~OGL_ID();
 
         /**
-         * \brief Obtain the OpenGL resource.
-         *
-         * \return a boolean indicating success of acquisition
-         *              TRUE - resources acquired without error
-         *              FALSE - resources were not acquired
-         */
-        virtual bool acquire(void) = 0;
+		 * \brief Obtains the underlying OpenGL buffer object resources
+		 *        from the OpenGL state machine.
+		 *
+		 * \return a boolean indicating success of acquisition
+		 *              true - resources acquired without error
+		 *              false - resources were not acquired
+		 */
+		virtual bool acquire(void) = 0;
 
-        /**
-         * \brief Release the OpenGL resource.
-         */
-        virtual void release(void) = 0;
+		/**
+		 * \brief Releases the underlying OpenGL buffer object resources
+		 *        from the OpenGL state machine.
+		 */
+		virtual void release(void) = 0;
 
         /**
          * \brief Determine if identifier is non-null/zero.
