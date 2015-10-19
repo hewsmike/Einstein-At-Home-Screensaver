@@ -57,7 +57,8 @@ class Buffer : public OGL_ID {
          *                      ought persist at least until OpenGL resource
          *                      acquisition has occurred . Will fail fatally
          *                      if NULL supplied.
-         * \param bytes : the number of bytes of data.
+         * \param bytes : the number of bytes of data. This must be a strictly
+         *                positive ( non-zero ) integer.
          */
         Buffer(const GLvoid* buffer_data, GLuint bytes);
 
@@ -154,17 +155,17 @@ class Buffer : public OGL_ID {
 
     private:
         /// Flag indicating if OpenGL resources have been acquired.
-        bool acquire_flag;
+        bool m_acquire_flag;
 
         /// Flag indicating if the underlying OpenGL object is bound
         /// to the OpenGL state machine.
-        bool bound_flag;
+        bool m_bound_flag;
 
         /// The number of bytes to be allocated to the buffer.
         GLsizeiptr m_size;
 
-        /// A pointer to untyped data in client memory. NB other comments
-        /// regarding persistence.
+        /// A valid pointer to untyped data in client memory. Note other
+        /// comments regarding persistence.
         GLvoid* m_data;
 
         /**

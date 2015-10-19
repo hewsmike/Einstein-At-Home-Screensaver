@@ -33,25 +33,32 @@ Buffer::Buffer(const GLvoid* buffer_data, GLuint bytes) {
                              ErrorHandler::FATAL);
         }
 
-    // Remember the buffer size in bytes.
-    m_size = bytes;
+    // Ensure the buffer size is strictly positive.
+    if(m_size > 0) {
+        // Remember the buffer size in bytes.
+        m_size = bytes;
+        }
+    else {
+        ErrorHandler::record("Buffer::Buffer() : Invalid data size provided.",
+                             ErrorHandler::FATAL);
+        }
 
-    // Initially nothing acquired.
-    acquire_flag = false;
+    // Initially nothing acquired from the OpenGL state machine.
+    m_acquire_flag = false;
 
-    // NOr anyhting bound.
-    bound_flag = false.
+    // Nor anything bound to the OpenGL state machine.
+    m_bound_flag = false.
     }
 
 Buffer::~Buffer() {
     }
 
 bool Buffer::isAcquired(void) const {
-    return acquire_flag;
+    return m_acquire_flag;
     }
 
 bool Buffer::isBound(void) const {
-    return bound_flag;
+    return m_bound_flag;
     }
 
 const GLvoid* Buffer::data(void) const {
@@ -59,9 +66,9 @@ const GLvoid* Buffer::data(void) const {
     }
 
 void Buffer::setBoundState(bool state) {
-    bound_flag = state;
+    m_bound_flag = state;
     }
 
 void Buffer::setAcquisitionState(bool state) {
-    acquire_flag = state;
+    m_acquire_flag = state;
     }
