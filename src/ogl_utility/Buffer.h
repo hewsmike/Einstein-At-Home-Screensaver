@@ -51,9 +51,12 @@ class Buffer : public OGL_ID {
         /**
          * \brief Constructor.
          *
-         * \param buffer_data : pointer to the data to be stored, this is
-         *                      in client memory and ought persist. Will
-         *                      fail fatally if NULL.
+         * \param buffer_data : pointer to the data to be copied from client
+         *                      memory and stored in an underlying OpenGL
+         *                      buffer type. As this is in client memory it
+         *                      ought persist at least until OpenGL resource
+         *                      acquisition has occurred . Will fail fatally
+         *                      if NULL supplied.
          * \param bytes : the number of bytes of data.
          */
         Buffer(const GLvoid* buffer_data, GLuint bytes);
@@ -121,11 +124,13 @@ class Buffer : public OGL_ID {
         /**
          * \brief Obtain the pointer to immutable byte granular data.
          *        By construction this is guaranteed to be non-NULL.
-         *        However as it refers to a location in client memory
-         *        it hence ought be valid for the lifetime of an
-         *        object of this class.
+         *        HOWEVER as it refers to a location in client memory
+         *        it OUGHT be valid for the lifetime of an object of this
+         *        class. Failing that then at least until state machine
+         *        resources have been acquired and data copied to same
+         *        ( and assuming no re-acquistion is later desired ).
          *
-         * \return
+         * \return pointer to client memory location of buffer data.
          */
         const GLvoid* data(void) const;
 
@@ -151,18 +156,20 @@ class Buffer : public OGL_ID {
         /// Flag indicating if OpenGL resources have been acquired.
         bool acquire_flag;
 
-        /// Flag indicating if the underlying OPenGL object is bound
+        /// Flag indicating if the underlying OpenGL object is bound
         /// to the OpenGL state machine.
         bool bound_flag;
 
         /// The number of bytes to be allocated to the buffer.
         GLsizeiptr m_size;
 
-        /// A pointer to untyped data in client memory.
+        /// A pointer to untyped data in client memory. NB other comments
+        /// regarding persistence.
         GLvoid* m_data;
 
         /**
-         * \brief Populate the buffer with data.
+         * \brief Populate the buffer with data. This is the where a valid
+         *        client side pointer is required.
          */
         virtual void loadBuffer(void) const = 0;
     };
