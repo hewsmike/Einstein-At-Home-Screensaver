@@ -130,7 +130,7 @@ class VertexBuffer : public Buffer {
 		 */
         VertexBuffer::data_mix mix(void) const;
 
-    private:
+    private :
         /// The usage hint.
         GLenum m_usage;
 

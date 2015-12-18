@@ -24,6 +24,7 @@
 #include "ogl_utility.h"
 
 #include <map>
+#include <string>
 
 #include "AttributeInputAdapter.h"
 #include "FragmentShader.h"
@@ -55,11 +56,6 @@ class Program : public OGL_ID {
                            LINKAGE_FAILED,
                            LINKAGE_SUCCEEDED};
 
-        // NB DELETE_ON_GOOD_LINK means the OpenGL state machine marks an OpenGL shader
-        // object for deletion. This does not refer to any client source code entity.
-        enum shaderDisposition {KEEP_ON_GOOD_LINK,
-                                DELETE_ON_GOOD_LINK};
-
         /**
          * \brief Constructor.
          *
@@ -70,14 +66,10 @@ class Program : public OGL_ID {
          *                          assumed to take on the role of an
          *                          OpenGL fragment shader.
          * \param adapter : a pointer to an AttributeInputAdapter.
-         * \param dispose : one of the shaderDisposition enumerants indicating
-         *                  desired fate of supplied shaders after any successful
-         *                  linkage.
          */
         Program(VertexShader* vertex_shader,
                 FragmentShader* fragment_shader,
-				AttributeInputAdapter* adapter,
-				shaderDisposition dispose);
+				AttributeInputAdapter* adapter);
 
         /**
          * \brief Destructor.
@@ -211,9 +203,6 @@ class Program : public OGL_ID {
 
         /// Indicator of current linkage state.
         linkageState link_status;
-
-        /// Choice of disposition of shader objects.
-        shaderDisposition m_dispose;
 
         /// The linker log for this shader.
         std::string linker_log;

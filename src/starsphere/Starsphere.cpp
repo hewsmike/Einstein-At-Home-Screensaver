@@ -132,7 +132,7 @@ glm::vec3 Starsphere::sphVertex3D(GLfloat RAdeg, GLfloat DEdeg, GLfloat radius) 
     }
 
 glm::vec3 Starsphere::sphVertex(GLfloat RAdeg, GLfloat DEdeg) {
-	sphVertex3D(RAdeg, DEdeg, sphRadius);
+	return sphVertex3D(RAdeg, DEdeg, sphRadius);
     }
 
 /**
@@ -181,8 +181,7 @@ void Starsphere::make_stars() {
 
     // Populate data structure indicating GLSL code use.
 	RenderTask::shader_group s_group1 = {factory.createInstance("VertexShader_Stars")->std_string(),
-	                                     factory.createInstance("FragmentShader_Pass")->std_string(),
-	                                     Program::KEEP_ON_GOOD_LINK};
+	                                     factory.createInstance("FragmentShader_Pass")->std_string()};
 
     // Populate data structure for indices, in this case none is used.
 	RenderTask::index_buffer_group i_group1 = {NULL, 0, 0, 0, 0};
@@ -289,8 +288,7 @@ void Starsphere::make_snrs() {
 
     // Populate data structure indicating GLSL code use.
 	RenderTask::shader_group s_group1 = {factory.createInstance("VertexShader_Supernovae")->std_string(),
-	                                     factory.createInstance("FragmentShader_Pass")->std_string(),
-	                                     Program::KEEP_ON_GOOD_LINK};
+	                                     factory.createInstance("FragmentShader_Pass")->std_string()};
 
     // Populate data structure for indices, in this case none is used.
 	RenderTask::index_buffer_group i_group1 = {NULL, 0, 0, 0, 0};		// With no index data remaining fields irrelevant.
@@ -358,8 +356,7 @@ void Starsphere::make_constellations() {
 
     // Populate data structure indicating GLSL code use.
 	RenderTask::shader_group s_group1 = {factory.createInstance("VertexShader_Stars")->std_string(),
-	                                     factory.createInstance("FragmentShader_Pass")->std_string(),
-	                                     Program::KEEP_ON_GOOD_LINK};
+	                                     factory.createInstance("FragmentShader_Pass")->std_string()};
 
     // Populate data structure for indices, in this case none is used.
 	RenderTask::index_buffer_group i_group1 = {NULL, 0, 0, 0, 0};

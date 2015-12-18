@@ -18,35 +18,10 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "OGL_ID.h"
+#include "Bound.h"
 
-// An ID with value zero is never returned by OpenGL, and if passed to
-// OpenGL then it indicates unbinding and like semantics.
-// Thus it may be used to indicate 'no identifier assigned', 'null' etc.
-const GLuint OGL_ID::NO_ID(0);
-
-// Make sure you start with an un-assigned identifier,
-// lest you later over-write resources!
-OGL_ID::OGL_ID() : m_ident(OGL_ID::NO_ID),
-				   m_acquire_flag (false) {
+Bound::Bound() {
 	}
 
-// Must NOT call release() from here !!
-OGL_ID::~OGL_ID() {
-    }
-
-bool OGL_ID::isAcquired(void) const {
-    return m_acquire_flag;
-    }
-
-GLuint OGL_ID::ID(void) const {
-    return m_ident;
-    }
-
-void OGL_ID::set_ID(GLuint value) {
-    m_ident = value;
-    }
-
-void OGL_ID::setAcquisitionState(bool state) {
-    m_acquire_flag = state;
+Bound::~Bound() {
     }

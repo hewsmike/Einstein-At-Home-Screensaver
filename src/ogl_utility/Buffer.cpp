@@ -40,22 +40,15 @@ Buffer::Buffer(const GLvoid* buffer_data, GLuint bytes) {
         ErrorHandler::record("Buffer::Buffer() : Invalid data size provided.",
                              ErrorHandler::FATAL);
         }
-
-    // Initially nothing acquired from the OpenGL state machine.
-    m_acquire_flag = false;
 	}
 
 Buffer::~Buffer() {
-    }
-
-bool Buffer::isAcquired(void) const {
-    return m_acquire_flag;
     }
 
 const GLvoid* Buffer::data(void) const {
     return m_data;
     }
 
-void Buffer::setAcquisitionState(bool state) {
-    m_acquire_flag = state;
+GLuint Buffer::size(void) const {
+    return m_size;
     }

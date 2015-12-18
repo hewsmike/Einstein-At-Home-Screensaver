@@ -35,6 +35,7 @@ CPPFLAGS += -I$(FRAMEWORK_INSTALL)/include/glm/gtc
 
 DEPS = Makefile
 OBJS = AttributeInputAdapter.o
+OBJS += Bound.o
 OBJS += Buffer.o
 OBJS += FragmentShader.o
 OBJS += IndexBuffer.o
@@ -66,6 +67,9 @@ liboglutility.a: $(OBJS)
 
 AttributeInputAdapter.o: $(DEPS) $(UTILITY_SRC)/AttributeInputAdapter.cpp $(UTILITY_SRC)/AttributeInputAdapter.h
 	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/AttributeInputAdapter.cpp	
+
+Bound.o: $(DEPS) $(UTILITY_SRC)/Bound.cpp $(UTILITY_SRC)/Bound.h
+	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/Bound.cpp
 
 Buffer.o: $(DEPS) $(UTILITY_SRC)/Buffer.cpp $(UTILITY_SRC)/Buffer.h
 	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/Buffer.cpp

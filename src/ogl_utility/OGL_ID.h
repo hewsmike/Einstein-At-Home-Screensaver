@@ -74,15 +74,18 @@ class OGL_ID {
 		 */
 		virtual void release(void) = 0;
 
-        /**
-         * \brief Determine if identifier is non-null/zero.
-         *
-         * \return A boolean : TRUE if the OpenGL identifier is zero
-         *                     FALSE if the OpenGL identifier is non-zero.
-         */
-        bool isNull(void) const;
+		/**
+		 * \brief The acquisition state of the underlying OpenGL buffer
+		 *        object with respect to the OpenGL state machine. That is,
+		 *        have the OpenGL state machine resources been acquired ?
+		 *
+		 * \return a boolean indicating acquisition state :
+		 *          true : the object has acquired resources
+		 *          false : the object does not have acquired resources
+		 */
+		bool isAcquired(void) const;
 
-        /**
+		/**
 		 * \brief Obtain the OpenGL resource identifier.
 		 *
 		 * \return the identifier.
@@ -97,9 +100,22 @@ class OGL_ID {
 		 */
 		void set_ID(GLuint value);
 
+		/**
+		 * \brief Set the acquisition state flag for this object.
+		 *
+		 * \param state : the desired acquisition state.
+		 *                  true - the object has acquired resources
+		 *                  false - the object does not have acquired resources
+		 */
+		void setAcquisitionState(bool state);
+
     private:
         /// The identifier as allocated by OpenGL.
-        GLuint ident;
+        GLuint m_ident;
+
+        /// Flag indicating if OpenGL resources have been acquired.
+        bool m_acquire_flag;
+
     };
 
 /**

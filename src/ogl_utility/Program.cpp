@@ -29,8 +29,7 @@ Program::Program(VertexShader* vertex_shader,
 				 shaderDisposition dispose) :
                     m_vertex_shader(vertex_shader),
                     m_fragment_shader(fragment_shader),
-					m_adapter(adapter),
-					m_dispose(dispose){
+					m_adapter(adapter){
     // Initially unlinked.
     link_status = Program::NEVER_LINKED;
     }
@@ -44,6 +43,9 @@ void Program::use(void) const {
 	}
 
 void Program::stopUse(void)const {
+	// NB from OpenGL 3.3 standard "If program is zero, then the current rendering state refers
+	// to an invalid program object and the results of shader execution are undefined. However,
+	// this is not an error."
 	glUseProgram(OGL_ID::NO_ID);
 	}
 

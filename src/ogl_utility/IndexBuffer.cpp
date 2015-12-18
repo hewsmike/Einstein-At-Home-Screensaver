@@ -48,16 +48,11 @@ IndexBuffer::IndexBuffer(const GLvoid* buffer_data,
 		}
 
     // Ensure compliance with OpenGL acceptable parameter types.
-    m_index_type = index_type;
     switch(index_type) {
         case GL_UNSIGNED_BYTE:
-            m_size = indices * sizeof(GLubyte);
-            break;
         case GL_UNSIGNED_SHORT:
-            m_size = indices * sizeof(GLushort);
-            break;
         case GL_UNSIGNED_INT:
-            m_size = indices * sizeof(GLuint);
+        	m_index_type = index_type;
             break;
         default:
             ErrorHandler::record("IndexBuffer::IndexBuffer() : Bad index type provided.",
@@ -70,7 +65,7 @@ IndexBuffer::~IndexBuffer() {
     this->release();
     }
 
-bool IndexBuffer::acquire(void) const {
+bool IndexBuffer::acquire(void) {
 	// Only acquire if not already so.
 	if(this->isAcquired() == false) {
 		// Get a handle from the state machine.
@@ -91,8 +86,16 @@ bool IndexBuffer::acquire(void) const {
 	return true;
 	}
 
-void IndexBuffer::release_ID(GLuint* handle) const {
-	glDeleteBuffers(1, handle);
+void IndexBuffer::release(void) {
+	// Only release if already acquired.
+	if(this->isAcquired() == true) {
+		GLuint handle = this->ID();
+		glDeleteBuffers(1, &handle);
+		// Reset to the null case.
+		OGL_ID::set_ID(OGL_ID::NO_ID);
+		// Mark as not acquired.
+		Buffer::setAcquisitionState(false);
+		}
     }
 
 void IndexBuffer::loadBuffer(void) const {
@@ -100,7 +103,7 @@ void IndexBuffer::loadBuffer(void) const {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->ID());
 
     // Allocate space and transfer the data.
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_size, this->data(), m_usage);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->size(), this->data(), m_usage);
 
     // Unbind the buffer.
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, OGL_ID::NO_ID);

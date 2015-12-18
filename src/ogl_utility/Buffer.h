@@ -21,6 +21,7 @@
 #ifndef BUFFER_H_
 #define BUFFER_H_
 
+#include "Bound.h"
 #include "ogl_utility.h"
 #include "OGL_ID.h"
 
@@ -46,7 +47,7 @@
  * \author Mike Hewson\n
  */
 
-class Buffer : public OGL_ID {
+class Buffer : public OGL_ID, public Bound {
     public :
         /**
          * \brief Constructor.
@@ -68,42 +69,11 @@ class Buffer : public OGL_ID {
         virtual ~Buffer();
 
         /**
-         * \brief The acquisition state of the underlying OpenGL buffer
-         *        object with respect to the OpenGL state machine. That is,
-         *        have the OpenGL state machine resources been acquired ?
-         *
-         * \return a boolean indicating acquisition state :
-         *          true : the object has acquired resources
-         *          false : the object does not have acquired resources
-         */
-        bool isAcquired(void) const;
-
-        /**
 		 * \brief The number of bytes stored within the buffer.
 		 *
 		 * \return The size of the buffer in bytes.
 		 */
 		GLuint size(void) const;
-
-		/**
-         * \brief Perform any binding to the OpenGL pipeline.
-         */
-        virtual void bind(void) = 0;
-
-        /**
-         * \brief Remove any binding to the OpenGL pipeline.
-         */
-        virtual void unbind(void) = 0;
-
-        /**
-         * \brief The binding state of the underlying OpenGL buffer
-         *        object to the OpenGL state machine.
-         *
-         * \return a boolean indicating binding state :
-         *          true - the object is bound
-         *          false - the object is not bound
-         */
-        virtual bool isBound(void) const = 0;
 
     protected :
         /**
@@ -119,30 +89,10 @@ class Buffer : public OGL_ID {
          */
         const GLvoid* data(void) const;
 
-        /**
-         * \brief Set the acquisition state flag for this object.
-         *
-         * \param state : the desired acquisition state.
-         *                  true - the object has acquired resources
-         *                  false - the object does not have acquired resources
-         */
-        void setAcquisitionState(bool state);
-
-        /**
-		 * \brief Set the number of bytes to be acquired for this object.
-		 *
-		 * \param bytes : the desired acquisition state.
-		 *                  true - the object has acquired resources
-		 *                  false - the object does not have acquired resources
-		 */
-        virtual void setSize(GLuint bytes) = 0;
-
     private:
-        /// Flag indicating if OpenGL resources have been acquired.
-        bool m_acquire_flag;
 
         /// The number of bytes to be allocated to the buffer.
-        GLsizeiptr m_size;
+        GLuint m_size;
 
         /// A valid pointer to untyped data in client memory. Note other
         /// comments regarding persistence.
