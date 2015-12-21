@@ -25,8 +25,7 @@
 
 Program::Program(VertexShader* vertex_shader,
                  FragmentShader* fragment_shader,
-				 AttributeInputAdapter* adapter,
-				 shaderDisposition dispose) :
+				 AttributeInputAdapter* adapter) :
                     m_vertex_shader(vertex_shader),
                     m_fragment_shader(fragment_shader),
 					m_adapter(adapter){
@@ -108,12 +107,6 @@ bool Program::acquire(void) {
 
                 // Link program and check for success.
                 if(link() == true) {
-                    // If this behaviour previously selected, then release the shaders.
-                    /// TODO - enable this after other testing.
-                    if(m_dispose == Program::DELETE_ON_GOOD_LINK) {
-                        m_vertex_shader->release();
-                        m_fragment_shader->release();
-                        }
                     ret_val = true;
                     }
                 else {

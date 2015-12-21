@@ -29,7 +29,7 @@ RenderTask::RenderTask(RenderTask::shader_group s_group,
     m_vertex_shader = new VertexShader(s_group.vert_shader_source);
     m_frag_shader = new FragmentShader(s_group.frag_shader_source);
     m_attrib_adapt = new AttributeInputAdapter();
-    m_program = new Program(m_vertex_shader, m_frag_shader, m_attrib_adapt, s_group.disposition);
+    m_program = new Program(m_vertex_shader, m_frag_shader, m_attrib_adapt);
 
     m_vertex_buffer = new VertexBuffer(v_group.buffer_data, v_group.bytes, v_group.vertices, v_group.usage, v_group.mix);
     m_vertex_buffer->acquire();
@@ -45,7 +45,7 @@ RenderTask::RenderTask(RenderTask::shader_group s_group,
         m_index_buffer = NULL;
         }
 
-    // m_vertex_fetch = new VertexFetch(m_vertex_buffer, m_index_buffer, m_attrib_adapt);
+    m_vertex_fetch = new VertexFetch(m_vertex_buffer, m_index_buffer, m_attrib_adapt);
 
     m_pipeline = new Pipeline(*m_program, *m_vertex_fetch);
     }
