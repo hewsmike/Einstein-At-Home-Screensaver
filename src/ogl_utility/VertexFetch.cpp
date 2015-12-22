@@ -64,20 +64,16 @@ void VertexFetch::release(void) {
 
 void VertexFetch::bind(void) {
 	glBindVertexArray(this->ID());
-
-	m_bound_flag = true;
-	}
+    }
 
 void VertexFetch::unbind(void) {
 	glBindVertexArray(OGL_ID::NO_ID);
-
-	// Reset attachment state.
     m_bound_flag = false;
     }
 
 void VertexFetch::trigger(GLenum primitive, GLsizei count) {
     // If VAO is not bound then do so.
-    if(m_bound_flag == false) {
+    if(isBound() == false) {
         ErrorHandler::record("VertexFetch::trigger() : VAO not attached !",
                               ErrorHandler::WARN);
         this->bind();
@@ -88,5 +84,18 @@ void VertexFetch::trigger(GLenum primitive, GLsizei count) {
 	}
 
 bool VertexFetch::isBound(void) const {
-	return m_bound_flag;
+    // Assume failure.
+    bool ret_flag = false;
+
+    // Dynamically obtain the current VAO name.
+    GLint vao_name;
+    glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &vao_name);
+
+    // Is it this object's ID ?
+    if(vao_name == this->ID) {
+        // Yes, so this VAO is bound.
+        ret_flag = true;
+        }
+
+	return ret_flag;
 	}

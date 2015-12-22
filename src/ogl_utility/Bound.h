@@ -66,7 +66,7 @@ class Bound {
 
 		/**
 		 * \brief The binding state of the underlying OpenGL buffer
-		 *        object to the OpenGL state machine. This must be a
+		 *        object to the OpenGL state machine. This MUST be a
 		 *        dynamic inquiry.
 		 *
 		 * \return a boolean indicating binding state :

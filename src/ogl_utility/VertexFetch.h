@@ -38,12 +38,13 @@
  *  Use this class when all vertex attributes are assumed to be supplied
  *  within a vertex shader.
  *
+ * \see Bound
  * \see OGL_ID
  *
  * \author Mike Hewson\n
  */
 
-class VertexFetch : public OGL_ID {
+class VertexFetch : public OGL_ID, public Bound {
     public :
 		/**
          * \brief Constructor.
@@ -110,8 +111,6 @@ class VertexFetch : public OGL_ID {
         bool isBound(void) const;
 
     private :
-        // Attachment state.
-        bool m_bound_flag;
     };
 
 /**
