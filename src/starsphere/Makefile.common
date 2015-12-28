@@ -86,6 +86,7 @@ CXX ?= g++
 # Compiler variables.
 
 # Generic.
+CPPFLAGS += -std=c++11
 CPPFLAGS += -I$(PRODUCT_INSTALL)/include
 CPPFLAGS += $(shell $(PRODUCT_INSTALL)/bin/freetype-config --cflags)
 CPPFLAGS += $(shell $(PRODUCT_INSTALL)/bin/xml2-config --cflags)

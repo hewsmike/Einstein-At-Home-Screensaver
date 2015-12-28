@@ -81,7 +81,7 @@ class AttributeInputAdapter {
         /**
          * \brief Add another correspondence between vertex buffer and the vertex shader.
          */
-        void addSpecification(const attribute_spec& spec);
+        void addSpecification(attribute_spec spec);
 
         /**
 		 * \brief Retrieve an attribute specification at a given index into this store.

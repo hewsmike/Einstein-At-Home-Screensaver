@@ -376,16 +376,16 @@ class Starsphere : public AbstractGraphicsEngine {
         RenderTask* m_render_task_snr;
 
         /// Colors.
-        glm::vec3 m_pulsar_color = glm::vec3(0.80, 0.0, 0.85);          	// Pulsars are Purple.
-        glm::vec3 m_star_color = glm::vec3(1.0, 1.0, 1.0);              	// Stars are White.
-        glm::vec3 m_supernova_color = glm::vec3(1.0, 0.0, 0.0);       	// Supernovae are Sienna.
-        glm::vec3 m_constellation_line_color = glm::vec3(0.7, 0.7, 0.0);    // Lines are light yellow.
+        glm::vec3 m_pulsar_color;
+        glm::vec3 m_star_color;
+        glm::vec3 m_supernova_color;
+        glm::vec3 m_constellation_line_color;
 
         /// Point & line sizes.
-        GLfloat m_pulsar_point_size = 3.0f;
-        GLfloat m_star_point_size = 4.0f;
-        GLfloat m_supernova_point_size = 3.0f;
-        GLfloat m_constellation_line_width = 1.0f;
+        GLfloat m_pulsar_point_size;
+        GLfloat m_star_point_size;
+        GLfloat m_supernova_point_size;
+        GLfloat m_constellation_line_width;
 
         // Number of distinct stars.
         GLuint m_distinct_stars;

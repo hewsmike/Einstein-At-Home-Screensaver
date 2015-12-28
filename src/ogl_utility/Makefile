@@ -26,6 +26,7 @@ UTILITY_INSTALL?=$(PWD)
 CXX?=g++
 
 # variables
+CPPFLAGS += -std=c++11
 CPPFLAGS += -I$(UTILITY_SRC)
 CPPFLAGS += -I$(FRAMEWORK_SRC)
 CPPFLAGS += -I$(FRAMEWORK_INSTALL)/include/GL
@@ -47,6 +48,7 @@ OBJS += Shader.o
 OBJS += TextureBuffer.o
 OBJS += VertexBuffer.o
 OBJS += VertexFetch.o
+OBJS += VertexFetchAttributes.o
 OBJS += VertexShader.o
 
 # primary role based tagets
@@ -106,6 +108,9 @@ VertexBuffer.o: $(DEPS) $(UTILITY_SRC)/VertexBuffer.cpp $(UTILITY_SRC)/VertexBuf
 
 VertexFetch.o: $(DEPS) $(UTILITY_SRC)/VertexFetch.cpp $(UTILITY_SRC)/VertexFetch.h
 	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/VertexFetch.cpp
+	
+VertexFetchAttributes.o: $(DEPS) $(UTILITY_SRC)/VertexFetchAttributes.cpp $(UTILITY_SRC)/VertexFetchAttributes.h
+	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/VertexFetchAttributes.cpp	
 
 VertexShader.o: $(DEPS) $(UTILITY_SRC)/VertexShader.cpp $(UTILITY_SRC)/VertexShader.h
 	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/VertexShader.cpp

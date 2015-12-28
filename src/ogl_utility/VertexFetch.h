@@ -23,6 +23,7 @@
 
 #include "ogl_utility.h"
 
+#include "Bound.h"
 #include "OGL_ID.h"
 
 /**

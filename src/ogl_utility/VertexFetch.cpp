@@ -24,8 +24,7 @@
 #include <sstream>
 
 VertexFetch::VertexFetch(){
-	m_bound_flag = false;
-    }
+	}
 
 VertexFetch::~VertexFetch() {
 	release();
@@ -68,7 +67,6 @@ void VertexFetch::bind(void) {
 
 void VertexFetch::unbind(void) {
 	glBindVertexArray(OGL_ID::NO_ID);
-    m_bound_flag = false;
     }
 
 void VertexFetch::trigger(GLenum primitive, GLsizei count) {
@@ -92,7 +90,7 @@ bool VertexFetch::isBound(void) const {
     glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &vao_name);
 
     // Is it this object's ID ?
-    if(vao_name == this->ID) {
+    if(vao_name == GLint(this->ID())) {
         // Yes, so this VAO is bound.
         ret_flag = true;
         }

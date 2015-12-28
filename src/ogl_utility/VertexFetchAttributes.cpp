@@ -18,71 +18,39 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "VertexFetch.h"
+#include "VertexFetchAttributes.h"
 
 #include <iostream>
 #include <sstream>
 
-VertexFetch::VertexFetch(VertexBuffer* vertices, IndexBuffer* indices, AttributeInputAdapter* adapter) :
+#include "ErrorHandler.h"
+
+VertexFetchAttributes::VertexFetchAttributes(AttributeInputAdapter* adapter, VertexBuffer* vertices, IndexBuffer* indices) :
+						 m_adapter(adapter),
                          m_vertices(vertices),
-                         m_indices(indices),
-						 m_adapter(adapter){
+                         m_indices(indices) {
+	// Check to see that an AttributeInputAdapter was provided.
+		if(m_adapter == NULL) {
+			ErrorHandler::record("VertexFetch::VertexFetch() : NULL AttributeInputAdapter pointer provided !",
+								 ErrorHandler::FATAL);
+			}
+
 	// Check to see that at least a vertex buffer was provided.
 	if(m_vertices == NULL) {
 		ErrorHandler::record("VertexFetch::VertexFetch() : NULL VertexBuffer pointer provided !",
 		                     ErrorHandler::FATAL);
 		}
 
-	// Check to see that an AttributeInputAdapter was provided.
-	if(m_adapter == NULL) {
-		ErrorHandler::record("VertexFetch::VertexFetch() : NULL AttributeInputAdapter pointer provided !",
-							 ErrorHandler::FATAL);
-		}
-
 	// Initially the total sum of attribute lengths is zero.
 	m_attribute_length_sum = 0;
 
 	m_configure_flag = false;
-
-	m_bound_flag = false;
     }
 
-VertexFetch::~VertexFetch() {
-	release();
+VertexFetchAttributes::~VertexFetchAttributes() {
 	}
 
-bool VertexFetch::acquire(void) {
-	// Assume failure.
-	bool ret_val = false;
-
-	// Check and maybe acquire handle if we don't already have one.
-	if(this->ID() == OGL_ID::NO_ID) {
-		// Ask OpenGL for a single VAO handle.
-		GLuint temp = 0;
-		acquire_ID(&temp);
-		set_ID(temp);
-
-		// Failure to acquire a handle should be FATAL.
-		if(this->ID() == OGL_ID::NO_ID) {
-			ErrorHandler::record("VertexFetch::acquire() : failure to obtain identifier",
-								 ErrorHandler::FATAL);
-			}
-		ret_val = true;
-		}
-
-	return ret_val;
-    }
-
-void VertexFetch::release(void) {
-	// Inform OpenGL that we no longer need this specific VAO handle.
-	GLuint temp = this->ID();
-	release_ID(&temp);
-
-	// Reset our handle store to safe value.
-	set_ID(OGL_ID::NO_ID);
-    }
-
-void VertexFetch::bind(void) {
+void VertexFetchAttributes::bind(void) {
 	// Can only bind if configured.
 	if(m_configure_flag == false) {
 		/// TODO - failure mode path for configure fail.
@@ -98,19 +66,14 @@ void VertexFetch::bind(void) {
 			}
 		}
 
-	glBindVertexArray(this->ID());
-
-	m_bound_flag = true;
-	}
-
-void VertexFetch::unbind(void) {
-	glBindVertexArray(OGL_ID::NO_ID);
-
-	// Reset attachment state.
-    m_bound_flag = false;
+	VertexFetch::bind();
     }
 
-bool VertexFetch::configure(void) {
+void VertexFetchAttributes::unbind(void) {
+	VertexFetch::unbind();
+    }
+
+bool VertexFetchAttributes::configure(void) {
 	// Assume failure.
 	bool ret_val = false;
 
@@ -126,7 +89,7 @@ bool VertexFetch::configure(void) {
 		prepareAttributeMapping();
 
 		//
-		glBindVertexArray(this->ID());
+		VertexFetch::bind();
 		// Bind only existing buffers.
 		if(m_vertices != NULL) {
 			m_vertices->bind();
@@ -155,7 +118,7 @@ bool VertexFetch::configure(void) {
 
 		// NB the index array - if any - is not unbound as that requires persistence.
 
-		glBindVertexArray(OGL_ID::NO_ID);
+		VertexFetch::unbind();
 		}
 
 	m_configure_flag = true;
@@ -164,9 +127,9 @@ bool VertexFetch::configure(void) {
 	}
 
 
-void VertexFetch::trigger(GLenum primitive, GLsizei count) {
+void VertexFetchAttributes::trigger(GLenum primitive, GLsizei count) {
     // If VAO is not bound then do so.
-    if(m_bound_flag == false) {
+    if(this->isBound() == false) {
         ErrorHandler::record("VertexFetch::trigger() : VAO not attached !",
                               ErrorHandler::WARN);
         this->bind();
@@ -184,19 +147,7 @@ void VertexFetch::trigger(GLenum primitive, GLsizei count) {
         }
 	}
 
-void VertexFetch::acquire_ID(GLuint* handle) const {
-	glGenVertexArrays(1, handle);
-	}
-
-void VertexFetch::release_ID(GLuint* handle) const {
-	glDeleteVertexArrays(1, handle);
-    }
-
-bool VertexFetch::isBound(void) const {
-	return m_bound_flag;
-	}
-
-void VertexFetch::processAttributeDescriptions(void) {
+void VertexFetchAttributes::processAttributeDescriptions(void) {
 	// Access the AttributeInputAdapter and look at each attribute specification.
 	for(GLuint index = 0; index < m_adapter->size(); ++index) {
 		// Get an attribute specification.
@@ -248,7 +199,7 @@ void VertexFetch::processAttributeDescriptions(void) {
         }
     }
 
-void VertexFetch::prepareAttributeMapping(void) {
+void VertexFetchAttributes::prepareAttributeMapping(void) {
 	GLuint interleave_progressive_offset = 0;
 	GLuint non_interleave_progressive_offset = 0;
 	// Go through and examine all the given attribute specifications.

@@ -29,7 +29,7 @@ AttributeInputAdapter::AttributeInputAdapter(void) {
 AttributeInputAdapter::~AttributeInputAdapter() {
 	}
 
-void AttributeInputAdapter::addSpecification(const attribute_spec& spec) {
+void AttributeInputAdapter::addSpecification(attribute_spec spec) {
 	// Add this to the store.
 	m_matchings.push_back(spec);
 	}

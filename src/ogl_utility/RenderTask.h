@@ -32,7 +32,7 @@
 #include "Pipeline.h"
 #include "Program.h"
 #include "VertexBuffer.h"
-#include "VertexFetch.h"
+#include "VertexFetchAttributes.h"
 #include "VertexShader.h"
 
 /**
@@ -60,7 +60,7 @@
  * \see Pipeline
  * \see Program
  * \see VertexBuffer
- * \see VertexFetch
+ * \see VertexFetchAttributes
  * \see VertexShader
  *
  * \author Mike Hewson\n
@@ -113,7 +113,7 @@ class RenderTask {
          *
          * \param spec : an attribute specification as defined in the AttributeInputAdapter class.
          */
-        void addSpecification(const AttributeInputAdapter::attribute_spec& spec);
+        void addSpecification(const AttributeInputAdapter::attribute_spec spec);
 
         /**
          * \brief Create a correspondence between a uniform variable, as known
@@ -142,7 +142,7 @@ class RenderTask {
         Pipeline* m_pipeline;
         Program* m_program;
         VertexBuffer* m_vertex_buffer;
-        VertexFetch* m_vertex_fetch;
+        VertexFetchAttributes* m_vertex_fetch_attributes;
         VertexShader* m_vertex_shader;
     };
 

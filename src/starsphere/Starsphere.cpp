@@ -45,7 +45,13 @@ Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
 	AbstractGraphicsEngine(sharedMemoryAreaIdentifier) {
 	m_framecount = 0;
 
+	m_distinct_stars = 0;
+	m_constellation_lines = 0;
+
+	m_render_task_cons = NULL;
+	m_render_task_psr = NULL;
 	m_render_task_snr = NULL;
+	m_render_task_star = NULL;
 
 	m_rotation = glm::mat4(1.0);
 	m_axis = glm::vec3(1.0f, 0.0f, 0.0f);
@@ -100,6 +106,16 @@ Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
 	m_CurrentRightAscension = -1.0;
 	m_CurrentDeclination = -1.0;
 	m_RefreshSearchMarker = true;
+
+	m_pulsar_color = glm::vec3(0.80, 0.0, 0.85);          	// Pulsars are Purple.
+	m_star_color = glm::vec3(1.0, 1.0, 1.0);              	// Stars are White.
+	m_supernova_color = glm::vec3(1.0, 0.0, 0.0);       	// Supernovae are Sienna.
+	m_constellation_line_color = glm::vec3(0.7, 0.7, 0.0);    // Lines are light yellow.
+
+	m_pulsar_point_size = 3.0f;
+	m_star_point_size = 4.0f;
+	m_supernova_point_size = 3.0f;
+	m_constellation_line_width = 1.0f;
     }
 
 Starsphere::~Starsphere() {
@@ -188,7 +204,7 @@ void Starsphere::make_stars() {
 
     // Populate data structure for vertices.
 	RenderTask::vertex_buffer_group v_group1 = {star_vertex_data,
-	                                            m_distinct_stars*3*sizeof(GLfloat),
+	                                            GLuint(m_distinct_stars*3*sizeof(GLfloat)),
 												m_distinct_stars,
 	                                            GL_STATIC_DRAW,
 	                                            VertexBuffer::BY_VERTEX};
@@ -234,16 +250,15 @@ void Starsphere::make_pulsars() {
 
     // Populate data structure indicating GLSL code use.
 	RenderTask::shader_group s_group1 = {factory.createInstance("VertexShader_Pulsars")->std_string(),
-	                                     factory.createInstance("FragmentShader_Pass")->std_string(),
-	                                     Program::KEEP_ON_GOOD_LINK};
+	                                     factory.createInstance("FragmentShader_Pass")->std_string()};
 
     // Populate data structure for indices, in this case none is used.
 	RenderTask::index_buffer_group i_group1 = {NULL, 0, 0, 0, 0};
 
     // Populate data structure for vertices.
 	RenderTask::vertex_buffer_group v_group1 = {pulsar_vertex_data,
-	                                            sizeof(pulsar_vertex_data),
-	                                            Npulsars,
+	                                            GLuint(sizeof(pulsar_vertex_data)),
+	                                            GLuint(Npulsars),
 	                                            GL_STATIC_DRAW,
 	                                            VertexBuffer::BY_VERTEX};
 
@@ -295,8 +310,8 @@ void Starsphere::make_snrs() {
 
     // Instantiate a rendering task with the provided information.
 	RenderTask::vertex_buffer_group v_group1 = {snr_vertex_data,
-	                                            sizeof(snr_vertex_data),
-	                                            NSNRs,
+	                                            GLuint(sizeof(snr_vertex_data)),
+	                                            GLuint(NSNRs),
 	                                            GL_STATIC_DRAW,
 	                                            VertexBuffer::BY_VERTEX};
 
@@ -331,7 +346,7 @@ void Starsphere::make_constellations() {
 	GLfloat star_vertex_data[m_constellation_lines * 2 * 3];
 
     // Note assess stars in pairs.
-	for(int line = 0; line < m_constellation_lines; ++line) {
+	for(GLuint line = 0; line < m_constellation_lines; ++line) {
         // Vectors for each point at the ends of a constellation line.
         glm::vec3 temp1 = sphVertex3D(star_info[line*2][0], star_info[line*2][1], sphRadius);
         glm::vec3 temp2 = sphVertex3D(star_info[line*2+1][0], star_info[line*2+1][1], sphRadius);
@@ -412,7 +427,9 @@ GLfloat Starsphere::RAofZenith(double T, GLfloat LONdeg) {
 //	GLfloat alpha = (GMST/(24.0*3600.0))*360.0 - LONdeg;
 //
 //	return alpha;
-    }
+	return 1.0f;
+	}
+
 
 /**
  * Draw the observatories at their zenith positions

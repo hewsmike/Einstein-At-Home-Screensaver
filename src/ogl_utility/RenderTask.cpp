@@ -45,9 +45,9 @@ RenderTask::RenderTask(RenderTask::shader_group s_group,
         m_index_buffer = NULL;
         }
 
-    m_vertex_fetch = new VertexFetch(m_vertex_buffer, m_index_buffer, m_attrib_adapt);
+    m_vertex_fetch_attributes = new VertexFetchAttributes(m_attrib_adapt, m_vertex_buffer, m_index_buffer);
 
-    m_pipeline = new Pipeline(*m_program, *m_vertex_fetch);
+    m_pipeline = new Pipeline(*m_program, *m_vertex_fetch_attributes);
     }
 
 RenderTask::~RenderTask() {
@@ -57,11 +57,11 @@ RenderTask::~RenderTask() {
     if(m_pipeline) delete m_pipeline;
     if(m_program) delete m_program;
     if(m_vertex_buffer) delete m_vertex_buffer;
-    if(m_vertex_fetch) delete m_vertex_fetch;
+    if(m_vertex_fetch_attributes) delete m_vertex_fetch_attributes;
     if(m_vertex_shader) delete m_vertex_shader;
     }
 
-void RenderTask::addSpecification(const AttributeInputAdapter::attribute_spec& spec) {
+void RenderTask::addSpecification(const AttributeInputAdapter::attribute_spec spec) {
     // Pass on to the underlying adapter.
     m_attrib_adapt->addSpecification(spec);
     }
