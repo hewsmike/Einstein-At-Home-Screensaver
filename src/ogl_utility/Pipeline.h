@@ -48,7 +48,7 @@ class Pipeline {
          * \brief Constructor.
          *
          * \param program : reference to an existing Program object.
-         * \param vertex_fetch : reference to an existing VertexFetch object.
+         * \param vertex_fetch : reference to an existing VertexFetch object or derivative.
          */
         Pipeline(Program& program, VertexFetch& vertex_fetch);
 
