@@ -795,7 +795,7 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
 
     // Fatal error if no font resource supplied.
     if(!m_FontResource) {
-        ErrorHandler::record("Starsphere::initialize()", ErrorHandler::FATAL);
+        ErrorHandler::record("Starsphere::initialize() - no fontResource supplied!", ErrorHandler::FATAL);
         }
 	else {
         // NB : initialization of logo font instances is done in subclasses!
@@ -808,7 +808,7 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
                                           13);
 
             if(m_FontHeader == NULL) {
-                stringstream font_header_error;
+                std::stringstream font_header_error;
                 font_header_error << "Starsphere::initialize() : "
                                   << "Could not construct header font face from in memory resource!"
                                   << std::endl;
@@ -823,7 +823,7 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
                                         11);
 
             if(m_FontText == NULL) {
-                stringstream font_text_error;
+                std::stringstream font_text_error;
                 font_text_error << "Starsphere::initialize() : "
                                 << "Could not construct text font face from in memory resource!"
                                 << std::endl;
@@ -881,6 +881,7 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
 	setFeature(XRAYS, true);			/// TODO - we don't have this feature even designed yet.
 	setFeature(PULSARS, true);
 	setFeature(SNRS, true);
+	setFeature(GAMMA, true);			/// TODO - we don't have this feature even designed yet.
 	setFeature(GLOBE, true);
 	setFeature(AXES, false);
 	setFeature(SEARCHINFO, true);
@@ -1136,7 +1137,7 @@ void Starsphere::refreshLocalBOINCInformation() {
 	AbstractGraphicsEngine::refreshLocalBOINCInformation();
 
 	// prepare conversion buffer
-	stringstream buffer;
+	std::stringstream buffer;
 	buffer.precision(2);
 	buffer.setf(ios::fixed, ios::floatfield);
 	buffer.fill('0');
