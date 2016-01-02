@@ -111,6 +111,11 @@ int main(int argc, char **argv) {
         ErrorHandler::record(sdl_ttf_init_error.str(), ErrorHandler::FATAL);
         }
 
+    // At this point SDL TTF initialisation will have succeeded, so make sure
+    // that ( for whatever 'normal' exit modes later occur ) SDL TTF will be
+    // cleaned up.
+    atexit(TTF_Quit);
+
     // Inquire of SDL_TTF versions and report.
     // Version that this executable was compiled with.
     SDL_version compiled_version;
@@ -130,11 +135,6 @@ int main(int argc, char **argv) {
 						   << GLuint(linked_version->minor) << "."
 						   << GLuint(linked_version->patch);
     ErrorHandler::record(SDL_TTF_linked_version.str(), ErrorHandler::INFORM);
-
-    // At this point SDL TTF initialisation will have succeeded, so make sure
-    // that ( for whatever 'normal' exit modes later occur ) SDL TTF will be
-    // cleaned up.
-    atexit(TTF_Quit);
 
     // Enable BOINC diagnostics
     /// TODO: we might want to optimize this for glibc- and mingw-based stacktraces!
@@ -243,8 +243,8 @@ int main(int argc, char **argv) {
 
     // Clean up and exit
     window.unregisterEventObserver(graphics);
-    delete graphics;
-    delete fontResource;
+    if(graphics) delete graphics;
+    if(fontResource) delete fontResource;
 
     exit(0);
     }
