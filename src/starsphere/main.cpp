@@ -52,7 +52,7 @@ int main(int argc, char **argv) {
     if(argc == 2) {
         string param(argv[1]);
         if(param == "--version" || param == "-v") {
-            stringstream boinc_version;
+            std::stringstream boinc_version;
             boinc_version << "Version information:" << endl;
             boinc_version << "Graphics Application Revision: " << ERP_GIT_VERSION << endl;
             boinc_version << "BOINC Revision: " << SVN_VERSION << endl;
@@ -89,7 +89,7 @@ int main(int argc, char **argv) {
     int init_flag = SDL_DEBUG(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_EVENTS));
     if(init_flag != 0) {
         // Failed, which is FATAL.
-        stringstream sdl_init_error;
+        std::stringstream sdl_init_error;
         sdl_init_error << "\nUnable to initialize SDL:  "
                        << ErrorHandler::check_SDL2_Error(__FILE__, __LINE__)
                        << std::endl;
@@ -110,6 +110,26 @@ int main(int argc, char **argv) {
                            << std::endl;
         ErrorHandler::record(sdl_ttf_init_error.str(), ErrorHandler::FATAL);
         }
+
+    // Inquire of SDL_TTF versions and report.
+    // Version that this executable was compiled with.
+    SDL_version compiled_version;
+    SDL_TTF_VERSION(&compiled_version);
+    std::stringstream sdl_ttf_compiled_version;
+    sdl_ttf_compiled_version << "SDL_TTF compiled version : "
+    						 << GLuint(compiled_version.major) << "."
+							 << GLuint(compiled_version.minor) << "."
+							 << GLuint(compiled_version.patch);
+    ErrorHandler::record(sdl_ttf_compiled_version.str(), ErrorHandler::INFORM);
+
+    // Version that is on the target machine ( at runtime ).
+    const SDL_version* linked_version = TTF_Linked_Version();
+	std::stringstream SDL_TTF_linked_version;
+    SDL_TTF_linked_version << "SDL_TTF linked version : "
+    					   << GLuint(linked_version->major) << "."
+						   << GLuint(linked_version->minor) << "."
+						   << GLuint(linked_version->patch);
+    ErrorHandler::record(SDL_TTF_linked_version.str(), ErrorHandler::INFORM);
 
     // At this point SDL TTF initialisation will have succeeded, so make sure
     // that ( for whatever 'normal' exit modes later occur ) SDL TTF will be
