@@ -112,11 +112,12 @@ class VertexFetchAttributes : public VertexFetch {
     private :
         bool m_configure_flag;
 
+        // The input adapter pointer.
+        AttributeInputAdapter* m_adapter;
+
         // The given Buffer pointers.
         VertexBuffer* m_vertices;
         IndexBuffer* m_indices;
-
-        AttributeInputAdapter* m_adapter;
 
         /// The total length in bytes of all the attributes.
 		GLuint m_attribute_length_sum;

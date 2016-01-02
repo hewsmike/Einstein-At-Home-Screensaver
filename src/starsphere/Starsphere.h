@@ -220,17 +220,18 @@ class Starsphere : public AbstractGraphicsEngine {
         * \see Starsphere::isFeature()
         */
         enum Features {
-            STARS = 1,
-            CONSTELLATIONS = 2,
-            OBSERVATORIES = 4,
-            XRAYS = 8,
-            PULSARS = 16,
-            SNRS = 32,
-            GLOBE = 64,
-            AXES = 128,
-            SEARCHINFO = 256,
-            LOGO = 512,
-            MARKER = 1024
+        	AXES = 1,
+			CONSTELLATIONS = 2,
+			GAMMA = 4,
+			GLOBE = 8,
+			LOGO = 16,
+			MARKER = 32,
+			OBSERVATORIES = 64,
+			PULSARS = 128,
+			SEARCHINFO = 256,
+			SNRS = 512,
+			STARS = 1024,
+			XRAYS = 2048
             };
 
         /**
@@ -418,29 +419,20 @@ class Starsphere : public AbstractGraphicsEngine {
         void make_globe();
 
         /**
-        * \brief Generate OpenGL display list for search marker (gunsight)
-        *
-        * \param RAdeg Right ascension in degrees
-        * \param DEdeg Declination in degrees
-        * \param size Base size (radius/length) of the marker
-        */
+         * \brief Generate OpenGL display list for search marker (gunsight)
+         *
+         * \param RAdeg Right ascension in degrees
+         * \param DEdeg Declination in degrees
+         * \param size Base size (radius/length) of the marker
+         */
         void make_search_marker(GLfloat RAdeg, GLfloat DEdeg, GLfloat size);
 
-        /// Feature display list ID's
-        GLuint Axes, Stars, Constellations, Pulsars, SNRs;
-
-        /// Feature display list ID's
-        GLuint LLOmarker, LHOmarker, GEOmarker, VIRGOmarker;
-
-        /// Feature display list ID's
-        GLuint sphGrid, SearchMarker;
-
         /**
-        * \brief Current state of all features (bitmask)
-        * \see Starsphere::Features()
-        * \see Starsphere::setFeature()
-        * \see Starsphere::isFeature()
-        */
+         * \brief Current state of all features (bitmask)
+         * \see Starsphere::Features()
+         * \see Starsphere::setFeature()
+         * \see Starsphere::isFeature()
+         */
         int featureFlags;
 
         // Viewpoint (can be changed with mouse)

@@ -78,10 +78,6 @@ Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
 	m_CurrentDeclination = 0;
 	m_RefreshSearchMarker = false;
 
-	Axes=0, Stars=0, Constellations=0, Pulsars=0;
-	LLOmarker=0, LHOmarker=0, GEOmarker=0, VIRGOmarker=0;
-	sphGrid=0, SNRs=0, SearchMarker=0;
-
 	/**
 	 * Parameters and State info
 	 */
@@ -110,7 +106,7 @@ Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
 	m_pulsar_color = glm::vec3(0.80, 0.0, 0.85);          	// Pulsars are Purple.
 	m_star_color = glm::vec3(1.0, 1.0, 1.0);              	// Stars are White.
 	m_supernova_color = glm::vec3(1.0, 0.0, 0.0);       	// Supernovae are Sienna.
-	m_constellation_line_color = glm::vec3(0.7, 0.7, 0.0);    // Lines are light yellow.
+	m_constellation_line_color = glm::vec3(0.7, 0.7, 0.0);  // Lines are Light yellow.
 
 	m_pulsar_point_size = 3.0f;
 	m_star_point_size = 4.0f;
@@ -378,8 +374,8 @@ void Starsphere::make_constellations() {
 
     // Populate data structure for vertices.
 	RenderTask::vertex_buffer_group v_group1 = {star_vertex_data,
-	                                            m_constellation_lines*2*3*sizeof(GLfloat),
-												m_constellation_lines*2,
+	                                            GLuint(m_constellation_lines*2*3*sizeof(GLfloat)),
+												GLuint(m_constellation_lines*2),
 	                                            GL_STATIC_DRAW,
 	                                            VertexBuffer::BY_VERTEX};
 
@@ -787,6 +783,7 @@ void Starsphere::resize(const int width, const int height) {
 void Starsphere::initialize(const int width, const int height, const Resource* font) {
     ResourceFactory factory;
 
+    // Create rendering tasks for given features.
     make_snrs();
     make_pulsars();
     make_stars();
@@ -877,13 +874,18 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
 		/// TODO - what OpenGL ES 2.x fog options available? In the shader code then ?
         }
 
-	// create pre-drawn display lists
-//	make_stars();
-//	make_constellations();
-//	make_pulsars();
-//	make_snrs();
-//	make_axes();
-//	make_globe();
+	// Begin with these features enabled.
+	setFeature(STARS, true);
+	setFeature(CONSTELLATIONS, true);
+	setFeature(OBSERVATORIES, true);
+	setFeature(XRAYS, true);			/// TODO - we don't have this feature even designed yet.
+	setFeature(PULSARS, true);
+	setFeature(SNRS, true);
+	setFeature(GLOBE, true);
+	setFeature(AXES, false);
+	setFeature(SEARCHINFO, true);
+	setFeature(LOGO, true);
+	setFeature(MARKER, true);
 	}
 
 /**
@@ -959,27 +961,32 @@ void Starsphere::render(const double timeOfDay) {
 
 	m_camera = m_projection * m_view * m_rotation;
 
-	m_render_task_psr->utilise(GL_POINTS, Npulsars);
-	m_render_task_snr->utilise(GL_POINTS, NSNRs);
-	m_render_task_star->utilise(GL_POINTS, m_distinct_stars);
-	m_render_task_cons->utilise(GL_LINES, m_constellation_lines*2);
-
-	// draw axes before any rotation so they stay put
-//	if (isFeature(AXES)) glCallList(Axes);
-//
-//	// draw the sky sphere, with rotation:
-//	glPushMatrix();
-//	glRotatef(Zrot - rotation_offset, 0.0, 1.0, 0.0);
+	/// TODO - place this block correctly
+	// draw axes before any rotation so they stay put.
+	if(isFeature(AXES)) {
+		/// TODO - call to render axes;
+		}
 
 	// stars, pulsars, supernovae, grid
-//	if (isFeature(STARS))			glCallList(Stars);
-//	if (isFeature(PULSARS))			glCallList(Pulsars);
-//	if (isFeature(SNRS))			glCallList(SNRs);
-//	if (isFeature(CONSTELLATIONS))	glCallList(Constellations);
-//	if (isFeature(GLOBE))			glCallList(sphGrid);
+    if(isFeature(STARS)) {
+    	m_render_task_star->utilise(GL_POINTS, m_distinct_stars);;
+    	}
+    if(isFeature(PULSARS)) {
+    	m_render_task_psr->utilise(GL_POINTS, Npulsars);
+    	}
+    if(isFeature(SNRS)) {
+    	m_render_task_snr->utilise(GL_POINTS, NSNRs);
+    	}
+    if(isFeature(CONSTELLATIONS)) {
+    	m_render_task_cons->utilise(GL_LINES, m_constellation_lines*2);
+    	}
+	if(isFeature(GLOBE)) {
+		/// TODO - call to render axes;
+		}
 
 	// observatories move an extra 15 degrees/hr since they were drawn
-//	if (isFeature(OBSERVATORIES)) {
+	if(isFeature(OBSERVATORIES)) {
+		/// TODO - call to render observatories;
 //		glPushMatrix();
 //		Zobs = (timeOfDay - m_ObservatoryDrawTimeLocal) * 15.0/3600.0;
 //		glRotatef(Zobs, 0.0, 1.0, 0.0);
@@ -989,10 +996,11 @@ void Starsphere::render(const double timeOfDay) {
 //		glCallList(VIRGOmarker);
 //		renderAdditionalObservatories();
 //		glPopMatrix();
-//	}
+		}
 
 	// draw the search marker (gunsight)
-//	if (isFeature(MARKER)) {
+	if(isFeature(MARKER)) {
+		/// TODO - call to render gunsight;
 //		if(m_RefreshSearchMarker) {
 //			make_search_marker(m_CurrentRightAscension, m_CurrentDeclination, 0.5);
 //			m_RefreshSearchMarker = false;
@@ -1000,12 +1008,12 @@ void Starsphere::render(const double timeOfDay) {
 //		else {
 //			glCallList(SearchMarker);
 //		}
-//	}
+		}
 
-//	glPopMatrix();
 
 	// draw 2D vectorized HUD
-//    if(isFeature(LOGO) || isFeature(SEARCHINFO)) {
+	if(isFeature(LOGO) || isFeature(SEARCHINFO)) {
+		/// TODO - call(s) to render HUD;
 //
 //		// disable depth testing since we're in 2D mode
 //    	glDisable(GL_DEPTH_TEST);
@@ -1015,7 +1023,7 @@ void Starsphere::render(const double timeOfDay) {
 //
 ////		// enable depth testing since we're leaving 2D mode
 //    	glEnable(GL_DEPTH_TEST);
-//        }
+		}
 
     // Mark off another frame done.
     ++m_framecount;
