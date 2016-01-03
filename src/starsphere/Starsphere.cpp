@@ -842,28 +842,28 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
 	resize(m_CurrentWidth, m_CurrentHeight);
 
 	// more font setup and optimizations
-//	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-//
-//	// drawing setup:
-//	glClearColor(1.0, 1.0, 1.0, 0.0); // background is black
-////	glEnable(GL_CULL_FACE;
-//	glFrontFace(GL_CCW;
-////	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST;
-//
-//	// enable opt-in quality feature
-//	if(m_BoincAdapter.graphicsQualitySetting() == BOINCClientAdapter::HighGraphicsQualitySetting) {
-//		/// TODO - what OpenGL ES 2.x quality options available? In the shader code then ?
-//        }
-//
-//	// we need alpha blending for proper font rendering
-//	glEnable(GL_BLEND;
-//	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA;
-//
-//	// enable depth buffering for 3D graphics
-//	glClearDepthf(1.0f);
-//	glEnable(GL_DEPTH_TEST;
-//	glDepthFunc(GL_LEQUAL;
-//
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+	// drawing setup:
+	glClearColor(0.0, 0.0, 0.0, 0.0); // background is black
+	glEnable(GL_CULL_FACE);
+	glFrontFace(GL_CCW);
+	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+
+	// enable opt-in quality feature
+	if(m_BoincAdapter.graphicsQualitySetting() == BOINCClientAdapter::HighGraphicsQualitySetting) {
+		/// TODO - what OpenGL ES 2.x quality options available? In the shader code then ?
+        }
+
+	// we need alpha blending for proper font rendering
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	// enable depth buffering for 3D graphics
+	glClearDepth(1.0f);
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL);
+
     // Currently point size in managed within vertex shaders using gl_PointSize.
     // glEnable(GL_PROGRAM_POINT_SIZE);
 
@@ -920,8 +920,8 @@ void Starsphere::render(const double timeOfDay) {
 //	revs = Zrot/360.0;
 //	Zrot = -360.0 * (revs - (int)revs);
 
-	// and start drawing...
-	glClear(GL_COLOR_BUFFER_BIT);
+	// Start drawing with clearing the relevant buffers.
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// now draw the scene...
 
