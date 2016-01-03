@@ -781,15 +781,7 @@ void Starsphere::resize(const int width, const int height) {
  *  What to do when graphics are "initialized".
  */
 void Starsphere::initialize(const int width, const int height, const Resource* font) {
-    ResourceFactory factory;
-
-    // Create rendering tasks for given features.
-    make_snrs();
-    make_pulsars();
-    make_stars();
-    make_constellations();
-
-    m_CurrentWidth = width;
+	m_CurrentWidth = width;
     m_CurrentHeight = height;
     m_FontResource = font;
 
@@ -832,49 +824,16 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
             }
         }
 
-    // Default point size.
-    glPointSize(1.5f);
+    // Setup initial dimensions
+    resize(m_CurrentWidth, m_CurrentHeight);
 
-    // Default line width.
-    glLineWidth(8.0f);
+    // Create rendering tasks for given features.
+    make_snrs();
+    make_pulsars();
+    make_stars();
+    make_constellations();
 
-	// setup initial dimensions
-	resize(m_CurrentWidth, m_CurrentHeight);
-
-	// more font setup and optimizations
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-
-	// drawing setup:
-	glClearColor(0.0, 0.0, 0.0, 0.0); // background is black
-	glEnable(GL_CULL_FACE);
-	glFrontFace(GL_CCW);
-	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
-
-	// enable opt-in quality feature
-	if(m_BoincAdapter.graphicsQualitySetting() == BOINCClientAdapter::HighGraphicsQualitySetting) {
-		/// TODO - what OpenGL ES 2.x quality options available? In the shader code then ?
-        }
-
-	// we need alpha blending for proper font rendering
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	// enable depth buffering for 3D graphics
-	glClearDepth(1.0f);
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LEQUAL);
-
-    // Currently point size in managed within vertex shaders using gl_PointSize.
-    // glEnable(GL_PROGRAM_POINT_SIZE);
-
-	// enable opt-in quality feature
-	if(m_BoincAdapter.graphicsQualitySetting() == BOINCClientAdapter::MediumGraphicsQualitySetting ||
-	   m_BoincAdapter.graphicsQualitySetting() == BOINCClientAdapter::HighGraphicsQualitySetting) {
-		// fog aids depth perception
-		/// TODO - what OpenGL ES 2.x fog options available? In the shader code then ?
-        }
-
-	// Begin with these features enabled.
+	// Begin with these visual features enabled.
 	setFeature(STARS, true);
 	setFeature(CONSTELLATIONS, true);
 	setFeature(OBSERVATORIES, true);
@@ -887,6 +846,51 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
 	setFeature(SEARCHINFO, true);
 	setFeature(LOGO, true);
 	setFeature(MARKER, true);
+
+	// Here we set the byte alignment when unpacking data from memory
+	// to a one byte boundary. This done mainly for optimizing font setup.
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+	// In space the background is black.
+	glClearColor(0.0, 0.0, 0.0, 0.0);
+
+	// Enable depth buffering for 3D graphics
+	glClearDepth(1.0f);
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL);
+
+    // We need alpha blending for proper font rendering
+    // and other anti-aliased objects.
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    // Default point size.
+    glPointSize(1.5f);
+    // However, currently point size in managed within vertex shaders using gl_PointSize.
+    // Un-REM the following line to enable the above point size to apply.
+    // glEnable(GL_PROGRAM_POINT_SIZE);
+
+    // Default line width.
+    glLineWidth(2.0f);
+
+    // Some selected drawing quality choices.
+    glEnable(GL_POINT_SMOOTH);							// Jaggy reduction, but this per primitve
+    glEnable(GL_LINE_SMOOTH);							// anti-aliasing depends on hardware etc ...
+	glEnable(GL_CULL_FACE);								// Culling of rear faces
+	glFrontFace(GL_CCW);								// Front facing is counterclockwise
+
+	/// TODO - sort out this quality selection business ?
+	// enable opt-in quality feature
+//	if(m_BoincAdapter.graphicsQualitySetting() == BOINCClientAdapter::HighGraphicsQualitySetting) {
+//		/// TODO - what OpenGL ES 2.x quality options available? In the shader code then ?
+//        }
+//
+//	// enable opt-in quality feature
+//	if(m_BoincAdapter.graphicsQualitySetting() == BOINCClientAdapter::MediumGraphicsQualitySetting ||
+//	   m_BoincAdapter.graphicsQualitySetting() == BOINCClientAdapter::HighGraphicsQualitySetting) {
+//		// fog aids depth perception
+//		/// TODO - what OpenGL ES 2.x fog options available? In the shader code then ?
+//        }
 	}
 
 /**
