@@ -89,136 +89,136 @@ class Starsphere : public AbstractGraphicsEngine {
         virtual ~Starsphere();
 
         /**
-        * \brief This method is called to initialize the engine
-        *
-        * \param width The current width of the display surface
-        * \param height The current height of the display surface
-        * \param font A pointer to a Resource object containing TTF font faces for text rendering
-        */
+         * \brief This method is called to initialize the engine
+         *
+         * \param width The current width of the display surface
+         * \param height The current height of the display surface
+         * \param font A pointer to a Resource object containing TTF font faces for text rendering
+         */
         virtual void initialize(const int width, const int height, const Resource *font);
 
         /**
-        * \brief This method is called when the windowing system encounters a window resize event
-        *
-        * \param width The new width of the display surface
-        * \param height The new height of the display surface
-        */
+         * \brief This method is called when the windowing system encounters a window resize event
+         *
+         * \param width The new width of the display surface
+         * \param height The new height of the display surface
+         */
         virtual void resize(const int width, const int height);
 
         /**
-        * \brief This method renders one frame of the animation
-        *
-        * \param timeOfDay The current time (e.g. BOINC's dtime(), used for time-based rendering evolution)
-        */
+         * \brief This method renders one frame of the animation
+         *
+         * \param timeOfDay The current time (e.g. BOINC's dtime(), used for time-based rendering evolution)
+         */
         void render(const double timeOfDay);
 
         /**
-        * \brief Event handler for mouse button events
-        *
-        * \param positionX The mouse position's x-coordinate
-        * \param positionY The mouse position's y-coordinate
-        * \param buttonPressed The mouse button pressed
-        */
+         * \brief Event handler for mouse button events
+         *
+         * \param positionX The mouse position's x-coordinate
+         * \param positionY The mouse position's y-coordinate
+         * \param buttonPressed The mouse button pressed
+         */
         void mouseButtonEvent(const int positionX, const int positionY,
                         const AbstractGraphicsEngine::MouseButton buttonPressed);
 
         /**
-        * \brief Event handler for mouse move events
-        *
-        * \param deltaX The relative mouse movement in the x-direction
-        * \param deltaY The relative mouse movement in the y-direction
-        * \param buttonPressed The mouse button pressed
-        */
+         * \brief Event handler for mouse move events
+         *
+         * \param deltaX The relative mouse movement in the x-direction
+         * \param deltaY The relative mouse movement in the y-direction
+         * \param buttonPressed The mouse button pressed
+         */
         void mouseMoveEvent(const int deltaX, const int deltaY,
                       const AbstractGraphicsEngine::MouseButton buttonPressed);
 
         /**
-        * \brief Event handler for mouse wheel events
-        *
-        * \param pos The new mouse wheel position
-        */
+         * \brief Event handler for mouse wheel events
+         *
+         * \param pos The new mouse wheel position
+         */
         void mouseWheelEvent(const int pos);
 
         /**
-        * \brief Event handler for key press events
-        *
-        * \param keyPressed The key pressed
-        */
+         * \brief Event handler for key press events
+         *
+         * \param keyPressed The key pressed
+         */
         void keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey keyPressed);
 
     protected:
         /**
-        * \brief Constructor
-        *
-        * The constructor is protected since this is an abstract class. It takes
-        * as an argument the name of the shared memory area which is propagated
-        * to the BOINC client adapter instance (during construction).
-        *
-        * \param sharedMemoryIdentifier The identifier of the shared memory area
-        *
-        * \see AbstractGraphicsEngine::AbstractGraphicsEngine()
-        * \see BOINCClientAdapter::BOINCClientAdapter()
-        */
+         * \brief Constructor
+         *
+         * The constructor is protected since this is an abstract class. It takes
+         * as an argument the name of the shared memory area which is propagated
+         * to the BOINC client adapter instance (during construction).
+         *
+         * \param sharedMemoryIdentifier The identifier of the shared memory area
+         *
+         * \see AbstractGraphicsEngine::AbstractGraphicsEngine()
+         * \see BOINCClientAdapter::BOINCClientAdapter()
+         */
         Starsphere(string sharedMemoryIdentifier);
 
         /**
-        * \brief Render science run specific logo
-        *
-        * This abtract method is to be defined by derived classes implementing
-        * the science run specific logo rendering.
-        */
+         * \brief Render science run specific logo
+         *
+         * This abtract method is to be defined by derived classes implementing
+         * the science run specific logo rendering.
+         */
         virtual void renderLogo() = 0;
 
         /**
-        * \brief Render science run specific search information
-        *
-        * This abtract method is to be defined by derived classes implementing
-        * the science run specific search information handling and rendering.
-        *
-        * Note: for this engine this also includes the "BOINC Statistics"
-        * as it is top-aligned to the "Search Information".
-        */
+         * \brief Render science run specific search information
+         *
+         * This abtract method is to be defined by derived classes implementing
+         * the science run specific search information handling and rendering.
+         *
+         * Note: for this engine this also includes the "BOINC Statistics"
+         * as it is top-aligned to the "Search Information".
+         */
         virtual void renderSearchInformation() = 0;
 
         /**
-        * \brief Render additional observatories
-        *
-        * This method doesn't do anything in its local implementation. It's provided
-        * for potential specializing classes to add additional observatories by
-        * overriding the empty default implementation.
-        *
-        * Important: overriding classes should just provide additional display lists
-        * by via calls to glCallList().
-        *
-        * \see StarsphereRadio::renderAdditionalObservatories()
-        */
+         * \brief Render additional observatories
+         *
+         * This method doesn't do anything in its local implementation. It's provided
+         * for potential specializing classes to add additional observatories by
+         * overriding the empty default implementation.
+         *
+         * Important: overriding classes should just provide additional display lists
+         * by via calls to glCallList().
+         *
+         * \see StarsphereRadio::renderAdditionalObservatories()
+         */
         virtual void renderAdditionalObservatories();
 
         /**
-        * \brief This method has to be called in order to update the BOINC client information
-        *
-        * This is the local/generic implementation which calls
-        * AbstractGraphicsEngine::refreshLocalBOINCInformation() first and
-        * refreshes the "BOINC Statistics" afterwards.
-        *
-        * \see AbstractGraphicsEngine::refreshLocalBOINCInformation()
-        */
+         * \brief This method has to be called in order to update the BOINC client information
+         *
+         * This is the local/generic implementation which calls
+         * AbstractGraphicsEngine::refreshLocalBOINCInformation() first and
+         * refreshes the "BOINC Statistics" afterwards.
+         *
+         * \see AbstractGraphicsEngine::refreshLocalBOINCInformation()
+         */
         virtual void refreshLocalBOINCInformation();
 
         /**
-        * \brief Generates the OpenGL call lists for the displayed observatories
-        *
-        * \param dimFactor A dim factor (range: 0 <= x <= 1) that will, well, dim the color
-        * of the observatories.
-        */
+         * \brief Generates the OpenGL call lists for the displayed observatories
+         *
+         * \param dimFactor A dim factor (range: 0 <= x <= 1) that will, well, dim the color
+         * of the observatories.
+         */
         virtual void generateObservatories(const float dimFactor);
 
         /**
-        * \brief Available feature IDs
-        *
-        * \see Starsphere::setFeature()
-        * \see Starsphere::isFeature()
-        */
+         * \brief Available feature IDs
+         *
+         * \see Starsphere::setFeature()
+         * \see Starsphere::isFeature()
+         */
         enum Features {
         	AXES = 1,
 			CONSTELLATIONS = 2,
@@ -235,65 +235,53 @@ class Starsphere : public AbstractGraphicsEngine {
             };
 
         /**
-        * \brief Set the display state of a certain feature
-        *
-        * \param feature The feature to enable/disable
-        * \param enable The state to set for the feature
-        *
-        * \see Starsphere::Features
-        * \see Starsphere::isFeature()
-        */
+         * \brief Set the display state of a certain feature
+         *
+         * \param feature The feature to enable/disable
+         * \param enable The state to set for the feature
+         *
+         * \see Starsphere::Features
+         * \see Starsphere::isFeature()
+         */
         void setFeature(const Features feature, const bool enable);
 
         /**
-        * \brief Query the display state of a certain feature
-        *
-        * \param feature The feature to query
-        *
-        * \return The current state of the feature
-        *
-        * \see Starsphere::Features
-        * \see Starsphere::setFeature()
-        */
+         * \brief Query the display state of a certain feature
+         *
+         * \param feature The feature to query
+         *
+         * \return The current state of the feature
+         *
+         * \see Starsphere::Features
+         * \see Starsphere::setFeature()
+         */
         bool isFeature(const Features feature);
 
         /**
-        * \brief Computes the Right Ascension of the zenith at a given time (from
-        * the Unix epoch, in seconds) at a given Longitude (in degrees)
-        *
-        * From 'The Cambridge Handbook of Physics Formulas', Graham Woan, 2003
-        * edition, CUP. (NOT the first edition), p177.
-        *
-        * \param T Current time in seconds since the epoch
-        * \param LONdeg Longitude in degrees
-        *
-        * \return The right ascension of the zenith
-        */
+         * \brief Computes the Right Ascension of the zenith at a given time (from
+         * the Unix epoch, in seconds) at a given Longitude (in degrees)
+         *
+         * From 'The Cambridge Handbook of Physics Formulas', Graham Woan, 2003
+         * edition, CUP. (NOT the first edition), p177.
+         *
+         * \param T Current time in seconds since the epoch
+         * \param LONdeg Longitude in degrees
+         *
+         * \return The right ascension of the zenith
+         */
         GLfloat RAofZenith(double T, GLfloat LONdeg);
 
         /**
-        * \brief Creates a GL vertex in 3D sky sphere coordinates
-        *
-        * Use like glVertex()
-        *
-        * \param RAdeg The right ascension of the new vertex
-        * \param DEdeg The declination of the new vertex
-        * \param radius The radius of the sky sphere
-        */
+         * \brief Creates a GL vertex in 3D sky sphere coordinates
+         *
+         * Use like glVertex()
+         *
+         * \param RAdeg The right ascension of the new vertex
+         * \param DEdeg The declination of the new vertex
+         */
         glm::vec3 sphVertex3D(GLfloat RAdeg, GLfloat DEdeg, GLfloat radius);
 
-        /**
-        * \brief Creates a GL vertex on the surface of the sky sphere.
-        *
-        * Use like glVertex()
-        *
-        * \param RAdeg The right ascension of the new vertex
-        * \param DEdeg The declination of the new vertex
-        */
         glm::vec3 sphVertex(GLfloat RAdeg, GLfloat DEdeg);
-
-        /// Radius of the celestial sphere
-        GLfloat sphRadius;
 
         /// Observatory movement (in seconds since 1970 with usec precision)
         double m_ObservatoryDrawTimeLocal;
@@ -367,6 +355,20 @@ class Starsphere : public AbstractGraphicsEngine {
         bool m_RefreshSearchMarker;
 
     private:
+        // Class constants.
+        static const GLfloat DEFAULT_CLEAR_DEPTH;
+        static const GLfloat DEFAULT_LINE_WIDTH;
+        static const GLfloat DEFAULT_POINT_SIZE;
+        static const GLuint PIXEL_UNPACK_BOUNDARY;
+        static const GLuint SPHERE_RADIUS;
+        static const GLboolean TTF_FREE_SOURCE;
+        static const GLuint TTF_FONT_LOAD_HEADER_POINT_SIZE;
+        static const GLuint TTF_FONT_LOAD_TEXT_POINT_SIZE;
+        static const GLfloat VIEWPOINT_MAX_ZOOM;
+        static const GLfloat VIEWPOINT_MIN_ZOOM;
+        static const GLfloat VIEWPOINT_MOUSEWHEEL_ZOOM_RATE;
+        static const GLfloat VIEWPOINT_ZOOM_RATE;
+
         /// Cumulative frame count.
         GLuint m_framecount;
 
@@ -467,22 +469,22 @@ class Starsphere : public AbstractGraphicsEngine {
         // view control
 
         /**
-        * \brief Rotates the sphere by changing the viewpoint rotation/elevation relatively
-        *
-        * \param relativeRotation Relative rotation factor (e.g. relative mouse movement)
-        * \param relativeElevation Relative elevation factor (e.g. relative mouse movement)
-        *
-        * \see Starsphere::mouseMoveEvent()
-        */
+         * \brief Rotates the sphere by changing the viewpoint rotation/elevation relatively
+         *
+         * \param relativeRotation Relative rotation factor (e.g. relative mouse movement)
+         * \param relativeElevation Relative elevation factor (e.g. relative mouse movement)
+         *
+         * \see Starsphere::mouseMoveEvent()
+         */
         void rotateSphere(const int relativeRotation, const int relativeElevation);
 
         /**
-        * \brief Zooms the sphere by changing the viewpoint radius relatively
-        *
-        * \param relativeZoom Relative zoom factor (e.g. relative mouse movement)
-        *
-        * \see Starsphere::mouseMoveEvent()
-        */
+         * \brief Zooms the sphere by changing the viewpoint radius relatively
+         *
+         * \param relativeZoom Relative zoom factor (e.g. relative mouse movement)
+         *
+         * \see Starsphere::mouseMoveEvent()
+         */
         void zoomSphere(const int relativeZoom);
     };
 

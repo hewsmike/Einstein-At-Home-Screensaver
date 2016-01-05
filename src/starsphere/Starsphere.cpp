@@ -41,6 +41,20 @@
 #include "VertexFetch.h"
 #include "VertexShader.h"
 
+// Class static constants
+const GLfloat Starsphere::DEFAULT_CLEAR_DEPTH(1.0f);
+const GLfloat Starsphere::DEFAULT_LINE_WIDTH(2.0f);
+const GLfloat Starsphere::DEFAULT_POINT_SIZE(1.5f);
+const GLuint Starsphere::PIXEL_UNPACK_BOUNDARY(1);
+const GLuint Starsphere::SPHERE_RADIUS(5.5f);
+const GLboolean Starsphere::TTF_FREE_SOURCE(false);
+const GLuint Starsphere::TTF_FONT_LOAD_HEADER_POINT_SIZE(13);
+const GLuint Starsphere::TTF_FONT_LOAD_TEXT_POINT_SIZE(11);
+const GLfloat Starsphere::VIEWPOINT_MAX_ZOOM(20.0f);
+const GLfloat Starsphere::VIEWPOINT_MIN_ZOOM(0.5f);
+const GLfloat Starsphere::VIEWPOINT_MOUSEWHEEL_ZOOM_RATE(3.0f);
+const GLfloat Starsphere::VIEWPOINT_ZOOM_RATE(10.0f);
+
 Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
 	AbstractGraphicsEngine(sharedMemoryAreaIdentifier) {
 	m_framecount = 0;
@@ -81,7 +95,6 @@ Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
 	/**
 	 * Parameters and State info
 	 */
-	sphRadius = 5.5;
 	featureFlags = 0;
 
 	/**
@@ -89,7 +102,7 @@ Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
 	 */
 	viewpt_azimuth = 30.0;
 	viewpt_elev = 23.6;
-	viewpt_radius = 7.6;
+	viewpt_radius = (SPHERE_RADIUS + VIEWPOINT_MAX_ZOOM)/ 2.0f;
 
 	wobble_amp = 37.0;
 	wobble_period = 17.0;
@@ -144,7 +157,7 @@ glm::vec3 Starsphere::sphVertex3D(GLfloat RAdeg, GLfloat DEdeg, GLfloat radius) 
     }
 
 glm::vec3 Starsphere::sphVertex(GLfloat RAdeg, GLfloat DEdeg) {
-	return sphVertex3D(RAdeg, DEdeg, sphRadius);
+	return sphVertex3D(RAdeg, DEdeg, SPHERE_RADIUS);
     }
 
 /**
@@ -178,7 +191,7 @@ void Starsphere::make_stars() {
 			}
 		if (!is_dupe) {
 			// Vector for a single position.
-            glm::vec3 temp = sphVertex3D(star_info[i][0], star_info[i][1], sphRadius);
+            glm::vec3 temp = sphVertex3D(star_info[i][0], star_info[i][1], SPHERE_RADIUS);
 
             // Each array position is at successive locations as x, y then z
             star_vertex_data[m_distinct_stars*3] = temp.x;
@@ -233,7 +246,7 @@ void Starsphere::make_pulsars() {
     // coordinates at the radius of the sphere.
 	for(int i = 0; i < Npulsars; ++i) {
 	    // Vector for a single position.
-		glm::vec3 temp = sphVertex3D(pulsar_info[i][0], pulsar_info[i][1], sphRadius);
+		glm::vec3 temp = sphVertex3D(pulsar_info[i][0], pulsar_info[i][1], SPHERE_RADIUS);
 
         // Each array position is at successive locations as x, y then z
 		pulsar_vertex_data[i*3] = temp.x;
@@ -276,7 +289,7 @@ void Starsphere::make_pulsars() {
     }
 
 /**
- * Super Novae Remenants (SNRs):
+ * Super Novae Remnants (SNRs):
  */
 void Starsphere::make_snrs() {
 	// Temporary array for vertex data, to populate a vertex buffer object.
@@ -286,7 +299,7 @@ void Starsphere::make_snrs() {
     // coordinates at the radius of the sphere.
 	for(int i = 0; i < NSNRs; ++i) {
 	    // Vector for a single position.
-		glm::vec3 temp = sphVertex3D(SNR_info[i][0], SNR_info[i][1], sphRadius);
+		glm::vec3 temp = sphVertex3D(SNR_info[i][0], SNR_info[i][1], SPHERE_RADIUS);
 
         // Each array position is at successive locations as x, y then z
 		snr_vertex_data[i*3] = temp.x;
@@ -344,8 +357,8 @@ void Starsphere::make_constellations() {
     // Note assess stars in pairs.
 	for(GLuint line = 0; line < m_constellation_lines; ++line) {
         // Vectors for each point at the ends of a constellation line.
-        glm::vec3 temp1 = sphVertex3D(star_info[line*2][0], star_info[line*2][1], sphRadius);
-        glm::vec3 temp2 = sphVertex3D(star_info[line*2+1][0], star_info[line*2+1][1], sphRadius);
+        glm::vec3 temp1 = sphVertex3D(star_info[line*2][0], star_info[line*2][1], SPHERE_RADIUS);
+        glm::vec3 temp2 = sphVertex3D(star_info[line*2+1][0], star_info[line*2+1][1], SPHERE_RADIUS);
 
         // The offset from either star.
         glm::vec3 diff = (temp2 - temp1) * offset;
@@ -796,8 +809,8 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
 		if(m_FontHeader == NULL) {
             m_FontHeader = TTF_OpenFontRW(SDL_RWFromConstMem(&m_FontResource->data()->at(0),
                                                              m_FontResource->data()->size()),
-                                          0,
-                                          13);
+            							  TTF_FREE_SOURCE,
+										  TTF_FONT_LOAD_HEADER_POINT_SIZE);
 
             if(m_FontHeader == NULL) {
                 std::stringstream font_header_error;
@@ -811,8 +824,8 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
         if(m_FontText == NULL) {
             m_FontText = TTF_OpenFontRW(SDL_RWFromConstMem(&m_FontResource->data()->at(0),
                                                            m_FontResource->data()->size()),
-                                        0,
-                                        11);
+            							TTF_FREE_SOURCE,
+										TTF_FONT_LOAD_TEXT_POINT_SIZE);
 
             if(m_FontText == NULL) {
                 std::stringstream font_text_error;
@@ -855,7 +868,7 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
 	glClearColor(0.0, 0.0, 0.0, 0.0);
 
 	// Enable depth buffering for 3D graphics
-	glClearDepth(1.0f);
+	glClearDepth(DEFAULT_CLEAR_DEPTH);
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
 
@@ -865,13 +878,13 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     // Default point size.
-    glPointSize(1.5f);
+    glPointSize(DEFAULT_POINT_SIZE);
     // However, currently point size in managed within vertex shaders using gl_PointSize.
     // Un-REM the following line to enable the above point size to apply.
     // glEnable(GL_PROGRAM_POINT_SIZE);
 
     // Default line width.
-    glLineWidth(2.0f);
+    glLineWidth(DEFAULT_LINE_WIDTH);
 
     // Some selected drawing quality choices.
     glEnable(GL_POINT_SMOOTH);							// Jaggy reduction, but this per primitve
@@ -960,7 +973,9 @@ void Starsphere::render(const double timeOfDay) {
 		m_axis = glm::vec3(1.0f, 0.0f, 0.0f);
 		}
 
-	m_view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -15.0f));
+
+
+	m_view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -viewpt_radius));
 
 	m_rotation = glm::rotate(m_rotation, 0.01f, m_axis);
 
@@ -1057,7 +1072,7 @@ void Starsphere::mouseMoveEvent(const int deltaX, const int deltaY,
     }
 
 void Starsphere::mouseWheelEvent(const int pos) {
-    // Currently no behaviours attached to mouse wheel events.
+	// zoomSphere(pos * VIEWPOINT_MOUSEWHEEL_ZOOM_RATE);
     }
 
 void Starsphere::keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey keyPressed) {
@@ -1118,11 +1133,11 @@ void Starsphere::rotateSphere(const int relativeRotation,
 
 void Starsphere::zoomSphere(const int relativeZoom) {
 	// zoom
-	viewpt_radius -= relativeZoom/10.0;
-	if (viewpt_radius > 15.0)
-		viewpt_radius = 15.0;
-	if (viewpt_radius < 0.5)
-		viewpt_radius = 0.5;
+	viewpt_radius -= relativeZoom/VIEWPOINT_ZOOM_RATE;
+	if (viewpt_radius > VIEWPOINT_MAX_ZOOM)
+		viewpt_radius = VIEWPOINT_MAX_ZOOM;
+	if (viewpt_radius < VIEWPOINT_MIN_ZOOM)
+		viewpt_radius = VIEWPOINT_MIN_ZOOM;
     }
 
 /**
