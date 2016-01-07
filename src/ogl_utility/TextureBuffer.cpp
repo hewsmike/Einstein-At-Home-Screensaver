@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2013 by Mike Hewson                                     *
+ *   Copyright (C) 2016 by Mike Hewson                                     *
  *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
@@ -20,6 +20,8 @@
 
 #include "TextureBuffer.h"
 
+const GLuint TextureBuffer::DEFAULT_MIPMAP_BASE_LEVEL(0);
+const GLuint TextureBuffer::DEFAULT_IMAGE_BORDER_WIDTH(0);
 const GLsizei TextureBuffer::MIN_TEX_WIDTH(2);
 const GLsizei TextureBuffer::MIN_TEX_HEIGHT(2);
 
@@ -80,6 +82,30 @@ TextureBuffer::~TextureBuffer() {
     Buffer::release();
     }
 
+void TextureBuffer::bind(void) {
+    glBindTexture(GL_TEXTURE_2D, this->ID());
+    }
+
+void TextureBuffer::unbind(void) {
+    glBindTexture(GL_TEXTURE_2D, OGL_ID::NO_ID);
+    }
+
+bool TextureBuffer::isBound(void) const {
+	// Assume failure.
+	bool ret_val = false;
+
+	// Discover which array buffer, if any, is bound to the OpenGL state.
+	GLuint temp;
+
+	glGetIntegerv(GL_ARRAY_BUFFER_BINDING, (GLint*) &temp);
+
+	if((this->ID() == temp) && (this->ID() != OGL_ID::NO_ID)) {
+		ret_val = true;
+		}
+
+	return ret_val;
+	}
+
 void TextureBuffer::acquire_ID(GLuint* handle) const {
 	glGenTextures(1, handle);
     }
@@ -89,18 +115,19 @@ void TextureBuffer::release_ID(GLuint* handle) const {
     }
 
 void TextureBuffer::loadBuffer(void) {
-    // Bind the texture ( of GL_TEXTURE_2D type ) to our identifier.
-	glBindTexture(GL_TEXTURE_2D, this->ID());
+    bind();
 
+    // The 'm_format' parameter appears twice in the following parameter
+    // list as we don't change/convert for this application.
     glTexImage2D(GL_TEXTURE_2D,
-                 0,                      // Mipmap level zero.
-                 m_format,               // Storage format.
-                 m_width,                // image width in texels.
-                 m_height,               // image height in texels.
-                 0,                      // No image border.
-                 m_format,               // Storage format.
-                 m_data_type,            // Binary data representation.
-                 this->data());          // The actual data.
+                 DEFAULT_MIPMAP_BASE_LEVEL,     // Mipmap level zero.
+                 m_format,                      // Storage format ( to be stored in state machine ) .
+                 m_width,                       // image width in texels.
+                 m_height,                      // image height in texels.
+                 DEFAULT_IMAGE_BORDER_WIDTH,    // Usually no image border.
+                 m_format,                      // Storage format ( from data source ).
+                 m_data_type,                   // Binary data representation.
+                 this->data());                 // The actual data.
 
     // Specify 'reasonable' values for simple 'decal' like application.
 
@@ -134,22 +161,5 @@ void TextureBuffer::loadBuffer(void) {
         }
 
     /// TODO - Use glHint here to specify quality ?
-    // Unbind the texture.
-    glBindTexture(GL_TEXTURE_2D, OGL_ID::NO_ID);
+    unbind();
     }
-
-bool TextureBuffer::isBound(void) const {
-	// Assume failure.
-	bool ret_val = false;
-
-	// Discover which array buffer, if any, is bound to the OpenGL state.
-	GLuint temp;
-
-	glGetIntegerv(GL_ARRAY_BUFFER_BINDING, (GLint*) &temp);
-
-	if((this->ID() == temp) && (this->ID() != OGL_ID::NO_ID)) {
-		ret_val = true;
-		}
-
-	return ret_val;
-	}

@@ -32,7 +32,8 @@
 
 /**
  * \brief This interface declares public methods to deal with OpenGL
- *        texture objects.
+ *        texture objects. The power-of-2 requirement for texture dimensions
+ *        is to force efficient runtime behaviour ( specifically mipmaps ).
  *
  * \see Buffer
  *
@@ -76,11 +77,29 @@ class TextureBuffer : public Buffer {
         virtual ~TextureBuffer();
 
         /**
-		 * \brief Query if the buffer is bound.
+		 * \brief Perform any binding to the OpenGL pipeline.
 		 */
-		bool isBound(void) const;
+        virtual void bind(void);
+
+		/**
+		 * \brief Remove any binding to the OpenGL pipeline.
+		 */
+		virtual void unbind(void);
+
+		/**
+		 * \brief The binding state of the underlying OpenGL buffer
+		 *        object to the OpenGL state machine. This MUST be a
+		 *        dynamic inquiry.
+		 *
+		 * \return a boolean indicating binding state :
+		 *          true - the object is bound
+		 *          false - the object is not bound
+		 */
+		virtual bool isBound(void) const;
 
     private :
+        static const GLuint DEFAULT_MIPMAP_BASE_LEVEL;
+        static const GLuint DEFAULT_IMAGE_BORDER_WIDTH;
         static const GLsizei MIN_TEX_WIDTH;
         static const GLsizei MIN_TEX_HEIGHT;
 
