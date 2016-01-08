@@ -136,6 +136,13 @@ class TextureBuffer : public Buffer {
          * \brief Populate the buffer with texture data.
          */
         virtual void loadBuffer(void);
+
+        /**
+         * \brief Determine if a candidate integer is a
+         *        strictly positive power of two. So in
+         *        particular is not 2^[0] = 1 ....
+         */
+        bool power_of_two(GLuint number);
     };
 
 /**
