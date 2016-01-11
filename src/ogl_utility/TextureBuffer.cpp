@@ -169,25 +169,25 @@ bool TextureBuffer::power_of_two(GLuint number) {
     bool retval = false;
 
     // Provided candidate is not odd.
-    if((number%2) == 0) {
-        while(true) {
-            // Divide by two.
-            number /= 2;
-            // Do I have a single '1' in the bitfield ?
-            if(number == 1) {
-                // Yes, it is a power of two and we are done.
-                retval = true;
-                break;
-                }
+    while((number%2) == 0) {
+        // Divide by two.
+        number /= 2;
 
-            // Is the bitfield all zeroes ?
-            if(number == 0) {
-                // Yes, it is not a power of two and we are done.
-                break;
-                }
-            // No definite answer yet, so go around again.
+        // Is the bitfield all zeroes ?
+        if(number == 0) {
+        	// Yes, it is not a power of two and we are done.
+            break;
             }
-        }
+
+        // Do I have a single '1' in the bitfield ?
+        if(number == 1) {
+        	// Yes, it is a power of two and we are done.
+            retval = true;
+            break;
+            }
+
+        // No definite answer yet, so go around again.
+    	}
 
     return retval;
     }
