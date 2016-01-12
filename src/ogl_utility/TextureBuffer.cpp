@@ -36,7 +36,13 @@ TextureBuffer::TextureBuffer(const GLvoid* texture_data,
                                 m_mipmaps(mipmaps) {
     // Ensure sufficient width.
     if(width >= TextureBuffer::MIN_TEX_WIDTH) {
-        m_width = width;
+        if(power_of_two(width)){
+            m_width = width;
+            }
+        else {
+            ErrorHandler::record("TextureBuffer::TextureBuffer() : Texel width not power of two.",
+                                 ErrorHandler::FATAL);
+            }
         }
     else {
         ErrorHandler::record("TextureBuffer::TextureBuffer() : Insufficient texel width.",
@@ -45,7 +51,13 @@ TextureBuffer::TextureBuffer(const GLvoid* texture_data,
 
     // Ensure sufficient height.
     if(height >= TextureBuffer::MIN_TEX_HEIGHT) {
-        m_height = height;
+        if(power_of_two(height)){
+            m_height = height;
+            }
+         else {
+            ErrorHandler::record("TextureBuffer::TextureBuffer() : Texel height not power of two.",
+                                 ErrorHandler::FATAL);
+            }
         }
     else {
         ErrorHandler::record("TextureBuffer::TextureBuffer() : Insufficient texel height.",
