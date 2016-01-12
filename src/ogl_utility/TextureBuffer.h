@@ -34,7 +34,7 @@
  * \brief This interface declares public methods to deal with OpenGL
  *        texture objects.
  *
- *        There are several restrictions compared with a full OpenGL texture
+ *        There are many restrictions compared with a full OpenGL texture
  * facility, for reasons of efficiency and simplicity.
  *        - no multitexturing, thus no explicit reference to any active texture
  *          unit ie. GL_TEXTURE0.
@@ -48,7 +48,9 @@
  *        - there are no image borders assumed.
  *        - if mipmaps are generated the default base level is the original
  *          scale.
- *        - filtering is set to NEAREST ( Manhattan distance )
+ *        - basic filtering is set to NEAREST ( Manhattan distance ).
+ *        - anisotropic filtering not handled.
+ *        - texture compression not handled.
  *
  * \see Buffer
  *
