@@ -23,7 +23,6 @@
 
 #include "ogl_utility.h"
 
-#include <map>
 #include <string>
 
 #include "AttributeInputAdapter.h"
@@ -41,9 +40,9 @@
  */
 
 /**
- * \brief This interface declares public methods to deal with an entire rendering task,
- *        that being a specific collection of ogl_utility objects to render an entire vertex
- *        buffer data set.
+ * \brief This interface declares public methods to deal with an entire rendering task.
+ *        That being a specific collection of ogl_utility objects to render an entire vertex
+ *        buffer data set, with or without indexing.
  *
  *        The minimum to be provided is :
  *          - GLSL source code for both vertex and fragment shaders
@@ -51,8 +50,9 @@
  *          - a specification for a VertexBuffer object.
  *
  *        General usage :
- *          - construct instance with desired level of specification ( minimum as above )
- *          -
+ *          - construct instance with above minimum provisions.
+ *          - set any attribute specifications for vertex input.
+ *			- set any uniform variable loading points in client code.
  *
  * \see AttributeInputAdapter
  * \see FragmentShader
@@ -135,7 +135,6 @@ class RenderTask {
         void acquire(void);
 
     private:
-
         AttributeInputAdapter* m_attrib_adapt;
         FragmentShader* m_frag_shader;
         IndexBuffer* m_index_buffer;

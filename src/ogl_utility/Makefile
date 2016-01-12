@@ -44,6 +44,7 @@ OBJS += OGL_ID.o
 OBJS += Pipeline.o
 OBJS += Program.o
 OBJS += RenderTask.o
+OBJS += RenderTaskTexture.o
 OBJS += Shader.o
 OBJS += TextureBuffer.o
 OBJS += VertexBuffer.o
@@ -93,6 +94,9 @@ Program.o: $(DEPS) $(UTILITY_SRC)/Program.cpp $(UTILITY_SRC)/Program.h
 
 RenderTask.o: $(DEPS) $(UTILITY_SRC)/RenderTask.cpp $(UTILITY_SRC)/RenderTask.h
 	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/RenderTask.cpp
+
+RenderTaskTexture.o: $(DEPS) $(UTILITY_SRC)/RenderTaskTexture.cpp $(UTILITY_SRC)/RenderTaskTexture.h
+	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/RenderTaskTexture.cpp
 
 Shader.o: $(DEPS) $(UTILITY_SRC)/Shader.cpp $(UTILITY_SRC)/Shader.h
 	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/Shader.cpp
