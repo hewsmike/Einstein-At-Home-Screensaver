@@ -31,8 +31,12 @@ TextureBuffer::TextureBuffer(const GLvoid* texture_data,
                              GLsizei height,
                              GLenum format,
                              GLenum data_type,
+							 GLenum wrap_type_s,
+							 GLenum wrap_type_t,
                              bool mipmaps) :
                                 Buffer(texture_data, bytes),
+								m_wrap_type_s(wrap_type_s),
+								m_wrap_type_t(wrap_type_t),
                                 m_mipmaps(mipmaps) {
     // Ensure sufficient width.
     if(width >= TextureBuffer::MIN_TEX_WIDTH) {
@@ -143,13 +147,11 @@ void TextureBuffer::loadBuffer(void) {
 
     // Specify 'reasonable' values for simple 'decal' like application.
 
-    /// TODO - should we parameterise through the interface here ?
-    // 'S' is the 'horizontal' texture coordinate direction. GL_REPEAT
-    // chosen to cope with globes ie. the longitude = 0 modulus.
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    // 'S' is the 'horizontal' texture coordinate direction.
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, m_wrap_type_s);
 
     // 'T' is the 'vertical' texture coordinate direction.
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, m_wrap_type_t);
 
     // How it maps when texels and fragments/pixels areas don't match
     // when we do minification and magnification. That partly depends upon

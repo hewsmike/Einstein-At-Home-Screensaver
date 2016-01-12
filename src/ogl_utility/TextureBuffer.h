@@ -48,6 +48,7 @@
  *        - there are no image borders assumed.
  *        - if mipmaps are generated the default base level is the original
  *          scale.
+ *        - texture wrap is either GL_CLAMP or GL_REPEAT
  *
  * \see Buffer
  *
@@ -75,6 +76,16 @@ class TextureBuffer : public Buffer {
          *                      GL_UNSIGNED_SHORT_5_6_5
          *                      GL_UNSIGNED_SHORT_4_4_4_4
          *                      GL_UNSIGNED_SHORT_5_5_5_1
+         * \param wrap_type_s : one of the following allowed enumerants
+         *                      GL_REPEAT
+         *                      GL_CLAMP
+         *                      GL_CLAMP_TO_EDGE
+         *                      GL_CLAMP_TO_BORDER
+         * \param wrap_type_t : one of the following allowed enumerants
+         *                      GL_REPEAT
+         *                      GL_CLAMP
+         *                      GL_CLAMP_TO_EDGE
+         *                      GL_CLAMP_TO_BORDER
          * \param mipmaps : if true, all mipmaps generated down to 1 x 1
          */
         TextureBuffer(const GLvoid* texture_data,
@@ -83,6 +94,8 @@ class TextureBuffer : public Buffer {
                       GLsizei height,
                       GLenum format,
                       GLenum data_type,
+					  GLenum wrap_type_s,
+					  GLenum wrap_type_t,
                       bool mipmaps = true);
 
         /**
@@ -141,6 +154,12 @@ class TextureBuffer : public Buffer {
 
         /// The binary representation of the data.
         GLenum m_data_type;
+
+        /// The wrapping mode along the texture horizontal axis.
+        GLenum m_wrap_type_s;
+
+        /// The wrapping mode along the texture vertical axis.
+        GLenum m_wrap_type_t;
 
         /// Whether or not mipmaps are to be generated.
         bool m_mipmaps;
