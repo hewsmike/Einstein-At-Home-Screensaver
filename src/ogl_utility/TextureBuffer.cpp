@@ -35,8 +35,6 @@ TextureBuffer::TextureBuffer(const GLvoid* texture_data,
 							 GLenum wrap_type_t,
                              bool mipmaps) :
                                 Buffer(texture_data, bytes),
-								m_wrap_type_s(wrap_type_s),
-								m_wrap_type_t(wrap_type_t),
                                 m_mipmaps(mipmaps) {
     // Ensure sufficient width.
     if(width >= TextureBuffer::MIN_TEX_WIDTH) {
@@ -68,7 +66,7 @@ TextureBuffer::TextureBuffer(const GLvoid* texture_data,
                              ErrorHandler::FATAL);
         }
 
-    // Ensure compliance with OpenGL ES 2.x acceptable parameter types.
+    // Ensure compliance with acceptable parameter types for color format.
     if((format == GL_ALPHA) ||
        (format == GL_LUMINANCE) ||
        (format == GL_LUMINANCE_ALPHA) ||
@@ -81,7 +79,7 @@ TextureBuffer::TextureBuffer(const GLvoid* texture_data,
                              ErrorHandler::FATAL);
         }
 
-    // Ensure compliance with OpenGL ES 2.x acceptable parameter types.
+    // Ensure compliance with acceptable parameter types for data binary representation.
     if((data_type == GL_UNSIGNED_BYTE) ||
        (data_type == GL_UNSIGNED_SHORT_5_6_5) ||
        (data_type == GL_UNSIGNED_SHORT_4_4_4_4) ||
@@ -92,6 +90,30 @@ TextureBuffer::TextureBuffer(const GLvoid* texture_data,
         ErrorHandler::record("TextureBuffer::TextureBuffer() : Bad data type provided.",
                              ErrorHandler::FATAL);
         }
+
+    // Ensure compliance with acceptable parameter types for horizontal texture coordinate wrapping.
+        if((m_wrap_type_s == GL_REPEAT) ||
+           (m_wrap_type_s == GL_CLAMP) ||
+           (m_wrap_type_s == GL_CLAMP_TO_EDGE) ||
+           (m_wrap_type_s == GL_CLAMP_TO_BORDER)) {
+            m_wrap_type_s = wrap_type_s;
+            }
+        else {
+            ErrorHandler::record("TextureBuffer::TextureBuffer() : Bad horizontal wrap type provided.",
+                                 ErrorHandler::FATAL);
+            }
+
+        // Ensure compliance with acceptable parameter types for vertical texture coordinate wrapping.
+        if((m_wrap_type_t == GL_REPEAT) ||
+           (m_wrap_type_t == GL_CLAMP) ||
+           (m_wrap_type_t == GL_CLAMP_TO_EDGE) ||
+           (m_wrap_type_t == GL_CLAMP_TO_BORDER)) {
+            m_wrap_type_t = wrap_type_t;
+            }
+        else {
+        	ErrorHandler::record("TextureBuffer::TextureBuffer() : Bad vertical wrap type provided.",
+                                 ErrorHandler::FATAL);
+            }
     }
 
 TextureBuffer::~TextureBuffer() {

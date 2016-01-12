@@ -48,7 +48,7 @@
  *        - there are no image borders assumed.
  *        - if mipmaps are generated the default base level is the original
  *          scale.
- *        - texture wrap is either GL_CLAMP or GL_REPEAT
+ *        - filtering is set to NEAREST ( Manhattan distance )
  *
  * \see Buffer
  *
