@@ -32,8 +32,22 @@
 
 /**
  * \brief This interface declares public methods to deal with OpenGL
- *        texture objects. The power-of-2 requirement for texture dimensions
- *        is to force efficient runtime behaviour ( specifically mipmaps ).
+ *        texture objects.
+ *
+ *        There are several restrictions compared with a full OpenGL texture
+ * facility, for reasons of efficiency and simplicity.
+ *        - no multitexturing, thus no explicit reference to any active texture
+ *          unit ie. GL_TEXTURE0.
+ *        - texture data is provided by pointer only eg. no file sources.
+ *        - minimum texure dimensions is 2 x 2.
+ *        - the power-of-2 requirement for texture dimensions is to force
+ *          efficient runtime behaviour ( specifically mipmaps ).
+ *        - the target is GL_TEXTURE_2D ie. planar surface mapping.
+ *        - no change is made to internal formats on loading ie. the state
+ *          machine storage format is whatever the data source has.
+ *        - there are no image borders assumed.
+ *        - if mipmaps are generated the default base level is the original
+ *          scale.
  *
  * \see Buffer
  *
@@ -61,7 +75,7 @@ class TextureBuffer : public Buffer {
          *                      GL_UNSIGNED_SHORT_5_6_5
          *                      GL_UNSIGNED_SHORT_4_4_4_4
          *                      GL_UNSIGNED_SHORT_5_5_5_1
-         * \param mipmaps : if true, all mipmaps generated down to 1x1
+         * \param mipmaps : if true, all mipmaps generated down to 1 x 1
          */
         TextureBuffer(const GLvoid* texture_data,
         			  GLuint bytes,
@@ -96,6 +110,19 @@ class TextureBuffer : public Buffer {
 		 *          false - the object is not bound
 		 */
 		virtual bool isBound(void) const;
+
+        /**
+         * \brief Determine if a candidate integer is a
+         *        strictly positive power of two. So in
+         *        particular is not 2^[0] = 1 ....
+         *
+         * \param number : the unsigned integer to test.
+         *
+         * \return a boolean indicating the result :
+         *          true - the number is a strictly positive power of two
+         *          false - otherwise
+         */
+        static bool power_of_two(GLuint number);
 
     private :
         static const GLuint DEFAULT_MIPMAP_BASE_LEVEL;
@@ -136,13 +163,6 @@ class TextureBuffer : public Buffer {
          * \brief Populate the buffer with texture data.
          */
         virtual void loadBuffer(void);
-
-        /**
-         * \brief Determine if a candidate integer is a
-         *        strictly positive power of two. So in
-         *        particular is not 2^[0] = 1 ....
-         */
-        bool power_of_two(GLuint number);
     };
 
 /**
