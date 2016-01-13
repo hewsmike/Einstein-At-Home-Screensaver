@@ -39,6 +39,7 @@
  *    It's a generic wrapper, with further typing/behaviour being managed in
  * detail in derived classes.
  *
+ * \see Bound
  * \see IndexBuffer
  * \see OGL_ID
  * \see TextureBuffer
