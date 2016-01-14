@@ -32,10 +32,10 @@
  */
 
 /**
- * \brief This interface declares public methods to deal with an entire rendering task
- * 		  that involves a texture.
- *        That being a specific collection of ogl_utility objects to render an entire vertex
- *        buffer data set, with or without indexing.
+ * \brief This interface declares public methods to deal with an entire rendering
+ *        task that involves a texture. That also being a specific collection of
+ *        ogl_utility objects to render an entire vertex buffer data set, with or
+ *        without indexing.
  *
  *        The minimum to be provided is :
  *          - requirements for a RenderTask.
