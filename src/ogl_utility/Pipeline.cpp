@@ -49,10 +49,8 @@ void Pipeline::utilise(GLenum primitive, GLsizei count) {
         }
 
     // If you have a texture, but it is not acquired, then do so.
-    if(m_texture_buffer != NULL) {
-        if(!m_texture_buffer.isAcquired()) {
-            m_texture_buffer.acquire();
-            }
+    if((m_texture_buffer != NULL) && (!m_texture_buffer.isAcquired())) {
+        m_texture_buffer.acquire();
         }
 
     // Only if the program was successfully linked.
