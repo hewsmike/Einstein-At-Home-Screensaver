@@ -171,14 +171,14 @@ class TextureBuffer : public Buffer {
          *
          * \param handle : pointer to a handle.
          */
-        virtual void acquire_ID(GLuint* handle) const;
+        virtual void acquire_ID(GLuint* handle);
 
         /**
          * \brief Release to pool the OpenGL handle for the texture.
          *
          * \param handle : pointer to a handle.
          */
-        virtual void release_ID(GLuint* handle) const;
+        virtual void release_ID(GLuint* handle);
 
         /**
          * \brief Populate the buffer with texture data.

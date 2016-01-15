@@ -121,8 +121,18 @@ class Buffer : public OGL_ID, public Bound {
          */
         virtual void loadBuffer(void) const = 0;
 
+        /**
+         * \brief Get an OpenGL handle for the texture.
+         *
+         * \param handle : pointer to a handle.
+         */
         virtual void acquire_ID(GLuint* handle) = 0;
 
+        /**
+         * \brief Release to pool the OpenGL handle for the texture.
+         *
+         * \param handle : pointer to a handle.
+         */
         virtual void release_ID(GLuint* handle) = 0;
     };
 
