@@ -40,8 +40,6 @@
  * \brief This interface declares public methods to deal with OpenGL
  *        program objects. It's a wrapper.
  *
- * TODO : currently only enacting one each of vertex and fragment shaders. Extend ??
- *
  * \see OGL_ID
  * \see FragmentShader
  * \see VertexShader
@@ -144,7 +142,6 @@ class Program : public OGL_ID {
         void setUniformLoadPoint(std::string u_name, GLvoid* source);
 
     private:
-
         // Data structure containing the relevant parameters for
         // a uniform variable.
         struct uniform_data {

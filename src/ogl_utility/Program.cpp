@@ -25,10 +25,25 @@
 
 Program::Program(VertexShader* vertex_shader,
                  FragmentShader* fragment_shader,
-				 AttributeInputAdapter* adapter) :
-                    m_vertex_shader(vertex_shader),
-                    m_fragment_shader(fragment_shader),
-					m_adapter(adapter){
+				 AttributeInputAdapter* adapter) {
+	// Check VertexShader pointer validity.
+	if(vertex_shader == NULL) {
+        ErrorHandler::record("Program::Program() : No vertex shader provided.", FATAL);
+        }
+    m_vertex_shader = vertex_shader;
+
+    // Check FragmentShader pointer validity.
+	if(fragment_shader == NULL) {
+        ErrorHandler::record("Program::Program() : No fragment shader provided.", FATAL);
+        }
+    m_fragment_shader = fragment_shader;
+
+	// Check AttributeInputAdapter pointer validity.
+	if(adapter == NULL) {
+        ErrorHandler::record("Program::Program() : No attribute adapter provided.", FATAL);
+        }
+    m_adapter = adapter;
+
     // Initially unlinked.
     link_status = Program::NEVER_LINKED;
     }
@@ -288,6 +303,7 @@ bool Program::loadUniform(Program::uniform_data current) {
 	// Assume success.
 	bool ret_val = true;
 
+    // NB Specific cases to be added as needed in future.
 	switch(current.m_type) {
 		case GL_FLOAT:
 			glUniform1f(current.m_location, *(static_cast<const GLfloat*>(current.m_load_point)));
@@ -308,7 +324,9 @@ bool Program::loadUniform(Program::uniform_data current) {
 	}
 
 std::string Program::checkUniform(GLenum type) {
-	std::string ret_val("");
+    std::string ret_val("");
+
+	// Somewhat over-killed here, but covers all possible OpenGL v3.3 types.
 	switch(type) {
 		case GL_FLOAT:
 			ret_val = "GL_FLOAT";
