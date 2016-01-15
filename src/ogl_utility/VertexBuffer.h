@@ -79,22 +79,6 @@ class VertexBuffer : public Buffer {
         virtual ~VertexBuffer();
 
         /**
-		 * \brief Obtains the underlying OpenGL buffer object resources
-		 *        from the OpenGL state machine.
-		 *
-		 * \return a boolean indicating success of acquisition
-		 *              true - resources acquired without error
-		 *              false - resources were not acquired
-		 */
-        virtual bool acquire(void);
-
-        /**
-         * \brief Releases the underlying OpenGL buffer object resources
-         *        from the OpenGL state machine.
-         */
-        virtual void release(void);
-
-        /**
          * \brief Perform any binding to the OpenGL pipeline.
          */
         virtual void bind(void);
@@ -144,6 +128,10 @@ class VertexBuffer : public Buffer {
          * \brief Populate the buffer with vertex data.
          */
         virtual void loadBuffer(void) const;
+
+        virtual void acquire_ID(GLuint* handle);
+
+        virtual void release_ID(GLuint* handle);
     };
 
 /**

@@ -52,37 +52,12 @@ VertexBuffer::~VertexBuffer() {
     this->release();
     }
 
-bool VertexBuffer::acquire(void) {
-	// Only acquire if not already so.
-	if(this->isAcquired() == false) {
-		// Get a handle from the state machine.
-		GLuint handle;
-		glGenBuffers(1, &handle);
-		// Remember the value for later.
-		OGL_ID::set_ID(handle);
+bool VertexBuffer::acquire_ID(GLuint* handle) {
+	glGenBuffers(1, &handle);
+	}
 
-		// Copy the data from client side to be stored in the state
-		// machine object.
-		loadBuffer();
-
-		// Record resources as acquired.
-		Buffer::setAcquisitionState(true);
-    	}
-
-	/// TODO Oddly we can't determine if the above worked via straight forward API calls.
-	return true;
-    }
-
-void VertexBuffer::release(void) {
-	// Only release if already acquired.
-	if(this->isAcquired() == true) {
-		GLuint handle = this->ID();
-		glDeleteBuffers(1, &handle);
-		// Reset to the null case.
-		OGL_ID::set_ID(OGL_ID::NO_ID);
-		// Mark as not acquired.
-		Buffer::setAcquisitionState(false);
-		}
+void VertexBuffer::release_ID(GLuint* handle) {
+	glDeleteBuffers(1, handle);
 	}
 
 GLuint VertexBuffer::vertexCount(void) const {

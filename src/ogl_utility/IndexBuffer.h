@@ -74,22 +74,6 @@ class IndexBuffer : public Buffer {
         virtual ~IndexBuffer();
 
         /**
-		 * \brief Obtains the underlying OpenGL buffer object resources
-		 *        from the OpenGL state machine.
-		 *
-		 * \return a boolean indicating success of acquisition
-		 *              true - resources acquired without error
-		 *              false - resources were not acquired
-		 */
-		virtual bool acquire(void);
-
-		/**
-		 * \brief Releases the underlying OpenGL buffer object resources
-		 *        from the OpenGL state machine.
-		 */
-		virtual void release(void);
-
-        /**
          * \brief Perform any data binding to the pipeline input.
          */
         void bind(void);
@@ -123,6 +107,10 @@ class IndexBuffer : public Buffer {
          * \brief Populate the buffer with index data.
          */
         virtual void loadBuffer(void) const;
+
+        virtual void acquire_ID(GLuint* handle);
+
+        virtual void release_ID(GLuint* handle);
     };
 
 /**

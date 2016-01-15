@@ -120,6 +120,18 @@ TextureBuffer::~TextureBuffer() {
     Buffer::release();
     }
 
+bool TexureBuffer::acquire_ID(GLUint* handle) {
+	glGenTextures(1, &handle);
+	}
+
+void TextureBuffer::release_ID(GLUint* handle) {
+	glDeleteTextures(1, &handle);
+	}
+
+GLuint TextureBuffer::vertexCount(void) const {
+    return m_vertex_count;
+    }
+
 void TextureBuffer::bind(void) {
     glBindTexture(GL_TEXTURE_2D, this->ID());
     }
@@ -143,14 +155,6 @@ bool TextureBuffer::isBound(void) const {
 
 	return ret_val;
 	}
-
-void TextureBuffer::acquire_ID(GLuint* handle) const {
-	glGenTextures(1, handle);
-    }
-
-void TextureBuffer::release_ID(GLuint* handle) const {
-	glDeleteTextures(1, handle);
-    }
 
 void TextureBuffer::loadBuffer(void) {
     bind();

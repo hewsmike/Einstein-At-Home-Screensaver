@@ -70,6 +70,23 @@ class Buffer : public OGL_ID, public Bound {
         virtual ~Buffer();
 
         /**
+		 * \brief Obtains the underlying OpenGL buffer object resources
+		 *        from the OpenGL state machine.
+		 *
+		 * \return a boolean indicating success of acquisition
+		 *              true - resources acquired without error
+		 *              false - resources were not acquired
+		 */
+		bool acquire(void);
+
+		/**
+		 * \brief Releases the underlying OpenGL buffer object resources
+		 *        from the OpenGL state machine.
+		 */
+		void release(void);
+
+
+        /**
 		 * \brief The number of bytes stored within the buffer.
 		 *
 		 * \return The size of the buffer in bytes.
@@ -91,7 +108,6 @@ class Buffer : public OGL_ID, public Bound {
         const GLvoid* data(void) const;
 
     private:
-
         /// The number of bytes to be allocated to the buffer.
         GLuint m_size;
 
@@ -104,6 +120,10 @@ class Buffer : public OGL_ID, public Bound {
          *        client side pointer is required.
          */
         virtual void loadBuffer(void) const = 0;
+
+        virtual void acquire_ID(GLuint* handle) = 0;
+
+        virtual void release_ID(GLuint* handle) = 0;
     };
 
 /**
