@@ -115,7 +115,6 @@ class OGL_ID {
 
         /// Flag indicating if OpenGL resources have been acquired.
         bool m_acquire_flag;
-
     };
 
 /**

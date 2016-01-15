@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2014 by Mike Hewson                                     *
+ *   Copyright (C) 2016 by Mike Hewson                                     *
  *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
@@ -24,6 +24,7 @@
 #include "ogl_utility.h"
 
 #include "Program.h"
+#include "TextureBuffer.h"
 #include "VertexFetch.h"
 
 /**
@@ -34,9 +35,11 @@
 /**
  * \brief This interface declares public methods to deal with Pipeline
  *        objects. This encompasses a given pipeline state ie. a specified
- *        OpenGL program with it's vertex fetch capability.
+ *        OpenGL program with it's vertex fetch capability, and possibly
+ *        a texture.
  *
  * \see Program
+ * \see TextureBuffer
  * \see VertexFetch
  *
  * \author Mike Hewson\n
@@ -47,10 +50,14 @@ class Pipeline {
         /**
          * \brief Constructor.
          *
-         * \param program : reference to an existing Program object.
-         * \param vertex_fetch : reference to an existing VertexFetch object or derivative.
+         * \param program : pointer to an existing Program object.
+         * \param vertex_fetch : pointer to an existing VertexFetch object.
+         * \param texture : pointer to an existing TextureBuffer object, which
+         *                  may be NULL ( default ) if no texturing is desired.
          */
-        Pipeline(Program& program, VertexFetch& vertex_fetch);
+        Pipeline(Program* program,
+                 VertexFetch* vertex_fetch,
+                 TextureBuffer* texture = NULL);
 
         /**
          * \brief Destructor.
@@ -76,10 +83,13 @@ class Pipeline {
 
     private:
         /// The Program reference.
-        Program& m_program;
+        Program* m_program;
 
         /// The VertexFetch reference.
-        VertexFetch& m_vertex_fetch;
+        VertexFetch* m_vertex_fetch;
+
+        /// The TextureBuffer reference.
+        TextureBuffer* m_texture_buffer;
     };
 
 /**
