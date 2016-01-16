@@ -47,7 +47,7 @@ RenderTask::RenderTask(RenderTask::shader_group s_group,
 
     m_vertex_fetch_attributes = new VertexFetchAttributes(m_attrib_adapt, m_vertex_buffer, m_index_buffer);
 
-    m_pipeline = new Pipeline(*m_program, *m_vertex_fetch_attributes);
+    m_pipeline = new Pipeline(m_program, m_vertex_fetch_attributes);
     }
 
 RenderTask::~RenderTask() {

@@ -107,8 +107,9 @@ retrieve_boinc() {
 
         log "Retrieving BOINC (tag: $1) (this WILL take a while)..."
         cd $ROOT/retrieval || failure
-        git clone git://github.com/BOINC/boinc.git boinc >> $LOGFILE 2>&1 || failure
-        # git clone git://git.aei.uni-hannover.de/shared/einsteinathome/boinc.git boinc >> $LOGFILE 2>&1 || failure
+        # git clone git://github.com/BOINC/boinc.git boinc >> $LOGFILE 2>&1 || failure
+        log "Direct git clone from AEI."
+        git clone git://git.aei.uni-hannover.de/shared/einsteinathome/boinc.git boinc >> $LOGFILE 2>&1 || failure
         cd $ROOT/retrieval/boinc || failure
         git checkout $1 >> $LOGFILE  2>&1 || failure
     fi
@@ -414,7 +415,7 @@ prepare_directories() {
 
     # For common source retrieval only update
     # ( replace if newer, copy if non-existent )
-    cp -rfu $ROOT/retrieval/* $ROOT/$1/3rdparty
+    cp --preserve -rfu $ROOT/retrieval/* $ROOT/$1/3rdparty
     
     # Populate with latest developer ( ie. YOU ) source code.
     rm -rf $ROOT/$1/src

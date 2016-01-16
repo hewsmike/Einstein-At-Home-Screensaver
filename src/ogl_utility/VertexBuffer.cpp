@@ -52,8 +52,8 @@ VertexBuffer::~VertexBuffer() {
     this->release();
     }
 
-bool VertexBuffer::acquire_ID(GLuint* handle) {
-	glGenBuffers(1, &handle);
+void VertexBuffer::acquire_ID(GLuint* handle) {
+	glGenBuffers(1, handle);
 	}
 
 void VertexBuffer::release_ID(GLuint* handle) {

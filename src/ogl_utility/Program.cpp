@@ -28,19 +28,19 @@ Program::Program(VertexShader* vertex_shader,
 				 AttributeInputAdapter* adapter) {
 	// Check VertexShader pointer validity.
 	if(vertex_shader == NULL) {
-        ErrorHandler::record("Program::Program() : No vertex shader provided.", FATAL);
+        ErrorHandler::record("Program::Program() : No vertex shader provided.", ErrorHandler::FATAL);
         }
     m_vertex_shader = vertex_shader;
 
     // Check FragmentShader pointer validity.
 	if(fragment_shader == NULL) {
-        ErrorHandler::record("Program::Program() : No fragment shader provided.", FATAL);
+        ErrorHandler::record("Program::Program() : No fragment shader provided.", ErrorHandler::FATAL);
         }
     m_fragment_shader = fragment_shader;
 
 	// Check AttributeInputAdapter pointer validity.
 	if(adapter == NULL) {
-        ErrorHandler::record("Program::Program() : No attribute adapter provided.", FATAL);
+        ErrorHandler::record("Program::Program() : No attribute adapter provided.", ErrorHandler::FATAL);
         }
     m_adapter = adapter;
 

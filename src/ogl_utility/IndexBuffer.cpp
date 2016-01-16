@@ -65,11 +65,11 @@ IndexBuffer::~IndexBuffer() {
     this->release();
     }
 
-void IndexBuffer::acquire_ID(GLuint handle) {
+void IndexBuffer::acquire_ID(GLuint* handle) {
 	glGenBuffers(1, handle);
 	}
 
-void IndexBuffer::release_ID(GLuint handle) {
+void IndexBuffer::release_ID(GLuint* handle) {
 	glDeleteBuffers(1, handle);
 	}
 
