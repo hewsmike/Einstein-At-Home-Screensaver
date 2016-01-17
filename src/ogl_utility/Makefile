@@ -49,7 +49,6 @@ OBJS += TextureBuffer.o
 OBJS += TexturedParallelogram.o
 OBJS += VertexBuffer.o
 OBJS += VertexFetch.o
-OBJS += VertexFetchAttributes.o
 OBJS += VertexShader.o
 
 # primary role based tagets
@@ -65,59 +64,12 @@ debug: CPPFLAGS += -pg -ggdb3 -O0 -Wall -Wno-switch-enum
 release: CPPFLAGS += -DNDEBUG -ggdb3 -O3 -Wall -Wno-switch-enum
 
 # file based targets
-liboglutility.a: $(OBJS)
-	ar rcs liboglutility.a $(OBJS)	
+liboglutility.a: $(DEPS) $(OBJS)
+	ar rcs liboglutility.a $(OBJS)
 
-AttributeInputAdapter.o: $(DEPS) $(UTILITY_SRC)/AttributeInputAdapter.cpp $(UTILITY_SRC)/AttributeInputAdapter.h
-	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/AttributeInputAdapter.cpp	
-
-Bound.o: $(DEPS) $(UTILITY_SRC)/Bound.cpp $(UTILITY_SRC)/Bound.h
-	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/Bound.cpp
-
-Buffer.o: $(DEPS) $(UTILITY_SRC)/Buffer.cpp $(UTILITY_SRC)/Buffer.h
-	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/Buffer.cpp
-
-FragmentShader.o: $(DEPS) $(UTILITY_SRC)/FragmentShader.cpp $(UTILITY_SRC)/FragmentShader.h
-	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/FragmentShader.cpp
-
-IndexBuffer.o: $(DEPS) $(UTILITY_SRC)/IndexBuffer.cpp $(UTILITY_SRC)/IndexBuffer.h
-	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/IndexBuffer.cpp
-
-OGL_ID.o: $(DEPS) $(UTILITY_SRC)/OGL_ID.cpp $(UTILITY_SRC)/OGL_ID.h
-	$(CXX) -g $(CPPFLAGS) -c $(UTILITY_SRC)/OGL_ID.cpp
-
-Pipeline.o: $(DEPS) $(UTILITY_SRC)/Pipeline.cpp $(UTILITY_SRC)/Pipeline.h
-	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/Pipeline.cpp
-
-Program.o: $(DEPS) $(UTILITY_SRC)/Program.cpp $(UTILITY_SRC)/Program.h
-	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/Program.cpp
-
-RenderTask.o: $(DEPS) $(UTILITY_SRC)/RenderTask.cpp $(UTILITY_SRC)/RenderTask.h
-	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/RenderTask.cpp
-
-Shader.o: $(DEPS) $(UTILITY_SRC)/Shader.cpp $(UTILITY_SRC)/Shader.h
-	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/Shader.cpp
-
-Texture.o: $(DEPS) $(UTILITY_SRC)/Texture.cpp $(UTILITY_SRC)/Texture.h
-	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/Texture.cpp
-
-TextureBuffer.o: $(DEPS) $(UTILITY_SRC)/TextureBuffer.cpp $(UTILITY_SRC)/TextureBuffer.h
-	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/TextureBuffer.cpp
-
-TexturedParallelogram.o: $(DEPS) $(UTILITY_SRC)/TexturedParallelogram.cpp $(UTILITY_SRC)/TexturedParallelogram.h
-	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/TexturedParallelogram.cpp
-
-VertexBuffer.o: $(DEPS) $(UTILITY_SRC)/VertexBuffer.cpp $(UTILITY_SRC)/VertexBuffer.h
-	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/VertexBuffer.cpp	
-
-VertexFetch.o: $(DEPS) $(UTILITY_SRC)/VertexFetch.cpp $(UTILITY_SRC)/VertexFetch.h
-	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/VertexFetch.cpp
-	
-VertexFetchAttributes.o: $(DEPS) $(UTILITY_SRC)/VertexFetchAttributes.cpp $(UTILITY_SRC)/VertexFetchAttributes.h
-	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/VertexFetchAttributes.cpp	
-
-VertexShader.o: $(DEPS) $(UTILITY_SRC)/VertexShader.cpp $(UTILITY_SRC)/VertexShader.h
-	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/VertexShader.cpp
+# pattern rule for object files
+%.o: $(UTILITY_SRC)/%.cpp $(UTILITY_SRC)/%.h
+	$(CXX) -g ${CPPFLAGS} -c $< -o $@
 
 # tools
 install:
