@@ -46,6 +46,7 @@ OBJS += Program.o
 OBJS += RenderTask.o
 OBJS += Shader.o
 OBJS += TextureBuffer.o
+OBJS += TexturedParallelogram.o
 OBJS += VertexBuffer.o
 OBJS += VertexFetch.o
 OBJS += VertexFetchAttributes.o
@@ -102,6 +103,9 @@ Texture.o: $(DEPS) $(UTILITY_SRC)/Texture.cpp $(UTILITY_SRC)/Texture.h
 
 TextureBuffer.o: $(DEPS) $(UTILITY_SRC)/TextureBuffer.cpp $(UTILITY_SRC)/TextureBuffer.h
 	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/TextureBuffer.cpp
+
+TexturedParallelogram.o: $(DEPS) $(UTILITY_SRC)/TexturedParallelogram.cpp $(UTILITY_SRC)/TexturedParallelogram.h
+	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/TexturedParallelogram.cpp
 
 VertexBuffer.o: $(DEPS) $(UTILITY_SRC)/VertexBuffer.cpp $(UTILITY_SRC)/VertexBuffer.h
 	$(CXX) -g ${CPPFLAGS} -c $(UTILITY_SRC)/VertexBuffer.cpp	
