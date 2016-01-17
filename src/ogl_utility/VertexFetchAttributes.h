@@ -40,19 +40,6 @@
  *        OpenGL pipeline vertex fetch functionality ie.
  *        this wraps Vertex Array Objects (VAO's).
  *
- *  Common use cases of constructor :
- *        (1) VertexFetch() - vertex and index buffers set to NULL, index type
- *                        set but not used/relevant. Use if a vertex shader will
- *                        provide vertex attributes.
- *        (2) VertexFetch(NON-NULL) - vertex buffer set to the given NON-NULL
- *                                    address, index buffer set to NULL. Use if
- *                                    geometry is straightforward.
- *        (3) VertexFetch(NON-NULLA, NON-NULLB) - vertex buffer set to the
- *                                                given NON-NULLA address, index
- *                                                buffer set to the given
- *                                                NON-NULLB address. Use if a
- *                                                complex geometry needs a
- *                                                selection of vertices.
  *
  * \see Buffer
  *

@@ -973,8 +973,6 @@ void Starsphere::render(const double timeOfDay) {
 		m_axis = glm::vec3(1.0f, 0.0f, 0.0f);
 		}
 
-
-
 	m_view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -viewpt_radius));
 
 	m_rotation = glm::rotate(m_rotation, 0.01f, m_axis);
