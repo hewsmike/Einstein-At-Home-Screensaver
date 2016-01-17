@@ -31,23 +31,28 @@ RenderTask::RenderTask(RenderTask::shader_group s_group,
     m_attrib_adapt = new AttributeInputAdapter();
     m_program = new Program(m_vertex_shader, m_frag_shader, m_attrib_adapt);
 
-    m_vertex_buffer = new VertexBuffer(v_group.buffer_data, v_group.bytes, v_group.vertices, v_group.usage, v_group.mix);
-    m_vertex_buffer->acquire();
+    // Is a vertex buffer being used ?
+    m_vertex_buffer = NULL;
+    if(v_group.buffer_data != NULL) {
+    	m_vertex_buffer = new VertexBuffer(v_group.buffer_data, v_group.bytes, v_group.vertices, v_group.usage, v_group.mix);
+    	m_vertex_buffer->acquire();
+    	}
 
     // Is an index buffer being used ?
-    if(i_group.buffer_data) {
-        // Yep, an index buffer is being used.
+    m_index_buffer = NULL;
+    if(i_group.buffer_data != NULL) {
         m_index_buffer = new IndexBuffer(i_group.buffer_data, i_group.bytes, i_group.indices, i_group.usage, i_group.index_type);
         m_index_buffer->acquire();
         }
+
+    if((m_vertex_buffer != NULL)) {
+    	m_vertex_fetch = new VertexFetch(m_attrib_adapt, m_vertex_buffer, m_index_buffer);
+    	}
     else {
-        // Not using an index buffer then.
-        m_index_buffer = NULL;
-        }
+    	m_vertex_fetch = new VertexFetch();
+    	}
 
-    m_vertex_fetch_attributes = new VertexFetchAttributes(m_attrib_adapt, m_vertex_buffer, m_index_buffer);
-
-    m_pipeline = new Pipeline(m_program, m_vertex_fetch_attributes);
+    m_pipeline = new Pipeline(m_program, m_vertex_fetch);
     }
 
 RenderTask::~RenderTask() {
@@ -57,7 +62,7 @@ RenderTask::~RenderTask() {
     if(m_pipeline) delete m_pipeline;
     if(m_program) delete m_program;
     if(m_vertex_buffer) delete m_vertex_buffer;
-    if(m_vertex_fetch_attributes) delete m_vertex_fetch_attributes;
+    if(m_vertex_fetch) delete m_vertex_fetch;
     if(m_vertex_shader) delete m_vertex_shader;
     }
 

@@ -31,7 +31,7 @@
 #include "Pipeline.h"
 #include "Program.h"
 #include "VertexBuffer.h"
-#include "VertexFetchAttributes.h"
+#include "VertexFetch.h"
 #include "VertexShader.h"
 
 /**
@@ -60,7 +60,7 @@
  * \see Pipeline
  * \see Program
  * \see VertexBuffer
- * \see VertexFetchAttributes
+ * \see VertexFetch
  * \see VertexShader
  *
  * \author Mike Hewson\n
@@ -141,7 +141,7 @@ class RenderTask {
         Pipeline* m_pipeline;
         Program* m_program;
         VertexBuffer* m_vertex_buffer;
-        VertexFetchAttributes* m_vertex_fetch_attributes;
+        VertexFetch* m_vertex_fetch;
         VertexShader* m_vertex_shader;
     };
 
