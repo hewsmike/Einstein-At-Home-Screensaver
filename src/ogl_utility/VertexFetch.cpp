@@ -65,11 +65,43 @@ VertexFetch::VertexFetch(AttributeInputAdapter* adapter, VertexBuffer* vertices,
 VertexFetch::~VertexFetch() {
 	}
 
+bool VertexFetch::acquire(void) {
+	// Assume failure.
+	bool ret_val = false;
+
+	// Check and maybe acquire handle if we don't already have one.
+	if(this->ID() == OGL_ID::NO_ID) {
+		// Ask OpenGL for a single VAO handle.
+		GLuint temp = 0;
+		glGenVertexArrays(1, &temp);
+		set_ID(temp);
+
+		// Failure to acquire a handle should be FATAL.
+		if(this->ID() == OGL_ID::NO_ID) {
+		ErrorHandler::record("VertexFetch::acquire() : failure to obtain identifier",
+							 ErrorHandler::FATAL);
+			}
+		ret_val = true;
+		}
+	return ret_val;
+	}
+
+void VertexFetch::release(void) {
+	// Inform OpenGL that we no longer need this specific VAO handle.
+	GLuint temp = this->ID();
+	glDeleteVertexArrays(1, &temp);
+
+	// Reset our handle store to safe value.
+	set_ID(OGL_ID::NO_ID);
+	}
+
 void VertexFetch::bind(void) {
 	glBindVertexArray(this->ID());
 
 	// Bind only existing buffers.
 	if(m_operating_mode  != BARE) {
+		ErrorHandler::record("VertexFetch::bind() : binding the OGL_utility vertex buffer",
+		        	         ErrorHandler::INFORM);
 		m_vertices->bind();
 		}
 	if(m_operating_mode == VERTICES_AND_INDICES) {
@@ -81,11 +113,28 @@ void VertexFetch::bind(void) {
 		/// TODO - failure mode path for configure fail.
 		configure();
 	    }
-    }
+	}
 
 void VertexFetch::unbind(void) {
 	glBindVertexArray(OGL_ID::NO_ID);
     }
+
+bool VertexFetch::isBound(void) const {
+    // Assume failure.
+    bool ret_flag = false;
+
+    // Dynamically obtain the current VAO name.
+    GLint vao_name;
+    glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &vao_name);
+
+    // Is it this object's ID ?
+    if(vao_name == GLint(this->ID())) {
+        // Yes, so this VAO is bound.
+        ret_flag = true;
+        }
+
+	return ret_flag;
+	}
 
 bool VertexFetch::configure(void) {
 	// Assume failure.
@@ -117,11 +166,18 @@ bool VertexFetch::configure(void) {
     							  attrib->pointer);
     		}
 		}
+	// Ensure that the pipeline vertex fetch
+	// stage is not bound to any buffers at all.
+	m_vertices->unbind();
+
+	// NB the index array - if any - is not unbound as that requires persistence.
+
+	this->unbind();
+
 	m_configure_flag = true;
 
     return ret_val;
 	}
-
 
 void VertexFetch::trigger(GLenum primitive, GLsizei count) {
     // If VAO is not bound then do so.
@@ -135,11 +191,17 @@ void VertexFetch::trigger(GLenum primitive, GLsizei count) {
 	// buffer use depending upon mode of operation.
 	switch(m_operating_mode) {
 	    case BARE :
+	    	ErrorHandler::record("VertexFetch::trigger() : operating mode = BARE",
+	    	                     ErrorHandler::INFORM);
             break;
         case VERTICES_ONLY :
+        	ErrorHandler::record("VertexFetch::trigger() : operating mode = VERTICES_ONLY",
+        		    	         ErrorHandler::INFORM);
             glDrawArrays(primitive, 0, count);
             break;
         case VERTICES_AND_INDICES :
+        	ErrorHandler::record("VertexFetch::trigger() : operating mode = VERTICES_AND_INDICES",
+        	        		     ErrorHandler::INFORM);
             glDrawElements(primitive, count, GL_UNSIGNED_INT, 0);
             break;
         default :

@@ -72,9 +72,23 @@ class VertexFetch : public OGL_ID, public Bound {
         virtual ~VertexFetch();
 
         /**
+       	 * \brief Obtain the OpenGL resource.
+       	 *
+       	 * \return a boolean indicating success of acquisition
+       	 *              TRUE - resources acquired without error
+       	 *              FALSE - resources were not acquired
+       	 */
+       	virtual bool acquire(void);
+
+       	/**
+       	 * \brief Release the OpenGL resource.
+       	 */
+       	virtual	void release(void);
+
+        /**
          * \brief Perform any data binding to the pipeline input.
          */
-        void bind(void);
+        virtual void bind(void);
 
         /**
          * \brief Remove any data binding to the pipeline input.
@@ -83,7 +97,17 @@ class VertexFetch : public OGL_ID, public Bound {
          * other pipeline activity, in order to properly reset the vertex
          * fetching state.
          */
-        void unbind(void);
+        virtual void unbind(void);
+
+        /**
+		 * \brief Is the underlying vertex array object ( VAO ) bound to the
+		 * 	      state machine ?
+		 *
+		 * \return a boolean indicating binding
+		 *              TRUE - VAO is bound
+		 *              FALSE - VAO is not bound
+		 */
+        virtual bool isBound(void) const;
 
         /**
          * \brief Trigger pipeline activity. Attachment occurs automatically
