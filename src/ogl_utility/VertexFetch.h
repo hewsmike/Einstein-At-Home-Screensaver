@@ -103,12 +103,12 @@ class VertexFetch : public OGL_ID, public Bound {
 
     private :
         // These are the possible operating states.
-        enum operatingState {BARE,
-                             VERTICES_ONLY,
-                             VERTICES_AND_INDICES};
+        enum operatingMode {BARE,
+                            VERTICES_ONLY,
+                            VERTICES_AND_INDICES};
 
         /// Indicator of current operating state.
-        operatingState m_operating_state;
+        operatingMode m_operating_mode;
 
         bool m_configure_flag;
 

@@ -29,7 +29,7 @@ VertexFetch::VertexFetch(void) {
 	m_adapter = NULL;
 	m_vertices = NULL;
 	m_indices = NULL;
-	m_operating_state = VertexFetch::BARE;
+	m_operating_mode = BARE;
 	m_configure_flag = false;
 	m_attribute_length_sum = 0;
 }
@@ -50,10 +50,10 @@ VertexFetch::VertexFetch(AttributeInputAdapter* adapter, VertexBuffer* vertices,
 		                     ErrorHandler::FATAL);
 		}
 
-	m_operating_state = VertexFetch::VERTICES_ONLY;
+	m_operating_mode = VERTICES_ONLY;
 
 	if(m_indices != NULL) {
-		m_operating_state = VertexFetch::VERTICES_AND_INDICES;
+		m_operating_mode = VERTICES_AND_INDICES;
 		}
 
 	// Initially the total sum of attribute lengths is zero.
@@ -68,19 +68,19 @@ VertexFetch::~VertexFetch() {
 void VertexFetch::bind(void) {
 	glBindVertexArray(this->ID());
 
-	// Can only bind arrays if configured.
+	// Bind only existing buffers.
+	if(m_operating_mode  != BARE) {
+		m_vertices->bind();
+		}
+	if(m_operating_mode == VERTICES_AND_INDICES) {
+		m_indices->bind();
+		}
+
+	// Ensure configuration has occurred.
 	if(m_configure_flag == false) {
 		/// TODO - failure mode path for configure fail.
 		configure();
 	    }
-
-	// Bind only existing buffers.
-	if(m_operating_state  != VertexFetch::BARE) {
-		m_vertices->bind();
-		}
-	if(m_operating_state == VertexFetch::VERTICES_AND_INDICES) {
-		m_indices->bind();
-		}
     }
 
 void VertexFetch::unbind(void) {
@@ -95,20 +95,12 @@ bool VertexFetch::configure(void) {
 	this->acquire();
 
 	//
-	if(m_operating_state != VertexFetch::BARE) {
+	if(m_operating_mode != BARE) {
 		//
 		processAttributeDescriptions();
 
 		//
 		prepareAttributeMapping();
-
-		// Bind only existing buffers.
-		if(m_operating_state  != VertexFetch::BARE) {
-			m_vertices->bind();
-			}
-		if(m_operating_state == VertexFetch::VERTICES_AND_INDICES) {
-			m_indices->bind();
-			}
 
 		// Enable fetching for all supplied vertex attribute indices,
     	// these corresponding to 'location' definitions within the
@@ -124,10 +116,7 @@ bool VertexFetch::configure(void) {
     							  attrib->stride,
     							  attrib->pointer);
     		}
-
-    	// NB the index array - if any - is not unbound as that requires persistence.
 		}
-
 	m_configure_flag = true;
 
     return ret_val;
@@ -143,14 +132,20 @@ void VertexFetch::trigger(GLenum primitive, GLsizei count) {
         }
 
     // Provokes vertex shader activity for count invocations,
-	// buffer use depending upon that which exist.
-	if((m_vertices != NULL) && (m_indices != NULL)) {
-        // Both GL_ARRAY_BUFFER and GL_ELEMENT_ARRAY_BUFFER targets are bound.
-		glDrawElements(primitive, count, GL_UNSIGNED_INT, 0);
-	    }
-    else {
-        // Either only GL_ARRAY_BUFFER target bound, or none at all.
-    	glDrawArrays(primitive, 0, count);
+	// buffer use depending upon mode of operation.
+	switch(m_operating_mode) {
+	    case BARE :
+            break;
+        case VERTICES_ONLY :
+            glDrawArrays(primitive, 0, count);
+            break;
+        case VERTICES_AND_INDICES :
+            glDrawElements(primitive, count, GL_UNSIGNED_INT, 0);
+            break;
+        default :
+            ErrorHandler::record("VertexFetch::trigger() : Bad switch case ( default )",
+                                 ErrorHandler::FATAL);
+            break;
         }
 	}
 
@@ -198,6 +193,7 @@ void VertexFetch::processAttributeDescriptions(void) {
         m_attribute_length_sum += record.length;
 
         // These must be calculated once all attributes have been described.
+        // Initialise now, see prepareAttributeMapping() function.
         record.stride = 0;
         record.pointer = 0;
 
