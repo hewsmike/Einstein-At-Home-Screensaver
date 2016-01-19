@@ -49,6 +49,7 @@ OBJS += TextureBuffer.o
 OBJS += TexturedParallelogram.o
 OBJS += VertexBuffer.o
 OBJS += VertexFetch.o
+OBJS += VertexFetchAttributes.o
 OBJS += VertexShader.o
 
 # primary role based tagets

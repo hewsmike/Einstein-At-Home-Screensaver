@@ -46,10 +46,7 @@ RenderTask::RenderTask(RenderTask::shader_group s_group,
         }
 
     if((m_vertex_buffer != NULL)) {
-    	m_vertex_fetch = new VertexFetch(m_attrib_adapt, m_vertex_buffer, m_index_buffer);
-    	}
-    else {
-    	m_vertex_fetch = new VertexFetch();
+    	m_vertex_fetch = new VertexFetchAttributes(m_attrib_adapt, m_vertex_buffer, m_index_buffer);
     	}
 
     m_pipeline = new Pipeline(m_program, m_vertex_fetch);
