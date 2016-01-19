@@ -96,23 +96,20 @@ void VertexFetch::release(void) {
 	}
 
 void VertexFetch::bind(void) {
-	glBindVertexArray(this->ID());
-
-	// Bind only existing buffers.
-	if(m_operating_mode  != BARE) {
-		ErrorHandler::record("VertexFetch::bind() : binding the OGL_utility vertex buffer",
-		        	         ErrorHandler::INFORM);
-		m_vertices->bind();
-		}
-	if(m_operating_mode == VERTICES_AND_INDICES) {
-		m_indices->bind();
-		}
-
-	// Ensure configuration has occurred.
+    // Ensure configuration has occurred.
 	if(m_configure_flag == false) {
 		/// TODO - failure mode path for configure fail.
 		configure();
 	    }
+
+	// Bind any existing index buffer, if not already.
+	if(m_operating_mode == VERTICES_AND_INDICES) {
+	    if(m_indices.isBound() == false) {
+            m_indices->bind();
+            }
+		}
+
+	glBindVertexArray(this->ID());
 	}
 
 void VertexFetch::unbind(void) {
@@ -150,6 +147,13 @@ bool VertexFetch::configure(void) {
 
 		//
 		prepareAttributeMapping();
+
+		if(m_operating_mode != BARE) {
+            m_vertices->bind();
+            }
+        if(m_operating_mode == VERTICES_AND_INDICES) {
+            m_indices->bind();
+            }
 
 		// Enable fetching for all supplied vertex attribute indices,
     	// these corresponding to 'location' definitions within the
