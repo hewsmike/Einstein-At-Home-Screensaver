@@ -69,8 +69,8 @@
 class RenderTask {
     public :
 		struct shader_group {
-			const std::string vert_shader_source;
-			const std::string frag_shader_source;
+			const std::string& vert_shader_source;
+			const std::string& frag_shader_source;
 			};
 
 		struct index_buffer_group {

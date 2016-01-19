@@ -95,34 +95,58 @@ TexturedParallelogram::TexturedParallelogram(glm::vec3 position,
 	if(texture == NULL) {
 		ErrorHandler::record("TexturedParallelogram::TexturedParallelogram() : Texture not provided!", ErrorHandler::FATAL);
 		}
-	m_texture = texture;
 
+	m_texture = texture;
 	m_render_task = NULL;
+	configureTask();
     }
 
 TexturedParallelogram::~TexturedParallelogram() {
+	if(m_texture) delete m_texture;
+	if(m_render_task) delete m_render_task;
     }
 
 void TexturedParallelogram::setPosition(glm::vec3 position) {
 	m_position = position;
+	configureTask();
 	}
 
 void TexturedParallelogram::setHeightOffset(glm::vec3 height_offset) {
 	m_height_offset = height_offset;
+	configureTask();
 	}
 
 void TexturedParallelogram::setWidthOffset(glm::vec3 width_offset) {
 	m_width_offset = width_offset;
+	configureTask();
 	}
 
 void TexturedParallelogram::setTexture(TextureBuffer* texture) {
 	if(texture == NULL) {
-			ErrorHandler::record("TexturedParallelogram::setTexture() : Texture not provided!", ErrorHandler::FATAL);
-			}
+	    ErrorHandler::record("TexturedParallelogram::setTexture() : Texture not provided!", ErrorHandler::FATAL);
+		}
 	m_texture = texture;
+	configureTask();
 	}
 
 void TexturedParallelogram::configureTask(void) {
+	// Firstly discard any existing rendering task.
+	if(m_render_task) delete m_render_task;
+
+	// Construct a shader group structure.
+	RenderTask::shader_group s_group = {m_vertex_shader, m_fragment_shader};
+
+	// Create an index buffer group structure, for completeness.
+	RenderTask::index_buffer_group {NULL, 0, 0, 0, 0};
+
+	// Create a vertex buffer group structure, this matters.
+	RenderTask::vertex_buffer_group {
+				const GLvoid* buffer_data;
+				GLuint bytes;
+				GLuint vertices;
+				GLenum usage;
+				VertexBuffer::data_mix mix;
+	        	};
 
 	}
 
