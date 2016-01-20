@@ -93,7 +93,7 @@ TexturedParallelogram::TexturedParallelogram(glm::vec3 position,
 											 TextureBuffer* texture) :
 												 m_position(position),
 												 m_height_offset(height_offset),
-												 m_width_offset(width_offset) {
+												 m_width_offset(width_offset){
 	if(texture == NULL) {
 		ErrorHandler::record("TexturedParallelogram::TexturedParallelogram() : Texture not provided!", ErrorHandler::FATAL);
 		}
@@ -104,7 +104,6 @@ TexturedParallelogram::TexturedParallelogram(glm::vec3 position,
     }
 
 TexturedParallelogram::~TexturedParallelogram() {
-	if(m_texture) delete m_texture;
 	if(m_render_task) delete m_render_task;
     }
 

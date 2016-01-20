@@ -159,6 +159,7 @@ class VertexFetch : public OGL_ID, public Bound {
         /// Indicator of current operating state.
         operatingMode m_operating_mode;
 
+        ///Has this object been configured ?
         bool m_configure_flag;
 
 		// The input adapter pointer.
