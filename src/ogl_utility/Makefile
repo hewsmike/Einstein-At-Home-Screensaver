@@ -46,10 +46,9 @@ OBJS += Program.o
 OBJS += RenderTask.o
 OBJS += Shader.o
 OBJS += TextureBuffer.o
-OBJS += TexturedParallelogram.o
+# OBJS += TexturedParallelogram.o
 OBJS += VertexBuffer.o
 OBJS += VertexFetch.o
-OBJS += VertexFetchAttributes.o
 OBJS += VertexShader.o
 
 # primary role based tagets
