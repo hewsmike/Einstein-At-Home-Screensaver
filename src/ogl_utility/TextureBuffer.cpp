@@ -129,6 +129,12 @@ void TextureBuffer::release_ID(GLuint* handle) {
 	}
 
 void TextureBuffer::bind(void) {
+	// Only acquire if not already.
+	if(this->isAcquired() == false) {
+		// Ensure resource acquisition first.
+		this->acquire();
+		}
+
     glBindTexture(GL_TEXTURE_2D, this->ID());
     }
 

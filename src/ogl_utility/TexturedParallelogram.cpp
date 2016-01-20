@@ -24,6 +24,8 @@
 
 #include "ErrorHandler.h"
 
+const GLuint TexturedParallelogram::VERTEX_COUNT(4);
+
 const std::string TexturedParallelogram::m_vertex_shader("#version 150"
 ""
 "// This is a vertex shader. Creates a parallel sided quadrilateral"
@@ -137,19 +139,28 @@ void TexturedParallelogram::configureTask(void) {
 	RenderTask::shader_group s_group = {m_vertex_shader, m_fragment_shader};
 
 	// Create an index buffer group structure, for completeness.
-	RenderTask::index_buffer_group {NULL, 0, 0, 0, 0};
+	RenderTask::index_buffer_group i_group = {NULL, 0, 0, 0, 0};
 
 	// Create a vertex buffer group structure, this matters.
-	RenderTask::vertex_buffer_group {
-				const GLvoid* buffer_data;
-				GLuint bytes;
-				GLuint vertices;
-				GLenum usage;
-				VertexBuffer::data_mix mix;
-	        	};
+	RenderTask::vertex_buffer_group v_group = {NULL,
+											   0,
+											   VERTEX_COUNT,
+											   GL_STATIC_DRAW,
+											   VertexBuffer::BY_VERTEX};
 
+	m_render_task = new RenderTask(s_group,i_group, v_group);
+
+	m_render_task->setUniformLoadPoint("base_position", &m_position);
+
+	m_render_task->setUniformLoadPoint("height_offset", &m_height_offset);
+
+	m_render_task->setUniformLoadPoint("width_offset", &m_width_offset);
+
+	m_render_task->acquire();
+
+	m_texture->bind();
 	}
 
 void TexturedParallelogram::utilise(void) {
-	m_render_task->utilise(GL_TRIANGLE_STRIP, 4);
+	m_render_task->utilise(GL_TRIANGLE_STRIP, VERTEX_COUNT);
 	}

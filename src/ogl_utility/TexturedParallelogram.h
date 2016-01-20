@@ -99,6 +99,8 @@ class TexturedParallelogram {
         void utilise(void);
 
     private :
+        static const GLuint VERTEX_COUNT;
+
         /// The shader code for this type of texturing.
         static const std::string m_vertex_shader;
         static const std::string m_fragment_shader;

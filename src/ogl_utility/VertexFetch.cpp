@@ -206,8 +206,6 @@ bool VertexFetch::configure(void) {
     							  attrib->a_spec.normalised,
     							  attrib->stride,
     							  attrib->pointer);
-    		ErrorHandler::record("VertexFetch::configure() : Attribute mapping",
-    		    		         ErrorHandler::INFORM);
     		}
     	}
 
@@ -285,8 +283,6 @@ void VertexFetch::processAttributeDescriptions(void) {
 
         // Insert into the attributes record.
         m_attribute_specs.push_back(record);
-        ErrorHandler::record("VertexFetch::processAttributeDescriptions() : Attribute description processed",
-            		    	 ErrorHandler::INFORM);
         }
     }
 
