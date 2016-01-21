@@ -79,15 +79,19 @@ class TextString {
         glm::vec3 m_height_offset;
         glm::vec3 m_width_offset;
 
+        /// The text string to be displayed.
         const std::string& m_text_string;
 
+        /// The color for the text foreground.
         SDL_Color m_foreground;
 
+        /// The font type to use.
         TTF_Font* m_font;
 
         /// The texture to be applied.
         TextureBuffer* m_texture_buffer;
 
+        /// The parallelogram to be used for rendering.
         TexturedParallelogram* m_textured_parallelogram;
 
         ///Has this object been configured ?

@@ -48,32 +48,35 @@ TextString::~TextString() {
     }
 
 void TextString::configureTask(void) {
+    // Get SDL_ttf to construct an SDL_Surface with the embedded glyph patterns.
 	SDL_Surface* surface = TTF_RenderText_Solid(m_font, m_text_string.c_str(), m_foreground);
 
-	SDL_PixelFormat format;
+    // Convert that surface to another with the RGB format @ 8 bits per color.
+	SDL_Surface* converted = SDL_ConvertSurfaceFormat(surface, SDL_PIXELFORMAT_RGB888, 0);
 
-
-
-	// SDL_Surface* converted = SDL_ConvertSurface(surface, const SDL_PixelFormat* fmt, 0);
-
-//	m_texture_buffer = new TextureBuffer(m_font,
-//			  	  	  	  	  	  GLuint bytes,
-//								  	  GLsizei width,
-//            GLsizei height,
-//            GLenum format,
-//            GLenum data_type,
-//			  GLenum wrap_type_s,
-//			  GLenum wrap_type_t,
-//            bool mipmaps = true);
+    // Create a TextureBuffer object
+    m_texture_buffer = new TextureBuffer(converted->pixels,
+                                         GLuint(converted->pitch * converted->h),
+                                         GLsizei(converted->w),
+                                         GLsizei(converted->h),
+                                         GL_RGB,
+                                         GL_UNSIGNED_BYTE,
+                                         GL_CLAMP,
+                                         GL_CLAMP,
+                                         true);
 
 	m_textured_parallelogram = new TexturedParallelogram(m_position,
 	  	  	  	  	  	 	 	 	 	 	 	 	 	 m_height_offset,
 														 m_width_offset,
 														 m_texture_buffer);
 
+    // With the SDL_ttf library the caller must free the surface when done.
+    SDL_FreeSurface(surface);
+    SDL_FreeSurface(converted);
+    delete m_texture_buffer;
 
-
-	}
+    m_configure_flag = true;
+    }
 
 void TextString::utilise(void) {
 	// Ensure it is configured before use.
