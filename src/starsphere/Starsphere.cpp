@@ -1031,16 +1031,14 @@ void Starsphere::render(const double timeOfDay) {
 
 	// draw 2D vectorized HUD
 	if(isFeature(LOGO) || isFeature(SEARCHINFO)) {
-		/// TODO - call(s) to render HUD;
-//
-//		// disable depth testing since we're in 2D mode
-//    	glDisable(GL_DEPTH_TEST);
-//
-////		if (isFeature(LOGO)) renderLogo();
-////		if (isFeature(SEARCHINFO)) renderSearchInformation();
-//
-////		// enable depth testing since we're leaving 2D mode
-//    	glEnable(GL_DEPTH_TEST);
+		// Disable depth testing since we're in 2D mode
+        glDisable(GL_DEPTH_TEST);
+
+        if (isFeature(LOGO)) renderLogo();
+        if (isFeature(SEARCHINFO)) renderSearchInformation();
+
+        // Enable depth testing since we're leaving 2D mode
+        glEnable(GL_DEPTH_TEST);
 		}
 
     // Mark off another frame done.
