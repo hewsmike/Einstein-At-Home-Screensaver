@@ -28,7 +28,7 @@ TextString::TextString(glm::vec3 position,
 	  	  	  	  	   glm::vec3 height_offset,
 					   glm::vec3 width_offset,
 					   TTF_Font* font,
-					   const std::string& text,
+					   const char* text,
 					   SDL_Color foreground) :
 					      m_position(position),
 						  m_height_offset(height_offset),

@@ -53,14 +53,14 @@ class TextString {
          * \param width_offset - a vector directed to the lower right corner
          * 						 of the parallelogram, from the lower left.
 		 * \param font - a pointer to an existing TTF_Font to render with.
-		 * \param text - an std::string containing the text message to render.
+		 * \param text - an ASCIIZ string containing the text message to render.
 		 * \param foreground - an SDL_Color specification for the foreground.
          */
 		TextString(glm::vec3 position,
 				   glm::vec3 height_offset,
 				   glm::vec3 width_offset,
 				   TTF_Font* font,
-				   const std::string& text,
+				   const char* text,
 				   SDL_Color foreground);
 
         /**
@@ -80,7 +80,7 @@ class TextString {
         glm::vec3 m_width_offset;
 
         /// The text string to be displayed.
-        const std::string& m_text_string;
+        const char* m_text_string;
 
         /// The color for the text foreground.
         SDL_Color m_foreground;
