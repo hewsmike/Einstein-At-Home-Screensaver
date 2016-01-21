@@ -67,13 +67,15 @@ class TextureBuffer : public Buffer {
          * \param bytes : the number of bytes of data.
          * \param width : in texels, must be a strictly positive power of 2
          * \param height : in texels, must be a strictly positive power of 2
-         * \param format : one of the following allowed enumerants
+         * \param format : one of the following allowed enumerants which
+         *                 indicate the ORDERING of the color components.
          *                      GL_ALPHA
          *                      GL_LUMINANCE
          *                      GL_LUMINANCE_ALPHA
          *                      GL_RGB
          *                      GL_RGBA
-         * \param data_type : one of the following allowed enumerants
+         * \param data_type : one of the following allowed enumerants which
+         *                    indicate the PER COLOR BINARY REPRESENTATION.
          *                      GL_UNSIGNED_BYTE
          *                      GL_UNSIGNED_SHORT_5_6_5
          *                      GL_UNSIGNED_SHORT_4_4_4_4
