@@ -100,7 +100,7 @@ TexturedParallelogram::TexturedParallelogram(glm::vec3 position,
 
 	m_texture = texture;
 	m_render_task = NULL;
-	configureTask();
+	m_configure_flag = false;
     }
 
 TexturedParallelogram::~TexturedParallelogram() {
@@ -158,8 +158,13 @@ void TexturedParallelogram::configureTask(void) {
 	m_render_task->acquire();
 
 	m_texture->bind();
+
+	m_configure_flag == true;
 	}
 
 void TexturedParallelogram::utilise(void) {
+    if(m_configure_flag == false) {
+        configureTask();
+        }
 	m_render_task->utilise(GL_TRIANGLE_STRIP, VERTEX_COUNT);
 	}

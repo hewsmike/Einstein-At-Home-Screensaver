@@ -105,6 +105,9 @@ class TexturedParallelogram {
         static const std::string m_vertex_shader;
         static const std::string m_fragment_shader;
 
+        /// Flag to indicate if thisobject has been configured.
+        bool m_configure_flag;
+
         /// Positioning vectors for vertices.
         glm::vec3 m_position;
         glm::vec3 m_height_offset;
