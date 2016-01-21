@@ -101,7 +101,7 @@ bool VertexBuffer::isBound(void) const {
 	return ret_val;
 	}
 
-void VertexBuffer::loadBuffer(void) const {
+void VertexBuffer::loadBuffer(void) {
 	glBindBuffer(GL_ARRAY_BUFFER, this->ID());
 
     // Allocate space and transfer the data.

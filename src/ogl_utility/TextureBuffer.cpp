@@ -38,13 +38,7 @@ TextureBuffer::TextureBuffer(const GLvoid* texture_data,
                                 m_mipmaps(mipmaps) {
     // Ensure sufficient width.
     if(width >= TextureBuffer::MIN_TEX_WIDTH) {
-        if(power_of_two(width)){
-            m_width = width;
-            }
-        else {
-            ErrorHandler::record("TextureBuffer::TextureBuffer() : Texel width not power of two.",
-                                 ErrorHandler::FATAL);
-            }
+        m_width = width;
         }
     else {
         ErrorHandler::record("TextureBuffer::TextureBuffer() : Insufficient texel width.",
@@ -53,13 +47,7 @@ TextureBuffer::TextureBuffer(const GLvoid* texture_data,
 
     // Ensure sufficient height.
     if(height >= TextureBuffer::MIN_TEX_HEIGHT) {
-        if(power_of_two(height)){
-            m_height = height;
-            }
-         else {
-            ErrorHandler::record("TextureBuffer::TextureBuffer() : Texel height not power of two.",
-                                 ErrorHandler::FATAL);
-            }
+        m_height = height;
         }
     else {
         ErrorHandler::record("TextureBuffer::TextureBuffer() : Insufficient texel height.",
@@ -92,28 +80,28 @@ TextureBuffer::TextureBuffer(const GLvoid* texture_data,
         }
 
     // Ensure compliance with acceptable parameter types for horizontal texture coordinate wrapping.
-        if((m_wrap_type_s == GL_REPEAT) ||
-           (m_wrap_type_s == GL_CLAMP) ||
-           (m_wrap_type_s == GL_CLAMP_TO_EDGE) ||
-           (m_wrap_type_s == GL_CLAMP_TO_BORDER)) {
-            m_wrap_type_s = wrap_type_s;
-            }
-        else {
-            ErrorHandler::record("TextureBuffer::TextureBuffer() : Bad horizontal wrap type provided.",
-                                 ErrorHandler::FATAL);
-            }
+	if((m_wrap_type_s == GL_REPEAT) ||
+	   (m_wrap_type_s == GL_CLAMP) ||
+	   (m_wrap_type_s == GL_CLAMP_TO_EDGE) ||
+	   (m_wrap_type_s == GL_CLAMP_TO_BORDER)) {
+		m_wrap_type_s = wrap_type_s;
+		}
+	else {
+		//ErrorHandler::record("TextureBuffer::TextureBuffer() : Bad horizontal wrap type provided.",
+		//					 ErrorHandler::FATAL);
+		}
 
-        // Ensure compliance with acceptable parameter types for vertical texture coordinate wrapping.
-        if((m_wrap_type_t == GL_REPEAT) ||
-           (m_wrap_type_t == GL_CLAMP) ||
-           (m_wrap_type_t == GL_CLAMP_TO_EDGE) ||
-           (m_wrap_type_t == GL_CLAMP_TO_BORDER)) {
-            m_wrap_type_t = wrap_type_t;
-            }
-        else {
-        	ErrorHandler::record("TextureBuffer::TextureBuffer() : Bad vertical wrap type provided.",
-                                 ErrorHandler::FATAL);
-            }
+	// Ensure compliance with acceptable parameter types for vertical texture coordinate wrapping.
+	if((m_wrap_type_t == GL_REPEAT) ||
+	   (m_wrap_type_t == GL_CLAMP) ||
+	   (m_wrap_type_t == GL_CLAMP_TO_EDGE) ||
+	   (m_wrap_type_t == GL_CLAMP_TO_BORDER)) {
+		m_wrap_type_t = wrap_type_t;
+		}
+	else {
+		//ErrorHandler::record("TextureBuffer::TextureBuffer() : Bad vertical wrap type provided.",
+		//					 ErrorHandler::FATAL);
+		}
     }
 
 TextureBuffer::~TextureBuffer() {
@@ -159,7 +147,7 @@ bool TextureBuffer::isBound(void) const {
 	}
 
 void TextureBuffer::loadBuffer(void) {
-    bind();
+    this->bind();
 
     // The 'm_format' parameter appears twice in the following parameter
     // list as we don't change/convert for this application.
@@ -204,32 +192,4 @@ void TextureBuffer::loadBuffer(void) {
 
     /// TODO - Use glHint here to specify quality ?
     unbind();
-    }
-
-bool TextureBuffer::power_of_two(GLuint number) {
-    // Assume failure ie. candidate is not a power of two.
-    bool retval = false;
-
-    // Provided candidate is not odd.
-    while((number%2) == 0) {
-        // Divide by two.
-        number /= 2;
-
-        // Is the bitfield all zeroes ?
-        if(number == 0) {
-        	// Yes, it is not a power of two and we are done.
-            break;
-            }
-
-        // Do I have a single '1' in the bitfield ?
-        if(number == 1) {
-        	// Yes, it is a power of two and we are done.
-            retval = true;
-            break;
-            }
-
-        // No definite answer yet, so go around again.
-    	}
-
-    return retval;
     }

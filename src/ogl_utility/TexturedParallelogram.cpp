@@ -159,7 +159,7 @@ void TexturedParallelogram::configureTask(void) {
 
 	m_texture->bind();
 
-	m_configure_flag == true;
+	m_configure_flag = true;
 	}
 
 void TexturedParallelogram::utilise(void) {

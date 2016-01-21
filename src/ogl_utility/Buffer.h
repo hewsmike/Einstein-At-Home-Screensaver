@@ -119,7 +119,7 @@ class Buffer : public OGL_ID, public Bound {
          * \brief Populate the buffer with data. This is the where a valid
          *        client side pointer is required.
          */
-        virtual void loadBuffer(void) const = 0;
+        virtual void loadBuffer(void) = 0;
 
         /**
          * \brief Get an OpenGL handle for the texture.

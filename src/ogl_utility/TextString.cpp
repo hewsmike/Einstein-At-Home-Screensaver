@@ -21,6 +21,7 @@
 #include "TextString.h"
 
 #include <iostream>
+#include <sstream>
 
 #include "ErrorHandler.h"
 
@@ -49,14 +50,25 @@ TextString::~TextString() {
 
 void TextString::configureTask(void) {
     // Get SDL_ttf to construct an SDL_Surface with the embedded glyph patterns.
-	SDL_Surface* surface = TTF_RenderText_Solid(m_font, m_text_string.c_str(), m_foreground);
+	SDL_Surface* surface = TTF_RenderText_Solid(m_font, m_text_string, m_foreground);
 
     // Convert that surface to another with the RGB format @ 8 bits per color.
 	SDL_Surface* converted = SDL_ConvertSurfaceFormat(surface, SDL_PIXELFORMAT_RGB888, 0);
 
     // Create a TextureBuffer object
+
+	std::stringstream err_msg;
+	err_msg << "TextString::configureTask() : converted->pitch = "
+			<< GLuint(converted->pitch) << std::endl;
+	err_msg << "TextString::configureTask() : converted->h = "
+			<< GLuint(converted->h) << std::endl;
+	err_msg << "TextString::configureTask() : size in bytes = GLuint(converted->pitch) * GLuint(converted->h) = "
+			<< GLuint(converted->pitch) * GLuint(converted->h) << std::endl;
+
+	ErrorHandler::record(err_msg.str(), ErrorHandler::INFORM);
+
     m_texture_buffer = new TextureBuffer(converted->pixels,
-                                         GLuint(converted->pitch * converted->h),
+                                         GLuint(converted->pitch) * GLuint(converted->h),
                                          GLsizei(converted->w),
                                          GLsizei(converted->h),
                                          GL_RGB,

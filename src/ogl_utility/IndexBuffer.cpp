@@ -73,7 +73,7 @@ void IndexBuffer::release_ID(GLuint* handle) {
 	glDeleteBuffers(1, handle);
 	}
 
-void IndexBuffer::loadBuffer(void) const {
+void IndexBuffer::loadBuffer(void) {
     // Bind this buffer to the specified target.
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->ID());
 

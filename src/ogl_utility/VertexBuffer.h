@@ -127,7 +127,7 @@ class VertexBuffer : public Buffer {
         /**
          * \brief Populate the buffer with vertex data.
          */
-        virtual void loadBuffer(void) const;
+        virtual void loadBuffer(void);
 
         /**
          * \brief Get an OpenGL handle for the texture.

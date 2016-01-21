@@ -106,7 +106,7 @@ class IndexBuffer : public Buffer {
         /**
          * \brief Populate the buffer with index data.
          */
-        virtual void loadBuffer(void) const;
+        virtual void loadBuffer(void);
 
         /**
          * \brief Get an OpenGL handle for the texture.

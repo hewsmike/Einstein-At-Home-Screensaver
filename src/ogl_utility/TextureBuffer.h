@@ -40,8 +40,6 @@
  *          unit ie. GL_TEXTURE0.
  *        - texture data is provided by pointer only eg. no file sources.
  *        - minimum texure dimensions is 2 x 2.
- *        - the power-of-2 requirement for texture dimensions is to force
- *          efficient runtime behaviour ( specifically mipmaps ).
  *        - the target is GL_TEXTURE_2D ie. planar surface mapping.
  *        - no change is made to internal formats on loading ie. the state
  *          machine storage format is whatever the data source has.
@@ -127,19 +125,6 @@ class TextureBuffer : public Buffer {
 		 *          false - the object is not bound
 		 */
 		virtual bool isBound(void) const;
-
-        /**
-         * \brief Determine if a candidate integer is a
-         *        strictly positive power of two. So in
-         *        particular is not 2^[0] = 1 ....
-         *
-         * \param number : the unsigned integer to test.
-         *
-         * \return a boolean indicating the result :
-         *          true - the number is a strictly positive power of two
-         *          false - otherwise
-         */
-        static bool power_of_two(GLuint number);
 
     private :
         static const GLuint DEFAULT_MIPMAP_BASE_LEVEL;
