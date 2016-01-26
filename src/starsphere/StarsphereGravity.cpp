@@ -25,8 +25,8 @@
 #include "ErrorHandler.h"
 
 StarsphereGravity::StarsphereGravity() :
-	Starsphere(EinsteinGravityAdapter::SharedMemoryIdentifier),
-	m_EinsteinAdapter(&m_BoincAdapter) {
+		Starsphere(EinsteinGravityAdapter::SharedMemoryIdentifier),
+		m_EinsteinAdapter(&m_BoincAdapter) {
 	m_CurrentTime = "";
 	m_logo_1 = NULL;
 	m_logo_2 = NULL;

@@ -1035,7 +1035,7 @@ void Starsphere::render(const double timeOfDay) {
         glDisable(GL_DEPTH_TEST);
 
         if (isFeature(LOGO)) renderLogo();
-        if (isFeature(SEARCHINFO)) renderSearchInformation();
+        // if (isFeature(SEARCHINFO)) renderSearchInformation();
 
         // Enable depth testing since we're leaving 2D mode
         glEnable(GL_DEPTH_TEST);

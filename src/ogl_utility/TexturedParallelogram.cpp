@@ -147,7 +147,7 @@ void TexturedParallelogram::configureTask(void) {
 											   GL_STATIC_DRAW,
 											   VertexBuffer::BY_VERTEX};
 
-	m_render_task = new RenderTask(s_group,i_group, v_group);
+	m_render_task = new RenderTask(s_group, i_group, v_group);
 
 	m_render_task->setUniformLoadPoint("base_position", &m_position);
 

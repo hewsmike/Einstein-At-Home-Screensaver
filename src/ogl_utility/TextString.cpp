@@ -77,6 +77,8 @@ void TextString::configureTask(void) {
                                          GL_CLAMP,
                                          true);
 
+    ErrorHandler::record("TextString::configureTask() : breakpoint X ...", ErrorHandler::INFORM);
+
 	m_textured_parallelogram = new TexturedParallelogram(m_position,
 	  	  	  	  	  	 	 	 	 	 	 	 	 	 m_height_offset,
 														 m_width_offset,
@@ -85,7 +87,6 @@ void TextString::configureTask(void) {
     // With the SDL_ttf library the caller must free the surface when done.
     SDL_FreeSurface(surface);
     SDL_FreeSurface(converted);
-    delete m_texture_buffer;
 
     m_configure_flag = true;
     }

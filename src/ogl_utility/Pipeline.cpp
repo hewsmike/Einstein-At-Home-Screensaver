@@ -32,7 +32,7 @@ Pipeline::Pipeline(Program* program, VertexFetch* vertex_fetch, TextureBuffer* t
 
     // Check VertexFetch pointer validity.
 	if(vertex_fetch == NULL) {
-        ErrorHandler::record("Pipeline::Pipeline() : No vertex fetch provided.", ErrorHandler::FATAL);
+        ErrorHandler::record("Pipeline::Pipeline() : No vertex fetch provided.", ErrorHandler::INFORM);
         }
     m_vertex_fetch = vertex_fetch;
     }
@@ -50,32 +50,44 @@ void Pipeline::utilise(GLenum primitive, GLsizei count) {
 
     // If you have a texture, but it is not acquired, then do so.
     if((m_texture_buffer != NULL) && (!m_texture_buffer->isAcquired())) {
+    	ErrorHandler::record("Pipeline::utilise() : breakpoint X ...", ErrorHandler::INFORM);
         m_texture_buffer->acquire();
         }
 
     // Only if the program was successfully linked.
     if(m_program->status() == Program::LINKAGE_SUCCEEDED) {
+    	ErrorHandler::record("Pipeline::utilise() : breakpoint A ...", ErrorHandler::INFORM);
     	m_program->use();
+    	ErrorHandler::record("Pipeline::utilise() : breakpoint B ...", ErrorHandler::INFORM);
 
     	m_vertex_fetch->bind();
+    	ErrorHandler::record("Pipeline::utilise() : breakpoint C ...", ErrorHandler::INFORM);
 
     	// If texturing then bind.
     	if(m_texture_buffer != NULL) {
+    		ErrorHandler::record("Pipeline::utilise() : breakpoint D ...", ErrorHandler::INFORM);
             m_texture_buffer->bind();
+            ErrorHandler::record("Pipeline::utilise() : breakpoint E ...", ErrorHandler::INFORM);
             }
 
     	m_program->frameCallBack();
+    	ErrorHandler::record("Pipeline::utilise() : breakpoint F ...", ErrorHandler::INFORM);
 
         m_vertex_fetch->trigger(primitive, count);
+        ErrorHandler::record("Pipeline::utilise() : breakpoint G ...", ErrorHandler::INFORM);
 
         // If texturing then unbind.
     	if(m_texture_buffer != NULL) {
+    		ErrorHandler::record("Pipeline::utilise() : breakpoint H ...", ErrorHandler::INFORM);
             m_texture_buffer->unbind();
+            ErrorHandler::record("Pipeline::utilise() : breakpoint I ...", ErrorHandler::INFORM);
             }
 
         m_vertex_fetch->unbind();
+        ErrorHandler::record("Pipeline::utilise() : breakpoint J ...", ErrorHandler::INFORM);
 
         m_program->stopUse();
+        ErrorHandler::record("Pipeline::utilise() : breakpoint K ...", ErrorHandler::INFORM);
         }
     else {
         ErrorHandler::record("Pipeline::utilise() : Program did not link !", ErrorHandler::FATAL);
