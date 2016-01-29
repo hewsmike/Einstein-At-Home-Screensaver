@@ -43,6 +43,19 @@
 
 class TextString {
     public :
+        /// The rendering style.
+        /// SOLID :     Quick and dirty, tranparent background & opaque
+        ///             foreground. No surrounding parallelogram apparent.
+        /// SHADED :    Not as fast as SOLID, pixels graded from background to
+        ///             foreground. Text appears as within a visible
+        ///             parallellogram shape.
+        /// BLENDED :   Slowest of all but best quality. Alpha blending
+        ///             dithers and anti-aliases adjacent pixels. No
+        ///             surrounding parallelogram apparent.
+        enum render_style {SOLID,
+                           SHADED,
+                           BLENDED};
+
 		/**
          * \brief Constructor
          *
@@ -54,14 +67,23 @@ class TextString {
          * 						 of the parallelogram, from the lower left.
 		 * \param font - a pointer to an existing TTF_Font to render with.
 		 * \param text - an ASCIIZ string containing the text message to render.
+		 * \param text_style - one of the the render_style enumerants
 		 * \param foreground - an SDL_Color specification for the foreground.
-         */
+		 * \param background - an SDL_Color specification for the background.
+		 *                     But this is ONLY RELEVANT for the SHADED
+		 *                     rendering style, and the value is ignored for
+		 *                     either SOLID or BLENDED. It has a default
+		 *                     argument of {0, 0, 0, 0} ie. transparent
+		 *                     black if not provided.
+		 */
 		TextString(glm::vec3 position,
 				   glm::vec3 height_offset,
 				   glm::vec3 width_offset,
 				   TTF_Font* font,
 				   const char* text,
-				   SDL_Color foreground);
+				   TextString::render_style text_style,
+				   SDL_Color foreground,
+				   SDL_Color background = {0, 0, 0, 0});
 
         /**
          * \brief Destructor
@@ -85,8 +107,14 @@ class TextString {
         /// The text string to be displayed.
         const char* m_text_string;
 
+        /// The choice of rendering style.
+        TextString::render_style m_text_style;
+
         /// The color for the text foreground.
         SDL_Color m_foreground;
+
+        /// The color for the text background.
+        SDl_color m_background;
 
         /// The texture to be applied.
         TextureBuffer* m_texture_buffer;
