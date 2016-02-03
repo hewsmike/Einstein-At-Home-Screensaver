@@ -118,6 +118,8 @@ class RenderTask {
         /**
          * \brief Create a correspondence between a uniform variable, as known
          *        by an OpenGL program object, and a position within client code.
+         *        DO NOT set the vertex shader's uniform transform matrix name
+         *        and load point by this method.
          * \param u_name : the name of the uniform variable.
          * \param source : an untyped pointer to client code where the value
          *                 may be uploaded from.
@@ -134,7 +136,12 @@ class RenderTask {
          */
         void acquire(void);
 
+        static void setTransform(const std::string& name, glm::mat4* matrix[4][4]);
+
     private:
+        static std::string m_transform_name;
+        static glm::mat4* m_transform;
+
         AttributeInputAdapter* m_attrib_adapt;
         FragmentShader* m_frag_shader;
         IndexBuffer* m_index_buffer;

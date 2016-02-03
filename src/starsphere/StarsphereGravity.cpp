@@ -183,14 +183,15 @@ void StarsphereGravity::generateObservatories(float dimFactor) {
 void StarsphereGravity::renderLogo() {
     static bool m_isConfigured = false;
 
-    SDL_Color color = {1.0f, 1.0f, 1.0f, 1.0f};
+    SDL_Color color = {255, 255, 255, 255};
 
     if(m_isConfigured == false) {
         m_logo_1 = new TextString(glm::vec3(0.0f, 0.0f, 0.0f),
-                                  glm::vec3(0.0f, 10.0f, 0.0f),
+                                  glm::vec3(0.0f, +1.0f, 0.0f),
                                   glm::vec3(10.0f, 1.0f, 0.0f),
                                   m_FontLogo1,
                                   "Einstein@Home",
+								  TextString::SOLID,
                                   color);
         m_isConfigured = true;
         }

@@ -114,7 +114,7 @@ class TextString {
         SDL_Color m_foreground;
 
         /// The color for the text background.
-        SDl_color m_background;
+        SDL_Color m_background;
 
         /// The texture to be applied.
         TextureBuffer* m_texture_buffer;

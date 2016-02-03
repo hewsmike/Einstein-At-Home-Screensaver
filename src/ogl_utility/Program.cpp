@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2014 by Mike Hewson                                     *
+acr *   Copyright (C) 2014 by Mike Hewson                                     *
  *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
@@ -314,8 +314,16 @@ bool Program::loadUniform(Program::uniform_data current) {
 		case GL_FLOAT_VEC3:
 			glUniform3fv(current.m_location, 1, static_cast<const GLfloat*>(current.m_load_point));
 			break;
+		case GL_SAMPLER_2D:
+			/// Just accounting for the instance, nothing to be done.
+			break;
 		default:
+			std::stringstream err_msg;
+			err_msg << "\t\t"
+					<< checkUniform(current.m_type)
+					<< std::endl;
 			ErrorHandler::record("Program::loadUniform() : bad switch case ( default ).", ErrorHandler::WARN);
+			ErrorHandler::record(err_msg.str(), ErrorHandler::WARN);
 			ret_val = false;
 			break;
 		}
@@ -350,7 +358,7 @@ std::string Program::checkUniform(GLenum type) {
 			ret_val = "GL_DOUBLE_VEC3";
 			break;
 		case GL_DOUBLE_VEC4:
-			ret_val = "GL_DOUBLE_VEC24";
+			ret_val = "GL_DOUBLE_VEC4";
 			break;
 		case GL_INT:
 			ret_val = "GL_INT";

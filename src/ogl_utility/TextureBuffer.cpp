@@ -20,6 +20,11 @@
 
 #include "TextureBuffer.h"
 
+#include "ErrorHandler.h"
+
+#include <iostream>
+#include <sstream>
+
 const GLuint TextureBuffer::DEFAULT_MIPMAP_BASE_LEVEL(0);
 const GLuint TextureBuffer::DEFAULT_IMAGE_BORDER_WIDTH(0);
 const GLsizei TextureBuffer::MIN_TEX_WIDTH(2);
@@ -36,7 +41,7 @@ TextureBuffer::TextureBuffer(const GLvoid* texture_data,
                              bool mipmaps) :
                                 Buffer(texture_data, bytes),
                                 m_mipmaps(mipmaps) {
-    // Ensure sufficient width.
+	// Ensure sufficient width.
     if(width >= TextureBuffer::MIN_TEX_WIDTH) {
         m_width = width;
         }
@@ -80,27 +85,27 @@ TextureBuffer::TextureBuffer(const GLvoid* texture_data,
         }
 
     // Ensure compliance with acceptable parameter types for horizontal texture coordinate wrapping.
-	if((m_wrap_type_s == GL_REPEAT) ||
-	   (m_wrap_type_s == GL_CLAMP) ||
-	   (m_wrap_type_s == GL_CLAMP_TO_EDGE) ||
-	   (m_wrap_type_s == GL_CLAMP_TO_BORDER)) {
+	if((wrap_type_s == GL_REPEAT) ||
+	   (wrap_type_s == GL_CLAMP) ||
+	   (wrap_type_s == GL_CLAMP_TO_EDGE) ||
+	   (wrap_type_s == GL_CLAMP_TO_BORDER)) {
 		m_wrap_type_s = wrap_type_s;
 		}
 	else {
-		//ErrorHandler::record("TextureBuffer::TextureBuffer() : Bad horizontal wrap type provided.",
-		//					 ErrorHandler::FATAL);
+		ErrorHandler::record("TextureBuffer::TextureBuffer() : Bad horizontal wrap type provided.",
+							 ErrorHandler::FATAL);
 		}
 
 	// Ensure compliance with acceptable parameter types for vertical texture coordinate wrapping.
-	if((m_wrap_type_t == GL_REPEAT) ||
-	   (m_wrap_type_t == GL_CLAMP) ||
-	   (m_wrap_type_t == GL_CLAMP_TO_EDGE) ||
-	   (m_wrap_type_t == GL_CLAMP_TO_BORDER)) {
+	if((wrap_type_t == GL_REPEAT) ||
+	   (wrap_type_t == GL_CLAMP) ||
+	   (wrap_type_t == GL_CLAMP_TO_EDGE) ||
+	   (wrap_type_t == GL_CLAMP_TO_BORDER)) {
 		m_wrap_type_t = wrap_type_t;
 		}
 	else {
-		//ErrorHandler::record("TextureBuffer::TextureBuffer() : Bad vertical wrap type provided.",
-		//					 ErrorHandler::FATAL);
+		ErrorHandler::record("TextureBuffer::TextureBuffer() : Bad vertical wrap type provided.",
+							 ErrorHandler::FATAL);
 		}
     }
 
@@ -117,13 +122,7 @@ void TextureBuffer::release_ID(GLuint* handle) {
 	}
 
 void TextureBuffer::bind(void) {
-	// Only acquire if not already.
-	if(this->isAcquired() == false) {
-		// Ensure resource acquisition first.
-		this->acquire();
-		}
-
-    glBindTexture(GL_TEXTURE_2D, this->ID());
+	glBindTexture(GL_TEXTURE_2D, this->ID());
     }
 
 void TextureBuffer::unbind(void) {
@@ -148,6 +147,12 @@ bool TextureBuffer::isBound(void) const {
 
 void TextureBuffer::loadBuffer(void) {
     this->bind();
+
+    std::stringstream msg;
+    msg << "TextureBuffer::loadBuffer() : m_width = "
+    	<< m_width << "\t\tm_height = "
+		<< m_height;
+    ErrorHandler::record(msg.str(), ErrorHandler::INFORM);
 
     // The 'm_format' parameter appears twice in the following parameter
     // list as we don't change/convert for this application.

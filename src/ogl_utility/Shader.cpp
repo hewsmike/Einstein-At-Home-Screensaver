@@ -76,7 +76,6 @@ bool Shader::acquire(void) {
                 }
             }
 
-        // Load the source code into the shader object.
         glShaderSource(this->ID(), 1, StringHelper(shader_source), NULL);
 
         // Only compile if never attempted.

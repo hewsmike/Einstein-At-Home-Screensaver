@@ -794,6 +794,8 @@ void Starsphere::resize(const int width, const int height) {
  *  What to do when graphics are "initialized".
  */
 void Starsphere::initialize(const int width, const int height, const Resource* font) {
+	RenderTask::setTransform("CameraMatrix", &m_camera[0][0]);
+
 	m_CurrentWidth = width;
     m_CurrentHeight = height;
     m_FontResource = font;
@@ -841,10 +843,10 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
     resize(m_CurrentWidth, m_CurrentHeight);
 
     // Create rendering tasks for given features.
-    make_snrs();
-    make_pulsars();
-    make_stars();
-    make_constellations();
+    //make_snrs();
+    //make_pulsars();
+    //make_stars();
+    //make_constellations();
 
 	// Begin with these visual features enabled.
 	setFeature(STARS, true);
@@ -863,6 +865,8 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
 	// Here we set the byte alignment when unpacking data from memory
 	// to a one byte boundary. This done mainly for optimizing font setup.
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+	glActiveTexture(GL_TEXTURE0);
 
 	// In space the background is black.
 	glClearColor(0.0, 0.0, 0.0, 0.0);
@@ -889,7 +893,7 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
     // Some selected drawing quality choices.
     glEnable(GL_POINT_SMOOTH);							// Jaggy reduction, but this per primitve
     glEnable(GL_LINE_SMOOTH);							// anti-aliasing depends on hardware etc ...
-	glEnable(GL_CULL_FACE);								// Culling of rear faces
+	// glEnable(GL_CULL_FACE);								// Culling of rear faces
 	glFrontFace(GL_CCW);								// Front facing is counterclockwise
 
 	/// TODO - sort out this quality selection business ?
@@ -987,16 +991,16 @@ void Starsphere::render(const double timeOfDay) {
 
 	// stars, pulsars, supernovae, grid
     if(isFeature(STARS)) {
-    	m_render_task_star->utilise(GL_POINTS, m_distinct_stars);;
+    	//m_render_task_star->utilise(GL_POINTS, m_distinct_stars);;
     	}
     if(isFeature(PULSARS)) {
-    	m_render_task_psr->utilise(GL_POINTS, Npulsars);
+    	//m_render_task_psr->utilise(GL_POINTS, Npulsars);
     	}
     if(isFeature(SNRS)) {
-    	m_render_task_snr->utilise(GL_POINTS, NSNRs);
+    	//m_render_task_snr->utilise(GL_POINTS, NSNRs);
     	}
     if(isFeature(CONSTELLATIONS)) {
-    	m_render_task_cons->utilise(GL_LINES, m_constellation_lines*2);
+    	//m_render_task_cons->utilise(GL_LINES, m_constellation_lines*2);
     	}
 	if(isFeature(GLOBE)) {
 		/// TODO - call to render axes;
@@ -1032,13 +1036,13 @@ void Starsphere::render(const double timeOfDay) {
 	// draw 2D vectorized HUD
 	if(isFeature(LOGO) || isFeature(SEARCHINFO)) {
 		// Disable depth testing since we're in 2D mode
-        glDisable(GL_DEPTH_TEST);
+        //glDisable(GL_DEPTH_TEST);
 
         if (isFeature(LOGO)) renderLogo();
         // if (isFeature(SEARCHINFO)) renderSearchInformation();
 
         // Enable depth testing since we're leaving 2D mode
-        glEnable(GL_DEPTH_TEST);
+        //glEnable(GL_DEPTH_TEST);
 		}
 
     // Mark off another frame done.

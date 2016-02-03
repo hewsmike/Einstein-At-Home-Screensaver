@@ -66,15 +66,23 @@ void TextString::configureTask(void) {
         }
 
     // Create a TextureBuffer object
+    std::stringstream msg;
+    msg << "TextString::configureTask() : GL_CLAMP = "
+    	<< GL_CLAMP << std::endl;
+
+    ErrorHandler::record(msg.str(), ErrorHandler::INFORM);
+
     m_texture_buffer = new TextureBuffer(converted->pixels,
                                          GLuint(converted->pitch) * GLuint(converted->h),
                                          GLsizei(converted->w),
                                          GLsizei(converted->h),
-                                         GL_RGB,
+                                         GL_RGBA,
                                          GL_UNSIGNED_BYTE,
                                          GL_CLAMP,
                                          GL_CLAMP,
                                          true);
+
+    m_texture_buffer->acquire();
 
     m_textured_parallelogram = new TexturedParallelogram(m_position,
 	  	  	  	  	  	 	 	 	 	 	 	 	 	 m_height_offset,
@@ -82,8 +90,8 @@ void TextString::configureTask(void) {
 														 m_texture_buffer);
 
     // With the SDL_ttf library the caller must free the surface when done.
-    SDL_FreeSurface(surface);
-    SDL_FreeSurface(converted);
+    //SDL_FreeSurface(surface);
+    //SDL_FreeSurface(converted);
 
     m_configure_flag = true;
     }

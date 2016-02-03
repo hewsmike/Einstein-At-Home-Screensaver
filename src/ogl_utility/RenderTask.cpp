@@ -22,6 +22,9 @@
 
 #include <sstream>
 
+std::string RenderTask::m_transform_name("");
+glm::mat4* RenderTask::m_transform(NULL);
+
 RenderTask::RenderTask(RenderTask::shader_group s_group,
         			   RenderTask::index_buffer_group i_group,
 		               RenderTask::vertex_buffer_group v_group) {
@@ -78,7 +81,7 @@ void RenderTask::addSpecification(const AttributeInputAdapter::attribute_spec sp
 
 void RenderTask::setUniformLoadPoint(std::string u_name, GLvoid* source) {
     // Pass on to the underlying program object.
-    m_program->setUniformLoadPoint(u_name, source);
+	m_program->setUniformLoadPoint(u_name, source);
     }
 
 void RenderTask::utilise(GLenum primitive, GLsizei count) {
@@ -87,7 +90,9 @@ void RenderTask::utilise(GLenum primitive, GLsizei count) {
     }
 
 void RenderTask::acquire(void) {
-	m_vertex_buffer->acquire();
+	if(m_vertex_buffer != NULL) {
+		m_vertex_buffer->acquire();
+		}
 
     if(m_index_buffer != NULL) {
     	m_index_buffer->acquire();
@@ -105,4 +110,12 @@ void RenderTask::acquire(void) {
 					<< std::endl;
     	ErrorHandler::record(linking_log.str(), ErrorHandler::INFORM);
     	}
+
+    // Pass on to the underlying program object.
+    m_program->setUniformLoadPoint(m_transform_name, m_transform);
     }
+
+void RenderTask::setTransform(const std::string& name, glm::mat4* matrix) {
+	m_transform_name = name;
+	m_transform = matrix;
+	}
