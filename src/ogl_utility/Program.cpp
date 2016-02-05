@@ -316,6 +316,7 @@ bool Program::loadUniform(Program::uniform_data current) {
 			break;
 		case GL_SAMPLER_2D:
 			/// Just accounting for the instance, nothing to be done.
+			/// That is : writing to a sampler instance is illegal.
 			break;
 		default:
 			std::stringstream err_msg;

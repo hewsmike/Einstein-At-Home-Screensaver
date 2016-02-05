@@ -29,6 +29,7 @@
 #include "AttributeInputAdapter.h"
 #include "FragmentShader.h"
 #include "OGL_ID.h"
+#include "Uniform.h"
 #include "VertexShader.h"
 
 /**
@@ -142,20 +143,6 @@ class Program : public OGL_ID {
         void setUniformLoadPoint(std::string u_name, GLvoid* source);
 
     private:
-        // Data structure containing the relevant parameters for
-        // a uniform variable.
-        struct uniform_data {
-        	// The uniform variable type as known to OpenGL.
-        	GLenum m_type;
-
-        	// Untyped pointer to location of persistent data in client space
-        	// which will be used to refresh the in-program value.
-        	GLvoid* m_load_point;
-
-        	// The location of the uniform within the OpenGL program object.
-        	GLint m_location;
-        	};
-
         /**
          * \brief Obtain the uniform_data instance corresponding to the given
          */
@@ -210,7 +197,7 @@ class Program : public OGL_ID {
         /// but not otherwise usefully referenced ie. the OpenGL compiler
         /// may ( and probably will ) ignore them and thus discard any
         /// reference to them.
-        typedef std::map<std::string, Program::uniform_data> uniformMap;
+        typedef std::map<Uniform> uniformMap;
         uniformMap uniforms;
   };
 

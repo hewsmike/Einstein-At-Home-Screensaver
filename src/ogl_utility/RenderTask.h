@@ -30,6 +30,8 @@
 #include "IndexBuffer.h"
 #include "Pipeline.h"
 #include "Program.h"
+#include "TextureBuffer.h"
+#include "Uniform.h"
 #include "VertexBuffer.h"
 #include "VertexFetch.h"
 #include "VertexShader.h"
@@ -40,25 +42,49 @@
  */
 
 /**
- * \brief This interface declares public methods to deal with an entire rendering task.
- *        That being a specific collection of ogl_utility objects to render an entire vertex
- *        buffer data set, with or without indexing.
+ * \brief This class declares public methods to deal with an entire
+ *        rendering task, such that activation will cause rendering to
+ *        occur within the current OpenGL context. Cases :
  *
- *        The minimum to be provided is :
- *          - GLSL source code for both vertex and fragment shaders
- *            ( even if only of pass-through nature ).
- *          - a specification for a VertexBuffer object.
+ *        MINIMUM : provide GLSL source code for both vertex and fragment
+ *        shaders. This is the scenario where vertex attributes are generated
+ *        and handled entirely by shader code. A shader_group structure
+ *        with valid contents must be provided.
+ *
+ *        MINUMUM + TEXTURE : case MINIMUM plus provision of texture data
+ *        to be accessed/interpolated by a fragment shader.
+ *
+ *        MINUMUM + VERTICES : case MINIMUM with provision of vertex
+ *        attributes to be accessed by a vertex shader.
+ *
+ *        MINUMUM + VERTICES + TEXTURE : case MINIMUM + VERTICES with provision
+ *        of texture data to be accessed/interpolated by a fragment shader.
+ *
+ *        MINUMUM + VERTICES + INDICES : case MINIMUM + VERTICES with provision
+ *        of indices into the vertex attribute data in order to select a
+ *        subset of it. NB it makes no sense to provide indicial data without
+ *        vertex attribute data.
+ *
+ *        MINUMUM + VERTICES + INDICES + TEXTURE : case MINIMUM + VERTICES +
+ *        INDICES with provision of a texture data to be accessed/interpolated
+ *        by a fragment shader.
  *
  *        General usage :
- *          - construct instance with above minimum provisions.
- *          - set any attribute specifications for vertex input.
- *			- set any uniform variable loading points in client code.
+ *          - must ALWAYS provide a shader_group structure.
+ *          - provide any other structures suitable per the desired case.
+ *          - call a constructor corresponding the desired case,
+ *            using the appropriate structures as arguments.
+ *          - provide Uniform instances to specify client code loading points.
+ *          - if required ie. when using a buffer of vertex attributes, provide
+ *            attribute specifications.
  *
  * \see AttributeInputAdapter
  * \see FragmentShader
  * \see IndexBuffer
  * \see Pipeline
  * \see Program
+ * \see TextureBuffer
+ * \see Uniform
  * \see VertexBuffer
  * \see VertexFetch
  * \see VertexShader
@@ -88,6 +114,27 @@ class RenderTask {
 			GLenum usage;
 			VertexBuffer::data_mix mix;
         	};
+
+        struct texture_buffer_group {
+            const GLvoid* texture_data;
+        	GLuint bytes;
+            GLsizei width;
+            GLsizei height;
+            GLenum format;
+            GLenum data_type;
+			GLenum wrap_type_s;
+			GLenum wrap_type_t;
+            bool mipmaps;
+            };
+
+        /**
+         * \brief Constructor. Shaders only provided. Corresponds to MINIMUM
+         *                     case as described.
+         *
+         * \param s_group : a shader_group structure that specifies the key parameters
+         *                  to construct Shader objects for this rendering task.
+         */
+        RenderTask(RenderTask::shader_group s_group);
 
         /**
          * \brief Constructor.
@@ -120,11 +167,9 @@ class RenderTask {
          *        by an OpenGL program object, and a position within client code.
          *        DO NOT set the vertex shader's uniform transform matrix name
          *        and load point by this method.
-         * \param u_name : the name of the uniform variable.
-         * \param source : an untyped pointer to client code where the value
-         *                 may be uploaded from.
+         * \param uniform : a reference to a Uniform variable.
          */
-        void setUniformLoadPoint(std::string u_name, GLvoid* source);
+        void setUniform(Uniform& uniform);
 
         /**
          * \brief utilise this task ie. trigger rendering as per setup.
@@ -147,6 +192,7 @@ class RenderTask {
         IndexBuffer* m_index_buffer;
         Pipeline* m_pipeline;
         Program* m_program;
+        Texture* m_texture;
         VertexBuffer* m_vertex_buffer;
         VertexFetch* m_vertex_fetch;
         VertexShader* m_vertex_shader;
