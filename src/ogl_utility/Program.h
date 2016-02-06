@@ -76,14 +76,16 @@ class Program : public OGL_ID {
         virtual ~Program();
 
         /**
-		 * \brief Use the underlying OpenGL program object.
+		 * \brief Make the underlying OpenGL program object part of current
+		 * 		  pipeline state.
 		 */
-		void use(void) const;
+		void bind(void) const;
 
 		/**
-		 * \brief Don't use the underlying OpenGL program object.
+		 * \brief Detach the underlying OpenGL program object from the
+		 *        current pipeline state.
 		 */
-		void stopUse(void) const;
+		void unbind(void) const;
 
         /**
          * \brief Obtains the program object resources.
@@ -136,19 +138,33 @@ class Program : public OGL_ID {
         /**
          * \brief Create a correspondence between a uniform variable, as known
          *        by an OpenGL program object, and a position within client code.
-         * \param u_name : the name of the uniform variable.
-         * \param source : an untyped pointer to client code where the value
-         *                 may be uploaded from.
+         * \param uniform : the uniform variable.
          */
-        void setUniformLoadPoint(std::string u_name, GLvoid* source);
+        void setUniformLoadPoint(const Uniform& uniform);
 
     private:
+        // Data structure containing the relevant parameters for
+        // a uniform variable.
+        struct uniform_data{
+                	// Untyped pointer to location of persistent data in client space
+                	// which will be used to refresh the in-program value.
+                	GLvoid* client_load_point = NULL;
+
+                	// The uniform variable type as known to OpenGL.
+        			GLenum GLSL_type = 0;
+
+        			// The location of the uniform within the OpenGL program object.
+        			GLint program_location = 0;
+        			};
+
         /**
          * \brief Obtain the uniform_data instance corresponding to the given
          */
-        uniform_data getUniform(std::string u_name);
+        Program::uniform_data getUniform(std::string u_name);
 
-        bool loadUniform(Program::uniform_data current);
+        bool loadUniform(uniform_data current);
+
+        std::string checkUniform(GLenum type);
 
         /**
          * \brief Link the program.
@@ -173,9 +189,7 @@ class Program : public OGL_ID {
          */
         bool mapUniforms(void);
 
-        std::string checkUniform(GLenum type);
-
-        // These are merely set during construction, though utilised during acquisition.
+        /// These are merely set during construction, though utilised during acquisition.
         /// The vertex shader reference.
         VertexShader* m_vertex_shader;
 
@@ -197,7 +211,7 @@ class Program : public OGL_ID {
         /// but not otherwise usefully referenced ie. the OpenGL compiler
         /// may ( and probably will ) ignore them and thus discard any
         /// reference to them.
-        typedef std::map<Uniform> uniformMap;
+        typedef std::map<std::string, Program::uniform_data> uniformMap;
         uniformMap uniforms;
   };
 

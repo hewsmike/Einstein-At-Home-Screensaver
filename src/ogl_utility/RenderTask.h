@@ -46,37 +46,37 @@
  *        rendering task, such that activation will cause rendering to
  *        occur within the current OpenGL context. Cases :
  *
- *        MINIMUM : provide GLSL source code for both vertex and fragment
- *        shaders. This is the scenario where vertex attributes are generated
- *        and handled entirely by shader code. A shader_group structure
- *        with valid contents must be provided.
+ * MINIMUM : provide GLSL source code for both vertex and fragment
+ * shaders. This is the scenario where vertex attributes are generated
+ * and handled entirely by shader code. A shader_group structure
+ * with valid contents must be provided.
  *
- *        MINUMUM + TEXTURE : case MINIMUM plus provision of texture data
- *        to be accessed/interpolated by a fragment shader.
+ * MINUMUM + TEXTURE : case MINIMUM plus provision of texture data
+ * to be accessed/interpolated by a fragment shader.
  *
- *        MINUMUM + VERTICES : case MINIMUM with provision of vertex
- *        attributes to be accessed by a vertex shader.
+ * MINUMUM + VERTICES : case MINIMUM with provision of vertex
+ * attributes to be accessed by a vertex shader.
  *
- *        MINUMUM + VERTICES + TEXTURE : case MINIMUM + VERTICES with provision
- *        of texture data to be accessed/interpolated by a fragment shader.
+ * MINUMUM + VERTICES + TEXTURE : case MINIMUM + VERTICES with provision
+ * of texture data to be accessed/interpolated by a fragment shader.
  *
- *        MINUMUM + VERTICES + INDICES : case MINIMUM + VERTICES with provision
- *        of indices into the vertex attribute data in order to select a
- *        subset of it. NB it makes no sense to provide indicial data without
- *        vertex attribute data.
+ * MINUMUM + VERTICES + INDICES : case MINIMUM + VERTICES with provision
+ * of indices into the vertex attribute data in order to select a
+ * subset of it. NB it makes no sense to provide indicial data without
+ * vertex attribute data.
  *
- *        MINUMUM + VERTICES + INDICES + TEXTURE : case MINIMUM + VERTICES +
- *        INDICES with provision of a texture data to be accessed/interpolated
- *        by a fragment shader.
+ * MINUMUM + VERTICES + INDICES + TEXTURE : case MINIMUM + VERTICES +
+ * INDICES with provision of a texture data to be accessed/interpolated
+ * by a fragment shader.
  *
- *        General usage :
- *          - must ALWAYS provide a shader_group structure.
- *          - provide any other structures suitable per the desired case.
- *          - call a constructor corresponding the desired case,
- *            using the appropriate structures as arguments.
- *          - provide Uniform instances to specify client code loading points.
- *          - if required ie. when using a buffer of vertex attributes, provide
- *            attribute specifications.
+ * Usage :
+ * 		- must ALWAYS provide a shader_group structure.
+ *      - provide any other structures suitable per the desired case.
+ *      - call a constructor corresponding the desired case,
+ *        using the appropriate structures as arguments.
+ *      - provide Uniform instances to specify client code loading points.
+ *      - if required ie. when using a buffer of vertex attributes, provide
+ *        attribute specifications.
  *
  * \see AttributeInputAdapter
  * \see FragmentShader
@@ -134,7 +134,7 @@ class RenderTask {
          * \param s_group : a shader_group structure that specifies the key parameters
          *                  to construct Shader objects for this rendering task.
          */
-        RenderTask(RenderTask::shader_group s_group);
+        //RenderTask(RenderTask::shader_group s_group, Uniform& transform);
 
         /**
          * \brief Constructor.
@@ -181,18 +181,22 @@ class RenderTask {
          */
         void acquire(void);
 
-        static void setTransform(const std::string& name, glm::mat4* matrix[4][4]);
+        static void setTransform(Uniform& transform);
+
+        static Uniform getTransfrom(void);
 
     private:
         static std::string m_transform_name;
-        static glm::mat4* m_transform;
+        static GLvoid* m_transform_matrix;
+        static bool m_transform_set;
 
         AttributeInputAdapter* m_attrib_adapt;
         FragmentShader* m_frag_shader;
         IndexBuffer* m_index_buffer;
         Pipeline* m_pipeline;
         Program* m_program;
-        Texture* m_texture;
+        TextureBuffer* m_texture;
+        Uniform m_transform;
         VertexBuffer* m_vertex_buffer;
         VertexFetch* m_vertex_fetch;
         VertexShader* m_vertex_shader;

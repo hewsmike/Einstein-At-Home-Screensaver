@@ -25,32 +25,38 @@
 
 #include "ErrorHandler.h"
 
-Uniform::Uniform(GLenum type, const std::string& name, GLvoid* load_point) :
-                    m_type(type),
+Uniform::Uniform(const std::string& name, GLvoid* load_point) :
                     m_name(name),
                     m_load_point(load_point) {
-    }
+	}
 
-virtual Uniform::~Uniform() {
-    }
+Uniform::Uniform(const Uniform& other) {
+	m_name = other.m_name;
+	m_load_point = other.m_load_point;
+	}
 
-GLenum Uniform::type(void) const {
-    return m_type;
+Uniform& Uniform::operator=(const Uniform& other) {
+	m_name = other.m_name;
+	m_load_point = other.m_load_point;
+	return *this;
+	}
+
+Uniform::~Uniform() {
     }
 
 std::string Uniform::name(void) const {
-    return m_uniform_name;
+    return m_name;
     }
 
 GLvoid* Uniform::loadPoint(void) const {
     return m_load_point;
     }
 
-std::string Uniform::type_name(void) const {
+std::string Uniform::type_name(GLenum type) {
     std::string ret_val("");
 
 	// Somewhat over-killed here, but covers all possible OpenGL v3.3 types.
-	switch(m_type) {
+	switch(type) {
 		case GL_FLOAT:
 			ret_val = "GL_FLOAT";
 			break;
@@ -376,41 +382,4 @@ std::string Uniform::type_name(void) const {
 		}
 
 	return ret_val;
-    }
-
-bool Uniform::load(void) const {
-    // Assume success.
-	bool ret_val = true;
-
-    // NB Specific cases to be added as needed in future.
-	switch(m_type) {
-		case GL_FLOAT:
-			glUniform1f(m_load_point, *(static_cast<const GLfloat*>(current.m_load_point)));
-			break;
-		case GL_FLOAT_MAT4:
-			glUniformMatrix4fv(current.m_location, 1, false, static_cast<const GLfloat*>(current.m_load_point));
-			break;
-		case GL_FLOAT_VEC3:
-			glUniform3fv(current.m_location, 1, static_cast<const GLfloat*>(current.m_load_point));
-			break;
-		case GL_SAMPLER_2D:
-			/// Just accounting for the instance, nothing to be done.
-			/// That is : writing to a sampler instance is illegal.
-			break;
-		default:
-			std::stringstream err_msg;
-			err_msg << "\t\t"
-					<< type_name(m_type)
-					<< std::endl;
-			ErrorHandler::record("Uniform::load() : bad switch case ( default ).", ErrorHandler::WARN);
-			ErrorHandler::record(err_msg.str(), ErrorHandler::WARN);
-			ret_val = false;
-			break;
-		}
-
-	return ret_val;
-    }
-
-void Uniform::m_set_index(GLint index) {
-    m_program_index = index;
     }

@@ -225,9 +225,11 @@ void Starsphere::make_stars() {
 	m_render_task_star->addSpecification({0, "position", 3, GL_FLOAT, GL_FALSE});
 
     // For program uniforms need client side pointers.
-	m_render_task_star->setUniformLoadPoint("CameraMatrix", &m_camera[0][0]);
-	m_render_task_star->setUniformLoadPoint("color", &m_star_color);
-	m_render_task_star->setUniformLoadPoint("point_size", &m_star_point_size);
+	Uniform color("color", &m_star_color);
+	m_render_task_star->setUniform(color);
+
+	Uniform point_size("point_size", &m_star_point_size);
+	m_render_task_star->setUniform(point_size);
 
     // Claim all required state machine resources for this rendering task.
 	m_render_task_star->acquire();
@@ -278,9 +280,11 @@ void Starsphere::make_pulsars() {
 	m_render_task_psr->addSpecification({0, "position", 3, GL_FLOAT, GL_FALSE});
 
     // For program uniforms need client side pointers.
-	m_render_task_psr->setUniformLoadPoint("CameraMatrix", &m_camera[0][0]);
-	m_render_task_psr->setUniformLoadPoint("color", &m_pulsar_color);
-	m_render_task_psr->setUniformLoadPoint("point_size", &m_pulsar_point_size);
+	Uniform color("color", &m_pulsar_color);
+	m_render_task_psr->setUniform(color);
+
+	Uniform point_size("point_size", &m_pulsar_point_size);
+	m_render_task_psr->setUniform(point_size);
 
     // Claim all required state machine resources for this rendering task.
 	m_render_task_psr->acquire();
@@ -331,9 +335,11 @@ void Starsphere::make_snrs() {
 	m_render_task_snr->addSpecification({0, "position", 3, GL_FLOAT, GL_FALSE});
 
     // For program uniforms need client side pointers.
-	m_render_task_snr->setUniformLoadPoint("CameraMatrix", &m_camera[0][0]);
-	m_render_task_snr->setUniformLoadPoint("color", &m_supernova_color);
-	m_render_task_snr->setUniformLoadPoint("point_size", &m_supernova_point_size);
+	Uniform color("color", &m_supernova_color);
+	m_render_task_snr->setUniform(color);
+
+	Uniform point_size("point_size", &m_supernova_point_size);
+	m_render_task_snr->setUniform(point_size);
 
     // Claim all required state machine resources for this rendering task.
 	m_render_task_snr->acquire();
@@ -399,9 +405,11 @@ void Starsphere::make_constellations() {
 	m_render_task_cons->addSpecification({0, "position", 3, GL_FLOAT, GL_FALSE});
 
     // For program uniforms need client side pointers.
-	m_render_task_cons->setUniformLoadPoint("CameraMatrix", &m_camera[0][0]);
-	m_render_task_cons->setUniformLoadPoint("color", &m_constellation_line_color);
-	m_render_task_cons->setUniformLoadPoint("point_size", &m_constellation_line_width);
+	Uniform color("color", &m_constellation_line_color);
+	m_render_task_cons->setUniform(color);
+
+	Uniform point_size("point_size", &m_constellation_line_width);
+	m_render_task_cons->setUniform(point_size);
 
     // Claim all required state machine resources for this rendering task.
 	m_render_task_cons->acquire();
@@ -794,7 +802,8 @@ void Starsphere::resize(const int width, const int height) {
  *  What to do when graphics are "initialized".
  */
 void Starsphere::initialize(const int width, const int height, const Resource* font) {
-	RenderTask::setTransform("CameraMatrix", &m_camera[0][0]);
+	Uniform transform("CameraMatrix", &m_camera[0][0]);
+	RenderTask::setTransform(transform);
 
 	m_CurrentWidth = width;
     m_CurrentHeight = height;
@@ -991,16 +1000,16 @@ void Starsphere::render(const double timeOfDay) {
 
 	// stars, pulsars, supernovae, grid
     if(isFeature(STARS)) {
-    	//m_render_task_star->utilise(GL_POINTS, m_distinct_stars);;
+    	m_render_task_star->utilise(GL_POINTS, m_distinct_stars);;
     	}
     if(isFeature(PULSARS)) {
-    	//m_render_task_psr->utilise(GL_POINTS, Npulsars);
+    	m_render_task_psr->utilise(GL_POINTS, Npulsars);
     	}
     if(isFeature(SNRS)) {
-    	//m_render_task_snr->utilise(GL_POINTS, NSNRs);
+    	m_render_task_snr->utilise(GL_POINTS, NSNRs);
     	}
     if(isFeature(CONSTELLATIONS)) {
-    	//m_render_task_cons->utilise(GL_LINES, m_constellation_lines*2);
+    	m_render_task_cons->utilise(GL_LINES, m_constellation_lines*2);
     	}
 	if(isFeature(GLOBE)) {
 		/// TODO - call to render axes;
@@ -1038,7 +1047,7 @@ void Starsphere::render(const double timeOfDay) {
 		// Disable depth testing since we're in 2D mode
         //glDisable(GL_DEPTH_TEST);
 
-        if (isFeature(LOGO)) renderLogo();
+        //if (isFeature(LOGO)) renderLogo();
         // if (isFeature(SEARCHINFO)) renderSearchInformation();
 
         // Enable depth testing since we're leaving 2D mode

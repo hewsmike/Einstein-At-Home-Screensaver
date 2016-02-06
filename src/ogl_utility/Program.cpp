@@ -52,11 +52,11 @@ Program::~Program() {
     Program::release();
     }
 
-void Program::use(void) const {
+void Program::bind(void) const {
 	glUseProgram(this->ID());
 	}
 
-void Program::stopUse(void)const {
+void Program::unbind(void)const {
 	// NB from OpenGL 3.3 standard "If program is zero, then the current rendering state refers
 	// to an invalid program object and the results of shader execution are undefined. However,
 	// this is not an error."
@@ -226,13 +226,13 @@ const std::string& Program::linkageLog(void) const {
     return linker_log;
     }
 
-void Program::setUniformLoadPoint(std::string u_name, GLvoid* source) {
+void Program::setUniformLoadPoint(const Uniform& uniform) {
 	uniform_data current;
-	current.m_load_point = source;
+	current.client_load_point = uniform.loadPoint();
 
-	uniformMap::iterator pos = uniforms.find(u_name);
+	uniformMap::iterator pos = uniforms.find(uniform.name());
 	if(pos == uniforms.end()) {
-		uniforms.insert(std::make_pair(std::string(u_name), current));
+		uniforms.insert(std::make_pair(uniform.name(), current));
 		}
 	else {
 		pos->second = current;
@@ -274,13 +274,13 @@ bool Program::mapUniforms(void) {
             // Paranoia.
             u_name[max_name_len] = '\0';
 
-            current.m_location = (GLint)(index);
-            current.m_type = uniform_type;
+            current.program_location = (GLint)(index);
+            current.GLSL_type = uniform_type;
 
             uniformMap::iterator pos = uniforms.find(u_name);
 			if(pos != uniforms.end()) {
-				pos->second.m_type = uniform_type;
-				pos->second.m_location = index;
+				pos->second.GLSL_type = uniform_type;
+				pos->second.program_location = index;
 				}
 			else {
 				uniforms.insert(std::make_pair(std::string(u_name), current));
@@ -304,15 +304,15 @@ bool Program::loadUniform(Program::uniform_data current) {
 	bool ret_val = true;
 
     // NB Specific cases to be added as needed in future.
-	switch(current.m_type) {
+	switch(current.GLSL_type) {
 		case GL_FLOAT:
-			glUniform1f(current.m_location, *(static_cast<const GLfloat*>(current.m_load_point)));
+			glUniform1f(current.program_location, *(static_cast<const GLfloat*>(current.client_load_point)));
 			break;
 		case GL_FLOAT_MAT4:
-			glUniformMatrix4fv(current.m_location, 1, false, static_cast<const GLfloat*>(current.m_load_point));
+			glUniformMatrix4fv(current.program_location, 1, false, static_cast<const GLfloat*>(current.client_load_point));
 			break;
 		case GL_FLOAT_VEC3:
-			glUniform3fv(current.m_location, 1, static_cast<const GLfloat*>(current.m_load_point));
+			glUniform3fv(current.program_location, 1, static_cast<const GLfloat*>(current.client_load_point));
 			break;
 		case GL_SAMPLER_2D:
 			/// Just accounting for the instance, nothing to be done.
@@ -321,7 +321,7 @@ bool Program::loadUniform(Program::uniform_data current) {
 		default:
 			std::stringstream err_msg;
 			err_msg << "\t\t"
-					<< checkUniform(current.m_type)
+					<< checkUniform(current.GLSL_type)
 					<< std::endl;
 			ErrorHandler::record("Program::loadUniform() : bad switch case ( default ).", ErrorHandler::WARN);
 			ErrorHandler::record(err_msg.str(), ErrorHandler::WARN);

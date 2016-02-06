@@ -39,6 +39,7 @@
 #include "EinsteinGravityAdapter.h"
 #include "ogl_utility.h"
 #include "RenderTask.h"
+#include "Uniform.h"
 #include "WindowManager.h"
 
 #include "SDL_ttf.h"

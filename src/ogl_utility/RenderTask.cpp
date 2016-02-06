@@ -23,16 +23,18 @@
 #include <sstream>
 
 std::string RenderTask::m_transform_name("");
-glm::mat4* RenderTask::m_transform(NULL);
+GLvoid* RenderTask::m_transform_matrix(NULL);
+bool RenderTask::m_transform_set(false);
 
-RenderTask::RenderTask(RenderTask::shader_group s_group) {
-    m_vertex_shader = new VertexShader(s_group.vert_shader_source);
-    m_frag_shader = new FragmentShader(s_group.frag_shader_source);
-    }
+//RenderTask::RenderTask(RenderTask::shader_group s_group, Uniform&) {
+//    m_vertex_shader = new VertexShader(s_group.vert_shader_source);
+//    m_frag_shader = new FragmentShader(s_group.frag_shader_source);
+//    }
 
 RenderTask::RenderTask(RenderTask::shader_group s_group,
         			   RenderTask::index_buffer_group i_group,
-		               RenderTask::vertex_buffer_group v_group) {
+		               RenderTask::vertex_buffer_group v_group) :
+							m_transform("", NULL) {
     //
     m_vertex_shader = new VertexShader(s_group.vert_shader_source);
     m_frag_shader = new FragmentShader(s_group.frag_shader_source);
@@ -84,9 +86,9 @@ void RenderTask::addSpecification(const AttributeInputAdapter::attribute_spec sp
     m_attrib_adapt->addSpecification(spec);
     }
 
-void RenderTask::setUniformLoadPoint(std::string u_name, GLvoid* source) {
+void RenderTask::setUniform(Uniform& uniform) {
     // Pass on to the underlying program object.
-	m_program->setUniformLoadPoint(u_name, source);
+	m_program->setUniformLoadPoint(uniform);
     }
 
 void RenderTask::utilise(GLenum primitive, GLsizei count) {
@@ -117,10 +119,18 @@ void RenderTask::acquire(void) {
     	}
 
     // Pass on to the underlying program object.
-    m_program->setUniformLoadPoint(m_transform_name, m_transform);
+    Uniform transform(m_transform_name, m_transform_matrix);
+    m_program->setUniformLoadPoint(transform);
     }
 
-void RenderTask::setTransform(const std::string& name, glm::mat4* matrix) {
-	m_transform_name = name;
-	m_transform = matrix;
+void RenderTask::setTransform(Uniform& transform) {
+	if(m_transform_set == false) {
+		m_transform_name = transform.name();
+		m_transform_matrix = transform.loadPoint();
+		}
+	m_transform_set = true;
+	}
+
+Uniform RenderTask::getTransfrom(void) {
+	return Uniform(m_transform_name, m_transform_matrix);
 	}

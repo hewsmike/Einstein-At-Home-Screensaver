@@ -42,24 +42,31 @@ class Uniform {
         /**
          * \brief Constructor
          *
-         * \param type - the uniform variable's OpenGL type enumeration
-         * \param uniform_name - the name of the uniform variable
-         * \param load_point - the location to load the value from.
+         * \param uniform_name - the name of the uniform variable as
+         * 						 declared within a shader
+         * \param load_point - the untyped client code location to retrieve
+         * 					   the value from.
          */
-        Uniform(GLenum type, const std::string& uniform_name, GLvoid* load_point);
+        Uniform(const std::string& uniform_name, GLvoid* load_point);
+
+        /**
+		 * \brief Copy Constructor
+		 *
+		 * \param other - the name of the Uniform instance.
+		 */
+		Uniform(const Uniform& other);
+
+		/**
+		 * \brief Copy Assignment Operator
+		 *
+		 * \param other - the name of the Uniform instance.
+		 */
+		Uniform& operator=(const Uniform& other);
 
         /**
          * \brief Destructor
          */
         virtual ~Uniform();
-
-        /**
-         * \brief Return the OpenGL enumerant representing the uniform
-         *        variable's type.
-         *
-         * \return The OpenGL enumerant.
-         */
-        GLenum type(void) const;
 
         /**
          * \brief Return the uniform variable's name as declared within
@@ -84,41 +91,15 @@ class Uniform {
          *         value "UNKNOWN" may be returned if not an OpenGL 3.3
          *         recognised type.
          */
-        std::string type_name(void) const;
-
-        /**
-         * \brief Return the uniform variable's program index.
-         *
-         * \return An integer representing it's program index.
-         */
-        GLuint index(void) const;
-
-        /**
-         * \brief Load the value of the uniform variable into the
-         *        currently bound OpenGL program
-         *
-         * \return A boolean indicating success of the operation
-         *              - false : the load failed
-         *              - true : the load succeeded
-         */
-        bool load(void) const;
+        static std::string type_name(GLenum type);
 
     private :
-        /// Set the program index of the variable.
-        void m_set_index(GLint index);
-
-        /// The OpenGL enumerant represeting the uniform variable type.
-        GLenum m_type;
-
         /// The name of the variable as known within a shader.
         std::string m_name;
 
         /// The client code load point.
         GLvoid* m_load_point;
-
-        /// The index of the uniform variable within it's OpenGL program.
-        GLint m_program_index;
-	};
+    };
 
 /**
  * @}

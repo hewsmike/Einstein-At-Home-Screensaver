@@ -55,7 +55,7 @@ void Pipeline::utilise(GLenum primitive, GLsizei count) {
 
     // Only if the program was successfully linked.
     if(m_program->status() == Program::LINKAGE_SUCCEEDED) {
-    	m_program->use();
+    	m_program-> bind();
 
     	m_vertex_fetch->bind();
 
@@ -75,7 +75,7 @@ void Pipeline::utilise(GLenum primitive, GLsizei count) {
 
         m_vertex_fetch->unbind();
 
-        m_program->stopUse();
+        m_program->unbind();
         }
     else {
         ErrorHandler::record("Pipeline::utilise() : Program did not link !", ErrorHandler::FATAL);
