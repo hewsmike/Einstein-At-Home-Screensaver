@@ -66,12 +66,6 @@ void TextString::configureTask(void) {
         }
 
     // Create a TextureBuffer object
-    std::stringstream msg;
-    msg << "TextString::configureTask() : GL_CLAMP = "
-    	<< GL_CLAMP << std::endl;
-
-    ErrorHandler::record(msg.str(), ErrorHandler::INFORM);
-
     m_texture_buffer = new TextureBuffer(converted->pixels,
                                          GLuint(converted->pitch) * GLuint(converted->h),
                                          GLsizei(converted->w),

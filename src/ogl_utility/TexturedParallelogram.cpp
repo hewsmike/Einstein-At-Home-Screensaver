@@ -150,17 +150,11 @@ void TexturedParallelogram::configureTask(void) {
 
 	m_render_task = new RenderTask(s_group, i_group, v_group);
 
-	Uniform base("base_position", &m_position);
+	m_render_task->setUniform("base_position", &m_position);
 
-	m_render_task->setUniform(base);
+	m_render_task->setUniform("height_offset", &m_height_offset);
 
-	Uniform height("height_offset", &m_height_offset);
-
-	m_render_task->setUniform(height);
-
-	Uniform width("width_offset", &m_width_offset);
-
-	m_render_task->setUniform(width);
+	m_render_task->setUniform("width_offset", &m_width_offset);
 
 	m_render_task->acquire();
 

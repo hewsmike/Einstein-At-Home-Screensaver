@@ -148,12 +148,6 @@ bool TextureBuffer::isBound(void) const {
 void TextureBuffer::loadBuffer(void) {
     this->bind();
 
-    std::stringstream msg;
-    msg << "TextureBuffer::loadBuffer() : m_width = "
-    	<< m_width << "\t\tm_height = "
-		<< m_height;
-    ErrorHandler::record(msg.str(), ErrorHandler::INFORM);
-
     // The 'm_format' parameter appears twice in the following parameter
     // list as we don't change/convert for this application.
     glTexImage2D(GL_TEXTURE_2D,

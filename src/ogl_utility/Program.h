@@ -29,7 +29,6 @@
 #include "AttributeInputAdapter.h"
 #include "FragmentShader.h"
 #include "OGL_ID.h"
-#include "Uniform.h"
 #include "VertexShader.h"
 
 /**
@@ -138,24 +137,25 @@ class Program : public OGL_ID {
         /**
          * \brief Create a correspondence between a uniform variable, as known
          *        by an OpenGL program object, and a position within client code.
-         * \param uniform : the uniform variable.
+         * \param uniform : the uniform variable's name
+         * \param load_point : the client code address to load values from
          */
-        void setUniformLoadPoint(const Uniform& uniform);
+        void setUniformLoadPoint(const std::string& uniform_name, GLvoid* load_point);
 
     private:
         // Data structure containing the relevant parameters for
-        // a uniform variable.
-        struct uniform_data{
-                	// Untyped pointer to location of persistent data in client space
-                	// which will be used to refresh the in-program value.
-                	GLvoid* client_load_point = NULL;
+		// a uniform variable.
+		struct uniform_data{
+			// Untyped pointer to location of persistent data in client space
+			// which will be used to refresh the in-program value.
+			GLvoid* client_load_point;
 
-                	// The uniform variable type as known to OpenGL.
-        			GLenum GLSL_type = 0;
+			// The uniform variable type as known to OpenGL.
+			GLenum GLSL_type;
 
-        			// The location of the uniform within the OpenGL program object.
-        			GLint program_location = 0;
-        			};
+			// The location of the uniform within the OpenGL program object.
+			GLint program_location;
+			};
 
         /**
          * \brief Obtain the uniform_data instance corresponding to the given

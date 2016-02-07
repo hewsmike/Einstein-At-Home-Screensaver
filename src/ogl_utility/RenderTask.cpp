@@ -33,8 +33,7 @@ bool RenderTask::m_transform_set(false);
 
 RenderTask::RenderTask(RenderTask::shader_group s_group,
         			   RenderTask::index_buffer_group i_group,
-		               RenderTask::vertex_buffer_group v_group) :
-							m_transform("", NULL) {
+		               RenderTask::vertex_buffer_group v_group) {
     //
     m_vertex_shader = new VertexShader(s_group.vert_shader_source);
     m_frag_shader = new FragmentShader(s_group.frag_shader_source);
@@ -86,9 +85,9 @@ void RenderTask::addSpecification(const AttributeInputAdapter::attribute_spec sp
     m_attrib_adapt->addSpecification(spec);
     }
 
-void RenderTask::setUniform(Uniform& uniform) {
+void RenderTask::setUniform(const std::string& uniform_name, GLvoid* load_point) {
     // Pass on to the underlying program object.
-	m_program->setUniformLoadPoint(uniform);
+	m_program->setUniformLoadPoint(uniform_name, load_point);
     }
 
 void RenderTask::utilise(GLenum primitive, GLsizei count) {
@@ -117,20 +116,20 @@ void RenderTask::acquire(void) {
 					<< std::endl;
     	ErrorHandler::record(linking_log.str(), ErrorHandler::INFORM);
     	}
-
-    // Pass on to the underlying program object.
-    Uniform transform(m_transform_name, m_transform_matrix);
-    m_program->setUniformLoadPoint(transform);
     }
 
-void RenderTask::setTransform(Uniform& transform) {
+void RenderTask::setTransform(const std::string& transform_name, GLvoid* load_point) {
 	if(m_transform_set == false) {
-		m_transform_name = transform.name();
-		m_transform_matrix = transform.loadPoint();
+		m_transform_name = transform_name;
+		m_transform_matrix = load_point;
 		}
 	m_transform_set = true;
 	}
 
-Uniform RenderTask::getTransfrom(void) {
-	return Uniform(m_transform_name, m_transform_matrix);
+std::string RenderTask::getTransformName(void) {
+	return m_transform_name;
+	}
+
+GLvoid* RenderTask::getTransformMatrix(void) {
+	return m_transform_matrix;
 	}

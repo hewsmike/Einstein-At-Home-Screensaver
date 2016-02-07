@@ -23,6 +23,8 @@ acr *   Copyright (C) 2014 by Mike Hewson                                     *
 #include <iostream>
 #include <sstream>
 
+#include "RenderTask.h"
+
 Program::Program(VertexShader* vertex_shader,
                  FragmentShader* fragment_shader,
 				 AttributeInputAdapter* adapter) {
@@ -226,13 +228,13 @@ const std::string& Program::linkageLog(void) const {
     return linker_log;
     }
 
-void Program::setUniformLoadPoint(const Uniform& uniform) {
+void Program::setUniformLoadPoint(const std::string& uniform_name, GLvoid* load_point) {
 	uniform_data current;
-	current.client_load_point = uniform.loadPoint();
+	current.client_load_point = load_point;
 
-	uniformMap::iterator pos = uniforms.find(uniform.name());
+	uniformMap::iterator pos = uniforms.find(uniform_name);
 	if(pos == uniforms.end()) {
-		uniforms.insert(std::make_pair(uniform.name(), current));
+		uniforms.insert(std::make_pair(uniform_name, current));
 		}
 	else {
 		pos->second = current;
@@ -245,6 +247,8 @@ bool Program::mapUniforms(void) {
 
     // Only proceed if linkage was attempted and succeeded.
     if(this->status() == LINKAGE_SUCCEEDED) {
+
+
         // How many uniforms does this program entity have ?
         GLuint temp;
         glGetProgramiv(this->ID(), GL_ACTIVE_UNIFORMS, (GLint*)(&temp));
@@ -274,16 +278,20 @@ bool Program::mapUniforms(void) {
             // Paranoia.
             u_name[max_name_len] = '\0';
 
-            current.program_location = (GLint)(index);
             current.GLSL_type = uniform_type;
+            current.program_location = (GLint)(index);
 
             uniformMap::iterator pos = uniforms.find(u_name);
 			if(pos != uniforms.end()) {
 				pos->second.GLSL_type = uniform_type;
 				pos->second.program_location = index;
-				}
-			else {
-				uniforms.insert(std::make_pair(std::string(u_name), current));
+
+				std::stringstream msg;
+				msg << "Program::mapUniforms() : name = " << pos->first
+					<< "\t\ttype = " << checkUniform(pos->second.GLSL_type)
+				    << "\t\tposition = " << pos->second.program_location
+					<< "\t\tclient location = " << pos->second.client_load_point;
+				ErrorHandler::record(msg.str(), ErrorHandler::INFORM);
 				}
 			}
         delete u_name;
@@ -300,6 +308,12 @@ Program::uniform_data Program::getUniform(std::string u_name) {
 	}
 
 bool Program::loadUniform(Program::uniform_data current) {
+	std::stringstream msg;
+	msg << "Program::loadUniform() : type = " << checkUniform(current.GLSL_type)
+		<< "\t\tposition = " << current.program_location
+		<< "\t\tclient location = " << current.client_load_point; ;
+	ErrorHandler::record(msg.str(), ErrorHandler::INFORM);
+
 	// Assume success.
 	bool ret_val = true;
 
@@ -669,6 +683,10 @@ void Program::frameCallBack(void) {
 	for(uniformMap::const_iterator uniform = uniforms.begin();
         uniform != uniforms.end();
         ++uniform) {
+        std::stringstream err_msg;
+        err_msg << "Program::frameCallBack() : uniform name = "
+        		<< uniform->first;
+        ErrorHandler::record(err_msg.str(), ErrorHandler::INFORM);
         this->loadUniform(uniform->second);
         }
 	}

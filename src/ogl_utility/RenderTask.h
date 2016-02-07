@@ -169,7 +169,7 @@ class RenderTask {
          *        and load point by this method.
          * \param uniform : a reference to a Uniform variable.
          */
-        void setUniform(Uniform& uniform);
+        void setUniform(const std::string& uniform_name, GLvoid* load_point);
 
         /**
          * \brief utilise this task ie. trigger rendering as per setup.
@@ -181,9 +181,11 @@ class RenderTask {
          */
         void acquire(void);
 
-        static void setTransform(Uniform& transform);
+        static void setTransform(const std::string& transform_name, GLvoid* load_point);
 
-        static Uniform getTransfrom(void);
+        static std::string getTransformName(void);
+
+        static GLvoid* getTransformMatrix(void);
 
     private:
         static std::string m_transform_name;
@@ -196,7 +198,6 @@ class RenderTask {
         Pipeline* m_pipeline;
         Program* m_program;
         TextureBuffer* m_texture;
-        Uniform m_transform;
         VertexBuffer* m_vertex_buffer;
         VertexFetch* m_vertex_fetch;
         VertexShader* m_vertex_shader;
