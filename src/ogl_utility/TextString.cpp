@@ -84,8 +84,8 @@ void TextString::configureTask(void) {
 														 m_texture_buffer);
 
     // With the SDL_ttf library the caller must free the surface when done.
-    //SDL_FreeSurface(surface);
-    //SDL_FreeSurface(converted);
+    SDL_FreeSurface(surface);
+    SDL_FreeSurface(converted);
 
     m_configure_flag = true;
     }

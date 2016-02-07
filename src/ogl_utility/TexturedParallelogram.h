@@ -25,7 +25,6 @@
 
 #include "RenderTask.h"
 #include "TextureBuffer.h"
-#include "Uniform.h"
 
 #include <string>
 

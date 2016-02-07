@@ -31,7 +31,6 @@
 #include "Pipeline.h"
 #include "Program.h"
 #include "TextureBuffer.h"
-#include "Uniform.h"
 #include "VertexBuffer.h"
 #include "VertexFetch.h"
 #include "VertexShader.h"

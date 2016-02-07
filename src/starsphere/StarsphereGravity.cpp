@@ -187,10 +187,10 @@ void StarsphereGravity::renderLogo() {
 
     if(m_isConfigured == false) {
         m_logo_1 = new TextString(glm::vec3(0.0f, 0.0f, 0.0f),
-                                  glm::vec3(0.0f, +1.0f, 0.0f),
-                                  glm::vec3(10.0f, 1.0f, 0.0f),
+                                  glm::vec3(0.0f, +0.5f, 0.0f),
+                                  glm::vec3(20.0f, 1.0f, 0.0f),
                                   m_FontLogo1,
-                                  "Einstein@Home",
+                                  "Hello",
 								  TextString::SOLID,
                                   color);
         m_isConfigured = true;

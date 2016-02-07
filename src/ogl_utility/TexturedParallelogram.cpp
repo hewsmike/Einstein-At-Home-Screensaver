@@ -81,11 +81,13 @@ const std::string TexturedParallelogram::m_fragment_shader("#version 150\n"
 "in vec2 pass_text_coords;\n"
 "\n"
 "// ... lookup using this sampler device ...\n"
-"// uniform sampler2D color_map;\n"
+"uniform sampler2D color_map;\n"
 "\n"
+"// ... to determine the fragment color.\n"
+"out vec4 out_color;\n"
 "void main()\n"
 "{\n"
-"	gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);\n"
+"	out_color = texture(color_map, pass_text_coords.st);\n"
 "}\n");
 
 TexturedParallelogram::TexturedParallelogram(glm::vec3 position,
@@ -150,6 +152,8 @@ void TexturedParallelogram::configureTask(void) {
 
 	m_render_task = new RenderTask(s_group, i_group, v_group);
 
+	m_render_task->setUniform(RenderTask::getTransformName(), RenderTask::getTransformMatrix());
+
 	m_render_task->setUniform("base_position", &m_position);
 
 	m_render_task->setUniform("height_offset", &m_height_offset);
@@ -158,15 +162,13 @@ void TexturedParallelogram::configureTask(void) {
 
 	m_render_task->acquire();
 
-	m_texture->bind();
-
 	m_configure_flag = true;
 	}
 
 void TexturedParallelogram::utilise(void) {
+	m_texture->bind();
     if(m_configure_flag == false) {
         configureTask();
         }
-    m_texture->bind();
     m_render_task->utilise(GL_TRIANGLE_STRIP, VERTEX_COUNT);
     }
