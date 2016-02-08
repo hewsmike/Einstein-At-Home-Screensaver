@@ -34,10 +34,10 @@ GLuint TransformGlobals::m_width(0);
 TransformGlobals::TransformGlobals(void) {
     }
 
-TransformGlobals::~TransformGlobals{
+TransformGlobals::~TransformGlobals(){
     }
 
-void TransformGlobals::setTransformMatrix(const GLvoid* load_point) {
+void TransformGlobals::setTransformMatrix(GLvoid* load_point) {
     // Can only do this once.
     if(m_transform_matrix_set == false) {
         m_transform_matrix = load_point;
@@ -45,12 +45,12 @@ void TransformGlobals::setTransformMatrix(const GLvoid* load_point) {
         }
     }
 
-GLvoid* TransformGlobals::getTransformMatrix(void) const {
-    if(m_transform_matrix_set == true) {
-        return m_transform_matrix;
-        }
-    ErrorHandler::record("TransformGlobals::getTransformMatrix() : access attempt before set !",
+GLvoid* TransformGlobals::getTransformMatrix(void) {
+    if(m_transform_matrix_set == false) {
+        ErrorHandler::record("TransformGlobals::getTransformMatrix() : access attempt before set !",
                          ErrorHandler::FATAL);
+    	}
+    return m_transform_matrix;
     }
 
 void TransformGlobals::setClientScreenDimensions(GLuint height, GLuint width) {
@@ -58,14 +58,14 @@ void TransformGlobals::setClientScreenDimensions(GLuint height, GLuint width) {
     m_width = width;
     }
 
-Gluint TransformGlobals::getClientScreenHeight(void) const {
+GLuint TransformGlobals::getClientScreenHeight(void) {
     return m_height;
     }
 
-Gluint TransformGlobals::getClientScreenWidth(void) const {
+GLuint TransformGlobals::getClientScreenWidth(void) {
     return m_width;
     }
 
-glm::vec2 TransformGlobals::getClientScreenUniform(void) const {
+glm::vec2 TransformGlobals::getClientScreenUniform(void) {
     return glm::vec2(2.0/m_width, 2.0/m_height);
     }

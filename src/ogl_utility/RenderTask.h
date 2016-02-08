@@ -180,23 +180,12 @@ class RenderTask {
          */
         void acquire(void);
 
-        static void setTransform(const std::string& transform_name, GLvoid* load_point);
-
-        static std::string getTransformName(void);
-
-        static GLvoid* getTransformMatrix(void);
-
     private:
-        static std::string m_transform_name;
-        static GLvoid* m_transform_matrix;
-        static bool m_transform_set;
-
         AttributeInputAdapter* m_attrib_adapt;
         FragmentShader* m_frag_shader;
         IndexBuffer* m_index_buffer;
         Pipeline* m_pipeline;
         Program* m_program;
-        TextureBuffer* m_texture;
         VertexBuffer* m_vertex_buffer;
         VertexFetch* m_vertex_fetch;
         VertexShader* m_vertex_shader;

@@ -37,6 +37,7 @@
 #include "Pipeline.h"
 #include "Program.h"
 #include "ResourceFactory.h"
+#include "TransformGlobals.h"
 #include "VertexBuffer.h"
 #include "VertexFetch.h"
 #include "VertexShader.h"
@@ -225,7 +226,7 @@ void Starsphere::make_stars() {
 	m_render_task_star->addSpecification({0, "position", 3, GL_FLOAT, GL_FALSE});
 
     // For program uniforms need client side pointers.
-	m_render_task_star->setUniform(RenderTask::getTransformName(), RenderTask::getTransformMatrix());
+	m_render_task_star->setUniform("CameraMatrix", TransformGlobals::getTransformMatrix());
 
 	m_render_task_star->setUniform("color", &m_star_color);
 
@@ -280,7 +281,7 @@ void Starsphere::make_pulsars() {
 	m_render_task_psr->addSpecification({0, "position", 3, GL_FLOAT, GL_FALSE});
 
     // For program uniforms need client side pointers.
-	m_render_task_psr->setUniform(RenderTask::getTransformName(), RenderTask::getTransformMatrix());
+	m_render_task_psr->setUniform("CameraMatrix", TransformGlobals::getTransformMatrix());
 
 	m_render_task_psr->setUniform("color", &m_pulsar_color);
 
@@ -335,7 +336,7 @@ void Starsphere::make_snrs() {
 	m_render_task_snr->addSpecification({0, "position", 3, GL_FLOAT, GL_FALSE});
 
     // For program uniforms need client side pointers.
-	m_render_task_snr->setUniform(RenderTask::getTransformName(), RenderTask::getTransformMatrix());
+	m_render_task_snr->setUniform("CameraMatrix", TransformGlobals::getTransformMatrix());
 
 	m_render_task_snr->setUniform("color", &m_supernova_color);
 
@@ -405,7 +406,7 @@ void Starsphere::make_constellations() {
 	m_render_task_cons->addSpecification({0, "position", 3, GL_FLOAT, GL_FALSE});
 
     // For program uniforms need client side pointers.
-	m_render_task_cons->setUniform(RenderTask::getTransformName(), RenderTask::getTransformMatrix());
+	m_render_task_cons->setUniform("CameraMatrix", TransformGlobals::getTransformMatrix());;
 
 	m_render_task_cons->setUniform("color", &m_constellation_line_color);
 
@@ -802,7 +803,7 @@ void Starsphere::resize(const int width, const int height) {
  *  What to do when graphics are "initialized".
  */
 void Starsphere::initialize(const int width, const int height, const Resource* font) {
-	RenderTask::setTransform("CameraMatrix", &m_camera[0][0]);
+	TransformGlobals::setTransformMatrix(&m_camera[0][0]);
 
 	m_CurrentWidth = width;
     m_CurrentHeight = height;
@@ -851,10 +852,10 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
     resize(m_CurrentWidth, m_CurrentHeight);
 
     // Create rendering tasks for given features.
-    make_snrs();
-    make_pulsars();
-    make_stars();
-    make_constellations();
+//    make_snrs();
+//    make_pulsars();
+//    make_stars();
+//    make_constellations();
 
 	// Begin with these visual features enabled.
 	setFeature(STARS, true);
@@ -998,21 +999,21 @@ void Starsphere::render(const double timeOfDay) {
 		}
 
 	// stars, pulsars, supernovae, grid
-    if(isFeature(STARS)) {
-    	m_render_task_star->utilise(GL_POINTS, m_distinct_stars);;
-    	}
-    if(isFeature(PULSARS)) {
-    	m_render_task_psr->utilise(GL_POINTS, Npulsars);
-    	}
-    if(isFeature(SNRS)) {
-    	m_render_task_snr->utilise(GL_POINTS, NSNRs);
-    	}
-    if(isFeature(CONSTELLATIONS)) {
-    	m_render_task_cons->utilise(GL_LINES, m_constellation_lines*2);
-    	}
-	if(isFeature(GLOBE)) {
-		/// TODO - call to render axes;
-		}
+//    if(isFeature(STARS)) {
+//    	m_render_task_star->utilise(GL_POINTS, m_distinct_stars);;
+//    	}
+//    if(isFeature(PULSARS)) {
+//    	m_render_task_psr->utilise(GL_POINTS, Npulsars);
+//    	}
+//    if(isFeature(SNRS)) {
+//    	m_render_task_snr->utilise(GL_POINTS, NSNRs);
+//    	}
+//    if(isFeature(CONSTELLATIONS)) {
+//    	m_render_task_cons->utilise(GL_LINES, m_constellation_lines*2);
+//    	}
+//	if(isFeature(GLOBE)) {
+//		/// TODO - call to render axes;
+//		}
 
 	// observatories move an extra 15 degrees/hr since they were drawn
 	if(isFeature(OBSERVATORIES)) {
@@ -1044,13 +1045,13 @@ void Starsphere::render(const double timeOfDay) {
 	// draw 2D vectorized HUD
 	if(isFeature(LOGO) || isFeature(SEARCHINFO)) {
 		// Disable depth testing since we're in 2D mode
-        glDisable(GL_DEPTH_TEST);
+        //glDisable(GL_DEPTH_TEST);
 
         if (isFeature(LOGO)) renderLogo();
         // if (isFeature(SEARCHINFO)) renderSearchInformation();
 
         // Enable depth testing since we're leaving 2D mode
-        glEnable(GL_DEPTH_TEST);
+        //glEnable(GL_DEPTH_TEST);
 		}
 
     // Mark off another frame done.

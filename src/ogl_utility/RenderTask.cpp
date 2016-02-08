@@ -22,10 +22,6 @@
 
 #include <sstream>
 
-std::string RenderTask::m_transform_name("");
-GLvoid* RenderTask::m_transform_matrix(NULL);
-bool RenderTask::m_transform_set(false);
-
 //RenderTask::RenderTask(RenderTask::shader_group s_group, Uniform&) {
 //    m_vertex_shader = new VertexShader(s_group.vert_shader_source);
 //    m_frag_shader = new FragmentShader(s_group.frag_shader_source);
@@ -117,19 +113,3 @@ void RenderTask::acquire(void) {
     	ErrorHandler::record(linking_log.str(), ErrorHandler::INFORM);
     	}
     }
-
-void RenderTask::setTransform(const std::string& transform_name, GLvoid* load_point) {
-	if(m_transform_set == false) {
-		m_transform_name = transform_name;
-		m_transform_matrix = load_point;
-		}
-	m_transform_set = true;
-	}
-
-std::string RenderTask::getTransformName(void) {
-	return m_transform_name;
-	}
-
-GLvoid* RenderTask::getTransformMatrix(void) {
-	return m_transform_matrix;
-	}

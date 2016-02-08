@@ -48,6 +48,7 @@ OBJS += Shader.o
 OBJS += TextureBuffer.o
 OBJS += TexturedParallelogram.o
 OBJS += TextString.o 
+OBJS += TransformGlobals.o
 OBJS += VertexBuffer.o
 OBJS += VertexFetch.o
 OBJS += VertexShader.o

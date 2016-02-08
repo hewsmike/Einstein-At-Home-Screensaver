@@ -24,12 +24,12 @@
 #include "framework.h"
 
 /**
- * \addtogroup framework Framework
+ * \addtogroup  ogl_utility OGL_Utility
  * @{
  */
 
 /**
- * \brief %Framework This class provides a common point for setting and
+ * \brief %OGL_Utility This class provides a common point for setting and
  *        accessing some global variables relevant to transforms.
  *
  *     This static/singleton class was created to prevent pollution of
@@ -69,7 +69,7 @@ class TransformGlobals {
          *                     Obviously that should be persistent and
          *                     available before first dereference.
          */
-        static void setTransformMatrix(const GLvoid* load_point);
+        static void setTransformMatrix(GLvoid* load_point);
 
         /**
          * \brief Get the location of the 3D transform matrix.
@@ -80,7 +80,7 @@ class TransformGlobals {
          *         if this is called before value setting has occured via
          *         setTransformMatrix().
          */
-        static GLvoid* getTransformMatrix(void) const;
+        static GLvoid* getTransformMatrix(void);
 
         /**
          * \brief Set the width and the height of the client screen area.
@@ -95,14 +95,14 @@ class TransformGlobals {
          *
          * \return the height of the client screen area in pixels.
          */
-        static Gluint getClientScreenHeight(void) const;
+        static GLuint getClientScreenHeight(void);
 
         /**
          * \brief Get the width of the client screen area.
          *
          * \return the width of the client screen area in pixels.
          */
-        static Gluint getClientScreenWidth(void) const;
+        static GLuint getClientScreenWidth(void);
 
         /**
          * \brief Get a value suitable for uniform use representing the
@@ -119,7 +119,7 @@ class TransformGlobals {
          *
          * \return a glm::vec2 containing the correct values for use as described.
          */
-        static glm::vec2 getClientScreenUniform(void) const;
+        static glm::vec2 getClientScreenUniform(void);
 
     private:
         /// The 3D transform matrix, which can be set once only.

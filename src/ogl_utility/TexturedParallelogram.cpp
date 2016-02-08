@@ -23,6 +23,7 @@
 #include <iostream>
 
 #include "ErrorHandler.h"
+#include "TransformGlobals.h"
 
 const GLuint TexturedParallelogram::VERTEX_COUNT(4);
 
@@ -37,25 +38,24 @@ const std::string TexturedParallelogram::m_vertex_shader("#version 150\n"
 "// Both dimensions of texture coordinates are bound/clamped to\n"
 "// zero and one at extents.\n"
 "\n"
-"//uniform vec3 base_position;\n"
-"//uniform vec3 height_offset;\n"
-"//uniform vec3 width_offset;\n"
+"uniform vec3 base_position;\n"
+"uniform vec3 height_offset;\n"
+"uniform vec3 width_offset;\n"
+"uniform mat4 CameraMatrix;\n"
 "\n"
 "out vec2 pass_text_coords;\n"
-"\n"
-"uniform mat4 CameraMatrix;\n"
 "\n"
 "void main()\n"
 "{\n"
 "    // Start at lower left corner.\n"
-"    vec3 position = vec3(0.0, 0.0, 0.0);\n"
+"    vec3 position = base_position;\n"
 "    // With texture coordinates of zero.\n"
 "    pass_text_coords.st = vec2(0.0, 0.0);\n"
 "\n"
 "    // For odd numbered vertices.\n"
 "    if((gl_VertexID % 2) == 1) {\n"
 "        // Add the width_offset.\n"
-"        position += vec3(2.0, 0.0, 0.0);\n"
+"        position += width_offset;\n"
 "        // With the 's' texture coordinate is 1.0.\n"
 "        pass_text_coords.s = 1.0;\n"
 "        }\n"
@@ -63,7 +63,7 @@ const std::string TexturedParallelogram::m_vertex_shader("#version 150\n"
 "    // For the vertex numbered two & three.\n"
 "    if(gl_VertexID > 1) {\n"
 "        // Add the height offset.\n"
-"        position += vec3(0.0, 5.0, 0.0);\n"
+"        position += height_offset;\n"
 "        // With the 't' texture coordinate being 1.0.\n"
 "        pass_text_coords.t = 1.0;\n"
 "        }\n"
@@ -152,7 +152,7 @@ void TexturedParallelogram::configureTask(void) {
 
 	m_render_task = new RenderTask(s_group, i_group, v_group);
 
-	m_render_task->setUniform(RenderTask::getTransformName(), RenderTask::getTransformMatrix());
+	m_render_task->setUniform("CameraMatrix", TransformGlobals::getTransformMatrix());
 
 	m_render_task->setUniform("base_position", &m_position);
 
