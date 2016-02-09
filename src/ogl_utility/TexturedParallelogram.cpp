@@ -31,7 +31,48 @@ const GLuint TexturedParallelogram::VERTEX_COUNT(4);
 /// is required to avoid incorrect string length and termination,
 /// which would otherwise be exposed when the shaders are compiled.
 
-const std::string TexturedParallelogram::m_vertex_shader("#version 150\n"
+const std::string TexturedParallelogram::m_vertex_shader_2D("#version 150\n"
+"\n"
+"// This is a vertex shader. Creates a parallel sided quadrilateral\n"
+"// area based at lower left corner, with offsets along the sides.\n"
+"// Both dimensions of texture coordinates are bound/clamped to\n"
+"// zero and one at extents.\n"
+"\n"
+"uniform vec3 base_position;\n"
+"uniform vec3 height_offset;\n"
+"uniform vec3 width_offset;\n"
+"uniform mat4 CameraMatrix;\n"
+"\n"
+"out vec2 pass_text_coords;\n"
+"\n"
+"void main()\n"
+"{\n"
+"    // Start at lower left corner.\n"
+"    vec3 position = base_position;\n"
+"    // With texture coordinates of zero.\n"
+"    pass_text_coords.st = vec2(0.0, 0.0);\n"
+"\n"
+"    // For odd numbered vertices.\n"
+"    if((gl_VertexID % 2) == 1) {\n"
+"        // Add the width_offset.\n"
+"        position += width_offset;\n"
+"        // With the 's' texture coordinate is 1.0.\n"
+"        pass_text_coords.s = 1.0;\n"
+"        }\n"
+"\n"
+"    // For the vertex numbered two & three.\n"
+"    if(gl_VertexID > 1) {\n"
+"        // Add the height offset.\n"
+"        position += height_offset;\n"
+"        // With the 't' texture coordinate being 1.0.\n"
+"        pass_text_coords.t = 1.0;\n"
+"        }\n"
+"\n"
+"    // Emit final position of the vertex.\n"
+"    gl_Position = CameraMatrix * vec4(position, 1.0f);\n"
+"}\n");
+
+const std::string TexturedParallelogram::m_vertex_shader_3D("#version 150\n"
 "\n"
 "// This is a vertex shader. Creates a parallel sided quadrilateral\n"
 "// area based at lower left corner, with offsets along the sides.\n"
@@ -93,10 +134,12 @@ const std::string TexturedParallelogram::m_fragment_shader("#version 150\n"
 TexturedParallelogram::TexturedParallelogram(glm::vec3 position,
 	  	  	  	  	  	  	  	  	  	  	 glm::vec3 height_offset,
 											 glm::vec3 width_offset,
+											 TexturedParallelogram::render_mode mode,
 											 TextureBuffer* texture) :
 												 m_position(position),
 												 m_height_offset(height_offset),
-												 m_width_offset(width_offset){
+												 m_width_offset(width_offset),
+												 m_render_mode(mode) {
 	if(texture == NULL) {
 		ErrorHandler::record("TexturedParallelogram::TexturedParallelogram() : Texture not provided!", ErrorHandler::FATAL);
 		}
@@ -138,7 +181,21 @@ void TexturedParallelogram::configureTask(void) {
 	if(m_render_task) delete m_render_task;
 
 	// Construct a shader group structure.
-	RenderTask::shader_group s_group = {m_vertex_shader, m_fragment_shader};
+	RenderTask::shader_group s_group;
+	switch(m_render_mode) {
+        case FLAT:
+            s_group.vert_shader_source = m_vertex_shader_2D;
+            break;
+        case VOLUME:
+            s_group.vert_shader_source = m_vertex_shader_3D;
+            break;
+        default:
+            ErrorHandler::record("TexturedParallelogram::configureTask() : Bad switch case ( DEFAULT ) !",
+                                 ErrorHandler::FATAL);
+            break;
+        }
+
+	s_group.frag_shader_source = m_fragment_shader;
 
 	// Create an index buffer group structure, for completeness.
 	RenderTask::index_buffer_group i_group = {NULL, 0, 0, 0, 0};

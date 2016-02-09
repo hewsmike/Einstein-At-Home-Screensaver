@@ -44,6 +44,11 @@
 
 class TexturedParallelogram {
     public :
+        /// The rendering mode.
+        /// FLAT :  render onto the frustum near face.
+        /// VOLUME : redner into the world space volume.
+        enum render_mode{FLAT, VOLUME};
+
 		/**
          * \brief Constructor
          *
@@ -58,6 +63,7 @@ class TexturedParallelogram {
 		TexturedParallelogram(glm::vec3 position,
 						  	  glm::vec3 height_offset,
 							  glm::vec3 width_offset,
+							  TexturedParallelogram::render_mode mode,
 							  TextureBuffer* texture);
 
         /**
@@ -102,11 +108,14 @@ class TexturedParallelogram {
         static const GLuint VERTEX_COUNT;
 
         /// The shader code for this type of texturing.
-        static const std::string m_vertex_shader;
+        static const std::string m_vertex_shader_2D;
+        static const std::string m_vertex_shader_3D;
         static const std::string m_fragment_shader;
 
-        /// Flag to indicate if thisobject has been configured.
+        /// Flag to indicate if this object has been configured.
         bool m_configure_flag;
+
+        TexturedParallelogram::render_mode m_render_mode;
 
         /// Positioning vectors for vertices.
         glm::vec3 m_position;

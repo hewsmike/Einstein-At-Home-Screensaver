@@ -36,6 +36,7 @@ TextString::TextString(glm::vec3 position,
 					      m_position(position),
 						  m_height_offset(height_offset),
 						  m_width_offset(width_offset),
+						  m_render_mode(mode),
 						  m_font(font),
 						  m_text_string(text),
                           m_text_style(text_style),
@@ -43,9 +44,39 @@ TextString::TextString(glm::vec3 position,
 						  m_background(background) {
 	m_texture_buffer = NULL;
     m_textured_parallelogram = NULL;
-
     m_configure_flag = false;
+    m_3D_render_mode = false;
     }
+
+TextString::TextString(glm::vec2 position,
+	  	  	  	  	   glm::vec2 height_offset,
+					   glm::vec2 width_offset,
+					   TTF_Font* font,
+					   const char* text,
+					   TextString::render_style text_style,
+                       SDL_Color foreground,
+				       SDL_Color background) :
+					      m_position(position),
+						  m_height_offset(height_offset),
+						  m_width_offset(width_offset),
+						  m_render_mode(mode),
+						  m_font(font),
+						  m_text_string(text),
+                          m_text_style(text_style),
+						  m_foreground(foreground),
+						  m_background(background) {
+	// Just extend the 2D vectors to 3D vectors with z component of zero,
+	// and then call the 3D version.
+	TextString::TextString(glm::vec3(position, 0.0f),
+	  	  	  	  	       glm::vec3(height_offset, 0.0f),
+                           glm::vec3(width_offset, 0.0f),
+                           font,
+					       text,
+					       text_style,
+                           foreground,
+				           background);
+	m_3D_render_mode = true;
+	}
 
 TextString::~TextString() {
 	if(m_texture_buffer) delete m_texture_buffer;

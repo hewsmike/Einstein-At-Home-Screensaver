@@ -186,9 +186,10 @@ void StarsphereGravity::renderLogo() {
     SDL_Color color = {255, 255, 255, 255};
 
     if(m_isConfigured == false) {
-        m_logo_1 = new TextString(glm::vec3(0.0f, 0.0f, 0.0f),
-                                  glm::vec3(0.0f, +1.5f, 0.0f),
-                                  glm::vec3(5.0f, 1.0f, 0.0f),
+        // NB 2D version of TextString being summoned.
+        m_logo_1 = new TextString(glm::vec2(0.0f, 0.0f),
+                                  glm::vec2(0.0f, +1.5f),
+                                  glm::vec2(5.0f, 1.0f),
                                   m_FontLogo1,
                                   "Hello",
 								  TextString::SOLID,
