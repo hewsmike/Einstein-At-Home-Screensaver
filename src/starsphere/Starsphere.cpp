@@ -55,6 +55,9 @@ const GLfloat Starsphere::VIEWPOINT_MAX_ZOOM(20.0f);
 const GLfloat Starsphere::VIEWPOINT_MIN_ZOOM(0.5f);
 const GLfloat Starsphere::VIEWPOINT_MOUSEWHEEL_ZOOM_RATE(3.0f);
 const GLfloat Starsphere::VIEWPOINT_ZOOM_RATE(10.0f);
+const GLfloat Starsphere::PERSPECTIVE_FOV(45.0f);
+const GLfloat Starsphere::PERSPECTIVE_NEAR_FRUSTUM_DISTANCE(0.1f);
+const GLfloat Starsphere::PERSPECTIVE_FAR_FRUSTUM_DISTANCE(100.f);
 
 Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
 	AbstractGraphicsEngine(sharedMemoryAreaIdentifier) {
@@ -783,7 +786,7 @@ void Starsphere::make_globe() {
  * Window resize/remap
  */
 void Starsphere::resize(const int width, const int height) {
-    // store current settings
+    // Store current settings. Units are pixels.
 	m_CurrentWidth = width;
 	m_CurrentHeight = height;
 
@@ -804,15 +807,20 @@ void Starsphere::resize(const int width, const int height) {
     // Remember screen dimensions in global state class.
     TransformGlobals::setClientScreenDimensions(height, width);
 
-	// adjust HUD config
+	// Adjust HUD config.
 	m_YStartPosTop = m_CurrentHeight - 25;
 
-	// make sure the search marker is updated (conditional rendering!)
+	// Make sure the search marker is updated (conditional rendering!)
 	m_RefreshSearchMarker = true;
 
-    // adjust aspect ratio and projection
+    // Adjust aspect ratio and projection.
 	glViewport(0, 0, m_CurrentWidth, m_CurrentHeight);
-	m_projection = glm::perspective(45.0f, aspect, 0.1f, 100.f);
+
+	// Create desired projection matrix based upon a frustum model.
+	m_projection = glm::perspective(PERSPECTIVE_FOV,
+                                    aspect,
+                                    PERSPECTIVE_NEAR_FRUSTUM_DISTANCE,
+                                    PERSPECTIVE_FAR_FRUSTUM_DISTANCE);
     }
 
 /**
