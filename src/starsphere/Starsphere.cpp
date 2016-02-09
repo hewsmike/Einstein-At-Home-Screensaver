@@ -783,10 +783,26 @@ void Starsphere::make_globe() {
  * Window resize/remap
  */
 void Starsphere::resize(const int width, const int height) {
-	// store current settings
+    // store current settings
 	m_CurrentWidth = width;
 	m_CurrentHeight = height;
-	aspect = (float)m_CurrentWidth / (float)m_CurrentHeight;
+
+	// Filter out non-positivity in either screen dimension.
+	if((m_CurrentHeight > 0) && (m_CurrentWidth > 0)) {
+	    // Dimensions acceptable.
+        aspect = (float)m_CurrentWidth / (float)m_CurrentHeight;
+        }
+    else {
+        // Negative or zero for one or both of width and height.
+        std::stringstream msg;
+        msg << "Starsphere::resize() : screen height = " << m_CurrentHeight
+            << " and width = " << m_CurrentWidth;
+        ErrorHandler::record(msg.str(), ErrorHandler::WARN);
+        ErrorHandler::record("Starsphere::resize() : invalid screen dimensions!", ErrorHandler::FATAL);
+        }
+
+    // Remember screen dimensions in global state class.
+    TransformGlobals::setClientScreenDimensions(height, width);
 
 	// adjust HUD config
 	m_YStartPosTop = m_CurrentHeight - 25;
@@ -803,7 +819,10 @@ void Starsphere::resize(const int width, const int height) {
  *  What to do when graphics are "initialized".
  */
 void Starsphere::initialize(const int width, const int height, const Resource* font) {
+    // Remember transfrom matrix location in global state class.
 	TransformGlobals::setTransformMatrix(&m_camera[0][0]);
+	// Remember screen dimensions in global state class.
+	TransformGlobals::setClientScreenDimensions(height, width);
 
 	m_CurrentWidth = width;
     m_CurrentHeight = height;
