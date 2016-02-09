@@ -370,13 +370,17 @@ class Starsphere : public AbstractGraphicsEngine {
         // Zoom facility.
         static const GLfloat VIEWPOINT_MAX_ZOOM;
         static const GLfloat VIEWPOINT_MIN_ZOOM;
-        static const GLfloat VIEWPOINT_MOUSEWHEEL_ZOOM_RATE;
         static const GLfloat VIEWPOINT_ZOOM_RATE;
 
         // Transform parameters.
-        static const GLfloat PERSPECTIVE_FOV;
         static const GLfloat PERSPECTIVE_NEAR_FRUSTUM_DISTANCE;
         static const GLfloat PERSPECTIVE_FAR_FRUSTUM_DISTANCE;
+
+        // Field of view angle extents.
+        static const GLfloat PERSPECTIVE_FOV_DEFAULT;
+        static const GLfloat PERSPECTIVE_FOV_MIN;
+        static const GLfloat PERSPECTIVE_FOV_MAX;
+        static const GLfloat VIEWPOINT_MOUSEWHEEL_FOV_RATE;
 
         /// Cumulative frame count.
         GLuint m_framecount;
@@ -448,6 +452,12 @@ class Starsphere : public AbstractGraphicsEngine {
 
         // Viewpoint (can be changed with mouse)
 
+        /// Angle of perspective field of view.
+        GLfloat viewpt_fov;
+
+        /// Aspect ratio of screen.
+        GLfloat m_aspect;
+
         /// Viewpoint azimuth in degrees
         GLfloat viewpt_azimuth;
 
@@ -495,6 +505,8 @@ class Starsphere : public AbstractGraphicsEngine {
          * \see Starsphere::mouseMoveEvent()
          */
         void zoomSphere(const int relativeZoom);
+
+        void configTransformMatrix(void);
     };
 
 /// Constellation & star coordinates (starlist.C)

@@ -53,11 +53,13 @@ const GLuint Starsphere::TTF_FONT_LOAD_HEADER_POINT_SIZE(13);
 const GLuint Starsphere::TTF_FONT_LOAD_TEXT_POINT_SIZE(11);
 const GLfloat Starsphere::VIEWPOINT_MAX_ZOOM(20.0f);
 const GLfloat Starsphere::VIEWPOINT_MIN_ZOOM(0.5f);
-const GLfloat Starsphere::VIEWPOINT_MOUSEWHEEL_ZOOM_RATE(3.0f);
 const GLfloat Starsphere::VIEWPOINT_ZOOM_RATE(10.0f);
-const GLfloat Starsphere::PERSPECTIVE_FOV(45.0f);
 const GLfloat Starsphere::PERSPECTIVE_NEAR_FRUSTUM_DISTANCE(0.1f);
 const GLfloat Starsphere::PERSPECTIVE_FAR_FRUSTUM_DISTANCE(100.f);
+const GLfloat Starsphere::PERSPECTIVE_FOV_DEFAULT(45.0f);
+const GLfloat Starsphere::PERSPECTIVE_FOV_MIN(30.0f);
+const GLfloat Starsphere::PERSPECTIVE_FOV_MAX(60.0f);
+const GLfloat Starsphere::VIEWPOINT_MOUSEWHEEL_FOV_RATE(3.0f);
 
 Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
 	AbstractGraphicsEngine(sharedMemoryAreaIdentifier) {
@@ -104,6 +106,8 @@ Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
 	/**
 	 * Viewpoint (can be changed with mouse)
 	 */
+	viewpt_fov = PERSPECTIVE_FOV_DEFAULT;
+	m_aspect = 0.0;
 	viewpt_azimuth = 30.0;
 	viewpt_elev = 23.6;
 	viewpt_radius = (SPHERE_RADIUS + VIEWPOINT_MAX_ZOOM)/ 2.0f;
@@ -793,7 +797,7 @@ void Starsphere::resize(const int width, const int height) {
 	// Filter out non-positivity in either screen dimension.
 	if((m_CurrentHeight > 0) && (m_CurrentWidth > 0)) {
 	    // Dimensions acceptable.
-        aspect = (float)m_CurrentWidth / (float)m_CurrentHeight;
+        m_aspect = (float)m_CurrentWidth / (float)m_CurrentHeight;
         }
     else {
         // Negative or zero for one or both of width and height.
@@ -815,13 +819,8 @@ void Starsphere::resize(const int width, const int height) {
 
     // Adjust aspect ratio and projection.
 	glViewport(0, 0, m_CurrentWidth, m_CurrentHeight);
-
-	// Create desired projection matrix based upon a frustum model.
-	m_projection = glm::perspective(PERSPECTIVE_FOV,
-                                    aspect,
-                                    PERSPECTIVE_NEAR_FRUSTUM_DISTANCE,
-                                    PERSPECTIVE_FAR_FRUSTUM_DISTANCE);
-    }
+	configTransformMatrix();
+	}
 
 /**
  *  What to do when graphics are "initialized".
@@ -1108,8 +1107,22 @@ void Starsphere::mouseMoveEvent(const int deltaX, const int deltaY,
     }
 
 void Starsphere::mouseWheelEvent(const int pos) {
-	// zoomSphere(pos * VIEWPOINT_MOUSEWHEEL_ZOOM_RATE);
-    }
+    // Mouse wheel sets angle of field of view for perspective transform.
+    if(pos > 0) {
+        viewpt_fov += VIEWPOINT_MOUSEWHEEL_FOV_RATE;
+        if(viewpt_fov > PERSPECTIVE_FOV_MAX) {
+            viewpt_fov = PERSPECTIVE_FOV_MAX;
+            }
+        }
+    else if (pos < 0) {
+        viewpt_fov -= VIEWPOINT_MOUSEWHEEL_FOV_RATE;
+        if(viewpt_fov < PERSPECTIVE_FOV_MIN) {
+            viewpt_fov = PERSPECTIVE_FOV_MIN;
+            }
+        }
+    // Re-compute transform matrix with new field of view angle.
+    configTransformMatrix();
+	}
 
 void Starsphere::keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey keyPressed) {
 	switch(keyPressed) {
@@ -1174,6 +1187,14 @@ void Starsphere::zoomSphere(const int relativeZoom) {
 		viewpt_radius = VIEWPOINT_MAX_ZOOM;
 	if (viewpt_radius < VIEWPOINT_MIN_ZOOM)
 		viewpt_radius = VIEWPOINT_MIN_ZOOM;
+    }
+
+void Starsphere::configTransformMatrix(void) {
+    // Create desired projection matrix based upon a frustum model.
+	m_projection = glm::perspective(viewpt_fov,
+                                    m_aspect,
+                                    PERSPECTIVE_NEAR_FRUSTUM_DISTANCE,
+                                    PERSPECTIVE_FAR_FRUSTUM_DISTANCE);
     }
 
 /**
