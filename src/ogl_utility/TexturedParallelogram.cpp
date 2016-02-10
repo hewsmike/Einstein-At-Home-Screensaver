@@ -38,9 +38,9 @@ const std::string TexturedParallelogram::m_vertex_shader_2D("#version 150\n"
 "// Both dimensions of texture coordinates are bound/clamped to\n"
 "// zero and one at extents.\n"
 "\n"
-"uniform vec3 base_position;\n"
-"uniform vec3 height_offset;\n"
-"uniform vec3 width_offset;\n"
+"uniform vec2 base_position;\n"
+"uniform vec2 height_offset;\n"
+"uniform vec2 width_offset;\n"
 "uniform mat4 CameraMatrix;\n"
 "\n"
 "out vec2 pass_text_coords;\n"
@@ -48,7 +48,7 @@ const std::string TexturedParallelogram::m_vertex_shader_2D("#version 150\n"
 "void main()\n"
 "{\n"
 "    // Start at lower left corner.\n"
-"    vec3 position = base_position;\n"
+"    vec2 position = base_position;\n"
 "    // With texture coordinates of zero.\n"
 "    pass_text_coords.st = vec2(0.0, 0.0);\n"
 "\n"
@@ -69,7 +69,7 @@ const std::string TexturedParallelogram::m_vertex_shader_2D("#version 150\n"
 "        }\n"
 "\n"
 "    // Emit final position of the vertex.\n"
-"    gl_Position = CameraMatrix * vec4(position, 1.0f);\n"
+"    gl_Position = CameraMatrix * vec4(position, 0.0f, 1.0f);\n"
 "}\n");
 
 const std::string TexturedParallelogram::m_vertex_shader_3D("#version 150\n"
@@ -181,7 +181,15 @@ void TexturedParallelogram::configureTask(void) {
 	if(m_render_task) delete m_render_task;
 
 	// Construct a shader group structure.
-	RenderTask::shader_group s_group = {m_vertex_shader_3D, m_fragment_shader};
+	RenderTask::shader_group s_group;
+	s_group.frag_shader_source = m_fragment_shader;
+
+	if(m_render_mode == FLAT) {
+		s_group.vert_shader_source = m_vertex_shader_2D;
+		}
+	else {
+		s_group.vert_shader_source = m_vertex_shader_2D;
+		}
 
 	// Create an index buffer group structure, for completeness.
 	RenderTask::index_buffer_group i_group = {NULL, 0, 0, 0, 0};
