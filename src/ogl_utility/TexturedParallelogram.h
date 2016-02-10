@@ -115,12 +115,12 @@ class TexturedParallelogram {
         /// Flag to indicate if this object has been configured.
         bool m_configure_flag;
 
-        TexturedParallelogram::render_mode m_render_mode;
-
         /// Positioning vectors for vertices.
         glm::vec3 m_position;
         glm::vec3 m_height_offset;
         glm::vec3 m_width_offset;
+
+        TexturedParallelogram::render_mode m_render_mode;
 
         /// The texture to be applied.
         TextureBuffer* m_texture;

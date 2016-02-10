@@ -45,7 +45,7 @@
 
 // Enabling swizzle operators will massively increase the size of compiled files and the
 // compilation time. Swizzle is disabled by default.
-// #define GLM_SWIZZLE
+#define GLM_SWIZZLE
 
 // Available defines for floating point types (glm::vec*, glm::mat*).
 // High precision is the default :

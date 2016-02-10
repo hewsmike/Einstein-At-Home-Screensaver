@@ -148,13 +148,13 @@ class Program : public OGL_ID {
 		struct uniform_data{
 			// Untyped pointer to location of persistent data in client space
 			// which will be used to refresh the in-program value.
-			GLvoid* client_load_point;
+			GLvoid* client_load_point = NULL;
 
 			// The uniform variable type as known to OpenGL.
-			GLenum GLSL_type;
+			GLenum GLSL_type = 0;
 
 			// The location of the uniform within the OpenGL program object.
-			GLint program_location;
+			GLint program_location = -1;
 			};
 
         /**

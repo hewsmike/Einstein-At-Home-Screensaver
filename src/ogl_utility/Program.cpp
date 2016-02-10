@@ -308,12 +308,6 @@ Program::uniform_data Program::getUniform(std::string u_name) {
 	}
 
 bool Program::loadUniform(Program::uniform_data current) {
-	std::stringstream msg;
-	msg << "Program::loadUniform() : type = " << checkUniform(current.GLSL_type)
-		<< "\t\tposition = " << current.program_location
-		<< "\t\tclient location = " << current.client_load_point; ;
-	ErrorHandler::record(msg.str(), ErrorHandler::INFORM);
-
 	// Assume success.
 	bool ret_val = true;
 
@@ -683,10 +677,6 @@ void Program::frameCallBack(void) {
 	for(uniformMap::const_iterator uniform = uniforms.begin();
         uniform != uniforms.end();
         ++uniform) {
-        std::stringstream err_msg;
-        err_msg << "Program::frameCallBack() : uniform name = "
-        		<< uniform->first;
-        ErrorHandler::record(err_msg.str(), ErrorHandler::INFORM);
         this->loadUniform(uniform->second);
         }
 	}

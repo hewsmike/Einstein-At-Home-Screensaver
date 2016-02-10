@@ -181,21 +181,7 @@ void TexturedParallelogram::configureTask(void) {
 	if(m_render_task) delete m_render_task;
 
 	// Construct a shader group structure.
-	RenderTask::shader_group s_group;
-	switch(m_render_mode) {
-        case FLAT:
-            s_group.vert_shader_source = m_vertex_shader_2D;
-            break;
-        case VOLUME:
-            s_group.vert_shader_source = m_vertex_shader_3D;
-            break;
-        default:
-            ErrorHandler::record("TexturedParallelogram::configureTask() : Bad switch case ( DEFAULT ) !",
-                                 ErrorHandler::FATAL);
-            break;
-        }
-
-	s_group.frag_shader_source = m_fragment_shader;
+	RenderTask::shader_group s_group = {m_vertex_shader_3D, m_fragment_shader};
 
 	// Create an index buffer group structure, for completeness.
 	RenderTask::index_buffer_group i_group = {NULL, 0, 0, 0, 0};
