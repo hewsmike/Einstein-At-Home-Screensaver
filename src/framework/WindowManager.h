@@ -88,9 +88,9 @@ class WindowManager {
          *
          * \return TRUE if successful, otherwise FALSE
          */
-        bool initialize(const int width = 800,
-                        const int height = 600,
-                        const int frameRate = 20);
+        bool initialize(const int width = PREFERRED_SCREEN_WIDTH,
+                        const int height = PREFERRED_SCREEN_HEIGHT,
+                        const int frameRate = PREFERRED_SCREEN_FRAME_RATE);
 
         /**
          * \brief Registers a new event observer.
@@ -193,6 +193,11 @@ class WindowManager {
 
     private:
         /// Most of these statics are to remove magic numbers.
+        /// Preferred/default screen behaviour.
+        static const int PREFERRED_SCREEN_WIDTH;
+        static const int PREFERRED_SCREEN_HEIGHT;
+        static const int PREFERRED_SCREEN_FRAME_RATE;
+
         /// The window's title/caption.
         static const std::string m_WindowTitle;
 

@@ -30,6 +30,10 @@
 #include "ogl_utility.h"
 #include "SDL_events.h"
 
+const int WindowManager::PREFERRED_SCREEN_WIDTH(800);
+const int WindowManager::PREFERRED_SCREEN_HEIGHT(600);
+const int WindowManager::PREFERRED_SCREEN_FRAME_RATE(20);
+
 const std::string WindowManager::m_WindowTitle("Einstein At Home");
 
 const int WindowManager::RED_BITS(8);
