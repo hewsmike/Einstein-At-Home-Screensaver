@@ -89,14 +89,14 @@ const std::string TexturedParallelogram::m_vertex_shader_3D("#version 150\n"
 "void main()\n"
 "{\n"
 "    // Start at lower left corner.\n"
-"    vec3 position = base_position;\n"
+"    vec2 position = base_position.xy;\n"
 "    // With texture coordinates of zero.\n"
 "    pass_text_coords.st = vec2(0.0, 0.0);\n"
 "\n"
 "    // For odd numbered vertices.\n"
 "    if((gl_VertexID % 2) == 1) {\n"
 "        // Add the width_offset.\n"
-"        position += width_offset;\n"
+"        position += width_offset.xy;\n"
 "        // With the 's' texture coordinate is 1.0.\n"
 "        pass_text_coords.s = 1.0;\n"
 "        }\n"
@@ -104,13 +104,13 @@ const std::string TexturedParallelogram::m_vertex_shader_3D("#version 150\n"
 "    // For the vertex numbered two & three.\n"
 "    if(gl_VertexID > 1) {\n"
 "        // Add the height offset.\n"
-"        position += height_offset;\n"
+"        position += height_offset.xy;\n"
 "        // With the 't' texture coordinate being 1.0.\n"
 "        pass_text_coords.t = 1.0;\n"
 "        }\n"
 "\n"
 "    // Emit final position of the vertex.\n"
-"    gl_Position = CameraMatrix * vec4(position, 1.0f);\n"
+"    gl_Position = CameraMatrix * vec4(position, 0.0f, 1.0f);\n"
 "}\n");
 
 const std::string TexturedParallelogram::m_fragment_shader("#version 150\n"
@@ -202,6 +202,7 @@ void TexturedParallelogram::configureTask(void) {
 											   VertexBuffer::BY_VERTEX};
 
 	m_render_task = new RenderTask(s_group, i_group, v_group);
+
 
 	m_render_task->setUniform("CameraMatrix", TransformGlobals::getTransformMatrix());
 
