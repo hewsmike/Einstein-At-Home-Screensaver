@@ -11,8 +11,8 @@
  * - Refurbished visuals and extended features
  * - Generalized API for community-driven implementations
  * - %Resource embedding (e.g. fonts, images)
- * - Migration to GLFW and GLEW
- * - Self-consistent build script (Linux, Mac OS X, Windows/MinGW)
+ * - Migration to SDL2 and GLEW
+ * - Self-consistent build script (Linux, Windows/MinGW)
  * - Full doxygen documentation
  *
  * \subsection sec_status Current Status
@@ -21,8 +21,8 @@
  * This means that probably not all desired features are fully implemented yet and the code might still contain some bugs.
  * However, we think the application is stable enough to be used on a daily basis. You're invited to test and
  * discuss the current version at the Einstein\@Home
- * \htmlonly<a href="http://einstein.phys.uwm.edu/forum_forum.php?id=3">\endhtmlonly
- * Cruncher's Corner
+ * \htmlonly<a href="https://einstein.phys.uwm.edu/forum_thread.php?id=6476&postid=152048#152048">\endhtmlonly
+ * "Write your own Einstein@home screensaver" thread in Cruncher's Corner
  * \htmlonly</a>\endhtmlonly.
  *
  * The most important feature that's not fully supported right now is the persistent configuration of the graphics
@@ -34,7 +34,7 @@
  *   - Window width (default: 800 pixels)
  *   - Window height (default: 600 pixels)
  *   - Frame rate (default: 20 fps)
- *   - Quality (default: low / also available: medium, high)
+ *   - Quality (default: low / currently working on medium, high)
  * - %Starsphere options (still pending):
  *   - Enabled screen elements (see \ref sec_app_usage)
  *
@@ -48,9 +48,8 @@
  * \subsection sec_platforms Supported Platforms
  *
  * The binary versions as well as the build script support the following platforms:
- * - Linux (Intel, 32 Bit)
- * - Mac OS TO BE ANNOUNCED
- * - Windows (Intel, 32 Bit, cross compiled with MinGW)
+ * - Linux (Intel/x86, 64  Bit : TBA ? AMD/32)
+ * - Windows (TBA ? Intel/AMD, 32/64 Bit : await all, cross compiled with MinGW)
  *
  * \subsection sec_future The Future
  *
@@ -267,7 +266,7 @@
  * \verbatim
    Copyright © 2004 Bruce Allen, David Hammer, Eric Myers
    Copyright © 2008 Oliver Bock, Bernd Machenschalk
-   Copyright © 2013 Mike Hewson
+   Copyright © 2016 Mike Hewson
 
    This application/framework is part of Einstein@Home.
 
