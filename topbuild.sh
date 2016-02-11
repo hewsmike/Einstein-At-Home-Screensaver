@@ -4,7 +4,7 @@
 #   Copyright (C) 2008-2009 by Oliver Bock                                #
 #   oliver.bock[AT]aei.mpg.de                                             #
 #                                                                         #
-#   Copyright (C) 2013 by Mike Hewson  [ any & all errors are mine :-) ]  #
+#   Copyright (C) 2016 by Mike Hewson  [ any & all errors are mine :-) ]  #
 #   hewsmike[AT]iinet.net.au                                              #
 #                                                                         #
 #   This file is part of Einstein@Home.                                   #
@@ -50,12 +50,11 @@ TARGET_ALL=1
 TARGET_ANDROID=2
 TARGET_IOS=3
 TARGET_LINUX=4
-TARGET_MAC_OSX=5
-TARGET_WIN32=6
-TARGET_DOC=7
-TARGET_GETBASE=8
-TARGET_CLEAN=9
-TARGET_DISTCLEAN=10
+TARGET_WIN32=5
+TARGET_DOC=6
+TARGET_GETBASE=7
+TARGET_CLEAN=8
+TARGET_DISTCLEAN=9
 
 # No target set initially.
 TARGET=$TARGET_NONE
@@ -232,26 +231,26 @@ retrieve_sdl_ttf() {
 
     return 0
     }
-    
+
 retrieve_glm() {
 	GLM_RETRIEVE_STR=glm-$GLM_VERSION
     GLM_RETRIEVE_FILE=$GLM_RETRIEVE_STR.tar.gz
     GLM_RETRIEVE_DOMAIN=https://github.com/g-truc/glm/archive/
     GLM_RETRIEVE_PATH=$GLM_RETRIEVE_DOMAIN$GLM_RETRIEVE_FILE
-    
+
     # https://github.com/g-truc/glm/archive/0.9.6.1.tar.gz
 
     log "Preparing GLM..."
     mkdir -p $ROOT/retrieval/glm >> $LOGFILE || failure
 
     cd $ROOT/retrieval || failure
-        
+
     git clone --branch $GLM_VERSION https://github.com/g-truc/glm.git $ROOT/retrieval/glm >> $LOGFILE 2>&1 || failure
-     
+
     save_topbuild_state $TBS_GLM_RETRIEVED
 
     return 0
-    }    
+    }
 
 ### functions (utility) ####################################################
 
@@ -266,10 +265,6 @@ distclean() {
 
     log "Cleaning Linux... "
     cd $ROOT/linux
-    ./build.sh --distclean
-
-    log "Cleaning Mac OSX... "
-    cd $ROOT/mac_osx --distclean
     ./build.sh --distclean
 
     log "Cleaning Win32... "
@@ -338,7 +333,7 @@ check_retrieval() {
     if [ $TOPBUILDSTATE -lt $TBS_SDL_TTF_RETRIEVED ]; then
         retrieve_sdl_ttf || failure
     fi
-    
+
     if [ $TOPBUILDSTATE -lt $TBS_GLM_RETRIEVED ]; then
         retrieve_glm || failure
     fi
@@ -416,7 +411,7 @@ prepare_directories() {
     # For common source retrieval only update
     # ( replace if newer, copy if non-existent )
     cp --preserve -rfu $ROOT/retrieval/* $ROOT/$1/3rdparty
-    
+
     # Populate with latest developer ( ie. YOU ) source code.
     rm -rf $ROOT/$1/src
     cp -rf $ROOT/src $ROOT/$1/src
@@ -451,7 +446,6 @@ print_usage() {
     echo "          --android"
     echo "          --ios"
     echo "          --linux"
-    echo "          --mac_osx"
     echo "          --win32"
     echo
     echo "      Available modes:"
@@ -470,8 +464,8 @@ print_usage() {
     echo "          `basename $0` <target>"
     echo
     echo "      Available targets:"
-    echo "          --doc"
-    echo "          --getbase"
+    echo "          --doc                  ( run Doxygen ) "
+    echo "          --getbase              ( fetch common libraries )"
     echo "          --distclean            ( cleans all targets trees )"
     echo "          --projectclean         ( distclean + BEWARE : deletes common library fetches )"
     echo
@@ -557,9 +551,6 @@ if [ $# -eq 3 ]; then
             ;;
         "--linux")
             TARGET=$TARGET_LINUX
-            ;;
-        "--mac_osx")
-            TARGET=$TARGET_MAC_OSX
             ;;
         "--win32")
             TARGET=$TARGET_WIN32
@@ -656,15 +647,6 @@ case $TARGET in
         ./build.sh $2 $3
         cd ..
         ;;
-    $TARGET_MAC_OSX)
-        realtarget
-        prepare_directories mac_osx
-        cp -f $ROOT/build_mac_osx.sh $ROOT/mac_osx/build.sh
-        log "For $PRODUCT_NAME : invoking Mac OSX build script ... "
-        cd $ROOT/mac_osx
-        ./build.sh $2 $3
-        cd ..
-        ;;
     $TARGET_WIN32)
     	export TARGET_SYSTEM="i686-w64-mingw32"
         realtarget
@@ -673,7 +655,7 @@ case $TARGET in
         log "For $PRODUCT_NAME : invoking Win32 build script ... "
         log "BUILD_SYSTEM = $BUILD_SYSTEM"
         log "TARGET_SYSTEM = $TARGET_SYSTEM"
-                
+
         cd $ROOT/win32
         ./build.sh $2 $3
         cd ..
