@@ -122,6 +122,8 @@ class TexturedParallelogram {
 
         TexturedParallelogram::render_mode m_render_mode;
 
+        glm::vec2 m_ortho_transform;
+
         /// The texture to be applied.
         TextureBuffer* m_texture;
 

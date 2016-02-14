@@ -44,7 +44,7 @@ TextString::TextString(glm::vec3 position,
 	m_texture_buffer = NULL;
     m_textured_parallelogram = NULL;
     m_configure_flag = false;
-    mode = TexturedParallelogram::VOLUME;
+    m_mode = TexturedParallelogram::VOLUME;
     }
 
 TextString::TextString(glm::vec2 position,
@@ -63,7 +63,7 @@ TextString::TextString(glm::vec2 position,
 			                       text_style,
                                    foreground,
 			                       background) {
-	mode = TexturedParallelogram::FLAT;
+	m_mode = TexturedParallelogram::FLAT;
 	}
 
 TextString::~TextString() {
@@ -100,7 +100,7 @@ void TextString::configureTask(void) {
     m_textured_parallelogram = new TexturedParallelogram(m_position,
 	  	  	  	  	  	 	 	 	 	 	 	 	 	 m_height_offset,
 														 m_width_offset,
-														 mode,
+														 m_mode,
 														 m_texture_buffer);
 
     // With the SDL_ttf library the caller must free the surface when done.

@@ -319,6 +319,9 @@ bool Program::loadUniform(Program::uniform_data current) {
 		case GL_FLOAT_MAT4:
 			glUniformMatrix4fv(current.program_location, 1, false, static_cast<const GLfloat*>(current.client_load_point));
 			break;
+		case GL_FLOAT_VEC2:
+			glUniform2fv(current.program_location, 1, static_cast<const GLfloat*>(current.client_load_point));
+			break;
 		case GL_FLOAT_VEC3:
 			glUniform3fv(current.program_location, 1, static_cast<const GLfloat*>(current.client_load_point));
 			break;

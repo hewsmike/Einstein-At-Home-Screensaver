@@ -135,7 +135,7 @@ class TextString {
         const char* m_text_string;
 
         /// The choice of rendering mode.
-        TexturedParallelogram::render_mode mode;
+        TexturedParallelogram::render_mode m_mode;
 
         /// The choice of rendering style.
         TextString::render_style m_text_style;
