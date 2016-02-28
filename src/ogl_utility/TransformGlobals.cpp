@@ -20,42 +20,60 @@
 
 #include "TransformGlobals.h"
 
+#include <sstream>
+
 #include "ErrorHandler.h"
 
 /// Initial values of static variables.
-/// 3D transform address unknown.
-GLvoid* TransformGlobals::m_transform_matrix(NULL);
-/// Transform address not yet set.
-bool TransformGlobals::m_transform_matrix_set(false);
+glm::mat4* TransformGlobals::m_transform_matrix_camera(NULL);
+glm::mat4* TransformGlobals::m_transform_matrix_orthographic(NULL);
+
 /// Screen has zero dimensions.
 GLuint TransformGlobals::m_height(0);
 GLuint TransformGlobals::m_width(0);
 
 TransformGlobals::TransformGlobals(void) {
-    }
+	}
 
 TransformGlobals::~TransformGlobals(){
     }
 
-void TransformGlobals::setTransformMatrix(GLvoid* load_point) {
-    // Can only do this once.
-    if(m_transform_matrix_set == false) {
-        m_transform_matrix = load_point;
-        m_transform_matrix_set = true;
-        }
+void TransformGlobals::setCameraTransformMatrix(glm::mat4* load_point) {
+    m_transform_matrix_camera = load_point;
     }
 
-GLvoid* TransformGlobals::getTransformMatrix(void) {
-    if(m_transform_matrix_set == false) {
-        ErrorHandler::record("TransformGlobals::getTransformMatrix() : access attempt before set !",
+glm::mat4* TransformGlobals::getCameraTransformMatrix(void) {
+    if(m_transform_matrix_camera == NULL) {
+        ErrorHandler::record("TransformGlobals::getPerspectiveTransformMatrix() : access attempt before set !",
                          ErrorHandler::FATAL);
     	}
-    return m_transform_matrix;
+    return m_transform_matrix_camera;
+    }
+
+void TransformGlobals::setOrthographicTransformMatrix(glm::mat4* load_point) {
+    m_transform_matrix_orthographic = load_point;
+    }
+
+glm::mat4* TransformGlobals::getOrthographicTransformMatrix(void) {
+    if(m_transform_matrix_orthographic == NULL) {
+        ErrorHandler::record("TransformGlobals::getOrthographicTransformMatrix() : access attempt before set !",
+                         ErrorHandler::FATAL);
+    	}
+    return m_transform_matrix_orthographic;
     }
 
 void TransformGlobals::setClientScreenDimensions(GLuint height, GLuint width) {
-    m_height = height;
-    m_width = width;
+	if((height > 0) && (width >0)) {
+		m_height = height;
+		m_width = width;
+		}
+	else {
+		std::stringstream msg;
+		msg << "TransformGlobals::setClientScreenDimensions() : non-strictly positive dimensions \t"
+			<< "height = " << height
+			<< "\twidth = " << width;
+		ErrorHandler::record(msg.str(), ErrorHandler::FATAL);
+		}
     }
 
 GLuint TransformGlobals::getClientScreenHeight(void) {
@@ -64,8 +82,4 @@ GLuint TransformGlobals::getClientScreenHeight(void) {
 
 GLuint TransformGlobals::getClientScreenWidth(void) {
     return m_width;
-    }
-
-glm::vec2 TransformGlobals::getClientScreenUniform(void) {
-    return glm::vec2(2.0/m_width, 2.0/m_height);
     }

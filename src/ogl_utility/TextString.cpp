@@ -100,7 +100,6 @@ void TextString::configureTask(void) {
     m_textured_parallelogram = new TexturedParallelogram(m_position,
 	  	  	  	  	  	 	 	 	 	 	 	 	 	 m_height_offset,
 														 m_width_offset,
-														 m_mode,
 														 m_texture_buffer);
 
     // With the SDL_ttf library the caller must free the surface when done.

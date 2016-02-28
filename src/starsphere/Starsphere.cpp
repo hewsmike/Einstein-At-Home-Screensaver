@@ -233,7 +233,7 @@ void Starsphere::make_stars() {
 	m_render_task_star->addSpecification({0, "position", 3, GL_FLOAT, GL_FALSE});
 
     // For program uniforms need client side pointers.
-	m_render_task_star->setUniform("CameraMatrix", TransformGlobals::getTransformMatrix());
+	m_render_task_star->setUniform("CameraMatrix", TransformGlobals::getCameraTransformMatrix());
 
 	m_render_task_star->setUniform("color", &m_star_color);
 
@@ -288,7 +288,7 @@ void Starsphere::make_pulsars() {
 	m_render_task_psr->addSpecification({0, "position", 3, GL_FLOAT, GL_FALSE});
 
     // For program uniforms need client side pointers.
-	m_render_task_psr->setUniform("CameraMatrix", TransformGlobals::getTransformMatrix());
+	m_render_task_psr->setUniform("CameraMatrix", TransformGlobals::getCameraTransformMatrix());
 
 	m_render_task_psr->setUniform("color", &m_pulsar_color);
 
@@ -343,7 +343,7 @@ void Starsphere::make_snrs() {
 	m_render_task_snr->addSpecification({0, "position", 3, GL_FLOAT, GL_FALSE});
 
     // For program uniforms need client side pointers.
-	m_render_task_snr->setUniform("CameraMatrix", TransformGlobals::getTransformMatrix());
+	m_render_task_snr->setUniform("CameraMatrix", TransformGlobals::getCameraTransformMatrix());
 
 	m_render_task_snr->setUniform("color", &m_supernova_color);
 
@@ -413,7 +413,7 @@ void Starsphere::make_constellations() {
 	m_render_task_cons->addSpecification({0, "position", 3, GL_FLOAT, GL_FALSE});
 
     // For program uniforms need client side pointers.
-	m_render_task_cons->setUniform("CameraMatrix", TransformGlobals::getTransformMatrix());;
+	m_render_task_cons->setUniform("CameraMatrix", TransformGlobals::getCameraTransformMatrix());;
 
 	m_render_task_cons->setUniform("color", &m_constellation_line_color);
 
@@ -827,7 +827,8 @@ void Starsphere::resize(const int width, const int height) {
  */
 void Starsphere::initialize(const int width, const int height, const Resource* font) {
     // Remember transfrom matrix location in global state class.
-	TransformGlobals::setTransformMatrix(&m_camera[0][0]);
+	TransformGlobals::setCameraTransformMatrix(&m_camera);
+	TransformGlobals::setOrthographicTransformMatrix(&m_orthographic_projection);
 	// Remember screen dimensions in global state class.
 	TransformGlobals::setClientScreenDimensions(height, width);
 
@@ -878,10 +879,10 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
     resize(m_CurrentWidth, m_CurrentHeight);
 
     // Create rendering tasks for given features.
-//    make_snrs();
-//    make_pulsars();
-//    make_stars();
-//    make_constellations();
+    make_snrs();
+    make_pulsars();
+    make_stars();
+    make_constellations();
 
 	// Begin with these visual features enabled.
 	setFeature(STARS, true);
@@ -1016,7 +1017,7 @@ void Starsphere::render(const double timeOfDay) {
 
 	m_rotation = glm::rotate(m_rotation, 0.01f, m_axis);
 
-	m_camera = m_projection * m_view * m_rotation;
+	m_camera = m_perspective_projection * m_view * m_rotation;
 
 	/// TODO - place this block correctly
 	// draw axes before any rotation so they stay put.
@@ -1025,21 +1026,21 @@ void Starsphere::render(const double timeOfDay) {
 		}
 
 	// stars, pulsars, supernovae, grid
-//    if(isFeature(STARS)) {
-//    	m_render_task_star->utilise(GL_POINTS, m_distinct_stars);;
-//    	}
-//    if(isFeature(PULSARS)) {
-//    	m_render_task_psr->utilise(GL_POINTS, Npulsars);
-//    	}
-//    if(isFeature(SNRS)) {
-//    	m_render_task_snr->utilise(GL_POINTS, NSNRs);
-//    	}
-//    if(isFeature(CONSTELLATIONS)) {
-//    	m_render_task_cons->utilise(GL_LINES, m_constellation_lines*2);
-//    	}
-//	if(isFeature(GLOBE)) {
-//		/// TODO - call to render axes;
-//		}
+    if(isFeature(STARS)) {
+    	m_render_task_star->utilise(GL_POINTS, m_distinct_stars);;
+    	}
+    if(isFeature(PULSARS)) {
+    	m_render_task_psr->utilise(GL_POINTS, Npulsars);
+    	}
+    if(isFeature(SNRS)) {
+    	m_render_task_snr->utilise(GL_POINTS, NSNRs);
+    	}
+    if(isFeature(CONSTELLATIONS)) {
+    	m_render_task_cons->utilise(GL_LINES, m_constellation_lines*2);
+    	}
+	if(isFeature(GLOBE)) {
+		/// TODO - call to render axes;
+		}
 
 	// observatories move an extra 15 degrees/hr since they were drawn
 	if(isFeature(OBSERVATORIES)) {
@@ -1190,12 +1191,16 @@ void Starsphere::zoomSphere(const int relativeZoom) {
     }
 
 void Starsphere::configTransformMatrix(void) {
-    // Create desired projection matrix based upon a frustum model.
-	m_projection = glm::perspective(viewpt_fov,
+    // Create desired perspective projection matrix based upon a frustum model.
+	m_perspective_projection = glm::perspective(viewpt_fov,
                                     m_aspect,
                                     PERSPECTIVE_NEAR_FRUSTUM_DISTANCE,
                                     PERSPECTIVE_FAR_FRUSTUM_DISTANCE);
-    }
+
+	// Create desired orthographic projection matrix based upon a frustum model.
+	m_orthographic_projection = glm::ortho(GLuint(0), TransformGlobals::getClientScreenWidth(),
+										   GLuint(0), TransformGlobals::getClientScreenHeight());
+	}
 
 /**
  * Feature control

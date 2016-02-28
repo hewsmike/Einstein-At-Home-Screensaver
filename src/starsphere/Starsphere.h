@@ -409,7 +409,9 @@ class Starsphere : public AbstractGraphicsEngine {
         // Number of constellation lines.
         GLuint m_constellation_lines;
 
-        glm::mat4 m_projection;
+        glm::mat4 m_perspective_projection;
+        glm::mat4 m_orthographic_projection;
+
         glm::mat4 m_view;
         glm::mat4 m_rotation;
         glm::vec3 m_axis;

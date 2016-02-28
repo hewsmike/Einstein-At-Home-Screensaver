@@ -62,25 +62,44 @@ class TransformGlobals {
         ~TransformGlobals();
 
         /**
-         * \brief Set the location of the 3D transform matrix. This is enacted
-         *        so as to only allow this to happen once.
+         * \brief Set the location of the camera transform matrix.
          *
          * \param load_point : an untyped address of the matrix in client code.
          *                     Obviously that should be persistent and
          *                     available before first dereference.
          */
-        static void setTransformMatrix(GLvoid* load_point);
+        static void setCameraTransformMatrix(glm::mat4* load_point);
 
         /**
-         * \brief Get the location of the 3D transform matrix.
+         * \brief Get the location of the camera transform matrix.
          *
          * \return the address of the matrix in client code as stored here.
          *         Obviously that should be set to a valid location prior
          *         to the first dereference. A FATAL error will be generated
          *         if this is called before value setting has occured via
-         *         setTransformMatrix().
+         *         setPerspectiveTransformMatrix().
          */
-        static GLvoid* getTransformMatrix(void);
+        static glm::mat4* getCameraTransformMatrix(void);
+
+        /**
+		 * \brief Set the location of the orthographic transform matrix.
+		 *
+		 * \param load_point : an untyped address of the matrix in client code.
+		 *                     Obviously that should be persistent and
+		 *                     available before first dereference.
+		 */
+		static void setOrthographicTransformMatrix(glm::mat4* load_point);
+
+		/**
+		 * \brief Get the location of the orthographic transform matrix.
+		 *
+		 * \return the address of the matrix in client code as stored here.
+		 *         Obviously that should be set to a valid location prior
+		 *         to the first dereference. A FATAL error will be generated
+		 *         if this is called before value setting has occured via
+		 *         setOrthographicTransformMatrix().
+		 */
+		static glm::mat4* getOrthographicTransformMatrix(void);
 
         /**
          * \brief Set the width and the height of the client screen area.
@@ -104,27 +123,12 @@ class TransformGlobals {
          */
         static GLuint getClientScreenWidth(void);
 
-        /**
-         * \brief Get a value suitable for uniform use representing the
-         *        scaling to Normalised Device Coordinates (NDC).
-         *
-         *    The gl_Position value emitted by a vertex shader must lie
-         * within the range of NDC ie. [-1,+1]. Assuming the input position
-         * is in pixels then within GLSL code :
-         *
-         *      gl_Position = position*vec2(2.0/width, 2.0/height) - vec2(1,1)
-         *
-         * gives : (0, 0) maps to [-1, -1] and
-         *         (width, height) maps to [+1, +1].
-         *
-         * \return a glm::vec2 containing the correct values for use as described.
-         */
-        static glm::vec2 getClientScreenUniform(void);
-
     private:
-        /// The 3D transform matrix, which can be set once only.
-        static GLvoid* m_transform_matrix;
-        static bool m_transform_matrix_set;
+        /// The 3D perspective transform matrix.
+        static glm::mat4* m_transform_matrix_camera;
+
+        /// The 2D orthographic transform matrix.
+        static glm::mat4* m_transform_matrix_orthographic;
 
         /// The current width and height values of the client screen area.
         /// This can be set/reset many times

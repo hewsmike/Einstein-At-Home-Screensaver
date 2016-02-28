@@ -188,8 +188,8 @@ void StarsphereGravity::renderLogo() {
     if(m_isConfigured == false) {
         // NB 2D version of TextString being summoned.
         m_logo_1 = new TextString(glm::vec2(0.0f, 0.0f),
-                                  glm::vec2(0.0f, +0.5f),
-                                  glm::vec2(0.5f, 1.0f),
+                                  glm::vec2(0.0f, 100.0f),
+                                  glm::vec2(100.0f, 1.0f),
                                   m_FontLogo1,
                                   "Hello",
 								  TextString::SOLID,

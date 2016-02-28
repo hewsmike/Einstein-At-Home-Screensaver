@@ -79,11 +79,10 @@ const std::string TexturedParallelogram::m_vertex_shader_2D("#version 150\n"
 "// Both dimensions of texture coordinates are bound/clamped to\n"
 "// zero and one at extents.\n"
 ""
-"uniform vec2 OrthographicScalars;\n"
-"\n"
 "uniform vec3 base_position;\n"
 "uniform vec3 height_offset;\n"
 "uniform vec3 width_offset;\n"
+"uniform mat4 HUDMatrix;\n"
 "\n"
 "out vec2 pass_text_coords;\n"
 "\n"
@@ -97,7 +96,7 @@ const std::string TexturedParallelogram::m_vertex_shader_2D("#version 150\n"
 "    // For odd numbered vertices.\n"
 "    if((gl_VertexID % 2) == 1) {\n"
 "        // Add the width_offset.\n"
-"        position.xy += width_offset.xy;\n"
+"        position += width_offset.xy;\n"
 "        // With the 's' texture coordinate is 1.0.\n"
 "        pass_text_coords.s = 1.0;\n"
 "        }\n"
@@ -105,13 +104,13 @@ const std::string TexturedParallelogram::m_vertex_shader_2D("#version 150\n"
 "    // For the vertex numbered two & three.\n"
 "    if(gl_VertexID > 1) {\n"
 "        // Add the height offset.\n"
-"        position.xy += height_offset.xy;\n"
+"        position += height_offset.xy;\n"
 "        // With the 't' texture coordinate being 1.0.\n"
 "        pass_text_coords.t = 1.0;\n"
 "        }\n"
 "\n"
 "    // Emit final position of the vertex.\n"
-"    gl_Position = vec4(((position * OrthographicScalars) - vec2(1,1)), 0.0, 1.0);\n"
+"    gl_Position = HUDMatrix * vec4(position, 0.0f, 1.0f);\n"
 "}\n");
 
 const std::string TexturedParallelogram::m_fragment_shader("#version 150\n"
@@ -135,21 +134,30 @@ const std::string TexturedParallelogram::m_fragment_shader("#version 150\n"
 TexturedParallelogram::TexturedParallelogram(glm::vec3 position,
 	  	  	  	  	  	  	  	  	  	  	 glm::vec3 height_offset,
 											 glm::vec3 width_offset,
-											 TexturedParallelogram::render_mode mode,
 											 TextureBuffer* texture) :
 												 m_position(position),
 												 m_height_offset(height_offset),
-												 m_width_offset(width_offset),
-												 m_render_mode(mode) {
+												 m_width_offset(width_offset) {
 	if(texture == NULL) {
-		ErrorHandler::record("TexturedParallelogram::TexturedParallelogram() : Texture not provided!", ErrorHandler::FATAL);
+		ErrorHandler::record("TexturedParallelogram::TexturedParallelogram() 3D version : Texture not provided!", ErrorHandler::FATAL);
 		}
 
-	m_ortho_transform = glm::vec2(0.0, 0.0);
+	m_render_mode = VOLUME;
 	m_texture = texture;
 	m_render_task = NULL;
 	m_configure_flag = false;
     }
+
+TexturedParallelogram::TexturedParallelogram(glm::vec2 position,
+							  	  	  	     glm::vec2 height_offset,
+											 glm::vec2 width_offset,
+											 TextureBuffer* texture) :
+					   TexturedParallelogram::TexturedParallelogram(glm::vec3(position.x, position.y, 0),
+			  	  	  	  	  	  	  	  	  	  	 	 	 	    glm::vec3(height_offset.x, height_offset.y, 0),
+																	glm::vec3(width_offset.x, width_offset.y, 0),
+																	texture) {
+    m_render_mode = FLAT;
+	}
 
 TexturedParallelogram::~TexturedParallelogram() {
 	if(m_render_task) delete m_render_task;
@@ -187,7 +195,7 @@ void TexturedParallelogram::configureTask(void) {
 	s_group.frag_shader_source = m_fragment_shader;
 
 	if(m_render_mode == FLAT) {
-		s_group.vert_shader_source = m_vertex_shader_2D;
+		s_group.vert_shader_source = m_vertex_shader_3D;
 		}
 	else {
 		s_group.vert_shader_source = m_vertex_shader_3D;
@@ -206,11 +214,10 @@ void TexturedParallelogram::configureTask(void) {
 	m_render_task = new RenderTask(s_group, i_group, v_group);
 
 	if(m_render_mode == FLAT) {
-		m_ortho_transform = TransformGlobals::getClientScreenUniform();
-		m_render_task->setUniform("OrthographicScalars", &m_ortho_transform);
+		m_render_task->setUniform("HUDMatrix", TransformGlobals::getOrthographicTransformMatrix());
 		}
 	else {
-		m_render_task->setUniform("CameraMatrix", TransformGlobals::getTransformMatrix());
+		m_render_task->setUniform("CameraMatrix", TransformGlobals::getCameraTransformMatrix());
 		}
 
 	m_render_task->setUniform("base_position", &m_position);
