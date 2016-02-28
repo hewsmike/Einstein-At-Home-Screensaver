@@ -77,7 +77,7 @@ class TransformGlobals {
          *         Obviously that should be set to a valid location prior
          *         to the first dereference. A FATAL error will be generated
          *         if this is called before value setting has occured via
-         *         setPerspectiveTransformMatrix().
+         *         setCameraTransformMatrix().
          */
         static glm::mat4* getCameraTransformMatrix(void);
 

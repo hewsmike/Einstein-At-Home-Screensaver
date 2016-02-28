@@ -879,10 +879,10 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
     resize(m_CurrentWidth, m_CurrentHeight);
 
     // Create rendering tasks for given features.
-    make_snrs();
-    make_pulsars();
-    make_stars();
-    make_constellations();
+//    make_snrs();
+//    make_pulsars();
+//    make_stars();
+//    make_constellations();
 
 	// Begin with these visual features enabled.
 	setFeature(STARS, true);
@@ -1026,21 +1026,21 @@ void Starsphere::render(const double timeOfDay) {
 		}
 
 	// stars, pulsars, supernovae, grid
-    if(isFeature(STARS)) {
-    	m_render_task_star->utilise(GL_POINTS, m_distinct_stars);;
-    	}
-    if(isFeature(PULSARS)) {
-    	m_render_task_psr->utilise(GL_POINTS, Npulsars);
-    	}
-    if(isFeature(SNRS)) {
-    	m_render_task_snr->utilise(GL_POINTS, NSNRs);
-    	}
-    if(isFeature(CONSTELLATIONS)) {
-    	m_render_task_cons->utilise(GL_LINES, m_constellation_lines*2);
-    	}
-	if(isFeature(GLOBE)) {
-		/// TODO - call to render axes;
-		}
+//    if(isFeature(STARS)) {
+//    	m_render_task_star->utilise(GL_POINTS, m_distinct_stars);;
+//    	}
+//    if(isFeature(PULSARS)) {
+//    	m_render_task_psr->utilise(GL_POINTS, Npulsars);
+//    	}
+//    if(isFeature(SNRS)) {
+//    	m_render_task_snr->utilise(GL_POINTS, NSNRs);
+//    	}
+//    if(isFeature(CONSTELLATIONS)) {
+//    	m_render_task_cons->utilise(GL_LINES, m_constellation_lines*2);
+//    	}
+//	if(isFeature(GLOBE)) {
+//		/// TODO - call to render axes;
+//		}
 
 	// observatories move an extra 15 degrees/hr since they were drawn
 	if(isFeature(OBSERVATORIES)) {
@@ -1198,8 +1198,8 @@ void Starsphere::configTransformMatrix(void) {
                                     PERSPECTIVE_FAR_FRUSTUM_DISTANCE);
 
 	// Create desired orthographic projection matrix based upon a frustum model.
-	m_orthographic_projection = glm::ortho(GLuint(0), TransformGlobals::getClientScreenWidth(),
-										   GLuint(0), TransformGlobals::getClientScreenHeight());
+	m_orthographic_projection = glm::ortho(0, 800,
+										   0, 600, -1, 1);
 	}
 
 /**

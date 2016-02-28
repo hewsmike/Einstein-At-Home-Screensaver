@@ -97,10 +97,17 @@ void TextString::configureTask(void) {
 
     m_texture_buffer->acquire();
 
-    m_textured_parallelogram = new TexturedParallelogram(m_position,
-	  	  	  	  	  	 	 	 	 	 	 	 	 	 m_height_offset,
-														 m_width_offset,
-														 m_texture_buffer);
+    if(m_mode == TexturedParallelogram::FLAT) {
+    	m_textured_parallelogram = new TexturedParallelogram(m_position.xy(),
+    														m_height_offset.xy(),
+															m_width_offset.xy(),
+															m_texture_buffer);
+    } else if(m_mode == TexturedParallelogram::VOLUME) {
+		m_textured_parallelogram = new TexturedParallelogram(m_position,
+															 m_height_offset,
+															 m_width_offset,
+															 m_texture_buffer);
+    }
 
     // With the SDL_ttf library the caller must free the surface when done.
     SDL_FreeSurface(surface);
