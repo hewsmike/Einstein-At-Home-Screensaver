@@ -191,7 +191,7 @@ void StarsphereGravity::renderLogo() {
         // NB 2D version of TextString being summoned.
         m_logo_1 = new TextString(glm::vec2(0.0f, TransformGlobals::getClientScreenHeight()),
                                   glm::vec2(0.0f, -50.0f),
-                                  glm::vec2(200.0f, 0.0f),
+                                  glm::vec2(250.0f, 0.0f),
                                   m_FontLogo1,
                                   "Einstein At Home",
 								  TextString::SOLID,
@@ -207,5 +207,5 @@ void StarsphereGravity::renderLogo() {
         m_isConfigured = true;
         }
     m_logo_1->utilise();
-    m_logo_2->utilise();
+    //m_logo_2->utilise();
     }
