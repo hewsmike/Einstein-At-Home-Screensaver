@@ -23,6 +23,7 @@
 #include <time.h>
 
 #include "ErrorHandler.h"
+#include "TransformGlobals.h"
 
 StarsphereGravity::StarsphereGravity() :
 		Starsphere(EinsteinGravityAdapter::SharedMemoryIdentifier),
@@ -183,21 +184,28 @@ void StarsphereGravity::generateObservatories(float dimFactor) {
 void StarsphereGravity::renderLogo() {
     static bool m_isConfigured = false;
 
-    SDL_Color color = {255, 255, 255, 255};
+    SDL_Color color1 = {255, 255, 255, 255};
+    SDL_Color color2 = {255, 100, 100, 255};
 
     if(m_isConfigured == false) {
         // NB 2D version of TextString being summoned.
-        m_logo_1 = new TextString(glm::vec2(0.0f, 0.0f),
-                                  glm::vec2(0.0f, 100.0f),
-                                  glm::vec2(100.0f, 0.0f),
+        m_logo_1 = new TextString(glm::vec2(0.0f, TransformGlobals::getClientScreenHeight()),
+                                  glm::vec2(0.0f, -50.0f),
+                                  glm::vec2(200.0f, 0.0f),
                                   m_FontLogo1,
-                                  "Hello",
+                                  "Einstein At Home",
 								  TextString::SOLID,
-                                  color);
+                                  color1);
+        m_logo_2 = new TextString(glm::vec2(TransformGlobals::getClientScreenWidth() - 300.0f, TransformGlobals::getClientScreenHeight()),
+                				  glm::vec2(0.0f, -50.0f),
+								  glm::vec2(300.0f, 0.0f),
+								  m_FontLogo1,
+								  "World Year of Physics 2005",
+								  TextString::SOLID,
+								  color2);
+
         m_isConfigured = true;
         }
     m_logo_1->utilise();
-    // m_logo_2->utilise();
-//	m_FontLogo1->draw(m_XStartPosLeft, m_YStartPosTop, "Einstein@Home");
-//	m_FontLogo2->draw(m_XStartPosLeft, m_YStartPosTop - m_YOffsetLarge, "World Year of Physics 2005");
+    m_logo_2->utilise();
     }

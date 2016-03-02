@@ -195,7 +195,7 @@ void TexturedParallelogram::configureTask(void) {
 	s_group.frag_shader_source = m_fragment_shader;
 
 	if(m_render_mode == FLAT) {
-		s_group.vert_shader_source = m_vertex_shader_3D;
+		s_group.vert_shader_source = m_vertex_shader_2D;
 		}
 	else {
 		s_group.vert_shader_source = m_vertex_shader_3D;
@@ -214,7 +214,7 @@ void TexturedParallelogram::configureTask(void) {
 	m_render_task = new RenderTask(s_group, i_group, v_group);
 
 	if(m_render_mode == FLAT) {
-		m_render_task->setUniform("CameraMatrix", TransformGlobals::getOrthographicTransformMatrix());
+		m_render_task->setUniform("HUDMatrix", TransformGlobals::getOrthographicTransformMatrix());
 		}
 	else {
 		m_render_task->setUniform("CameraMatrix", TransformGlobals::getCameraTransformMatrix());

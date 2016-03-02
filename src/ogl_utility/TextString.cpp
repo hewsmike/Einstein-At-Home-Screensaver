@@ -121,6 +121,6 @@ void TextString::utilise(void) {
 	if(m_configure_flag == false) {
 		configureTask();
 		}
-
+	m_texture_buffer->acquire();
 	m_textured_parallelogram->utilise();
 	}

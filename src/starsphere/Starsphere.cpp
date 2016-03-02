@@ -826,11 +826,13 @@ void Starsphere::resize(const int width, const int height) {
  *  What to do when graphics are "initialized".
  */
 void Starsphere::initialize(const int width, const int height, const Resource* font) {
+	// Remember screen dimensions in global state class.
+	TransformGlobals::setClientScreenDimensions(height, width);
+
+	configTransformMatrix();
     // Remember transfrom matrix location in global state class.
 	TransformGlobals::setCameraTransformMatrix(&m_camera);
 	TransformGlobals::setOrthographicTransformMatrix(&m_orthographic_projection);
-	// Remember screen dimensions in global state class.
-	TransformGlobals::setClientScreenDimensions(height, width);
 
 	m_CurrentWidth = width;
     m_CurrentHeight = height;
@@ -879,10 +881,10 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
     resize(m_CurrentWidth, m_CurrentHeight);
 
     // Create rendering tasks for given features.
-//    make_snrs();
-//    make_pulsars();
-//    make_stars();
-//    make_constellations();
+    make_snrs();
+    make_pulsars();
+    make_stars();
+    make_constellations();
 
 	// Begin with these visual features enabled.
 	setFeature(STARS, true);
@@ -1026,21 +1028,21 @@ void Starsphere::render(const double timeOfDay) {
 		}
 
 	// stars, pulsars, supernovae, grid
-//    if(isFeature(STARS)) {
-//    	m_render_task_star->utilise(GL_POINTS, m_distinct_stars);;
-//    	}
-//    if(isFeature(PULSARS)) {
-//    	m_render_task_psr->utilise(GL_POINTS, Npulsars);
-//    	}
-//    if(isFeature(SNRS)) {
-//    	m_render_task_snr->utilise(GL_POINTS, NSNRs);
-//    	}
-//    if(isFeature(CONSTELLATIONS)) {
-//    	m_render_task_cons->utilise(GL_LINES, m_constellation_lines*2);
-//    	}
-//	if(isFeature(GLOBE)) {
-//		/// TODO - call to render axes;
-//		}
+    if(isFeature(STARS)) {
+    	m_render_task_star->utilise(GL_POINTS, m_distinct_stars);;
+    	}
+    if(isFeature(PULSARS)) {
+    	m_render_task_psr->utilise(GL_POINTS, Npulsars);
+    	}
+    if(isFeature(SNRS)) {
+    	m_render_task_snr->utilise(GL_POINTS, NSNRs);
+    	}
+    if(isFeature(CONSTELLATIONS)) {
+    	m_render_task_cons->utilise(GL_LINES, m_constellation_lines*2);
+    	}
+	if(isFeature(GLOBE)) {
+		/// TODO - call to render axes;
+		}
 
 	// observatories move an extra 15 degrees/hr since they were drawn
 	if(isFeature(OBSERVATORIES)) {
@@ -1198,8 +1200,34 @@ void Starsphere::configTransformMatrix(void) {
                                     PERSPECTIVE_FAR_FRUSTUM_DISTANCE);
 
 	// Create desired orthographic projection matrix based upon a frustum model.
-	m_orthographic_projection = glm::ortho(0, 800,
-										   0, 600, -1, 1);
+//	m_orthographic_projection = glm::mat4{{1/800.0f, 0.0f, 0.0f, 0.0f},
+//								{0.0f, 1/600.0f, 0.0f, 0.0f},
+//								{0.0f, 0.0f, 0.0f, 0.0f},
+//								{0.0f, 0.0f, 0.0f, 1.0f}};
+
+
+
+	m_orthographic_projection = glm::ortho(GLfloat(0), GLfloat(TransformGlobals::getClientScreenWidth()),
+										   GLfloat(0), GLfloat(TransformGlobals::getClientScreenHeight()));
+
+	std::cout << "m_orthographic_projection = [["
+			  << m_orthographic_projection[0][0] << ", "
+			  << m_orthographic_projection[0][1] << ", "
+			  << m_orthographic_projection[0][2] << ", "
+			  << m_orthographic_projection[0][3] << "], ["
+			  << m_orthographic_projection[1][0] << ", "
+			  << m_orthographic_projection[1][1] << ", "
+			  << m_orthographic_projection[1][2] << ", "
+			  << m_orthographic_projection[1][3] << "], ["
+			  << m_orthographic_projection[2][0] << ", "
+			  << m_orthographic_projection[2][1] << ", "
+			  << m_orthographic_projection[2][2] << ", "
+			  << m_orthographic_projection[2][3] << "], ["
+			  << m_orthographic_projection[3][0] << ", "
+			  << m_orthographic_projection[3][1] << ", "
+			  << m_orthographic_projection[3][2] << ", "
+			  << m_orthographic_projection[3][3] << "]]"
+			  << std::endl;
 	}
 
 /**
