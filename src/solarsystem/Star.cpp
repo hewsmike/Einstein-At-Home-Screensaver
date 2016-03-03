@@ -56,7 +56,7 @@ Star::Star(starpos_t ra, starpos_t dec, const std::string& nm) : s_name(nm) {
 
     // Inputs in range, so can now initialise with given arguments.
     right_asc = ra;
-	decl = dec;
+    decl = dec;
     }
 
 Star::~Star() {

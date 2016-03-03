@@ -113,7 +113,7 @@ void EinsteinRadioAdapter::parseApplicationInformation() {
                break;
                }
             }
-      	}
+          }
       else {
          cerr << "Invalid power spectrum shared memory data encountered!" << endl;
          }

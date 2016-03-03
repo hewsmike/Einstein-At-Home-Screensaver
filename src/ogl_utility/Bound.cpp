@@ -21,7 +21,7 @@
 #include "Bound.h"
 
 Bound::Bound() {
-	}
+    }
 
 Bound::~Bound() {
     }

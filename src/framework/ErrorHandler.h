@@ -88,7 +88,7 @@ class ErrorHandler {
 
         /**
          * \brief Check the current OpenGL context for error, possibly emitting FILE and LINE
-         * 		  information.
+         *           information.
          *
          * \param message : a character string ( eg. compile time generated using __FILE__ )
          * \param line : an integer ( eg. compile time generated using __LINE__ )
@@ -98,7 +98,7 @@ class ErrorHandler {
 
         /**
          * \brief Check the current SDL2 state for error, possibly emitting FILE and LINE
-         * 		  information, and return any error message.
+         *           information, and return any error message.
          *
          *      Only the most recent, if any, error is reported upon since
          * the last call to SDL_ClearError(). Return value will be an empty string

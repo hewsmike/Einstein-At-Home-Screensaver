@@ -66,13 +66,13 @@ bool Shader::acquire(void) {
         // Get an OpenGL handle for this shader object, if needed.
         if(this->ID() == OGL_ID::NO_ID) {
             // Get an OpenGL handle for this shader object.
-        	GLuint temp = glCreateShader(shader_type);
-        	this->set_ID(temp);
+            GLuint temp = glCreateShader(shader_type);
+            this->set_ID(temp);
 
             // If that handle acquisition failed the we have no other option ...
             if(this->ID() == OGL_ID::NO_ID)  {
                 ErrorHandler::record("Shader::acquire() : OpenGL handle acquisition failure !",
-                                 	 ErrorHandler::FATAL);
+                                      ErrorHandler::FATAL);
                 }
             }
 
@@ -80,7 +80,7 @@ bool Shader::acquire(void) {
 
         // Only compile if never attempted.
         if(comp_status == Shader::NEVER_COMPILED) {
-        	ret_val = compile();
+            ret_val = compile();
             }
         }
 
@@ -89,8 +89,8 @@ bool Shader::acquire(void) {
 
 void Shader::release(void) {
     // NB This means the OpenGL state machine marks an OpenGL shader object
-	// for deletion. This does not refer to any client source code entity.
-	glDeleteShader(this->ID());
+    // for deletion. This does not refer to any client source code entity.
+    glDeleteShader(this->ID());
     // Set our handle store to safe value.
     set_ID(OGL_ID::NO_ID);
     // Reset compilation status.
@@ -126,59 +126,59 @@ bool Shader::compile(void) {
     // Only compile a valid handle.
     if(this->ID() != OGL_ID::NO_ID) {
         // Present shader's GLSL code to the GLSL compiler.
-    	glCompileShader(this->ID());
+        glCompileShader(this->ID());
 
         // See if the compilation was a success.
         GLint c_status;
         glGetShaderiv(this->ID(), GL_COMPILE_STATUS, &c_status);
         if(c_status == GL_TRUE) {
-        	// Compile good.
-        	comp_status = COMPILE_SUCCEEDED;
-        	ret_val = true;
+            // Compile good.
+            comp_status = COMPILE_SUCCEEDED;
+            ret_val = true;
             }
         else {
-        	// Populate the compilation log ie. retrieve compiler error output.
-			// Copy to an std::string via temporary character array to avoid
-			// const semantic difficulties on the std::string c_str() method.
-        	// The log length established by this call INCLUDES a null-termination.
-			GLint log_len;
-			glGetShaderiv(this->ID(), GL_INFO_LOG_LENGTH, &log_len);
+            // Populate the compilation log ie. retrieve compiler error output.
+            // Copy to an std::string via temporary character array to avoid
+            // const semantic difficulties on the std::string c_str() method.
+            // The log length established by this call INCLUDES a null-termination.
+            GLint log_len;
+            glGetShaderiv(this->ID(), GL_INFO_LOG_LENGTH, &log_len);
 
-			// Strictly positive log length indicates an error log is available
-			if(log_len > 0) {
-				// Create temporary character array to receive the error log.
-				GLchar* temp_log = new GLchar[log_len];
+            // Strictly positive log length indicates an error log is available
+            if(log_len > 0) {
+                // Create temporary character array to receive the error log.
+                GLchar* temp_log = new GLchar[log_len];
 
-				// The returned log length DOES NOT INCLUDE a null temination.
-				GLsizei returned_log_len = 0;
-				// Having log-len as the second parameter here limits the write to temp_log
-				// ie. stops buffer over-run.
-				glGetShaderInfoLog(this->ID(), log_len, &returned_log_len, temp_log);
+                // The returned log length DOES NOT INCLUDE a null temination.
+                GLsizei returned_log_len = 0;
+                // Having log-len as the second parameter here limits the write to temp_log
+                // ie. stops buffer over-run.
+                glGetShaderInfoLog(this->ID(), log_len, &returned_log_len, temp_log);
 
-				// Is the returned error log of expected length ?
-				// Bear in mind that we expect a difference of one character for null termination.
-				if(log_len != returned_log_len + 1) {
-					std::stringstream error_log_len_msg;
-					error_log_len_msg << "Shader::compile() : error log length = "
-									  << returned_log_len + 1
-									  << "("
-									  << log_len
-									  << " expected)";
-					/// TODO - should this be FATAL ?
-					ErrorHandler::record(error_log_len_msg.str(),
-					                     ErrorHandler::WARN);
-					}
+                // Is the returned error log of expected length ?
+                // Bear in mind that we expect a difference of one character for null termination.
+                if(log_len != returned_log_len + 1) {
+                    std::stringstream error_log_len_msg;
+                    error_log_len_msg << "Shader::compile() : error log length = "
+                                      << returned_log_len + 1
+                                      << "("
+                                      << log_len
+                                      << " expected)";
+                    /// TODO - should this be FATAL ?
+                    ErrorHandler::record(error_log_len_msg.str(),
+                                         ErrorHandler::WARN);
+                    }
 
-				// Paranoia !
-				temp_log[log_len -1] = '\0';
+                // Paranoia !
+                temp_log[log_len -1] = '\0';
 
-				// Store the log.
-				compile_log = temp_log;
+                // Store the log.
+                compile_log = temp_log;
 
-				// Dispose of the temporary character array.
-				delete[] temp_log;
-				}
-        	}
+                // Dispose of the temporary character array.
+                delete[] temp_log;
+                }
+            }
         }
 
     // Some improved reporting.
@@ -187,31 +187,31 @@ bool Shader::compile(void) {
     shader_compile_error_msg << "Shader::compile() : ";
 
     if(this->type() == GL_VERTEX_SHADER) {
-        	shader_compile_error_msg << "GL_VERTEX_SHADER";
-        	}
-	if(this->type() == GL_FRAGMENT_SHADER) {
+            shader_compile_error_msg << "GL_VERTEX_SHADER";
+            }
+    if(this->type() == GL_FRAGMENT_SHADER) {
             shader_compile_error_msg << "GL_FRAGMENT_SHADER";
-        	}
+            }
 
-	shader_compile_error_msg << " ( ID = "
-    						 << this->ID()
-							 << " ) did ";
+    shader_compile_error_msg << " ( ID = "
+                             << this->ID()
+                             << " ) did ";
 
     if(this->status() != Shader::COMPILE_SUCCEEDED) {
-    	info_level = ErrorHandler::WARN;
-		shader_compile_error_msg <<	"not compile !!\n"
-								 << "Compile log is as follows :\n"
-								 << "++++++++++++++++++++++++++++++++++++++++++++++++++++++\n"
-								 << this->compileLog()
-								 << "------------------------------------------------------\n"
-								 << "Shader source code is as follows :\n"
-								 << "------------------------------------------------------\n"
-								 << this->source()
-								 << "++++++++++++++++++++++++++++++++++++++++++++++++++++++";
-		}
+        info_level = ErrorHandler::WARN;
+        shader_compile_error_msg <<    "not compile !!\n"
+                                 << "Compile log is as follows :\n"
+                                 << "++++++++++++++++++++++++++++++++++++++++++++++++++++++\n"
+                                 << this->compileLog()
+                                 << "------------------------------------------------------\n"
+                                 << "Shader source code is as follows :\n"
+                                 << "------------------------------------------------------\n"
+                                 << this->source()
+                                 << "++++++++++++++++++++++++++++++++++++++++++++++++++++++";
+        }
     else {
-    	shader_compile_error_msg <<	"compile ... ";
-    	}
+        shader_compile_error_msg <<    "compile ... ";
+        }
 
     ErrorHandler::record(shader_compile_error_msg.str(), info_level);
 

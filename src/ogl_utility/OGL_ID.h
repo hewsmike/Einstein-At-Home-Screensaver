@@ -59,55 +59,55 @@ class OGL_ID {
         virtual ~OGL_ID();
 
         /**
-		 * \brief Obtains the underlying OpenGL buffer object resources
-		 *        from the OpenGL state machine.
-		 *
-		 * \return a boolean indicating success of acquisition
-		 *              true - resources acquired without error
-		 *              false - resources were not acquired
-		 */
-		virtual bool acquire(void) = 0;
+         * \brief Obtains the underlying OpenGL buffer object resources
+         *        from the OpenGL state machine.
+         *
+         * \return a boolean indicating success of acquisition
+         *              true - resources acquired without error
+         *              false - resources were not acquired
+         */
+        virtual bool acquire(void) = 0;
 
-		/**
-		 * \brief Releases the underlying OpenGL buffer object resources
-		 *        from the OpenGL state machine.
-		 */
-		virtual void release(void) = 0;
+        /**
+         * \brief Releases the underlying OpenGL buffer object resources
+         *        from the OpenGL state machine.
+         */
+        virtual void release(void) = 0;
 
-		/**
-		 * \brief The acquisition state of the underlying OpenGL buffer
-		 *        object with respect to the OpenGL state machine. That is,
-		 *        have the OpenGL state machine resources been acquired ?
-		 *
-		 * \return a boolean indicating acquisition state :
-		 *          true : the object has acquired resources
-		 *          false : the object does not have acquired resources
-		 */
-		bool isAcquired(void) const;
+        /**
+         * \brief The acquisition state of the underlying OpenGL buffer
+         *        object with respect to the OpenGL state machine. That is,
+         *        have the OpenGL state machine resources been acquired ?
+         *
+         * \return a boolean indicating acquisition state :
+         *          true : the object has acquired resources
+         *          false : the object does not have acquired resources
+         */
+        bool isAcquired(void) const;
 
-		/**
-		 * \brief Obtain the OpenGL resource identifier.
-		 *
-		 * \return the identifier.
-		 */
-		GLuint ID(void) const;
+        /**
+         * \brief Obtain the OpenGL resource identifier.
+         *
+         * \return the identifier.
+         */
+        GLuint ID(void) const;
 
     protected :
         /**
-		 * \brief Set the OpenGL resource identifier.
-		 *
-		 * \param value : the identifier value
-		 */
-		void set_ID(GLuint value);
+         * \brief Set the OpenGL resource identifier.
+         *
+         * \param value : the identifier value
+         */
+        void set_ID(GLuint value);
 
-		/**
-		 * \brief Set the acquisition state flag for this object.
-		 *
-		 * \param state : the desired acquisition state.
-		 *                  true - the object has acquired resources
-		 *                  false - the object does not have acquired resources
-		 */
-		void setAcquisitionState(bool state);
+        /**
+         * \brief Set the acquisition state flag for this object.
+         *
+         * \param state : the desired acquisition state.
+         *                  true - the object has acquired resources
+         *                  false - the object does not have acquired resources
+         */
+        void setAcquisitionState(bool state);
 
     private:
         /// The identifier as allocated by OpenGL.

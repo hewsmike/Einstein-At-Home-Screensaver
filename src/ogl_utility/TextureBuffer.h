@@ -91,13 +91,13 @@ class TextureBuffer : public Buffer {
          * \param mipmaps : if true, all mipmaps generated down to 1 x 1
          */
         TextureBuffer(const GLvoid* texture_data,
-        			  GLuint bytes,
+                      GLuint bytes,
                       GLsizei width,
                       GLsizei height,
                       GLenum format,
                       GLenum data_type,
-					  GLenum wrap_type_s,
-					  GLenum wrap_type_t,
+                      GLenum wrap_type_s,
+                      GLenum wrap_type_t,
                       bool mipmaps = true);
 
         /**
@@ -106,25 +106,25 @@ class TextureBuffer : public Buffer {
         virtual ~TextureBuffer();
 
         /**
-		 * \brief Perform any binding to the OpenGL pipeline.
-		 */
+         * \brief Perform any binding to the OpenGL pipeline.
+         */
         virtual void bind(void);
 
-		/**
-		 * \brief Remove any binding to the OpenGL pipeline.
-		 */
-		virtual void unbind(void);
+        /**
+         * \brief Remove any binding to the OpenGL pipeline.
+         */
+        virtual void unbind(void);
 
-		/**
-		 * \brief The binding state of the underlying OpenGL buffer
-		 *        object to the OpenGL state machine. This MUST be a
-		 *        dynamic inquiry.
-		 *
-		 * \return a boolean indicating binding state :
-		 *          true - the object is bound
-		 *          false - the object is not bound
-		 */
-		virtual bool isBound(void) const;
+        /**
+         * \brief The binding state of the underlying OpenGL buffer
+         *        object to the OpenGL state machine. This MUST be a
+         *        dynamic inquiry.
+         *
+         * \return a boolean indicating binding state :
+         *          true - the object is bound
+         *          false - the object is not bound
+         */
+        virtual bool isBound(void) const;
 
     private :
         static const GLuint DEFAULT_MIPMAP_BASE_LEVEL;

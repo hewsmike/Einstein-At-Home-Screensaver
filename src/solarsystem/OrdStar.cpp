@@ -30,12 +30,12 @@ OrdStar::OrdStar(starpos_t ra,
     }
 
 OrdStar::~OrdStar() {
-	}
+    }
 
 GLfloat OrdStar::magnitude(void) const {
-	return mag;
-	}
+    return mag;
+    }
 
 OrdStar::spectral_type OrdStar::spectral_class(void) const {
-	return spect_class;
-	}
+    return spect_class;
+    }

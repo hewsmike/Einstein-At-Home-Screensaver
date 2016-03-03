@@ -24,7 +24,7 @@
 
 Configure::Configure(void) :
         m_configure_flag(false) {
-	}
+    }
 
 Configure::~Configure() {
     }

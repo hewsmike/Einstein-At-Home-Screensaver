@@ -28,8 +28,8 @@ const GLuint OGL_ID::NO_ID(0);
 // Make sure you start with an un-assigned identifier,
 // lest you later over-write resources!
 OGL_ID::OGL_ID() : m_ident(OGL_ID::NO_ID),
-				   m_acquire_flag (false) {
-	}
+                   m_acquire_flag (false) {
+    }
 
 // Must NOT call release() from here !!
 OGL_ID::~OGL_ID() {

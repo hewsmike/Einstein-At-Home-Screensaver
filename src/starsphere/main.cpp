@@ -122,18 +122,18 @@ int main(int argc, char **argv) {
     SDL_TTF_VERSION(&compiled_version);
     std::stringstream sdl_ttf_compiled_version;
     sdl_ttf_compiled_version << "SDL_TTF compiled version : "
-    						 << GLuint(compiled_version.major) << "."
-							 << GLuint(compiled_version.minor) << "."
-							 << GLuint(compiled_version.patch);
+                             << GLuint(compiled_version.major) << "."
+                             << GLuint(compiled_version.minor) << "."
+                             << GLuint(compiled_version.patch);
     ErrorHandler::record(sdl_ttf_compiled_version.str(), ErrorHandler::INFORM);
 
     // Version that is on the target machine ( at runtime ).
     const SDL_version* linked_version = TTF_Linked_Version();
-	std::stringstream SDL_TTF_linked_version;
+    std::stringstream SDL_TTF_linked_version;
     SDL_TTF_linked_version << "SDL_TTF linked version : "
-    					   << GLuint(linked_version->major) << "."
-						   << GLuint(linked_version->minor) << "."
-						   << GLuint(linked_version->patch);
+                           << GLuint(linked_version->major) << "."
+                           << GLuint(linked_version->minor) << "."
+                           << GLuint(linked_version->patch);
     ErrorHandler::record(SDL_TTF_linked_version.str(), ErrorHandler::INFORM);
 
     // Enable BOINC diagnostics

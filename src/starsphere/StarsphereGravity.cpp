@@ -26,11 +26,11 @@
 #include "TransformGlobals.h"
 
 StarsphereGravity::StarsphereGravity() :
-		Starsphere(EinsteinGravityAdapter::SharedMemoryIdentifier),
-		m_EinsteinAdapter(&m_BoincAdapter) {
-	m_CurrentTime = "";
-	m_logo_1 = NULL;
-	m_logo_2 = NULL;
+        Starsphere(EinsteinGravityAdapter::SharedMemoryIdentifier),
+        m_EinsteinAdapter(&m_BoincAdapter) {
+    m_CurrentTime = "";
+    m_logo_1 = NULL;
+    m_logo_2 = NULL;
     }
 
 StarsphereGravity::~StarsphereGravity() {
@@ -39,13 +39,13 @@ StarsphereGravity::~StarsphereGravity() {
 void StarsphereGravity::initialize(const int width, const int height, const Resource* font) {
     Starsphere::initialize(width, height, font);
 
-	// Fatal error if no font resource supplied.
+    // Fatal error if no font resource supplied.
     if(!m_FontResource) {
         ErrorHandler::record("StarsphereGravity::initialize()", ErrorHandler::FATAL);
         }
-	else {
+    else {
         // Create two logo font instances using font resource, if not done already.
-		if(m_FontLogo1 == NULL) {
+        if(m_FontLogo1 == NULL) {
             m_FontLogo1 = TTF_OpenFontRW(SDL_RWFromConstMem(&m_FontResource->data()->at(0),
                                                             m_FontResource->data()->size()),
                                          0,
@@ -86,99 +86,99 @@ void StarsphereGravity::initialize(const int width, const int height, const Reso
     m_Y3StartPosBottom = m_Y2StartPosBottom - m_YOffsetMedium;
     m_Y4StartPosBottom = m_Y3StartPosBottom - m_YOffsetMedium;
 
-	// prepare base class observatories (not dimmed)
-	generateObservatories(1.0);
+    // prepare base class observatories (not dimmed)
+    generateObservatories(1.0);
     }
 
 void StarsphereGravity::resize(const int width, const int height) {
-	Starsphere::resize(width, height);
+    Starsphere::resize(width, height);
 
-	// adjust HUD config
-	m_XStartPosRight = m_CurrentWidth - 125;
-	m_XStartPosClock = m_CurrentWidth - 98;
+    // adjust HUD config
+    m_XStartPosRight = m_CurrentWidth - 125;
+    m_XStartPosClock = m_CurrentWidth - 98;
     }
 
 void StarsphereGravity::refreshBOINCInformation() {
-	// call base class implementation
-	Starsphere::refreshLocalBOINCInformation();
+    // call base class implementation
+    Starsphere::refreshLocalBOINCInformation();
 
-	// update local/specific content
-	m_EinsteinAdapter.refresh();
+    // update local/specific content
+    m_EinsteinAdapter.refresh();
 
-	// prepare conversion buffer
-	stringstream buffer;
-	buffer.precision(2);
-	buffer.setf(ios::fixed, ios::floatfield);
-	buffer.fill('0');
-	buffer.setf(ios::right, ios::adjustfield);
+    // prepare conversion buffer
+    stringstream buffer;
+    buffer.precision(2);
+    buffer.setf(ios::fixed, ios::floatfield);
+    buffer.fill('0');
+    buffer.setf(ios::right, ios::adjustfield);
 
-	// store content required for our HUD (search info)
-	if(m_CurrentRightAscension != m_EinsteinAdapter.wuSkyPosRightAscension()) {
-		// we've got a new position, update search marker and HUD
-		m_CurrentRightAscension = m_EinsteinAdapter.wuSkyPosRightAscension();
-		m_RefreshSearchMarker = true;
-		buffer.str("");
-		buffer << "Ascension: " << fixed << m_CurrentRightAscension << " deg" << ends;
-		m_WUSkyPosRightAscension = buffer.str();
+    // store content required for our HUD (search info)
+    if(m_CurrentRightAscension != m_EinsteinAdapter.wuSkyPosRightAscension()) {
+        // we've got a new position, update search marker and HUD
+        m_CurrentRightAscension = m_EinsteinAdapter.wuSkyPosRightAscension();
+        m_RefreshSearchMarker = true;
+        buffer.str("");
+        buffer << "Ascension: " << fixed << m_CurrentRightAscension << " deg" << ends;
+        m_WUSkyPosRightAscension = buffer.str();
         }
 
-	if(m_CurrentDeclination != m_EinsteinAdapter.wuSkyPosDeclination()) {
-		// we've got a new position, update search marker and HUD
-		m_CurrentDeclination = m_EinsteinAdapter.wuSkyPosDeclination();
-		m_RefreshSearchMarker = true;
-		buffer.str("");
-		buffer << "Declination: " << fixed << m_CurrentDeclination << " deg" << ends;
-		m_WUSkyPosDeclination = buffer.str();
+    if(m_CurrentDeclination != m_EinsteinAdapter.wuSkyPosDeclination()) {
+        // we've got a new position, update search marker and HUD
+        m_CurrentDeclination = m_EinsteinAdapter.wuSkyPosDeclination();
+        m_RefreshSearchMarker = true;
+        buffer.str("");
+        buffer << "Declination: " << fixed << m_CurrentDeclination << " deg" << ends;
+        m_WUSkyPosDeclination = buffer.str();
         }
 
-	buffer.str("");
-	buffer << "Completed: " << fixed << m_EinsteinAdapter.wuFractionDone() * 100 << " %" << ends;
-	m_WUPercentDone = buffer.str();
+    buffer.str("");
+    buffer << "Completed: " << fixed << m_EinsteinAdapter.wuFractionDone() * 100 << " %" << ends;
+    m_WUPercentDone = buffer.str();
 
-	// show WU's total CPU time (previously accumulated + current session)
-	double timeCPU = m_BoincAdapter.wuCPUTimeSpent() + m_EinsteinAdapter.wuCPUTime();
-	int hrs = timeCPU / 3600;
-	int min = fmod(timeCPU, 3600) / 60;
-	int sec = fmod(timeCPU, 60);
+    // show WU's total CPU time (previously accumulated + current session)
+    double timeCPU = m_BoincAdapter.wuCPUTimeSpent() + m_EinsteinAdapter.wuCPUTime();
+    int hrs = timeCPU / 3600;
+    int min = fmod(timeCPU, 3600) / 60;
+    int sec = fmod(timeCPU, 60);
 
-	buffer.str("");
-	buffer << "CPU Time: "  << right << setw(2) << hrs << ":"
-							<< right << setw(2) << min << ":"
-							<< right << setw(2) << sec << ends;
+    buffer.str("");
+    buffer << "CPU Time: "  << right << setw(2) << hrs << ":"
+                            << right << setw(2) << min << ":"
+                            << right << setw(2) << sec << ends;
 
-	m_WUCPUTime = buffer.str();
+    m_WUCPUTime = buffer.str();
 
-	// update current time string (clock)
-	char cBuffer[10] = {0};
-	time_t timeNow = time(0);
-	struct tm* timeLocal = localtime(&timeNow);
-	strftime(cBuffer, sizeof(cBuffer) - 1, "%H:%M:%S", timeLocal);
+    // update current time string (clock)
+    char cBuffer[10] = {0};
+    time_t timeNow = time(0);
+    struct tm* timeLocal = localtime(&timeNow);
+    strftime(cBuffer, sizeof(cBuffer) - 1, "%H:%M:%S", timeLocal);
 
-	m_CurrentTime = string(cBuffer);
+    m_CurrentTime = string(cBuffer);
     }
 
 void StarsphereGravity::renderSearchInformation() {
-//		// clock
-//		m_FontLogo1->draw(m_XStartPosClock, m_YStartPosTop, m_CurrentTime.c_str());
+//        // clock
+//        m_FontLogo1->draw(m_XStartPosClock, m_YStartPosTop, m_CurrentTime.c_str());
 //
-//		// left info block
-//		m_FontHeader->draw(m_XStartPosLeft, m_YStartPosBottom, "BOINC Statistics");
-//		m_FontText->draw(m_XStartPosLeft, m_Y1StartPosBottom, m_UserName.c_str());
-//		m_FontText->draw(m_XStartPosLeft, m_Y2StartPosBottom, m_TeamName.c_str());
-//		m_FontText->draw(m_XStartPosLeft, m_Y3StartPosBottom, m_UserCredit.c_str());
-//		m_FontText->draw(m_XStartPosLeft, m_Y4StartPosBottom, m_UserRACredit.c_str());
+//        // left info block
+//        m_FontHeader->draw(m_XStartPosLeft, m_YStartPosBottom, "BOINC Statistics");
+//        m_FontText->draw(m_XStartPosLeft, m_Y1StartPosBottom, m_UserName.c_str());
+//        m_FontText->draw(m_XStartPosLeft, m_Y2StartPosBottom, m_TeamName.c_str());
+//        m_FontText->draw(m_XStartPosLeft, m_Y3StartPosBottom, m_UserCredit.c_str());
+//        m_FontText->draw(m_XStartPosLeft, m_Y4StartPosBottom, m_UserRACredit.c_str());
 //
-//		// right info block
-//		m_FontHeader->draw(m_XStartPosRight, m_YStartPosBottom, "Search Information");
-//		m_FontText->draw(m_XStartPosRight, m_Y1StartPosBottom, m_WUSkyPosRightAscension.c_str());
-//		m_FontText->draw(m_XStartPosRight, m_Y2StartPosBottom, m_WUSkyPosDeclination.c_str());
-//		m_FontText->draw(m_XStartPosRight, m_Y3StartPosBottom, m_WUPercentDone.c_str());
-//		m_FontText->draw(m_XStartPosRight, m_Y4StartPosBottom, m_WUCPUTime.c_str());
+//        // right info block
+//        m_FontHeader->draw(m_XStartPosRight, m_YStartPosBottom, "Search Information");
+//        m_FontText->draw(m_XStartPosRight, m_Y1StartPosBottom, m_WUSkyPosRightAscension.c_str());
+//        m_FontText->draw(m_XStartPosRight, m_Y2StartPosBottom, m_WUSkyPosDeclination.c_str());
+//        m_FontText->draw(m_XStartPosRight, m_Y3StartPosBottom, m_WUPercentDone.c_str());
+//        m_FontText->draw(m_XStartPosRight, m_Y4StartPosBottom, m_WUCPUTime.c_str());
     }
 
 void StarsphereGravity::generateObservatories(float dimFactor) {
-	// we don't do anything special here, just call base class
-	Starsphere::generateObservatories(dimFactor);
+    // we don't do anything special here, just call base class
+    Starsphere::generateObservatories(dimFactor);
     }
 
 void StarsphereGravity::renderLogo() {
@@ -194,15 +194,15 @@ void StarsphereGravity::renderLogo() {
                                   glm::vec2(250.0f, 0.0f),
                                   m_FontLogo1,
                                   "Einstein At Home",
-								  TextString::SOLID,
+                                  TextString::SOLID,
                                   color1);
         m_logo_2 = new TextString(glm::vec2(TransformGlobals::getClientScreenWidth() - 300.0f, TransformGlobals::getClientScreenHeight()),
-                				  glm::vec2(0.0f, -50.0f),
-								  glm::vec2(300.0f, 0.0f),
-								  m_FontLogo1,
-								  "World Year of Physics 2005",
-								  TextString::SOLID,
-								  color2);
+                                  glm::vec2(0.0f, -50.0f),
+                                  glm::vec2(300.0f, 0.0f),
+                                  m_FontLogo1,
+                                  "World Year of Physics 2005",
+                                  TextString::SOLID,
+                                  color2);
 
         m_isConfigured = true;
         }

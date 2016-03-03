@@ -20,9 +20,9 @@
 #include "SolarSystemGravity.h"
 
 SolarSystemGravity::SolarSystemGravity() :
-	SolarSystem(EinsteinGravityAdapter::SharedMemoryIdentifier),
-	m_EinsteinAdapter(&m_BoincAdapter) {
-	sim_instance = new SimulationGravity(&m_BoincAdapter, &m_EinsteinAdapter);
+    SolarSystem(EinsteinGravityAdapter::SharedMemoryIdentifier),
+    m_EinsteinAdapter(&m_BoincAdapter) {
+    sim_instance = new SimulationGravity(&m_BoincAdapter, &m_EinsteinAdapter);
     }
 
 SolarSystemGravity::~SolarSystemGravity() {
@@ -30,17 +30,17 @@ SolarSystemGravity::~SolarSystemGravity() {
     }
 
 void SolarSystemGravity::initialize(const int width, const int height, const Resource *font, const bool recycle) {
-	SolarSystem::initialize(width, height, font, recycle);
+    SolarSystem::initialize(width, height, font, recycle);
     }
 
 void SolarSystemGravity::resize(const int width, const int height) {
-	SolarSystem::resize(width, height);
+    SolarSystem::resize(width, height);
     }
 
 void SolarSystemGravity::refreshBOINCInformation(void) {
-	// call base class implementation
-	SolarSystem::refreshLocalBOINCInformation();
+    // call base class implementation
+    SolarSystem::refreshLocalBOINCInformation();
 
-	// update local/specific content
-	m_EinsteinAdapter.refresh();
-   	}
+    // update local/specific content
+    m_EinsteinAdapter.refresh();
+       }

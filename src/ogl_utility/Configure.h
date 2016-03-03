@@ -37,7 +37,7 @@
 
 class Configure {
     public :
-		/**
+        /**
          * \brief Constructor.
          */
         Configure(void);

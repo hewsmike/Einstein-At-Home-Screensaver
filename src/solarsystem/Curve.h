@@ -53,41 +53,41 @@ class Curve {
          */
         Curve(void);
 
-		/**
+        /**
          * \brief Constructor.
-	     *
-	     * \param start : the vector to the begining point.
-	     *
-	     * \param finish : the vector to the end point.
-	     */
-		Curve(const Vector3D& start, const Vector3D& finish);
-
-		/**
-		 * \brief Destructor.
-		 */
-		virtual ~Curve();
-
-		/**
-		 * \brief The vector to the point parameterised by the given rho. In
-		 *        this base class a simple straight line is emulated.
-		 *
-		 * \param rho : a value indicating the desired point.
-		 *
-		 * \return a Vector3D indicating the point referred to by the given rho.
-		 */
-		virtual Vector3D value(float rho) const;
+         *
+         * \param start : the vector to the begining point.
+         *
+         * \param finish : the vector to the end point.
+         */
+        Curve(const Vector3D& start, const Vector3D& finish);
 
         /**
-		 * \brief Obtain the length along the curve ( in notional units ) from
-		 *        the start to the finish point.
-		 *
-		 * \return the length along the curve.
-		 */
-		virtual float length(void) const;
+         * \brief Destructor.
+         */
+        virtual ~Curve();
+
+        /**
+         * \brief The vector to the point parameterised by the given rho. In
+         *        this base class a simple straight line is emulated.
+         *
+         * \param rho : a value indicating the desired point.
+         *
+         * \return a Vector3D indicating the point referred to by the given rho.
+         */
+        virtual Vector3D value(float rho) const;
+
+        /**
+         * \brief Obtain the length along the curve ( in notional units ) from
+         *        the start to the finish point.
+         *
+         * \return the length along the curve.
+         */
+        virtual float length(void) const;
 
    private:
-		Vector3D begin;
-		Vector3D end;
+        Vector3D begin;
+        Vector3D end;
     };
 
 /**

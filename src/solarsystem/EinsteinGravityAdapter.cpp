@@ -29,11 +29,11 @@
 const string EinsteinGravityAdapter::SharedMemoryIdentifier = "EinsteinHS";
 
 EinsteinGravityAdapter::EinsteinGravityAdapter(BOINCClientAdapter* boincClient) {
-	p_boincClient = boincClient;
+    p_boincClient = boincClient;
 
-	m_WUSkyPosRightAscension = 0.0;
-	m_WUSkyPosDeclination = 0.0;
-	m_WUFractionDone = 0.0;
+    m_WUSkyPosRightAscension = 0.0;
+    m_WUSkyPosDeclination = 0.0;
+    m_WUFractionDone = 0.0;
     m_WUCPUTime = 0.0;
     }
 
@@ -41,50 +41,50 @@ EinsteinGravityAdapter::~EinsteinGravityAdapter() {
     }
 
 void EinsteinGravityAdapter::refresh() {
-	p_boincClient->refresh();
-	parseApplicationInformation();
+    p_boincClient->refresh();
+    parseApplicationInformation();
     }
 
 void EinsteinGravityAdapter::parseApplicationInformation() {
-	// Get updated application information.
-	string info = p_boincClient->applicationInformation();
+    // Get updated application information.
+    string info = p_boincClient->applicationInformation();
 
-	// Do we have any data?
-	if(info.length() > 0) {
+    // Do we have any data?
+    if(info.length() > 0) {
         // Parse data into members, or warn on failure.
-		if(4 != sscanf(info.c_str(),
-			  		   "<graphics_info>\n"
-			  		   "  <skypos_rac>%lf</skypos_rac>\n"
+        if(4 != sscanf(info.c_str(),
+                         "<graphics_info>\n"
+                         "  <skypos_rac>%lf</skypos_rac>\n"
                        "  <skypos_dec>%lf</skypos_dec>\n"
-			  		   "  <fraction_done>%lf</fraction_done>\n"
-			  		   "  <cpu_time>%lf</cpu_time>\n",
-			  		   &m_WUSkyPosRightAscension,
-			  		   &m_WUSkyPosDeclination,
-			  		   &m_WUFractionDone,
-			  		   &m_WUCPUTime)) {
+                         "  <fraction_done>%lf</fraction_done>\n"
+                         "  <cpu_time>%lf</cpu_time>\n",
+                         &m_WUSkyPosRightAscension,
+                         &m_WUSkyPosDeclination,
+                         &m_WUFractionDone,
+                         &m_WUCPUTime)) {
             ErrorHandler::record("EinsteinGravityAdapter::parseApplicationInformation() : Incompatible shared memory data encountered!",
                                  ErrorHandler::WARN);
-			}
-		else {
-			// Convert radians to degrees.
-			m_WUSkyPosRightAscension *= SolarSystemGlobals::HALF_CIRCLE_DEG/PI;
-			m_WUSkyPosDeclination *= SolarSystemGlobals::HALF_CIRCLE_DEG/PI;
+            }
+        else {
+            // Convert radians to degrees.
+            m_WUSkyPosRightAscension *= SolarSystemGlobals::HALF_CIRCLE_DEG/PI;
+            m_WUSkyPosDeclination *= SolarSystemGlobals::HALF_CIRCLE_DEG/PI;
             }
         }
     }
 
 double EinsteinGravityAdapter::wuSkyPosRightAscension() const {
-	return m_WUSkyPosRightAscension;
+    return m_WUSkyPosRightAscension;
     }
 
 double EinsteinGravityAdapter::wuSkyPosDeclination() const {
-	return m_WUSkyPosDeclination;
+    return m_WUSkyPosDeclination;
     }
 
 double EinsteinGravityAdapter::wuFractionDone() const {
-	return m_WUFractionDone;
+    return m_WUFractionDone;
     }
 
 double EinsteinGravityAdapter::wuCPUTime() const {
-	return m_WUCPUTime;
+    return m_WUCPUTime;
     }

@@ -82,24 +82,24 @@ class TransformGlobals {
         static glm::mat4* getCameraTransformMatrix(void);
 
         /**
-		 * \brief Set the location of the orthographic transform matrix.
-		 *
-		 * \param load_point : an untyped address of the matrix in client code.
-		 *                     Obviously that should be persistent and
-		 *                     available before first dereference.
-		 */
-		static void setOrthographicTransformMatrix(glm::mat4* load_point);
+         * \brief Set the location of the orthographic transform matrix.
+         *
+         * \param load_point : an untyped address of the matrix in client code.
+         *                     Obviously that should be persistent and
+         *                     available before first dereference.
+         */
+        static void setOrthographicTransformMatrix(glm::mat4* load_point);
 
-		/**
-		 * \brief Get the location of the orthographic transform matrix.
-		 *
-		 * \return the address of the matrix in client code as stored here.
-		 *         Obviously that should be set to a valid location prior
-		 *         to the first dereference. A FATAL error will be generated
-		 *         if this is called before value setting has occured via
-		 *         setOrthographicTransformMatrix().
-		 */
-		static glm::mat4* getOrthographicTransformMatrix(void);
+        /**
+         * \brief Get the location of the orthographic transform matrix.
+         *
+         * \return the address of the matrix in client code as stored here.
+         *         Obviously that should be set to a valid location prior
+         *         to the first dereference. A FATAL error will be generated
+         *         if this is called before value setting has occured via
+         *         setOrthographicTransformMatrix().
+         */
+        static glm::mat4* getOrthographicTransformMatrix(void);
 
         /**
          * \brief Set the width and the height of the client screen area.

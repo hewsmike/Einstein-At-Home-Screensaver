@@ -70,28 +70,28 @@ class Buffer : public OGL_ID, public Bound {
         virtual ~Buffer();
 
         /**
-		 * \brief Obtains the underlying OpenGL buffer object resources
-		 *        from the OpenGL state machine.
-		 *
-		 * \return a boolean indicating success of acquisition
-		 *              true - resources acquired without error
-		 *              false - resources were not acquired
-		 */
-		bool acquire(void);
+         * \brief Obtains the underlying OpenGL buffer object resources
+         *        from the OpenGL state machine.
+         *
+         * \return a boolean indicating success of acquisition
+         *              true - resources acquired without error
+         *              false - resources were not acquired
+         */
+        bool acquire(void);
 
-		/**
-		 * \brief Releases the underlying OpenGL buffer object resources
-		 *        from the OpenGL state machine.
-		 */
-		void release(void);
+        /**
+         * \brief Releases the underlying OpenGL buffer object resources
+         *        from the OpenGL state machine.
+         */
+        void release(void);
 
 
         /**
-		 * \brief The number of bytes stored within the buffer.
-		 *
-		 * \return The size of the buffer in bytes.
-		 */
-		GLuint size(void) const;
+         * \brief The number of bytes stored within the buffer.
+         *
+         * \return The size of the buffer in bytes.
+         */
+        GLuint size(void) const;
 
     protected :
         /**

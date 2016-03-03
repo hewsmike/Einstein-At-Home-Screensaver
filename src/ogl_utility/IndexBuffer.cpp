@@ -21,7 +21,7 @@
 #include "IndexBuffer.h"
 
 IndexBuffer::IndexBuffer(const GLvoid* buffer_data,
-						 GLuint bytes,
+                         GLuint bytes,
                          GLuint indices,
                          GLenum usage,
                          GLenum index_type) :
@@ -37,22 +37,22 @@ IndexBuffer::IndexBuffer(const GLvoid* buffer_data,
         }
 
     // Ensure compliance with OpenGL acceptable parameter types.
-	if((usage == GL_STREAM_DRAW) ||
-	   (usage == GL_STATIC_DRAW) ||
-	   (usage == GL_DYNAMIC_DRAW)) {
-		m_usage = usage;
-		}
-	else {
-		ErrorHandler::record("IndexBuffer::IndexBuffer() : Bad usage type provided.",
-							 ErrorHandler::FATAL);
-		}
+    if((usage == GL_STREAM_DRAW) ||
+       (usage == GL_STATIC_DRAW) ||
+       (usage == GL_DYNAMIC_DRAW)) {
+        m_usage = usage;
+        }
+    else {
+        ErrorHandler::record("IndexBuffer::IndexBuffer() : Bad usage type provided.",
+                             ErrorHandler::FATAL);
+        }
 
     // Ensure compliance with OpenGL acceptable parameter types.
     switch(index_type) {
         case GL_UNSIGNED_BYTE:
         case GL_UNSIGNED_SHORT:
         case GL_UNSIGNED_INT:
-        	m_index_type = index_type;
+            m_index_type = index_type;
             break;
         default:
             ErrorHandler::record("IndexBuffer::IndexBuffer() : Bad index type provided.",
@@ -66,12 +66,12 @@ IndexBuffer::~IndexBuffer() {
     }
 
 void IndexBuffer::acquire_ID(GLuint* handle) {
-	glGenBuffers(1, handle);
-	}
+    glGenBuffers(1, handle);
+    }
 
 void IndexBuffer::release_ID(GLuint* handle) {
-	glDeleteBuffers(1, handle);
-	}
+    glDeleteBuffers(1, handle);
+    }
 
 void IndexBuffer::loadBuffer(void) {
     // Bind this buffer to the specified target.
@@ -93,25 +93,25 @@ void IndexBuffer::bind(void) {
 
 void IndexBuffer::unbind(void) {
     // Unbind the given buffer object from pipeline state.
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, OGL_ID::NO_ID);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, OGL_ID::NO_ID);
     }
 
 bool IndexBuffer::isBound(void) const {
-	// Assume failure.
-	bool ret_val = false;
+    // Assume failure.
+    bool ret_val = false;
 
-	// Discover which array buffer, if any, is bound to the OpenGL state.
-	GLuint temp;
+    // Discover which array buffer, if any, is bound to the OpenGL state.
+    GLuint temp;
 
-	glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, (GLint*) &temp);
+    glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, (GLint*) &temp);
 
-	if((this->ID() == temp) && (this->ID() != OGL_ID::NO_ID)) {
-		ret_val = true;
-		}
+    if((this->ID() == temp) && (this->ID() != OGL_ID::NO_ID)) {
+        ret_val = true;
+        }
 
-	return ret_val;
-	}
+    return ret_val;
+    }
 
 GLenum IndexBuffer::indexType(void) const {
-	return m_index_type;
-	}
+    return m_index_type;
+    }

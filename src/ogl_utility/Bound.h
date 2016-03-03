@@ -55,25 +55,25 @@ class Bound {
         virtual ~Bound();
 
         /**
-		 * \brief Perform any binding to the OpenGL pipeline.
-		 */
-		virtual void bind(void) = 0;
+         * \brief Perform any binding to the OpenGL pipeline.
+         */
+        virtual void bind(void) = 0;
 
-		/**
-		 * \brief Remove any binding to the OpenGL pipeline.
-		 */
-		virtual void unbind(void) = 0;
+        /**
+         * \brief Remove any binding to the OpenGL pipeline.
+         */
+        virtual void unbind(void) = 0;
 
-		/**
-		 * \brief The binding state of the underlying OpenGL buffer
-		 *        object to the OpenGL state machine. This MUST be a
-		 *        dynamic inquiry.
-		 *
-		 * \return a boolean indicating binding state :
-		 *          true - the object is bound
-		 *          false - the object is not bound
-		 */
-		virtual bool isBound(void) const = 0;
+        /**
+         * \brief The binding state of the underlying OpenGL buffer
+         *        object to the OpenGL state machine. This MUST be a
+         *        dynamic inquiry.
+         *
+         * \return a boolean indicating binding state :
+         *          true - the object is bound
+         *          false - the object is not bound
+         */
+        virtual bool isBound(void) const = 0;
     };
 
 /**

@@ -26,60 +26,60 @@
 #include "ErrorHandler.h"
 
 TextString::TextString(glm::vec3 position,
-	  	  	  	  	   glm::vec3 height_offset,
-					   glm::vec3 width_offset,
-					   TTF_Font* font,
-					   const char* text,
-					   TextString::render_style text_style,
+                               glm::vec3 height_offset,
+                       glm::vec3 width_offset,
+                       TTF_Font* font,
+                       const char* text,
+                       TextString::render_style text_style,
                        SDL_Color foreground,
-				       SDL_Color background) :
-					      m_position(position),
-						  m_height_offset(height_offset),
-						  m_width_offset(width_offset),
-						  m_font(font),
-						  m_text_string(text),
+                       SDL_Color background) :
+                          m_position(position),
+                          m_height_offset(height_offset),
+                          m_width_offset(width_offset),
+                          m_font(font),
+                          m_text_string(text),
                           m_text_style(text_style),
-						  m_foreground(foreground),
-						  m_background(background) {
-	m_texture_buffer = NULL;
+                          m_foreground(foreground),
+                          m_background(background) {
+    m_texture_buffer = NULL;
     m_textured_parallelogram = NULL;
     m_configure_flag = false;
     m_mode = TexturedParallelogram::VOLUME;
     }
 
 TextString::TextString(glm::vec2 position,
-	  	  	  	  	   glm::vec2 height_offset,
-					   glm::vec2 width_offset,
-					   TTF_Font* font,
-					   const char* text,
-					   TextString::render_style text_style,
+                               glm::vec2 height_offset,
+                       glm::vec2 width_offset,
+                       TTF_Font* font,
+                       const char* text,
+                       TextString::render_style text_style,
                        SDL_Color foreground,
-				       SDL_Color background) :
-			TextString::TextString(glm::vec3(position.x, position.y, 0),
-								   glm::vec3(height_offset.x, height_offset.y, 0),
+                       SDL_Color background) :
+            TextString::TextString(glm::vec3(position.x, position.y, 0),
+                                   glm::vec3(height_offset.x, height_offset.y, 0),
                                    glm::vec3(width_offset.x, width_offset.y, 0),
                                    font,
-			                       text,
-			                       text_style,
+                                   text,
+                                   text_style,
                                    foreground,
-			                       background) {
-	m_mode = TexturedParallelogram::FLAT;
-	}
+                                   background) {
+    m_mode = TexturedParallelogram::FLAT;
+    }
 
 TextString::~TextString() {
-	if(m_texture_buffer) delete m_texture_buffer;
-	if(m_textured_parallelogram) delete m_textured_parallelogram;
+    if(m_texture_buffer) delete m_texture_buffer;
+    if(m_textured_parallelogram) delete m_textured_parallelogram;
     }
 
 void TextString::configureTask(void) {
     // Get SDL_ttf to construct an SDL_Surface with the embedded glyph patterns.
-	SDL_Surface* surface = TTF_RenderText_Solid(m_font, m_text_string, m_foreground);
-	if(surface == NULL) {
+    SDL_Surface* surface = TTF_RenderText_Solid(m_font, m_text_string, m_foreground);
+    if(surface == NULL) {
         ErrorHandler::record("TextString::configureTask() : NULL return for RenderText !", ErrorHandler::FATAL);
         }
 
     // Convert that surface to another with the RGBA format @ 8 bits per color plus alpha.
-	SDL_Surface* converted = SDL_ConvertSurfaceFormat(surface, SDL_PIXELFORMAT_RGBA8888, 0);
+    SDL_Surface* converted = SDL_ConvertSurfaceFormat(surface, SDL_PIXELFORMAT_RGBA8888, 0);
     if(converted == NULL) {
         ErrorHandler::record("TextString::configureTask() : NULL return for ConvertSurfaceFormat !", ErrorHandler::FATAL);
         }
@@ -98,15 +98,15 @@ void TextString::configureTask(void) {
     m_texture_buffer->acquire();
 
     if(m_mode == TexturedParallelogram::FLAT) {
-    	m_textured_parallelogram = new TexturedParallelogram(m_position.xy(),
-    														 m_height_offset.xy(),
-															 m_width_offset.xy(),
-															 m_texture_buffer);
+        m_textured_parallelogram = new TexturedParallelogram(m_position.xy(),
+                                                             m_height_offset.xy(),
+                                                             m_width_offset.xy(),
+                                                             m_texture_buffer);
     } else if(m_mode == TexturedParallelogram::VOLUME) {
-		m_textured_parallelogram = new TexturedParallelogram(m_position,
-															 m_height_offset,
-															 m_width_offset,
-															 m_texture_buffer);
+        m_textured_parallelogram = new TexturedParallelogram(m_position,
+                                                             m_height_offset,
+                                                             m_width_offset,
+                                                             m_texture_buffer);
     }
 
     // With the SDL_ttf library the caller must free the surface when done.
@@ -117,10 +117,10 @@ void TextString::configureTask(void) {
     }
 
 void TextString::utilise(void) {
-	// Ensure it is configured before use.
-	if(m_configure_flag == false) {
-		configureTask();
-		}
-	m_texture_buffer->acquire();
-	m_textured_parallelogram->utilise();
-	}
+    // Ensure it is configured before use.
+    if(m_configure_flag == false) {
+        configureTask();
+        }
+    m_texture_buffer->acquire();
+    m_textured_parallelogram->utilise();
+    }

@@ -43,7 +43,7 @@ void SimulationRadio::includeSearchInformation(HUDTempFlowLayout* container) {
     work_unit_heading << "Current Work Unit Details";
     setText(container, work_unit_heading.str());
 
-	// Right ascension.
+    // Right ascension.
     double right_ascension = ER_adapter->wuSkyPosRightAscension();
     stringstream msg_RA;
     msg_RA << "Right ascension : ";

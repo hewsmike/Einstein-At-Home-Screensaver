@@ -63,7 +63,7 @@ class IndexBuffer : public Buffer {
          * \param index_type : one of GL_UNSIGNED_BYTE, GL_UNSIGNED_SHORT, GL_UNSIGNED_INT ( default ).
          */
         IndexBuffer(const GLvoid* buffer_data,
-        			GLuint bytes,
+                    GLuint bytes,
                     GLuint indices,
                     GLenum usage,
                     GLenum index_type = GL_UNSIGNED_INT);

@@ -67,7 +67,7 @@ class Program : public OGL_ID {
          */
         Program(VertexShader* vertex_shader,
                 FragmentShader* fragment_shader,
-				AttributeInputAdapter* adapter);
+                AttributeInputAdapter* adapter);
 
         /**
          * \brief Destructor.
@@ -75,16 +75,16 @@ class Program : public OGL_ID {
         virtual ~Program();
 
         /**
-		 * \brief Make the underlying OpenGL program object part of current
-		 * 		  pipeline state.
-		 */
-		void bind(void) const;
+         * \brief Make the underlying OpenGL program object part of current
+         *           pipeline state.
+         */
+        void bind(void) const;
 
-		/**
-		 * \brief Detach the underlying OpenGL program object from the
-		 *        current pipeline state.
-		 */
-		void unbind(void) const;
+        /**
+         * \brief Detach the underlying OpenGL program object from the
+         *        current pipeline state.
+         */
+        void unbind(void) const;
 
         /**
          * \brief Obtains the program object resources.
@@ -129,9 +129,9 @@ class Program : public OGL_ID {
         const std::string& linkageLog(void) const;
 
         /**
-		 * \brief Invoke the callback function with the GLuint argument being the
-		 * 		  (underlying) OpenGL program entity's OpenGL identifier.
-		 */
+         * \brief Invoke the callback function with the GLuint argument being the
+         *           (underlying) OpenGL program entity's OpenGL identifier.
+         */
         void frameCallBack(void);
 
         /**
@@ -144,18 +144,18 @@ class Program : public OGL_ID {
 
     private:
         // Data structure containing the relevant parameters for
-		// a uniform variable.
-		struct uniform_data{
-			// Untyped pointer to location of persistent data in client space
-			// which will be used to refresh the in-program value.
-			GLvoid* client_load_point = NULL;
+        // a uniform variable.
+        struct uniform_data{
+            // Untyped pointer to location of persistent data in client space
+            // which will be used to refresh the in-program value.
+            GLvoid* client_load_point = NULL;
 
-			// The uniform variable type as known to OpenGL.
-			GLenum GLSL_type = 0;
+            // The uniform variable type as known to OpenGL.
+            GLenum GLSL_type = 0;
 
-			// The location of the uniform within the OpenGL program object.
-			GLint program_location = -1;
-			};
+            // The location of the uniform within the OpenGL program object.
+            GLint program_location = -1;
+            };
 
         /**
          * \brief Obtain the uniform_data instance corresponding to the given

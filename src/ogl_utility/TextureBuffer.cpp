@@ -31,17 +31,17 @@ const GLsizei TextureBuffer::MIN_TEX_WIDTH(2);
 const GLsizei TextureBuffer::MIN_TEX_HEIGHT(2);
 
 TextureBuffer::TextureBuffer(const GLvoid* texture_data,
-							 GLuint bytes,
+                             GLuint bytes,
                              GLsizei width,
                              GLsizei height,
                              GLenum format,
                              GLenum data_type,
-							 GLenum wrap_type_s,
-							 GLenum wrap_type_t,
+                             GLenum wrap_type_s,
+                             GLenum wrap_type_t,
                              bool mipmaps) :
                                 Buffer(texture_data, bytes),
                                 m_mipmaps(mipmaps) {
-	// Ensure sufficient width.
+    // Ensure sufficient width.
     if(width >= TextureBuffer::MIN_TEX_WIDTH) {
         m_width = width;
         }
@@ -85,28 +85,28 @@ TextureBuffer::TextureBuffer(const GLvoid* texture_data,
         }
 
     // Ensure compliance with acceptable parameter types for horizontal texture coordinate wrapping.
-	if((wrap_type_s == GL_REPEAT) ||
-	   (wrap_type_s == GL_CLAMP) ||
-	   (wrap_type_s == GL_CLAMP_TO_EDGE) ||
-	   (wrap_type_s == GL_CLAMP_TO_BORDER)) {
-		m_wrap_type_s = wrap_type_s;
-		}
-	else {
-		ErrorHandler::record("TextureBuffer::TextureBuffer() : Bad horizontal wrap type provided.",
-							 ErrorHandler::FATAL);
-		}
+    if((wrap_type_s == GL_REPEAT) ||
+       (wrap_type_s == GL_CLAMP) ||
+       (wrap_type_s == GL_CLAMP_TO_EDGE) ||
+       (wrap_type_s == GL_CLAMP_TO_BORDER)) {
+        m_wrap_type_s = wrap_type_s;
+        }
+    else {
+        ErrorHandler::record("TextureBuffer::TextureBuffer() : Bad horizontal wrap type provided.",
+                             ErrorHandler::FATAL);
+        }
 
-	// Ensure compliance with acceptable parameter types for vertical texture coordinate wrapping.
-	if((wrap_type_t == GL_REPEAT) ||
-	   (wrap_type_t == GL_CLAMP) ||
-	   (wrap_type_t == GL_CLAMP_TO_EDGE) ||
-	   (wrap_type_t == GL_CLAMP_TO_BORDER)) {
-		m_wrap_type_t = wrap_type_t;
-		}
-	else {
-		ErrorHandler::record("TextureBuffer::TextureBuffer() : Bad vertical wrap type provided.",
-							 ErrorHandler::FATAL);
-		}
+    // Ensure compliance with acceptable parameter types for vertical texture coordinate wrapping.
+    if((wrap_type_t == GL_REPEAT) ||
+       (wrap_type_t == GL_CLAMP) ||
+       (wrap_type_t == GL_CLAMP_TO_EDGE) ||
+       (wrap_type_t == GL_CLAMP_TO_BORDER)) {
+        m_wrap_type_t = wrap_type_t;
+        }
+    else {
+        ErrorHandler::record("TextureBuffer::TextureBuffer() : Bad vertical wrap type provided.",
+                             ErrorHandler::FATAL);
+        }
     }
 
 TextureBuffer::~TextureBuffer() {
@@ -114,15 +114,15 @@ TextureBuffer::~TextureBuffer() {
     }
 
 void TextureBuffer::acquire_ID(GLuint* handle) {
-	glGenTextures(1, handle);
-	}
+    glGenTextures(1, handle);
+    }
 
 void TextureBuffer::release_ID(GLuint* handle) {
-	glDeleteTextures(1, handle);
-	}
+    glDeleteTextures(1, handle);
+    }
 
 void TextureBuffer::bind(void) {
-	glBindTexture(GL_TEXTURE_2D, this->ID());
+    glBindTexture(GL_TEXTURE_2D, this->ID());
     }
 
 void TextureBuffer::unbind(void) {
@@ -130,20 +130,20 @@ void TextureBuffer::unbind(void) {
     }
 
 bool TextureBuffer::isBound(void) const {
-	// Assume failure.
-	bool ret_val = false;
+    // Assume failure.
+    bool ret_val = false;
 
-	// Discover which array buffer, if any, is bound to the OpenGL state.
-	GLuint temp;
+    // Discover which array buffer, if any, is bound to the OpenGL state.
+    GLuint temp;
 
-	glGetIntegerv(GL_ARRAY_BUFFER_BINDING, (GLint*) &temp);
+    glGetIntegerv(GL_ARRAY_BUFFER_BINDING, (GLint*) &temp);
 
-	if((this->ID() == temp) && (this->ID() != OGL_ID::NO_ID)) {
-		ret_val = true;
-		}
+    if((this->ID() == temp) && (this->ID() != OGL_ID::NO_ID)) {
+        ret_val = true;
+        }
 
-	return ret_val;
-	}
+    return ret_val;
+    }
 
 void TextureBuffer::loadBuffer(void) {
     this->bind();
@@ -175,18 +175,18 @@ void TextureBuffer::loadBuffer(void) {
     /// TODO - make these choices dependent upon rendering quality selection ?
     if(m_mipmaps == true) {
         // With mipmapping intended.
-    	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST_MIPMAP_NEAREST);
-    	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
         }
     else {
         // Without mipmaps involved.
-    	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         }
 
     // Make mipmaps if requested.
     if(m_mipmaps == true) {
-    	glGenerateMipmap(GL_TEXTURE_2D);
+        glGenerateMipmap(GL_TEXTURE_2D);
         }
 
     /// TODO - Use glHint here to specify quality ?

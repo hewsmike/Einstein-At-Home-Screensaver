@@ -21,8 +21,8 @@
 #include "VertexBuffer.h"
 
 VertexBuffer::VertexBuffer(const GLvoid* buffer_data,
-						   GLuint bytes,
-		                   GLuint vertices,
+                           GLuint bytes,
+                           GLuint vertices,
                            GLenum usage,
                            data_mix mix) :
                 Buffer(buffer_data, bytes),
@@ -53,60 +53,60 @@ VertexBuffer::~VertexBuffer() {
     }
 
 void VertexBuffer::acquire_ID(GLuint* handle) {
-	glGenBuffers(1, handle);
-	}
+    glGenBuffers(1, handle);
+    }
 
 void VertexBuffer::release_ID(GLuint* handle) {
-	glDeleteBuffers(1, handle);
-	}
+    glDeleteBuffers(1, handle);
+    }
 
 GLuint VertexBuffer::vertexCount(void) const {
     return m_vertex_count;
     }
 
 void VertexBuffer::bind(void) {
-	// Only acquire if not already.
-	if(this->isAcquired() == false) {
-		// Ensure resource acquisition first.
-		this->acquire();
-		}
+    // Only acquire if not already.
+    if(this->isAcquired() == false) {
+        // Ensure resource acquisition first.
+        this->acquire();
+        }
 
-	// Bind the given buffer object to pipeline state.
-	glBindBuffer(GL_ARRAY_BUFFER, this->ID());
-	}
+    // Bind the given buffer object to pipeline state.
+    glBindBuffer(GL_ARRAY_BUFFER, this->ID());
+    }
 
 void VertexBuffer::unbind(void) {
     // Unbind the given buffer object from pipeline state.
     glBindBuffer(GL_ARRAY_BUFFER, OGL_ID::NO_ID);
-	}
+    }
 
 VertexBuffer::data_mix VertexBuffer::mix(void) const {
-	return m_mix;
-	}
+    return m_mix;
+    }
 
 bool VertexBuffer::isBound(void) const {
-	// Assume failure.
-	bool ret_val = false;
+    // Assume failure.
+    bool ret_val = false;
 
-	// Discover which array buffer, if any, is bound to the OpenGL state.
-	GLuint temp;
+    // Discover which array buffer, if any, is bound to the OpenGL state.
+    GLuint temp;
 
-	glGetIntegerv(GL_ARRAY_BUFFER_BINDING, (GLint*) &temp);
+    glGetIntegerv(GL_ARRAY_BUFFER_BINDING, (GLint*) &temp);
 
-	// Only bound if non-null and the same as this object.
-	if((this->ID() == temp) && (this->ID() != OGL_ID::NO_ID)) {
-		ret_val = true;
-		}
+    // Only bound if non-null and the same as this object.
+    if((this->ID() == temp) && (this->ID() != OGL_ID::NO_ID)) {
+        ret_val = true;
+        }
 
-	return ret_val;
-	}
+    return ret_val;
+    }
 
 void VertexBuffer::loadBuffer(void) {
-	glBindBuffer(GL_ARRAY_BUFFER, this->ID());
+    glBindBuffer(GL_ARRAY_BUFFER, this->ID());
 
     // Allocate space and transfer the data.
-	glBufferData(GL_ARRAY_BUFFER, this->size(), this->data(), m_usage);
+    glBufferData(GL_ARRAY_BUFFER, this->size(), this->data(), m_usage);
 
     // Unbind the buffer.
     glBindBuffer(GL_ARRAY_BUFFER, OGL_ID::NO_ID);
-	}
+    }

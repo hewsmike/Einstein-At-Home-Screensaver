@@ -64,7 +64,7 @@
 
 class VertexFetch : public OGL_ID, public Bound {
     public :
-		/**
+        /**
          * \brief Constructor.
          */
         VertexFetch(void);
@@ -86,8 +86,8 @@ class VertexFetch : public OGL_ID, public Bound {
          * \param indices : a valid pointer to an IndexBuffer.
          */
         VertexFetch(AttributeInputAdapter* adapter,
-                	VertexBuffer* vertices,
-                	IndexBuffer* indices);
+                    VertexBuffer* vertices,
+                    IndexBuffer* indices);
 
         /**
          * \brief Destructor.
@@ -95,18 +95,18 @@ class VertexFetch : public OGL_ID, public Bound {
         virtual ~VertexFetch();
 
         /**
-		 * \brief Obtain the OpenGL resource.
-		 *
-		 * \return a boolean indicating success of acquisition
-		 *              TRUE - resources acquired without error
-		 *              FALSE - resources were not acquired
-		 */
-		virtual bool acquire(void);
+         * \brief Obtain the OpenGL resource.
+         *
+         * \return a boolean indicating success of acquisition
+         *              TRUE - resources acquired without error
+         *              FALSE - resources were not acquired
+         */
+        virtual bool acquire(void);
 
-		/**
-		 * \brief Release the OpenGL resource.
-		 */
-		virtual void release(void);
+        /**
+         * \brief Release the OpenGL resource.
+         */
+        virtual void release(void);
 
         /**
          * \brief Perform any data binding to the pipeline input.
@@ -123,13 +123,13 @@ class VertexFetch : public OGL_ID, public Bound {
         virtual void unbind(void);
 
         /**
-       	 * \brief Is the underlying vertex array object ( VAO ) bound to the
-       	 * 	      state machine ?
-       	 *
-       	 * \return a boolean indicating binding
-       	 *              TRUE - VAO is bound
-       	 *              FALSE - VAO is not bound
-       	 */
+            * \brief Is the underlying vertex array object ( VAO ) bound to the
+            *           state machine ?
+            *
+            * \return a boolean indicating binding
+            *              TRUE - VAO is bound
+            *              FALSE - VAO is not bound
+            */
         virtual bool isBound(void) const;
 
         /**
@@ -162,38 +162,38 @@ class VertexFetch : public OGL_ID, public Bound {
         ///Has this object been configured ?
         bool m_configure_flag;
 
-		// The input adapter pointer.
-		AttributeInputAdapter* m_adapter;
+        // The input adapter pointer.
+        AttributeInputAdapter* m_adapter;
 
-		// The given Buffer pointers.
-		VertexBuffer* m_vertices;
-		IndexBuffer* m_indices;
+        // The given Buffer pointers.
+        VertexBuffer* m_vertices;
+        IndexBuffer* m_indices;
 
-		/// The total length in bytes of all the attributes.
-		GLuint m_attribute_length_sum;
+        /// The total length in bytes of all the attributes.
+        GLuint m_attribute_length_sum;
 
-		bool configure(void);
+        bool configure(void);
 
-		struct attribute_record {AttributeInputAdapter::attribute_spec a_spec;     // An attribute specification.
-								 GLuint length;             // The byte length of this attribute (how many x how long).
-								 GLsizei stride;            // The byte gap between this attribute type in the buffer.
-								 GLvoid* pointer;           // The byte offset of the FIRST of this attribute in the buffer.
-								 };
+        struct attribute_record {AttributeInputAdapter::attribute_spec a_spec;     // An attribute specification.
+                                 GLuint length;             // The byte length of this attribute (how many x how long).
+                                 GLsizei stride;            // The byte gap between this attribute type in the buffer.
+                                 GLvoid* pointer;           // The byte offset of the FIRST of this attribute in the buffer.
+                                 };
 
-		// Storage for all the attribute specifications.
-		std::vector<attribute_record> m_attribute_specs;
+        // Storage for all the attribute specifications.
+        std::vector<attribute_record> m_attribute_specs;
 
-		/*
-		 * \brief
-		 */
-		void processAttributeDescriptions(void);
+        /*
+         * \brief
+         */
+        void processAttributeDescriptions(void);
 
-		/**
-		 * \brief Create full/detailed mapping of attribute positions within
-		 * 		  he vertex buffer, based upon any given vertex attribute
-		 * 		  specifications and choice of data mixing.
-		 */
-		void prepareAttributeMapping(void);
+        /**
+         * \brief Create full/detailed mapping of attribute positions within
+         *           he vertex buffer, based upon any given vertex attribute
+         *           specifications and choice of data mixing.
+         */
+        void prepareAttributeMapping(void);
     };
 
 /**

@@ -63,7 +63,7 @@ class VertexShader : public Shader {
 
     private :
 
-	};
+    };
 
 /**
  * @}

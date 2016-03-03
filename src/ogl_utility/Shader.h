@@ -58,7 +58,7 @@ class Shader : public OGL_ID {
          *               GL_FRAGMENT_SHADER
          *
          * \param source - the shader's source code. If null length then
-         * 				   construction will fail fatally.
+         *                    construction will fail fatally.
          */
         Shader(GLenum type, const std::string& source);
 
@@ -83,7 +83,7 @@ class Shader : public OGL_ID {
 
         /**
          * \brief Determine if shader has been MARKED for deletion by the state
-         * 		  machine.
+         *           machine.
          *
          * \return a boolean indicating deletion status
          *              true - shader is marked for deletion

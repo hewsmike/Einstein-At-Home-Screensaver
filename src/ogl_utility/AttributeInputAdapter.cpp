@@ -24,39 +24,39 @@
 #include <sstream>
 
 AttributeInputAdapter::AttributeInputAdapter(void) {
-	}
+    }
 
 AttributeInputAdapter::~AttributeInputAdapter() {
-	}
+    }
 
 void AttributeInputAdapter::addSpecification(attribute_spec spec) {
-	// Add this to the store.
-	m_matchings.push_back(spec);
-	}
+    // Add this to the store.
+    m_matchings.push_back(spec);
+    }
 
 bool AttributeInputAdapter::getAttributeSpecAt(GLuint index, attribute_spec& spec) const {
-	// Assume failure.
+    // Assume failure.
     bool ret_val = false;
 
     // Is the index within range ?
     if(index < m_matchings.size()) {
-    	// Yes, copy to the given structure.
-    	spec.attrib_index = m_matchings[index].attrib_index;
-    	spec.multiplicity = m_matchings[index].multiplicity;
-    	spec.name = m_matchings[index].name;
-    	spec.normalised= m_matchings[index].normalised;
-    	spec.type = m_matchings[index].type;
-    	ret_val = true;
-    	}
+        // Yes, copy to the given structure.
+        spec.attrib_index = m_matchings[index].attrib_index;
+        spec.multiplicity = m_matchings[index].multiplicity;
+        spec.name = m_matchings[index].name;
+        spec.normalised= m_matchings[index].normalised;
+        spec.type = m_matchings[index].type;
+        ret_val = true;
+        }
     else {
-    	// No, emit a warning.
-    	ErrorHandler::record("AttributeInputAdapter::getAttributeSpecAt() : out of range index to attribute store.",
-    	                     ErrorHandler::WARN);
-    	}
+        // No, emit a warning.
+        ErrorHandler::record("AttributeInputAdapter::getAttributeSpecAt() : out of range index to attribute store.",
+                             ErrorHandler::WARN);
+        }
 
     return ret_val;
-	}
+    }
 
 GLuint AttributeInputAdapter::size(void) const {
-	return m_matchings.size();
-	}
+    return m_matchings.size();
+    }

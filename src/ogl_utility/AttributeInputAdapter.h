@@ -43,35 +43,35 @@
 
 class AttributeInputAdapter {
     public :
-		struct attribute_spec {
-			// The index of the attribute in the OpenGL vertex array object (VAO).
-			GLuint attrib_index;
-			// Name of the corresponding vertex shader variable.
-			std::string name;
-			// Number of components for this attribute eg. 3 for x, y and z coordinates,
-			// 4 for RBGA values.
-			GLint multiplicity;
-			// The data type of each component of this attribute.
-			// Valid values are :
-			// 		GL_BYTE
-			// 		GL_UNSIGNED_BYTE
-			// 		GL_SHORT
-			// 		GL_UNSIGNED_SHORT
-			// 		GL_FIXED
-			// 		GL_FLOAT
-			GLenum type;
-			// For integer data types only, whether values are normalised
-			// with respect to the type range.
-			// GL_TRUE signed integers map to [-1, +1]
-			// unsigned integers map to [0, +1]
-			// GL_FALSE no normalisation.
-			GLboolean normalised;
-			};
+        struct attribute_spec {
+            // The index of the attribute in the OpenGL vertex array object (VAO).
+            GLuint attrib_index;
+            // Name of the corresponding vertex shader variable.
+            std::string name;
+            // Number of components for this attribute eg. 3 for x, y and z coordinates,
+            // 4 for RBGA values.
+            GLint multiplicity;
+            // The data type of each component of this attribute.
+            // Valid values are :
+            //         GL_BYTE
+            //         GL_UNSIGNED_BYTE
+            //         GL_SHORT
+            //         GL_UNSIGNED_SHORT
+            //         GL_FIXED
+            //         GL_FLOAT
+            GLenum type;
+            // For integer data types only, whether values are normalised
+            // with respect to the type range.
+            // GL_TRUE signed integers map to [-1, +1]
+            // unsigned integers map to [0, +1]
+            // GL_FALSE no normalisation.
+            GLboolean normalised;
+            };
 
         /**
          * \brief Constructor
          */
-		AttributeInputAdapter(void);
+        AttributeInputAdapter(void);
 
         /**
          * \brief Destructor
@@ -84,22 +84,22 @@ class AttributeInputAdapter {
         void addSpecification(attribute_spec spec);
 
         /**
-		 * \brief Retrieve an attribute specification at a given index into this store.
-		 *
-		 * \param index - a positive integer ranging from 0 to [attributeCount() - 1]. This is
-		 * 				  NOT the location field of a given attribute specification.
-		 * \param spec - a reference to an attribute specification to fill.
-		 *
-		 * \return a boolean indicating success of the retrieval
-		 *              TRUE - attribute specification has been filled with valid data.
-		 *              FALSE - attribute specification has not been altered,
-		 *               		for instance if the index is out of range.
-		 */
+         * \brief Retrieve an attribute specification at a given index into this store.
+         *
+         * \param index - a positive integer ranging from 0 to [attributeCount() - 1]. This is
+         *                   NOT the location field of a given attribute specification.
+         * \param spec - a reference to an attribute specification to fill.
+         *
+         * \return a boolean indicating success of the retrieval
+         *              TRUE - attribute specification has been filled with valid data.
+         *              FALSE - attribute specification has not been altered,
+         *                       for instance if the index is out of range.
+         */
         bool getAttributeSpecAt(GLuint index, attribute_spec& spec) const;
 
         /**
-		 * \brief How many attribute specifications are stored ?
-		 */
+         * \brief How many attribute specifications are stored ?
+         */
         GLuint size(void) const;
 
     private :

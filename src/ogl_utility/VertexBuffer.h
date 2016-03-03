@@ -68,7 +68,7 @@ class VertexBuffer : public Buffer {
          * \param mix : one of the data_mix enumerants.
          */
         VertexBuffer(const GLvoid* buffer_data,
-        			 GLuint bytes,
+                     GLuint bytes,
                      GLuint vertices,
                      GLenum usage,
                      data_mix mix);
@@ -100,8 +100,8 @@ class VertexBuffer : public Buffer {
         virtual bool isBound(void) const;
 
         /**
-		 * \brief What is the usage type for this buffer?
-		 */
+         * \brief What is the usage type for this buffer?
+         */
         GLenum usage(void) const;
 
         /**
@@ -110,8 +110,8 @@ class VertexBuffer : public Buffer {
         GLuint vertexCount(void) const;
 
         /**
-		 * \brief What is the type of data mixing in this buffer?
-		 */
+         * \brief What is the type of data mixing in this buffer?
+         */
         VertexBuffer::data_mix mix(void) const;
 
     private :
