@@ -220,18 +220,18 @@ class Starsphere : public AbstractGraphicsEngine {
          * \see Starsphere::isFeature()
          */
         enum Features {
-        	AXES = 1,
-			CONSTELLATIONS = 2,
-			GAMMA = 4,
-			GLOBE = 8,
-			LOGO = 16,
-			MARKER = 32,
-			OBSERVATORIES = 64,
-			PULSARS = 128,
-			SEARCHINFO = 256,
-			SNRS = 512,
-			STARS = 1024,
-			XRAYS = 2048
+            AXES = 1,
+            CONSTELLATIONS = 2,
+            GAMMA = 4,
+            GLOBE = 8,
+            LOGO = 16,
+            MARKER = 32,
+            OBSERVATORIES = 64,
+            PULSARS = 128,
+            SEARCHINFO = 256,
+            SNRS = 512,
+            STARS = 1024,
+            XRAYS = 2048
             };
 
         /**

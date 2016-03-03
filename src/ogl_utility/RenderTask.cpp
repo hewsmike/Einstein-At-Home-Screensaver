@@ -29,8 +29,8 @@ RenderTask::RenderTask(RenderTask::shader_group s_group) {
     }
 
 RenderTask::RenderTask(RenderTask::shader_group s_group,
-        			   RenderTask::index_buffer_group i_group,
-		               RenderTask::vertex_buffer_group v_group) {
+                       RenderTask::index_buffer_group i_group,
+                       RenderTask::vertex_buffer_group v_group) {
     //
     m_vertex_shader = new VertexShader(s_group.vert_shader_source);
     m_frag_shader = new FragmentShader(s_group.frag_shader_source);
@@ -40,9 +40,9 @@ RenderTask::RenderTask(RenderTask::shader_group s_group,
     // Is a vertex buffer being used ?
     m_vertex_buffer = NULL;
     if(v_group.buffer_data != NULL) {
-    	m_vertex_buffer = new VertexBuffer(v_group.buffer_data, v_group.bytes, v_group.vertices, v_group.usage, v_group.mix);
-    	m_vertex_buffer->acquire();
-    	}
+        m_vertex_buffer = new VertexBuffer(v_group.buffer_data, v_group.bytes, v_group.vertices, v_group.usage, v_group.mix);
+        m_vertex_buffer->acquire();
+        }
 
     // Is an index buffer being used ?
     m_index_buffer = NULL;
@@ -52,16 +52,16 @@ RenderTask::RenderTask(RenderTask::shader_group s_group,
         }
 
     if((m_vertex_buffer == NULL)) {
-    	m_vertex_fetch = new VertexFetch();
-    	}
+        m_vertex_fetch = new VertexFetch();
+        }
     else {
-    	if(m_index_buffer == NULL) {
-    		m_vertex_fetch = new VertexFetch(m_attrib_adapt, m_vertex_buffer);
-    		}
-    	else {
-    		m_vertex_fetch = new VertexFetch(m_attrib_adapt, m_vertex_buffer, m_index_buffer);
-    		}
-    	}
+        if(m_index_buffer == NULL) {
+            m_vertex_fetch = new VertexFetch(m_attrib_adapt, m_vertex_buffer);
+            }
+        else {
+            m_vertex_fetch = new VertexFetch(m_attrib_adapt, m_vertex_buffer, m_index_buffer);
+            }
+        }
 
     m_pipeline = new Pipeline(m_program, m_vertex_fetch);
     }
@@ -84,33 +84,33 @@ void RenderTask::addSpecification(const AttributeInputAdapter::attribute_spec sp
 
 void RenderTask::setUniform(const std::string& uniform_name, GLvoid* load_point) {
     // Pass on to the underlying program object.
-	m_program->setUniformLoadPoint(uniform_name, load_point);
+    m_program->setUniformLoadPoint(uniform_name, load_point);
     }
 
 void RenderTask::utilise(GLenum primitive, GLsizei count) {
-	// Pass on to the underlying pipeline object.
-	m_pipeline->utilise(primitive, count);
+    // Pass on to the underlying pipeline object.
+    m_pipeline->utilise(primitive, count);
     }
 
 void RenderTask::acquire(void) {
-	if(m_vertex_buffer != NULL) {
-		m_vertex_buffer->acquire();
-		}
+    if(m_vertex_buffer != NULL) {
+        m_vertex_buffer->acquire();
+        }
 
     if(m_index_buffer != NULL) {
-    	m_index_buffer->acquire();
-    	}
+        m_index_buffer->acquire();
+        }
 
     m_program->acquire();
 
     if(m_program->status() != Program::LINKAGE_SUCCEEDED) {
-    	std::stringstream linking_log;
-    	linking_log << "RenderTask::acquire() : program did not link !!" << std::endl
-					<< "Linker log follows :\n"
-					<< "------------------------------------------------------\n"
-					<< m_program->linkageLog()
-					<< "------------------------------------------------------"
-					<< std::endl;
-    	ErrorHandler::record(linking_log.str(), ErrorHandler::INFORM);
-    	}
+        std::stringstream linking_log;
+        linking_log << "RenderTask::acquire() : program did not link !!" << std::endl
+                    << "Linker log follows :\n"
+                    << "------------------------------------------------------\n"
+                    << m_program->linkageLog()
+                    << "------------------------------------------------------"
+                    << std::endl;
+        ErrorHandler::record(linking_log.str(), ErrorHandler::INFORM);
+        }
     }

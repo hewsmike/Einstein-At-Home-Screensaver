@@ -210,13 +210,13 @@ bool ErrorHandler::check_OpenGL_Error() {
     }
 
 void ErrorHandler::check_OpenGL_Error(const char* message, GLint line) {
-	if(ErrorHandler::check_OpenGL_Error() == true) {
-    	std::stringstream err_message;
-    	err_message << message
-    				<< "\t LINE = "
-					<< line;
-    	ErrorHandler::record(err_message.str(), ErrorHandler::INFORM);
-    	}
+    if(ErrorHandler::check_OpenGL_Error() == true) {
+        std::stringstream err_message;
+        err_message << message
+                    << "\t LINE = "
+                    << line;
+        ErrorHandler::record(err_message.str(), ErrorHandler::INFORM);
+        }
     }
 
 const std::string& ErrorHandler::check_SDL2_Error(const char* message, GLint line) {
@@ -226,14 +226,14 @@ const std::string& ErrorHandler::check_SDL2_Error(const char* message, GLint lin
     last_SDL2_error = SDL_GetError();
 
     if(last_SDL2_error.size() != 0) {
-    	std::stringstream err_message;
-    	err_message << message
-    				<< "\t LINE = "
-					<< line
-					<< "\t ERROR = "
-					<< last_SDL2_error;
-    	ErrorHandler::record(err_message.str(), ErrorHandler::INFORM);
-    	}
+        std::stringstream err_message;
+        err_message << message
+                    << "\t LINE = "
+                    << line
+                    << "\t ERROR = "
+                    << last_SDL2_error;
+        ErrorHandler::record(err_message.str(), ErrorHandler::INFORM);
+        }
 
     // Clearout any message.
     SDL_ClearError();

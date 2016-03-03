@@ -33,7 +33,7 @@ GLuint TransformGlobals::m_height(0);
 GLuint TransformGlobals::m_width(0);
 
 TransformGlobals::TransformGlobals(void) {
-	}
+    }
 
 TransformGlobals::~TransformGlobals(){
     }
@@ -46,7 +46,7 @@ glm::mat4* TransformGlobals::getCameraTransformMatrix(void) {
     if(m_transform_matrix_camera == NULL) {
         ErrorHandler::record("TransformGlobals::getPerspectiveTransformMatrix() : access attempt before set !",
                          ErrorHandler::FATAL);
-    	}
+        }
     return m_transform_matrix_camera;
     }
 
@@ -58,22 +58,22 @@ glm::mat4* TransformGlobals::getOrthographicTransformMatrix(void) {
     if(m_transform_matrix_orthographic == NULL) {
         ErrorHandler::record("TransformGlobals::getOrthographicTransformMatrix() : access attempt before set !",
                          ErrorHandler::FATAL);
-    	}
+        }
     return m_transform_matrix_orthographic;
     }
 
 void TransformGlobals::setClientScreenDimensions(GLuint height, GLuint width) {
-	if((height > 0) && (width >0)) {
-		m_height = height;
-		m_width = width;
-		}
-	else {
-		std::stringstream msg;
-		msg << "TransformGlobals::setClientScreenDimensions() : non-strictly positive dimensions \t"
-			<< "height = " << height
-			<< "\twidth = " << width;
-		ErrorHandler::record(msg.str(), ErrorHandler::FATAL);
-		}
+    if((height > 0) && (width >0)) {
+        m_height = height;
+        m_width = width;
+        }
+    else {
+        std::stringstream msg;
+        msg << "TransformGlobals::setClientScreenDimensions() : non-strictly positive dimensions \t"
+            << "height = " << height
+            << "\twidth = " << width;
+        ErrorHandler::record(msg.str(), ErrorHandler::FATAL);
+        }
     }
 
 GLuint TransformGlobals::getClientScreenHeight(void) {
