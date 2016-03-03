@@ -22,10 +22,11 @@
 
 #include <sstream>
 
-//RenderTask::RenderTask(RenderTask::shader_group s_group, Uniform&) {
-//    m_vertex_shader = new VertexShader(s_group.vert_shader_source);
-//    m_frag_shader = new FragmentShader(s_group.frag_shader_source);
-//    }
+RenderTask::RenderTask(RenderTask::shader_group s_group) {
+    m_vertex_shader = new VertexShader(s_group.vert_shader_source);
+    m_frag_shader = new FragmentShader(s_group.frag_shader_source);
+    m_vertex_fetch = new VertexFetch();
+    }
 
 RenderTask::RenderTask(RenderTask::shader_group s_group,
         			   RenderTask::index_buffer_group i_group,

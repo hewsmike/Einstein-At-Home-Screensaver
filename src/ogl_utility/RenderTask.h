@@ -69,7 +69,7 @@
  * by a fragment shader.
  *
  * Usage :
- * 		- must ALWAYS provide a shader_group structure.
+ *         - must ALWAYS provide a shader_group structure.
  *      - provide any other structures suitable per the desired case.
  *      - call a constructor corresponding the desired case,
  *        using the appropriate structures as arguments.
@@ -93,36 +93,36 @@
 
 class RenderTask {
     public :
-		struct shader_group {
-			std::string vert_shader_source;
-			std::string frag_shader_source;
-			};
+        struct shader_group {
+            std::string vert_shader_source;
+            std::string frag_shader_source;
+            };
 
-		struct index_buffer_group {
-			const GLvoid* buffer_data;
-			GLuint bytes;
-			GLuint indices;
-			GLenum usage;
-			GLenum index_type;
-			};
+        struct index_buffer_group {
+            const GLvoid* buffer_data;
+            GLuint bytes;
+            GLuint indices;
+            GLenum usage;
+            GLenum index_type;
+            };
 
         struct vertex_buffer_group {
-			const GLvoid* buffer_data;
-			GLuint bytes;
-			GLuint vertices;
-			GLenum usage;
-			VertexBuffer::data_mix mix;
-        	};
+            const GLvoid* buffer_data;
+            GLuint bytes;
+            GLuint vertices;
+            GLenum usage;
+            VertexBuffer::data_mix mix;
+            };
 
         struct texture_buffer_group {
             const GLvoid* texture_data;
-        	GLuint bytes;
+            GLuint bytes;
             GLsizei width;
             GLsizei height;
             GLenum format;
             GLenum data_type;
-			GLenum wrap_type_s;
-			GLenum wrap_type_t;
+            GLenum wrap_type_s;
+            GLenum wrap_type_t;
             bool mipmaps;
             };
 
@@ -133,7 +133,7 @@ class RenderTask {
          * \param s_group : a shader_group structure that specifies the key parameters
          *                  to construct Shader objects for this rendering task.
          */
-        //RenderTask(RenderTask::shader_group s_group, Uniform& transform);
+        RenderTask(RenderTask::shader_group s_group);
 
         /**
          * \brief Constructor.
@@ -147,7 +147,7 @@ class RenderTask {
          */
         RenderTask(RenderTask::shader_group s_group,
                    RenderTask::index_buffer_group i_group,
-        		   RenderTask::vertex_buffer_group v_group);
+                   RenderTask::vertex_buffer_group v_group);
 
         /**
          * \brief Destructor.
@@ -164,9 +164,8 @@ class RenderTask {
         /**
          * \brief Create a correspondence between a uniform variable, as known
          *        by an OpenGL program object, and a position within client code.
-         *        DO NOT set the vertex shader's uniform transform matrix name
-         *        and load point by this method.
-         * \param uniform : a reference to a Uniform variable.
+         * \param uniform_name : the in-shader variable name.
+         * \param load_point : the client code address to load from.
          */
         void setUniform(const std::string& uniform_name, GLvoid* load_point);
 
@@ -181,11 +180,20 @@ class RenderTask {
         void acquire(void);
 
     private:
+        // These are the possible operating modes.
+        enum taskType {MINIMUM,
+                       MINIMUM_TEXTURE,
+                       MINIMUM_VERTICES,
+                       MINIMUM_VERTICES_TEXTURE,
+                       MINIMUM_VERTICES_INDICES
+                       MINIMUM_VERTICES_INDICES_TEXTURE};
+
         AttributeInputAdapter* m_attrib_adapt;
         FragmentShader* m_frag_shader;
         IndexBuffer* m_index_buffer;
         Pipeline* m_pipeline;
         Program* m_program;
+        TextureBuffer* m_texture_buffer;
         VertexBuffer* m_vertex_buffer;
         VertexFetch* m_vertex_fetch;
         VertexShader* m_vertex_shader;

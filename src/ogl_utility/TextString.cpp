@@ -99,9 +99,9 @@ void TextString::configureTask(void) {
 
     if(m_mode == TexturedParallelogram::FLAT) {
     	m_textured_parallelogram = new TexturedParallelogram(m_position.xy(),
-    														m_height_offset.xy(),
-															m_width_offset.xy(),
-															m_texture_buffer);
+    														 m_height_offset.xy(),
+															 m_width_offset.xy(),
+															 m_texture_buffer);
     } else if(m_mode == TexturedParallelogram::VOLUME) {
 		m_textured_parallelogram = new TexturedParallelogram(m_position,
 															 m_height_offset,
