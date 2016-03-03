@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2015 by Mike Hewson                                     *
+ *   Copyright (C) 2016 by Mike Hewson                                     *
  *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
@@ -69,7 +69,7 @@
  * by a fragment shader.
  *
  * Usage :
- *         - must ALWAYS provide a shader_group structure.
+ *      - must ALWAYS provide a shader_group structure.
  *      - provide any other structures suitable per the desired case.
  *      - call a constructor corresponding the desired case,
  *        using the appropriate structures as arguments.
@@ -83,7 +83,6 @@
  * \see Pipeline
  * \see Program
  * \see TextureBuffer
- * \see Uniform
  * \see VertexBuffer
  * \see VertexFetch
  * \see VertexShader
@@ -136,18 +135,80 @@ class RenderTask {
         RenderTask(RenderTask::shader_group s_group);
 
         /**
-         * \brief Constructor.
+         * \brief Constructor. Shaders plus texture provided. Corresponds to
+         *                     MINIMUM + TEXTURE case as described.
          *
          * \param s_group : a shader_group structure that specifies the key parameters
          *                  to construct Shader objects for this rendering task.
-         * \param i_group : an index_buffer_group structure that specifies the key parameters
-         *                  to possibly construct an IndexBuffer object for this rendering task.
+         * \param t_group : a texture_buffer_group structure that specifies
+         *                  the key parameters to construct a TextureBuffer
+         *                  object for this rendering task.
+         */
+        RenderTask(RenderTask::shader_group s_group,
+                   RenderTask::texture_buffer_group t_group);
+
+        /**
+         * \brief Constructor. Shaders plus vertex attributes provided. Corresponds to
+         *                     MINIMUM + VERTICES case as described.
+         *
+         * \param s_group : a shader_group structure that specifies the key parameters
+         *                  to construct Shader objects for this rendering task.
          * \param v_group : a vertex_buffer_group structure that specifies the key parameters
          *                  to construct a VertexBuffer object for this rendering task.
          */
         RenderTask(RenderTask::shader_group s_group,
-                   RenderTask::index_buffer_group i_group,
                    RenderTask::vertex_buffer_group v_group);
+
+        /**
+         * \brief Constructor. Shaders plus vertex attributes plus texture provided.
+         *                     Corresponds to MINIMUM + VERTICES + TEXTURE case as described.
+         *
+         * \param s_group : a shader_group structure that specifies the key parameters
+         *                  to construct Shader objects for this rendering task.
+         * \param v_group : a vertex_buffer_group structure that specifies the key parameters
+         *                  to construct a VertexBuffer object for this rendering task.
+         * \param t_group : a texture_buffer_group structure that specifies
+         *                  the key parameters to construct a TextureBuffer
+         *                  object for this rendering task.
+         */
+        RenderTask(RenderTask::shader_group s_group,
+                   RenderTask::vertex_buffer_group v_group,
+                   RenderTask::texture_buffer_group t_group);
+
+        /**
+         * \brief Constructor. Shaders plus vertex attributes plus indices provided.
+         *                     Corresponds to MINIMUM + VERTICES + INDICES case as described.
+         *
+         * \param s_group : a shader_group structure that specifies the key parameters
+         *                  to construct Shader objects for this rendering task.
+         * \param v_group : a vertex_buffer_group structure that specifies the key parameters
+         *                  to construct a VertexBuffer object for this rendering task.
+         * \param i_group : an index_buffer_group structure that specifies the key parameters
+         *                  to possibly construct an IndexBuffer object for this rendering task.
+         */
+        RenderTask(RenderTask::shader_group s_group,
+                   RenderTask::vertex_buffer_group v_group,
+                   RenderTask::index_buffer_group i_group);
+
+        /**
+         * \brief Constructor. Shaders plus vertex attributes plus indices
+         *                     plus texture provided ( hamburger with the lot ).
+         *                     Corresponds to MINIMUM + VERTICES + INDICES + TEXTURE case as described.
+         *
+         * \param s_group : a shader_group structure that specifies the key parameters
+         *                  to construct Shader objects for this rendering task.
+         * \param v_group : a vertex_buffer_group structure that specifies the key parameters
+         *                  to construct a VertexBuffer object for this rendering task.
+         * \param i_group : an index_buffer_group structure that specifies the key parameters
+         *                  to possibly construct an IndexBuffer object for this rendering task.
+         * \param t_group : a texture_buffer_group structure that specifies
+         *                  the key parameters to construct a TextureBuffer
+         *                  object for this rendering task.
+         */
+        RenderTask(RenderTask::shader_group s_group,
+                   RenderTask::vertex_buffer_group v_group,
+                   RenderTask::index_buffer_group i_group,
+                   RenderTask::texture_buffer_group t_group);
 
         /**
          * \brief Destructor.
@@ -180,14 +241,6 @@ class RenderTask {
         void acquire(void);
 
     private:
-        // These are the possible operating modes.
-        enum taskType {MINIMUM,
-                       MINIMUM_TEXTURE,
-                       MINIMUM_VERTICES,
-                       MINIMUM_VERTICES_TEXTURE,
-                       MINIMUM_VERTICES_INDICES
-                       MINIMUM_VERTICES_INDICES_TEXTURE};
-
         AttributeInputAdapter* m_attrib_adapt;
         FragmentShader* m_frag_shader;
         IndexBuffer* m_index_buffer;
@@ -197,6 +250,8 @@ class RenderTask {
         VertexBuffer* m_vertex_buffer;
         VertexFetch* m_vertex_fetch;
         VertexShader* m_vertex_shader;
+
+        void setBaseCase(RenderTask::shader_group s_group);
     };
 
 /**

@@ -132,7 +132,7 @@ const std::string TexturedParallelogram::m_fragment_shader("#version 150\n"
 "}\n");
 
 TexturedParallelogram::TexturedParallelogram(glm::vec3 position,
-                                                                 glm::vec3 height_offset,
+                                             glm::vec3 height_offset,
                                              glm::vec3 width_offset,
                                              TextureBuffer* texture) :
                                                  m_position(position),
@@ -153,7 +153,7 @@ TexturedParallelogram::TexturedParallelogram(glm::vec2 position,
                                              glm::vec2 width_offset,
                                              TextureBuffer* texture) :
                        TexturedParallelogram::TexturedParallelogram(glm::vec3(position.x, position.y, 0),
-                                                                                           glm::vec3(height_offset.x, height_offset.y, 0),
+                                                                    glm::vec3(height_offset.x, height_offset.y, 0),
                                                                     glm::vec3(width_offset.x, width_offset.y, 0),
                                                                     texture) {
     m_render_mode = FLAT;
