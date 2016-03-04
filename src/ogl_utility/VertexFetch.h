@@ -72,7 +72,7 @@ class VertexFetch : public OGL_ID, public Bound {
         /**
          * \brief Constructor.
          *
-         * \param adapter : a valid pointer to an AtrributeInputAdapter.
+         * \param adapter : a valid pointer to an AttributeInputAdapter.
          * \param vertices : a valid pointer to a VertexBuffer.
          */
         VertexFetch(AttributeInputAdapter* adapter,
@@ -81,7 +81,7 @@ class VertexFetch : public OGL_ID, public Bound {
         /**
          * \brief Constructor.
          *
-         * \param adapter : a valid pointer to an AtrributeInputAdapter.
+         * \param adapter : a valid pointer to an AttributeInputAdapter.
          * \param vertices : a valid pointer to a VertexBuffer.
          * \param indices : a valid pointer to an IndexBuffer.
          */
@@ -148,8 +148,6 @@ class VertexFetch : public OGL_ID, public Bound {
          */
         void trigger(GLenum primitive, GLsizei count);
 
-
-
     private :
         // These are the possible operating modes.
         enum operatingMode {BARE,
@@ -190,8 +188,8 @@ class VertexFetch : public OGL_ID, public Bound {
 
         /**
          * \brief Create full/detailed mapping of attribute positions within
-         *           he vertex buffer, based upon any given vertex attribute
-         *           specifications and choice of data mixing.
+         *        the vertex buffer, based upon any given vertex attribute
+         *        specifications and choice of data mixing.
          */
         void prepareAttributeMapping(void);
     };

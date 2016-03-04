@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2014 by Mike Hewson                                     *
+ *   Copyright (C) 2016 by Mike Hewson                                     *
  *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
@@ -24,11 +24,15 @@
 #include <sstream>
 
 VertexFetch::VertexFetch(){
-    // Initialisations done for the look of it.
+    // Initialisations done of unused pointers.
     m_adapter = NULL;
     m_vertices = NULL;
     m_indices = NULL;
+
+    // Initially the total sum of attribute lengths is zero.
     m_attribute_length_sum = 0;
+
+    // Attribute configuration yet to be done.
     m_configure_flag = false;
 
     // This is the use case enabled for this constructor.
@@ -44,12 +48,13 @@ VertexFetch::VertexFetch(AttributeInputAdapter* adapter, VertexBuffer* vertices)
                              ErrorHandler::FATAL);
         }
 
-    // Check to see that at least a vertex buffer was provided.
+    // Check to see that a vertex buffer was provided.
     if(m_vertices == NULL) {
         ErrorHandler::record("VertexFetch::VertexFetch() : NULL VertexBuffer pointer provided !",
                              ErrorHandler::FATAL);
         }
 
+    // No indices here.
     m_indices = NULL;
 
     // Initially the total sum of attribute lengths is zero.
@@ -78,7 +83,7 @@ VertexFetch::VertexFetch(AttributeInputAdapter* adapter, VertexBuffer* vertices,
                              ErrorHandler::FATAL);
         }
 
-    // Check to see that a vertex buffer was provided.
+    // Check to see that an index buffer was provided.
     if(m_indices == NULL) {
         ErrorHandler::record("VertexFetch::VertexFetch() : NULL IndexBuffer pointer provided !",
                              ErrorHandler::FATAL);
@@ -115,6 +120,16 @@ bool VertexFetch::acquire(void) {
                                  ErrorHandler::FATAL);
             }
 
+        // Acquire vertex resources for the non BARE cases.
+        if(m_operating_mode != BARE) {
+            m_vertices->acquire();
+            }
+
+        // Acquire index resources for the indexing case.
+        if(m_operating_mode == VERTICES_AND_INDICES) {
+            m_indices->acquire();
+            }
+
         // Record resources as acquired.
         OGL_ID::setAcquisitionState(true);
 
@@ -140,24 +155,32 @@ void VertexFetch::bind(void) {
         this->acquire();
         }
 
+    // Bind this VAO.
     glBindVertexArray(this->ID());
 
+    // Bind vertices for the non BARE cases.
     if(m_operating_mode != BARE) {
         m_vertices->bind();
-        if(m_configure_flag == false){
-            /// TODO - failure mode path for configure fail.
-            configure();
-            }
         }
 
-    // If we have an index array ...
+    // Bind indices for the indexing case.
     if(m_operating_mode == VERTICES_AND_INDICES) {
         m_indices->bind();
         }
-
     }
 
 void VertexFetch::unbind(void) {
+    // Unbind vertices for the non BARE cases.
+    if(m_operating_mode != BARE) {
+        m_vertices->unbind();
+        }
+
+    // Unbind indices for the indexing case.
+    if(m_operating_mode == VERTICES_AND_INDICES) {
+        m_indices->unbind();
+        }
+
+    // Unbind this VAO.
     glBindVertexArray(OGL_ID::NO_ID);
     }
 
@@ -185,7 +208,7 @@ bool VertexFetch::configure(void) {
     // Ensure resource acquisition first.
     this->acquire();
 
-    //
+    // If one or both of vertex/index buffers exist then
     if(m_operating_mode != BARE) {
         //
         processAttributeDescriptions();
