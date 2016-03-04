@@ -42,8 +42,12 @@
 
 /**
  * \brief This class declares public methods to deal with an entire
- *        rendering task, such that activation will cause rendering to
- *        occur within the current OpenGL context. Cases :
+ *        rendering task.
+ *
+ *      Activation of a rendering task via the utilise() method will cause
+ * rendering to occur within the current OpenGL context. What is also implied is
+ * that instantiation mus only occur after an OpenGL context is successfully
+ * obtained ie. without error. Use cases follow :
  *
  * MINIMUM : provide GLSL source code for both vertex and fragment
  * shaders. This is the scenario where vertex attributes are generated
