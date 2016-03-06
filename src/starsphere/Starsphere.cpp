@@ -227,7 +227,7 @@ void Starsphere::make_stars() {
                                                 VertexBuffer::BY_VERTEX};
 
     // Instantiate a rendering task with the provided information.
-    m_render_task_star = new RenderTask(s_group1, i_group1, v_group1);
+    m_render_task_star = new RenderTask(s_group1, v_group1, i_group1);
 
     // For vertex input need to correlate with vertex shader code.
     m_render_task_star->addSpecification({0, "position", 3, GL_FLOAT, GL_FALSE});
@@ -282,7 +282,7 @@ void Starsphere::make_pulsars() {
                                                 VertexBuffer::BY_VERTEX};
 
     // Instantiate a rendering task with the provided information.
-    m_render_task_psr = new RenderTask(s_group1, i_group1, v_group1);
+    m_render_task_psr = new RenderTask(s_group1, v_group1, i_group1);
 
     // For vertex input need to correlate with vertex shader code.
     m_render_task_psr->addSpecification({0, "position", 3, GL_FLOAT, GL_FALSE});
@@ -337,7 +337,7 @@ void Starsphere::make_snrs() {
                                                 VertexBuffer::BY_VERTEX};
 
     // Instantiate a rendering task with the provided information.
-    m_render_task_snr = new RenderTask(s_group1, i_group1, v_group1);
+    m_render_task_snr = new RenderTask(s_group1, v_group1, i_group1);
 
     // For vertex input need to correlate with vertex shader code.
     m_render_task_snr->addSpecification({0, "position", 3, GL_FLOAT, GL_FALSE});
@@ -407,7 +407,7 @@ void Starsphere::make_constellations() {
                                                 VertexBuffer::BY_VERTEX};
 
     // Instantiate a rendering task with the provided information.
-    m_render_task_cons = new RenderTask(s_group1, i_group1, v_group1);
+    m_render_task_cons = new RenderTask(s_group1, v_group1, i_group1);
 
     // For vertex input need to correlate with vertex shader code.
     m_render_task_cons->addSpecification({0, "position", 3, GL_FLOAT, GL_FALSE});
@@ -880,11 +880,11 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
     // Setup initial dimensions
     resize(m_CurrentWidth, m_CurrentHeight);
 
-    // Create rendering tasks for given features.
-    make_snrs();
-    make_pulsars();
-    make_stars();
-    make_constellations();
+//    // Create rendering tasks for given features.
+//    make_snrs();
+//    make_pulsars();
+//    make_stars();
+//    make_constellations();
 
     // Begin with these visual features enabled.
     setFeature(STARS, true);
@@ -1028,21 +1028,21 @@ void Starsphere::render(const double timeOfDay) {
         }
 
     // stars, pulsars, supernovae, grid
-    if(isFeature(STARS)) {
-        m_render_task_star->utilise(GL_POINTS, m_distinct_stars);;
-        }
-    if(isFeature(PULSARS)) {
-        m_render_task_psr->utilise(GL_POINTS, Npulsars);
-        }
-    if(isFeature(SNRS)) {
-        m_render_task_snr->utilise(GL_POINTS, NSNRs);
-        }
-    if(isFeature(CONSTELLATIONS)) {
-        m_render_task_cons->utilise(GL_LINES, m_constellation_lines*2);
-        }
-    if(isFeature(GLOBE)) {
-        /// TODO - call to render axes;
-        }
+//    if(isFeature(STARS)) {
+//        m_render_task_star->utilise(GL_POINTS, m_distinct_stars);;
+//        }
+//    if(isFeature(PULSARS)) {
+//        m_render_task_psr->utilise(GL_POINTS, Npulsars);
+//        }
+//    if(isFeature(SNRS)) {
+//        m_render_task_snr->utilise(GL_POINTS, NSNRs);
+//        }
+//    if(isFeature(CONSTELLATIONS)) {
+//        m_render_task_cons->utilise(GL_LINES, m_constellation_lines*2);
+//        }
+//    if(isFeature(GLOBE)) {
+//        /// TODO - call to render axes;
+//        }
 
     // observatories move an extra 15 degrees/hr since they were drawn
     if(isFeature(OBSERVATORIES)) {

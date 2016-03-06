@@ -46,22 +46,22 @@ class TexturedParallelogram {
     public :
         /// The rendering mode.
         /// FLAT :  render onto the frustum near face.
-        /// VOLUME : redner into the world space volume.
+        /// VOLUME : render into the world space volume.
         enum render_mode{FLAT, VOLUME};
 
         /**
          * \brief Constructor for 3D perspective rendering
          *
          * \param position - a vector to the point on the lower left corner
-         *                      of the parallelogram.
+         *                   of the parallelogram.
          * \param height_offset - a vector directed to the upper left corner
-         *                           of the parallelogram, from the lower left.
+         *                        of the parallelogram, from the lower left.
          * \param width_offset - a vector directed to the lower right corner
-         *                          of the parallelogram, from the lower left.
+         *                       of the parallelogram, from the lower left.
          * \param texture - a pointer to a TextureBuffer object.
          */
         TexturedParallelogram(glm::vec3 position,
-                                glm::vec3 height_offset,
+                              glm::vec3 height_offset,
                               glm::vec3 width_offset,
                               TextureBuffer* texture);
 
@@ -69,17 +69,17 @@ class TexturedParallelogram {
          * \brief Constructor for 2D orthographic rendering
          *
          * \param position - a vector to the point on the lower left corner
-         *                      of the parallelogram.
+         *                   of the parallelogram.
          * \param height_offset - a vector directed to the upper left corner
-         *                           of the parallelogram, from the lower left.
+         *                        of the parallelogram, from the lower left.
          * \param width_offset - a vector directed to the lower right corner
-         *                          of the parallelogram, from the lower left.
+         *                       of the parallelogram, from the lower left.
          * \param texture - a pointer to a TextureBuffer object.
          */
         TexturedParallelogram(glm::vec2 position,
                               glm::vec2 height_offset,
                               glm::vec2 width_offset,
-                              TextureBuffer* texture);
+							  TextureBuffer* texture);
 
         /**
          * \brief Destructor
@@ -135,10 +135,9 @@ class TexturedParallelogram {
         glm::vec3 m_height_offset;
         glm::vec3 m_width_offset;
 
-        TexturedParallelogram::render_mode m_render_mode;
-
-        /// The texture to be applied.
         TextureBuffer* m_texture;
+
+        TexturedParallelogram::render_mode m_render_mode;
 
         /// The rendering task to enact the texturing.
         RenderTask* m_render_task;

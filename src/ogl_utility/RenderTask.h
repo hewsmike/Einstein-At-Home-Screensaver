@@ -129,71 +129,71 @@ class RenderTask {
             bool mipmaps;
             };
 
-        /**
-         * \brief Constructor. Shaders only provided. Corresponds to MINIMUM
-         *                     case as described.
-         *
-         * \param s_group : a shader_group structure that specifies the key parameters
-         *                  to construct Shader objects for this rendering task.
-         */
-        RenderTask(RenderTask::shader_group s_group);
+//        /**
+//         * \brief Constructor. Shaders only provided. Corresponds to MINIMUM
+//         *                     case as described.
+//         *
+//         * \param s_group : a shader_group structure that specifies the key parameters
+//         *                  to construct Shader objects for this rendering task.
+//         */
+//        RenderTask(RenderTask::shader_group s_group);
+//
+//        /**
+//         * \brief Constructor. Shaders plus texture provided. Corresponds to
+//         *                     MINIMUM + TEXTURE case as described.
+//         *
+//         * \param s_group : a shader_group structure that specifies the key parameters
+//         *                  to construct Shader objects for this rendering task.
+//         * \param t_group : a texture_buffer_group structure that specifies
+//         *                  the key parameters to construct a TextureBuffer
+//         *                  object for this rendering task.
+//         */
+//        RenderTask(RenderTask::shader_group s_group,
+//                   RenderTask::texture_buffer_group t_group);
+//
+//        /**
+//         * \brief Constructor. Shaders plus vertex attributes provided. Corresponds to
+//         *                     MINIMUM + VERTICES case as described.
+//         *
+//         * \param s_group : a shader_group structure that specifies the key parameters
+//         *                  to construct Shader objects for this rendering task.
+//         * \param v_group : a vertex_buffer_group structure that specifies the key parameters
+//         *                  to construct a VertexBuffer object for this rendering task.
+//         */
+//        RenderTask(RenderTask::shader_group s_group,
+//                   RenderTask::vertex_buffer_group v_group);
+//
+//        /**
+//         * \brief Constructor. Shaders plus vertex attributes plus texture provided.
+//         *                     Corresponds to MINIMUM + VERTICES + TEXTURE case as described.
+//         *
+//         * \param s_group : a shader_group structure that specifies the key parameters
+//         *                  to construct Shader objects for this rendering task.
+//         * \param v_group : a vertex_buffer_group structure that specifies the key parameters
+//         *                  to construct a VertexBuffer object for this rendering task.
+//         * \param t_group : a texture_buffer_group structure that specifies
+//         *                  the key parameters to construct a TextureBuffer
+//         *                  object for this rendering task.
+//         */
+//        RenderTask(RenderTask::shader_group s_group,
+//                   RenderTask::vertex_buffer_group v_group,
+//                   RenderTask::texture_buffer_group t_group);
 
-        /**
-         * \brief Constructor. Shaders plus texture provided. Corresponds to
-         *                     MINIMUM + TEXTURE case as described.
-         *
-         * \param s_group : a shader_group structure that specifies the key parameters
-         *                  to construct Shader objects for this rendering task.
-         * \param t_group : a texture_buffer_group structure that specifies
-         *                  the key parameters to construct a TextureBuffer
-         *                  object for this rendering task.
-         */
-        RenderTask(RenderTask::shader_group s_group,
-                   RenderTask::texture_buffer_group t_group);
-
-        /**
-         * \brief Constructor. Shaders plus vertex attributes provided. Corresponds to
-         *                     MINIMUM + VERTICES case as described.
-         *
-         * \param s_group : a shader_group structure that specifies the key parameters
-         *                  to construct Shader objects for this rendering task.
-         * \param v_group : a vertex_buffer_group structure that specifies the key parameters
-         *                  to construct a VertexBuffer object for this rendering task.
-         */
-        RenderTask(RenderTask::shader_group s_group,
-                   RenderTask::vertex_buffer_group v_group);
-
-        /**
-         * \brief Constructor. Shaders plus vertex attributes plus texture provided.
-         *                     Corresponds to MINIMUM + VERTICES + TEXTURE case as described.
-         *
-         * \param s_group : a shader_group structure that specifies the key parameters
-         *                  to construct Shader objects for this rendering task.
-         * \param v_group : a vertex_buffer_group structure that specifies the key parameters
-         *                  to construct a VertexBuffer object for this rendering task.
-         * \param t_group : a texture_buffer_group structure that specifies
-         *                  the key parameters to construct a TextureBuffer
-         *                  object for this rendering task.
-         */
-        RenderTask(RenderTask::shader_group s_group,
-                   RenderTask::vertex_buffer_group v_group,
-                   RenderTask::texture_buffer_group t_group);
-
-        /**
-         * \brief Constructor. Shaders plus vertex attributes plus indices provided.
-         *                     Corresponds to MINIMUM + VERTICES + INDICES case as described.
-         *
-         * \param s_group : a shader_group structure that specifies the key parameters
-         *                  to construct Shader objects for this rendering task.
-         * \param v_group : a vertex_buffer_group structure that specifies the key parameters
-         *                  to construct a VertexBuffer object for this rendering task.
-         * \param i_group : an index_buffer_group structure that specifies the key parameters
-         *                  to possibly construct an IndexBuffer object for this rendering task.
-         */
-        RenderTask(RenderTask::shader_group s_group,
-                   RenderTask::vertex_buffer_group v_group,
-                   RenderTask::index_buffer_group i_group);
-
+//        /**
+//         * \brief Constructor. Shaders plus vertex attributes plus indices provided.
+//         *                     Corresponds to MINIMUM + VERTICES + INDICES case as described.
+//         *
+//         * \param s_group : a shader_group structure that specifies the key parameters
+//         *                  to construct Shader objects for this rendering task.
+//         * \param v_group : a vertex_buffer_group structure that specifies the key parameters
+//         *                  to construct a VertexBuffer object for this rendering task.
+//         * \param i_group : an index_buffer_group structure that specifies the key parameters
+//         *                  to possibly construct an IndexBuffer object for this rendering task.
+//         */
+//        RenderTask(RenderTask::shader_group s_group,
+//                   RenderTask::vertex_buffer_group v_group,
+//                   RenderTask::index_buffer_group i_group);
+//
         /**
          * \brief Constructor. Shaders plus vertex attributes plus indices
          *                     plus texture provided ( hamburger with the lot ).
@@ -250,12 +250,13 @@ class RenderTask {
         IndexBuffer* m_index_buffer;
         Pipeline* m_pipeline;
         Program* m_program;
-        TextureBuffer* m_texture_buffer;
         VertexBuffer* m_vertex_buffer;
         VertexFetch* m_vertex_fetch;
         VertexShader* m_vertex_shader;
 
-        void setBaseCase(RenderTask::shader_group s_group);
+        RenderTask::texture_buffer_group m_t_group;
+
+//        void setBaseCase(RenderTask::shader_group s_group);
     };
 
 /**

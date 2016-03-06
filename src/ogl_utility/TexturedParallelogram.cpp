@@ -134,14 +134,10 @@ const std::string TexturedParallelogram::m_fragment_shader("#version 150\n"
 TexturedParallelogram::TexturedParallelogram(glm::vec3 position,
                                              glm::vec3 height_offset,
                                              glm::vec3 width_offset,
-                                             TextureBuffer* texture) :
+											 TextureBuffer* texture) :
                                                  m_position(position),
                                                  m_height_offset(height_offset),
                                                  m_width_offset(width_offset) {
-    if(texture == NULL) {
-        ErrorHandler::record("TexturedParallelogram::TexturedParallelogram() 3D version : Texture not provided!", ErrorHandler::FATAL);
-        }
-
     m_render_mode = VOLUME;
     m_texture = texture;
     m_render_task = NULL;
@@ -151,7 +147,7 @@ TexturedParallelogram::TexturedParallelogram(glm::vec3 position,
 TexturedParallelogram::TexturedParallelogram(glm::vec2 position,
                                                    glm::vec2 height_offset,
                                              glm::vec2 width_offset,
-                                             TextureBuffer* texture) :
+											 TextureBuffer* texture) :
                        TexturedParallelogram::TexturedParallelogram(glm::vec3(position.x, position.y, 0),
                                                                     glm::vec3(height_offset.x, height_offset.y, 0),
                                                                     glm::vec3(width_offset.x, width_offset.y, 0),
@@ -188,7 +184,7 @@ void TexturedParallelogram::setTexture(TextureBuffer* texture) {
 
 void TexturedParallelogram::configureTask(void) {
     // Firstly discard any existing rendering task.
-    if(m_render_task) delete m_render_task;
+    if(m_render_task != NULL) delete m_render_task;
 
     // Construct a shader group structure.
     RenderTask::shader_group s_group;
@@ -211,7 +207,7 @@ void TexturedParallelogram::configureTask(void) {
                                                GL_STATIC_DRAW,
                                                VertexBuffer::BY_VERTEX};
 
-    m_render_task = new RenderTask(s_group, i_group, v_group);
+    m_render_task = new RenderTask(s_group, v_group, i_group, m_t_group);
 
     if(m_render_mode == FLAT) {
         m_render_task->setUniform("HUDMatrix", TransformGlobals::getOrthographicTransformMatrix());
@@ -232,9 +228,9 @@ void TexturedParallelogram::configureTask(void) {
     }
 
 void TexturedParallelogram::utilise(void) {
-    m_texture->bind();
+    //m_texture->bind();
     if(m_configure_flag == false) {
         configureTask();
         }
-    m_render_task->utilise(GL_TRIANGLE_STRIP, VERTEX_COUNT);
+    //m_render_task->utilise(GL_TRIANGLE_STRIP, VERTEX_COUNT);
     }
