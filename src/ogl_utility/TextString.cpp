@@ -66,7 +66,6 @@ TextString::TextString(glm::vec2 position,
     }
 
 TextString::~TextString() {
-    if(m_texture_buffer) delete m_texture_buffer;
     if(m_textured_parallelogram) delete m_textured_parallelogram;
     }
 

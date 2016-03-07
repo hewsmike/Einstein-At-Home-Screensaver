@@ -24,7 +24,7 @@
 #include "ogl_utility.h"
 
 #include "AttributeInputAdapter.h"
-#include "Bound.h"
+#include "Bindable.h"
 #include "IndexBuffer.h"
 #include "OGL_ID.h"
 #include "VertexBuffer.h"
@@ -62,7 +62,7 @@
  * \author Mike Hewson\n
  */
 
-class VertexFetch : public OGL_ID, public Bound {
+class VertexFetch : public OGL_ID, public Bindable {
     public :
         /**
          * \brief Constructor.

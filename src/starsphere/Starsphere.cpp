@@ -869,7 +869,7 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
     resize(m_CurrentWidth, m_CurrentHeight);
 
 //    // Create rendering tasks for given features.
-//    make_snrs();
+      make_snrs();
 //    make_pulsars();
 //    make_stars();
 //    make_constellations();
@@ -1022,9 +1022,9 @@ void Starsphere::render(const double timeOfDay) {
 //    if(isFeature(PULSARS)) {
 //        m_render_task_psr->utilise(GL_POINTS, Npulsars);
 //        }
-//    if(isFeature(SNRS)) {
-//        m_render_task_snr->utilise(GL_POINTS, NSNRs);
-//        }
+    if(isFeature(SNRS)) {
+        m_render_task_snr->utilise(GL_POINTS, NSNRs);
+        }
 //    if(isFeature(CONSTELLATIONS)) {
 //        m_render_task_cons->utilise(GL_LINES, m_constellation_lines*2);
 //        }
@@ -1064,7 +1064,7 @@ void Starsphere::render(const double timeOfDay) {
         // Disable depth testing since we're in 2D mode
         glDisable(GL_DEPTH_TEST);
 
-        if (isFeature(LOGO)) renderLogo();
+        //if (isFeature(LOGO)) renderLogo();
         // if (isFeature(SEARCHINFO)) renderSearchInformation();
 
         // Enable depth testing since we're leaving 2D mode

@@ -23,6 +23,8 @@
 #include <sstream>
 
 RenderTask::RenderTask(RenderTask::shader_group s_group) {
+	ErrorHandler::record("RenderTask::RenderTask(): MINUMUM", ErrorHandler::INFORM);
+
     // Set unused pointers to NULL.
     m_index_buffer = NULL;
     m_texture_buffer = NULL;
@@ -39,8 +41,10 @@ RenderTask::RenderTask(RenderTask::shader_group s_group) {
 RenderTask::RenderTask(RenderTask::shader_group s_group,
                        RenderTask::texture_buffer_group t_group) :
                            RenderTask(s_group) {
+	ErrorHandler::record("RenderTask::RenderTask(): MINUMUM + TEXTURE", ErrorHandler::INFORM);
+
     if(t_group.texture_data == NULL) {
-        ErrorHandler::record("RenderTask::RenderTask: Texture not provided!", ErrorHandler::FATAL);
+        ErrorHandler::record("RenderTask::RenderTask(): Texture not provided!", ErrorHandler::FATAL);
         }
     m_texture_buffer = new TextureBuffer(t_group.texture_data,
                                          t_group.bytes,
@@ -53,10 +57,11 @@ RenderTask::RenderTask(RenderTask::shader_group s_group,
     }
 
 RenderTask::RenderTask(RenderTask::shader_group s_group,
-                       RenderTask::vertex_buffer_group v_group) :
-                           RenderTask::RenderTask(s_group) {
+                       RenderTask::vertex_buffer_group v_group) {
+	ErrorHandler::record("RenderTask::RenderTask(): MINUMUM + VERTICES", ErrorHandler::INFORM);
+
     if(v_group.buffer_data == NULL) {
-        ErrorHandler::record("RenderTask::RenderTask: Vertex data not provided!", ErrorHandler::FATAL);
+        ErrorHandler::record("RenderTask::RenderTask(): Vertex data not provided!", ErrorHandler::FATAL);
         }
 
     m_vertex_buffer = new VertexBuffer(v_group.buffer_data,
@@ -82,6 +87,8 @@ RenderTask::RenderTask(RenderTask::shader_group s_group,
 //                   RenderTask::vertex_buffer_group v_group,
 //                   RenderTask::texture_buffer_group t_group) :
 //                        RenderTask(s_group, v_group) {
+// 	  ErrorHandler::record("RenderTask::RenderTask(): MINUMUM + VERTICES + TEXTURE", ErrorHandler::INFORM);
+//
 //    if(t_group.texture_data == NULL) {
 //        ErrorHandler::record("RenderTask::RenderTask: Texture not provided!", ErrorHandler::FATAL);
 //        }
@@ -100,6 +107,8 @@ RenderTask::RenderTask(RenderTask::shader_group s_group,
 //                   RenderTask::vertex_buffer_group v_group,
 //                   RenderTask::index_buffer_group i_group) :
 //                       RenderTask(s_group, v_group) {
+// 	  ErrorHandler::record("RenderTask::RenderTask(): MINUMUM + VERTICES + INDICES", ErrorHandler::INFORM);
+//
 //
 //                   }
 
@@ -107,6 +116,8 @@ RenderTask::RenderTask(RenderTask::shader_group s_group,
 //                       RenderTask::vertex_buffer_group v_group,
 //					   RenderTask::index_buffer_group i_group,
 //					   RenderTask::texture_buffer_group t_group) {
+// 	  ErrorHandler::record("RenderTask::RenderTask(): MINUMUM + VERTICES + INDICES + TEXTURE", ErrorHandler::INFORM);
+//
 //    //
 //	m_t_group = t_group;
 //

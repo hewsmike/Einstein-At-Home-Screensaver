@@ -21,7 +21,7 @@
 #ifndef BUFFER_H_
 #define BUFFER_H_
 
-#include "Bound.h"
+#include "Bindable.h"
 #include "ogl_utility.h"
 #include "OGL_ID.h"
 
@@ -39,7 +39,7 @@
  *    It's a generic wrapper, with further typing/behaviour being managed in
  * detail in derived classes.
  *
- * \see Bound
+ * \see Bindable
  * \see IndexBuffer
  * \see OGL_ID
  * \see TextureBuffer
@@ -48,7 +48,7 @@
  * \author Mike Hewson\n
  */
 
-class Buffer : public OGL_ID, public Bound {
+class Buffer : public OGL_ID, public Bindable {
     public :
         /**
          * \brief Constructor.
