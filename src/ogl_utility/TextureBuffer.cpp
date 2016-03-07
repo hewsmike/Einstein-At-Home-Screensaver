@@ -133,10 +133,10 @@ bool TextureBuffer::isBound(void) const {
     // Assume failure.
     bool ret_val = false;
 
-    // Discover which array buffer, if any, is bound to the OpenGL state.
+    // Discover which 2D texture array buffer, if any, is bound to the OpenGL state.
     GLuint temp;
 
-    glGetIntegerv(GL_ARRAY_BUFFER_BINDING, (GLint*) &temp);
+    glGetIntegerv(GL_TEXTURE_BINDING_2D, (GLint*) &temp);
 
     if((this->ID() == temp) && (this->ID() != OGL_ID::NO_ID)) {
         ret_val = true;
