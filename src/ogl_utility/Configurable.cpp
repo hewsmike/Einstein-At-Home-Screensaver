@@ -1,0 +1,36 @@
+/***************************************************************************
+ *   Copyright (C) 2016 by Mike Hewson                                     *
+ *   hewsmike[AT]iinet.net.au                                              *
+ *                                                                         *
+ *   This file is part of Einstein@Home.                                   *
+ *                                                                         *
+ *   Einstein@Home is free software: you can redistribute it and/or modify *
+ *   it under the terms of the GNU General Public License as published     *
+ *   by the Free Software Foundation, version 2 of the License.            *
+ *                                                                         *
+ *   Einstein@Home is distributed in the hope that it will be useful,      *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the          *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with Einstein@Home. If not, see <http://www.gnu.org/licenses/>. *
+ *                                                                         *
+ ***************************************************************************/
+
+#include "Configurable.h"
+
+Configurable::Configurable(void) :
+        m_configure_flag(false) {
+    }
+
+Configurable::~Configurable() {
+    }
+
+bool Configurable::isAcquired(void) const {
+    return m_configure_flag;
+    }
+
+void Configurable::setAcquisitionState(bool state) {
+    m_configure_flag = state;
+    }
