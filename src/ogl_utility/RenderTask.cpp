@@ -22,65 +22,62 @@
 
 #include <sstream>
 
-//RenderTask::RenderTask(RenderTask::shader_group s_group) {
-//    // Set unused pointers to NULL.
-//    m_index_buffer = NULL;
-//    m_texture_buffer = NULL;
-//    m_vertex_buffer = NULL;
-//
-//    // Always need to define an attribute adapter, even though not used here.
-//    m_attrib_adapt = new AttributeInputAdapter();
-//    // Always need a trigger for the pipeline.
-//    m_vertex_fetch = new VertexFetch();
-//
-//    setBaseCase(s_group);
-//    }
-//
-//RenderTask::RenderTask(RenderTask::shader_group s_group,
-//                       RenderTask::texture_buffer_group t_group) :
-//                           RenderTask(s_group) {
-//    if(t_group.texture_data == NULL) {
-//        ErrorHandler::record("RenderTask::RenderTask: Texture not provided!", ErrorHandler::FATAL);
-//        }
-//    m_texture_buffer = new TextureBuffer(t_group.texture_data,
-//                                         t_group.bytes,
-//                                         t_group.width,
-//                                         t_group.height,
-//                                         t_group.format,
-//                                         t_group.data_type,
-//                                         t_group.wrap_type_s,
-//                                         t_group.mipmaps);
-//    }
-//
-//RenderTask::RenderTask(RenderTask::shader_group s_group,
-//                       RenderTask::vertex_buffer_group v_group) :
-//                           RenderTask::RenderTask(s_group) {
-//    // Set unused pointers to NULL.
-//    m_index_buffer = NULL;
-//    m_texture_buffer = NULL;
-//
-//    // Always need a trigger for the pipeline.
-//    m_vertex_fetch = new VertexFetch();
-//
-//    setBaseCase(s_group);
-//
-//// VertexFetch(AttributeInputAdapter* adapter,
-//                    //VertexBuffer* vertices);
-//    if(v_group.buffer_data == NULL) {
-//        ErrorHandler::record("RenderTask::RenderTask: Vertex data not provided!", ErrorHandler::FATAL);
-//        }
-//    if(m_vertex_fetch != NULL) {
-//        delete m_vertex_fetch;
-//        m_vertex_fetch = new VertexFetch();
-//        }
-//    m_vertex_buffer = new VertexBuffer(v_group.buffer_data,
-//                                       v_group.bytes,
-//                                       v_group.vertices,
-//                                       v_group.usage,
-//                                       v_group.mix);
-//    m_vertex_buffer->acquire();
-//    }
-//
+RenderTask::RenderTask(RenderTask::shader_group s_group) {
+    // Set unused pointers to NULL.
+    m_index_buffer = NULL;
+    m_texture_buffer = NULL;
+    m_vertex_buffer = NULL;
+
+    // Always need to define an attribute adapter, even though not used here.
+    m_attrib_adapt = new AttributeInputAdapter();
+    // Always need a trigger for the pipeline.
+    m_vertex_fetch = new VertexFetch();
+
+    setBaseCase(s_group);
+    }
+
+RenderTask::RenderTask(RenderTask::shader_group s_group,
+                       RenderTask::texture_buffer_group t_group) :
+                           RenderTask(s_group) {
+    if(t_group.texture_data == NULL) {
+        ErrorHandler::record("RenderTask::RenderTask: Texture not provided!", ErrorHandler::FATAL);
+        }
+    m_texture_buffer = new TextureBuffer(t_group.texture_data,
+                                         t_group.bytes,
+                                         t_group.width,
+                                         t_group.height,
+                                         t_group.format,
+                                         t_group.data_type,
+                                         t_group.wrap_type_s,
+                                         t_group.mipmaps);
+    }
+
+RenderTask::RenderTask(RenderTask::shader_group s_group,
+                       RenderTask::vertex_buffer_group v_group) :
+                           RenderTask::RenderTask(s_group) {
+    if(v_group.buffer_data == NULL) {
+        ErrorHandler::record("RenderTask::RenderTask: Vertex data not provided!", ErrorHandler::FATAL);
+        }
+
+    m_vertex_buffer = new VertexBuffer(v_group.buffer_data,
+                                       v_group.bytes,
+                                       v_group.vertices,
+                                       v_group.usage,
+                                       v_group.mix);
+
+
+    // Set unused pointers to NULL.
+    m_index_buffer = NULL;
+    m_texture_buffer = NULL;
+
+    // Need to define an attribute adapter.
+    m_attrib_adapt = new AttributeInputAdapter();
+    // Always need a trigger for the pipeline.
+    m_vertex_fetch = new VertexFetch(m_attrib_adapt, m_vertex_buffer);
+
+    setBaseCase(s_group);
+    }
+
 //RenderTask::RenderTask(RenderTask::shader_group s_group,
 //                   RenderTask::vertex_buffer_group v_group,
 //                   RenderTask::texture_buffer_group t_group) :
@@ -106,46 +103,46 @@
 //
 //                   }
 
-RenderTask::RenderTask(RenderTask::shader_group s_group,
-                       RenderTask::vertex_buffer_group v_group,
-					   RenderTask::index_buffer_group i_group,
-					   RenderTask::texture_buffer_group t_group) {
-    //
-	m_t_group = t_group;
-
-    m_vertex_shader = new VertexShader(s_group.vert_shader_source);
-    m_frag_shader = new FragmentShader(s_group.frag_shader_source);
-    m_attrib_adapt = new AttributeInputAdapter();
-    m_program = new Program(m_vertex_shader, m_frag_shader, m_attrib_adapt);
-
-    // Is a vertex buffer being used ?
-    m_vertex_buffer = NULL;
-    if(v_group.buffer_data != NULL) {
-        m_vertex_buffer = new VertexBuffer(v_group.buffer_data, v_group.bytes, v_group.vertices, v_group.usage, v_group.mix);
-        m_vertex_buffer->acquire();
-        }
-
-    // Is an index buffer being used ?
-    m_index_buffer = NULL;
-    if(i_group.buffer_data != NULL) {
-        m_index_buffer = new IndexBuffer(i_group.buffer_data, i_group.bytes, i_group.indices, i_group.usage, i_group.index_type);
-        m_index_buffer->acquire();
-        }
-
-    if((m_vertex_buffer == NULL)) {
-        m_vertex_fetch = new VertexFetch();
-        }
-    else {
-        if(m_index_buffer == NULL) {
-            m_vertex_fetch = new VertexFetch(m_attrib_adapt, m_vertex_buffer);
-            }
-        else {
-            m_vertex_fetch = new VertexFetch(m_attrib_adapt, m_vertex_buffer, m_index_buffer);
-            }
-        }
-
-    m_pipeline = new Pipeline(m_program, m_vertex_fetch);
-    }
+//RenderTask::RenderTask(RenderTask::shader_group s_group,
+//                       RenderTask::vertex_buffer_group v_group,
+//					   RenderTask::index_buffer_group i_group,
+//					   RenderTask::texture_buffer_group t_group) {
+//    //
+//	m_t_group = t_group;
+//
+//    m_vertex_shader = new VertexShader(s_group.vert_shader_source);
+//    m_frag_shader = new FragmentShader(s_group.frag_shader_source);
+//    m_attrib_adapt = new AttributeInputAdapter();
+//    m_program = new Program(m_vertex_shader, m_frag_shader, m_attrib_adapt);
+//
+//    // Is a vertex buffer being used ?
+//    m_vertex_buffer = NULL;
+//    if(v_group.buffer_data != NULL) {
+//        m_vertex_buffer = new VertexBuffer(v_group.buffer_data, v_group.bytes, v_group.vertices, v_group.usage, v_group.mix);
+//        m_vertex_buffer->acquire();
+//        }
+//
+//    // Is an index buffer being used ?
+//    m_index_buffer = NULL;
+//    if(i_group.buffer_data != NULL) {
+//        m_index_buffer = new IndexBuffer(i_group.buffer_data, i_group.bytes, i_group.indices, i_group.usage, i_group.index_type);
+//        m_index_buffer->acquire();
+//        }
+//
+//    if((m_vertex_buffer == NULL)) {
+//        m_vertex_fetch = new VertexFetch();
+//        }
+//    else {
+//        if(m_index_buffer == NULL) {
+//            m_vertex_fetch = new VertexFetch(m_attrib_adapt, m_vertex_buffer);
+//            }
+//        else {
+//            m_vertex_fetch = new VertexFetch(m_attrib_adapt, m_vertex_buffer, m_index_buffer);
+//            }
+//        }
+//
+//    m_pipeline = new Pipeline(m_program, m_vertex_fetch);
+//    }
 
 RenderTask::~RenderTask() {
     if(m_attrib_adapt) delete m_attrib_adapt;
@@ -182,8 +179,8 @@ void RenderTask::acquire(void) {
         m_index_buffer->acquire();
         }
 
-    if(m_t_group.texture_data != NULL) {
-        m_t_group.texture_data->acquire();
+    if(m_texture_buffer != NULL) {
+        m_texture_buffer->acquire();
         }
 
     m_program->acquire();
@@ -200,12 +197,12 @@ void RenderTask::acquire(void) {
         }
     }
 
-//void RenderTask::setBaseCase(RenderTask::shader_group s_group) {
-//    // Now configure the basic components.
-//    // Always need shader code.
-//    m_vertex_shader = new VertexShader(s_group.vert_shader_source);
-//    m_frag_shader = new FragmentShader(s_group.frag_shader_source);
-//    // Always have program entity and a pipleine.
-//    m_program = new Program(m_vertex_shader, m_frag_shader, m_attrib_adapt);
-//    m_pipeline = new Pipeline(m_program, m_vertex_fetch);
-//    }
+void RenderTask::setBaseCase(RenderTask::shader_group s_group) {
+    // Now configure the basic components.
+    // Always need shader code.
+    m_vertex_shader = new VertexShader(s_group.vert_shader_source);
+    m_frag_shader = new FragmentShader(s_group.frag_shader_source);
+    // Always have program entity and a pipleine.
+    m_program = new Program(m_vertex_shader, m_frag_shader, m_attrib_adapt);
+    m_pipeline = new Pipeline(m_program, m_vertex_fetch);
+    }

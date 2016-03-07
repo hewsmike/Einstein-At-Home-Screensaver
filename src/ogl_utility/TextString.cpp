@@ -26,7 +26,7 @@
 #include "ErrorHandler.h"
 
 TextString::TextString(glm::vec3 position,
-                               glm::vec3 height_offset,
+                       glm::vec3 height_offset,
                        glm::vec3 width_offset,
                        TTF_Font* font,
                        const char* text,
@@ -41,14 +41,13 @@ TextString::TextString(glm::vec3 position,
                           m_text_style(text_style),
                           m_foreground(foreground),
                           m_background(background) {
-    m_texture_buffer = NULL;
     m_textured_parallelogram = NULL;
     m_configure_flag = false;
     m_mode = TexturedParallelogram::VOLUME;
     }
 
 TextString::TextString(glm::vec2 position,
-                               glm::vec2 height_offset,
+                       glm::vec2 height_offset,
                        glm::vec2 width_offset,
                        TTF_Font* font,
                        const char* text,
@@ -84,27 +83,27 @@ void TextString::configureTask(void) {
         ErrorHandler::record("TextString::configureTask() : NULL return for ConvertSurfaceFormat !", ErrorHandler::FATAL);
         }
 
-    // Create a TextureBuffer object
-    m_texture_buffer = new TextureBuffer(converted->pixels,
-                                         GLuint(converted->pitch) * GLuint(converted->h),
-                                         GLsizei(converted->w),
-                                         GLsizei(converted->h),
-                                         GL_RGBA,
-                                         GL_UNSIGNED_BYTE,
-                                         GL_CLAMP,
-                                         GL_CLAMP,
-                                         true);
+    // Create a TextureBuffer object.
+    struct RenderTask::texture_buffer_group t_group {converted->pixels,
+                                                     GLuint(converted->pitch) * GLuint(converted->h),
+                                                     GLsizei(converted->w),
+                                                     GLsizei(converted->h),
+                                                     GL_RGBA,
+                                                     GL_UNSIGNED_BYTE,
+                                                     GL_CLAMP,
+                                                     GL_CLAMP,
+                                                     true};
 
     if(m_mode == TexturedParallelogram::FLAT) {
         m_textured_parallelogram = new TexturedParallelogram(m_position.xy(),
                                                              m_height_offset.xy(),
                                                              m_width_offset.xy(),
-															 m_texture_buffer);
+															 t_group);
     } else if(m_mode == TexturedParallelogram::VOLUME) {
         m_textured_parallelogram = new TexturedParallelogram(m_position,
                                                              m_height_offset,
                                                              m_width_offset,
-															 m_texture_buffer);
+															 t_group);
     }
 
     // With the SDL_ttf library the caller must free the surface when done.
@@ -119,6 +118,5 @@ void TextString::utilise(void) {
     if(m_configure_flag == false) {
         configureTask();
         }
-    m_texture_buffer->acquire();
     m_textured_parallelogram->utilise();
     }

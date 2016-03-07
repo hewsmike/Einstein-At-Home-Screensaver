@@ -24,7 +24,6 @@
 #include "ogl_utility.h"
 
 #include "RenderTask.h"
-#include "TextureBuffer.h"
 
 #include <string>
 
@@ -58,12 +57,12 @@ class TexturedParallelogram {
          *                        of the parallelogram, from the lower left.
          * \param width_offset - a vector directed to the lower right corner
          *                       of the parallelogram, from the lower left.
-         * \param texture - a pointer to a TextureBuffer object.
+         * \param t_group - a RenderTask::texture_buffer_group structure instance.
          */
         TexturedParallelogram(glm::vec3 position,
                               glm::vec3 height_offset,
                               glm::vec3 width_offset,
-                              TextureBuffer* texture);
+                              RenderTask::texture_buffer_group t_group);
 
         /**
          * \brief Constructor for 2D orthographic rendering
@@ -74,12 +73,12 @@ class TexturedParallelogram {
          *                        of the parallelogram, from the lower left.
          * \param width_offset - a vector directed to the lower right corner
          *                       of the parallelogram, from the lower left.
-         * \param texture - a pointer to a TextureBuffer object.
+         * \param t_group - a RenderTask::texture_buffer_group structure instance.
          */
         TexturedParallelogram(glm::vec2 position,
                               glm::vec2 height_offset,
                               glm::vec2 width_offset,
-							  TextureBuffer* texture);
+							  RenderTask::texture_buffer_group t_group);
 
         /**
          * \brief Destructor
@@ -110,9 +109,9 @@ class TexturedParallelogram {
         /**
          * \brief Set the texture to be applied to the parallelogram.
          *
-         * \param texture - an existing TextureBuffer to apply to the parallelogram.
+         * \param t_group - a RenderTask::texture_buffer_group structure instance.
          */
-        void setTexture(TextureBuffer* texture);
+        void setTexture(RenderTask::texture_buffer_group t_group);
 
         /**
          * \brief Invoke rendering activity.
@@ -135,7 +134,7 @@ class TexturedParallelogram {
         glm::vec3 m_height_offset;
         glm::vec3 m_width_offset;
 
-        TextureBuffer* m_texture;
+        RenderTask::texture_buffer_group m_t_group;
 
         TexturedParallelogram::render_mode m_render_mode;
 

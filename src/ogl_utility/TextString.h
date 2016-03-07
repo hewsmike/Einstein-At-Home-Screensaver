@@ -146,9 +146,6 @@ class TextString {
         /// The color for the text background.
         SDL_Color m_background;
 
-        /// The texture to be applied.
-        TextureBuffer* m_texture_buffer;
-
         /// The parallelogram to be used for rendering.
         TexturedParallelogram* m_textured_parallelogram;
 

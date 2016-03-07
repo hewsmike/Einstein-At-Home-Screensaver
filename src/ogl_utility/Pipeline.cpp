@@ -48,6 +48,11 @@ void Pipeline::utilise(GLenum primitive, GLsizei count) {
         m_program->acquire();
         }
 
+    // Need to acquire Vertexfetch if not already.
+    if(m_vertex_fetch != NULL) {
+        m_vertex_fetch->acquire();
+        }
+
     // If you have a texture, but it is not acquired, then do so.
     if((m_texture_buffer != NULL) && (!m_texture_buffer->isAcquired())) {
         m_texture_buffer->acquire();

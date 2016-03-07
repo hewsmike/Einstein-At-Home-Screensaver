@@ -216,10 +216,7 @@ void Starsphere::make_stars() {
     RenderTask::shader_group s_group1 = {factory.createInstance("VertexShader_Stars")->std_string(),
                                          factory.createInstance("FragmentShader_Pass")->std_string()};
 
-    // Populate data structure for indices, in this case none is used.
-    RenderTask::index_buffer_group i_group1 = {NULL, 0, 0, 0, 0};
-
-    // Populate data structure for vertices.
+      // Populate data structure for vertices.
     RenderTask::vertex_buffer_group v_group1 = {star_vertex_data,
                                                 GLuint(m_distinct_stars*3*sizeof(GLfloat)),
                                                 m_distinct_stars,
@@ -227,7 +224,7 @@ void Starsphere::make_stars() {
                                                 VertexBuffer::BY_VERTEX};
 
     // Instantiate a rendering task with the provided information.
-    m_render_task_star = new RenderTask(s_group1, v_group1, i_group1);
+    m_render_task_star = new RenderTask(s_group1, v_group1);
 
     // For vertex input need to correlate with vertex shader code.
     m_render_task_star->addSpecification({0, "position", 3, GL_FLOAT, GL_FALSE});
@@ -271,9 +268,6 @@ void Starsphere::make_pulsars() {
     RenderTask::shader_group s_group1 = {factory.createInstance("VertexShader_Pulsars")->std_string(),
                                          factory.createInstance("FragmentShader_Pass")->std_string()};
 
-    // Populate data structure for indices, in this case none is used.
-    RenderTask::index_buffer_group i_group1 = {NULL, 0, 0, 0, 0};
-
     // Populate data structure for vertices.
     RenderTask::vertex_buffer_group v_group1 = {pulsar_vertex_data,
                                                 GLuint(sizeof(pulsar_vertex_data)),
@@ -282,7 +276,7 @@ void Starsphere::make_pulsars() {
                                                 VertexBuffer::BY_VERTEX};
 
     // Instantiate a rendering task with the provided information.
-    m_render_task_psr = new RenderTask(s_group1, v_group1, i_group1);
+    m_render_task_psr = new RenderTask(s_group1, v_group1);
 
     // For vertex input need to correlate with vertex shader code.
     m_render_task_psr->addSpecification({0, "position", 3, GL_FLOAT, GL_FALSE});
@@ -326,9 +320,6 @@ void Starsphere::make_snrs() {
     RenderTask::shader_group s_group1 = {factory.createInstance("VertexShader_Supernovae")->std_string(),
                                          factory.createInstance("FragmentShader_Pass")->std_string()};
 
-    // Populate data structure for indices, in this case none is used.
-    RenderTask::index_buffer_group i_group1 = {NULL, 0, 0, 0, 0};        // With no index data remaining fields irrelevant.
-
     // Instantiate a rendering task with the provided information.
     RenderTask::vertex_buffer_group v_group1 = {snr_vertex_data,
                                                 GLuint(sizeof(snr_vertex_data)),
@@ -337,7 +328,7 @@ void Starsphere::make_snrs() {
                                                 VertexBuffer::BY_VERTEX};
 
     // Instantiate a rendering task with the provided information.
-    m_render_task_snr = new RenderTask(s_group1, v_group1, i_group1);
+    m_render_task_snr = new RenderTask(s_group1, v_group1);
 
     // For vertex input need to correlate with vertex shader code.
     m_render_task_snr->addSpecification({0, "position", 3, GL_FLOAT, GL_FALSE});
@@ -396,9 +387,6 @@ void Starsphere::make_constellations() {
     RenderTask::shader_group s_group1 = {factory.createInstance("VertexShader_Stars")->std_string(),
                                          factory.createInstance("FragmentShader_Pass")->std_string()};
 
-    // Populate data structure for indices, in this case none is used.
-    RenderTask::index_buffer_group i_group1 = {NULL, 0, 0, 0, 0};
-
     // Populate data structure for vertices.
     RenderTask::vertex_buffer_group v_group1 = {star_vertex_data,
                                                 GLuint(m_constellation_lines*2*3*sizeof(GLfloat)),
@@ -407,7 +395,7 @@ void Starsphere::make_constellations() {
                                                 VertexBuffer::BY_VERTEX};
 
     // Instantiate a rendering task with the provided information.
-    m_render_task_cons = new RenderTask(s_group1, v_group1, i_group1);
+    m_render_task_cons = new RenderTask(s_group1, v_group1);
 
     // For vertex input need to correlate with vertex shader code.
     m_render_task_cons->addSpecification({0, "position", 3, GL_FLOAT, GL_FALSE});
