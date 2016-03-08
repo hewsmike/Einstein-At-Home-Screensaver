@@ -85,12 +85,12 @@ class VertexBuffer : public Buffer {
          *              true - resources acquired without error
          *              false - resources were not acquired
          */
-        virtual void VertexBuffer::acquire(void);
+        virtual void acquire(void);
 
         /**
          * \brief Releases the object resources.
          */
-        virtual void VertexBuffer::release(void);
+        virtual void release(void);
 
         /**
          * \brief Perform any binding to the OpenGL pipeline.

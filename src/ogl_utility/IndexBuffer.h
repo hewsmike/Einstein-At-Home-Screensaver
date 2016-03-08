@@ -80,12 +80,12 @@ class IndexBuffer : public Buffer {
          *              true - resources acquired without error
          *              false - resources were not acquired
          */
-        virtual void IndexBuffer::acquire(void);
+        virtual void acquire(void);
 
         /**
          * \brief Releases the object resources.
          */
-        virtual void IndexBuffer::release(void);
+        virtual void release(void);
 
         /**
          * \brief Perform any data binding to the pipeline input.
