@@ -27,10 +27,10 @@ Configurable::Configurable(void) :
 Configurable::~Configurable() {
     }
 
-bool Configurable::isAcquired(void) const {
+bool Configurable::isConfigured(void) const {
     return m_configure_flag;
     }
 
-void Configurable::setAcquisitionState(bool state) {
+void Configurable::setConfigurationState(bool state) {
     m_configure_flag = state;
     }

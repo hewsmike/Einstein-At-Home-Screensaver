@@ -23,6 +23,7 @@
 
 #include "ogl_utility.h"
 
+#include "Configurable.h"
 #include "OGL_ID.h"
 
 #include <string>
@@ -44,7 +45,7 @@
  * \author Mike Hewson\n
  */
 
-class Shader : public OGL_ID {
+class Shader : public OGL_ID, public Configurable {
     public :
         enum compilationState {NEVER_COMPILED,
                                COMPILE_FAILED,
@@ -80,6 +81,15 @@ class Shader : public OGL_ID {
          * \brief Releases the object resources.
          */
         virtual void release(void);
+
+        /**
+		 * \brief Actually configure any underlying object(s).
+		 *
+		 * \return a boolean indicating success of configuration
+		 *              - true, the configuration as successful.
+		 *              - false, the configuration was not successful.
+		 */
+		virtual bool configure(void);
 
         /**
          * \brief Determine if shader has been MARKED for deletion by the state

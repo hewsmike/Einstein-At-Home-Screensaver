@@ -56,7 +56,6 @@ class FragmentShader : public Shader {
         virtual ~FragmentShader();
 
     private :
-
     };
 
 /**

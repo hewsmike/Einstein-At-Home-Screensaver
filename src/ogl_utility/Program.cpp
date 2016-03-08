@@ -70,11 +70,11 @@ bool Program::acquire(void) {
            (m_fragment_shader->isDeleted() == false )) {
             // No deletions marked, so compile if needed.
             if(m_vertex_shader->status() == Shader::NEVER_COMPILED) {
-                m_vertex_shader->acquire();
+                m_vertex_shader->configure();
                 }
 
             if(m_fragment_shader->status() == Shader::NEVER_COMPILED) {
-                m_fragment_shader->acquire();
+                m_fragment_shader->configure();
                 }
 
             // Attach only if both pass muster.

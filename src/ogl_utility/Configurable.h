@@ -47,15 +47,15 @@ class Configurable {
          */
         virtual ~Configurable();
 
-         /**
-         * \brief actually configure the underlying object. The configuration
+        /**
+         * \brief Actually configure any underlying object(s). The configuration
          *        state must be set by any derived class via setConfigurationState().
          *
          * \return a boolean indicating success of configuration
          *              - true, the configuration as successful.
          *              - false, the configuration was not successful.
          */
-        virtual bool m_configure(void) = 0;
+        virtual bool configure(void) = 0;
 
         /**
          * \brief The configuration state of the object.

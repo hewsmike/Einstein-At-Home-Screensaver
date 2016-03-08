@@ -97,6 +97,18 @@ void Shader::release(void) {
     comp_status = Shader::NEVER_COMPILED;
     }
 
+bool Shader::configure(void) {
+	// Assume failure.
+	bool ret_val = false;
+	if(this->isAcquired() == false) {
+		this->acquire();
+		}
+
+	ret_val = compile();
+
+	return ret_val;
+	}
+
 bool Shader::isDeleted(void) const {
     // Assume not marked for deletion.
     bool ret_val = false;
