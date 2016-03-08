@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2014 by Mike Hewson                                     *
+ *   Copyright (C) 2016 by Mike Hewson                                     *
  *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
@@ -38,9 +38,6 @@
 /**
  * \brief This interface declares public methods to deal with OpenGL
  *        vertex shader objects.
- *
- *      It's a wrapper class to especially manage acquisition and
- * release of OpenGL resources.
  *
  * \see Shader
  *
