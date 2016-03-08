@@ -109,28 +109,25 @@ class VertexFetch : public OGL_ID, public Bindable {
         virtual void release(void);
 
         /**
-         * \brief Perform any data binding to the pipeline input.
-         */
-        virtual void bind(void);
+		 * \brief Perform any binding to the OpenGL pipeline.
+		 */
+		virtual void bind(void);
 
-        /**
-         * \brief Remove any data binding to the pipeline input.
-         *
-         *      HIGHLY ADVISED to invoke after rendering and before any
-         * other pipeline activity, in order to properly reset the vertex
-         * fetching state.
-         */
-        virtual void unbind(void);
+		/**
+		 * \brief Remove any binding to the OpenGL pipeline.
+		 */
+		virtual void unbind(void);
 
-        /**
-            * \brief Is the underlying vertex array object ( VAO ) bound to the
-            *           state machine ?
-            *
-            * \return a boolean indicating binding
-            *              TRUE - VAO is bound
-            *              FALSE - VAO is not bound
-            */
-        virtual bool isBound(void) const;
+		/**
+		 * \brief The binding state of any underlying OpenGL objects
+		 *        to the OpenGL state machine. This is a
+		 *        dynamic inquiry.
+		 *
+		 * \return a boolean indicating binding state :
+		 *          true - the object is bound
+		 *          false - the object is not bound
+		 */
+		virtual bool isBound(void) const;
 
         /**
          * \brief Trigger pipeline activity. Attachment occurs automatically
