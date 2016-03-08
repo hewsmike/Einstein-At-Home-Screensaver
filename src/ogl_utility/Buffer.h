@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2015 by Mike Hewson                                     *
+ *   Copyright (C) 2016 by Mike Hewson                                     *
  *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
@@ -70,23 +70,6 @@ class Buffer : public OGL_ID, public Bindable {
         virtual ~Buffer();
 
         /**
-         * \brief Obtains the underlying OpenGL buffer object resources
-         *        from the OpenGL state machine.
-         *
-         * \return a boolean indicating success of acquisition
-         *              true - resources acquired without error
-         *              false - resources were not acquired
-         */
-        bool acquire(void);
-
-        /**
-         * \brief Releases the underlying OpenGL buffer object resources
-         *        from the OpenGL state machine.
-         */
-        void release(void);
-
-
-        /**
          * \brief The number of bytes stored within the buffer.
          *
          * \return The size of the buffer in bytes.
@@ -120,20 +103,6 @@ class Buffer : public OGL_ID, public Bindable {
          *        client side pointer is required.
          */
         virtual void loadBuffer(void) = 0;
-
-        /**
-         * \brief Get an OpenGL handle for the texture.
-         *
-         * \param handle : pointer to a handle.
-         */
-        virtual void acquire_ID(GLuint* handle) = 0;
-
-        /**
-         * \brief Release to pool the OpenGL handle for the texture.
-         *
-         * \param handle : pointer to a handle.
-         */
-        virtual void release_ID(GLuint* handle) = 0;
     };
 
 /**
