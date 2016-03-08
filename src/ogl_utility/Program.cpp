@@ -154,11 +154,11 @@ void Program::release(void) {
     this->setAcquisitionState(false);
     }
 
-void Program::bind(void) const {
+void Program::bind(void) {
     glUseProgram(this->ID());
     }
 
-void Program::unbind(void) const {
+void Program::unbind(void) {
     // NB from OpenGL 3.3 standard "If program is zero, then the current rendering state refers
     // to an invalid program object and the results of shader execution are undefined. However,
     // this is not an error."

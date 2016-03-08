@@ -35,11 +35,11 @@ CPPFLAGS += -I$(FRAMEWORK_INSTALL)/include/glm
 CPPFLAGS += -I$(FRAMEWORK_INSTALL)/include/glm/gtc
 
 DEPS = Makefile
-# OBJS += Acquirable.o
-OBJS = AttributeInputAdapter.o
+OBJS += Acquirable.o
+OBJS += AttributeInputAdapter.o
 OBJS += Bindable.o
 OBJS += Buffer.o
-# OBKS += Configurable.o
+# OBJS += Configurable.o
 OBJS += FragmentShader.o
 OBJS += IndexBuffer.o
 OBJS += OGL_ID.o

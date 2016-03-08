@@ -41,6 +41,6 @@ void OGL_ID::set_ID(GLuint value) {
     m_ident = value;
     }
 
-void OGL::reset_ID(void) {
+void OGL_ID::reset_ID(void) {
     m_ident = OGL_ID::NO_ID;
     }

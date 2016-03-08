@@ -75,6 +75,20 @@ class Program : public OGL_ID, public Bindable {
         virtual ~Program();
 
         /**
+		 * \brief Obtains the resources.
+		 *
+		 * \return a boolean indicating success of acquisition
+		 *              true - resources acquired without error
+		 *              false - resources were not acquired
+		 */
+		virtual bool acquire(void);
+
+		/**
+		 * \brief Releases the object resources.
+		 */
+		virtual void release(void);
+
+        /**
 		 * \brief Perform any binding to the OpenGL pipeline.
 		 */
 		virtual void bind(void);
@@ -94,21 +108,6 @@ class Program : public OGL_ID, public Bindable {
 		 *          false - the object is not bound
 		 */
 		virtual bool isBound(void) const;
-
-        /**
-         * \brief Obtains the resources.
-         *
-         * \return a boolean indicating success of acquisition
-         *              true - resources acquired without error
-         *              false - resources were not acquired
-         */
-        virtual bool acquire(void);
-
-        /**
-         * \brief Releases the object resources.
-         */
-        virtual void release(void);
-
 
         /**
          * \brief Determine if program has been MARKED for deletion.

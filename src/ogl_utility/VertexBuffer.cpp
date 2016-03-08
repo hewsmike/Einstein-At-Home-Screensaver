@@ -52,11 +52,12 @@ VertexBuffer::~VertexBuffer() {
     this->release();
     }
 
-void VertexBuffer::acquire(void) {
+bool VertexBuffer::acquire(void) {
     GLuint handle;
     glGenBuffers(1, &handle);
     this->set_ID(handle);
     this->setAcquisitionState(true);
+    return true;
     }
 
 void VertexBuffer::release(void) {

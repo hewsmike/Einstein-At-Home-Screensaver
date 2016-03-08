@@ -80,7 +80,7 @@ class IndexBuffer : public Buffer {
          *              true - resources acquired without error
          *              false - resources were not acquired
          */
-        virtual void acquire(void);
+        virtual bool acquire(void);
 
         /**
          * \brief Releases the object resources.

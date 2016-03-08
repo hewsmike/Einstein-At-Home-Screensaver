@@ -65,11 +65,12 @@ IndexBuffer::~IndexBuffer() {
     this->release();
     }
 
-void IndexBuffer::acquire(void) {
+bool IndexBuffer::acquire(void) {
     GLuint handle;
     glGenBuffers(1, &handle);
     this->set_ID(handle);
     this->setAcquisitionState(true);
+    return true;
     }
 
 void IndexBuffer::release(void) {

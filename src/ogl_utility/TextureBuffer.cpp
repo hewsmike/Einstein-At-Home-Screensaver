@@ -110,14 +110,15 @@ TextureBuffer::TextureBuffer(const GLvoid* texture_data,
     }
 
 TextureBuffer::~TextureBuffer() {
-    Buffer::release();
+    TextureBuffer::release();
     }
 
-void TextureBuffer::acquire(void) {
+bool TextureBuffer::acquire(void) {
     GLuint handle;
     glGenTextures(1, &handle);
     this->set_ID(handle);
     this->setAcquisitionState(true);
+    return true;
     }
 
 void TextureBuffer::release(void) {
