@@ -153,8 +153,6 @@ bool TextureBuffer::isBound(void) const {
     }
 
 void TextureBuffer::loadBuffer(void) {
-    this->bind();
-
     // The 'm_format' parameter appears twice in the following parameter
     // list as we don't change/convert for this application.
     glTexImage2D(GL_TEXTURE_2D,
@@ -197,5 +195,4 @@ void TextureBuffer::loadBuffer(void) {
         }
 
     /// TODO - Use glHint here to specify quality ?
-    unbind();
     }

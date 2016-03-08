@@ -49,6 +49,20 @@ const GLvoid* Buffer::data(void) const {
     return m_data;
     }
 
+bool Buffer::configure(void) {
+    // Assume success.
+    ret_val = true;
+
+    if(isConfigured() == false) {
+        bind();
+        loadbuffer();
+        unbind();
+        setConfigurationState(true);
+        }
+
+    return ret_val;
+    }
+
 GLuint Buffer::size(void) const {
     return m_size;
     }

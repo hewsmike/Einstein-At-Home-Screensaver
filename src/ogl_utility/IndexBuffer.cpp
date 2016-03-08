@@ -80,20 +80,13 @@ void IndexBuffer::release(void) {
     this->setAcquisitionState(false);
     }
 
-void IndexBuffer::loadBuffer(void) {
-    // Bind this buffer to the specified target.
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->ID());
-
-    // Allocate space and transfer the data.
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->size(), this->data(), m_usage);
-
-    // Unbind the buffer.
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, OGL_ID::NO_ID);
-    }
-
 void IndexBuffer::bind(void) {
     // Ensure resource acquisition first.
-    this->acquire();
+    if(this->isAcquired() == false) {
+        // Ensure resource acquisition first.
+        this->acquire();
+        }
+
     // Bind the given buffer object to pipeline state.
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->ID());
     }
@@ -121,4 +114,9 @@ bool IndexBuffer::isBound(void) const {
 
 GLenum IndexBuffer::indexType(void) const {
     return m_index_type;
+    }
+
+void IndexBuffer::loadBuffer(void) {
+    // Allocate space and transfer the data.
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->size(), this->data(), m_usage);
     }

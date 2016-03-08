@@ -109,11 +109,6 @@ VertexBuffer::data_mix VertexBuffer::mix(void) const {
     }
 
 void VertexBuffer::loadBuffer(void) {
-    glBindBuffer(GL_ARRAY_BUFFER, this->ID());
-
     // Allocate space and transfer the data.
     glBufferData(GL_ARRAY_BUFFER, this->size(), this->data(), m_usage);
-
-    // Unbind the buffer.
-    glBindBuffer(GL_ARRAY_BUFFER, OGL_ID::NO_ID);
     }
