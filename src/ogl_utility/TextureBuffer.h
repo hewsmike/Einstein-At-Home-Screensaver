@@ -106,6 +106,20 @@ class TextureBuffer : public Buffer {
         virtual ~TextureBuffer();
 
         /**
+         * \brief Obtains the resources.
+         *
+         * \return a boolean indicating success of acquisition
+         *              true - resources acquired without error
+         *              false - resources were not acquired
+         */
+        virtual void acquire(void);
+
+        /**
+         * \brief Releases the object resources.
+         */
+        virtual void release(void);
+
+        /**
          * \brief Perform any binding to the OpenGL pipeline.
          */
         virtual void bind(void);
@@ -152,20 +166,6 @@ class TextureBuffer : public Buffer {
 
         /// Whether or not mipmaps are to be generated.
         bool m_mipmaps;
-
-        /**
-         * \brief Get an OpenGL handle for the texture.
-         *
-         * \param handle : pointer to a handle.
-         */
-        virtual void acquire_ID(GLuint* handle);
-
-        /**
-         * \brief Release to pool the OpenGL handle for the texture.
-         *
-         * \param handle : pointer to a handle.
-         */
-        virtual void release_ID(GLuint* handle);
 
         /**
          * \brief Populate the buffer with texture data.

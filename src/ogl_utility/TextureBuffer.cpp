@@ -113,12 +113,18 @@ TextureBuffer::~TextureBuffer() {
     Buffer::release();
     }
 
-void TextureBuffer::acquire_ID(GLuint* handle) {
-    glGenTextures(1, handle);
+void TextureBuffer::acquire(void) {
+    GLuint handle;
+    glGenTextures(1, &handle);
+    this->set_ID(handle);
+    this->setAcquisitionState(true);
     }
 
-void TextureBuffer::release_ID(GLuint* handle) {
-    glDeleteTextures(1, handle);
+void TextureBuffer::release(void) {
+    GLuint handle(this->ID());
+    glDeleteTextures(1, &handle);
+    this->reset_ID();
+    this->setAcquisitionState(false);
     }
 
 void TextureBuffer::bind(void) {
