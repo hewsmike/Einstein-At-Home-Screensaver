@@ -1,5 +1,5 @@
 /***************************************************************************
-acr *   Copyright (C) 2014 by Mike Hewson                                     *
+acr *   Copyright (C) 2016 by Mike Hewson                                     *
  *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
@@ -52,17 +52,6 @@ Program::Program(VertexShader* vertex_shader,
 
 Program::~Program() {
     Program::release();
-    }
-
-void Program::bind(void) const {
-    glUseProgram(this->ID());
-    }
-
-void Program::unbind(void)const {
-    // NB from OpenGL 3.3 standard "If program is zero, then the current rendering state refers
-    // to an invalid program object and the results of shader execution are undefined. However,
-    // this is not an error."
-    glUseProgram(OGL_ID::NO_ID);
     }
 
 bool Program::acquire(void) {
@@ -161,7 +150,19 @@ void Program::release(void) {
     // Reset linkage status.
     link_status = Program::NEVER_LINKED;
     // Set our handle store to safe value.
-    set_ID(OGL_ID::NO_ID);
+    this->reset_ID();
+    this->setAcquisitionState(false);
+    }
+
+void Program::bind(void) const {
+    glUseProgram(this->ID());
+    }
+
+void Program::unbind(void)const {
+    // NB from OpenGL 3.3 standard "If program is zero, then the current rendering state refers
+    // to an invalid program object and the results of shader execution are undefined. However,
+    // this is not an error."
+    glUseProgram(OGL_ID::NO_ID);
     }
 
 bool Program::isDeleted(void) const {

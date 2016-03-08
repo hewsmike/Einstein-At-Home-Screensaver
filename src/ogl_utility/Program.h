@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2014 by Mike Hewson                                     *
+ *   Copyright (C) 2016 by Mike Hewson                                     *
  *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
@@ -75,6 +75,20 @@ class Program : public OGL_ID {
         virtual ~Program();
 
         /**
+         * \brief Obtains the resources.
+         *
+         * \return a boolean indicating success of acquisition
+         *              true - resources acquired without error
+         *              false - resources were not acquired
+         */
+        virtual bool acquire(void);
+
+        /**
+         * \brief Releases the object resources.
+         */
+        virtual void release(void);
+
+        /**
          * \brief Make the underlying OpenGL program object part of current
          *           pipeline state.
          */
@@ -85,20 +99,6 @@ class Program : public OGL_ID {
          *        current pipeline state.
          */
         void unbind(void) const;
-
-        /**
-         * \brief Obtains the program object resources.
-         *
-         * \return a boolean indicating success of acquisition
-         *              TRUE - resources acquired without error
-         *              FALSE - resources were not acquired
-         */
-        bool acquire(void);
-
-        /**
-         * \brief Releases the program object resources.
-         */
-        void release(void);
 
         /**
          * \brief Determine if program has been MARKED for deletion.
