@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2015 by Mike Hewson                                     *
+ *   Copyright (C) 2016 by Mike Hewson                                     *
  *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
@@ -79,6 +79,20 @@ class VertexBuffer : public Buffer {
         virtual ~VertexBuffer();
 
         /**
+         * \brief Obtains the resources.
+         *
+         * \return a boolean indicating success of acquisition
+         *              true - resources acquired without error
+         *              false - resources were not acquired
+         */
+        virtual void VertexBuffer::acquire(void);
+
+        /**
+         * \brief Releases the object resources.
+         */
+        virtual void VertexBuffer::release(void);
+
+        /**
          * \brief Perform any binding to the OpenGL pipeline.
          */
         virtual void bind(void);
@@ -128,21 +142,6 @@ class VertexBuffer : public Buffer {
          * \brief Populate the buffer with vertex data.
          */
         virtual void loadBuffer(void);
-
-        /**
-         * \brief Get an OpenGL handle for the texture.
-         *
-         * \param handle : pointer to a handle.
-         */
-        virtual void acquire_ID(GLuint* handle);
-
-        /**
-         * \brief Release to pool the OpenGL handle for the texture.
-         *
-         * \param handle : pointer to a handle.
-         */
-        virtual void release_ID(GLuint* handle);
-
     };
 
 /**

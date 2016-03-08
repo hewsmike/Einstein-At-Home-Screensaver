@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2014 by Mike Hewson                                     *
+ *   Copyright (C) 2016 by Mike Hewson                                     *
  *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
@@ -52,12 +52,18 @@ VertexBuffer::~VertexBuffer() {
     this->release();
     }
 
-void VertexBuffer::acquire_ID(GLuint* handle) {
-    glGenBuffers(1, handle);
+void VertexBuffer::acquire(void) {
+    GLuint handle;
+    glGenBuffers(1, &handle);
+    this->set_ID(handle);
+    this->setAcquisitionState(true);
     }
 
-void VertexBuffer::release_ID(GLuint* handle) {
-    glDeleteBuffers(1, handle);
+void VertexBuffer::release(void) {
+    GLuint handle(this->ID());
+    glDeleteBuffers(1, &handle);
+    this->reset_ID();
+    this->setAcquisitionState(false);
     }
 
 GLuint VertexBuffer::vertexCount(void) const {
