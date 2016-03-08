@@ -158,11 +158,28 @@ void Program::bind(void) const {
     glUseProgram(this->ID());
     }
 
-void Program::unbind(void)const {
+void Program::unbind(void) const {
     // NB from OpenGL 3.3 standard "If program is zero, then the current rendering state refers
     // to an invalid program object and the results of shader execution are undefined. However,
     // this is not an error."
     glUseProgram(OGL_ID::NO_ID);
+    }
+
+bool Program::isBound(void) const {
+    // Assume failure.
+    bool ret_flag = false;
+
+    // Dynamically obtain the current program name.
+    GLint prog_name;
+    glGetIntegerv(GL_CURRENT_PROGRAM, &prog_name);
+
+    // Is it this object's ID ?
+    if((prog_name == GLint(this->ID())) && (prog_name != OGL_ID::NO_ID)) {
+        // Yes, so this VAO is bound.
+        ret_flag = true;
+        }
+
+    return ret_flag;
     }
 
 bool Program::isDeleted(void) const {

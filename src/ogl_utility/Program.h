@@ -47,7 +47,7 @@
  * \author Mike Hewson\n
  */
 
-class Program : public OGL_ID {
+class Program : public OGL_ID, public Bindable {
     public :
         // These are the possible link states.
         enum linkageState {NEVER_LINKED,
@@ -75,6 +75,27 @@ class Program : public OGL_ID {
         virtual ~Program();
 
         /**
+		 * \brief Perform any binding to the OpenGL pipeline.
+		 */
+		virtual void bind(void);
+
+		/**
+		 * \brief Remove any binding to the OpenGL pipeline.
+		 */
+		virtual void unbind(void);
+
+		/**
+		 * \brief The binding state of any underlying OpenGL objects
+		 *        to the OpenGL state machine. This is a
+		 *        dynamic inquiry.
+		 *
+		 * \return a boolean indicating binding state :
+		 *          true - the object is bound
+		 *          false - the object is not bound
+		 */
+		virtual bool isBound(void) const;
+
+        /**
          * \brief Obtains the resources.
          *
          * \return a boolean indicating success of acquisition
@@ -88,17 +109,6 @@ class Program : public OGL_ID {
          */
         virtual void release(void);
 
-        /**
-         * \brief Make the underlying OpenGL program object part of current
-         *           pipeline state.
-         */
-        void bind(void) const;
-
-        /**
-         * \brief Detach the underlying OpenGL program object from the
-         *        current pipeline state.
-         */
-        void unbind(void) const;
 
         /**
          * \brief Determine if program has been MARKED for deletion.
