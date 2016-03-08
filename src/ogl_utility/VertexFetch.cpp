@@ -194,7 +194,7 @@ bool VertexFetch::isBound(void) const {
     glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &vao_name);
 
     // Is it this object's ID ?
-    if(vao_name == GLint(this->ID())) {
+    if(vao_name == GLint(this->ID()) && (vao_name != OGL_ID::NO_ID)) {
         // Yes, so this VAO is bound.
         ret_flag = true;
         }
