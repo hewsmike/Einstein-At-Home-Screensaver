@@ -74,6 +74,20 @@ class IndexBuffer : public Buffer {
         virtual ~IndexBuffer();
 
         /**
+         * \brief Obtains the resources.
+         *
+         * \return a boolean indicating success of acquisition
+         *              true - resources acquired without error
+         *              false - resources were not acquired
+         */
+        virtual void IndexBuffer::acquire(void);
+
+        /**
+         * \brief Releases the object resources.
+         */
+        virtual void IndexBuffer::release(void);
+
+        /**
          * \brief Perform any data binding to the pipeline input.
          */
         void bind(void);
@@ -107,20 +121,6 @@ class IndexBuffer : public Buffer {
          * \brief Populate the buffer with index data.
          */
         virtual void loadBuffer(void);
-
-        /**
-         * \brief Get an OpenGL handle for the texture.
-         *
-         * \param handle : pointer to a handle.
-         */
-        virtual void acquire_ID(GLuint* handle);
-
-        /**
-         * \brief Release to pool the OpenGL handle for the texture.
-         *
-         * \param handle : pointer to a handle.
-         */
-        virtual void release_ID(GLuint* handle);
     };
 
 /**

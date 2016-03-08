@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2015 by Mike Hewson                                     *
+ *   Copyright (C) 2016 by Mike Hewson                                     *
  *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
@@ -65,12 +65,18 @@ IndexBuffer::~IndexBuffer() {
     this->release();
     }
 
-void IndexBuffer::acquire_ID(GLuint* handle) {
-    glGenBuffers(1, handle);
+void IndexBuffer::acquire(void) {
+    GLuint handle;
+    glGenBuffers(1, &handle);
+    this->set_ID(handle);
+    this->setAcquisitionState(true);
     }
 
-void IndexBuffer::release_ID(GLuint* handle) {
-    glDeleteBuffers(1, handle);
+void IndexBuffer::release(void) {
+    GLuint handle(this->ID());
+    glDeleteBuffers(1, &handle);
+    this->reset_ID();
+    this->setAcquisitionState(false);
     }
 
 void IndexBuffer::loadBuffer(void) {
