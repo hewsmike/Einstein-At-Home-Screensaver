@@ -18,8 +18,8 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef CONFIGURABLE_H_
-#define CONFIGURABLE_H_
+#ifndef TRIGGERABLE_H_
+#define TRIGGERABLE_H_
 
 #include "ogl_utility.h"
 
@@ -29,59 +29,44 @@
  */
 
 /**
- * \brief This interface declares public methods to deal with those objects
- *        that require configuration/setup before first use.
+ * \brief This interface declares public methods to deal with objects
+ *        that involve triggering of the OpenGL pipeline.
  *
  * \author Mike Hewson\n
  */
 
-class Configurable {
-    public :
+class Triggerable {
+    public:
         /**
          * \brief Constructor.
          */
-        Configurable(void);
+        Triggerable(void);
 
         /**
          * \brief Destructor.
          */
-        virtual ~Configurable();
-
-         /**
-         * \brief actually configure the underlying object. The configuration
-         *        state must be set by any derived class via setConfigurationState().
-         *
-         * \return a boolean indicating success of configuration
-         *              - true, the configuration as successful.
-         *              - false, the configuration was not successful.
-         */
-        virtual bool m_configure(void) = 0;
+        virtual ~Triggerable();
 
         /**
-         * \brief The configuration state of the object.
+         * \brief Trigger pipeline activity.
          *
-         * \return a boolean indicating configuration state :
-         *          true : the object has been configured
-         *          false : the object has not been configured
+         * \param primitive : one of the OpenGL primitives
+         *          GL_POINTS
+         *          GL_LINE_STRIP
+         *          GL_LINE_LOOP
+         *          GL_LINES
+         *          GL_TRIANGLE_STRIP
+         *          GL_TRIANGLE_FAN
+         *          GL_TRIANGLES
+         * \param count : how many times to invoke the vertex shader.
          */
-        bool isConfigured(void) const;
-
-    protected :
-        /**
-         * \brief Set the configuration state flag for this object.
-         *
-         * \param state : the desired configuration state.
-         *                  true - the object has been configured
-         *                  false - the object has not been configured
-         */
-        void setConfigurationState(bool state);
+        virtual void trigger(GLenum primitive, GLsizei count) = 0;
 
     private:
-        bool m_configure_flag;
     };
 
 /**
  * @}
  */
 
-#endif /*CONFIGURABLE_H_*/
+#endif /*TRIGGERABLE_H_*/
