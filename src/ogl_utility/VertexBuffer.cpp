@@ -66,10 +66,6 @@ void VertexBuffer::release(void) {
     this->setAcquisitionState(false);
     }
 
-GLuint VertexBuffer::vertexCount(void) const {
-    return m_vertex_count;
-    }
-
 void VertexBuffer::bind(void) {
     // Only acquire if not already.
     if(this->isAcquired() == false) {
@@ -84,10 +80,6 @@ void VertexBuffer::bind(void) {
 void VertexBuffer::unbind(void) {
     // Unbind the given buffer object from pipeline state.
     glBindBuffer(GL_ARRAY_BUFFER, OGL_ID::NO_ID);
-    }
-
-VertexBuffer::data_mix VertexBuffer::mix(void) const {
-    return m_mix;
     }
 
 bool VertexBuffer::isBound(void) const {
@@ -105,6 +97,14 @@ bool VertexBuffer::isBound(void) const {
         }
 
     return ret_val;
+    }
+
+GLuint VertexBuffer::vertexCount(void) const {
+    return m_vertex_count;
+    }
+
+VertexBuffer::data_mix VertexBuffer::mix(void) const {
+    return m_mix;
     }
 
 void VertexBuffer::loadBuffer(void) {
