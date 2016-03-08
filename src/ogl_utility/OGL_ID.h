@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2014 by Mike Hewson                                     *
+ *   Copyright (C) 2016 by Mike Hewson                                     *
  *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
@@ -21,6 +21,7 @@
 #ifndef OGL_ID_H_
 #define OGL_ID_H_
 
+#include "Acquirable.h"
 #include "ogl_utility.h"
 
 #include "framework.h"
@@ -34,15 +35,10 @@
  * \brief This interface declares public methods to deal with OpenGL
  *        objects that use runtime allocated identifiers.
  *
- *      Many OpenGL types have a common functionality for which this
- * class is a base of. The detailed acquisition and release of OpenGL
- * resources is to be provided in subclasses. NOTE CAREFULLY that a
- * suitable derived class destructor MUST call release() !!!
- *
  * \author Mike Hewson\n
  */
 
-class OGL_ID {
+class OGL_ID : public Acquirable {
     public:
         /// Default initialiser for the identifier.
         static const GLuint NO_ID;
@@ -53,37 +49,9 @@ class OGL_ID {
         OGL_ID(void);
 
         /**
-         * \brief Destructor - do NOT call release() here, a suitable derived
-         *        class destructor MUST call it.
+         * \brief Destructor.
          */
         virtual ~OGL_ID();
-
-        /**
-         * \brief Obtains the underlying OpenGL buffer object resources
-         *        from the OpenGL state machine.
-         *
-         * \return a boolean indicating success of acquisition
-         *              true - resources acquired without error
-         *              false - resources were not acquired
-         */
-        virtual bool acquire(void) = 0;
-
-        /**
-         * \brief Releases the underlying OpenGL buffer object resources
-         *        from the OpenGL state machine.
-         */
-        virtual void release(void) = 0;
-
-        /**
-         * \brief The acquisition state of the underlying OpenGL buffer
-         *        object with respect to the OpenGL state machine. That is,
-         *        have the OpenGL state machine resources been acquired ?
-         *
-         * \return a boolean indicating acquisition state :
-         *          true : the object has acquired resources
-         *          false : the object does not have acquired resources
-         */
-        bool isAcquired(void) const;
 
         /**
          * \brief Obtain the OpenGL resource identifier.
@@ -101,20 +69,13 @@ class OGL_ID {
         void set_ID(GLuint value);
 
         /**
-         * \brief Set the acquisition state flag for this object.
-         *
-         * \param state : the desired acquisition state.
-         *                  true - the object has acquired resources
-         *                  false - the object does not have acquired resources
+         * \brief Reset the OpenGL resource identifier to a 'NULL' value.
          */
-        void setAcquisitionState(bool state);
+        void reset_ID(void);
 
     private:
         /// The identifier as allocated by OpenGL.
         GLuint m_ident;
-
-        /// Flag indicating if OpenGL resources have been acquired.
-        bool m_acquire_flag;
     };
 
 /**

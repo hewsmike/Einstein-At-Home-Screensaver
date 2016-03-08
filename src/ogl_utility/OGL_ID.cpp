@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2015 by Mike Hewson                                     *
+ *   Copyright (C) 2016 by Mike Hewson                                     *
  *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
@@ -27,16 +27,10 @@ const GLuint OGL_ID::NO_ID(0);
 
 // Make sure you start with an un-assigned identifier,
 // lest you later over-write resources!
-OGL_ID::OGL_ID() : m_ident(OGL_ID::NO_ID),
-                   m_acquire_flag (false) {
+OGL_ID::OGL_ID() : m_ident(OGL_ID::NO_ID) {
     }
 
-// Must NOT call release() from here !!
 OGL_ID::~OGL_ID() {
-    }
-
-bool OGL_ID::isAcquired(void) const {
-    return m_acquire_flag;
     }
 
 GLuint OGL_ID::ID(void) const {
@@ -47,6 +41,6 @@ void OGL_ID::set_ID(GLuint value) {
     m_ident = value;
     }
 
-void OGL_ID::setAcquisitionState(bool state) {
-    m_acquire_flag = state;
+void OGL::reset_ID(void) {
+    m_ident = OGL_ID::NO_ID;
     }
