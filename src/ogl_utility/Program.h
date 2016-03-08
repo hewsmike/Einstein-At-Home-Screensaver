@@ -27,6 +27,7 @@
 #include <string>
 
 #include "AttributeInputAdapter.h"
+#include "Configurable.h"
 #include "FragmentShader.h"
 #include "OGL_ID.h"
 #include "VertexShader.h"
@@ -47,7 +48,7 @@
  * \author Mike Hewson\n
  */
 
-class Program : public OGL_ID, public Bindable {
+class Program : public OGL_ID, public Bindable, public Configurable {
     public :
         // These are the possible link states.
         enum linkageState {NEVER_LINKED,
@@ -109,7 +110,16 @@ class Program : public OGL_ID, public Bindable {
 		 */
 		virtual bool isBound(void) const;
 
-        /**
+		/**
+		 * \brief Actually configure any underlying object(s).
+		 *
+		 * \return a boolean indicating success of configuration
+		 *              - true, the configuration as successful.
+		 *              - false, the configuration was not successful.
+		 */
+		virtual bool configure(void);
+
+		/**
          * \brief Determine if program has been MARKED for deletion.
          *
          * \return a boolean indicating deletion status
@@ -209,10 +219,10 @@ class Program : public OGL_ID, public Bindable {
         AttributeInputAdapter* m_adapter;
 
         /// Indicator of current linkage state.
-        linkageState link_status;
+        linkageState m_link_status;
 
         /// The linker log for this shader.
-        std::string linker_log;
+        std::string m_linker_log;
 
         /// Map to track the active uniform variables within the OpenGL
         /// program entity. Active means those declared and used within
@@ -221,7 +231,7 @@ class Program : public OGL_ID, public Bindable {
         /// may ( and probably will ) ignore them and thus discard any
         /// reference to them.
         typedef std::map<std::string, Program::uniform_data> uniformMap;
-        uniformMap uniforms;
+        uniformMap m_uniforms;
   };
 
 /**

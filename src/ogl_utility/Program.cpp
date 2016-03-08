@@ -47,7 +47,7 @@ Program::Program(VertexShader* vertex_shader,
     m_adapter = adapter;
 
     // Initially unlinked.
-    link_status = Program::NEVER_LINKED;
+    m_link_status = Program::NEVER_LINKED;
     }
 
 Program::~Program() {
@@ -58,89 +58,19 @@ bool Program::acquire(void) {
     // Assume failure.
     bool ret_val = false;
 
-    // Provided a prior link attempt has not occurred.
-    if(link_status == Program::NEVER_LINKED) {
-        // Clear the linker log.
-        linker_log = "";
+    // Only get a handle if none already.
+	if(this->ID() == OGL_ID::NO_ID) {
+		// Get an OpenGL handle for this program object.
+		GLuint temp = glCreateProgram();
+		set_ID(temp);
+		// If that handle acquisition failed the we have no other option ...
+		if(this->ID() == OGL_ID::NO_ID)  {
+			ErrorHandler::record("Program::acquire() : OpenGL handle acquisition failure !",
+								 ErrorHandler::INFORM);
+			}
+		}
 
-        // Attaching and linking shaders only occurs if both have compiled
-        // successfully and neither have been marked for deletion ( which
-        // includes the possibility that they may have been deleted ).
-        if((m_vertex_shader->isDeleted() == false ) &&
-           (m_fragment_shader->isDeleted() == false )) {
-            // No deletions marked, so compile if needed.
-            if(m_vertex_shader->status() == Shader::NEVER_COMPILED) {
-                m_vertex_shader->configure();
-                }
-
-            if(m_fragment_shader->status() == Shader::NEVER_COMPILED) {
-                m_fragment_shader->configure();
-                }
-
-            // Attach only if both pass muster.
-            if((m_vertex_shader->status() == Shader::COMPILE_SUCCEEDED) &&
-               (m_fragment_shader->status() == Shader::COMPILE_SUCCEEDED)) {
-
-                // Only get a handle if none already.
-                if(this->ID() == OGL_ID::NO_ID) {
-                    // Get an OpenGL handle for this program object.
-                    GLuint temp = glCreateProgram();
-                    set_ID(temp);
-                    // If that handle acquisition failed the we have no other option ...
-                    if(this->ID() == OGL_ID::NO_ID)  {
-                        ErrorHandler::record("Program::acquire() : OpenGL handle acquisition failure !",
-                                             ErrorHandler::FATAL);
-                        }
-                    }
-
-                // The shaders have compiled without error, and are
-                // not marked for deletion, so attach them.
-                std::stringstream vshader_msg;
-                vshader_msg << "Program::acquire() : attaching vertex shader with ID = "
-                            << m_vertex_shader->ID()
-                            << " to program with ID = "
-                            << this->ID();
-                ErrorHandler::record(vshader_msg.str(), ErrorHandler::INFORM);
-                glAttachShader(this->ID(), m_vertex_shader->ID());
-
-                std::stringstream fshader_msg;
-                fshader_msg << "Program::acquire() : attaching fragment shader with ID = "
-                            << m_fragment_shader->ID()
-                            << " to program with ID = "
-                            << this->ID();
-                ErrorHandler::record(fshader_msg.str(), ErrorHandler::INFORM);
-                glAttachShader(this->ID(), m_fragment_shader->ID());
-
-                // Link program and check for success.
-                if(link() == true) {
-                    ret_val = true;
-                    }
-                else {
-                    link_status = Program::LINKAGE_FAILED;
-                    ErrorHandler::record("Program::acquire() : failure to GLSL link !",
-                                         ErrorHandler::WARN);
-                    // Populate the linkage log ie. retrieve linker error output.
-                    // Copy to an std::string via temporary character array to avoid
-                    // const semantic difficulties on the std::string c_str() method.
-                    GLint log_len;
-                    glGetProgramiv(this->ID(), GL_INFO_LOG_LENGTH, &log_len);
-                    // Use extra character to account for null character terminator ( documentation unclear ).
-                    GLchar* temp_log = new GLchar[log_len+1];
-                    GLsizei returned_log_len;
-                    glGetProgramInfoLog(this->ID(), log_len+1, &returned_log_len, temp_log);
-
-                    // Account for null character terminator ( documentation unclear ).
-                    temp_log[log_len] = '\0';
-                    linker_log = temp_log;
-
-                    // Dispose of the temporary character array.
-                    delete[] temp_log;
-                    }
-                }
-            }
-        }
-
-    return ret_val;
+	return ret_val;
     }
 
 void Program::release(void) {
@@ -148,7 +78,7 @@ void Program::release(void) {
     glDeleteProgram(this->ID());
 
     // Reset linkage status.
-    link_status = Program::NEVER_LINKED;
+    m_link_status = Program::NEVER_LINKED;
     // Set our handle store to safe value.
     this->reset_ID();
     this->setAcquisitionState(false);
@@ -182,6 +112,88 @@ bool Program::isBound(void) const {
     return ret_flag;
     }
 
+bool Program::configure(void) {
+	// Assume failure.
+	bool ret_val = false;
+	if(this->isAcquired() == false) {
+		this->acquire();
+		}
+
+	// Provided a prior link attempt has not occurred.
+	if(m_link_status == Program::NEVER_LINKED) {
+		// Clear the linker log.
+		m_linker_log = "";
+
+		// Attaching and linking shaders only occurs if both have compiled
+		// successfully and neither have been marked for deletion ( which
+		// includes the possibility that they may have been deleted ).
+		if((m_vertex_shader->isDeleted() == false ) &&
+		   (m_fragment_shader->isDeleted() == false )) {
+			// No deletions marked, so compile if needed.
+			if(m_vertex_shader->status() == Shader::NEVER_COMPILED) {
+				m_vertex_shader->configure();
+				}
+
+			if(m_fragment_shader->status() == Shader::NEVER_COMPILED) {
+				m_fragment_shader->configure();
+				}
+
+			// Attach only if both pass muster.
+			if((m_vertex_shader->status() == Shader::COMPILE_SUCCEEDED) &&
+			   (m_fragment_shader->status() == Shader::COMPILE_SUCCEEDED)) {
+
+
+
+				// The shaders have compiled without error, and are
+				// not marked for deletion, so attach them.
+				std::stringstream vshader_msg;
+				vshader_msg << "Program::acquire() : attaching vertex shader with ID = "
+							<< m_vertex_shader->ID()
+							<< " to program with ID = "
+							<< this->ID();
+				ErrorHandler::record(vshader_msg.str(), ErrorHandler::INFORM);
+				glAttachShader(this->ID(), m_vertex_shader->ID());
+
+				std::stringstream fshader_msg;
+				fshader_msg << "Program::acquire() : attaching fragment shader with ID = "
+							<< m_fragment_shader->ID()
+							<< " to program with ID = "
+							<< this->ID();
+				ErrorHandler::record(fshader_msg.str(), ErrorHandler::INFORM);
+				glAttachShader(this->ID(), m_fragment_shader->ID());
+
+				// Link program and check for success.
+				if(link() == true) {
+					ret_val = true;
+					}
+				else {
+					m_link_status = Program::LINKAGE_FAILED;
+					ErrorHandler::record("Program::acquire() : failure to GLSL link !",
+										 ErrorHandler::WARN);
+					// Populate the linkage log ie. retrieve linker error output.
+					// Copy to an std::string via temporary character array to avoid
+					// const semantic difficulties on the std::string c_str() method.
+					GLint log_len;
+					glGetProgramiv(this->ID(), GL_INFO_LOG_LENGTH, &log_len);
+					// Use extra character to account for null character terminator ( documentation unclear ).
+					GLchar* temp_log = new GLchar[log_len+1];
+					GLsizei returned_log_len;
+					glGetProgramInfoLog(this->ID(), log_len+1, &returned_log_len, temp_log);
+
+					// Account for null character terminator ( documentation unclear ).
+					temp_log[log_len] = '\0';
+					m_linker_log = temp_log;
+
+					// Dispose of the temporary character array.
+					delete[] temp_log;
+					}
+				}
+			}
+		}
+
+	return ret_val;
+	}
+
 bool Program::isDeleted(void) const {
     // Assume not marked for deletion.
     bool ret_val = false;
@@ -198,7 +210,7 @@ bool Program::isDeleted(void) const {
     }
 
 Program::linkageState Program::status(void) const {
-    return link_status;
+    return m_link_status;
     }
 
 bool Program::link(void) {
@@ -234,7 +246,7 @@ bool Program::link(void) {
     GLint link_state = GL_FALSE;
     glGetProgramiv(this->ID(), GL_LINK_STATUS, &link_state);
     if(link_state == GL_TRUE) {
-        link_status = Program::LINKAGE_SUCCEEDED;
+        m_link_status = Program::LINKAGE_SUCCEEDED;
         mapUniforms();
         ret_val = true;
         }
@@ -243,16 +255,16 @@ bool Program::link(void) {
     }
 
 const std::string& Program::linkageLog(void) const {
-    return linker_log;
+    return m_linker_log;
     }
 
 void Program::setUniformLoadPoint(const std::string& uniform_name, GLvoid* load_point) {
     uniform_data current;
     current.client_load_point = load_point;
 
-    uniformMap::iterator pos = uniforms.find(uniform_name);
-    if(pos == uniforms.end()) {
-        uniforms.insert(std::make_pair(uniform_name, current));
+    uniformMap::iterator pos = m_uniforms.find(uniform_name);
+    if(pos == m_uniforms.end()) {
+        m_uniforms.insert(std::make_pair(uniform_name, current));
         }
     else {
         pos->second = current;
@@ -299,8 +311,8 @@ bool Program::mapUniforms(void) {
             current.GLSL_type = uniform_type;
             current.program_location = (GLint)(index);
 
-            uniformMap::iterator pos = uniforms.find(u_name);
-            if(pos != uniforms.end()) {
+            uniformMap::iterator pos = m_uniforms.find(u_name);
+            if(pos != m_uniforms.end()) {
                 pos->second.GLSL_type = uniform_type;
                 pos->second.program_location = index;
 
@@ -321,7 +333,7 @@ bool Program::mapUniforms(void) {
     }
 
 Program::uniform_data Program::getUniform(std::string u_name) {
-    uniformMap::iterator pos = uniforms.find(u_name);
+    uniformMap::iterator pos = m_uniforms.find(u_name);
     return pos->second;
     }
 
@@ -695,8 +707,8 @@ std::string Program::checkUniform(GLenum type) {
 
 void Program::frameCallBack(void) {
     // Load each known uniform variable upon referring to an earlier constructed map.
-    for(uniformMap::const_iterator uniform = uniforms.begin();
-        uniform != uniforms.end();
+    for(uniformMap::const_iterator uniform = m_uniforms.begin();
+        uniform != m_uniforms.end();
         ++uniform) {
         this->loadUniform(uniform->second);
         }

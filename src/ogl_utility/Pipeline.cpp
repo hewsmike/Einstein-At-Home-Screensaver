@@ -45,7 +45,7 @@ void Pipeline::utilise(GLenum primitive, GLsizei count) {
     // Link program if not done.
     if(m_program->status() == Program::NEVER_LINKED) {
         ErrorHandler::record("Pipeline::utilise() : program needs acquisition ...", ErrorHandler::INFORM);
-        m_program->acquire();
+        m_program->configure();
         }
 
     // Need to acquire Vertexfetch if not already.
