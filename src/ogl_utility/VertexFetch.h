@@ -95,16 +95,16 @@ class VertexFetch : public OGL_ID, public Bindable {
         virtual ~VertexFetch();
 
         /**
-         * \brief Obtain the OpenGL resource.
+         * \brief Obtains the resources.
          *
          * \return a boolean indicating success of acquisition
-         *              TRUE - resources acquired without error
-         *              FALSE - resources were not acquired
+         *              true - resources acquired without error
+         *              false - resources were not acquired
          */
         virtual bool acquire(void);
 
         /**
-         * \brief Release the OpenGL resource.
+         * \brief Releases the object resources.
          */
         virtual void release(void);
 

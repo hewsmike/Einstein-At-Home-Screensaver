@@ -145,7 +145,8 @@ void VertexFetch::release(void) {
     glDeleteVertexArrays(1, &temp);
 
     // Reset our handle store to safe value.
-    set_ID(OGL_ID::NO_ID);
+    this->reset_ID();
+    this->setAcquisitionState(false);
     }
 
 void VertexFetch::bind(void) {
