@@ -130,8 +130,8 @@ class TextureBuffer : public Buffer {
         virtual void unbind(void);
 
         /**
-         * \brief The binding state of the underlying OpenGL buffer
-         *        object to the OpenGL state machine. This MUST be a
+         * \brief The binding state of any underlying OpenGL objects
+         *        to the OpenGL state machine. This is a
          *        dynamic inquiry.
          *
          * \return a boolean indicating binding state :
