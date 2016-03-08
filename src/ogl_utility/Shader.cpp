@@ -92,7 +92,7 @@ void Shader::release(void) {
     // for deletion. This does not refer to any client source code entity.
     glDeleteShader(this->ID());
     // Set our handle store to safe value.
-    set_ID(OGL_ID::NO_ID);
+    this->reset_ID();
     // Reset compilation status.
     comp_status = Shader::NEVER_COMPILED;
     }
