@@ -88,19 +88,25 @@ class IndexBuffer : public Buffer {
         virtual void release(void);
 
         /**
-         * \brief Perform any data binding to the pipeline input.
+         * \brief Perform any binding to the OpenGL pipeline.
          */
-        void bind(void);
+        virtual void bind(void);
 
         /**
-         * \brief Remove any data binding to the pipeline input.
+         * \brief Remove any binding to the OpenGL pipeline.
          */
-        void unbind(void);
+        virtual void unbind(void);
 
         /**
-         * \brief Query if the buffer is bound.
+         * \brief The binding state of any underlying OpenGL objects
+         *        to the OpenGL state machine. This is a
+         *        dynamic inquiry.
+         *
+         * \return a boolean indicating binding state :
+         *          true - the object is bound
+         *          false - the object is not bound
          */
-        bool isBound(void) const;
+        virtual bool isBound(void) const;
 
         /*
          * \brief The type of index used.
