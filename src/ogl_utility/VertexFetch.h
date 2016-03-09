@@ -62,7 +62,7 @@
  * \author Mike Hewson\n
  */
 
-class VertexFetch : public OGL_ID, public Bindable {
+class VertexFetch : public OGL_ID, public Bindable, public Configurable {
     public :
         /**
          * \brief Constructor.
@@ -129,6 +129,15 @@ class VertexFetch : public OGL_ID, public Bindable {
 		 */
 		virtual bool isBound(void) const;
 
+		/**
+         * \brief Actually configure any underlying object(s).
+         *
+         * \return a boolean indicating success of configuration
+         *              - true, the configuration as successful.
+         *              - false, the configuration was not successful.
+         */
+        virtual bool configure(void);
+
         /**
          * \brief Trigger pipeline activity. Attachment occurs automatically
          *        if not already performed.
@@ -154,9 +163,6 @@ class VertexFetch : public OGL_ID, public Bindable {
         /// Indicator of current operating state.
         operatingMode m_operating_mode;
 
-        ///Has this object been configured ?
-        bool m_configure_flag;
-
         // The input adapter pointer.
         AttributeInputAdapter* m_adapter;
 
@@ -166,8 +172,6 @@ class VertexFetch : public OGL_ID, public Bindable {
 
         /// The total length in bytes of all the attributes.
         GLuint m_attribute_length_sum;
-
-        bool configure(void);
 
         struct attribute_record {AttributeInputAdapter::attribute_spec a_spec;     // An attribute specification.
                                  GLuint length;             // The byte length of this attribute (how many x how long).

@@ -32,9 +32,6 @@ VertexFetch::VertexFetch(){
     // Initially the total sum of attribute lengths is zero.
     m_attribute_length_sum = 0;
 
-    // Attribute configuration yet to be done.
-    m_configure_flag = false;
-
     // This is the use case enabled for this constructor.
     m_operating_mode = BARE;
     }
@@ -59,9 +56,6 @@ VertexFetch::VertexFetch(AttributeInputAdapter* adapter, VertexBuffer* vertices)
 
     // Initially the total sum of attribute lengths is zero.
     m_attribute_length_sum = 0;
-
-    // Attribute configuration yet to be done.
-    m_configure_flag = false;
 
     // This is the use case enabled for this constructor.
     m_operating_mode = VERTICES_ONLY;
@@ -91,9 +85,6 @@ VertexFetch::VertexFetch(AttributeInputAdapter* adapter, VertexBuffer* vertices,
 
     // Initially the total sum of attribute lengths is zero.
     m_attribute_length_sum = 0;
-
-    // Attribute configuration yet to be done.
-    m_configure_flag = false;
 
     // This is the use case enabled for this constructor.
     m_operating_mode = VERTICES_AND_INDICES;
@@ -203,37 +194,37 @@ bool VertexFetch::isBound(void) const {
     }
 
 bool VertexFetch::configure(void) {
-    // Assume failure.
-    bool ret_val = false;
+    // Assume success.
+    ret_val = false;
 
-    // Ensure resource acquisition first.
-    this->acquire();
+    if(isConfigured() == false) {
+        // Ensure resource acquisition first.
+        this->acquire();
 
-    // If one or both of vertex/index buffers exist then
-    if(m_operating_mode != BARE) {
-        //
-        processAttributeDescriptions();
+        // If a vertex buffers exist then we must correlate
+        if(m_operating_mode != BARE) {
+            //
+            processAttributeDescriptions();
 
-        //
-        prepareAttributeMapping();
+            //
+            prepareAttributeMapping();
 
-        // Enable fetching for all supplied vertex attribute indices,
-        // these corresponding to 'location' definitions within the
-        // vertex shader's GLSL code.
-        for(std::vector<attribute_record>::iterator attrib = m_attribute_specs.begin();
-            attrib != m_attribute_specs.end();
-            ++attrib) {
-            glEnableVertexAttribArray(attrib->a_spec.attrib_index);
-            glVertexAttribPointer(attrib->a_spec.attrib_index,
-                                  attrib->a_spec.multiplicity,
-                                  attrib->a_spec.type,
-                                  attrib->a_spec.normalised,
-                                  attrib->stride,
-                                  attrib->pointer);
+            // Enable fetching for all supplied vertex attribute indices,
+            // these corresponding to 'location' definitions within the
+            // vertex shader's GLSL code.
+            for(std::vector<attribute_record>::iterator attrib = m_attribute_specs.begin();
+                attrib != m_attribute_specs.end();
+                ++attrib) {
+                glEnableVertexAttribArray(attrib->a_spec.attrib_index);
+                glVertexAttribPointer(attrib->a_spec.attrib_index,
+                                      attrib->a_spec.multiplicity,
+                                      attrib->a_spec.type,
+                                      attrib->a_spec.normalised,
+                                      attrib->stride,
+                                      attrib->pointer);
             }
+        setConfigurationState(true);
         }
-
-    m_configure_flag = true;
 
     return ret_val;
     }
