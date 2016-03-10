@@ -69,6 +69,7 @@ Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
     m_constellation_lines = 0;
 
     m_render_task_cons = NULL;
+    m_render_task_gammas = NULL;
     m_render_task_psr = NULL;
     m_render_task_snr = NULL;
     m_render_task_star = NULL;
@@ -124,11 +125,13 @@ Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
     m_CurrentDeclination = -1.0;
     m_RefreshSearchMarker = true;
 
-    m_pulsar_color = glm::vec3(0.80, 0.0, 0.85);              // Pulsars are Purple.
-    m_star_color = glm::vec3(1.0, 1.0, 1.0);                  // Stars are White.
-    m_supernova_color = glm::vec3(1.0, 0.0, 0.0);           // Supernovae are Sienna.
-    m_constellation_line_color = glm::vec3(0.7, 0.7, 0.0);  // Lines are Light yellow.
+    m_gamma_color = glm::vec3(0.0, 1.0, 0.0);              // Gammas are Green.
+    m_pulsar_color = glm::vec3(0.80, 0.0, 0.85);           // Pulsars are Purple.
+    m_star_color = glm::vec3(1.0, 1.0, 1.0);               // Stars are White.
+    m_supernova_color = glm::vec3(1.0, 0.0, 0.0);          // Supernovae are Sienna.
+    m_constellation_line_color = glm::vec3(0.7, 0.7, 0.0); // Lines are Light yellow.
 
+    m_gamma_point_size = 3.0f;
     m_pulsar_point_size = 3.0f;
     m_star_point_size = 4.0f;
     m_supernova_point_size = 3.0f;
@@ -409,6 +412,58 @@ void Starsphere::make_constellations() {
 
     // Claim all required state machine resources for this rendering task.
     m_render_task_cons->acquire();
+
+    return;
+    }
+
+/**
+ * Gamma ray pulsars:
+ */
+void Starsphere::make_gammas() {
+    // Temporary array for vertex data, to populate a vertex buffer object.
+    GLfloat gamma_vertex_data[Ngammas * 3];
+
+    // Go through the gamma pulsar position data and convert to cartesian
+    // coordinates at the radius of the sphere.
+    for(int i = 0; i < Ngammas; ++i) {
+        // Vector for a single position.
+        glm::vec3 temp = sphVertex3D(gamma_info[i][0], gamma_info[i][1], SPHERE_RADIUS);
+
+        // Each array position is at successive locations as x, y then z
+        gamma_vertex_data[i*3] = temp.x;
+        gamma_vertex_data[i*3 + 1] = temp.y;
+        gamma_vertex_data[i*3 + 2] = temp.z;
+        }
+
+    // Create factory instance to then access the shader strings.
+    ResourceFactory factory;
+
+    // Populate data structure indicating GLSL code use.
+    RenderTask::shader_group s_group1 = {factory.createInstance("VertexShader_Gammas")->std_string(),
+                                         factory.createInstance("FragmentShader_Pass")->std_string()};
+
+    // Instantiate a rendering task with the provided information.
+    RenderTask::vertex_buffer_group v_group1 = {gamma_vertex_data,
+                                                GLuint(sizeof(gamma_vertex_data)),
+                                                GLuint(Ngammas),
+                                                GL_STATIC_DRAW,
+                                                VertexBuffer::BY_VERTEX};
+
+    // Instantiate a rendering task with the provided information.
+    m_render_task_snr = new RenderTask(s_group1, v_group1);
+
+    // For vertex input need to correlate with vertex shader code.
+    m_render_task_gammas->addSpecification({0, "position", 3, GL_FLOAT, GL_FALSE});
+
+    // For program uniforms need client side pointers.
+    m_render_task_gammas->setUniform("CameraMatrix", TransformGlobals::getCameraTransformMatrix());
+
+    m_render_task_gammas->setUniform("color", &m_gamma_color);
+
+    m_render_task_gammas->setUniform("point_size", &m_gamma_point_size);
+
+    // Claim all required state machine resources for this rendering task.
+    m_render_task_gammas->acquire();
 
     return;
     }
@@ -869,6 +924,7 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
     resize(m_CurrentWidth, m_CurrentHeight);
 
 //    // Create rendering tasks for given features.
+      make_gammas();
       make_snrs();
 //    make_pulsars();
 //    make_stars();
@@ -881,7 +937,7 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
     setFeature(XRAYS, true);            /// TODO - we don't have this feature even designed yet.
     setFeature(PULSARS, true);
     setFeature(SNRS, true);
-    setFeature(GAMMA, true);            /// TODO - we don't have this feature even designed yet.
+    setFeature(GAMMAS, true);
     setFeature(GLOBE, true);
     setFeature(AXES, false);
     setFeature(SEARCHINFO, true);
@@ -1019,6 +1075,9 @@ void Starsphere::render(const double timeOfDay) {
 //    if(isFeature(STARS)) {
 //        m_render_task_star->utilise(GL_POINTS, m_distinct_stars);;
 //        }
+    if(isFeature(GAMMAS)) {
+        m_render_task_gammas->utilise(GL_POINTS, Ngammas);
+        }
 //    if(isFeature(PULSARS)) {
 //        m_render_task_psr->utilise(GL_POINTS, Npulsars);
 //        }
@@ -1149,6 +1208,9 @@ void Starsphere::keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey ke
             break;
         case KeyM:
             setFeature(MARKER, isFeature(MARKER) ? false : true);
+            break;
+        case KeyU:
+            setFeature(GAMMAS, isFeature(GAMMAS) ? false : true);
             break;
         default:
             break;

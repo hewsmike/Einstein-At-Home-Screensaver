@@ -222,7 +222,7 @@ class Starsphere : public AbstractGraphicsEngine {
         enum Features {
             AXES = 1,
             CONSTELLATIONS = 2,
-            GAMMA = 4,
+            GAMMAS = 4,
             GLOBE = 8,
             LOGO = 16,
             MARKER = 32,
@@ -387,17 +387,20 @@ class Starsphere : public AbstractGraphicsEngine {
 
         /// Pointers to rendering tasks.
         RenderTask* m_render_task_cons;
+        RenderTask* m_render_task_gammas;
         RenderTask* m_render_task_psr;
         RenderTask* m_render_task_star;
         RenderTask* m_render_task_snr;
 
         /// Colors.
+        glm::vec3 m_gamma_color;
         glm::vec3 m_pulsar_color;
         glm::vec3 m_star_color;
         glm::vec3 m_supernova_color;
         glm::vec3 m_constellation_line_color;
 
         /// Point & line sizes.
+        GLfloat m_gamma_point_size;
         GLfloat m_pulsar_point_size;
         GLfloat m_star_point_size;
         GLfloat m_supernova_point_size;
@@ -417,17 +420,20 @@ class Starsphere : public AbstractGraphicsEngine {
         glm::vec3 m_axis;
         glm::mat4 m_camera;
 
-        /// Generate OpenGL display list for stars
+        /// Generate rendering task for stars.
         void make_stars();
 
-        /// Generate OpenGL display list for pulsars
+        /// Generate rendering task for pulsars.
         void make_pulsars();
 
-        /// Generate OpenGL display list for SNRs
+        /// Generate rendering task for supernovae.
         void make_snrs();
 
-        /// Generate OpenGL display list for constellations
+        /// Generate rendering task for constellations.
         void make_constellations();
+
+        /// Generate rendering task for gamma ray pulsars.
+        void make_gammas();
 
         /// Generate OpenGL display list for the axes (debug)
         void make_axes();
@@ -511,13 +517,19 @@ class Starsphere : public AbstractGraphicsEngine {
         void configTransformMatrix(void);
     };
 
-/// Constellation & star coordinates (starlist.C)
+/// Constellation & star coordinates (starlist.c)
 extern float star_info[][2];
 
 /// Total number of stars
 extern int Nstars;
 
-/// Pulsar coordinates are (pulsar_list.C)
+/// Gamma pulsar coordinates (gamma_list.c)
+extern float gamma_info[][2];
+
+/// Total number of pulsars
+extern int Ngammas;
+
+/// Pulsar coordinates (pulsar_list.c)
 extern float pulsar_info[][2];
 
 /// Total number of pulsars
