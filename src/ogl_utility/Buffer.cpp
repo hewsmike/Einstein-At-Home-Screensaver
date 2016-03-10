@@ -51,11 +51,11 @@ const GLvoid* Buffer::data(void) const {
 
 bool Buffer::configure(void) {
     // Assume success.
-    ret_val = true;
+    bool ret_val = true;
 
     if(isConfigured() == false) {
         bind();
-        loadbuffer();
+        loadBuffer();
         unbind();
         setConfigurationState(true);
         }

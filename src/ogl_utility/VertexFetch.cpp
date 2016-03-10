@@ -195,7 +195,7 @@ bool VertexFetch::isBound(void) const {
 
 bool VertexFetch::configure(void) {
     // Assume success.
-    ret_val = false;
+    bool ret_val = false;
 
     if(isConfigured() == false) {
         // Ensure resource acquisition first.
@@ -222,7 +222,8 @@ bool VertexFetch::configure(void) {
                                       attrib->a_spec.normalised,
                                       attrib->stride,
                                       attrib->pointer);
-            }
+            	}
+        	}
         setConfigurationState(true);
         }
 

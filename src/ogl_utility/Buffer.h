@@ -22,6 +22,7 @@
 #define BUFFER_H_
 
 #include "Bindable.h"
+#include "Configurable.h"
 #include "ogl_utility.h"
 #include "OGL_ID.h"
 
