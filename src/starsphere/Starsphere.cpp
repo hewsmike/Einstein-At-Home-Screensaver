@@ -450,7 +450,7 @@ void Starsphere::make_gammas() {
                                                 VertexBuffer::BY_VERTEX};
 
     // Instantiate a rendering task with the provided information.
-    m_render_task_snr = new RenderTask(s_group1, v_group1);
+    m_render_task_gammas = new RenderTask(s_group1, v_group1);
 
     // For vertex input need to correlate with vertex shader code.
     m_render_task_gammas->addSpecification({0, "position", 3, GL_FLOAT, GL_FALSE});
