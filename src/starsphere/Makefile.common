@@ -29,7 +29,7 @@
 #
 #        is <valgrind> or <callgrind>                       ( if SYSTEM='linux' )
 #
-# SYSTEM value is <linux> or <win32> or <mac>               ( not required if
+# SYSTEM value is <linux> or <win32>                        ( not required if
 #                                                             TARGET is <install>
 #                                                             or <clean> )
 #
@@ -70,14 +70,6 @@ endif
 ifeq ".$(SYSTEM)" ".win32"
     TARGET_APPEND := "windows_intelx86.exe"
 endif
-ifeq ".$(SYSTEM)" ".mac"
-    TARGET_APPEND := "i686-apple-darwin"
-endif
-
-TARGET_XTRA_DEPS=
-ifeq ".$(SYSTEM)" ".mac"
-    TARGET_XTRA_DEPS := $(PRODUCT_SRC)/EaHMacIcon.h
-endif
 
 # Config values.
 CXX ?= g++
@@ -109,10 +101,6 @@ ifeq ".$(SYSTEM)" ".win32"
     CPPFLAGS += -DWIN32_GLEXT_LINKS
     CPPFLAGS += -DGLEW_STATIC
 endif
-ifeq ".$(SYSTEM)" ".mac"
-    CPPFLAGS += -I/usr/include
-    CPPFLAGS += $(CXXFLAGS)
-endif
 
 ###########################################################################
 # Library variables. Note carefully the ordering with respect
@@ -141,17 +129,6 @@ ifeq ".$(SYSTEM)" ".win32"
     LIBS += -lopengl32
 endif
 
-ifeq ".$(SYSTEM)" ".mac"
-    LIBS += -lframework -loglutility -L$(PRODUCT_INSTALL)/lib
-    LIBS += $(shell $(PRODUCT_INSTALL)/bin/freetype-config --libs)
-    LIBS += $(shell $(PRODUCT_INSTALL)/bin/xml2-config --libs)
-    LIBS += -lboinc_graphics2 -lboinc_api -lboinc -L$(PRODUCT_INSTALL)/lib
-    LIBS += -lGLEW -framework AGL -framework OpenGL
-    LIBS += -framework Carbon -framework AppKit -framework CoreFoundation
-    LIBS += -lstdc++
-    LIBS += -lpthread -lm -lc
-endif
-
 ###########################################################################
 # Loader variables.
 # Generic.
@@ -173,16 +150,13 @@ RESOURCESPEC = resources
 ifeq ".$(SYSTEM)" ".win32"
     OBJS += $(RESOURCESPEC)_mingw.o
 endif
-ifeq ".$(SYSTEM)" ".mac"
-    OBJS += SetMacSSLevel.o
-endif
 
 # Product specific.
-OBJS += pulsar_list.o starlist.o snr_list.o
+OBJS += gamma_list.o pulsar_list.o snr_list.o starlist.o
 
 # Rules for object builds from sources.
 
-%.o : $(PRODUCT_SRC)/%.C
+%.o : $(PRODUCT_SRC)/%.c
 	$(CXX) -g $(CPPFLAGS) -c $<
 
 %.o : $(PRODUCT_SRC)/%.cpp $(PRODUCT_SRC)/%.h
@@ -232,13 +206,6 @@ release: CPPFLAGS += -gstabs3
 
 endif
 
-ifeq ".$(SYSTEM)" ".mac"
-
-debug: CPPFLAGS += -ggdb3
-release: CPPFLAGS += -ggdb3
-
-endif
-
 ###########################################################################
 # File based targets.
 # Required product executables.
@@ -250,8 +217,6 @@ $(PRODUCT_LOWER)_Einstein_$(GRAV): $(DEPS) $(PRODUCT_SRC)/main.cpp $(TARGET_XTRA
 
 ###########################################################################
 # Target specific modules.
-SetMacSSLevel.o: $(DEPS) $(PRODUCT_SRC)/SetMacSSLevel.m
-	$(CXX) -g $(CPPFLAGS) -c $(PRODUCT_SRC)/SetMacSSLevel.m
 
 ###########################################################################
 # Resource compiler.
