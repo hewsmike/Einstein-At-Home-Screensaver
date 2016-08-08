@@ -194,7 +194,7 @@ void RenderTask::acquire(void) {
         m_texture_buffer->acquire();
         }
 
-    m_program->acquire();
+    m_program->configure();
 
     if(m_program->status() != Program::LINKAGE_SUCCEEDED) {
         std::stringstream linking_log;

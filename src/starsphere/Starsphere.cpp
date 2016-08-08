@@ -55,7 +55,7 @@ const GLfloat Starsphere::VIEWPOINT_MAX_ZOOM(20.0f);
 const GLfloat Starsphere::VIEWPOINT_MIN_ZOOM(0.5f);
 const GLfloat Starsphere::VIEWPOINT_ZOOM_RATE(10.0f);
 const GLfloat Starsphere::PERSPECTIVE_NEAR_FRUSTUM_DISTANCE(0.1f);
-const GLfloat Starsphere::PERSPECTIVE_FAR_FRUSTUM_DISTANCE(100.f);
+const GLfloat Starsphere::PERSPECTIVE_FAR_FRUSTUM_DISTANCE(100.0f);
 const GLfloat Starsphere::PERSPECTIVE_FOV_DEFAULT(45.0f);
 const GLfloat Starsphere::PERSPECTIVE_FOV_MIN(20.0f);
 const GLfloat Starsphere::PERSPECTIVE_FOV_MAX(70.0f);
@@ -68,13 +68,21 @@ Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
     m_distinct_stars = 0;
     m_constellation_lines = 0;
 
+    m_perspective_projection = glm::mat4(0.0f);
+    m_orthographic_projection = glm::mat4(0.0f);
+
+    m_view = glm::mat4(0);
+    m_rotation  = glm::mat4(0.0f);
+    m_axis = glm::vec3(0.0f);
+    m_camera = glm::mat4(0.0f);
+
     m_render_task_cons = NULL;
     m_render_task_gammas = NULL;
     m_render_task_psr = NULL;
     m_render_task_snr = NULL;
     m_render_task_star = NULL;
 
-    m_rotation = glm::mat4(1.0);
+    m_rotation = glm::mat4(1.0f);
     m_axis = glm::vec3(1.0f, 0.0f, 0.0f);
 
     m_ObservatoryDrawTimeLocal = 0;
@@ -91,7 +99,6 @@ Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
 
     m_CurrentWidth = 0;
     m_CurrentHeight = 0;
-    aspect = 0;
     m_XStartPosLeft = 0;
     m_YStartPosTop = 0;
     m_YOffsetLarge = 0;
@@ -108,28 +115,28 @@ Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
      * Viewpoint (can be changed with mouse)
      */
     viewpt_fov = PERSPECTIVE_FOV_DEFAULT;
-    m_aspect = 0.0;
-    viewpt_azimuth = 30.0;
-    viewpt_elev = 23.6;
+    m_aspect = 0.0f;
+    viewpt_azimuth = 30.0f;
+    viewpt_elev = 23.6f;
     viewpt_radius = (SPHERE_RADIUS + VIEWPOINT_MAX_ZOOM)/ 2.0f;
 
-    wobble_amp = 37.0;
-    wobble_period = 17.0;
-    zoom_amp = 0.00;
-    zoom_period = 29.0;
+    wobble_amp = 37.0f;
+    wobble_period = 17.0f;
+    zoom_amp = 0.00f;
+    zoom_period = 29.0f;
 
-    rotation_offset = 0.0;
-    rotation_speed = 180.0;
+    rotation_offset = 0.0f;
+    rotation_speed = 180.0f;
 
-    m_CurrentRightAscension = -1.0;
-    m_CurrentDeclination = -1.0;
+    m_CurrentRightAscension = -1.0f;
+    m_CurrentDeclination = -1.0f;
     m_RefreshSearchMarker = true;
 
-    m_gamma_color = glm::vec3(0.0, 1.0, 0.0);              // Gammas are Green.
-    m_pulsar_color = glm::vec3(0.80, 0.0, 0.85);           // Pulsars are Purple.
-    m_star_color = glm::vec3(1.0, 1.0, 1.0);               // Stars are White.
-    m_supernova_color = glm::vec3(1.0, 0.0, 0.0);          // Supernovae are Sienna.
-    m_constellation_line_color = glm::vec3(0.7, 0.7, 0.0); // Lines are Light yellow.
+    m_gamma_color = glm::vec3(0.0f, 1.0f, 0.0f);              // Gammas are Green.
+    m_pulsar_color = glm::vec3(0.80f, 0.0f, 0.85f);           // Pulsars are Purple.
+    m_star_color = glm::vec3(1.0f, 1.0f, 1.0f);               // Stars are White.
+    m_supernova_color = glm::vec3(1.0f, 0.0f, 0.0f);          // Supernovae are Sienna.
+    m_constellation_line_color = glm::vec3(0.7f, 0.7f, 0.0f); // Lines are Light yellow.
 
     m_gamma_point_size = 3.0f;
     m_pulsar_point_size = 3.0f;
@@ -841,13 +848,17 @@ void Starsphere::resize(const int width, const int height) {
     if((m_CurrentHeight > 0) && (m_CurrentWidth > 0)) {
         // Dimensions acceptable.
         m_aspect = (float)m_CurrentWidth / (float)m_CurrentHeight;
-        }
+        std::stringstream msg1;
+		msg1 << "Starsphere::resize() : m_aspect = " << m_CurrentWidth
+			<< "/" << m_CurrentHeight << " = " << m_aspect;
+		ErrorHandler::record(msg1.str(), ErrorHandler::INFORM);
+		}
     else {
         // Negative or zero for one or both of width and height.
-        std::stringstream msg;
-        msg << "Starsphere::resize() : screen height = " << m_CurrentHeight
+        std::stringstream msg2;
+        msg2 << "Starsphere::resize() : screen height = " << m_CurrentHeight
             << " and width = " << m_CurrentWidth;
-        ErrorHandler::record(msg.str(), ErrorHandler::WARN);
+        ErrorHandler::record(msg2.str(), ErrorHandler::WARN);
         ErrorHandler::record("Starsphere::resize() : invalid screen dimensions!", ErrorHandler::FATAL);
         }
 
@@ -862,7 +873,7 @@ void Starsphere::resize(const int width, const int height) {
 
     // Adjust aspect ratio and projection.
     glViewport(0, 0, m_CurrentWidth, m_CurrentHeight);
-    configTransformMatrix();
+    configTransformMatrices();
     }
 
 /**
@@ -872,13 +883,15 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
     // Remember screen dimensions in global state class.
     TransformGlobals::setClientScreenDimensions(height, width);
 
-    configTransformMatrix();
-    // Remember transfrom matrix location in global state class.
+    // Remember transform matrix locations in global state class.
     TransformGlobals::setCameraTransformMatrix(&m_camera);
     TransformGlobals::setOrthographicTransformMatrix(&m_orthographic_projection);
 
+    // Setup initial dimensions.
     m_CurrentWidth = width;
     m_CurrentHeight = height;
+    resize(m_CurrentWidth, m_CurrentHeight);
+
     m_FontResource = font;
 
     // Fatal error if no font resource supplied.
@@ -920,12 +933,9 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
             }
         }
 
-    // Setup initial dimensions
-    resize(m_CurrentWidth, m_CurrentHeight);
-
-//    // Create rendering tasks for given features.
-      make_gammas();
-      make_snrs();
+    // Create rendering tasks for given features.
+      // make_gammas();
+    make_snrs();
 //    make_pulsars();
 //    make_stars();
 //    make_constellations();
@@ -1076,7 +1086,7 @@ void Starsphere::render(const double timeOfDay) {
 //        m_render_task_star->utilise(GL_POINTS, m_distinct_stars);;
 //        }
     if(isFeature(GAMMAS)) {
-        m_render_task_gammas->utilise(GL_POINTS, Ngammas);
+        // m_render_task_gammas->utilise(GL_POINTS, Ngammas);
         }
 //    if(isFeature(PULSARS)) {
 //        m_render_task_psr->utilise(GL_POINTS, Npulsars);
@@ -1171,7 +1181,7 @@ void Starsphere::mouseWheelEvent(const int pos) {
             }
         }
     // Re-compute transform matrix with new field of view angle.
-    configTransformMatrix();
+    configTransformMatrices();
     }
 
 void Starsphere::keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey keyPressed) {
@@ -1242,21 +1252,33 @@ void Starsphere::zoomSphere(const int relativeZoom) {
         viewpt_radius = VIEWPOINT_MIN_ZOOM;
     }
 
-void Starsphere::configTransformMatrix(void) {
+void Starsphere::configTransformMatrices(void) {
     // Create desired perspective projection matrix based upon a frustum model.
     m_perspective_projection = glm::perspective(viewpt_fov,
                                     m_aspect,
                                     PERSPECTIVE_NEAR_FRUSTUM_DISTANCE,
                                     PERSPECTIVE_FAR_FRUSTUM_DISTANCE);
 
+    std::cout << "m_perspective_projection = [["
+                  << m_perspective_projection[0][0] << ", "
+                  << m_perspective_projection[0][1] << ", "
+                  << m_perspective_projection[0][2] << ", "
+                  << m_perspective_projection[0][3] << "], ["
+                  << m_perspective_projection[1][0] << ", "
+                  << m_perspective_projection[1][1] << ", "
+                  << m_perspective_projection[1][2] << ", "
+                  << m_perspective_projection[1][3] << "], ["
+                  << m_perspective_projection[2][0] << ", "
+                  << m_perspective_projection[2][1] << ", "
+                  << m_perspective_projection[2][2] << ", "
+                  << m_perspective_projection[2][3] << "], ["
+                  << m_perspective_projection[3][0] << ", "
+                  << m_perspective_projection[3][1] << ", "
+                  << m_perspective_projection[3][2] << ", "
+                  << m_perspective_projection[3][3] << "]]"
+                  << std::endl;
+
     // Create desired orthographic projection matrix based upon a frustum model.
-//    m_orthographic_projection = glm::mat4{{1/800.0f, 0.0f, 0.0f, 0.0f},
-//                                {0.0f, 1/600.0f, 0.0f, 0.0f},
-//                                {0.0f, 0.0f, 0.0f, 0.0f},
-//                                {0.0f, 0.0f, 0.0f, 1.0f}};
-
-
-
     m_orthographic_projection = glm::ortho(GLfloat(0), GLfloat(TransformGlobals::getClientScreenWidth()),
                                            GLfloat(0), GLfloat(TransformGlobals::getClientScreenHeight()));
 
