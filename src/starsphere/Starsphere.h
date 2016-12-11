@@ -315,9 +315,6 @@ class Starsphere : public AbstractGraphicsEngine {
         /// Current window height (y-resolution)
         int m_CurrentHeight;
 
-        /// Current window aspect ratio
-        float aspect;
-
         // HUD text rendering config (maybe overridden in subclasses)
 
         /// X-coordinate position for head up display (HUD) positioning
@@ -514,7 +511,7 @@ class Starsphere : public AbstractGraphicsEngine {
          */
         void zoomSphere(const int relativeZoom);
 
-        void configTransformMatrix(void);
+        void configTransformMatrices(void);
     };
 
 /// Constellation & star coordinates (starlist.c)
