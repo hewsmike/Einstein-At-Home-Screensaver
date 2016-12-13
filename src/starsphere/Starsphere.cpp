@@ -344,7 +344,7 @@ void Starsphere::make_snrs() {
     m_render_task_snr->addSpecification({0, "position", 3, GL_FLOAT, GL_FALSE});
 
     // For program uniforms need client side pointers.
-    m_render_task_snr->setUniform("CameraMatrix", TransformGlobals::getCameraTransformMatrix());
+    m_render_task_snr->setUniform("CameraMatrix", &m_camera);
 
     m_render_task_snr->setUniform("color", &m_supernova_color);
 
@@ -1259,24 +1259,26 @@ void Starsphere::configTransformMatrices(void) {
                                     PERSPECTIVE_NEAR_FRUSTUM_DISTANCE,
                                     PERSPECTIVE_FAR_FRUSTUM_DISTANCE);
 
+    m_perspective_projection[3][3]= 1.0f;
+
     std::cout << "m_perspective_projection = [["
-                  << m_perspective_projection[0][0] << ", "
-                  << m_perspective_projection[0][1] << ", "
-                  << m_perspective_projection[0][2] << ", "
-                  << m_perspective_projection[0][3] << "], ["
-                  << m_perspective_projection[1][0] << ", "
-                  << m_perspective_projection[1][1] << ", "
-                  << m_perspective_projection[1][2] << ", "
-                  << m_perspective_projection[1][3] << "], ["
-                  << m_perspective_projection[2][0] << ", "
-                  << m_perspective_projection[2][1] << ", "
-                  << m_perspective_projection[2][2] << ", "
-                  << m_perspective_projection[2][3] << "], ["
-                  << m_perspective_projection[3][0] << ", "
-                  << m_perspective_projection[3][1] << ", "
-                  << m_perspective_projection[3][2] << ", "
-                  << m_perspective_projection[3][3] << "]]"
-                  << std::endl;
+              << m_perspective_projection[0][0] << ", "
+              << m_perspective_projection[0][1] << ", "
+              << m_perspective_projection[0][2] << ", "
+              << m_perspective_projection[0][3] << "], ["
+              << m_perspective_projection[1][0] << ", "
+              << m_perspective_projection[1][1] << ", "
+              << m_perspective_projection[1][2] << ", "
+              << m_perspective_projection[1][3] << "], ["
+              << m_perspective_projection[2][0] << ", "
+              << m_perspective_projection[2][1] << ", "
+              << m_perspective_projection[2][2] << ", "
+              << m_perspective_projection[2][3] << "], ["
+              << m_perspective_projection[3][0] << ", "
+              << m_perspective_projection[3][1] << ", "
+              << m_perspective_projection[3][2] << ", "
+              << m_perspective_projection[3][3] << "]]"
+              << std::endl;
 
     // Create desired orthographic projection matrix based upon a frustum model.
     m_orthographic_projection = glm::ortho(GLfloat(0), GLfloat(TransformGlobals::getClientScreenWidth()),
