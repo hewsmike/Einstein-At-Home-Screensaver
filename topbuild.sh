@@ -107,9 +107,10 @@ retrieve_boinc() {
         log "Retrieving BOINC (tag: $1) (this WILL take a while)..."
         cd $ROOT/retrieval || failure
         # git clone git://github.com/BOINC/boinc.git boinc >> $LOGFILE 2>&1 || failure
-        log "Direct git clone from AEI."
-        git clone git://git.aei.uni-hannover.de/shared/einsteinathome/boinc.git boinc >> $LOGFILE 2>&1 || failure
+        log "Direct git cloning from AEI GitLab ....."
+        git clone https://gitlab.aei.uni-hannover.de/einsteinathome/boinc.git boinc >> $LOGFILE 2>&1 || failure
         cd $ROOT/retrieval/boinc || failure
+	log "Successful git clone from AEI !"
         git checkout $1 >> $LOGFILE  2>&1 || failure
     fi
 
