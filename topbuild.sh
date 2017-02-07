@@ -32,7 +32,7 @@ ROOT=`pwd`
 LOGFILE=$ROOT/topbuild.log
 
 # Required for correct access to the BOINC repository.
-TAG_GFXAPPS="current_gfx_apps"
+TAG_GFXAPPS="current_gw_apps"
 
 # For source fetches I use version strings as I'm
 # not entirely happy to commit to whatever some latest
