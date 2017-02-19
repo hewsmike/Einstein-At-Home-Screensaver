@@ -35,7 +35,7 @@
  */
 
 #define GLEW_STATIC
-#include <GL/glew.h>
+#include <glew.h>
 
 // To circumvent potential later failure of SDL_Init(), as we are not
 // not using SDL_main() as a program entry point. The SDL2 Wiki entries
@@ -45,7 +45,7 @@
 // operating systems, SDL_Init() will fail if SDL_main() has not been defined
 // as the entry point for the program. Calling SDL_SetMainReady() prior to
 // SDL_Init() will circumvent this failure condition, however, users should be
-// careful when calling SDL_SetMainReady() as improper initalization may cause
+// careful when calling SDL_SetMainReady() as improper initialization may cause
 // crashes and hard to diagnose problems."
 //
 // Under 'SDL_SetMainReady' : "This function is defined in SDL_main.h, along
@@ -61,7 +61,7 @@
 // Capture project wide glm library setting choices.
 #include "glm_settings.h"
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 #include <SDL_ttf.h>
 

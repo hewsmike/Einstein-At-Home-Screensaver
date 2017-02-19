@@ -22,6 +22,9 @@
 FRAMEWORK_SRC?=$(PWD)
 FRAMEWORK_INSTALL?=$(PWD)
 
+$(info FRAMEWORK_SRC is $(FRAMEWORK_SRC))
+$(info FRAMEWORK_INSTALL is $(FRAMEWORK_INSTALL))
+
 # Product specific. Activates code within GraphicsEngineFactory switch cases.
 PRODUCT_UPPER := $(shell echo $(PRODUCT) | tr a-z A-Z)
 CPPFLAGS += -D$(PRODUCT_UPPER)
@@ -35,6 +38,7 @@ CPPFLAGS += $(shell $(FRAMEWORK_INSTALL)/bin/freetype-config --cflags)
 CPPFLAGS += $(shell $(FRAMEWORK_INSTALL)/bin/xml2-config --cflags)
 CPPFLAGS += -I$(FRAMEWORK_INSTALL)/include/boinc
 CPPFLAGS += -I$(FRAMEWORK_INSTALL)/include/GL
+CPPFLAGS += -I$(FRAMEWORK_INSTALL)
 CPPFLAGS += -I$(FRAMEWORK_INSTALL)/include/SDL2
 CPPFLAGS += -I$(FRAMEWORK_INSTALL)/include/glm
 CPPFLAGS += -I$(FRAMEWORK_INSTALL)/include/glm/gtc
@@ -53,6 +57,7 @@ CPPFLAGS += -I$(FRAMEWORK_SRC)
 CPPFLAGS += -I$(FRAMEWORK_SRC)/../solarsystem
 CPPFLAGS += -I$(FRAMEWORK_SRC)/../starsphere
 CPPFLAGS += -I$(FRAMEWORK_SRC)/../ogl_utility
+CPPFLAGS += -I$(FRAMEWORK_SRC)/../framework
 CPPFLAGS += -I$(SOLARSYSTEM_INSTALL)/include/boinc
 
 # primary role based tagets
@@ -65,6 +70,8 @@ release: clean libframework.a
 # target specific options
 debug: CPPFLAGS += -pg -ggdb3 -O0 -Wall -Wno-switch-enum
 release: CPPFLAGS += -DNDEBUG -ggdb3 -O3 -Wall -Wno-switch-enum
+
+$(info CPPFLAGS is $(CPPFLAGS))
 
 # file based targets
 libframework.a: $(OBJS) $(FRAMEWORK_SRC)/framework.h

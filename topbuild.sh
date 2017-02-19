@@ -38,7 +38,7 @@ TAG_GFXAPPS="current_gw_apps"
 # not entirely happy to commit to whatever some latest
 # library build might be.
 FREETYPE_VERSION=2.5.1
-GLEW_VERSION=1.10.0
+GLEW_VERSION=2.0.0
 LIBXML_VERSION=2.9.2
 SDL_VERSION=2.0.3
 SDL_TTF_VERSION=2.0.12
@@ -125,7 +125,7 @@ retrieve_freetype() {
     FREETYPE_RETRIEVE_DOMAIN=http://download.savannah.gnu.org/releases/freetype/
     FREETYPE_RETRIEVE_PATH=$FREETYPE_RETRIEVE_DOMAIN$FREETYPE_RETRIEVE_FILE
 
-    log "Retrieving Freetype2 (this may take a while)..."
+    log "Retrieving Freetype2 version $FREETYPE_VERSION (this may take a while)..."
     mkdir -p $ROOT/retrieval/freetype2 >> $LOGFILE || failure
 
     cd $ROOT/retrieval || failure
@@ -147,7 +147,7 @@ retrieve_glew() {
     GLEW_RETRIEVE_DOMAIN=http://sourceforge.net/projects/glew/files/glew/$GLEW_VERSION/
     GLEW_RETRIEVE_PATH=$GLEW_RETRIEVE_DOMAIN$GLEW_RETRIEVE_FILE
 
-    log "Retrieving GLEW (this may take a while)..."
+    log "Retrieving GLEW version $GLEW_VERSION  (this may take a while)..."
     mkdir -p $ROOT/retrieval/glew >> $LOGFILE || failure
 
     cd $ROOT/retrieval || failure
@@ -170,7 +170,7 @@ retrieve_libxml() {
     LIBXML_RETRIEVE_DOMAIN=ftp://xmlsoft.org/libxml2/
     LIBXML_RETRIEVE_PATH=$LIBXML_RETRIEVE_DOMAIN$LIBXML_RETRIEVE_FILE
 
-    log "Retrieving libxml2 (this may take a while)..."
+    log "Retrieving libxml2 version $LIBXML_VERSION (this may take a while)..."
     mkdir -p $ROOT/retrieval/libxml2 >> $LOGFILE || failure
 
     cd $ROOT/retrieval || failure
@@ -193,7 +193,7 @@ retrieve_sdl() {
     SDL_RETRIEVE_DOMAIN=http://www.libsdl.org/release/
     SDL_RETRIEVE_PATH=$SDL_RETRIEVE_DOMAIN$SDL_RETRIEVE_FILE
 
-    log "Retrieving SDL2 (this may take a while)..."
+    log "Retrieving SDL2 version $SDL_VERSION (this may take a while)..."
     mkdir -p $ROOT/retrieval/sdl2 >> $LOGFILE || failure
 
     cd $ROOT/retrieval || failure
@@ -216,7 +216,7 @@ retrieve_sdl_ttf() {
     SDL_TTF_RETRIEVE_DOMAIN=https://www.libsdl.org/projects/SDL_ttf/release/
     SDL_TTF_RETRIEVE_PATH=$SDL_TTF_RETRIEVE_DOMAIN$SDL_TTF_RETRIEVE_FILE
 
-    log "Retrieving SDL2 TTF(this may take a while)..."
+    log "Retrieving SDL2 TTF version $SDL_TTF_VERSION (this may take a while)..."
     mkdir -p $ROOT/retrieval/sdl2_ttf >> $LOGFILE || failure
 
     cd $ROOT/retrieval || failure
@@ -229,7 +229,7 @@ retrieve_sdl_ttf() {
     mv $SDL_TTF_RETRIEVE_STR sdl2_ttf >> $LOGFILE 2>&1 || failure
 
     save_topbuild_state $TBS_SDL_TTF_RETRIEVED
-
+   
     return 0
     }
 
@@ -240,12 +240,13 @@ retrieve_glm() {
     GLM_RETRIEVE_PATH=$GLM_RETRIEVE_DOMAIN$GLM_RETRIEVE_FILE
 
     # https://github.com/g-truc/glm/archive/0.9.6.1.tar.gz
-
-    log "Preparing GLM..."
+    
+    log "Preparing GLM version $GLM_VERSION ..."
+    
+    cd $ROOT/retrieval || failure    
+    rm -rf glm
     mkdir -p $ROOT/retrieval/glm >> $LOGFILE || failure
-
-    cd $ROOT/retrieval || failure
-
+    
     git clone --branch $GLM_VERSION https://github.com/g-truc/glm.git $ROOT/retrieval/glm >> $LOGFILE 2>&1 || failure
 
     save_topbuild_state $TBS_GLM_RETRIEVED
