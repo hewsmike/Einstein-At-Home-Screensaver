@@ -33,6 +33,10 @@ CPPFLAGS += -B/usr/bin
 LDFLAGS +=
 LIBS += -L/usr/lib -L/usr/lib/x86_64-linux-gnu
 
+# Supress obtuse error in library throws std::ios::failure for Fedora 23 + 
+# See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=69877 
+CPPFLAGS += -D_GLIBCXX_USE_CXX11_ABI=0 
+
 OBJS=ResourceCompiler.o
 DEPS=Makefile
 
