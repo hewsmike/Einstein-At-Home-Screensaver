@@ -294,8 +294,12 @@ build_glew() {
     cd $ROOT/3rdparty/glew
 
     log "Building GLEW (this may take a while)..."
+    # This gets glew.h into the correct include directory.
     make glew.lib >> $LOGFILE 2>&1 || failure
     make GLEW_DEST=$ROOT/install/ install >> $LOGFILE 2>&1 || failure
+    
+    # This gets glew.c into the correct source code directory.
+    cp --force $ROOT/3rdparty/glew/src/glew.c $ROOT/src/framework/glew.c
 
     log "Successfully built and installed GLEW!"
 
