@@ -934,10 +934,10 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
         }
 
     // Create rendering tasks for given features.
-      // make_gammas();
+//    make_gammas();
     make_snrs();
-//    make_pulsars();
-//    make_stars();
+    make_pulsars();
+    // make_stars();
 //    make_constellations();
 
     // Begin with these visual features enabled.
@@ -1085,12 +1085,12 @@ void Starsphere::render(const double timeOfDay) {
 //    if(isFeature(STARS)) {
 //        m_render_task_star->trigger(GL_POINTS, m_distinct_stars);;
 //        }
-    if(isFeature(GAMMAS)) {
-        // m_render_task_gammas->trigger(GL_POINTS, Ngammas);
-        }
-//    if(isFeature(PULSARS)) {
-//        m_render_task_psr->trigger(GL_POINTS, Npulsars);
+//    if(isFeature(GAMMAS)) {
+//        m_render_task_gammas->trigger(GL_POINTS, Ngammas);
 //        }
+    if(isFeature(PULSARS)) {
+        m_render_task_psr->trigger(GL_POINTS, Npulsars);
+        }
     if(isFeature(SNRS)) {
         m_render_task_snr->trigger(GL_POINTS, NSNRs);
         }

@@ -200,9 +200,15 @@ bool VertexFetch::configure(void) {
             //
             prepareAttributeMapping();
 
+            // Need to bind the VAO before configuring.
             this->bind();
+            // Bind the vertex array buffer - this is global state and should be unbound after configuration.
             m_vertices->bind();
-
+            // Bind the index buffer next. This is not global state and is part of the VAO's state,
+            // therefore you have to bind this while the VAO is bound.
+            // You must not unbind this when the VAO is bound, as this will change the VAO's state and the index buffer
+            // cannot be used for rendering at a later point. Think of this as simply 'telling' the VAO what index buffer to use.
+            // m_indices->bind();
 
             // Enable fetching for all supplied vertex attribute indices,
             // these corresponding to 'location' definitions within the
@@ -211,6 +217,8 @@ bool VertexFetch::configure(void) {
                 attrib != m_attribute_specs.end();
                 ++attrib) {
                 glEnableVertexAttribArray(attrib->a_spec.attrib_index);
+                // A vertex array buffer must be bound when you call glVertexAttribPointer
+                // - it is where the actual linkage between the VAO and the currently bound vertex buffer happens.
                 glVertexAttribPointer(attrib->a_spec.attrib_index,
                                       attrib->a_spec.multiplicity,
                                       attrib->a_spec.type,
@@ -219,6 +227,8 @@ bool VertexFetch::configure(void) {
                                       attrib->pointer);
             	}
         	}
+        	// Unbind the vertex buffer and VAO
+        	// You don't need to unbind the vertex buffer for the VAO to work but it is good practice.
         	m_vertices->unbind();
         	this->unbind();
 
