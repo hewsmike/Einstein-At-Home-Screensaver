@@ -1083,19 +1083,19 @@ void Starsphere::render(const double timeOfDay) {
 
     // stars, pulsars, supernovae, grid
 //    if(isFeature(STARS)) {
-//        m_render_task_star->utilise(GL_POINTS, m_distinct_stars);;
+//        m_render_task_star->trigger(GL_POINTS, m_distinct_stars);;
 //        }
     if(isFeature(GAMMAS)) {
-        // m_render_task_gammas->utilise(GL_POINTS, Ngammas);
+        // m_render_task_gammas->trigger(GL_POINTS, Ngammas);
         }
 //    if(isFeature(PULSARS)) {
-//        m_render_task_psr->utilise(GL_POINTS, Npulsars);
+//        m_render_task_psr->trigger(GL_POINTS, Npulsars);
 //        }
     if(isFeature(SNRS)) {
-        m_render_task_snr->utilise(GL_POINTS, NSNRs);
+        m_render_task_snr->trigger(GL_POINTS, NSNRs);
         }
 //    if(isFeature(CONSTELLATIONS)) {
-//        m_render_task_cons->utilise(GL_LINES, m_constellation_lines*2);
+//        m_render_task_cons->trigger(GL_LINES, m_constellation_lines*2);
 //        }
 //    if(isFeature(GLOBE)) {
 //        /// TODO - call to render axes;

@@ -150,15 +150,6 @@ void VertexFetch::bind(void) {
     // Bind this VAO.
     glBindVertexArray(this->ID());
 
-    // Bind vertices for the non BARE cases.
-    if(m_operating_mode != BARE) {
-        m_vertices->bind();
-        }
-
-    // Bind indices for the indexing case.
-    if(m_operating_mode == VERTICES_AND_INDICES) {
-        m_indices->bind();
-        }
     }
 
 void VertexFetch::unbind(void) {
@@ -209,6 +200,10 @@ bool VertexFetch::configure(void) {
             //
             prepareAttributeMapping();
 
+            this->bind();
+            m_vertices->bind();
+
+
             // Enable fetching for all supplied vertex attribute indices,
             // these corresponding to 'location' definitions within the
             // vertex shader's GLSL code.
@@ -224,6 +219,9 @@ bool VertexFetch::configure(void) {
                                       attrib->pointer);
             	}
         	}
+        	m_vertices->unbind();
+        	this->unbind();
+
         setConfigurationState(true);
         }
 
@@ -231,7 +229,7 @@ bool VertexFetch::configure(void) {
     }
 
 void VertexFetch::trigger(GLenum primitive, GLsizei count) {
-    this->bind();
+    //this->bind();
 
     switch(m_operating_mode) {
         case BARE :

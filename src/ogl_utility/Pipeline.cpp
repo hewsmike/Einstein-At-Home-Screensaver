@@ -41,10 +41,10 @@ Pipeline::Pipeline(Program* program, VertexFetch* vertex_fetch, TextureBuffer* t
 Pipeline::~Pipeline() {
     }
 
-void Pipeline::utilise(GLenum primitive, GLsizei count) {
+void Pipeline::trigger(GLenum primitive, GLsizei count) {
     // Link program if not done.
     if(m_program->status() == Program::NEVER_LINKED) {
-        ErrorHandler::record("Pipeline::utilise() : program needs acquisition ...", ErrorHandler::INFORM);
+        ErrorHandler::record("Pipeline::trigger() : program needs acquisition ...", ErrorHandler::INFORM);
         m_program->configure();
         }
 
@@ -83,6 +83,6 @@ void Pipeline::utilise(GLenum primitive, GLsizei count) {
         m_program->unbind();
         }
     else {
-        ErrorHandler::record("Pipeline::utilise() : Program did not link !", ErrorHandler::FATAL);
+        ErrorHandler::record("Pipeline::trigger() : Program did not link !", ErrorHandler::FATAL);
         }
     }

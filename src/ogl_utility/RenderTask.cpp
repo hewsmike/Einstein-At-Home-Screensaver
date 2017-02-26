@@ -176,9 +176,9 @@ void RenderTask::setUniform(const std::string& uniform_name, GLvoid* load_point)
     m_program->setUniformLoadPoint(uniform_name, load_point);
     }
 
-void RenderTask::utilise(GLenum primitive, GLsizei count) {
+void RenderTask::trigger(GLenum primitive, GLsizei count) {
     // Pass on to the underlying pipeline object.
-    m_pipeline->utilise(primitive, count);
+    m_pipeline->trigger(primitive, count);
     }
 
 void RenderTask::acquire(void) {
@@ -195,6 +195,8 @@ void RenderTask::acquire(void) {
         }
 
     m_program->configure();
+
+    m_vertex_fetch->configure();
 
     if(m_program->status() != Program::LINKAGE_SUCCEEDED) {
         std::stringstream linking_log;

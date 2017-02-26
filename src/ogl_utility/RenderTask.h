@@ -31,6 +31,7 @@
 #include "Pipeline.h"
 #include "Program.h"
 #include "TextureBuffer.h"
+#include "Triggerable.h"
 #include "VertexBuffer.h"
 #include "VertexFetch.h"
 #include "VertexShader.h"
@@ -237,7 +238,7 @@ class RenderTask {
         /**
          * \brief utilise this task ie. trigger rendering as per setup.
          */
-        void utilise(GLenum primitive, GLsizei count);
+        virtual void trigger(GLenum primitive, GLsizei count);
 
         /**
          * \brief Acquire the OpenGL state resources for this task.
