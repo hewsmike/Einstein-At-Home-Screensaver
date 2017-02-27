@@ -24,6 +24,7 @@ doc/*.tag
 # files
 erp_git_version.h
 .buildstate
+.cscope_file_list
 .topbuildstate
 .lasttopbuild
 .lastbuild

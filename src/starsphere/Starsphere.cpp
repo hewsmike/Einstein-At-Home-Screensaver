@@ -160,9 +160,10 @@ Starsphere::~Starsphere() {
 //
 
     if(m_render_task_cons) delete m_render_task_cons;
+    if(m_render_task_gammas) delete m_render_task_gammas;
     if(m_render_task_psr) delete m_render_task_psr;
-    if(m_render_task_star) delete m_render_task_star;
     if(m_render_task_snr) delete m_render_task_snr;
+    if(m_render_task_star) delete m_render_task_star;
 
     }
 

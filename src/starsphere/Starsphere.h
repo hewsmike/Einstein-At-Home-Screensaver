@@ -386,8 +386,8 @@ class Starsphere : public AbstractGraphicsEngine {
         RenderTask* m_render_task_cons;
         RenderTask* m_render_task_gammas;
         RenderTask* m_render_task_psr;
-        RenderTask* m_render_task_star;
         RenderTask* m_render_task_snr;
+        RenderTask* m_render_task_star;
 
         /// Colors.
         glm::vec3 m_gamma_color;
