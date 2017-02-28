@@ -30,9 +30,11 @@
  *   "http://www.mrao.cam.ac.uk/surveys/snrs/").                           *
  ***************************************************************************/
 
+#include "framework.h"
+
 #define N_SNR_ITEMS 2
 
-float SNR_info[][N_SNR_ITEMS] = {
+extern float SNR_info[][N_SNR_ITEMS] = {
     {266.433333f, -29.00000f},
     {266.562500f, -28.63333f},
     {266.837500f, -28.15000f},
@@ -266,6 +268,6 @@ float SNR_info[][N_SNR_ITEMS] = {
     {264.900000f, -29.18333f}
     };
 
-int NSNRs = sizeof(SNR_info)/(N_SNR_ITEMS*sizeof(float));
+extern GLuint NSNRs = sizeof(SNR_info)/(N_SNR_ITEMS*sizeof(float));
 
 // EOF

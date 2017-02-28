@@ -22,9 +22,11 @@
  *   List of gamma pulsars discovered by Einstein At Home.                 *
  ***************************************************************************/
 
+#include "framework.h"
+
 #define N_GAMMA_ITEMS 2
 
-float gamma_info[][N_GAMMA_ITEMS] = {
+extern float gamma_info[][N_GAMMA_ITEMS] = {
 { 0.0334f, 62.2667f },
 { 3.9834f, 54.2334f },
 { 5.9000f, 31.1167f },
@@ -45,6 +47,6 @@ float gamma_info[][N_GAMMA_ITEMS] = {
 { 20.2834f, 36.4167f }
 };
 
-int Ngammas = sizeof(gamma_info)/(N_GAMMA_ITEMS*sizeof(float));
+extern GLuint Ngammas = sizeof(gamma_info)/(N_GAMMA_ITEMS*sizeof(float));
 
 // EOF

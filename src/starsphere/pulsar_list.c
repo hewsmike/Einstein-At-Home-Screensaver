@@ -24,9 +24,11 @@
  *   List of known pulsars, extracted from the ATNF catalogue (v 1.36)     *
  ***************************************************************************/
 
+#include "framework.h"
+
 #define N_PULSAR_ITEMS 2
 
-float pulsar_info[][N_PULSAR_ITEMS] = {
+extern float pulsar_info[][N_PULSAR_ITEMS] = {
 { 1.520000f, 18.583056f },
 { 1.756500f, 73.052250f },
 { 3.573958f, 47.775944f },
@@ -1855,6 +1857,6 @@ float pulsar_info[][N_PULSAR_ITEMS] = {
 { 358.519683f, 61.929664f }
 };
 
-int Npulsars = sizeof(pulsar_info)/(N_PULSAR_ITEMS*sizeof(float));
+extern GLuint Npulsars = sizeof(pulsar_info)/(N_PULSAR_ITEMS*sizeof(float));
 
 // EOF

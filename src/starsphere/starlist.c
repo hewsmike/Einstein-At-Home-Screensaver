@@ -26,7 +26,11 @@
  *   constellations. Some stars appear more than once.                     *
  ***************************************************************************/
 
-float star_info[][2] = {
+#include "framework.h"
+
+#define N_STAR_ITEMS 2
+
+extern float star_info[][N_STAR_ITEMS] = {
     {298.82819233f, +06.40793334f}, {297.69450860f, +08.86738491f},
     {297.69450860f, +08.86738491f}, {296.56487567f, +10.61326869f},
     {297.69450860f, +08.86738491f}, {291.37396941f, +03.11457923f},
@@ -711,6 +715,6 @@ float star_info[][2] = {
     {136.99907126f, -43.43262406f}, {122.38314727f, -47.33661177f},
     };
 
-int Nstars = sizeof(star_info)/(2*sizeof(float)) ;
+extern GLuint Nstars = sizeof(star_info)/(sizeof(float)*N_STAR_ITEMS) ;
 
 //EOF
