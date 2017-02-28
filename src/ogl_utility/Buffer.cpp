@@ -32,11 +32,12 @@ Buffer::Buffer(const GLvoid* buffer_data, GLuint bytes) {
         }
 
     // Ensure the buffer size is strictly positive.
-    if(m_size > 0) {
+    if(bytes > 0) {
         // Remember the buffer size in bytes.
         m_size = bytes;
         }
     else {
+
         ErrorHandler::record("Buffer::Buffer() : Invalid data size provided.",
                              ErrorHandler::FATAL);
         }
