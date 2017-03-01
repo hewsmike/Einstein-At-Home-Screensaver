@@ -67,6 +67,7 @@ Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
 
     m_distinct_stars = 0;
     m_constellation_lines = 0;
+    m_globe_lines = 0;
 
     m_perspective_projection = glm::mat4(0.0f);
     m_orthographic_projection = glm::mat4(0.0f);
@@ -78,6 +79,7 @@ Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
 
     m_render_task_cons = NULL;
     m_render_task_gammas = NULL;
+    m_render_task_globe = NULL;
     m_render_task_psr = NULL;
     m_render_task_snr = NULL;
     m_render_task_star = NULL;
@@ -133,12 +135,14 @@ Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
     m_RefreshSearchMarker = true;
 
     m_gamma_color = glm::vec3(0.0f, 1.0f, 0.0f);              // Gammas are Green.
+    m_globe_color = glm::vec3(1.0f, 1.0f, 0.0f);              // Globe is Orange.
     m_pulsar_color = glm::vec3(0.80f, 0.0f, 0.85f);           // Pulsars are Purple.
     m_star_color = glm::vec3(1.0f, 1.0f, 1.0f);               // Stars are White.
     m_supernova_color = glm::vec3(1.0f, 0.0f, 0.0f);          // Supernovae are Sienna.
     m_constellation_line_color = glm::vec3(0.7f, 0.7f, 0.0f); // Lines are Light yellow.
 
     m_gamma_point_size = 3.0f;
+    m_globe_point_size = 0.5f;
     m_pulsar_point_size = 3.0f;
     m_star_point_size = 4.0f;
     m_supernova_point_size = 3.0f;
@@ -798,11 +802,6 @@ void Starsphere::make_axes() {
 void Starsphere::make_globe() {
 //    int hr, j, i, iMax=100;
 //    GLfloat RAdeg, DEdeg;
-
-    // delete existing, create new (required for windoze)
-//    if(sphGrid) glDeleteLists(sphGrid, 1);
-//    sphGrid = glGenLists(1);
-//    glNewList(sphGrid, GL_COMPILE);
 //
 //        glLineWidth(1.0);
 //
@@ -833,8 +832,7 @@ void Starsphere::make_globe() {
 //                }
 //            glEnd();
 //        }
-//
-//    glEndList();
+
     }
 
 /**
@@ -935,11 +933,12 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
         }
 
     // Create rendering tasks for given features.
+    make_constellations();
     make_gammas();
+    make_globe();
     make_pulsars();
     make_snrs();
     make_stars();
-    make_constellations();
 
     // Begin with these visual features enabled.
     setFeature(STARS, true);
@@ -1098,9 +1097,9 @@ void Starsphere::render(const double timeOfDay) {
     if(isFeature(CONSTELLATIONS)) {
         m_render_task_cons->trigger(GL_LINES, m_constellation_lines*2);
         }
-//    if(isFeature(GLOBE)) {
-//        /// TODO - call to render axes;
-//        }
+    if(isFeature(GLOBE)) {
+        // m_render_task_globe->trigger(GL_LINES, m_globe_lines);
+        }
 
     // observatories move an extra 15 degrees/hr since they were drawn
     if(isFeature(OBSERVATORIES)) {

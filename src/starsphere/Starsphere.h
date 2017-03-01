@@ -385,12 +385,14 @@ class Starsphere : public AbstractGraphicsEngine {
         /// Pointers to rendering tasks.
         RenderTask* m_render_task_cons;
         RenderTask* m_render_task_gammas;
+        RenderTask* m_render_task_globe;
         RenderTask* m_render_task_psr;
         RenderTask* m_render_task_snr;
         RenderTask* m_render_task_star;
 
         /// Colors.
         glm::vec3 m_gamma_color;
+        glm::vec3 m_globe_color;
         glm::vec3 m_pulsar_color;
         glm::vec3 m_star_color;
         glm::vec3 m_supernova_color;
@@ -398,6 +400,7 @@ class Starsphere : public AbstractGraphicsEngine {
 
         /// Point & line sizes.
         GLfloat m_gamma_point_size;
+        GLfloat m_globe_point_size;
         GLfloat m_pulsar_point_size;
         GLfloat m_star_point_size;
         GLfloat m_supernova_point_size;
@@ -408,6 +411,9 @@ class Starsphere : public AbstractGraphicsEngine {
 
         // Number of constellation lines.
         GLuint m_constellation_lines;
+
+        // Number of line segments for globe.
+        GLuint m_globe_lines;
 
         glm::mat4 m_orthographic_projection;
         glm::mat4 m_perspective_projection;
