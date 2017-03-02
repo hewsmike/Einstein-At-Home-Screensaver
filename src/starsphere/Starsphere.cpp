@@ -60,8 +60,8 @@ const GLfloat Starsphere::PERSPECTIVE_FOV_DEFAULT(45.0f);
 const GLfloat Starsphere::PERSPECTIVE_FOV_MIN(20.0f);
 const GLfloat Starsphere::PERSPECTIVE_FOV_MAX(70.0f);
 const GLfloat Starsphere::VIEWPOINT_MOUSEWHEEL_FOV_RATE(0.1f);
-const GLuint Starsphere::GLOBE_LATITUDE_LAYERS(17);                     // Every ten degrees in latitude/declination, pole to pole.
-const GLuint Starsphere::GLOBE_LONGITUDE_SLICES(36);                    // Every ten degress in longitude/right-ascension, from equinox.
+const GLuint Starsphere::GLOBE_LATITUDE_LAYERS(19);                     // Every ten degrees in latitude/declination, pole to pole.
+const GLuint Starsphere::GLOBE_LONGITUDE_SLICES(36);                    // Every ten degrees in longitude/right-ascension, from equinox.
 
 Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
     AbstractGraphicsEngine(sharedMemoryAreaIdentifier) {
@@ -804,15 +804,63 @@ void Starsphere::make_axes() {
 void Starsphere::make_globe() {
     // Calculate the number of vertices. This is a full number of longitudinal slices for
     // each non-pole latitude layer, plus one for each pole.
-    GLuint num_vertices = ((GLOBE_LATITUDE_LAYERS - 2)* GLOBE_LONGITUDE_SLICES) + 2
-    // Calculate the number of line segments to render.
-    // GLuint m_globe_lines = ;
-    // Allocate a temporary array for vertex positions.
-    // GLfloat globe_vertex_data[m_globe_lines * 2 * 3];
-    // Allocate a temporary array for vertex buffer indices.
-    // GLfloat globe_index_data[m_globe_lines * 2 * 3];
+    GLuint num_vertices = ((GLOBE_LATITUDE_LAYERS - 2)* GLOBE_LONGITUDE_SLICES) + 2;
+
+    // Calculate the number of line segments to render. For latitude layers this is one for
+    // each step in longitude ie. (GLOBE_LONGITUDE_SLICES - 1). For longitude slices this
+    // is one for each step in latitude ie. (GLOBE_LATITUDE_SLICES - 1).
+    m_globe_lines = (GLOBE_LONGITUDE_SLICES - 1) * GLOBE_LATITUDE_LAYERS +
+					(GLOBE_LATITUDE_LAYERS - 1) * GLOBE_LONGITUDE_SLICES;
+
+    // What are the steps in latitude and longitude for this globe? Decimal degrees.
+    GLfloat LAT_STEP = 180.0f/(GLOBE_LATITUDE_LAYERS - 1);
+    GLfloat LONG_STEP = 360.0f/GLOBE_LONGITUDE_SLICES;
+
+    // Allocate a temporary array for vertex positions in 3D ie. each has
+    // an x, y and z component.
+    GLfloat globe_vertex_data[num_vertices*3];
+
+    // Allocate a temporary array for vertex buffer indices. Note the array
+    // type is suitable for indices ie. unsigned integer. Upon rendering
+    // there are two endpoints to specify for the GL_LINES enumerant.
+    GLuint globe_index_data[m_globe_lines * 2];
+
+
     // Populate the vertex array.
+
+    // Keep a count of how many vertices we have done.
+    GLuint vertex_counter = 0;
+
+    // Do the North Pole vertex first. This will be at RA = 0, DEC = +90 times radius.
+    glm::vec3 north_pole = sphVertex3D(0, 1, SPHERE_RADIUS);
+    globe_vertex_data[vertex_counter*3] = north_pole.x;
+    globe_vertex_data[vertex_counter*3 + 1] = north_pole.y;
+    globe_vertex_data[vertex_counter*3 + 2] = north_pole.z;
+
+
+
+    std::cout << "Starsphere::make_globe() : num_vertices = " << num_vertices << std::endl;
+
+    // For each non=pole latitude layer.
+    for(GLuint lat_layer = 0; lat_layer < (GLOBE_LATITUDE_LAYERS - 2); ++lat_layer ){
+    	// For each longitude layer.
+    	for(GLuint long_slice = 0; long_slice < GLOBE_LONGITUDE_SLICES; ++long_slice){
+    		std::cout << "Starsphere::make_globe() : vertex_counter = " << vertex_counter << std::endl;
+    		++vertex_counter;
+    		glm::vec3 globe_vertex = sphVertex3D(long_slice*LONG_STEP, lat_layer*LAT_STEP, SPHERE_RADIUS);
+    		globe_vertex_data[vertex_counter*3] = globe_vertex.x;
+    		globe_vertex_data[vertex_counter*3 + 1] = globe_vertex.y;
+    		globe_vertex_data[vertex_counter*3 + 2] = globe_vertex.z;
+    		}
+    	}
+
+
+
+    // Do the South Pole vertex last.
+
     // Populate the index array.
+
+
 
      // Create factory instance to then access the shader strings.
 //    ResourceFactory factory;
