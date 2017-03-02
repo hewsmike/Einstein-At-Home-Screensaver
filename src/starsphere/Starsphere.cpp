@@ -60,6 +60,8 @@ const GLfloat Starsphere::PERSPECTIVE_FOV_DEFAULT(45.0f);
 const GLfloat Starsphere::PERSPECTIVE_FOV_MIN(20.0f);
 const GLfloat Starsphere::PERSPECTIVE_FOV_MAX(70.0f);
 const GLfloat Starsphere::VIEWPOINT_MOUSEWHEEL_FOV_RATE(0.1f);
+const GLuint Starsphere::GLOBE_LATITUDE_LAYERS(17);                     // Every ten degrees in latitude/declination, pole to pole.
+const GLuint Starsphere::GLOBE_LONGITUDE_SLICES(36);                    // Every ten degress in longitude/right-ascension, from equinox.
 
 Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
     AbstractGraphicsEngine(sharedMemoryAreaIdentifier) {
@@ -800,6 +802,51 @@ void Starsphere::make_axes() {
  * RA/DEC coordinate grid on the sphere
  */
 void Starsphere::make_globe() {
+    // Calculate the number of vertices. This is a full number of longitudinal slices for
+    // each non-pole latitude layer, plus one for each pole.
+    GLuint num_vertices = ((GLOBE_LATITUDE_LAYERS - 2)* GLOBE_LONGITUDE_SLICES) + 2
+    // Calculate the number of line segments to render.
+    // GLuint m_globe_lines = ;
+    // Allocate a temporary array for vertex positions.
+    // GLfloat globe_vertex_data[m_globe_lines * 2 * 3];
+    // Allocate a temporary array for vertex buffer indices.
+    // GLfloat globe_index_data[m_globe_lines * 2 * 3];
+    // Populate the vertex array.
+    // Populate the index array.
+
+     // Create factory instance to then access the shader strings.
+//    ResourceFactory factory;
+
+    // Populate data structure indicating GLSL code use.
+//    RenderTask::shader_group s_group1 = {factory.createInstance("VertexShader_Stars")->std_string(),
+//                                         factory.createInstance("FragmentShader_Pass")->std_string()};
+
+    // Populate data structure for vertices.
+//    RenderTask::vertex_buffer_group v_group1 = {star_vertex_data,
+//                                                GLuint(m_globe_lines*2*3*sizeof(GLfloat)),
+//                                                GLuint(m_globe_lines*2),
+//                                                GL_STATIC_DRAW,
+//                                                VertexBuffer::BY_VERTEX};
+
+
+
+    // Instantiate a rendering task with the provided information.
+//    m_render_task_cons = new RenderTask(s_group1, v_group1);
+
+    // For vertex input need to correlate with vertex shader code.
+//    m_render_task_cons->addSpecification({0, "position", 3, GL_FLOAT, GL_FALSE});
+
+    // For program uniforms need client side pointers.
+//    m_render_task_globe->setUniform("CameraMatrix", TransformGlobals::getCameraTransformMatrix());;
+
+//    m_render_task_globe->setUniform("color", &m_constellation_line_color);
+
+//    m_render_task_globe->setUniform("point_size", &m_constellation_line_width);
+
+    // Claim all required state machine resources for this rendering task.
+//    m_render_task_globe->acquire();
+
+
 //    int hr, j, i, iMax=100;
 //    GLfloat RAdeg, DEdeg;
 //
