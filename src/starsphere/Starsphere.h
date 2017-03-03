@@ -417,6 +417,7 @@ class Starsphere : public AbstractGraphicsEngine {
         GLuint m_constellation_lines;
 
         // Number of line segments for globe.
+        GLuint m_globe_vertices;
         GLuint m_globe_lines;
 
         glm::mat4 m_orthographic_projection;
