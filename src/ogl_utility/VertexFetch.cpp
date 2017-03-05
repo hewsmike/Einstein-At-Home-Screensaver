@@ -149,7 +149,9 @@ void VertexFetch::bind(void) {
 
     // Bind this VAO.
     glBindVertexArray(this->ID());
-
+    if(m_operating_mode == VERTICES_AND_INDICES){
+    	m_indices->bind();
+    	}
     }
 
 void VertexFetch::unbind(void) {
@@ -208,7 +210,9 @@ bool VertexFetch::configure(void) {
             // therefore you have to bind this while the VAO is bound.
             // You must not unbind this when the VAO is bound, as this will change the VAO's state and the index buffer
             // cannot be used for rendering at a later point. Think of this as simply 'telling' the VAO what index buffer to use.
-            // m_indices->bind();
+            if(m_operating_mode == VERTICES_AND_INDICES){
+            	m_indices->bind();
+            	}
 
             // Enable fetching for all supplied vertex attribute indices,
             // these corresponding to 'location' definitions within the
@@ -239,7 +243,7 @@ bool VertexFetch::configure(void) {
     }
 
 void VertexFetch::trigger(GLenum primitive, GLsizei count) {
-    //this->bind();
+    this->bind();
 
     switch(m_operating_mode) {
         case BARE :
