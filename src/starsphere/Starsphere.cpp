@@ -802,27 +802,15 @@ void Starsphere::make_axes() {
  * RA/DEC coordinate grid on the sphere
  */
 void Starsphere::make_globe() {
-	std::cout << "Starsphere::make_globe() : GLOBE_LATITUDE_LAYERS = "
-			  << GLOBE_LATITUDE_LAYERS << std::endl;
-	std::cout << "Starsphere::make_globe() : GLOBE_LONGITUDE_SLICES = "
-			  << GLOBE_LONGITUDE_SLICES << std::endl;
-
     // What are the steps in latitude and longitude for this globe? Decimal degrees.
     GLfloat LAT_STEP = 180.0f/(GLOBE_LATITUDE_LAYERS - 1);
     GLfloat LONG_STEP = 360.0f/GLOBE_LONGITUDE_SLICES;
-    std::cout << "Starsphere::make_globe() : LAT_STEP = "
-    		  << LAT_STEP << std::endl;
-    std::cout << "Starsphere::make_globe() : LONG_STEP = "
-    		  << LONG_STEP << std::endl;
 
     // Populate a vertex array.
     // Calculate the number of vertices. This is a full number of longitudinal slices for
     // each non-pole latitude layer, plus one for each pole.
     GLuint num_vertices = ((GLOBE_LATITUDE_LAYERS - 2)* GLOBE_LONGITUDE_SLICES) + 2;
     m_globe_vertices = num_vertices;
-    std::cout << "Starsphere::make_globe() : num_vertices = "
-    		  << num_vertices << std::endl;
-
 
     // Allocate a temporary array for vertex positions in 3D ie. each has
     // an x, y and z component.
@@ -832,11 +820,6 @@ void Starsphere::make_globe() {
     // Set & remember the index of the North Pole.
     GLuint north_pole_index = 0;
     glm::vec3 north_pole = sphVertex3D(0, 90, SPHERE_RADIUS);
-    std::cout << "Starsphere::make_globe() : north_pole_index = "
-    		  << north_pole_index << "\t"
-              << "(" << north_pole.x << ", "
-    		  << north_pole.y << ", "
-    		  << north_pole.z << ")" << std::endl;
     globe_vertex_data[north_pole_index*3] = north_pole.x;
     globe_vertex_data[north_pole_index*3 + 1] = north_pole.y;
     globe_vertex_data[north_pole_index*3 + 2] = north_pole.z;
@@ -851,15 +834,6 @@ void Starsphere::make_globe() {
     		// latitude is measured from the North Pole = 0 downwards to Equator = 90
     		// and then South Pole = 180.
     		glm::vec3 globe_vertex = sphVertex3D(long_slice*LONG_STEP, 90 - lat_layer*LAT_STEP, SPHERE_RADIUS);
-    		std::cout << "Starsphere::make_globe() : vertex_counter = "
-    				  << vertex_counter << "\t"
-					  << "long_slice*LONG_STEP = "
-    		    	  << long_slice*LONG_STEP << "\t"
-    		    	  << "lat_layer*LAT_STEP = "
-					  << lat_layer*LAT_STEP << "\t\t"
-					  << "(" << globe_vertex.x << ", "
-					  << globe_vertex.y << ", "
-					  << globe_vertex.z << ")" << std::endl;
     		globe_vertex_data[vertex_counter*3] = globe_vertex.x;
     		globe_vertex_data[vertex_counter*3 + 1] = globe_vertex.y;
     		globe_vertex_data[vertex_counter*3 + 2] = globe_vertex.z;
@@ -871,11 +845,6 @@ void Starsphere::make_globe() {
     // Set & remember the index of the South Pole.
     GLuint south_pole_index = num_vertices - 1;
     glm::vec3 south_pole = sphVertex3D(0, -90, SPHERE_RADIUS);
-    std::cout << "Starsphere::make_globe() : south_pole_index = "
-    		  << south_pole_index  << "\t"
-              << "(" << south_pole.x << ", "
-    		  << south_pole.y << ", "
-    		  << south_pole.z << ")" << std::endl;
     globe_vertex_data[south_pole_index*3] = south_pole.x;
     globe_vertex_data[south_pole_index*3 + 1] = south_pole.y;
     globe_vertex_data[south_pole_index*3 + 2] = south_pole.z;
@@ -886,8 +855,6 @@ void Starsphere::make_globe() {
     // is one for each step in latitude ie. (GLOBE_LATITUDE_SLICES - 1).
     m_globe_lines = GLOBE_LONGITUDE_SLICES * (GLOBE_LATITUDE_LAYERS - 1) +
 					(GLOBE_LATITUDE_LAYERS - 1) * GLOBE_LONGITUDE_SLICES;
-    std::cout << "Starsphere::make_globe() : m_globe_lines = "
-              << m_globe_lines << std::endl;
 
 	// Allocate a temporary array for vertex buffer indices. Note the array
     // type is suitable for indices ie. unsigned integer. I'm going to be brave
@@ -931,14 +898,18 @@ void Starsphere::make_globe() {
     //
     // For longitude slices.
 
+    for(GLuint temp = 0; temp < num_vertices; ++temp) {
+    	globe_index_data[temp] = temp;
+    	}
+    GLuint num_indices = num_vertices;
 
 
-     // Create factory instance to then access the shader strings.
-     ResourceFactory factory;
+    // Create factory instance to then access the shader strings.
+    ResourceFactory factory;
 
-     // Populate data structure indicating GLSL code use.
-     RenderTask::shader_group s_group1 = {factory.createInstance("VertexShader_Stars")->std_string(),
-    		                              factory.createInstance("FragmentShader_Pass")->std_string()};
+    // Populate data structure indicating GLSL code use.
+    RenderTask::shader_group s_group1 = {factory.createInstance("VertexShader_Stars")->std_string(),
+    		                             factory.createInstance("FragmentShader_Pass")->std_string()};
 
     // Populate data structure for vertices.
     RenderTask::vertex_buffer_group v_group1 = {globe_vertex_data,
@@ -946,9 +917,15 @@ void Starsphere::make_globe() {
 												num_vertices,
     		                                    GL_STATIC_DRAW,
     		                                    VertexBuffer::BY_VERTEX};
+    // Populate data structure for vertices.
+    RenderTask::index_buffer_group i_group1 = {globe_index_data,
+        		 	 	 	 	 	 	 	   GLuint(sizeof(globe_index_data)),
+    										   m_globe_vertices,
+        		                               GL_STATIC_DRAW,
+											   GL_UNSIGNED_INT};
 
     // Instantiate a rendering task with the provided information.
-    m_render_task_globe = new RenderTask(s_group1, v_group1);
+    m_render_task_globe = new RenderTask(s_group1, v_group1, i_group1);
 
     // For vertex input need to correlate with vertex shader code.
     m_render_task_globe->addSpecification({0, "position", 3, GL_FLOAT, GL_FALSE});
