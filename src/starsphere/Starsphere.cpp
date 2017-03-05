@@ -137,7 +137,7 @@ Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
     m_RefreshSearchMarker = true;
 
     m_gamma_color = glm::vec3(0.0f, 1.0f, 0.0f);              // Gammas are Green.
-    m_globe_color = glm::vec3(1.0f, 1.0f, 0.0f);              // Globe is Orange.
+    m_globe_color = glm::vec3(1.0f, 0.84f, 0.0f);             // Globe is Gold.
     m_pulsar_color = glm::vec3(0.80f, 0.0f, 0.85f);           // Pulsars are Purple.
     m_star_color = glm::vec3(1.0f, 1.0f, 1.0f);               // Stars are White.
     m_supernova_color = glm::vec3(1.0f, 0.0f, 0.0f);          // Supernovae are Sienna.
@@ -893,9 +893,8 @@ void Starsphere::make_globe() {
     // type is suitable for indices ie. unsigned integer. I'm going to be brave
     // and do a single line loop sequence of vertices to create a wireframe globe,
     // without any repeats/retracing ! Thus the GL_LINE_LOOP enumerant is to be used at
-    // rendering time, and will present with request for one more vertex than the
-    // number of lines to be rendered.
-    GLuint globe_index_data[m_globe_lines + 1];
+    // rendering time, and will present with request for the number of lines to be rendered.
+    GLuint globe_index_data[m_globe_lines];
 
     // Keep track of how many vertex-to-vertex steps we make.
     GLuint num_vertex_steps = 0;

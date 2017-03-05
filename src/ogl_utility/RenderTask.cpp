@@ -41,19 +41,19 @@ RenderTask::RenderTask(RenderTask::shader_group s_group) {
 RenderTask::RenderTask(RenderTask::shader_group s_group,
                        RenderTask::texture_buffer_group t_group) :
                            RenderTask(s_group) {
-	ErrorHandler::record("RenderTask::RenderTask(): MINUMUM + TEXTURE", ErrorHandler::INFORM);
-
-    if(t_group.texture_data == NULL) {
-        ErrorHandler::record("RenderTask::RenderTask(): Texture not provided!", ErrorHandler::FATAL);
-        }
-    m_texture_buffer = new TextureBuffer(t_group.texture_data,
-                                         t_group.bytes,
-                                         t_group.width,
-                                         t_group.height,
-                                         t_group.format,
-                                         t_group.data_type,
-                                         t_group.wrap_type_s,
-                                         t_group.mipmaps);
+//	ErrorHandler::record("RenderTask::RenderTask(): MINUMUM + TEXTURE", ErrorHandler::INFORM);
+//
+//    if(t_group.texture_data == NULL) {
+//        ErrorHandler::record("RenderTask::RenderTask(): Texture not provided!", ErrorHandler::FATAL);
+//        }
+//    m_texture_buffer = new TextureBuffer(t_group.texture_data,
+//                                         t_group.bytes,
+//                                         t_group.width,
+//                                         t_group.height,
+//                                         t_group.format,
+//                                         t_group.data_type,
+//                                         t_group.wrap_type_s,
+//                                         t_group.mipmaps);
     }
 
 RenderTask::RenderTask(RenderTask::shader_group s_group,
@@ -69,7 +69,6 @@ RenderTask::RenderTask(RenderTask::shader_group s_group,
                                        v_group.vertices,
                                        v_group.usage,
                                        v_group.mix);
-
 
     // Set unused pointers to NULL.
     m_index_buffer = NULL;
@@ -103,14 +102,33 @@ RenderTask::RenderTask(RenderTask::shader_group s_group,
 //    m_texture_buffer->acquire();
 //    }
 
-//RenderTask::RenderTask(RenderTask::shader_group s_group,
-//                   RenderTask::vertex_buffer_group v_group,
-//                   RenderTask::index_buffer_group i_group) :
-//                       RenderTask(s_group, v_group) {
-// 	  ErrorHandler::record("RenderTask::RenderTask(): MINUMUM + VERTICES + INDICES", ErrorHandler::INFORM);
-//
-//
-//                   }
+RenderTask::RenderTask(RenderTask::shader_group s_group,
+                   RenderTask::vertex_buffer_group v_group,
+                   RenderTask::index_buffer_group i_group) {
+ 	 ErrorHandler::record("RenderTask::RenderTask(): MINUMUM + VERTICES + INDICES", ErrorHandler::INFORM);
+
+ 	m_vertex_buffer = new VertexBuffer(v_group.buffer_data,
+ 	                                       v_group.bytes,
+ 	                                       v_group.vertices,
+ 	                                       v_group.usage,
+ 	                                       v_group.mix);
+
+ 	m_index_buffer = new IndexBuffer(i_group.buffer_data,
+                    				 i_group.bytes,
+									 i_group.indices,
+									 i_group.usage,
+									 i_group.index_type);
+
+ 	// Set unused pointers to NULL.
+ 	m_texture_buffer = NULL;
+
+ 	// Need to define an attribute adapter.
+ 	m_attrib_adapt = new AttributeInputAdapter();
+ 	// Always need a trigger for the pipeline.
+ 	m_vertex_fetch = new VertexFetch(m_attrib_adapt, m_vertex_buffer, m_index_buffer);
+
+ 	setBaseCase(s_group);
+	}
 
 //RenderTask::RenderTask(RenderTask::shader_group s_group,
 //                       RenderTask::vertex_buffer_group v_group,
@@ -215,7 +233,7 @@ void RenderTask::setBaseCase(RenderTask::shader_group s_group) {
     // Always need shader code.
     m_vertex_shader = new VertexShader(s_group.vert_shader_source);
     m_frag_shader = new FragmentShader(s_group.frag_shader_source);
-    // Always have program entity and a pipleine.
+    // Always have a program entity and a pipeline.
     m_program = new Program(m_vertex_shader, m_frag_shader, m_attrib_adapt);
     m_pipeline = new Pipeline(m_program, m_vertex_fetch);
     }
