@@ -149,12 +149,16 @@ void VertexFetch::bind(void) {
 
     // Bind this VAO.
     glBindVertexArray(this->ID());
-    if(m_operating_mode == VERTICES_AND_INDICES){
-    	m_indices->bind();
-    	}
+    // Due to VAO state at time of
+    // configuration, no need to re-bind either
+    // vertex or index buffer.
     }
 
 void VertexFetch::unbind(void) {
+    // Due to state concerns must unbind the VAO
+    // before either vertex or index buffer.
+    glBindVertexArray(OGL_ID::NO_ID);
+
     // Unbind vertices for the non BARE cases.
     if(m_operating_mode != BARE) {
         m_vertices->unbind();
@@ -164,9 +168,6 @@ void VertexFetch::unbind(void) {
     if(m_operating_mode == VERTICES_AND_INDICES) {
         m_indices->unbind();
         }
-
-    // Unbind this VAO.
-    glBindVertexArray(OGL_ID::NO_ID);
     }
 
 bool VertexFetch::isBound(void) const {
