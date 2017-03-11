@@ -861,7 +861,7 @@ void Starsphere::make_globe() {
     // and do a single line loop sequence of vertices to create a wireframe globe,
     // without any repeats/retracing ! Thus the GL_LINE_LOOP enumerant is to be used at
     // rendering time, and will present with request for the number of lines to be rendered.
-    GLuint globe_index_data[m_globe_lines];
+    GLuint globe_index_data[num_vertices*2];
 
     // Keep track of how many vertex-to-vertex steps we make.
     GLuint num_vertex_steps = 0;
@@ -920,7 +920,7 @@ void Starsphere::make_globe() {
     // Populate data structure for vertices.
     RenderTask::index_buffer_group i_group1 = {globe_index_data,
         		 	 	 	 	 	 	 	   GLuint(sizeof(globe_index_data)),
-    										   m_globe_vertices,
+    										   num_vertices,
         		                               GL_STATIC_DRAW,
 											   GL_UNSIGNED_INT};
 
