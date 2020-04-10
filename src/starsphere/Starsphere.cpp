@@ -137,7 +137,7 @@ Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
     m_RefreshSearchMarker = true;
 
     m_gamma_color = glm::vec3(0.0f, 1.0f, 0.0f);              // Gammas are Green.
-    m_globe_color = glm::vec3(1.0f, 0.84f, 0.0f);             // Globe is Gold.
+    m_globe_color = glm::vec3(0.2f, 0.2f, 0.2f);             // Globe is Grey.
     m_pulsar_color = glm::vec3(0.80f, 0.0f, 0.85f);           // Pulsars are Purple.
     m_star_color = glm::vec3(1.0f, 1.0f, 1.0f);               // Stars are White.
     m_supernova_color = glm::vec3(1.0f, 0.0f, 0.0f);          // Supernovae are Sienna.
@@ -917,10 +917,10 @@ void Starsphere::make_globe() {
 												num_vertices,
     		                                    GL_STATIC_DRAW,
     		                                    VertexBuffer::BY_VERTEX};
-    // Populate data structure for vertices.
+    // Populate data structure for indices.
     RenderTask::index_buffer_group i_group1 = {globe_index_data,
         		 	 	 	 	 	 	 	   GLuint(sizeof(globe_index_data)),
-    										   num_vertices,
+    										   num_indices,
         		                               GL_STATIC_DRAW,
 											   GL_UNSIGNED_INT};
 
@@ -1073,12 +1073,12 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
         }
 
     // Create rendering tasks for given features.
-//    make_constellations();
-//    make_gammas();
+    make_constellations();
+    make_gammas();
     make_globe();
-//    make_pulsars();
-//    make_snrs();
-//    make_stars();
+    make_pulsars();
+    make_snrs();
+    make_stars();
 
     // Begin with these visual features enabled.
     setFeature(STARS, true);
