@@ -138,9 +138,6 @@ class Shader : public OGL_ID, public Configurable {
         const std::string& compileLog(void) const;
 
     private :
-        static const GLint GLSL_COMPILE_FAILURE;
-        static const GLint GLSL_COMPILE_SUCCESS;
-
         /**
          * \brief Compile the shader.
          *

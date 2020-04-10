@@ -23,9 +23,6 @@
 #include <iostream>
 #include <sstream>
 
-const GLint Shader::GLSL_COMPILE_FAILURE(0);
-const GLint Shader::GLSL_COMPILE_SUCCESS(1);
-
 Shader::Shader(GLenum type, const std::string& source) {
     // Check and store valid shader type.
     switch(type) {
@@ -104,7 +101,9 @@ bool Shader::configure(void) {
 		this->acquire();
 		}
 
-	ret_val = compile();
+	if(comp_status == Shader::NEVER_COMPILED) {
+        ret_val = compile();
+        }
 
 	return ret_val;
 	}
@@ -130,8 +129,8 @@ bool Shader::isDeleted(void) const {
 bool Shader::compile(void) {
     // Assume compile failure
     bool ret_val = false;
-    if(comp_status == NEVER_COMPILED) {
-        comp_status = COMPILE_FAILED;
+    if(comp_status == Shader::NEVER_COMPILED) {
+        comp_status = Shader::COMPILE_FAILED;
 
         // Clear the compilation log.
         compile_log = "";
@@ -146,7 +145,7 @@ bool Shader::compile(void) {
             glGetShaderiv(this->ID(), GL_COMPILE_STATUS, &c_status);
             if(c_status == GL_TRUE) {
                 // Compile good.
-                comp_status = COMPILE_SUCCEEDED;
+                comp_status = Shader::COMPILE_SUCCEEDED;
                 ret_val = true;
                 }
             else {
