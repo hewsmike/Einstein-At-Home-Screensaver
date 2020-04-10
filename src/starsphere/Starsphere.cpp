@@ -137,7 +137,7 @@ Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
     m_RefreshSearchMarker = true;
 
     m_gamma_color = glm::vec3(0.0f, 1.0f, 0.0f);              // Gammas are Green.
-    m_globe_color = glm::vec3(0.2f, 0.2f, 0.2f);             // Globe is Grey.
+    m_globe_color = glm::vec3(0.15f, 0.15f, 0.15f);           // Globe is Grey.
     m_pulsar_color = glm::vec3(0.80f, 0.0f, 0.85f);           // Pulsars are Purple.
     m_star_color = glm::vec3(1.0f, 1.0f, 1.0f);               // Stars are White.
     m_supernova_color = glm::vec3(1.0f, 0.0f, 0.0f);          // Supernovae are Sienna.
@@ -809,7 +809,7 @@ void Starsphere::make_globe() {
     // Populate a vertex array.
     // Calculate the number of vertices. This is a full number of longitudinal slices for
     // each non-pole latitude layer, plus one for each pole.
-    GLuint num_vertices = ((GLOBE_LATITUDE_LAYERS - 2)* GLOBE_LONGITUDE_SLICES) + 2;
+    GLuint num_vertices = ((GLOBE_LATITUDE_LAYERS - 2) * GLOBE_LONGITUDE_SLICES) + 2;
     m_globe_vertices = num_vertices;
 
     // Allocate a temporary array for vertex positions in 3D ie. each has
@@ -819,13 +819,14 @@ void Starsphere::make_globe() {
     // Do the North Pole vertex first. This will be at RA = 0, DEC = +90 times radius.
     // Set & remember the index of the North Pole.
     GLuint north_pole_index = 0;
+    // Set and remember the index of the current vertex.
+    GLuint vertex_counter = 0;
     glm::vec3 north_pole = sphVertex3D(0, 90, SPHERE_RADIUS);
     globe_vertex_data[north_pole_index*3] = north_pole.x;
     globe_vertex_data[north_pole_index*3 + 1] = north_pole.y;
     globe_vertex_data[north_pole_index*3 + 2] = north_pole.z;
 
-    // Set and remember the index of the current vertex.
-    GLuint vertex_counter = 1;
+
     // For each non-pole latitude layer.
     for(GLuint lat_layer = 1; lat_layer < (GLOBE_LATITUDE_LAYERS - 1); ++lat_layer ){
     	// For each longitude layer.
@@ -834,75 +835,94 @@ void Starsphere::make_globe() {
     		// latitude is measured from the North Pole = 0 downwards to Equator = 90
     		// and then South Pole = 180.
     		glm::vec3 globe_vertex = sphVertex3D(long_slice*LONG_STEP, 90 - lat_layer*LAT_STEP, SPHERE_RADIUS);
+    		++vertex_counter;
     		globe_vertex_data[vertex_counter*3] = globe_vertex.x;
     		globe_vertex_data[vertex_counter*3 + 1] = globe_vertex.y;
     		globe_vertex_data[vertex_counter*3 + 2] = globe_vertex.z;
-    		++vertex_counter;
     		}
     	}
 
     // Do the South Pole vertex last. This will be at RA = 0, DEC = -90 times radius.
     // Set & remember the index of the South Pole.
-    GLuint south_pole_index = num_vertices - 1;
+    ++vertex_counter;
+    GLuint south_pole_index = vertex_counter;
+    std::cout << "Starsphere::make_globe() : south_pole_index = "
+              << south_pole_index
+              << std::endl;
     glm::vec3 south_pole = sphVertex3D(0, -90, SPHERE_RADIUS);
     globe_vertex_data[south_pole_index*3] = south_pole.x;
     globe_vertex_data[south_pole_index*3 + 1] = south_pole.y;
     globe_vertex_data[south_pole_index*3 + 2] = south_pole.z;
 
     // Populate an index array.
-    // Calculate the number of line segments to render. For latitude layers this is one for
-    // each step in longitude ie. GLOBE_LONGITUDE_SLICES. For longitude slices this
-    // is one for each step in latitude ie. (GLOBE_LATITUDE_SLICES - 1).
-    m_globe_lines = GLOBE_LONGITUDE_SLICES * (GLOBE_LATITUDE_LAYERS - 1) +
-					(GLOBE_LATITUDE_LAYERS - 1) * GLOBE_LONGITUDE_SLICES;
+    // Calculate the number of line segments to render.
+    // For latitude layers this is one for each step in longitude ie. GLOBE_LONGITUDE_SLICES.
+    // For longitude slices this is one for each step in latitude ie. (GLOBE_LATITUDE_SLICES - 1).
+    m_globe_lines = GLOBE_LONGITUDE_SLICES * (GLOBE_LATITUDE_LAYERS - 1)
+                    + (GLOBE_LATITUDE_LAYERS - 2) * GLOBE_LONGITUDE_SLICES;
+    std::cout << "Starsphere::make_globe() : m_globe_lines = "
+              << m_globe_lines
+              << std::endl;
 
 	// Allocate a temporary array for vertex buffer indices. Note the array
-    // type is suitable for indices ie. unsigned integer. I'm going to be brave
-    // and do a single line loop sequence of vertices to create a wireframe globe,
-    // without any repeats/retracing ! Thus the GL_LINE_LOOP enumerant is to be used at
-    // rendering time, and will present with request for the number of lines to be rendered.
-    GLuint globe_index_data[num_vertices*2];
+    // type is suitable for indices ie. unsigned integer. The GL_LINES enumerant is to be used at
+    // rendering time.
+    GLuint globe_index_data[m_globe_lines*2];
 
     // Keep track of how many vertex-to-vertex steps we make.
-    GLuint num_vertex_steps = 0;
-    // Start at the north pole.
-    globe_index_data[num_vertex_steps] = north_pole_index;
-    ++num_vertex_steps;
+    GLuint indicial_index = 0;
+    for(GLuint longitude = 0; longitude < GLOBE_LONGITUDE_SLICES; ++longitude) {
+        // Start at the north pole.
+        globe_index_data[indicial_index] = north_pole_index;
+        std::cout << "Starsphere::make_globe() : vertex_index[" << indicial_index
+                  <<  "] = " << globe_index_data[indicial_index] << std::endl;
+        ++indicial_index;
+        for(GLuint latitude = 1; latitude < (GLOBE_LATITUDE_LAYERS - 1); ++latitude) {
+            GLuint temp = north_pole_index + 1 + longitude
+                          + (latitude - 1) * (GLOBE_LONGITUDE_SLICES);
 
-    // For longitude = 0 to longitude = (180 - LONG_STEP*2) ie. next-to-last great circle
-    // in longitude.
-    //(){
-        // For latitude = 1 to latitude
-        // Step along a series of vertices ...to the south pole along a line of longitude,
-//        for(GLuint lat_counter = 1; lat_counter <  ;++lat_counter){
-//            // Store the index of that vertex according to it's position in the
-//            // globe_vertex_data array.
-//            // The +1 is to offset from the first non-north-pole vertex.
-//            GLuint index = (lat_counter - 1)*(GLOBE_LONGITUDE_SLICES) + 1;
-//            std::cout << "Starsphere::make_globe() : num_vertex_steps = "
-//            		  << num_vertex_steps << "\t"
-//					  << "index*3 = " << index*3 << std::endl;
-//
-//            ++num_vertex_steps;
-//            std::cout << "Starsphere::make_globe() : num_vertex_steps" << std::endl;
-//            }
-        // to the south pole along a line of longitude,
-        // globe_index_data[num_vertex_steps*3] = south_pole_index;
-        ++num_vertex_steps;
-        // and then back up to the north pole along that longitude + 180 degrees.
+            globe_index_data[indicial_index] = temp;
+            std::cout << "Starsphere::make_globe() : vertex_index[" << indicial_index
+                      <<  "] = " << globe_index_data[indicial_index] << std::endl;
+            ++indicial_index;
 
+            globe_index_data[indicial_index] = temp;
+            std::cout << "Starsphere::make_globe() : vertex_index[" << indicial_index
+                      <<  "] = " << globe_index_data[indicial_index] << std::endl;
+            ++indicial_index;
+            }
+        // End at the south pole.
+        globe_index_data[indicial_index] = south_pole_index;
+        std::cout << "Starsphere::make_globe() : vertex_index[" << indicial_index
+                  <<  "] = " << globe_index_data[indicial_index] << std::endl;
+        ++indicial_index;
+        }
 
-      //  }
-
-
-    //
-    // For longitude slices.
-
-    for(GLuint temp = 0; temp < num_vertices; ++temp) {
-    	globe_index_data[temp] = temp;
-    	}
-    GLuint num_indices = num_vertices;
-
+    for(GLuint latitude = 1; latitude < (GLOBE_LATITUDE_LAYERS - 1); ++latitude) {
+        // Start at longitude zero;
+        GLuint starter = 1 + (latitude - 1) * GLOBE_LONGITUDE_SLICES;
+        globe_index_data[indicial_index] = starter;
+        std::cout << "Starsphere::make_globe() : vertex_index[" << indicial_index
+                  <<  "] = " << globe_index_data[indicial_index] << std::endl;
+        ++indicial_index;
+        for(GLuint longitude = 1; longitude < GLOBE_LONGITUDE_SLICES; ++longitude) {
+            GLuint temp = starter + longitude;
+            globe_index_data[indicial_index] = temp;
+            std::cout << "Starsphere::make_globe() : vertex_index[" << indicial_index
+                  <<  "] = " << globe_index_data[indicial_index] << std::endl;
+            ++indicial_index;
+            globe_index_data[indicial_index] = temp;
+            std::cout << "Starsphere::make_globe() : vertex_index[" << indicial_index
+                  <<  "] = " << globe_index_data[indicial_index] << std::endl;
+            ++indicial_index;
+            }
+        globe_index_data[indicial_index] = starter;
+        std::cout << "Starsphere::make_globe() : vertex_index[" << indicial_index
+                  <<  "] = " << globe_index_data[indicial_index] << std::endl;
+        if(latitude != (GLOBE_LATITUDE_LAYERS - 2)) {
+            ++indicial_index;
+            }
+        }
 
     // Create factory instance to then access the shader strings.
     ResourceFactory factory;
@@ -920,7 +940,7 @@ void Starsphere::make_globe() {
     // Populate data structure for indices.
     RenderTask::index_buffer_group i_group1 = {globe_index_data,
         		 	 	 	 	 	 	 	   GLuint(sizeof(globe_index_data)),
-    										   num_indices,
+    										   m_globe_lines*2,
         		                               GL_STATIC_DRAW,
 											   GL_UNSIGNED_INT};
 
@@ -1222,23 +1242,23 @@ void Starsphere::render(const double timeOfDay) {
         }
 
     // stars, pulsars, supernovae, grid
-//    if(isFeature(GAMMAS)) {
-//        m_render_task_gammas->trigger(GL_POINTS, Ngammas);
-//        }
-//    if(isFeature(PULSARS)) {
-//        m_render_task_psr->trigger(GL_POINTS, Npulsars);
-//        }
-//    if(isFeature(SNRS)) {
-//        m_render_task_snr->trigger(GL_POINTS, NSNRs);
-//        }
-//    if(isFeature(STARS)) {
-//        m_render_task_star->trigger(GL_POINTS, m_distinct_stars);;
-//        }
-//    if(isFeature(CONSTELLATIONS)) {
-//        m_render_task_cons->trigger(GL_LINES, m_constellation_lines*2);
-//        }
+    if(isFeature(GAMMAS)) {
+        m_render_task_gammas->trigger(GL_POINTS, Ngammas);
+        }
+    if(isFeature(PULSARS)) {
+        m_render_task_psr->trigger(GL_POINTS, Npulsars);
+        }
+    if(isFeature(SNRS)) {
+        m_render_task_snr->trigger(GL_POINTS, NSNRs);
+        }
+    if(isFeature(STARS)) {
+        m_render_task_star->trigger(GL_POINTS, m_distinct_stars);;
+        }
+    if(isFeature(CONSTELLATIONS)) {
+        m_render_task_cons->trigger(GL_LINES, m_constellation_lines*2);
+        }
     if(isFeature(GLOBE)) {
-        m_render_task_globe->trigger(GL_POINTS, m_globe_vertices);
+        m_render_task_globe->trigger(GL_LINES, m_globe_lines*2);
         }
 
     // observatories move an extra 15 degrees/hr since they were drawn
