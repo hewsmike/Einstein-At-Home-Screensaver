@@ -108,14 +108,13 @@ endif
 
 # Target specific.
 ifeq ".$(SYSTEM)" ".linux"
-	LIBS += -Wl,-Bstatic
-    LIBS += -L$(PRODUCT_INSTALL)/lib -L$(PRODUCT_INSTALL)/lib64
-    LIBS += -lSDL2_ttf -lfreetype -lSDL2 -lxml2 -lz -lbz2 -lGLEW -lframework -loglutility -lboinc_api -lboinc
-	LIBS += -Wl,-Bdynamic
+    LIBS += -Wl,-Bdynamic
     LIBS += -L/usr/lib/X11 -lX11 -lXrandr -lXrender
     LIBS += -L/usr/lib/x86_64-linux-gnu/mesa
-    LIBS += -lGL -lm -lrt
-    LIBS += -lpthread -ldl
+    LIBS += -lGL -ldl -lpthread -lm -lrt
+    LIBS += -Wl,-Bstatic
+    LIBS += -L$(PRODUCT_INSTALL)/lib -L$(PRODUCT_INSTALL)/lib64
+    LIBS += -lSDL2_ttf -lfreetype -lSDL2 -lxml2 -lz -lbz2 -lGLEW -lframework -loglutility -lboinc_api -lboinc
 
 endif
 
