@@ -167,7 +167,7 @@ class Starsphere : public AbstractGraphicsEngine {
          * This abtract method is to be defined by derived classes implementing
          * the science run specific logo rendering.
          */
-        virtual void renderLogo() = 0;
+        virtual void renderLogo(void) = 0;
 
         /**
          * \brief Render science run specific search information
@@ -178,7 +178,7 @@ class Starsphere : public AbstractGraphicsEngine {
          * Note: for this engine this also includes the "BOINC Statistics"
          * as it is top-aligned to the "Search Information".
          */
-        virtual void renderSearchInformation() = 0;
+        virtual void renderSearchInformation(void) = 0;
 
         /**
          * \brief Render additional observatories
@@ -192,7 +192,7 @@ class Starsphere : public AbstractGraphicsEngine {
          *
          * \see StarsphereRadio::renderAdditionalObservatories()
          */
-        virtual void renderAdditionalObservatories();
+        virtual void renderAdditionalObservatories(void);
 
         /**
          * \brief This method has to be called in order to update the BOINC client information
@@ -203,7 +203,7 @@ class Starsphere : public AbstractGraphicsEngine {
          *
          * \see AbstractGraphicsEngine::refreshLocalBOINCInformation()
          */
-        virtual void refreshLocalBOINCInformation();
+        virtual void refreshLocalBOINCInformation(void);
 
         /**
          * \brief Generates the OpenGL call lists for the displayed observatories
@@ -231,7 +231,8 @@ class Starsphere : public AbstractGraphicsEngine {
             SEARCHINFO = 256,
             SNRS = 512,
             STARS = 1024,
-            XRAYS = 2048
+            XRAYS = 2048,
+            EARTH = 4096
             };
 
         /**
@@ -357,7 +358,7 @@ class Starsphere : public AbstractGraphicsEngine {
         static const GLfloat DEFAULT_LINE_WIDTH;
         static const GLfloat DEFAULT_POINT_SIZE;
         static const GLuint PIXEL_UNPACK_BOUNDARY;
-        static const GLuint SPHERE_RADIUS;
+        static const GLfloat SPHERE_RADIUS;
 
         // Fonts.
         static const GLboolean TTF_FREE_SOURCE;
@@ -390,6 +391,7 @@ class Starsphere : public AbstractGraphicsEngine {
         RenderTask* m_render_task_cons;
         RenderTask* m_render_task_gammas;
         RenderTask* m_render_task_globe;
+        RenderTask* m_render_task_earth;
         RenderTask* m_render_task_psr;
         RenderTask* m_render_task_snr;
         RenderTask* m_render_task_star;
@@ -397,6 +399,7 @@ class Starsphere : public AbstractGraphicsEngine {
         /// Colors.
         glm::vec3 m_gamma_color;
         glm::vec3 m_globe_color;
+        glm::vec3 m_earth_color;
         glm::vec3 m_pulsar_color;
         glm::vec3 m_star_color;
         glm::vec3 m_supernova_color;
@@ -419,6 +422,7 @@ class Starsphere : public AbstractGraphicsEngine {
         // Number of line segments for globe.
         GLuint m_globe_vertices;
         GLuint m_globe_lines;
+        GLuint m_earth_triangles;
 
         glm::mat4 m_orthographic_projection;
         glm::mat4 m_perspective_projection;
@@ -429,25 +433,28 @@ class Starsphere : public AbstractGraphicsEngine {
         glm::mat4 m_camera;
 
         /// Generate rendering task for stars.
-        void make_stars();
+        void make_stars(void);
 
         /// Generate rendering task for pulsars.
-        void make_pulsars();
+        void make_pulsars(void);
 
         /// Generate rendering task for supernovae.
-        void make_snrs();
+        void make_snrs(void);
 
         /// Generate rendering task for constellations.
-        void make_constellations();
+        void make_constellations(void);
 
         /// Generate rendering task for gamma ray pulsars.
-        void make_gammas();
+        void make_gammas(void);
 
         /// Generate OpenGL display list for the axes (debug)
-        void make_axes();
+        void make_axes(void);
 
-        /// Generate OpenGL display list for the globe
-        void make_globe();
+        /// Generate a latitude/longitude mesh globe.
+        void make_globe_mesh_lat_long(void);
+
+        /// Generate a globe with a texture.
+        void make_globe_mesh_texture(void);
 
         /**
          * \brief Generate OpenGL display list for search marker (gunsight)
