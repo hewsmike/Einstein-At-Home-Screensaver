@@ -178,7 +178,7 @@ RenderTask::RenderTask(RenderTask::shader_group s_group,
             }
         }
 
-    m_pipeline = new Pipeline(m_program, m_vertex_fetch);
+    m_pipeline = new Pipeline(m_program, m_vertex_fetch, m_texture_buffer);
     }
 
 RenderTask::~RenderTask() {

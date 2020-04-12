@@ -232,7 +232,8 @@ class Starsphere : public AbstractGraphicsEngine {
             SNRS = 512,
             STARS = 1024,
             XRAYS = 2048,
-            EARTH = 4096
+            EARTH = 4096,
+            ROLL_STOP = 8192
             };
 
         /**
