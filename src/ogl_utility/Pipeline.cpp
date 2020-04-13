@@ -44,7 +44,7 @@ Pipeline::~Pipeline() {
 void Pipeline::trigger(GLenum primitive, GLsizei count) {
     // Link program if not done.
     if(m_program->status() == Program::NEVER_LINKED) {
-        ErrorHandler::record("Pipeline::trigger() : program needs acquisition ...", ErrorHandler::INFORM);
+        ErrorHandler::record("Pipeline::trigger() : program needs configuring ...", ErrorHandler::INFORM);
         m_program->configure();
         }
 
@@ -55,6 +55,7 @@ void Pipeline::trigger(GLenum primitive, GLsizei count) {
 
     // If you have a texture, but it is not acquired, then do so.
     if((m_texture_buffer != NULL) && (!m_texture_buffer->isAcquired())) {
+        std::cout << "Pipeline::trigger() : m_texture_buffer acquired!" << std::endl;
         m_texture_buffer->acquire();
         }
 
@@ -66,7 +67,11 @@ void Pipeline::trigger(GLenum primitive, GLsizei count) {
 
         // If texturing then bind.
         if(m_texture_buffer != NULL) {
+            if(!m_texture_buffer->isConfigured()){
+                m_texture_buffer->configure();
+                }
             m_texture_buffer->bind();
+            // std::cout << "Pipeline::trigger() : texture_buffer_bound!" << std::endl;
             }
 
         m_program->frameCallBack();

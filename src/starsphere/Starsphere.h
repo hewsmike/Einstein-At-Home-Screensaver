@@ -384,6 +384,7 @@ class Starsphere : public AbstractGraphicsEngine {
         // Globe feature parameters.
         static const GLuint GLOBE_LATITUDE_LAYERS;
         static const GLuint GLOBE_LONGITUDE_SLICES;
+        static const GLuint VERTICES_PER_TRIANGLE;
 
         /// Cumulative frame count.
         GLuint m_framecount;

@@ -25,7 +25,7 @@ AppIconBMP|EaH.bmp.res
 
 # Shaders
 FragmentShader_Pass|fs_pass.res
-VertexShader_Texture|vertex_shader_single_color_single_pointsize_texture.res
+VertexShader_Texture|vertex_shader_single_pointsize_texture.res
 VertexShader_Gammas|vertex_shader_single_color_single_pointsize.res
 VertexShader_Pulsars|vertex_shader_single_color_single_pointsize.res
 VertexShader_Stars|vertex_shader_single_color_single_pointsize.res

@@ -117,8 +117,6 @@ bool TextureBuffer::acquire(void) {
     GLuint handle;
     glGenTextures(1, &handle);
     this->set_ID(handle);
-    this->bind();
-    this->loadBuffer();
     this->setAcquisitionState(true);
     return true;
     }
@@ -182,13 +180,13 @@ void TextureBuffer::loadBuffer(void) {
     /// TODO - make these choices dependent upon rendering quality selection ?
     if(m_mipmaps == true) {
         // With mipmapping intended.
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST_MIPMAP_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
         }
     else {
         // Without mipmaps involved.
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         }
 
     // Make mipmaps if requested.

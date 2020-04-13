@@ -218,6 +218,7 @@ void RenderTask::acquire(void) {
 
     if(m_texture_buffer != NULL) {
         m_texture_buffer->acquire();
+        std::cout << "RenderTask::acquire() : m_texture_buffer_acquired!" << std::endl;
         }
 
     m_program->configure();
