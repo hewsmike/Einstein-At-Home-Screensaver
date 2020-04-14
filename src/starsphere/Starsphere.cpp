@@ -953,9 +953,7 @@ void Starsphere::make_globe_mesh_lat_long(void) {
     m_render_task_globe->setUniform("point_size", &m_globe_point_size);
 
     // Claim all required state machine resources for this rendering task.
-    std::cout << "BEFORE" << std::endl;
     m_render_task_globe->acquire();
-    std::cout << "AFTER" << std::endl;
     }
 
 /**
@@ -964,16 +962,10 @@ void Starsphere::make_globe_mesh_lat_long(void) {
 
 void Starsphere::make_globe_mesh_texture(void) {
     // What are the steps in latitude and longitude for this globe? Decimal degrees.
-    std::cout << "GLOBE_LATITUDE_LAYERS = " << GLOBE_LATITUDE_LAYERS << std::endl;
-    std::cout << "GLOBE_LONGITUDE_SLICES = " << GLOBE_LONGITUDE_SLICES << std::endl;
     GLfloat LAT_STEP = 180.0f/(GLOBE_LATITUDE_LAYERS - 1);
-    std::cout << "LAT_STEP = " << LAT_STEP << std::endl;
     GLfloat LONG_STEP = 360.0f/GLOBE_LONGITUDE_SLICES;
-    std::cout << "LONG_STEP = " << LONG_STEP << std::endl;
     GLfloat LAT_TEXTURE_STEP = 1.0f/(GLOBE_LATITUDE_LAYERS - 1);
-    std::cout << "LAT_TEXTURE_STEP = " << LAT_TEXTURE_STEP << std::endl;
     GLfloat LONG_TEXTURE_STEP = 1.0f/GLOBE_LONGITUDE_SLICES;
-    std::cout << "LONG_TEXTURE_STEP = " << LONG_TEXTURE_STEP << std::endl;
     GLuint COORDS_PER_VERTEX = 5;
 
     // What is the radius compared to the celestial sphere.
@@ -983,10 +975,8 @@ void Starsphere::make_globe_mesh_texture(void) {
     // Calculate the number of vertices. This is a full number of longitudinal slices for
     // each latitude layer, including each pole.
     GLuint NUM_VERTICES = GLOBE_LATITUDE_LAYERS * GLOBE_LONGITUDE_SLICES;
-    std::cout << "NUM_VERTICES = " << NUM_VERTICES << std::endl;
 
     m_earth_triangles = NUM_VERTICES * 2;
-    std::cout << "m_earth_triangles = " << m_earth_triangles << std::endl;
 
     // Allocate a temporary array for vertex positions in 3D ie. each has
     // an x, y and z component. Plus two texture coordinates.
@@ -1011,19 +1001,11 @@ void Starsphere::make_globe_mesh_texture(void) {
     		globe_vertex_data[vertex_counter*COORDS_PER_VERTEX + 2] = globe_vertex.z;
     		globe_vertex_data[vertex_counter*COORDS_PER_VERTEX + 3] = float(longitudinal_slice)*LONG_TEXTURE_STEP;
     		globe_vertex_data[vertex_counter*COORDS_PER_VERTEX + 4] = 1.0f - latitude_layer*LAT_TEXTURE_STEP;
-    		std::cout << "latitude = " << 90 - latitude_layer*LAT_STEP
-                      << "\tlongitude = " << temp
-                      << "\t\tx = " << globe_vertex_data[vertex_counter*COORDS_PER_VERTEX]
-                      << "\ty = " << globe_vertex_data[vertex_counter*COORDS_PER_VERTEX+1]
-                      << "\tz = " << globe_vertex_data[vertex_counter*COORDS_PER_VERTEX+2]
-                      << "\ts = " << globe_vertex_data[vertex_counter*COORDS_PER_VERTEX+3]
-                      << "\tt = " << globe_vertex_data[vertex_counter*COORDS_PER_VERTEX+4]
-                      << std::endl;
     		++vertex_counter;
     		}
     	}
 
-// Allocate a temporary array for vertex buffer indices. Note the array
+    // Allocate a temporary array for vertex buffer indices. Note the array
     // type is suitable for indices ie. unsigned integer. The GL_TRIANGLES enumerant is to be used at
     // rendering time.
     GLuint globe_index_data[m_earth_triangles*VERTICES_PER_TRIANGLE];
@@ -1031,25 +1013,8 @@ void Starsphere::make_globe_mesh_texture(void) {
     // Keep track of which entry in the indicial array we are up to.
     GLuint indicial_index = 0;
 
-//    // North polar cap.
-//    for(GLuint longitude = 0; longitude < GLOBE_LONGITUDE_SLICES; ++longitude) {
-//        // Start at the north pole.
-//        globe_index_data[indicial_index] = longitude;
-//        ++indicial_index;
-//        globe_index_data[indicial_index] = GLOBE_LONGITUDE_SLICES + longitude;
-//        ++indicial_index;
-//        globe_index_data[indicial_index] = GLOBE_LONGITUDE_SLICES + (longitude + 1)%GLOBE_LONGITUDE_SLICES;
-//        ++indicial_index;
-//        }
-
     for(GLuint latitude_layer = 0; latitude_layer < GLOBE_LATITUDE_LAYERS; ++latitude_layer) {
         for(GLuint longitude = 0; longitude < GLOBE_LONGITUDE_SLICES; ++longitude) {
-//            std::cout << "latitude_layer = " << latitude_layer
-//                      << "\tlongitude = " << longitude
-//                      << "\tvertex_indices = " << longitude + latitude_layer*GLOBE_LONGITUDE_SLICES
-//                      << ", " << (latitude_layer + 1)*GLOBE_LONGITUDE_SLICES + longitude
-//                      << ", " << (latitude_layer + 1)*GLOBE_LONGITUDE_SLICES + (longitude + 1)%GLOBE_LONGITUDE_SLICES
-//                      << std::endl;
             globe_index_data[indicial_index] = longitude + latitude_layer*GLOBE_LONGITUDE_SLICES;
             ++indicial_index;
             globe_index_data[indicial_index] = (latitude_layer + 1)*GLOBE_LONGITUDE_SLICES + longitude;
