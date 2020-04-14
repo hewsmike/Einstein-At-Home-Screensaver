@@ -128,8 +128,7 @@ RenderTask::RenderTask(RenderTask::shader_group s_group,
  	m_vertex_fetch = new VertexFetch(m_attrib_adapt, m_vertex_buffer, m_index_buffer);
 
  	setBaseCase(s_group);
- 	std::cout << "HERE" << std::endl;
-	}
+ 	}
 
 RenderTask::RenderTask(RenderTask::shader_group s_group,
                        RenderTask::vertex_buffer_group v_group,

@@ -823,12 +823,11 @@ void Starsphere::make_globe_mesh_lat_long(void) {
     GLuint north_pole_index = 0;
     // Set and remember the index of the current vertex.
     GLuint vertex_counter = 0;
-    GLfloat globe_radius = SPHERE_RADIUS*(1.2);
+    GLfloat globe_radius = SPHERE_RADIUS*(1.02);
     glm::vec3 north_pole = sphVertex3D(0, 90, globe_radius);
     globe_vertex_data[north_pole_index*3] = north_pole.x;
     globe_vertex_data[north_pole_index*3 + 1] = north_pole.y;
     globe_vertex_data[north_pole_index*3 + 2] = north_pole.z;
-
 
     // For each non-pole latitude layer.
     for(GLuint lat_layer = 1; lat_layer < (GLOBE_LATITUDE_LAYERS - 1); ++lat_layer ){
@@ -967,9 +966,12 @@ void Starsphere::make_globe_mesh_texture(void) {
     GLfloat LAT_TEXTURE_STEP = 1.0f/(GLOBE_LATITUDE_LAYERS - 1);
     GLfloat LONG_TEXTURE_STEP = 1.0f/GLOBE_LONGITUDE_SLICES;
     GLuint COORDS_PER_VERTEX = 5;
+    GLuint EARTH_TEXTURE_WIDTH = 2048;
+    GLuint EARTH_TEXTURE_HEIGHT = 1024;
+    GLuint EARTH_TEXTURE_COLOR_DEPTH = 3;
 
     // What is the radius compared to the celestial sphere.
-    GLfloat EARTH_RADIUS = SPHERE_RADIUS * 1.2;
+    GLfloat EARTH_RADIUS = SPHERE_RADIUS * 0.4;
 
     // Populate a vertex array.
     // Calculate the number of vertices. This is a full number of longitudinal slices for
@@ -1054,9 +1056,9 @@ void Starsphere::make_globe_mesh_texture(void) {
 
     // To get at the underlying texture data from a Resource instance, then cast it void ...
 	RenderTask::texture_buffer_group t_group1 =	{(const GLvoid*)factory.createInstance("Earthmap")->data()->data(),
-                                                2048*1024*3,
-                                                2048,
-                                                1024,
+                                                EARTH_TEXTURE_WIDTH*EARTH_TEXTURE_HEIGHT*EARTH_TEXTURE_COLOR_DEPTH,
+                                                EARTH_TEXTURE_WIDTH,
+                                                EARTH_TEXTURE_HEIGHT,
                                                 GL_RGB,
                                                 GL_UNSIGNED_BYTE,
                                                 GL_CLAMP,
@@ -1177,28 +1179,28 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
         }
 
     // Create rendering tasks for given features.
-//    make_constellations();
-//    make_gammas();
-      make_globe_mesh_lat_long();
-      make_globe_mesh_texture();
-//    make_pulsars();
-//    make_snrs();
-//    make_stars();
+    make_constellations();
+    make_gammas();
+    make_globe_mesh_lat_long();
+    make_globe_mesh_texture();
+    make_pulsars();
+    make_snrs();
+    make_stars();
 
     // Begin with these visual features enabled.
-//    setFeature(CONSTELLATIONS, true);
-//    setFeature(OBSERVATORIES, true);
-//    setFeature(XRAYS, true);            /// TODO - we don't have this feature even designed yet.
-//    setFeature(PULSARS, true);
-//    setFeature(SNRS, true);
-//    setFeature(GAMMAS, true);
-      setFeature(GLOBE, true);
-//    setFeature(AXES, false);
-//    setFeature(SEARCHINFO, true);
-//    setFeature(LOGO, true);
-//    setFeature(MARKER, true);
-      setFeature(EARTH, true);
-      setFeature(ROLL_STOP, true);
+    setFeature(CONSTELLATIONS, true);
+    setFeature(OBSERVATORIES, true);
+    setFeature(XRAYS, true);            /// TODO - we don't have this feature even designed yet.
+    setFeature(PULSARS, true);
+    setFeature(SNRS, true);
+    setFeature(GAMMAS, true);
+    setFeature(GLOBE, true);
+    setFeature(AXES, false);
+    setFeature(SEARCHINFO, true);
+    setFeature(LOGO, true);
+    setFeature(MARKER, true);
+    setFeature(EARTH, true);
+    setFeature(ROLL_STOP, true);
 
     // Here we set the byte alignment when unpacking data from memory
     // to a one byte boundary. This done mainly for optimizing font setup.
