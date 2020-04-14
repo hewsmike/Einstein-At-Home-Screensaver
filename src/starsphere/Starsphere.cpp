@@ -829,6 +829,7 @@ void Starsphere::make_globe_mesh_lat_long(void) {
     globe_vertex_data[north_pole_index*3 + 1] = north_pole.y;
     globe_vertex_data[north_pole_index*3 + 2] = north_pole.z;
 
+
     // For each non-pole latitude layer.
     for(GLuint lat_layer = 1; lat_layer < (GLOBE_LATITUDE_LAYERS - 1); ++lat_layer ){
     	// For each longitude layer.
