@@ -67,11 +67,7 @@ void Pipeline::trigger(GLenum primitive, GLsizei count) {
 
         // If texturing then bind.
         if(m_texture_buffer != NULL) {
-            if(!m_texture_buffer->isConfigured()){
-                m_texture_buffer->configure();
-                }
             m_texture_buffer->bind();
-            // std::cout << "Pipeline::trigger() : texture_buffer_bound!" << std::endl;
             }
 
         m_program->frameCallBack();

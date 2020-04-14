@@ -49,7 +49,7 @@
  * \author Mike Hewson\n
  */
 
-class Buffer : public OGL_ID, public Bindable, public Configurable {
+class Buffer : public OGL_ID, public Bindable {
     public :
         /**
          * \brief Constructor.
@@ -69,15 +69,6 @@ class Buffer : public OGL_ID, public Bindable, public Configurable {
          * \brief Destructor.
          */
         virtual ~Buffer();
-
-        /**
-         * \brief Actually configure any underlying object(s).
-         *
-         * \return a boolean indicating success of configuration
-         *              - true, the configuration as successful.
-         *              - false, the configuration was not successful.
-         */
-        virtual bool configure(void);
 
         /**
          * \brief The number of bytes stored within the buffer.

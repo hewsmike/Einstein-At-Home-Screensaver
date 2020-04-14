@@ -118,6 +118,11 @@ bool TextureBuffer::acquire(void) {
     glGenTextures(1, &handle);
     this->set_ID(handle);
     this->setAcquisitionState(true);
+
+    this->bind();
+    this->loadBuffer();
+    this->unbind();
+
     return true;
     }
 

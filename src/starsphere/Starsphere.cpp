@@ -953,7 +953,9 @@ void Starsphere::make_globe_mesh_lat_long(void) {
     m_render_task_globe->setUniform("point_size", &m_globe_point_size);
 
     // Claim all required state machine resources for this rendering task.
+    std::cout << "BEFORE" << std::endl;
     m_render_task_globe->acquire();
+    std::cout << "AFTER" << std::endl;
     }
 
 /**
@@ -1085,15 +1087,8 @@ void Starsphere::make_globe_mesh_texture(void) {
         		                               GL_STATIC_DRAW,
 											   GL_UNSIGNED_INT};
 
-//	const vector<unsigned char>* texture_vector = factory.createInstance("Earthmap")->data();
-//	GLuint texture_bytes = 2048*1024*3;
-//	GLchar texelsRGB[texture_bytes];
-//    for(GLuint t_byte = 0; t_byte < texture_bytes; ++t_byte) {
-//        // (const GLvoid*)factory.createInstance("Earthmap")->data()
-//        texelsRGB[t_byte] = texture_vector->at(t_byte);
-//        }
-
-	RenderTask::texture_buffer_group t_group1 =	{(const GLvoid*)factory.createInstance("Earthmap")->data()->data(), //(const GLvoid*)texelsRGB
+    // To get at the underlying texture data from a Resource instance, then cast it void ...
+	RenderTask::texture_buffer_group t_group1 =	{(const GLvoid*)factory.createInstance("Earthmap")->data()->data(),
                                                 2048*1024*3,
                                                 2048,
                                                 1024,

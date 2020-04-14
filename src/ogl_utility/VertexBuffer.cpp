@@ -59,7 +59,6 @@ bool VertexBuffer::acquire(void) {
     this->setAcquisitionState(true);
 
     this->bind();
-
     this->loadBuffer();
     this->unbind();
 
