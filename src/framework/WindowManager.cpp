@@ -30,8 +30,8 @@
 #include "ogl_utility.h"
 #include "SDL_events.h"
 
-const int WindowManager::PREFERRED_SCREEN_WIDTH(800);
-const int WindowManager::PREFERRED_SCREEN_HEIGHT(600);
+const int WindowManager::PREFERRED_SCREEN_WIDTH(1024);
+const int WindowManager::PREFERRED_SCREEN_HEIGHT(768);
 const int WindowManager::PREFERRED_SCREEN_FRAME_RATE(20);
 
 const std::string WindowManager::m_WindowTitle("Einstein At Home");
@@ -157,16 +157,14 @@ bool WindowManager::initialize(const int width, const int height, const int fram
         m_BoincAdapter->initialize();
 
         // Obtain BOINC preferred window width.
-        // int preferredWidth = m_BoincAdapter->graphicsWindowWidth();
-        int preferredWidth = 1024;
+        int preferredWidth = m_BoincAdapter->graphicsWindowWidth();
         stringstream msg_init_prefwidth;
         msg_init_prefwidth << "WindowManager::initialize() : BOINC preferred width = "
                            << preferredWidth;
         ErrorHandler::record(msg_init_prefwidth.str(), ErrorHandler::INFORM);
 
         // Obtain BOINC preferred window height.
-        // int preferredHeight = m_BoincAdapter->graphicsWindowHeight();
-        int preferredHeight = 768;
+        int preferredHeight = m_BoincAdapter->graphicsWindowHeight();
         stringstream msg_init_prefheight;
         msg_init_prefheight << "WindowManager::initialize() : BOINC preferred height = "
                             << preferredHeight;
