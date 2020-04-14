@@ -209,24 +209,17 @@ void RenderTask::trigger(GLenum primitive, GLsizei count) {
     }
 
 void RenderTask::acquire(void) {
-    std::cout << "THERE" << std::endl;
     if(m_vertex_buffer != NULL) {
-        std::cout << "THERES" << std::endl;
         m_vertex_buffer->acquire();
         }
 
     if(m_index_buffer != NULL) {
-        std::cout << "THERE0" << std::endl;
         m_index_buffer->acquire();
         }
 
     if(m_texture_buffer != NULL) {
-        std::cout << "THERE1" << std::endl;
         m_texture_buffer->acquire();
-        std::cout << "RenderTask::acquire() : m_texture_buffer_acquired!" << std::endl;
         }
-
-    std::cout << "THERE2" << std::endl;
 
     m_program->configure();
 

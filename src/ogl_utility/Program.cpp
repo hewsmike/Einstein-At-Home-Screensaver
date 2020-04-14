@@ -66,7 +66,7 @@ bool Program::acquire(void) {
 		// If that handle acquisition failed the we have no other option ...
 		if(this->ID() == OGL_ID::NO_ID)  {
 			ErrorHandler::record("Program::acquire() : OpenGL handle acquisition failure !",
-								 ErrorHandler::INFORM);
+								 ErrorHandler::FATAL);
 			}
 		}
 
@@ -119,77 +119,64 @@ bool Program::configure(void) {
 		this->acquire();
 		}
 
+    // Provided shaders have acquired and not deleted,
+    // then attach them.
+	if((m_vertex_shader->isAcquired() == false) &&
+       (m_vertex_shader->isDeleted() == false)) {
+        this->m_vertex_shader->acquire();
+        }
+    if((m_fragment_shader->isAcquired() == false ) &&
+       (m_fragment_shader->isDeleted() == false)) {
+        this->m_fragment_shader->acquire();
+       }
+
 	// Provided a prior link attempt has not occurred.
 	if(m_link_status == Program::NEVER_LINKED) {
 		// Clear the linker log.
 		m_linker_log = "";
 
-		// Attaching and linking shaders only occurs if both have compiled
-		// successfully and neither have been marked for deletion ( which
-		// includes the possibility that they may have been deleted ).
-		if((m_vertex_shader->isDeleted() == false ) &&
-		   (m_fragment_shader->isDeleted() == false )) {
-			// No deletions marked, so compile if needed.
-			if(m_vertex_shader->status() == Shader::NEVER_COMPILED) {
-				m_vertex_shader->configure();
-				}
+		std::stringstream vshader_msg;
+        vshader_msg << "Program::acquire() : attaching vertex shader with ID = "
+                    << m_vertex_shader->ID()
+                    << " to program with ID = "
+                    << this->ID();
+        ErrorHandler::record(vshader_msg.str(), ErrorHandler::INFORM);
+        glAttachShader(this->ID(), m_vertex_shader->ID());
 
-			if(m_fragment_shader->status() == Shader::NEVER_COMPILED) {
-				m_fragment_shader->configure();
-				}
+        std::stringstream fshader_msg;
+        fshader_msg << "Program::acquire() : attaching fragment shader with ID = "
+                    << m_fragment_shader->ID()
+                    << " to program with ID = "
+                    << this->ID();
+        ErrorHandler::record(fshader_msg.str(), ErrorHandler::INFORM);
+        glAttachShader(this->ID(), m_fragment_shader->ID());
 
-			// Attach only if both pass muster.
-			if((m_vertex_shader->status() == Shader::COMPILE_SUCCEEDED) &&
-			   (m_fragment_shader->status() == Shader::COMPILE_SUCCEEDED)) {
+        // Link program and check for success.
+        if(link() == true) {
+            ret_val = true;
+            }
+        else {
+            m_link_status = Program::LINKAGE_FAILED;
+            ErrorHandler::record("Program::configure() : failure to GLSL link !",
+                                 ErrorHandler::WARN);
+            // Populate the linkage log ie. retrieve linker error output.
+            // Copy to an std::string via temporary character array to avoid
+            // const semantic difficulties on the std::string c_str() method.
+            GLint log_len;
+            glGetProgramiv(this->ID(), GL_INFO_LOG_LENGTH, &log_len);
+            // Use extra character to account for null character terminator ( documentation unclear ).
+            GLchar* temp_log = new GLchar[log_len+1];
+            GLsizei returned_log_len;
+            glGetProgramInfoLog(this->ID(), log_len+1, &returned_log_len, temp_log);
 
+            // Account for null character terminator ( documentation unclear ).
+            temp_log[log_len] = '\0';
+            m_linker_log = temp_log;
 
-
-				// The shaders have compiled without error, and are
-				// not marked for deletion, so attach them.
-				std::stringstream vshader_msg;
-				vshader_msg << "Program::acquire() : attaching vertex shader with ID = "
-							<< m_vertex_shader->ID()
-							<< " to program with ID = "
-							<< this->ID();
-				ErrorHandler::record(vshader_msg.str(), ErrorHandler::INFORM);
-				glAttachShader(this->ID(), m_vertex_shader->ID());
-
-				std::stringstream fshader_msg;
-				fshader_msg << "Program::acquire() : attaching fragment shader with ID = "
-							<< m_fragment_shader->ID()
-							<< " to program with ID = "
-							<< this->ID();
-				ErrorHandler::record(fshader_msg.str(), ErrorHandler::INFORM);
-				glAttachShader(this->ID(), m_fragment_shader->ID());
-
-				// Link program and check for success.
-				if(link() == true) {
-					ret_val = true;
-					}
-				else {
-					m_link_status = Program::LINKAGE_FAILED;
-					ErrorHandler::record("Program::acquire() : failure to GLSL link !",
-										 ErrorHandler::WARN);
-					// Populate the linkage log ie. retrieve linker error output.
-					// Copy to an std::string via temporary character array to avoid
-					// const semantic difficulties on the std::string c_str() method.
-					GLint log_len;
-					glGetProgramiv(this->ID(), GL_INFO_LOG_LENGTH, &log_len);
-					// Use extra character to account for null character terminator ( documentation unclear ).
-					GLchar* temp_log = new GLchar[log_len+1];
-					GLsizei returned_log_len;
-					glGetProgramInfoLog(this->ID(), log_len+1, &returned_log_len, temp_log);
-
-					// Account for null character terminator ( documentation unclear ).
-					temp_log[log_len] = '\0';
-					m_linker_log = temp_log;
-
-					// Dispose of the temporary character array.
-					delete[] temp_log;
-					}
-				}
-			}
-		}
+            // Dispose of the temporary character array.
+            delete[] temp_log;
+            }
+        }
 
 	return ret_val;
 	}

@@ -78,6 +78,7 @@ bool Shader::acquire(void) {
         // Only compile if never attempted.
         if(comp_status == Shader::NEVER_COMPILED) {
             ret_val = compile();
+
             }
         }
 
@@ -93,20 +94,6 @@ void Shader::release(void) {
     // Reset compilation status.
     comp_status = Shader::NEVER_COMPILED;
     }
-
-bool Shader::configure(void) {
-	// Assume failure.
-	bool ret_val = false;
-	if(this->isAcquired() == false) {
-		this->acquire();
-		}
-
-	if(comp_status == Shader::NEVER_COMPILED) {
-        ret_val = compile();
-        }
-
-	return ret_val;
-	}
 
 bool Shader::isDeleted(void) const {
     // Assume not marked for deletion.
@@ -209,7 +196,7 @@ bool Shader::compile(void) {
                                  << " ) did ";
 
         if(this->status() != Shader::COMPILE_SUCCEEDED) {
-            info_level = ErrorHandler::WARN;
+            info_level = ErrorHandler::FATAL;
             shader_compile_error_msg <<    "not compile !!\n"
                                      << "Compile log is as follows :\n"
                                      << "++++++++++++++++++++++++++++++++++++++++++++++++++++++\n"

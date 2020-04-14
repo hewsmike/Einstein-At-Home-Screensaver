@@ -55,7 +55,6 @@ void Pipeline::trigger(GLenum primitive, GLsizei count) {
 
     // If you have a texture, but it is not acquired, then do so.
     if((m_texture_buffer != NULL) && (!m_texture_buffer->isAcquired())) {
-        std::cout << "Pipeline::trigger() : m_texture_buffer acquired!" << std::endl;
         m_texture_buffer->acquire();
         }
 
