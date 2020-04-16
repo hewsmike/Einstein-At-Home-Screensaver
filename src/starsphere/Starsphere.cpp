@@ -60,8 +60,8 @@ const GLfloat Starsphere::PERSPECTIVE_FOV_DEFAULT(45.0f);
 const GLfloat Starsphere::PERSPECTIVE_FOV_MIN(20.0f);
 const GLfloat Starsphere::PERSPECTIVE_FOV_MAX(70.0f);
 const GLfloat Starsphere::VIEWPOINT_MOUSEWHEEL_FOV_RATE(0.1f);
-const GLuint Starsphere::GLOBE_LATITUDE_LAYERS(19);                     // Every ten degrees in latitude/declination, pole to pole.
-const GLuint Starsphere::GLOBE_LONGITUDE_SLICES(36);                    // Every ten degrees in longitude/right-ascension, from equinox.
+const GLuint Starsphere::GLOBE_LATITUDE_LAYERS(37);                     // Each pole is a layer in latitude too.
+const GLuint Starsphere::GLOBE_LONGITUDE_SLICES(72);
 const GLuint Starsphere::VERTICES_PER_TRIANGLE(3);
 
 Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
@@ -172,7 +172,8 @@ Starsphere::~Starsphere() {
     if(m_render_task_psr) delete m_render_task_psr;
     if(m_render_task_snr) delete m_render_task_snr;
     if(m_render_task_star) delete m_render_task_star;
-
+    if(m_render_task_globe) delete m_render_task_globe;
+    if(m_render_task_earth) delete m_render_task_earth;
     }
 
 glm::vec3 Starsphere::sphVertex3D(GLfloat RAdeg, GLfloat DEdeg, GLfloat radius) {
