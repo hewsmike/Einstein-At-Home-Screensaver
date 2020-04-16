@@ -41,7 +41,8 @@ void StarsphereGravity::initialize(const int width, const int height, const Reso
 
     // Fatal error if no font resource supplied.
     if(!m_FontResource) {
-        ErrorHandler::record("StarsphereGravity::initialize()", ErrorHandler::FATAL);
+        std::cout << "Hello from StarsphereGravity::initialize no font resource available !" << std::endl;
+        // ErrorHandler::record("StarsphereGravity::initialize()", ErrorHandler::FATAL);
         }
     else {
         // Create two logo font instances using font resource, if not done already.

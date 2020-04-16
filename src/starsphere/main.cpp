@@ -224,11 +224,10 @@ int main(int argc, char **argv) {
         if(param == "--fullscreen") {
             // Set non-interactive mode ie. 'screensaver'
             // (must do this first on Apple).
-            window.setScreensaverMode(true);
+            // window.setScreensaverMode(true);
             }
-        if(param == "--demo") {
+        if((param == "--demo") || (param == "--fullscreen")) {
             ErrorHandler::record("Starsphere::main() : Fullscreen & demo mode ...", ErrorHandler::INFORM);
-            window.setScreensaverMode(false);
             // Initialised display is as a window,
             // so we transition to a fullscreen.
             window.toggleFullscreen();

@@ -957,7 +957,7 @@ void Starsphere::make_globe_mesh_lat_long(void) {
     }
 
 /**
- * Globe with a texture covered mesh.
+ * Globe as a texture covered mesh. The Earth actually.
  */
 
 void Starsphere::make_globe_mesh_texture(void) {
@@ -977,9 +977,9 @@ void Starsphere::make_globe_mesh_texture(void) {
     // Populate a vertex array.
     // Calculate the number of vertices. This is a full number of longitudinal slices for
     // each latitude layer, including each pole.
-    GLuint NUM_VERTICES = GLOBE_LATITUDE_LAYERS * GLOBE_LONGITUDE_SLICES;
+    GLuint NUM_VERTICES = GLOBE_LATITUDE_LAYERS * (GLOBE_LONGITUDE_SLICES + 1);
 
-    m_earth_triangles = NUM_VERTICES * 2;
+    m_earth_triangles = GLOBE_LATITUDE_LAYERS * GLOBE_LONGITUDE_SLICES * 2;
 
     // Allocate a temporary array for vertex positions in 3D ie. each has
     // an x, y and z component. Plus two texture coordinates.
@@ -993,15 +993,21 @@ void Starsphere::make_globe_mesh_texture(void) {
     // For each latitude layer.
     for(GLuint latitude_layer = 0; latitude_layer < GLOBE_LATITUDE_LAYERS; ++latitude_layer ){
         // For each longitude layer.
-    	for(GLuint longitudinal_slice = 0; longitudinal_slice < GLOBE_LONGITUDE_SLICES; ++longitudinal_slice){
+    	for(GLuint longitudinal_slice = 0; longitudinal_slice < GLOBE_LONGITUDE_SLICES +1; ++longitudinal_slice){
     		// NB sphVertex3D() measures declination above/below equator, but here
     		// latitude is measured from the North Pole = 0 downwards to Equator = 90
     		// and then South Pole = 180.
-    		GLfloat temp = float(longitudinal_slice)*LONG_STEP;
-    		glm::vec3 globe_vertex = sphVertex3D(temp, 90 - latitude_layer*LAT_STEP, EARTH_RADIUS);
+    		GLfloat temp = float(longitudinal_slice);
+    		if(longitudinal_slice == GLOBE_LONGITUDE_SLICES){
+                // Line of longitude at 360 degrees is equivalent in
+                // position to the line at zero degrees.
+                temp = 0.0f;
+                }
+    		glm::vec3 globe_vertex = sphVertex3D(temp*LONG_STEP, 90 - latitude_layer*LAT_STEP, EARTH_RADIUS);
     		globe_vertex_data[vertex_counter*COORDS_PER_VERTEX] = globe_vertex.x;
     		globe_vertex_data[vertex_counter*COORDS_PER_VERTEX + 1] = globe_vertex.y;
     		globe_vertex_data[vertex_counter*COORDS_PER_VERTEX + 2] = globe_vertex.z;
+    		// Line of 360 degrees longitude has horizontal texture coordinate of 1.0f
     		globe_vertex_data[vertex_counter*COORDS_PER_VERTEX + 3] = float(longitudinal_slice)*LONG_TEXTURE_STEP;
     		globe_vertex_data[vertex_counter*COORDS_PER_VERTEX + 4] = 1.0f - latitude_layer*LAT_TEXTURE_STEP;
     		++vertex_counter;
@@ -1022,15 +1028,14 @@ void Starsphere::make_globe_mesh_texture(void) {
             ++indicial_index;
             globe_index_data[indicial_index] = (latitude_layer + 1)*GLOBE_LONGITUDE_SLICES + longitude;
             ++indicial_index;
-            globe_index_data[indicial_index] = (latitude_layer + 1)*GLOBE_LONGITUDE_SLICES + (longitude + 1)%GLOBE_LONGITUDE_SLICES;
+            globe_index_data[indicial_index] = (latitude_layer + 1)*GLOBE_LONGITUDE_SLICES + longitude + 1;
             ++indicial_index;
-
 
             globe_index_data[indicial_index] = longitude + latitude_layer*GLOBE_LONGITUDE_SLICES;
             ++indicial_index;
-            globe_index_data[indicial_index] = (latitude_layer + 1)*GLOBE_LONGITUDE_SLICES + (longitude + 1)%GLOBE_LONGITUDE_SLICES;
+            globe_index_data[indicial_index] = (latitude_layer + 1)*GLOBE_LONGITUDE_SLICES + longitude + 1;
             ++indicial_index;
-            globe_index_data[indicial_index] = latitude_layer*GLOBE_LONGITUDE_SLICES + (longitude + 1)%GLOBE_LONGITUDE_SLICES;
+            globe_index_data[indicial_index] = latitude_layer*GLOBE_LONGITUDE_SLICES + longitude + 1;
             ++indicial_index;
             }
         }
@@ -1062,8 +1067,8 @@ void Starsphere::make_globe_mesh_texture(void) {
                                                 EARTH_TEXTURE_HEIGHT,
                                                 GL_RGB,
                                                 GL_UNSIGNED_BYTE,
-                                                GL_CLAMP,
-                                                GL_CLAMP,
+                                                GL_REPEAT,
+                                                GL_REPEAT,
                                                 true};
 
 	// Instantiate a rendering task with the provided information.
