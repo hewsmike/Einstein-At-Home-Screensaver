@@ -25,7 +25,6 @@
 
 #include "Program.h"
 #include "TextureBuffer.h"
-#include "Triggerable.h"
 #include "VertexFetch.h"
 
 /**
@@ -46,7 +45,7 @@
  * \author Mike Hewson\n
  */
 
-class Pipeline : public Triggerable {
+class Pipeline {
     public :
         /**
          * \brief Constructor.
@@ -80,7 +79,7 @@ class Pipeline : public Triggerable {
          *          GL_TRIANGLES
          * \param count : how many times to invoke the vertex shader.
          */
-        virtual void trigger(GLenum primitive, GLsizei count);
+        void trigger(GLenum primitive, GLsizei count);
 
     private:
         /// The Program reference.

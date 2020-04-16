@@ -202,7 +202,7 @@ void RenderTask::setUniform(const std::string& uniform_name, GLvoid* load_point)
     m_program->setUniformLoadPoint(uniform_name, load_point);
     }
 
-void RenderTask::trigger(GLenum primitive, GLsizei count) {
+void RenderTask::render(GLenum primitive, GLsizei count) {
     // Pass on to the underlying pipeline object.
     m_pipeline->trigger(primitive, count);
     }

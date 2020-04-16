@@ -221,5 +221,5 @@ void TexturedParallelogram::utilise(void) {
     if(m_configure_flag == false) {
         configureTask();
         }
-    m_render_task->trigger(GL_TRIANGLE_STRIP, VERTEX_COUNT);
+    m_render_task->render(GL_TRIANGLE_STRIP, VERTEX_COUNT);
     }

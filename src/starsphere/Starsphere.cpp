@@ -1339,25 +1339,25 @@ void Starsphere::render(const double timeOfDay) {
 
     // stars, pulsars, supernovae, grid
     if(isFeature(GAMMAS)) {
-        m_render_task_gammas->trigger(GL_POINTS, Ngammas);
+        m_render_task_gammas->render(GL_POINTS, Ngammas);
         }
     if(isFeature(PULSARS)) {
-        m_render_task_psr->trigger(GL_POINTS, Npulsars);
+        m_render_task_psr->render(GL_POINTS, Npulsars);
         }
     if(isFeature(SNRS)) {
-        m_render_task_snr->trigger(GL_POINTS, NSNRs);
+        m_render_task_snr->render(GL_POINTS, NSNRs);
         }
     if(isFeature(STARS)) {
-        m_render_task_star->trigger(GL_POINTS, m_distinct_stars);
+        m_render_task_star->render(GL_POINTS, m_distinct_stars);
         }
     if(isFeature(CONSTELLATIONS)) {
-        m_render_task_cons->trigger(GL_LINES, m_constellation_lines*2);
+        m_render_task_cons->render(GL_LINES, m_constellation_lines*2);
         }
     if(isFeature(GLOBE)) {
-        m_render_task_globe->trigger(GL_LINES, m_globe_lines*2);
+        m_render_task_globe->render(GL_LINES, m_globe_lines*2);
         }
     if(isFeature(EARTH)) {
-        m_render_task_earth->trigger(GL_TRIANGLES, m_earth_triangles*VERTICES_PER_TRIANGLE);
+        m_render_task_earth->render(GL_TRIANGLES, m_earth_triangles*VERTICES_PER_TRIANGLE);
         }
 
     // observatories move an extra 15 degrees/hr since they were drawn
