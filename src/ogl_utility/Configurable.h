@@ -38,11 +38,6 @@
 class Configurable {
     public :
         /**
-         * \brief Constructor.
-         */
-        Configurable(void);
-
-        /**
          * \brief Destructor.
          */
         virtual ~Configurable();
@@ -67,6 +62,11 @@ class Configurable {
         bool isConfigured(void) const;
 
     protected :
+        /**
+         * \brief Constructor.
+         */
+        Configurable(void);
+
         /**
          * \brief Set the configuration state flag for this object.
          *

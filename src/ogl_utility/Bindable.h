@@ -38,11 +38,6 @@
 class Bindable {
     public:
         /**
-         * \brief Constructor.
-         */
-        Bindable(void);
-
-        /**
          * \brief Destructor.
          */
         virtual ~Bindable();
@@ -67,6 +62,12 @@ class Bindable {
          *          false - the object is not bound
          */
         virtual bool isBound(void) const = 0;
+
+    protected:
+        /**
+         * \brief Constructor.
+         */
+        Bindable(void);
     };
 
 /**

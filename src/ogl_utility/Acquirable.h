@@ -38,11 +38,6 @@
 class Acquirable {
     public:
         /**
-         * \brief Constructor.
-         */
-        Acquirable(void);
-
-        /**
          * \brief Destructor.
          */
         virtual ~Acquirable();
@@ -74,6 +69,11 @@ class Acquirable {
         bool isAcquired(void) const;
 
     protected :
+         /**
+         * \brief Constructor.
+         */
+        Acquirable(void);
+
         /**
          * \brief Set the acquisition state flag for this object.
          *
