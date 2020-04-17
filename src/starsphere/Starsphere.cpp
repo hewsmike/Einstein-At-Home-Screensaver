@@ -48,6 +48,7 @@ const GLfloat Starsphere::DEFAULT_LINE_WIDTH(2.0f);
 const GLfloat Starsphere::DEFAULT_POINT_SIZE(1.5f);
 const GLuint Starsphere::PIXEL_UNPACK_BOUNDARY(1);
 const GLfloat Starsphere::SPHERE_RADIUS(5.0f);
+const GLfloat Starsphere::EARTH_RADIUS(1.0f);
 const GLboolean Starsphere::TTF_FREE_SOURCE(false);
 const GLuint Starsphere::TTF_FONT_LOAD_HEADER_POINT_SIZE(13);
 const GLuint Starsphere::TTF_FONT_LOAD_TEXT_POINT_SIZE(11);
@@ -60,8 +61,10 @@ const GLfloat Starsphere::PERSPECTIVE_FOV_DEFAULT(45.0f);
 const GLfloat Starsphere::PERSPECTIVE_FOV_MIN(20.0f);
 const GLfloat Starsphere::PERSPECTIVE_FOV_MAX(70.0f);
 const GLfloat Starsphere::VIEWPOINT_MOUSEWHEEL_FOV_RATE(0.1f);
-const GLuint Starsphere::GLOBE_LATITUDE_LAYERS(37);                     // Each pole is a layer in latitude too.
-const GLuint Starsphere::GLOBE_LONGITUDE_SLICES(72);
+const GLuint Starsphere::GLOBE_LATITUDE_LAYERS(145);                     // Each pole is a layer in latitude too.
+const GLuint Starsphere::GLOBE_LONGITUDE_SLICES(288);
+const GLuint Starsphere::GRID_LATITUDE_LAYERS(19);                      // Each pole is a layer in latitude too.
+const GLuint Starsphere::GRID_LONGITUDE_SLICES(36);
 const GLuint Starsphere::VERTICES_PER_TRIANGLE(3);
 
 Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
@@ -138,12 +141,12 @@ Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
     m_RefreshSearchMarker = true;
 
     m_gamma_color = glm::vec3(0.0f, 1.0f, 0.0f);              // Gammas are Green.
-    m_globe_color = glm::vec3(0.15f, 0.15f, 0.15f);           // Globe is Grey.
+    m_globe_color = glm::vec3(0.25f, 0.25f, 0.25f);           // Globe is Grey.
     m_earth_color = glm::vec3(1.0f, 1.0f, 0.5f);
     m_pulsar_color = glm::vec3(0.80f, 0.0f, 0.85f);           // Pulsars are Purple.
     m_star_color = glm::vec3(1.0f, 1.0f, 1.0f);               // Stars are Silver.
     m_supernova_color = glm::vec3(1.0f, 0.0f, 0.0f);          // Supernovae are Sienna.
-    m_constellation_line_color = glm::vec3(0.7f, 0.7f, 0.0f); // Lines are Light yellow.
+    m_constellation_line_color = glm::vec3(0.2f, 0.2f, 0.0f); // Lines are Light yellow.
 
     m_gamma_point_size = 3.0f;
     m_globe_point_size = 0.5f;
@@ -806,13 +809,13 @@ void Starsphere::make_axes(void) {
  */
 void Starsphere::make_globe_mesh_lat_long(void) {
     // What are the steps in latitude and longitude for this globe? Decimal degrees.
-    GLfloat LAT_STEP = 180.0f/(GLOBE_LATITUDE_LAYERS - 1);
-    GLfloat LONG_STEP = 360.0f/GLOBE_LONGITUDE_SLICES;
+    GLfloat LAT_STEP = 180.0f/(GRID_LATITUDE_LAYERS - 1);
+    GLfloat LONG_STEP = 360.0f/GRID_LONGITUDE_SLICES;
 
     // Populate a vertex array.
     // Calculate the number of vertices. This is a full number of longitudinal slices for
     // each non-pole latitude layer, plus one for each pole.
-    GLuint num_vertices = ((GLOBE_LATITUDE_LAYERS - 2) * GLOBE_LONGITUDE_SLICES) + 2;
+    GLuint num_vertices = ((GRID_LATITUDE_LAYERS - 2) * GRID_LONGITUDE_SLICES) + 2;
     m_globe_vertices = num_vertices;
 
     // Allocate a temporary array for vertex positions in 3D ie. each has
@@ -832,9 +835,9 @@ void Starsphere::make_globe_mesh_lat_long(void) {
 
 
     // For each non-pole latitude layer.
-    for(GLuint lat_layer = 1; lat_layer < (GLOBE_LATITUDE_LAYERS - 1); ++lat_layer ){
+    for(GLuint lat_layer = 1; lat_layer < (GRID_LATITUDE_LAYERS - 1); ++lat_layer ){
     	// For each longitude layer.
-    	for(GLuint long_slice = 0; long_slice < GLOBE_LONGITUDE_SLICES; ++long_slice){
+    	for(GLuint long_slice = 0; long_slice < GRID_LONGITUDE_SLICES; ++long_slice){
     		// NB sphVertex3D() measures declination above/below equator, but here
     		// latitude is measured from the North Pole = 0 downwards to Equator = 90
     		// and then South Pole = 180.
@@ -859,8 +862,8 @@ void Starsphere::make_globe_mesh_lat_long(void) {
     // Calculate the number of line segments to render.
     // For latitude layers this is one for each step in longitude ie. GLOBE_LONGITUDE_SLICES.
     // For longitude slices this is one for each step in latitude ie. (GLOBE_LATITUDE_SLICES - 1).
-    m_globe_lines = GLOBE_LONGITUDE_SLICES * (GLOBE_LATITUDE_LAYERS - 1)
-                    + (GLOBE_LATITUDE_LAYERS - 2) * GLOBE_LONGITUDE_SLICES;
+    m_globe_lines = GRID_LONGITUDE_SLICES * (GRID_LATITUDE_LAYERS - 1)
+                    + (GRID_LATITUDE_LAYERS - 2) * GRID_LONGITUDE_SLICES;
 
 	// Allocate a temporary array for vertex buffer indices. Note the array
     // type is suitable for indices ie. unsigned integer. The GL_LINES enumerant is to be used at
@@ -871,18 +874,18 @@ void Starsphere::make_globe_mesh_lat_long(void) {
     GLuint indicial_index = 0;
 
     // Do longitudinal slices. These are semi-circles.
-    for(GLuint longitude = 0; longitude < GLOBE_LONGITUDE_SLICES; ++longitude) {
+    for(GLuint longitude = 0; longitude < GRID_LONGITUDE_SLICES; ++longitude) {
         // Start at the north pole.
         globe_index_data[indicial_index] = north_pole_index;
         ++indicial_index;
         // For each point of latitude intermediate b/w poles.
-        for(GLuint latitude = 1; latitude < (GLOBE_LATITUDE_LAYERS - 1); ++latitude) {
+        for(GLuint latitude = 1; latitude < (GRID_LATITUDE_LAYERS - 1); ++latitude) {
             // Point on first latitude slice on zero meridian.
             GLuint temp = north_pole_index + 1;
             // Point on first latitude slice on correct longitude.
             temp += longitude;
             // Now move down to correct latitude.
-            temp += (latitude - 1) * (GLOBE_LONGITUDE_SLICES);
+            temp += (latitude - 1) * (GRID_LONGITUDE_SLICES);
             // End of one line segment.
             globe_index_data[indicial_index] = temp;
             ++indicial_index;
@@ -896,16 +899,16 @@ void Starsphere::make_globe_mesh_lat_long(void) {
         }
 
     // Do latitudinal layers for non polar latitudes.
-    for(GLuint latitude = 1; latitude < (GLOBE_LATITUDE_LAYERS - 1); ++latitude) {
+    for(GLuint latitude = 1; latitude < (GRID_LATITUDE_LAYERS - 1); ++latitude) {
         // Start at longitude zero, first layer.
         GLuint starter = 1;
         // Now move down to correct layer, longitude zero.
-        starter += (latitude - 1) * GLOBE_LONGITUDE_SLICES;
+        starter += (latitude - 1) * GRID_LONGITUDE_SLICES;
         // First point in layer.
         globe_index_data[indicial_index] = starter;
         ++indicial_index;
         // Step along longitudes in current layer.
-        for(GLuint longitude = 1; longitude < GLOBE_LONGITUDE_SLICES; ++longitude) {
+        for(GLuint longitude = 1; longitude < GRID_LONGITUDE_SLICES; ++longitude) {
             GLuint temp = starter + longitude;
             // End of one line segment.
             globe_index_data[indicial_index] = temp;
@@ -917,7 +920,7 @@ void Starsphere::make_globe_mesh_lat_long(void) {
         // Finish back at first point of layer.
         globe_index_data[indicial_index] = starter;
         // Check as no more indices at the final line segment.
-        if(latitude != (GLOBE_LATITUDE_LAYERS - 2)) {
+        if(latitude != (GRID_LATITUDE_LAYERS - 2)) {
             ++indicial_index;
             }
         }
@@ -971,9 +974,6 @@ void Starsphere::make_globe_mesh_texture(void) {
     GLuint EARTH_TEXTURE_WIDTH = 2048;
     GLuint EARTH_TEXTURE_HEIGHT = 1024;
     GLuint EARTH_TEXTURE_COLOR_DEPTH = 3;
-
-    // What is the radius compared to the celestial sphere.
-    GLfloat EARTH_RADIUS = SPHERE_RADIUS * 0.4;
 
     // Populate a vertex array.
     // Calculate the number of vertices. This is a full number of longitudinal slices for
@@ -1241,7 +1241,7 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
     // Some selected drawing quality choices.
     glEnable(GL_POINT_SMOOTH);                            // Jaggy reduction, but this per primitve
     glEnable(GL_LINE_SMOOTH);                            // anti-aliasing depends on hardware etc ...
-    // glEnable(GL_CULL_FACE);                                // Culling of rear faces
+    glEnable(GL_CULL_FACE);                                // Culling of rear faces
     glFrontFace(GL_CCW);                                // Front facing is counterclockwise
 
     /// TODO - sort out this quality selection business ?
@@ -1328,7 +1328,7 @@ void Starsphere::render(const double timeOfDay) {
     m_view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -viewpt_radius));
 
     if(!isFeature(ROLL_STOP)) {
-        m_rotation = glm::rotate(m_rotation, 0.01f, m_axis);
+        m_rotation = glm::rotate(m_rotation, 0.001f, m_axis);
         }
 
     m_camera = m_perspective_projection * m_view * m_rotation;
@@ -1515,8 +1515,8 @@ void Starsphere::zoomSphere(const int relativeZoom) {
     viewpt_radius -= relativeZoom/VIEWPOINT_ZOOM_RATE;
     if (viewpt_radius > VIEWPOINT_MAX_ZOOM)
         viewpt_radius = VIEWPOINT_MAX_ZOOM;
-    if (viewpt_radius < VIEWPOINT_MIN_ZOOM)
-        viewpt_radius = VIEWPOINT_MIN_ZOOM;
+    if (viewpt_radius < EARTH_RADIUS * 1.001f)
+        viewpt_radius = EARTH_RADIUS * 1.001f;
     }
 
 void Starsphere::configTransformMatrices(void) {

@@ -358,8 +358,9 @@ class Starsphere : public AbstractGraphicsEngine {
         static const GLfloat DEFAULT_CLEAR_DEPTH;
         static const GLfloat DEFAULT_LINE_WIDTH;
         static const GLfloat DEFAULT_POINT_SIZE;
-        static const GLuint PIXEL_UNPACK_BOUNDARY;
+        static const GLuint  PIXEL_UNPACK_BOUNDARY;
         static const GLfloat SPHERE_RADIUS;
+        static const GLfloat EARTH_RADIUS;
 
         // Fonts.
         static const GLboolean TTF_FREE_SOURCE;
@@ -384,6 +385,8 @@ class Starsphere : public AbstractGraphicsEngine {
         // Globe feature parameters.
         static const GLuint GLOBE_LATITUDE_LAYERS;
         static const GLuint GLOBE_LONGITUDE_SLICES;
+        static const GLuint GRID_LATITUDE_LAYERS;
+        static const GLuint GRID_LONGITUDE_SLICES;
         static const GLuint VERTICES_PER_TRIANGLE;
 
         /// Cumulative frame count.
