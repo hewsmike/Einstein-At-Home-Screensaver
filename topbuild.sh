@@ -72,19 +72,48 @@ MODE=$MODE_DEBUG
 # Common build stages.
 TBS_NONE=0
 TBS_PREREQUISITES=1
-TBS_BOINC_RETRIEVED=2
-TBS_FREETYPE_RETRIEVED=3
-TBS_GLEW_RETRIEVED=4
-TBS_LIBXML_RETRIEVED=5
-TBS_SDL_RETRIEVED=6
-TBS_SDL_TTF_RETRIEVED=7
-TBS_GLM_RETRIEVED=8
-TBS_RETRIEVED=9
+TBS_MINGW_RETRIEVED=2
+TBS_BOINC_RETRIEVED=3
+TBS_FREETYPE_RETRIEVED=4
+TBS_GLEW_RETRIEVED=5
+TBS_LIBXML_RETRIEVED=6
+TBS_SDL_RETRIEVED=7
+TBS_SDL_TTF_RETRIEVED=8
+TBS_GLM_RETRIEVED=9
+TBS_RETRIEVED=10
 
 # No topbuild state set initially.
 TOPBUILDSTATE=$TBS_NONE
 
 ### functions to obtain sources ####################################
+
+retrieve_mingw() {
+#    log "Retrieving MINGW..."
+#    mkdir -p $ROOT/retrieval/mingw >> $LOGFILE || failure
+#
+#    cd $ROOT/retrieval/mingw || failure
+#
+#    echo "Preparing MinGW source tree..." | tee -a $LOGFILE
+#    mkdir -p xscripts >> $LOGFILE || failure
+#    cd xscripts || failure
+#
+#    if [ -d CVS ]; then
+#        echo "Updating MinGW build script..." | tee -a $LOGFILE
+#        cvs update -C >> $LOGFILE 2>&1 || failure
+#    else
+#        cd .. || failure
+#        echo "Retrieving MinGW build script (this may take a while)..." | tee -a $LOGFILE
+#        cvs -z3 -d:pserver:anonymous@mingw.cvs.sourceforge.net:/cvsroot/mingw checkout -P xscripts >> $LOGFILE 2>&1 || failure
+#    fi
+#
+#    echo "Preparing MinGW build script..." | tee -a $LOGFILE
+#    # note: svn has no force/overwrite switch. the file might not be updated when patched
+#    # patch x86-mingw32-build.sh.conf < $ROOT/patches/x86-mingw32-build.sh.conf.patch >> $LOGFILE || failure
+#    chmod +x x86-mingw32-build.sh >> $LOGFILE || failure
+#
+    save_topbuild_state $TBS_MINGW_RETRIEVED
+    return 0
+    }
 
 retrieve_boinc() {
     log "Retrieving BOINC..."
@@ -229,7 +258,7 @@ retrieve_sdl_ttf() {
     mv $SDL_TTF_RETRIEVE_STR sdl2_ttf >> $LOGFILE 2>&1 || failure
 
     save_topbuild_state $TBS_SDL_TTF_RETRIEVED
-   
+
     return 0
     }
 
@@ -240,13 +269,13 @@ retrieve_glm() {
     GLM_RETRIEVE_PATH=$GLM_RETRIEVE_DOMAIN$GLM_RETRIEVE_FILE
 
     # https://github.com/g-truc/glm/archive/0.9.6.1.tar.gz
-    
+
     log "Preparing GLM version $GLM_VERSION ..."
-    
-    cd $ROOT/retrieval || failure    
+
+    cd $ROOT/retrieval || failure
     rm -rf glm
     mkdir -p $ROOT/retrieval/glm >> $LOGFILE || failure
-    
+
     git clone --branch $GLM_VERSION https://github.com/g-truc/glm.git $ROOT/retrieval/glm >> $LOGFILE 2>&1 || failure
 
     save_topbuild_state $TBS_GLM_RETRIEVED
@@ -311,6 +340,10 @@ check_retrieval() {
 
     # purge_toptree
     # prepare_toptree
+
+    if [ $TOPBUILDSTATE -lt $TBS_MINGW_RETRIEVED ]; then
+        retrieve_mingw $TAG_GFXAPPS || failure
+    fi
 
     if [ $TOPBUILDSTATE -lt $TBS_BOINC_RETRIEVED ]; then
         retrieve_boinc $TAG_GFXAPPS || failure

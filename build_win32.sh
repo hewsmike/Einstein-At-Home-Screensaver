@@ -42,13 +42,14 @@ MODE=$MODE_DEBUG
 # Build stages.
 BS_NONE=0
 BS_PREPARE_TREE=1
-BS_BUILD_BOINC=2
-BS_BUILD_FREETYPE=3
-BS_BUILD_GLEW=4
-BS_BUILD_LIBXML=5
-BS_BUILD_SDL=6
-BS_BUILD_SDL_TTF=7
-BS_BUILD_GLM=8
+BS_BUILD_MINGW=2
+BS_BUILD_BOINC=3
+BS_BUILD_FREETYPE=4
+BS_BUILD_GLEW=5
+BS_BUILD_LIBXML=6
+BS_BUILD_SDL=7
+BS_BUILD_SDL_TTF=8
+BS_BUILD_GLM=9
 
 # No buildstate set initially.
 BUILDSTATE=$BS_NONE
@@ -223,7 +224,7 @@ write_version_header() {
     # Return to prior directory.
     cd $OLD_DIR
     }
-    
+
 set_mingw() {
     # general config
     PREFIX=$ROOT/install
@@ -232,18 +233,33 @@ set_mingw() {
     # echo $PATH_MINGW
     PATH="$PATH_MINGW"
     export PATH
-    
+
     export CC=`which ${TARGET_SYSTEM}-gcc`
     export CXX=`which ${TARGET_SYSTEM}-g++`
-    
+
     echo "CC = $CC"
     echo "CXX = $CXX"
-    
+
     export CPPFLAGS="-D_WIN32_WINDOWS=0x0410 -DMINGW_WIN32 $CPPFLAGS"
-	}    
+	}
 
 
 ### functions to build from sources for Win32 targets #################################################################
+
+build_mingw() {
+    if [ $BUILDSTATE -ge $BS_BUILD_MINGW ]; then
+        return 0
+    fi
+    TARGET_HOST=i586-pc-mingw32
+
+    echo "Building MinGW (this will take quite a while)..." | tee -a $LOGFILE
+    # note: the script's current config for unattended setup expects it to be run from three levels below root!
+    cd $ROOT/3rdparty/mingw/xscripts || failure
+    ./x86-mingw32-build.sh --unattended $TARGET_HOST >> $LOGFILE 2>&1 || failure
+
+    store_build_state $BS_BUILD_MINGW
+    return 0
+    }
 
 build_boinc_mingw() {
     if [ $BUILDSTATE -ge $BS_BUILD_BOINC ]; then
@@ -264,7 +280,7 @@ build_freetype_mingw() {
     if [ $BUILDSTATE -ge $BS_BUILD_FREETYPE ]; then
         return 0
     fi
-    
+
     log "Building Freetype2 (this may take a while)..."
     cd $ROOT/3rdparty/freetype2 || failure
     chmod +x autogen.sh >> $LOGFILE 2>&1 || failure
@@ -310,14 +326,14 @@ build_libxml_mingw() {
     if [ $BUILDSTATE -ge $BS_BUILD_LIBXML ]; then
         return 0
     fi
-    
+
     log "Configuring libxml2"
     cd $ROOT/3rdparty/libxml2 || failure
     chmod +x configure >> $LOGFILE 2>&1 || failure
-        
-    # '--with-threads=no' configure option gets around a weird bug with mingw32 !!    
+
+    # '--with-threads=no' configure option gets around a weird bug with mingw32 !!
     $ROOT/3rdparty/libxml2/configure --host=$TARGET_SYSTEM --build=$BUILD_SYSTEM --prefix=$PREFIX --enable-shared=no --enable-static=yes --without-python --with-threads=no >> $LOGFILE 2>&1 || failure
-    
+
     log "Building libxml2 (this may take a while)..."
     make >> $LOGFILE 2>&1 || failure
     make install >> $LOGFILE 2>&1 || failure
@@ -381,7 +397,7 @@ build_sdl_ttf_mingw() {
 
     return 0
     }
-    
+
 build_glm_mingw() {
     if [ $BUILDSTATE -ge $BS_BUILD_GLM ]; then
         return 0
@@ -390,16 +406,16 @@ build_glm_mingw() {
     cd $ROOT/install/include || failure
 
     log "Building GLM (this may take a while)..."
-    
+
     # Special instance here as glm is not a build but header only inclusion.
-    cp -rfu $ROOT/3rdparty/glm/glm/* $ROOT/install/include/glm >> $LOGFILE 2>&1 || failure 
-    
+    cp -rfu $ROOT/3rdparty/glm/glm/* $ROOT/install/include/glm >> $LOGFILE 2>&1 || failure
+
     log "Successfully built and installed GLEW!"
 
     #save_build_state $BS_BUILD_GLM || failure
 
     return 0
-    }    
+    }
 
 ### specific build functions ###########################################################################################
 
@@ -482,19 +498,22 @@ build_win32() {
 
 	export CPPFLAGS="-D_WIN32_WINDOWS=0x0410 $CPPFLAGS"
 
-    set_mingw || failure
-      
-    # Make sure the base libraries are built.    
+    # Make sure we have built MINGW.
+    build_mingw || failure
+
+    # set_mingw || failure
+
+    # Make sure the base libraries are built.
    	# build_boinc_mingw || failure
-    # build_glew_mingw || failure    
-    build_freetype_mingw || failure
+    # build_glew_mingw || failure
+    # build_freetype_mingw || failure
     # build_libxml_mingw || failure
-    build_sdl_mingw || failure
-    build_sdl_ttf_mingw || failure
+    # build_sdl_mingw || failure
+    # build_sdl_ttf_mingw || failure
     # build_glm_mingw || failure
-	
+
 	# build_starsphere $TARGET_WIN32 || failure
-	
+
     # Now client code.
     #     build_orc_mingw || failure
     #     build_framework_mingw || failure

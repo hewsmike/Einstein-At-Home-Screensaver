@@ -1200,6 +1200,7 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
     setFeature(XRAYS, true);            /// TODO - we don't have this feature even designed yet.
     setFeature(PULSARS, true);
     setFeature(SNRS, true);
+    setFeature(STARS, true);
     setFeature(GAMMAS, true);
     setFeature(GLOBE, true);
     setFeature(AXES, false);
@@ -1207,7 +1208,7 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
     setFeature(LOGO, true);
     setFeature(MARKER, true);
     setFeature(EARTH, true);
-    setFeature(ROLL_STOP, true);
+    setFeature(ROLL_STOP, false);
 
     // Here we set the byte alignment when unpacking data from memory
     // to a one byte boundary. This done mainly for optimizing font setup.
