@@ -71,7 +71,7 @@ const GLuint Starsphere::VERTICES_PER_TRIANGLE(3);
 const GLuint Starsphere::AXES_LINE_LENGTH(100);
 const GLuint Starsphere::NUMBER_OF_AXES(3);
 
-const GLuint Starsphere::OBSERVATORY_COUNT(2);
+const GLuint Starsphere::OBSERVATORY_COUNT(4);
 const GLuint Starsphere::GEODE_AXES_PER_OBSERVATORY(3);
 const GLuint Starsphere::ARMS_PER_OBSERVATORY(2);
 const GLuint Starsphere::COORDS_PER_VERTEX_BARE(3);
@@ -545,7 +545,7 @@ GLfloat Starsphere::RAofZenith(double T, GLfloat LONdeg) {
 void Starsphere::make_local_arms(GLfloat latitude, GLfloat longitude,
                                  GLfloat x_arm_azimuth, GLfloat y_arm_azimuth,
                                  glm::vec3 color, GLfloat* vertex_data, GLuint array_offset) {
-    const GLfloat ARM_DELTA = 0.20f;
+    const GLfloat ARM_DELTA = 0.05f;
     GLfloat temp;
     glm::vec3 temp_cross_product(0.0f, 0.0f, 0.0f);
 
@@ -716,11 +716,8 @@ void Starsphere::make_local_geode_axes(GLfloat latitude, GLfloat longitude, glm:
  */
 void Starsphere::make_observatories(void) {
     m_geode_lines = OBSERVATORY_COUNT * (GEODE_AXES_PER_OBSERVATORY + ARMS_PER_OBSERVATORY);
-    std::cout << "m_geode_lines = " << m_geode_lines << std::endl;
     GLuint vertex_count = 0;
-    std::cout << "vertex_count(0) = " << vertex_count << std::endl;
 
-    const GLfloat ARM_LENGTH = 0.20f;
     GLfloat arms_vertex_data[m_geode_lines * VERTICES_PER_LINE * COORDS_PER_VERTEX_COLOR];
 
     // LIGO Livingston Observatory.
@@ -733,7 +730,6 @@ void Starsphere::make_observatories(void) {
                           arms_vertex_data,
                           vertex_count);
     vertex_count += GEODE_AXES_PER_OBSERVATORY * VERTICES_PER_LINE * COORDS_PER_VERTEX_COLOR;
-    std::cout << "vertex_count(1) = " << vertex_count << std::endl;
 
     // Locally referenced arm directions.
     GLfloat X_arm_local_direction_livingston = 252.3f;      // Positive easterly of local north.
@@ -743,7 +739,6 @@ void Starsphere::make_observatories(void) {
                     m_arms_color, arms_vertex_data, vertex_count);
 
     vertex_count += ARMS_PER_OBSERVATORY * VERTICES_PER_LINE * COORDS_PER_VERTEX_COLOR;
-    std::cout << "vertex_count(2) = " << vertex_count << std::endl;
 
     // LIGO Hanford Observatory:
     // Corner station at :
@@ -755,7 +750,6 @@ void Starsphere::make_observatories(void) {
                           arms_vertex_data,
                           vertex_count);
     vertex_count += GEODE_AXES_PER_OBSERVATORY * VERTICES_PER_LINE * COORDS_PER_VERTEX_COLOR;
-    std::cout << "vertex_count(3) = " << vertex_count << std::endl;
 
     // Locally referenced arm directions.
     GLfloat X_arm_local_direction_hanford = 324.0f;         // Positive easterly of local north.
@@ -765,7 +759,46 @@ void Starsphere::make_observatories(void) {
                     m_arms_color, arms_vertex_data, vertex_count);
 
     vertex_count += ARMS_PER_OBSERVATORY * VERTICES_PER_LINE * COORDS_PER_VERTEX_COLOR;
-    std::cout << "vertex_count(4) = " << vertex_count << std::endl;
+
+    // LIGO GEO Observatory.
+    // Corner station at :
+    GLfloat latitude_geo = 52.3f;                    // Positive above equator.
+    GLfloat longitude_geo = 9.8f;                  // Positive easterly from Greenwich.
+    make_local_geode_axes(latitude_geo,
+                          longitude_geo,
+                          m_geode_axes_color,
+                          arms_vertex_data,
+                          vertex_count);
+    vertex_count += GEODE_AXES_PER_OBSERVATORY * VERTICES_PER_LINE * COORDS_PER_VERTEX_COLOR;
+
+    // Locally referenced arm directions.
+    GLfloat X_arm_local_direction_geo = 337.5f;      // Positive easterly of local north.
+    GLfloat Y_arm_local_direction_geo = 67.5f;      // Positive easterly of local north.
+    make_local_arms(latitude_geo, longitude_geo,
+                    X_arm_local_direction_geo, Y_arm_local_direction_geo,
+                    m_arms_color, arms_vertex_data, vertex_count);
+
+    vertex_count += ARMS_PER_OBSERVATORY * VERTICES_PER_LINE * COORDS_PER_VERTEX_COLOR;
+
+    // VIRGO Observatory.
+    // Corner station at :
+    GLfloat latitude_virgo = 43.6f;                    // Positive above equator.
+    GLfloat longitude_virgo = 10.5f;                  // Positive easterly from Greenwich.
+    make_local_geode_axes(latitude_virgo,
+                          longitude_virgo,
+                          m_geode_axes_color,
+                          arms_vertex_data,
+                          vertex_count);
+    vertex_count += GEODE_AXES_PER_OBSERVATORY * VERTICES_PER_LINE * COORDS_PER_VERTEX_COLOR;
+
+    // Locally referenced arm directions.
+    GLfloat X_arm_local_direction_virgo = 19.0f;      // Positive easterly of local north.
+    GLfloat Y_arm_local_direction_virgo = 289.0f;      // Positive easterly of local north.
+    make_local_arms(latitude_virgo, longitude_virgo,
+                    X_arm_local_direction_virgo, Y_arm_local_direction_virgo,
+                    m_arms_color, arms_vertex_data, vertex_count);
+
+    vertex_count += ARMS_PER_OBSERVATORY * VERTICES_PER_LINE * COORDS_PER_VERTEX_COLOR;
 
     // Create factory instance to then access the shader strings.
     ResourceFactory factory;
@@ -1412,7 +1445,7 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
 void Starsphere::render(const double timeOfDay) {
     const glm::mat4 identity(1.0f);
     const GLuint AUTO_ROTATE_FRAME_COUNT(300);
-    const GLfloat AUTO_ROTATE_TRIGGER_RADIUS(0.5f);
+    const GLfloat AUTO_ROTATE_TRIGGER_RADIUS(2.5f);
     const GLfloat EARTH_DRAG_SPEED_RATIO(0.02f);
 
     glm::mat4 m_stance = identity;
