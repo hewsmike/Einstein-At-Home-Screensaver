@@ -46,8 +46,8 @@
 // SIN and COS take arguments in DEGREES
 #define PI 3.14159265
 #define PI2 (2*PI)
-#define COS(X)   cos( (X) * PI2/360.0 )
-#define SIN(X)   sin( (X) * PI2/360.0 )
+#define COS(X)   cos( (X) * PI2/360.0f )
+#define SIN(X)   sin( (X) * PI2/360.0f )
 
 // search marker status
 #define MARKER_NONE 0
@@ -418,6 +418,7 @@ class Starsphere : public AbstractGraphicsEngine {
         /// Colors.
         glm::vec3 m_axes_color;
         glm::vec3 m_geode_axes_color;
+        glm::vec3 m_arms_color;
         glm::vec3 m_gamma_color;
         glm::vec3 m_globe_color;
         glm::vec3 m_earth_color;
@@ -435,6 +436,7 @@ class Starsphere : public AbstractGraphicsEngine {
         GLfloat m_constellation_line_width;
         GLfloat m_axes_line_width;
         GLfloat m_geode_line_width;
+        GLfloat m_arms_line_width;
 
         // Number of distinct stars.
         GLuint m_distinct_stars;
@@ -458,6 +460,10 @@ class Starsphere : public AbstractGraphicsEngine {
         glm::mat4 m_rotation;
         glm::vec3 m_axis;
         glm::mat4 m_camera;
+
+        void make_local_arms(GLfloat latitude, GLfloat longitude,
+                             GLfloat x_arm_azimuth, GLfloat y_arm_azimuth,
+                             glm::vec3 color, GLfloat* vertex_data, GLuint array_offset);
 
         void make_local_geode_axes(GLfloat latitude,
                                    GLfloat longitude,
