@@ -540,7 +540,7 @@ GLfloat Starsphere::RAofZenith(double T, GLfloat LONdeg) {
     return 1.0f;
     }
 
-void Starsphere::make_local_geode_axes(GLfloat latitude, GLfloat longitude, GLfloat* vertex_data, GLuint array_offset) {
+void Starsphere::make_local_geode_axes(GLfloat latitude, GLfloat longitude, glm::vec3 color, GLfloat* vertex_data, GLuint array_offset) {
     const GLfloat ZENITH_DELTA = 0.10f;
 
     GLfloat temp;
@@ -555,13 +555,19 @@ void Starsphere::make_local_geode_axes(GLfloat latitude, GLfloat longitude, GLfl
     vertex_data[array_offset] = corner.x;
     vertex_data[array_offset + 1] = corner.y;
     vertex_data[array_offset + 2] = corner.z;
-    array_offset += COORDS_PER_VERTEX_BARE;
+    vertex_data[array_offset + 3] = color.r;
+    vertex_data[array_offset + 4] = color.g;
+    vertex_data[array_offset + 5] = color.b;
+    array_offset += COORDS_PER_VERTEX_COLOR;
 
     // ... to local zenith.
     vertex_data[array_offset] = local_zenith.x;
     vertex_data[array_offset + 1] = local_zenith.y;
     vertex_data[array_offset + 2] = local_zenith.z;
-    array_offset += COORDS_PER_VERTEX_BARE;
+    vertex_data[array_offset + 3] = color.r;
+    vertex_data[array_offset + 4] = color.g;
+    vertex_data[array_offset + 5] = color.b;
+    array_offset += COORDS_PER_VERTEX_COLOR;
 
     // Vector in direction of local north, same length as zenith vector.
     temp = longitude + 180;
@@ -579,13 +585,19 @@ void Starsphere::make_local_geode_axes(GLfloat latitude, GLfloat longitude, GLfl
     vertex_data[array_offset] = corner.x;
     vertex_data[array_offset + 1] = corner.y;
     vertex_data[array_offset + 2] = corner.z;
-    array_offset += COORDS_PER_VERTEX_BARE;
+    vertex_data[array_offset + 3] = color.r;
+    vertex_data[array_offset + 4] = color.g;
+    vertex_data[array_offset + 5] = color.b;
+    array_offset += COORDS_PER_VERTEX_COLOR;
 
     // ... to local north.
     vertex_data[array_offset] = local_north_tip.x;
     vertex_data[array_offset + 1] = local_north_tip.y;
     vertex_data[array_offset + 2] = local_north_tip.z;
-    array_offset += COORDS_PER_VERTEX_BARE;
+    vertex_data[array_offset + 3] = color.r;
+    vertex_data[array_offset + 4] = color.g;
+    vertex_data[array_offset + 5] = color.b;
+    array_offset += COORDS_PER_VERTEX_COLOR;
 
     // Vector in direction of local east, same length as zenith vector.
     temp_cross_product = glm::cross(local_north, local_zenith);
@@ -596,12 +608,18 @@ void Starsphere::make_local_geode_axes(GLfloat latitude, GLfloat longitude, GLfl
     vertex_data[array_offset] = corner.x;
     vertex_data[array_offset + 1] = corner.y;
     vertex_data[array_offset + 2] = corner.z;
-    array_offset += COORDS_PER_VERTEX_BARE;
+    vertex_data[array_offset + 3] = color.r;
+    vertex_data[array_offset + 4] = color.g;
+    vertex_data[array_offset + 5] = color.b;
+    array_offset += COORDS_PER_VERTEX_COLOR;
 
     // ... to local east.
     vertex_data[array_offset] = local_east_tip.x;
     vertex_data[array_offset + 1] = local_east_tip.y;
     vertex_data[array_offset + 2] = local_east_tip.z;
+    vertex_data[array_offset + 3] = color.r;
+    vertex_data[array_offset + 4] = color.g;
+    vertex_data[array_offset + 5] = color.b;
     }
 
 /**
@@ -613,7 +631,7 @@ void Starsphere::make_observatories(void) {
     GLuint vertex_count = 0;
 
     const GLfloat ARM_LENGTH = 0.20f;
-    GLfloat arms_vertex_data[m_geode_lines * VERTICES_PER_LINE * COORDS_PER_VERTEX_BARE];
+    GLfloat arms_vertex_data[m_geode_lines * VERTICES_PER_LINE * COORDS_PER_VERTEX_COLOR];
 
     // LIGO Livingston Observatory.
     // Corner station at :
@@ -621,9 +639,10 @@ void Starsphere::make_observatories(void) {
     GLfloat longitude_livingston = 269.3f;                  // Positive easterly from Greenwich.
     make_local_geode_axes(latitude_livingston,
                           longitude_livingston,
+                          m_geode_axes_color,
                           arms_vertex_data,
                           vertex_count);
-    vertex_count += GEODE_AXES_PER_OBSERVATORY * VERTICES_PER_LINE * COORDS_PER_VERTEX_BARE;
+    vertex_count += GEODE_AXES_PER_OBSERVATORY * VERTICES_PER_LINE * COORDS_PER_VERTEX_COLOR;
 
     GLfloat X_arm_local_direction_livingston = 252.3f;      // Positive easterly of local north.
     GLfloat Y_arm_local_direction_livingston = 162.3f;      // Positive easterly of local north.
@@ -637,6 +656,7 @@ void Starsphere::make_observatories(void) {
     GLfloat Y_arm_local_direction_hanford = 234.0f;         // Positive easterly of local north.
     make_local_geode_axes(latitude_hanford,
                           longitude_hanford,
+                          m_geode_axes_color,
                           arms_vertex_data,
                           vertex_count);
 
@@ -652,7 +672,7 @@ void Starsphere::make_observatories(void) {
                                                GLuint(OBSERVATORY_COUNT*
                                                       GEODE_AXES_PER_OBSERVATORY*
                                                       VERTICES_PER_LINE*
-                                                      COORDS_PER_VERTEX_BARE*
+                                                      COORDS_PER_VERTEX_COLOR*
                                                       sizeof(GLfloat)),
                                                GLuint(OBSERVATORY_COUNT*
                                                       GEODE_AXES_PER_OBSERVATORY*
@@ -665,11 +685,10 @@ void Starsphere::make_observatories(void) {
 
     // For vertex input need to correlate with vertex shader code.
     m_render_task_arms->addSpecification({0, "position", 3, GL_FLOAT, GL_FALSE});
+    m_render_task_arms->addSpecification({1, "color", 3, GL_FLOAT, GL_FALSE});
 
     // For program uniforms need client side pointers.
     m_render_task_arms->setUniform("CameraMatrix", TransformGlobals::getCameraTransformMatrix());
-
-    m_render_task_arms->setUniform("color", &m_geode_axes_color);
 
     m_render_task_arms->setUniform("point_size", &m_geode_line_width);
 
