@@ -375,7 +375,7 @@ void Starsphere::make_snrs(void) {
     m_render_task_snr->addSpecification({0, "position", 3, GL_FLOAT, GL_FALSE});
 
     // For program uniforms need client side pointers.
-    m_render_task_snr->setUniform("CameraMatrix", &m_camera);
+    m_render_task_snr->setUniform("CameraMatrix", TransformGlobals::getCameraTransformMatrix());
 
     m_render_task_snr->setUniform("color", &m_supernova_color);
 
@@ -1283,7 +1283,7 @@ void Starsphere::render(const double timeOfDay) {
     const glm::mat4 identity(1.0f);
     const GLuint AUTO_ROTATE_FRAME_COUNT(300);
     const GLfloat AUTO_ROTATE_TRIGGER_RADIUS(2.0f);
-    const GLfoat EARTH_DRAG_SPEED_RATIO(0.02f);
+    const GLfloat EARTH_DRAG_SPEED_RATIO(0.02f);
 
     glm::mat4 m_stance = identity;
 
