@@ -1377,7 +1377,7 @@ void Starsphere::render(const double timeOfDay) {
     // Draw axes before any rotation so they stay put in
     // model/world space.
     if(isFeature(AXES)) {
-        m_render_task_axes->render(GL_LINES, NUMBER_OF_AXES*VERTICES_PER_LINE);
+        // m_render_task_axes->render(GL_LINES, NUMBER_OF_AXES*VERTICES_PER_LINE);
         }
 
     // Default unrotated viewpoint is along the Open GL z-axis by an amount
