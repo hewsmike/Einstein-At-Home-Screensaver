@@ -395,6 +395,7 @@ class Starsphere : public AbstractGraphicsEngine {
         static const GLuint GEODE_AXES_PER_OBSERVATORY;
         static const GLuint ARMS_PER_OBSERVATORY;
         static const GLuint COORDS_PER_VERTEX_BARE;
+        static const GLuint COORDS_PER_VERTEX_COLOR;
         static const GLuint COORDS_PER_VERTEX_TEXTURE;
         static const GLuint VERTICES_PER_ARM;
         static const GLuint VERTICES_PER_LINE;
@@ -416,7 +417,7 @@ class Starsphere : public AbstractGraphicsEngine {
 
         /// Colors.
         glm::vec3 m_axes_color;
-        glm::vec3 m_arms_color;
+        glm::vec3 m_geode_axes_color;
         glm::vec3 m_gamma_color;
         glm::vec3 m_globe_color;
         glm::vec3 m_earth_color;
@@ -433,6 +434,7 @@ class Starsphere : public AbstractGraphicsEngine {
         GLfloat m_supernova_point_size;
         GLfloat m_constellation_line_width;
         GLfloat m_axes_line_width;
+        GLfloat m_geode_line_width;
 
         // Number of distinct stars.
         GLuint m_distinct_stars;
@@ -459,6 +461,7 @@ class Starsphere : public AbstractGraphicsEngine {
 
         void make_local_geode_axes(GLfloat latitude,
                                    GLfloat longitude,
+                                   glm::vec4 color,
                                    GLfloat* vertex_data,
                                    GLuint array_offset);
 

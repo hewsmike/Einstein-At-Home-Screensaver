@@ -75,6 +75,7 @@ const GLuint Starsphere::OBSERVATORY_COUNT(2);
 const GLuint Starsphere::GEODE_AXES_PER_OBSERVATORY(3);
 const GLuint Starsphere::ARMS_PER_OBSERVATORY(2);
 const GLuint Starsphere::COORDS_PER_VERTEX_BARE(3);
+const GLuint Starsphere::COORDS_PER_VERTEX_COLOR(7);
 const GLuint Starsphere::COORDS_PER_VERTEX_TEXTURE(5);
 const GLuint Starsphere::VERTICES_PER_ARM(2);
 const GLuint Starsphere::VERTICES_PER_LINE(2);
@@ -153,7 +154,7 @@ Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
     m_CurrentDeclination = -1.0f;
     m_RefreshSearchMarker = true;
 
-    m_arms_color = glm::vec3(0.5f, 0.5f, 1.0f);               // Arms are light blue.
+    m_geode_axes_color = glm::vec3(0.5f, 0.5f, 1.0f);         // Local geode axes are light blue.
     m_axes_color = glm::vec3(1.0f, 0.0f, 0.0f);               // Axes are red.
     m_gamma_color = glm::vec3(0.0f, 1.0f, 0.0f);              // Gammas are Green.
     m_globe_color = glm::vec3(0.25f, 0.25f, 0.25f);           // Globe is Grey.
@@ -170,6 +171,10 @@ Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
     m_supernova_point_size = 3.0f;
     m_constellation_line_width = 1.0f;
     m_axes_line_width = 2.0f;
+    m_geode_line_width = 3.0f;
+
+    m_geode_lines = 0;
+    m_arms_lines = 0;
     }
 
 Starsphere::~Starsphere() {
@@ -255,7 +260,7 @@ void Starsphere::make_stars(void) {
 
     // Populate data structure indicating GLSL code use.
     RenderTask::shader_group s_group1 = {factory.createInstance("VertexShader_Stars")->std_string(),
-                                         factory.createInstance("FragmentShader_Pass")->std_string()};
+                                         factory.createInstance("FragmentShader_Pass_Color3")->std_string()};
 
       // Populate data structure for vertices.
     RenderTask::vertex_buffer_group v_group1 = {star_vertex_data,
@@ -307,7 +312,7 @@ void Starsphere::make_pulsars(void) {
 
     // Populate data structure indicating GLSL code use.
     RenderTask::shader_group s_group1 = {factory.createInstance("VertexShader_Pulsars")->std_string(),
-                                         factory.createInstance("FragmentShader_Pass")->std_string()};
+                                         factory.createInstance("FragmentShader_Pass_Color3")->std_string()};
 
     // Populate data structure for vertices.
     RenderTask::vertex_buffer_group v_group1 = {pulsar_vertex_data,
@@ -359,7 +364,7 @@ void Starsphere::make_snrs(void) {
 
     // Populate data structure indicating GLSL code use.
     RenderTask::shader_group s_group1 = {factory.createInstance("VertexShader_Supernovae")->std_string(),
-                                         factory.createInstance("FragmentShader_Pass")->std_string()};
+                                         factory.createInstance("FragmentShader_Pass_Color3")->std_string()};
 
     // Instantiate a rendering task with the provided information.
     RenderTask::vertex_buffer_group v_group1 = {snr_vertex_data,
@@ -426,7 +431,7 @@ void Starsphere::make_constellations(void) {
 
     // Populate data structure indicating GLSL code use.
     RenderTask::shader_group s_group1 = {factory.createInstance("VertexShader_Stars")->std_string(),
-                                         factory.createInstance("FragmentShader_Pass")->std_string()};
+                                         factory.createInstance("FragmentShader_Pass_Color3")->std_string()};
 
     // Populate data structure for vertices.
     RenderTask::vertex_buffer_group v_group1 = {star_vertex_data,
@@ -442,7 +447,7 @@ void Starsphere::make_constellations(void) {
     m_render_task_cons->addSpecification({0, "position", 3, GL_FLOAT, GL_FALSE});
 
     // For program uniforms need client side pointers.
-    m_render_task_cons->setUniform("CameraMatrix", TransformGlobals::getCameraTransformMatrix());;
+    m_render_task_cons->setUniform("CameraMatrix", TransformGlobals::getCameraTransformMatrix());
 
     m_render_task_cons->setUniform("color", &m_constellation_line_color);
 
@@ -478,7 +483,7 @@ void Starsphere::make_gammas(void) {
 
     // Populate data structure indicating GLSL code use.
     RenderTask::shader_group s_group1 = {factory.createInstance("VertexShader_Gammas")->std_string(),
-                                         factory.createInstance("FragmentShader_Pass")->std_string()};
+                                         factory.createInstance("FragmentShader_Pass_Color3")->std_string()};
 
     // Instantiate a rendering task with the provided information.
     RenderTask::vertex_buffer_group v_group1 = {gamma_vertex_data,
@@ -508,7 +513,6 @@ void Starsphere::make_gammas(void) {
 
 /**
  * Create markers on sky sphere for LLO, LHO, GEO and VIRGO
- * IFO corner positions are from Myers' personal GPS and are +/- 100m
  */
 
 GLfloat Starsphere::RAofZenith(double T, GLfloat LONdeg) {
@@ -536,7 +540,7 @@ GLfloat Starsphere::RAofZenith(double T, GLfloat LONdeg) {
     return 1.0f;
     }
 
-void Starsphere::make_local_geode_axes(GLfloat latitude, GLfloat longitude, GLfloat* vertex_data, GLuint array_offset) {
+void Starsphere::make_local_geode_axes(GLfloat latitude, GLfloat longitude, glm::vec4 color, GLfloat* vertex_data, GLuint array_offset) {
     const GLfloat ZENITH_DELTA = 0.10f;
 
     GLfloat temp;
@@ -551,13 +555,22 @@ void Starsphere::make_local_geode_axes(GLfloat latitude, GLfloat longitude, GLfl
     vertex_data[array_offset] = corner.x;
     vertex_data[array_offset + 1] = corner.y;
     vertex_data[array_offset + 2] = corner.z;
-    array_offset += COORDS_PER_VERTEX_BARE;
+    vertex_data[array_offset + 3] = 1.0f;
+    vertex_data[array_offset + 4] = 1.0f;
+    vertex_data[array_offset + 5] = 1.0f;
+    vertex_data[array_offset + 6] = 1.0f;
+    array_offset += COORDS_PER_VERTEX_COLOR;
 
     // ... to local zenith.
     vertex_data[array_offset] = local_zenith.x;
     vertex_data[array_offset + 1] = local_zenith.y;
     vertex_data[array_offset + 2] = local_zenith.z;
-    array_offset += COORDS_PER_VERTEX_BARE;
+    vertex_data[array_offset + 3] = color.r;
+    vertex_data[array_offset + 4] = color.g;
+    vertex_data[array_offset + 5] = color.b;
+    vertex_data[array_offset + 6] = color.a;
+
+    array_offset += COORDS_PER_VERTEX_COLOR;
 
     // Vector in direction of local north, same length as zenith vector.
     temp = longitude + 180;
@@ -575,13 +588,21 @@ void Starsphere::make_local_geode_axes(GLfloat latitude, GLfloat longitude, GLfl
     vertex_data[array_offset] = corner.x;
     vertex_data[array_offset + 1] = corner.y;
     vertex_data[array_offset + 2] = corner.z;
-    array_offset += COORDS_PER_VERTEX_BARE;
+    vertex_data[array_offset + 3] = color.r;
+    vertex_data[array_offset + 4] = color.g;
+    vertex_data[array_offset + 5] = color.b;
+    vertex_data[array_offset + 6] = color.a;
+    array_offset += COORDS_PER_VERTEX_COLOR;
 
     // ... to local north.
     vertex_data[array_offset] = local_north_tip.x;
     vertex_data[array_offset + 1] = local_north_tip.y;
     vertex_data[array_offset + 2] = local_north_tip.z;
-    array_offset += COORDS_PER_VERTEX_BARE;
+    vertex_data[array_offset + 3] = color.r;
+    vertex_data[array_offset + 4] = color.g;
+    vertex_data[array_offset + 5] = color.b;
+    vertex_data[array_offset + 6] = color.a;
+    array_offset += COORDS_PER_VERTEX_COLOR;
 
     // Vector in direction of local east, same length as zenith vector.
     temp_cross_product = glm::cross(local_north, local_zenith);
@@ -592,33 +613,48 @@ void Starsphere::make_local_geode_axes(GLfloat latitude, GLfloat longitude, GLfl
     vertex_data[array_offset] = corner.x;
     vertex_data[array_offset + 1] = corner.y;
     vertex_data[array_offset + 2] = corner.z;
-    array_offset += COORDS_PER_VERTEX_BARE;
+    vertex_data[array_offset + 3] = color.r;
+    vertex_data[array_offset + 4] = color.g;
+    vertex_data[array_offset + 5] = color.b;
+    vertex_data[array_offset + 6] = color.a;
+    array_offset += COORDS_PER_VERTEX_COLOR;
 
     // ... to local east.
     vertex_data[array_offset] = local_east_tip.x;
     vertex_data[array_offset + 1] = local_east_tip.y;
     vertex_data[array_offset + 2] = local_east_tip.z;
+    vertex_data[array_offset + 3] = color.r;
+    vertex_data[array_offset + 4] = color.g;
+    vertex_data[array_offset + 5] = color.b;
+    vertex_data[array_offset + 6] = color.a;
     }
 
 /**
  * Draw the observatories at their zenith positions
  */
 void Starsphere::generateObservatories(GLfloat dimFactor) {
+    // dimFactor unused. Keep it?
     m_geode_lines = OBSERVATORY_COUNT * GEODE_AXES_PER_OBSERVATORY;
     GLuint vertex_count = 0;
+    glm::vec4 temp_color(m_geode_axes_color.r,
+                         m_geode_axes_color.g,
+                         m_geode_axes_color.b,
+                         1.0f);
 
     const GLfloat ARM_LENGTH = 0.20f;
-    GLfloat arms_vertex_data[m_geode_lines * VERTICES_PER_LINE * COORDS_PER_VERTEX_BARE];
+    GLfloat arms_vertex_data[m_geode_lines * VERTICES_PER_LINE * COORDS_PER_VERTEX_COLOR];
 
     // LIGO Livingston Observatory.
     // Corner station at :
     GLfloat latitude_livingston = 30.5f;                    // Positive above equator.
     GLfloat longitude_livingston = 269.3f;                  // Positive easterly from Greenwich.
+
     make_local_geode_axes(latitude_livingston,
                           longitude_livingston,
+                          temp_color,
                           arms_vertex_data,
                           vertex_count);
-    vertex_count += GEODE_AXES_PER_OBSERVATORY * VERTICES_PER_LINE * COORDS_PER_VERTEX_BARE;
+    vertex_count += GEODE_AXES_PER_OBSERVATORY * VERTICES_PER_LINE * COORDS_PER_VERTEX_COLOR;
 
     GLfloat X_arm_local_direction_livingston = 252.3f;      // Positive easterly of local north.
     GLfloat Y_arm_local_direction_livingston = 162.3f;      // Positive easterly of local north.
@@ -632,6 +668,7 @@ void Starsphere::generateObservatories(GLfloat dimFactor) {
     GLfloat Y_arm_local_direction_hanford = 234.0f;         // Positive easterly of local north.
     make_local_geode_axes(latitude_hanford,
                           longitude_hanford,
+                          temp_color,
                           arms_vertex_data,
                           vertex_count);
 
@@ -639,15 +676,15 @@ void Starsphere::generateObservatories(GLfloat dimFactor) {
     ResourceFactory factory;
 
     // Populate data structure indicating GLSL code use.
-    RenderTask::shader_group s_group = {factory.createInstance("VertexShader_Stars")->std_string(),
-                                        factory.createInstance("FragmentShader_Pass")->std_string()};
+    RenderTask::shader_group s_group = {factory.createInstance("VertexShader_Geode_Axes")->std_string(),
+                                        factory.createInstance("FragmentShader_Pass_Color4")->std_string()};
 
     // Populate data structure for vertices.
     RenderTask::vertex_buffer_group v_group = {arms_vertex_data,
                                                GLuint(OBSERVATORY_COUNT*
                                                       GEODE_AXES_PER_OBSERVATORY*
                                                       VERTICES_PER_LINE*
-                                                      COORDS_PER_VERTEX_BARE*
+                                                      COORDS_PER_VERTEX_COLOR*
                                                       sizeof(GLfloat)),
                                                GLuint(OBSERVATORY_COUNT*
                                                       GEODE_AXES_PER_OBSERVATORY*
@@ -660,13 +697,12 @@ void Starsphere::generateObservatories(GLfloat dimFactor) {
 
     // For vertex input need to correlate with vertex shader code.
     m_render_task_arms->addSpecification({0, "position", 3, GL_FLOAT, GL_FALSE});
+    m_render_task_arms->addSpecification({1, "color", 4, GL_FLOAT, GL_FALSE});
 
     // For program uniforms need client side pointers.
-    m_render_task_arms->setUniform("CameraMatrix", TransformGlobals::getCameraTransformMatrix());;
+    m_render_task_arms->setUniform("CameraMatrix", TransformGlobals::getCameraTransformMatrix());
 
-    m_render_task_arms->setUniform("color", &m_arms_color);
-
-    m_render_task_arms->setUniform("point_size", &m_axes_line_width);
+    m_render_task_arms->setUniform("point_size", &m_geode_line_width);
 
     // Claim all required state machine resources for this rendering task.
     m_render_task_arms->acquire();
@@ -791,7 +827,7 @@ void Starsphere::make_axes(void) {
 
     // Populate data structure indicating GLSL code use.
     RenderTask::shader_group s_group = {factory.createInstance("VertexShader_Stars")->std_string(),
-                                        factory.createInstance("FragmentShader_Pass")->std_string()};
+                                        factory.createInstance("FragmentShader_Pass_Color3")->std_string()};
 
     // Populate data structure for vertices.
     RenderTask::vertex_buffer_group v_group = {axes_vertex_data,
@@ -807,7 +843,7 @@ void Starsphere::make_axes(void) {
     m_render_task_axes->addSpecification({0, "position", 3, GL_FLOAT, GL_FALSE});
 
     // For program uniforms need client side pointers.
-    m_render_task_axes->setUniform("CameraMatrix", TransformGlobals::getCameraTransformMatrix());;
+    m_render_task_axes->setUniform("CameraMatrix", TransformGlobals::getCameraTransformMatrix());
 
     m_render_task_axes->setUniform("color", &m_axes_color);
 
@@ -945,7 +981,7 @@ void Starsphere::make_globe_mesh_lat_long(void) {
 
     // Populate data structure indicating GLSL code use.
     RenderTask::shader_group s_group1 = {factory.createInstance("VertexShader_Stars")->std_string(),
-    		                             factory.createInstance("FragmentShader_Pass")->std_string()};
+    		                             factory.createInstance("FragmentShader_Pass_Color3")->std_string()};
 
     // Populate data structure for vertices.
     RenderTask::vertex_buffer_group v_group1 = {globe_vertex_data,
@@ -967,7 +1003,7 @@ void Starsphere::make_globe_mesh_lat_long(void) {
     m_render_task_globe->addSpecification({0, "position", 3, GL_FLOAT, GL_FALSE});
 
     // For program uniforms need client side pointers.
-    m_render_task_globe->setUniform("CameraMatrix", TransformGlobals::getCameraTransformMatrix());;
+    m_render_task_globe->setUniform("CameraMatrix", TransformGlobals::getCameraTransformMatrix());
     m_render_task_globe->setUniform("color", &m_globe_color);
     m_render_task_globe->setUniform("point_size", &m_globe_point_size);
 
@@ -1096,7 +1132,7 @@ void Starsphere::make_globe_mesh_texture(void) {
     m_render_task_earth->addSpecification({1, "aTexCoord", 2, GL_FLOAT, GL_FALSE});
 
     // For program uniforms need client side pointers.
-    m_render_task_earth->setUniform("CameraMatrix", TransformGlobals::getCameraTransformMatrix());;
+    m_render_task_earth->setUniform("CameraMatrix", TransformGlobals::getCameraTransformMatrix());
     m_render_task_earth->setUniform("point_size", &m_globe_point_size);
 
     // Claim all required state machine resources for this rendering task.
@@ -1203,14 +1239,14 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
 
     // Create rendering tasks for given features.
     make_constellations();
-    make_gammas();
-    make_globe_mesh_lat_long();
-    make_globe_mesh_texture();
-    make_pulsars();
-    make_snrs();
-    make_stars();
-    make_axes();
-    generateObservatories(0.5f);
+    //make_gammas();
+    // make_globe_mesh_lat_long();
+    //make_globe_mesh_texture();
+    //make_pulsars();
+    //make_snrs();
+    //make_stars();
+    //make_axes();
+    //generateObservatories(0.5f);
 
     // Begin with these visual features enabled.
     setFeature(CONSTELLATIONS, true);
@@ -1282,8 +1318,8 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
 void Starsphere::render(const double timeOfDay) {
     const glm::mat4 identity(1.0f);
     const GLuint AUTO_ROTATE_FRAME_COUNT(300);
-    const GLfloat AUTO_ROTATE_TRIGGER_RADIUS(2.0f);
-    const GLfoat EARTH_DRAG_SPEED_RATIO(0.02f);
+    const GLfloat AUTO_ROTATE_TRIGGER_RADIUS(0.5f);
+    const GLfloat EARTH_DRAG_SPEED_RATIO(0.02f);
 
     glm::mat4 m_stance = identity;
 
@@ -1341,7 +1377,7 @@ void Starsphere::render(const double timeOfDay) {
     // Draw axes before any rotation so they stay put in
     // model/world space.
     if(isFeature(AXES)) {
-        m_render_task_axes->render(GL_LINES, NUMBER_OF_AXES*VERTICES_PER_LINE);
+        // m_render_task_axes->render(GL_LINES, NUMBER_OF_AXES*VERTICES_PER_LINE);
         }
 
     // Default unrotated viewpoint is along the Open GL z-axis by an amount
@@ -1391,28 +1427,28 @@ void Starsphere::render(const double timeOfDay) {
 
     // stars, pulsars, supernovae, grid
     if(isFeature(GAMMAS)) {
-        m_render_task_gammas->render(GL_POINTS, Ngammas);
+        //m_render_task_gammas->render(GL_POINTS, Ngammas);
         }
     if(isFeature(PULSARS)) {
-        m_render_task_psr->render(GL_POINTS, Npulsars);
+        //m_render_task_psr->render(GL_POINTS, Npulsars);
         }
     if(isFeature(SNRS)) {
-        m_render_task_snr->render(GL_POINTS, NSNRs);
+        //m_render_task_snr->render(GL_POINTS, NSNRs);
         }
     if(isFeature(STARS)) {
-        m_render_task_star->render(GL_POINTS, m_distinct_stars);
+        //m_render_task_star->render(GL_POINTS, m_distinct_stars);
         }
     if(isFeature(CONSTELLATIONS)) {
         m_render_task_cons->render(GL_LINES, m_constellation_lines*VERTICES_PER_LINE);
         }
     if(isFeature(GLOBE)) {
-        m_render_task_globe->render(GL_LINES, m_globe_lines*VERTICES_PER_LINE);
+        //m_render_task_globe->render(GL_LINES, m_globe_lines*VERTICES_PER_LINE);
         }
     if(isFeature(EARTH)) {
-        m_render_task_earth->render(GL_TRIANGLES, m_earth_triangles*VERTICES_PER_TRIANGLE);
+        //m_render_task_earth->render(GL_TRIANGLES, m_earth_triangles*VERTICES_PER_TRIANGLE);
         }
     if(isFeature(OBSERVATORIES)) {
-        m_render_task_arms->render(GL_LINES, m_geode_lines*VERTICES_PER_LINE);
+        // m_render_task_arms->render(GL_LINES, m_geode_lines*VERTICES_PER_LINE);
         }
 
     // draw the search marker (gunsight)
