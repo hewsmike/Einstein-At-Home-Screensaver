@@ -21,6 +21,7 @@
  *                                                                         *
  ***************************************************************************/
 
+#include <cstdlib>          // For abs()
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -61,13 +62,23 @@ const GLfloat Starsphere::PERSPECTIVE_FOV_DEFAULT(45.0f);
 const GLfloat Starsphere::PERSPECTIVE_FOV_MIN(20.0f);
 const GLfloat Starsphere::PERSPECTIVE_FOV_MAX(70.0f);
 const GLfloat Starsphere::VIEWPOINT_MOUSEWHEEL_FOV_RATE(0.1f);
-const GLuint Starsphere::GLOBE_LATITUDE_LAYERS(145);                     // Each pole is a layer in latitude too.
+const GLuint Starsphere::GLOBE_LATITUDE_LAYERS(145);                    // Each pole is a layer in latitude too.
 const GLuint Starsphere::GLOBE_LONGITUDE_SLICES(288);
-const GLfloat Starsphere::GLOBE_TEXTURE_OFFSET(180.0f);                         // Texture map starts at longitude 1
+const GLfloat Starsphere::GLOBE_TEXTURE_OFFSET(180.0f);                 // Texture map starts at longitude 180
 const GLuint Starsphere::GRID_LATITUDE_LAYERS(19);                      // Each pole is a layer in latitude too.
 const GLuint Starsphere::GRID_LONGITUDE_SLICES(36);
 const GLuint Starsphere::VERTICES_PER_TRIANGLE(3);
 const GLuint Starsphere::AXES_LINE_LENGTH(100);
+const GLuint Starsphere::NUMBER_OF_AXES(3);
+
+const GLuint Starsphere::OBSERVATORY_COUNT(2);
+const GLuint Starsphere::GEODE_AXES_PER_OBSERVATORY(3);
+const GLuint Starsphere::ARMS_PER_OBSERVATORY(2);
+const GLuint Starsphere::COORDS_PER_VERTEX_BARE(3);
+const GLuint Starsphere::COORDS_PER_VERTEX_TEXTURE(5);
+const GLuint Starsphere::VERTICES_PER_ARM(2);
+const GLuint Starsphere::VERTICES_PER_LINE(2);
+
 
 Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
     AbstractGraphicsEngine(sharedMemoryAreaIdentifier) {
@@ -126,22 +137,23 @@ Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
      */
     viewpt_fov = PERSPECTIVE_FOV_DEFAULT;
     m_aspect = 0.0f;
-    viewpt_azimuth = 30.0f;
-    viewpt_elev = 23.6f;
-    viewpt_radius = (SPHERE_RADIUS + VIEWPOINT_MAX_ZOOM)/ 2.0f;
+    m_viewpt_azimuth = 30.0f;
+    m_viewpt_elev = 23.6f;
+    m_viewpt_radius = (SPHERE_RADIUS + VIEWPOINT_MAX_ZOOM)/ 2.0f;
 
     wobble_amp = 37.0f;
     wobble_period = 17.0f;
     zoom_amp = 0.00f;
     zoom_period = 29.0f;
 
-    rotation_offset = 0.0f;
+    m_rotation_offset = 0.0f;
     rotation_speed = 180.0f;
 
     m_CurrentRightAscension = -1.0f;
     m_CurrentDeclination = -1.0f;
     m_RefreshSearchMarker = true;
 
+    m_arms_color = glm::vec3(0.5f, 0.5f, 1.0f);               // Arms are light blue.
     m_axes_color = glm::vec3(1.0f, 0.0f, 0.0f);               // Axes are red.
     m_gamma_color = glm::vec3(0.0f, 1.0f, 0.0f);              // Gammas are Green.
     m_globe_color = glm::vec3(0.25f, 0.25f, 0.25f);           // Globe is Grey.
@@ -181,6 +193,8 @@ Starsphere::~Starsphere() {
     if(m_render_task_star) delete m_render_task_star;
     if(m_render_task_globe) delete m_render_task_globe;
     if(m_render_task_earth) delete m_render_task_earth;
+    if(m_render_task_axes) delete m_render_task_axes;
+    if(m_render_task_arms) delete m_render_task_arms;
     }
 
 glm::vec3 Starsphere::sphVertex3D(GLfloat RAdeg, GLfloat DEdeg, GLfloat radius) {
@@ -522,184 +536,140 @@ GLfloat Starsphere::RAofZenith(double T, GLfloat LONdeg) {
     return 1.0f;
     }
 
+void Starsphere::make_local_geode_axes(GLfloat latitude, GLfloat longitude, GLfloat* vertex_data, GLuint array_offset) {
+    const GLfloat ZENITH_DELTA = 0.10f;
+
+    GLfloat temp;
+    glm::vec3 temp_cross_product(0.0f, 0.0f, 0.0f);
+
+    // Vector from centre of Earth to corner station of interferometer.
+    glm::vec3 corner = sphVertex3D(longitude, latitude, EARTH_RADIUS * 1.0f);
+    // Vector from Earth's centre to the local zenith :
+    glm::vec3 local_zenith = sphVertex3D(longitude, latitude, EARTH_RADIUS * (1.0f + ZENITH_DELTA));
+
+    // Vector from corner station ...
+    vertex_data[array_offset] = corner.x;
+    vertex_data[array_offset + 1] = corner.y;
+    vertex_data[array_offset + 2] = corner.z;
+    array_offset += COORDS_PER_VERTEX_BARE;
+
+    // ... to local zenith.
+    vertex_data[array_offset] = local_zenith.x;
+    vertex_data[array_offset + 1] = local_zenith.y;
+    vertex_data[array_offset + 2] = local_zenith.z;
+    array_offset += COORDS_PER_VERTEX_BARE;
+
+    // Vector in direction of local north, same length as zenith vector.
+    temp = longitude + 180;
+    if(temp > 360.0f) {
+        temp = temp - 360.0f;
+        }
+    else if(temp < 0.0f) {
+        temp = temp + 360.0f;
+        }
+    glm::vec3 local_north = sphVertex3D(temp, 90.0 - abs(latitude), ZENITH_DELTA);
+
+    glm::vec3 local_north_tip = corner + local_north;
+
+    // Vector from corner station ...
+    vertex_data[array_offset] = corner.x;
+    vertex_data[array_offset + 1] = corner.y;
+    vertex_data[array_offset + 2] = corner.z;
+    array_offset += COORDS_PER_VERTEX_BARE;
+
+    // ... to local north.
+    vertex_data[array_offset] = local_north_tip.x;
+    vertex_data[array_offset + 1] = local_north_tip.y;
+    vertex_data[array_offset + 2] = local_north_tip.z;
+    array_offset += COORDS_PER_VERTEX_BARE;
+
+    // Vector in direction of local east, same length as zenith vector.
+    temp_cross_product = glm::cross(local_north, local_zenith);
+    glm::vec3 local_east = glm::normalize(temp_cross_product) * ZENITH_DELTA;
+    glm::vec3 local_east_tip = corner + local_east;
+
+    // Vector from corner station ...
+    vertex_data[array_offset] = corner.x;
+    vertex_data[array_offset + 1] = corner.y;
+    vertex_data[array_offset + 2] = corner.z;
+    array_offset += COORDS_PER_VERTEX_BARE;
+
+    // ... to local east.
+    vertex_data[array_offset] = local_east_tip.x;
+    vertex_data[array_offset + 1] = local_east_tip.y;
+    vertex_data[array_offset + 2] = local_east_tip.z;
+    }
 
 /**
  * Draw the observatories at their zenith positions
  */
-void Starsphere::generateObservatories(float dimFactor) {
-    // sanity check
-//    if(dimFactor < 0.0) dimFactor = 0.0;
-//    if(dimFactor > 1.0) dimFactor = 1.0;
-//
-//    GLfloat Lat, Lon; // Latitute/Longitude of IFO is
-//    GLfloat RAdeg, DEdeg; // converted to RA/DEC of sky sphere position
-//    GLfloat radius; // radius of sphere for obs
-//
-//    GLfloat arm_len_deg=3.000; // lenght of arms, in degrees (not to scale)
-//    GLfloat h2=0.400; // slight offset for H2 arms
-//
-//    // get current time and UTC offset (for zenith position)
-//    m_ObservatoryDrawTimeLocal = dtime();
-//    time_t local = m_ObservatoryDrawTimeLocal;
-//    tm *utc = gmtime(&local);
-//    double utcOffset = difftime(local, mktime(utc));
-//    double observatoryDrawTimeGMT = m_ObservatoryDrawTimeLocal - utcOffset;
-//
-//    radius = 1.0*sphRadius; // radius of sphere on which they are drawn
-//
-//    float lineSize = 4.0;
-//
-//    /**
-//     * LIGO Livingston Observatory:
-//     */
-//
-//    Lat= 30.56377;
-//    Lon= 90.77408;
-//
-//    RAdeg= RAofZenith(observatoryDrawTimeGMT, Lon);
-//    DEdeg= Lat;
-//
-//    // delete existing, create new (required for windoze)
-////    if(LLOmarker) glDeleteLists(LLOmarker, 1);
-////    LLOmarker = glGenLists(1);
-////    glNewList(LLOmarker, GL_COMPILE);
-////
-////        glColor3f(dimFactor * 0.0, dimFactor * 1.0, dimFactor * 0.0);
-////        glLineWidth(lineSize);
-////
-////        glBegin(GL_LINE_STRIP);
-////            //  North/South arm:
-////            sphVertex3D(RAdeg, DEdeg-arm_len_deg, radius);
-////            sphVertex3D(RAdeg, DEdeg, radius);
-////            // East/West arm:
-////            sphVertex3D(RAdeg-arm_len_deg, DEdeg, radius);
-////        glEnd();
-////
-////        // arm joint H2
-////        glPointSize((GLfloat) lineSize);
-////        glBegin(GL_POINTS);
-////            sphVertex3D(RAdeg, DEdeg, radius);
-////        glEnd();
-////
-////    glEndList();
-//
-//    /**
-//     * LIGO Hanford Observatory: H1 and H2
-//     */
-//
-//    Lat= 46.45510;
-//    Lon= 119.40627;
-//
-//    RAdeg= RAofZenith(observatoryDrawTimeGMT, Lon);
-//    DEdeg= Lat;
-//
-//    // delete existing, create new (required for windoze)
-////    if(LHOmarker) glDeleteLists(LHOmarker, 1);
-////    LHOmarker = glGenLists(1);
-////    glNewList(LHOmarker, GL_COMPILE);
-////
-////        glColor3f(dimFactor * 0.0, dimFactor * 0.0, dimFactor * 1.0);
-////        glLineWidth(lineSize);
-////
-////        glBegin(GL_LINE_STRIP);
-////            // North/South arm:
-////            sphVertex3D(RAdeg, DEdeg+arm_len_deg, radius);
-////            sphVertex3D(RAdeg, DEdeg, radius);
-////            // East/West arm:
-////            sphVertex3D(RAdeg-arm_len_deg, DEdeg, radius);
-////        glEnd();
-////
-////        glBegin(GL_LINE_STRIP);
-////            // North/South arm, H2:
-////            sphVertex3D(RAdeg-h2, DEdeg+arm_len_deg/2.0+h2/2.0, radius);
-////            sphVertex3D(RAdeg-h2, DEdeg+h2/2.0, radius);
-////            // East/West arm, H2;
-////            sphVertex3D(RAdeg-arm_len_deg/2.0-h2, DEdeg+h2/2.0, radius);
-////        glEnd();
-////
-////        // arm joint H1
-////        glPointSize((GLfloat) lineSize);
-////        glBegin(GL_POINTS);
-////            sphVertex3D(RAdeg, DEdeg, radius);
-////        glEnd();
-////
-////        // arm joint H2
-////        glPointSize((GLfloat) lineSize);
-////        glBegin(GL_POINTS);
-////            sphVertex3D(RAdeg-h2, DEdeg+h2/2.0, radius);
-////        glEnd();
-////
-////    glEndList();
-//
-//    /**
-//     *  GEO600 Interferometer:
-//     */
-//
-//    Lat= 52.24452;
-//    Lon= -9.80683;
-//    arm_len_deg=1.50; // not to scale
-//
-//    RAdeg= RAofZenith(observatoryDrawTimeGMT, Lon);
-//    DEdeg= Lat;
-//
-//    // delete existing, create new (required for windoze)
-////    if(GEOmarker) glDeleteLists(GEOmarker, 1);
-////    GEOmarker = glGenLists(1);
-////    glNewList(GEOmarker, GL_COMPILE);
-////
-////        glColor3f(dimFactor * 1.0, dimFactor * 0.0, dimFactor * 0.0);
-////        glLineWidth(lineSize);
-////
-////        glBegin(GL_LINE_STRIP);
-////            // North/South arm:
-////            sphVertex3D(RAdeg, DEdeg+arm_len_deg, radius);
-////            sphVertex3D(RAdeg, DEdeg, radius);
-////            // West/East arm:
-////            sphVertex3D(RAdeg+arm_len_deg, DEdeg, radius);
-////        glEnd();
-////
-////        // arm joint
-////        glPointSize((GLfloat) lineSize);
-////        glBegin(GL_POINTS);
-////            sphVertex3D(RAdeg, DEdeg, radius);
-////        glEnd();
-////
-////    glEndList();
-//
-//    /**
-//     *  VIRGO Interferometer:
-//     */
-//
-//    Lat= 43.63139;
-//    Lon= -10.505;
-//    arm_len_deg=3.000; // not to scale
-//
-//    RAdeg= RAofZenith(observatoryDrawTimeGMT, Lon);
-//    DEdeg= Lat;
-//
-//    // delete existing, create new (required for windoze)
-////    if(VIRGOmarker) glDeleteLists(VIRGOmarker, 1);
-//    VIRGOmarker = glGenLists(1);
-//    glNewList(VIRGOmarker, GL_COMPILE);
-//
-//        glColor3f(dimFactor * 1.0, dimFactor * 1.0, dimFactor * 1.0);
-//        glLineWidth(lineSize);
-//
-//        glBegin(GL_LINE_STRIP);
-//            // North/South arm:
-//            sphVertex3D(RAdeg, DEdeg+arm_len_deg, radius);
-//            sphVertex3D(RAdeg, DEdeg, radius);
-//            // West/East arm:
-//            sphVertex3D(RAdeg-arm_len_deg, DEdeg, radius);
-//        glEnd();
-//
-//        // arm joint
-//        glPointSize((GLfloat) lineSize);
-//        glBegin(GL_POINTS);
-//            sphVertex3D(RAdeg, DEdeg, radius);
-//        glEnd();
-//
-//    glEndList();
+void Starsphere::generateObservatories(GLfloat dimFactor) {
+    m_geode_lines = OBSERVATORY_COUNT * GEODE_AXES_PER_OBSERVATORY;
+    GLuint vertex_count = 0;
+
+    const GLfloat ARM_LENGTH = 0.20f;
+    GLfloat arms_vertex_data[m_geode_lines * VERTICES_PER_LINE * COORDS_PER_VERTEX_BARE];
+
+    // LIGO Livingston Observatory.
+    // Corner station at :
+    GLfloat latitude_livingston = 30.5f;                    // Positive above equator.
+    GLfloat longitude_livingston = 269.3f;                  // Positive easterly from Greenwich.
+    make_local_geode_axes(latitude_livingston,
+                          longitude_livingston,
+                          arms_vertex_data,
+                          vertex_count);
+    vertex_count += GEODE_AXES_PER_OBSERVATORY * VERTICES_PER_LINE * COORDS_PER_VERTEX_BARE;
+
+    GLfloat X_arm_local_direction_livingston = 252.3f;      // Positive easterly of local north.
+    GLfloat Y_arm_local_direction_livingston = 162.3f;      // Positive easterly of local north.
+
+    // LIGO Hanford Observatory:
+    // Corner station at :
+    GLfloat latitude_hanford = 46.5f;                       // Positive above equator.
+    GLfloat longitude_hanford = 240.6f;                     // Positive easterly from Greenwich.
+    // Arms :
+    GLfloat X_arm_local_direction_hanford = 324.0f;         // Positive easterly of local north.
+    GLfloat Y_arm_local_direction_hanford = 234.0f;         // Positive easterly of local north.
+    make_local_geode_axes(latitude_hanford,
+                          longitude_hanford,
+                          arms_vertex_data,
+                          vertex_count);
+
+    // Create factory instance to then access the shader strings.
+    ResourceFactory factory;
+
+    // Populate data structure indicating GLSL code use.
+    RenderTask::shader_group s_group = {factory.createInstance("VertexShader_Stars")->std_string(),
+                                        factory.createInstance("FragmentShader_Pass")->std_string()};
+
+    // Populate data structure for vertices.
+    RenderTask::vertex_buffer_group v_group = {arms_vertex_data,
+                                               GLuint(OBSERVATORY_COUNT*
+                                                      GEODE_AXES_PER_OBSERVATORY*
+                                                      VERTICES_PER_LINE*
+                                                      COORDS_PER_VERTEX_BARE*
+                                                      sizeof(GLfloat)),
+                                               GLuint(OBSERVATORY_COUNT*
+                                                      GEODE_AXES_PER_OBSERVATORY*
+                                                      VERTICES_PER_LINE),
+                                               GL_STATIC_DRAW,
+                                               VertexBuffer::BY_VERTEX};
+
+    // Instantiate a rendering task with the provided information.
+    m_render_task_arms = new RenderTask(s_group, v_group);
+
+    // For vertex input need to correlate with vertex shader code.
+    m_render_task_arms->addSpecification({0, "position", 3, GL_FLOAT, GL_FALSE});
+
+    // For program uniforms need client side pointers.
+    m_render_task_arms->setUniform("CameraMatrix", TransformGlobals::getCameraTransformMatrix());;
+
+    m_render_task_arms->setUniform("color", &m_arms_color);
+
+    m_render_task_arms->setUniform("point_size", &m_axes_line_width);
+
+    // Claim all required state machine resources for this rendering task.
+    m_render_task_arms->acquire();
 
     return;
     }
@@ -782,38 +752,38 @@ void Starsphere::make_search_marker(GLfloat RAdeg, GLfloat DEdeg, GLfloat size) 
  * XYZ coordinate axes: (if we want them - most useful for testing)
  */
 void Starsphere::make_axes(void) {
-    GLfloat axes_vertex_data[3 * 2 * 3];
+    GLfloat axes_vertex_data[NUMBER_OF_AXES * VERTICES_PER_LINE * COORDS_PER_VERTEX_BARE];
     GLuint endpoint = 0;
 
     // Vectors for each point at the ends of an axis line.
     // X axis.
-    axes_vertex_data[endpoint*3] = 0.0f;
-    axes_vertex_data[endpoint*3 + 1] = 0.0f;
-    axes_vertex_data[endpoint*3 + 2] = 0.0f;
+    axes_vertex_data[endpoint*COORDS_PER_VERTEX_BARE] = 0.0f;
+    axes_vertex_data[endpoint*COORDS_PER_VERTEX_BARE + 1] = 0.0f;
+    axes_vertex_data[endpoint*COORDS_PER_VERTEX_BARE + 2] = 0.0f;
     ++endpoint;
-    axes_vertex_data[endpoint*3] = AXES_LINE_LENGTH;
-    axes_vertex_data[endpoint*3 + 1] = 0.0f;
-    axes_vertex_data[endpoint*3 + 2] = 0.0f;
+    axes_vertex_data[endpoint*COORDS_PER_VERTEX_BARE] = AXES_LINE_LENGTH;
+    axes_vertex_data[endpoint*COORDS_PER_VERTEX_BARE + 1] = 0.0f;
+    axes_vertex_data[endpoint*COORDS_PER_VERTEX_BARE + 2] = 0.0f;
     ++endpoint;
 
     // Y axis.
-    axes_vertex_data[endpoint*3] = 0.0f;
-    axes_vertex_data[endpoint*3 + 1] = 0.0f;
-    axes_vertex_data[endpoint*3 + 2] = 0.0f;
+    axes_vertex_data[endpoint*COORDS_PER_VERTEX_BARE] = 0.0f;
+    axes_vertex_data[endpoint*COORDS_PER_VERTEX_BARE + 1] = 0.0f;
+    axes_vertex_data[endpoint*COORDS_PER_VERTEX_BARE + 2] = 0.0f;
     ++endpoint;
-    axes_vertex_data[endpoint*3] = 0.0f;
-    axes_vertex_data[endpoint*3 + 1] = AXES_LINE_LENGTH;
-    axes_vertex_data[endpoint*3 + 2] = 0.0f;
+    axes_vertex_data[endpoint*COORDS_PER_VERTEX_BARE] = 0.0f;
+    axes_vertex_data[endpoint*COORDS_PER_VERTEX_BARE + 1] = AXES_LINE_LENGTH;
+    axes_vertex_data[endpoint*COORDS_PER_VERTEX_BARE + 2] = 0.0f;
     ++endpoint;
 
     // Z axis.
-    axes_vertex_data[endpoint*3] = 0.0f;
-    axes_vertex_data[endpoint*3 + 1] = 0.0f;
-    axes_vertex_data[endpoint*3 + 2] = 0.0f;
+    axes_vertex_data[endpoint*COORDS_PER_VERTEX_BARE] = 0.0f;
+    axes_vertex_data[endpoint*COORDS_PER_VERTEX_BARE + 1] = 0.0f;
+    axes_vertex_data[endpoint*COORDS_PER_VERTEX_BARE + 2] = 0.0f;
     ++endpoint;
-    axes_vertex_data[endpoint*3] = 0.0f;
-    axes_vertex_data[endpoint*3 + 1] = 0.0f;
-    axes_vertex_data[endpoint*3 + 2] = AXES_LINE_LENGTH;
+    axes_vertex_data[endpoint*COORDS_PER_VERTEX_BARE] = 0.0f;
+    axes_vertex_data[endpoint*COORDS_PER_VERTEX_BARE + 1] = 0.0f;
+    axes_vertex_data[endpoint*COORDS_PER_VERTEX_BARE + 2] = AXES_LINE_LENGTH;
 
 
     // Create factory instance to then access the shader strings.
@@ -825,8 +795,8 @@ void Starsphere::make_axes(void) {
 
     // Populate data structure for vertices.
     RenderTask::vertex_buffer_group v_group = {axes_vertex_data,
-                                               GLuint(3*2*3*sizeof(GLfloat)),
-                                               GLuint(3*2),
+                                               GLuint(NUMBER_OF_AXES*VERTICES_PER_LINE*COORDS_PER_VERTEX_BARE*sizeof(GLfloat)),
+                                               GLuint(NUMBER_OF_AXES*VERTICES_PER_LINE),
                                                GL_STATIC_DRAW,
                                                VertexBuffer::BY_VERTEX};
 
@@ -1240,6 +1210,7 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
     make_snrs();
     make_stars();
     make_axes();
+    generateObservatories(0.5f);
 
     // Begin with these visual features enabled.
     setFeature(CONSTELLATIONS, true);
@@ -1309,6 +1280,9 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
  * Rendering routine:  this is what does the drawing:
  */
 void Starsphere::render(const double timeOfDay) {
+    const glm::mat4 identity(1.0f, 1.0f, 1.0f, 1.0f);
+    const GLuint AUTO_ROTATE_FRAME COUNT(300);
+
 //    GLfloat xvp, yvp, zvp, vp_theta, vp_phi, vp_rad;
 //    GLfloat Zrot = 0.0, Zobs=0.0;
 //    double revs, t, dt = 0;
@@ -1359,28 +1333,42 @@ void Starsphere::render(const double timeOfDay) {
 
 //              0.0, 0.0, 0.0, // looking toward here
 //                0.0, 1.0, 0.0); // which way is up?  y axis!
-    /// TODO - place this block correctly
-    // draw axes before any rotation so they stay put.
+
+    // Draw axes before any rotation so they stay put in
+    // model/world space.
     if(isFeature(AXES)) {
-        m_render_task_axes->render(GL_LINES, 3*2);
+        m_render_task_axes->render(GL_LINES, NUMBER_OF_AXES*VERTICES_PER_LINE);
         }
 
-    GLuint stagger = m_framecount % 300;
+    // Default unrotated viewpoint is along the Open GL z-axis by an amount
+    // per viewpoint radius.
+    m_view = glm::translate(identity, glm::vec3(0.0f, 0.0f, -m_viewpt_radius));
 
-    if(stagger == 100) {
-        m_axis = glm::vec3(0.0f, 1.0f, 0.0f);
+    // Now determine the rotation of the
+    if(m_viewpt_radius < EARTH_RADIUS * 2.0f) {
+        glm::vec3 temp_axis(m_view);
+        // m_axis = glm::vec3();
+        // m_rotation += glm::rotate(m_rotation, , );
         }
-    else if(stagger == 200){
-        m_axis = glm::vec3(0.0f, 0.0f, 1.0f);
-        }
-    else if(stagger == 0) {
-        m_axis = glm::vec3(1.0f, 0.0f, 0.0f);
-        }
-
-    m_view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -viewpt_radius));
-
-    if(!isFeature(ROLL_STOP)) {
-        m_rotation = glm::rotate(m_rotation, 0.001f, m_axis);
+    else {
+        // Calculate axis of autorotation on a regular
+        // basis
+        GLuint stagger = m_framecount % AUTO_ROTATE_FRAME_COUNT;
+        if(stagger == 0) {
+            // Rotate around the x-axis.
+            m_axis = glm::vec3(1.0f, 0.0f, 0.0f);
+            }
+        else if(stagger == 100) {
+            // Rotate around the y-axis.
+            m_axis = glm::vec3(0.0f, 1.0f, 0.0f);
+            }
+        else if(stagger == 200){
+            // Rotate around the z-axis.
+            m_axis = glm::vec3(0.0f, 0.0f, 1.0f);
+            }
+        if(!isFeature(ROLL_STOP)) {
+            m_rotation = glm::rotate(m_rotation, 0.001f, m_axis);
+            }
         }
 
     m_camera = m_perspective_projection * m_view * m_rotation;
@@ -1399,27 +1387,16 @@ void Starsphere::render(const double timeOfDay) {
         m_render_task_star->render(GL_POINTS, m_distinct_stars);
         }
     if(isFeature(CONSTELLATIONS)) {
-        m_render_task_cons->render(GL_LINES, m_constellation_lines*2);
+        m_render_task_cons->render(GL_LINES, m_constellation_lines*VERTICES_PER_LINE);
         }
     if(isFeature(GLOBE)) {
-        m_render_task_globe->render(GL_LINES, m_globe_lines*2);
+        m_render_task_globe->render(GL_LINES, m_globe_lines*VERTICES_PER_LINE);
         }
     if(isFeature(EARTH)) {
         m_render_task_earth->render(GL_TRIANGLES, m_earth_triangles*VERTICES_PER_TRIANGLE);
         }
-
-    // observatories move an extra 15 degrees/hr since they were drawn
     if(isFeature(OBSERVATORIES)) {
-        /// TODO - call to render observatories;
-//        glPushMatrix();
-//        Zobs = (timeOfDay - m_ObservatoryDrawTimeLocal) * 15.0/3600.0;
-//        glRotatef(Zobs, 0.0, 1.0, 0.0);
-//        glCallList(LLOmarker);
-//        glCallList(LHOmarker);
-//        glCallList(GEOmarker);
-//        glCallList(VIRGOmarker);
-//        renderAdditionalObservatories();
-//        glPopMatrix();
+        m_render_task_arms->render(GL_LINES, m_geode_lines*VERTICES_PER_LINE);
         }
 
     // draw the search marker (gunsight)
@@ -1546,23 +1523,26 @@ void Starsphere::keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey ke
 void Starsphere::rotateSphere(const int relativeRotation,
                               const int relativeElevation) {
     // elevation
-    viewpt_elev += relativeElevation/10.0;
-    if (viewpt_elev > 89.0)
-        viewpt_elev = +89.0;
-    if (viewpt_elev < -89.0)
-        viewpt_elev = -89.0;
+    m_viewpt_elev += relativeElevation/10.0f;
+    if (m_viewpt_elev > 89.0f)
+        m_viewpt_elev = +89.0f;
+    if (m_viewpt_elev < -89.0f)
+        m_viewpt_elev = -89.0f;
 
     // rotation
-    rotation_offset -= relativeRotation/10.0;
+    m_rotation_offset -= relativeRotation/10.0f;
     }
 
 void Starsphere::zoomSphere(const int relativeZoom) {
     // zoom
-    viewpt_radius -= relativeZoom/VIEWPOINT_ZOOM_RATE;
-    if (viewpt_radius > VIEWPOINT_MAX_ZOOM)
-        viewpt_radius = VIEWPOINT_MAX_ZOOM;
-    if (viewpt_radius < EARTH_RADIUS * 1.001f)
-        viewpt_radius = EARTH_RADIUS * 1.001f;
+    m_viewpt_radius -= relativeZoom/VIEWPOINT_ZOOM_RATE;
+    if (m_viewpt_radius > VIEWPOINT_MAX_ZOOM)
+        m_viewpt_radius = VIEWPOINT_MAX_ZOOM;
+    // For a given radius, plus a certain choice of clipping
+    // frustum, then this about as close as you can get without
+    // entering the interior of the Earth.
+    if (m_viewpt_radius < EARTH_RADIUS * 0.65f)
+        m_viewpt_radius = EARTH_RADIUS * 0.65f;
     }
 
 void Starsphere::configTransformMatrices(void) {

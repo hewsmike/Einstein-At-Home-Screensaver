@@ -391,6 +391,15 @@ class Starsphere : public AbstractGraphicsEngine {
         static const GLuint VERTICES_PER_TRIANGLE;
         static const GLuint AXES_LINE_LENGTH;
 
+        static const GLuint OBSERVATORY_COUNT;
+        static const GLuint GEODE_AXES_PER_OBSERVATORY;
+        static const GLuint ARMS_PER_OBSERVATORY;
+        static const GLuint COORDS_PER_VERTEX_BARE;
+        static const GLuint COORDS_PER_VERTEX_TEXTURE;
+        static const GLuint VERTICES_PER_ARM;
+        static const GLuint VERTICES_PER_LINE;
+        static const GLuint NUMBER_OF_AXES;
+
         /// Cumulative frame count.
         GLuint m_framecount;
 
@@ -403,9 +412,11 @@ class Starsphere : public AbstractGraphicsEngine {
         RenderTask* m_render_task_snr;
         RenderTask* m_render_task_star;
         RenderTask* m_render_task_axes;
+        RenderTask* m_render_task_arms;
 
         /// Colors.
         glm::vec3 m_axes_color;
+        glm::vec3 m_arms_color;
         glm::vec3 m_gamma_color;
         glm::vec3 m_globe_color;
         glm::vec3 m_earth_color;
@@ -429,6 +440,10 @@ class Starsphere : public AbstractGraphicsEngine {
         // Number of constellation lines.
         GLuint m_constellation_lines;
 
+        // Number of observatory arms.
+        GLuint m_arms_lines;
+        GLuint m_geode_lines;
+
         // Number of line segments for globe.
         GLuint m_globe_vertices;
         GLuint m_globe_lines;
@@ -441,6 +456,11 @@ class Starsphere : public AbstractGraphicsEngine {
         glm::mat4 m_rotation;
         glm::vec3 m_axis;
         glm::mat4 m_camera;
+
+        void make_local_geode_axes(GLfloat latitude,
+                                   GLfloat longitude,
+                                   GLfloat* vertex_data,
+                                   GLuint array_offset);
 
         /// Generate rendering task for stars.
         void make_stars(void);
@@ -492,13 +512,13 @@ class Starsphere : public AbstractGraphicsEngine {
         GLfloat m_aspect;
 
         /// Viewpoint azimuth in degrees
-        GLfloat viewpt_azimuth;
+        GLfloat m_viewpt_azimuth;
 
         /// Viewpoint elevation angle in degrees
-        GLfloat viewpt_elev;
+        GLfloat m_viewpt_elev;
 
         /// Viewpoint distance out
-        GLfloat viewpt_radius;
+        GLfloat m_viewpt_radius;
 
         /// Viewpoint wobble amplitude in degrees
         GLfloat wobble_amp;
@@ -513,7 +533,7 @@ class Starsphere : public AbstractGraphicsEngine {
         GLfloat zoom_period;
 
         /// Viewpoint rotation offset
-        GLfloat rotation_offset;
+        GLfloat m_rotation_offset;
 
         /// Viewpoint rotations in degrees per minute
         GLfloat rotation_speed;
