@@ -1238,15 +1238,15 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
         }
 
     // Create rendering tasks for given features.
-    make_constellations();
+    // make_constellations();
     //make_gammas();
-    // make_globe_mesh_lat_long();
-    //make_globe_mesh_texture();
+    //make_globe_mesh_lat_long();
+    make_globe_mesh_texture();
     //make_pulsars();
     //make_snrs();
     //make_stars();
     //make_axes();
-    //generateObservatories(0.5f);
+    generateObservatories(0.5f);
 
     // Begin with these visual features enabled.
     setFeature(CONSTELLATIONS, true);
@@ -1439,16 +1439,16 @@ void Starsphere::render(const double timeOfDay) {
         //m_render_task_star->render(GL_POINTS, m_distinct_stars);
         }
     if(isFeature(CONSTELLATIONS)) {
-        m_render_task_cons->render(GL_LINES, m_constellation_lines*VERTICES_PER_LINE);
+        //m_render_task_cons->render(GL_LINES, m_constellation_lines*VERTICES_PER_LINE);
         }
     if(isFeature(GLOBE)) {
         //m_render_task_globe->render(GL_LINES, m_globe_lines*VERTICES_PER_LINE);
         }
     if(isFeature(EARTH)) {
-        //m_render_task_earth->render(GL_TRIANGLES, m_earth_triangles*VERTICES_PER_TRIANGLE);
+        m_render_task_earth->render(GL_TRIANGLES, m_earth_triangles*VERTICES_PER_TRIANGLE);
         }
     if(isFeature(OBSERVATORIES)) {
-        // m_render_task_arms->render(GL_LINES, m_geode_lines*VERTICES_PER_LINE);
+        m_render_task_arms->render(GL_LINES, m_geode_lines*VERTICES_PER_LINE);
         }
 
     // draw the search marker (gunsight)
