@@ -1245,7 +1245,7 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
     //make_pulsars();
     //make_snrs();
     //make_stars();
-    // make_axes();
+    make_axes();
     generateObservatories(0.5f);
 
     // Begin with these visual features enabled.
@@ -1377,7 +1377,7 @@ void Starsphere::render(const double timeOfDay) {
     // Draw axes before any rotation so they stay put in
     // model/world space.
     if(isFeature(AXES)) {
-        // m_render_task_axes->render(GL_LINES, NUMBER_OF_AXES*VERTICES_PER_LINE);
+        m_render_task_axes->render(GL_LINES, NUMBER_OF_AXES*VERTICES_PER_LINE);
         }
 
     // Default unrotated viewpoint is along the Open GL z-axis by an amount
