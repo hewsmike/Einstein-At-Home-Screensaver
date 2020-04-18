@@ -1280,8 +1280,12 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
  * Rendering routine:  this is what does the drawing:
  */
 void Starsphere::render(const double timeOfDay) {
-    const glm::mat4 identity(1.0f, 1.0f, 1.0f, 1.0f);
-    const GLuint AUTO_ROTATE_FRAME COUNT(300);
+    const glm::mat4 identity(1.0f);
+    const GLuint AUTO_ROTATE_FRAME_COUNT(300);
+    const GLfloat AUTO_ROTATE_TRIGGER_RADIUS(2.0f);
+    const GLfoat EARTH_DRAG_SPEED_RATIO(0.02f);
+
+    glm::mat4 m_stance = identity;
 
 //    GLfloat xvp, yvp, zvp, vp_theta, vp_phi, vp_rad;
 //    GLfloat Zrot = 0.0, Zobs=0.0;
@@ -1341,18 +1345,30 @@ void Starsphere::render(const double timeOfDay) {
         }
 
     // Default unrotated viewpoint is along the Open GL z-axis by an amount
-    // per viewpoint radius.
+    // as per viewpoint radius.
     m_view = glm::translate(identity, glm::vec3(0.0f, 0.0f, -m_viewpt_radius));
 
-    // Now determine the rotation of the
-    if(m_viewpt_radius < EARTH_RADIUS * 2.0f) {
-        glm::vec3 temp_axis(m_view);
+    // m_stance = m_view *
+
+    // Stop autorotation if close to the Earth. Allow user manipulation
+    // via dragging mouse pointer while holding down the left mouse button.
+    if(m_viewpt_radius < EARTH_RADIUS * AUTO_ROTATE_TRIGGER_RADIUS) {
+
+        // For mouse this doesn't work : fix it.
+        m_axis = glm::vec3(0.0f,1.0f, 0.0f);
+        m_rotation = glm::rotate(m_rotation, -m_rotation_offset*EARTH_DRAG_SPEED_RATIO, m_axis);
+        m_rotation_offset = 0.0f;
+
+        m_axis = glm::vec3(1.0f, 0.0f, 0.0f);
+        m_rotation = glm::rotate(m_rotation, +m_viewpt_elev*EARTH_DRAG_SPEED_RATIO, m_axis);
+        m_viewpt_elev = 0.0f;
         // m_axis = glm::vec3();
         // m_rotation += glm::rotate(m_rotation, , );
         }
     else {
-        // Calculate axis of autorotation on a regular
-        // basis
+        // Calculate axis of autorotation on a regular basis.
+        // Generates the appearance of arbitrary wandering
+        // of viewpoint.
         GLuint stagger = m_framecount % AUTO_ROTATE_FRAME_COUNT;
         if(stagger == 0) {
             // Rotate around the x-axis.
