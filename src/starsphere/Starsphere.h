@@ -385,9 +385,11 @@ class Starsphere : public AbstractGraphicsEngine {
         // Globe feature parameters.
         static const GLuint GLOBE_LATITUDE_LAYERS;
         static const GLuint GLOBE_LONGITUDE_SLICES;
+        static const GLfloat GLOBE_TEXTURE_OFFSET;
         static const GLuint GRID_LATITUDE_LAYERS;
         static const GLuint GRID_LONGITUDE_SLICES;
         static const GLuint VERTICES_PER_TRIANGLE;
+        static const GLuint AXES_LINE_LENGTH;
 
         /// Cumulative frame count.
         GLuint m_framecount;
@@ -400,8 +402,10 @@ class Starsphere : public AbstractGraphicsEngine {
         RenderTask* m_render_task_psr;
         RenderTask* m_render_task_snr;
         RenderTask* m_render_task_star;
+        RenderTask* m_render_task_axes;
 
         /// Colors.
+        glm::vec3 m_axes_color;
         glm::vec3 m_gamma_color;
         glm::vec3 m_globe_color;
         glm::vec3 m_earth_color;
@@ -417,6 +421,7 @@ class Starsphere : public AbstractGraphicsEngine {
         GLfloat m_star_point_size;
         GLfloat m_supernova_point_size;
         GLfloat m_constellation_line_width;
+        GLfloat m_axes_line_width;
 
         // Number of distinct stars.
         GLuint m_distinct_stars;

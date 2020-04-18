@@ -63,9 +63,11 @@ const GLfloat Starsphere::PERSPECTIVE_FOV_MAX(70.0f);
 const GLfloat Starsphere::VIEWPOINT_MOUSEWHEEL_FOV_RATE(0.1f);
 const GLuint Starsphere::GLOBE_LATITUDE_LAYERS(145);                     // Each pole is a layer in latitude too.
 const GLuint Starsphere::GLOBE_LONGITUDE_SLICES(288);
+const GLfloat Starsphere::GLOBE_TEXTURE_OFFSET(180.0f);                         // Texture map starts at longitude 1
 const GLuint Starsphere::GRID_LATITUDE_LAYERS(19);                      // Each pole is a layer in latitude too.
 const GLuint Starsphere::GRID_LONGITUDE_SLICES(36);
 const GLuint Starsphere::VERTICES_PER_TRIANGLE(3);
+const GLuint Starsphere::AXES_LINE_LENGTH(100);
 
 Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
     AbstractGraphicsEngine(sharedMemoryAreaIdentifier) {
@@ -140,6 +142,7 @@ Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
     m_CurrentDeclination = -1.0f;
     m_RefreshSearchMarker = true;
 
+    m_axes_color = glm::vec3(1.0f, 0.0f, 0.0f);               // Axes are red.
     m_gamma_color = glm::vec3(0.0f, 1.0f, 0.0f);              // Gammas are Green.
     m_globe_color = glm::vec3(0.25f, 0.25f, 0.25f);           // Globe is Grey.
     m_earth_color = glm::vec3(1.0f, 1.0f, 0.5f);
@@ -154,6 +157,7 @@ Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
     m_star_point_size = 4.0f;
     m_supernova_point_size = 3.0f;
     m_constellation_line_width = 1.0f;
+    m_axes_line_width = 2.0f;
     }
 
 Starsphere::~Starsphere() {
@@ -778,30 +782,71 @@ void Starsphere::make_search_marker(GLfloat RAdeg, GLfloat DEdeg, GLfloat size) 
  * XYZ coordinate axes: (if we want them - most useful for testing)
  */
 void Starsphere::make_axes(void) {
-//    GLfloat axl=10.0;
+    GLfloat axes_vertex_data[3 * 2 * 3];
+    GLuint endpoint = 0;
 
-    // delete existing, create new (required for windoze)
-//    if(Axes) glDeleteLists(Axes, 1);
-//    Axes = glGenLists(1);
-//    glNewList(Axes, GL_COMPILE);
-//
-//        glLineWidth(2.0);
-//
-//        glBegin(GL_LINES);
-//            glColor3f(1.0, 0.0, 0.0);
-//            glVertex3f(-axl, 0.0, 0.0);
-//            glVertex3f(axl, 0.0, 0.0);
-//
-//            glColor3f(0.0, 1.0, 0.0);
-//            glVertex3f(0.0, -axl, 0.0);
-//            glVertex3f(0.0, axl, 0.0);
-//
-//            glColor3f(0.0, 0.0, 1.0);
-//            glVertex3f(0.0, 0.0, -axl);
-//            glVertex3f(0.0, 0.0, axl);
-//        glEnd();
-//
-//    glEndList();
+    // Vectors for each point at the ends of an axis line.
+    // X axis.
+    axes_vertex_data[endpoint*3] = 0.0f;
+    axes_vertex_data[endpoint*3 + 1] = 0.0f;
+    axes_vertex_data[endpoint*3 + 2] = 0.0f;
+    ++endpoint;
+    axes_vertex_data[endpoint*3] = AXES_LINE_LENGTH;
+    axes_vertex_data[endpoint*3 + 1] = 0.0f;
+    axes_vertex_data[endpoint*3 + 2] = 0.0f;
+    ++endpoint;
+
+    // Y axis.
+    axes_vertex_data[endpoint*3] = 0.0f;
+    axes_vertex_data[endpoint*3 + 1] = 0.0f;
+    axes_vertex_data[endpoint*3 + 2] = 0.0f;
+    ++endpoint;
+    axes_vertex_data[endpoint*3] = 0.0f;
+    axes_vertex_data[endpoint*3 + 1] = AXES_LINE_LENGTH;
+    axes_vertex_data[endpoint*3 + 2] = 0.0f;
+    ++endpoint;
+
+    // Z axis.
+    axes_vertex_data[endpoint*3] = 0.0f;
+    axes_vertex_data[endpoint*3 + 1] = 0.0f;
+    axes_vertex_data[endpoint*3 + 2] = 0.0f;
+    ++endpoint;
+    axes_vertex_data[endpoint*3] = 0.0f;
+    axes_vertex_data[endpoint*3 + 1] = 0.0f;
+    axes_vertex_data[endpoint*3 + 2] = AXES_LINE_LENGTH;
+
+
+    // Create factory instance to then access the shader strings.
+    ResourceFactory factory;
+
+    // Populate data structure indicating GLSL code use.
+    RenderTask::shader_group s_group = {factory.createInstance("VertexShader_Stars")->std_string(),
+                                        factory.createInstance("FragmentShader_Pass")->std_string()};
+
+    // Populate data structure for vertices.
+    RenderTask::vertex_buffer_group v_group = {axes_vertex_data,
+                                               GLuint(3*2*3*sizeof(GLfloat)),
+                                               GLuint(3*2),
+                                               GL_STATIC_DRAW,
+                                               VertexBuffer::BY_VERTEX};
+
+    // Instantiate a rendering task with the provided information.
+    m_render_task_axes = new RenderTask(s_group, v_group);
+
+    // For vertex input need to correlate with vertex shader code.
+    m_render_task_axes->addSpecification({0, "position", 3, GL_FLOAT, GL_FALSE});
+
+    // For program uniforms need client side pointers.
+    m_render_task_axes->setUniform("CameraMatrix", TransformGlobals::getCameraTransformMatrix());;
+
+    m_render_task_axes->setUniform("color", &m_axes_color);
+
+    m_render_task_axes->setUniform("point_size", &m_axes_line_width);
+
+    // Claim all required state machine resources for this rendering task.
+    m_render_task_axes->acquire();
+
+    return;
     }
 
 /**
@@ -1004,7 +1049,8 @@ void Starsphere::make_globe_mesh_texture(void) {
                 // position to the line at zero degrees.
                 temp = 0.0f;
                 }
-    		glm::vec3 globe_vertex = sphVertex3D(temp*LONG_STEP, 90 - latitude_layer*LAT_STEP, EARTH_RADIUS);
+            // However need to slide texture around the mesh so that Greenwich meridian appears at zero longitude.
+    		glm::vec3 globe_vertex = sphVertex3D(temp*LONG_STEP+GLOBE_TEXTURE_OFFSET, 90 - latitude_layer*LAT_STEP, EARTH_RADIUS);
     		globe_vertex_data[vertex_counter*COORDS_PER_VERTEX] = globe_vertex.x;
     		globe_vertex_data[vertex_counter*COORDS_PER_VERTEX + 1] = globe_vertex.y;
     		globe_vertex_data[vertex_counter*COORDS_PER_VERTEX + 2] = globe_vertex.z;
@@ -1193,6 +1239,7 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
     make_pulsars();
     make_snrs();
     make_stars();
+    make_axes();
 
     // Begin with these visual features enabled.
     setFeature(CONSTELLATIONS, true);
@@ -1312,6 +1359,11 @@ void Starsphere::render(const double timeOfDay) {
 
 //              0.0, 0.0, 0.0, // looking toward here
 //                0.0, 1.0, 0.0); // which way is up?  y axis!
+    /// TODO - place this block correctly
+    // draw axes before any rotation so they stay put.
+    if(isFeature(AXES)) {
+        m_render_task_axes->render(GL_LINES, 3*2);
+        }
 
     GLuint stagger = m_framecount % 300;
 
@@ -1332,12 +1384,6 @@ void Starsphere::render(const double timeOfDay) {
         }
 
     m_camera = m_perspective_projection * m_view * m_rotation;
-
-    /// TODO - place this block correctly
-    // draw axes before any rotation so they stay put.
-    if(isFeature(AXES)) {
-        /// TODO - call to render axes;
-        }
 
     // stars, pulsars, supernovae, grid
     if(isFeature(GAMMAS)) {
