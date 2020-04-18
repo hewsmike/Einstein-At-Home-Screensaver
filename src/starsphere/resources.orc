@@ -24,7 +24,7 @@ FontSansSerif|LiberationSans-Regular.ttf.res
 AppIconBMP|EaH.bmp.res
 
 # Shaders
-FragmentShader_Pass_Color3|fragment_shader_pass_color3.res
+FragmentShader_Pass_Color3|fs_pass.res
 FragmentShader_Pass_Color4|fragment_shader_pass_color4.res
 VertexShader_Texture|vertex_shader_single_pointsize_texture.res
 VertexShader_Gammas|vertex_shader_single_color_single_pointsize.res
