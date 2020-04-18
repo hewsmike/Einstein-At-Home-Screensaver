@@ -88,7 +88,7 @@ void StarsphereGravity::initialize(const int width, const int height, const Reso
     m_Y4StartPosBottom = m_Y3StartPosBottom - m_YOffsetMedium;
 
     // prepare base class observatories (not dimmed)
-    generateObservatories(1.0);
+    // generateObservatories(1.0);
     }
 
 void StarsphereGravity::resize(const int width, const int height) {
@@ -179,7 +179,7 @@ void StarsphereGravity::renderSearchInformation() {
 
 void StarsphereGravity::generateObservatories(float dimFactor) {
     // we don't do anything special here, just call base class
-    Starsphere::generateObservatories(dimFactor);
+    //Starsphere::generateObservatories(dimFactor);
     }
 
 void StarsphereGravity::renderLogo() {

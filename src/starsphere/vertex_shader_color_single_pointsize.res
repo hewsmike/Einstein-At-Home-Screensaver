@@ -3,9 +3,9 @@
 // This is a vertex shader. Camera transform & point size as uniforms.
 
 in vec3 position;
-in vec4 color;
+in vec3 color;
 
-out vec4 pass_color;
+out vec3 pass_color;
 
 uniform float point_size;
 uniform mat4 CameraMatrix;

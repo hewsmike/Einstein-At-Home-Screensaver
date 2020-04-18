@@ -75,7 +75,7 @@ const GLuint Starsphere::OBSERVATORY_COUNT(2);
 const GLuint Starsphere::GEODE_AXES_PER_OBSERVATORY(3);
 const GLuint Starsphere::ARMS_PER_OBSERVATORY(2);
 const GLuint Starsphere::COORDS_PER_VERTEX_BARE(3);
-const GLuint Starsphere::COORDS_PER_VERTEX_COLOR(7);
+const GLuint Starsphere::COORDS_PER_VERTEX_COLOR(6);
 const GLuint Starsphere::COORDS_PER_VERTEX_TEXTURE(5);
 const GLuint Starsphere::VERTICES_PER_ARM(2);
 const GLuint Starsphere::VERTICES_PER_LINE(2);
@@ -540,7 +540,7 @@ GLfloat Starsphere::RAofZenith(double T, GLfloat LONdeg) {
     return 1.0f;
     }
 
-void Starsphere::make_local_geode_axes(GLfloat latitude, GLfloat longitude, glm::vec4 color, GLfloat* vertex_data, GLuint array_offset) {
+void Starsphere::make_local_geode_axes(GLfloat latitude, GLfloat longitude, glm::vec3 color, GLfloat* vertex_data, GLuint array_offset) {
     const GLfloat ZENITH_DELTA = 0.10f;
 
     GLfloat temp;
@@ -558,7 +558,6 @@ void Starsphere::make_local_geode_axes(GLfloat latitude, GLfloat longitude, glm:
     vertex_data[array_offset + 3] = 1.0f;
     vertex_data[array_offset + 4] = 1.0f;
     vertex_data[array_offset + 5] = 1.0f;
-    vertex_data[array_offset + 6] = 1.0f;
     array_offset += COORDS_PER_VERTEX_COLOR;
 
     // ... to local zenith.
@@ -568,7 +567,6 @@ void Starsphere::make_local_geode_axes(GLfloat latitude, GLfloat longitude, glm:
     vertex_data[array_offset + 3] = color.r;
     vertex_data[array_offset + 4] = color.g;
     vertex_data[array_offset + 5] = color.b;
-    vertex_data[array_offset + 6] = color.a;
 
     array_offset += COORDS_PER_VERTEX_COLOR;
 
@@ -591,7 +589,6 @@ void Starsphere::make_local_geode_axes(GLfloat latitude, GLfloat longitude, glm:
     vertex_data[array_offset + 3] = color.r;
     vertex_data[array_offset + 4] = color.g;
     vertex_data[array_offset + 5] = color.b;
-    vertex_data[array_offset + 6] = color.a;
     array_offset += COORDS_PER_VERTEX_COLOR;
 
     // ... to local north.
@@ -601,7 +598,6 @@ void Starsphere::make_local_geode_axes(GLfloat latitude, GLfloat longitude, glm:
     vertex_data[array_offset + 3] = color.r;
     vertex_data[array_offset + 4] = color.g;
     vertex_data[array_offset + 5] = color.b;
-    vertex_data[array_offset + 6] = color.a;
     array_offset += COORDS_PER_VERTEX_COLOR;
 
     // Vector in direction of local east, same length as zenith vector.
@@ -616,7 +612,6 @@ void Starsphere::make_local_geode_axes(GLfloat latitude, GLfloat longitude, glm:
     vertex_data[array_offset + 3] = color.r;
     vertex_data[array_offset + 4] = color.g;
     vertex_data[array_offset + 5] = color.b;
-    vertex_data[array_offset + 6] = color.a;
     array_offset += COORDS_PER_VERTEX_COLOR;
 
     // ... to local east.
@@ -626,7 +621,6 @@ void Starsphere::make_local_geode_axes(GLfloat latitude, GLfloat longitude, glm:
     vertex_data[array_offset + 3] = color.r;
     vertex_data[array_offset + 4] = color.g;
     vertex_data[array_offset + 5] = color.b;
-    vertex_data[array_offset + 6] = color.a;
     }
 
 /**
@@ -636,10 +630,9 @@ void Starsphere::generateObservatories(GLfloat dimFactor) {
     // dimFactor unused. Keep it?
     m_geode_lines = OBSERVATORY_COUNT * GEODE_AXES_PER_OBSERVATORY;
     GLuint vertex_count = 0;
-    glm::vec4 temp_color(m_geode_axes_color.r,
+    glm::vec3 temp_color(m_geode_axes_color.r,
                          m_geode_axes_color.g,
-                         m_geode_axes_color.b,
-                         1.0f);
+                         m_geode_axes_color.b);
 
     const GLfloat ARM_LENGTH = 0.20f;
     GLfloat arms_vertex_data[m_geode_lines * VERTICES_PER_LINE * COORDS_PER_VERTEX_COLOR];
@@ -677,7 +670,7 @@ void Starsphere::generateObservatories(GLfloat dimFactor) {
 
     // Populate data structure indicating GLSL code use.
     RenderTask::shader_group s_group = {factory.createInstance("VertexShader_Geode_Axes")->std_string(),
-                                        factory.createInstance("FragmentShader_Pass_Color4")->std_string()};
+                                        factory.createInstance("FragmentShader_Pass_Color3")->std_string()};
 
     // Populate data structure for vertices.
     RenderTask::vertex_buffer_group v_group = {arms_vertex_data,
@@ -697,7 +690,7 @@ void Starsphere::generateObservatories(GLfloat dimFactor) {
 
     // For vertex input need to correlate with vertex shader code.
     m_render_task_arms->addSpecification({0, "position", 3, GL_FLOAT, GL_FALSE});
-    m_render_task_arms->addSpecification({1, "color", 4, GL_FLOAT, GL_FALSE});
+    m_render_task_arms->addSpecification({1, "color", 3, GL_FLOAT, GL_FALSE});
 
     // For program uniforms need client side pointers.
     m_render_task_arms->setUniform("CameraMatrix", TransformGlobals::getCameraTransformMatrix());
@@ -826,7 +819,7 @@ void Starsphere::make_axes(void) {
     ResourceFactory factory;
 
     // Populate data structure indicating GLSL code use.
-    RenderTask::shader_group s_group = {factory.createInstance("VertexShader_Stars")->std_string(),
+    RenderTask::shader_group s_group = {factory.createInstance("VertexShader_Geode_Axes")->std_string(),
                                         factory.createInstance("FragmentShader_Pass_Color3")->std_string()};
 
     // Populate data structure for vertices.
@@ -1137,7 +1130,6 @@ void Starsphere::make_globe_mesh_texture(void) {
 
     // Claim all required state machine resources for this rendering task.
     m_render_task_earth->acquire();
-
     }
 
 /**
@@ -1240,13 +1232,13 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
     // Create rendering tasks for given features.
     //make_constellations();
     //make_gammas();
-    //make_globe_mesh_lat_long();
+    make_globe_mesh_lat_long();
     make_globe_mesh_texture();
     //make_pulsars();
     //make_snrs();
     //make_stars();
     make_axes();
-    generateObservatories(0.5f);
+    //generateObservatories(0.5f);
 
     // Begin with these visual features enabled.
     setFeature(CONSTELLATIONS, true);
@@ -1377,7 +1369,7 @@ void Starsphere::render(const double timeOfDay) {
     // Draw axes before any rotation so they stay put in
     // model/world space.
     if(isFeature(AXES)) {
-        // m_render_task_axes->render(GL_LINES, NUMBER_OF_AXES*VERTICES_PER_LINE);
+        m_render_task_axes->render(GL_LINES, NUMBER_OF_AXES*VERTICES_PER_LINE);
         }
 
     // Default unrotated viewpoint is along the Open GL z-axis by an amount
@@ -1442,13 +1434,13 @@ void Starsphere::render(const double timeOfDay) {
         //m_render_task_cons->render(GL_LINES, m_constellation_lines*VERTICES_PER_LINE);
         }
     if(isFeature(GLOBE)) {
-        //m_render_task_globe->render(GL_LINES, m_globe_lines*VERTICES_PER_LINE);
+        m_render_task_globe->render(GL_LINES, m_globe_lines*VERTICES_PER_LINE);
         }
     if(isFeature(EARTH)) {
         m_render_task_earth->render(GL_TRIANGLES, m_earth_triangles*VERTICES_PER_TRIANGLE);
         }
     if(isFeature(OBSERVATORIES)) {
-        m_render_task_arms->render(GL_LINES, m_geode_lines*VERTICES_PER_LINE);
+       // m_render_task_arms->render(GL_LINES, m_geode_lines*VERTICES_PER_LINE);
         }
 
     // draw the search marker (gunsight)

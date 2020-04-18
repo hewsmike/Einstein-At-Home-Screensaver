@@ -102,7 +102,7 @@ void StarsphereRadio::initialize(const int width, const int height, const Resour
     generatePowerSpectrumCoordSystem(m_PowerSpectrumXPos, m_PowerSpectrumYPos);
 
     // prepare base class observatories (dimmed to 33%)
-    generateObservatories(0.33);
+    //generateObservatories(0.33);
 }
 
 void StarsphereRadio::resize(const int width, const int height)
@@ -337,7 +337,7 @@ void StarsphereRadio::generatePowerSpectrumBins(const int originX, const int ori
 void StarsphereRadio::generateObservatories(float dimFactor)
 {
     // call base class implementation first
-    Starsphere::generateObservatories(dimFactor);
+    ///Starsphere::generateObservatories(dimFactor);
 
     GLfloat Lat, Lon; // Latitute/Longitude of IFO is
     GLfloat RAdeg, DEdeg; // converted to RA/DEC of sky sphere position

@@ -53,14 +53,16 @@ VertexBuffer::~VertexBuffer() {
     }
 
 bool VertexBuffer::acquire(void) {
-    GLuint handle;
-    glGenBuffers(1, &handle);
-    this->set_ID(handle);
-    this->setAcquisitionState(true);
+    if(!this->isAcquired()) {
+        GLuint handle;
+        glGenBuffers(1, &handle);
+        this->set_ID(handle);
+        this->setAcquisitionState(true);
 
-    this->bind();
-    this->loadBuffer();
-    this->unbind();
+        this->bind();
+        this->loadBuffer();
+        this->unbind();
+        }
 
     return true;
     }

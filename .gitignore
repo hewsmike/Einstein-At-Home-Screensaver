@@ -37,3 +37,4 @@ topbuild.log
 *.layout
 *.save
 *~
+/cscope.out

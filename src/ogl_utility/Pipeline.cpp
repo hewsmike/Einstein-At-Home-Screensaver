@@ -49,8 +49,8 @@ void Pipeline::trigger(GLenum primitive, GLsizei count) {
         }
 
     // Need to acquire Vertexfetch if not already.
-    if(m_vertex_fetch != NULL) {
-        m_vertex_fetch->acquire();
+    if((m_vertex_fetch != NULL) && (!m_vertex_fetch->isConfigured())) {
+        m_vertex_fetch->configure();
         }
 
     // If you have a texture, but it is not acquired, then do so.

@@ -461,7 +461,7 @@ class Starsphere : public AbstractGraphicsEngine {
 
         void make_local_geode_axes(GLfloat latitude,
                                    GLfloat longitude,
-                                   glm::vec4 color,
+                                   glm::vec3 color,
                                    GLfloat* vertex_data,
                                    GLuint array_offset);
 
