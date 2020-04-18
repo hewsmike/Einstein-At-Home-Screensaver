@@ -1238,14 +1238,14 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
         }
 
     // Create rendering tasks for given features.
-    // make_constellations();
+    //make_constellations();
     //make_gammas();
     //make_globe_mesh_lat_long();
     make_globe_mesh_texture();
     //make_pulsars();
     //make_snrs();
     //make_stars();
-    //make_axes();
+    // make_axes();
     generateObservatories(0.5f);
 
     // Begin with these visual features enabled.
