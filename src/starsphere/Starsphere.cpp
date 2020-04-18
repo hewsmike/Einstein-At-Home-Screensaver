@@ -954,7 +954,7 @@ void Starsphere::make_axes(void) {
     ResourceFactory factory;
 
     // Populate data structure indicating GLSL code use.
-    RenderTask::shader_group s_group = {factory.createInstance("VertexShader_Geode_Axes")->std_string(),
+    RenderTask::shader_group s_group = {factory.createInstance("VertexShader_Axes")->std_string(),
                                         factory.createInstance("FragmentShader_Pass_Color3")->std_string()};
 
     // Populate data structure for vertices.
