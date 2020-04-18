@@ -147,7 +147,7 @@ private:
      * implementation, hence dims the IFOs. The local Arecibo observatory is currently
      * unaffected.
      */
-    void generateObservatories(const float dimFactor);
+    //void generateObservatories(const float dimFactor);
 
     /// ID of the OpenGL call list which contains the static power spectrum coordinate system
     GLuint m_PowerSpectrumCoordSystemList;

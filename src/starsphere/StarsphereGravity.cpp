@@ -88,7 +88,7 @@ void StarsphereGravity::initialize(const int width, const int height, const Reso
     m_Y4StartPosBottom = m_Y3StartPosBottom - m_YOffsetMedium;
 
     // prepare base class observatories (not dimmed)
-    // generateObservatories(1.0);
+    //generateObservatories(1.0);
     }
 
 void StarsphereGravity::resize(const int width, const int height) {
@@ -175,11 +175,6 @@ void StarsphereGravity::renderSearchInformation() {
 //        m_FontText->draw(m_XStartPosRight, m_Y2StartPosBottom, m_WUSkyPosDeclination.c_str());
 //        m_FontText->draw(m_XStartPosRight, m_Y3StartPosBottom, m_WUPercentDone.c_str());
 //        m_FontText->draw(m_XStartPosRight, m_Y4StartPosBottom, m_WUCPUTime.c_str());
-    }
-
-void StarsphereGravity::generateObservatories(float dimFactor) {
-    // we don't do anything special here, just call base class
-    //Starsphere::generateObservatories(dimFactor);
     }
 
 void StarsphereGravity::renderLogo() {

@@ -211,7 +211,7 @@ class Starsphere : public AbstractGraphicsEngine {
          * \param dimFactor A dim factor (range: 0 <= x <= 1) that will, well, dim the color
          * of the observatories.
          */
-        virtual void generateObservatories(const float dimFactor);
+        // virtual void generateObservatories(const float dimFactor);
 
         /**
          * \brief Available feature IDs
@@ -461,7 +461,6 @@ class Starsphere : public AbstractGraphicsEngine {
 
         void make_local_geode_axes(GLfloat latitude,
                                    GLfloat longitude,
-                                   glm::vec3 color,
                                    GLfloat* vertex_data,
                                    GLuint array_offset);
 
@@ -489,7 +488,8 @@ class Starsphere : public AbstractGraphicsEngine {
         /// Generate a globe with a texture.
         void make_globe_mesh_texture(void);
 
-        /**
+        void make_observatories(void);
+               /**
          * \brief Generate OpenGL display list for search marker (gunsight)
          *
          * \param RAdeg Right ascension in degrees

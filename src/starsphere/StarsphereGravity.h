@@ -118,7 +118,7 @@ class StarsphereGravity : public Starsphere {
          * of the observatories. Right now the factor is propagated to the base class
          * implementation, hence dims the IFOs.
          */
-        void generateObservatories(const float dimFactor);
+        // void generateObservatories(const float dimFactor);
 
         /// Specialized BOINC client adapter instance for information retrieval
         EinsteinGravityAdapter m_EinsteinAdapter;
