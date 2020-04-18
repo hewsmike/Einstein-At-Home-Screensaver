@@ -380,7 +380,7 @@ void Starsphere::make_snrs(void) {
     m_render_task_snr->addSpecification({0, "position", 3, GL_FLOAT, GL_FALSE});
 
     // For program uniforms need client side pointers.
-    m_render_task_snr->setUniform("CameraMatrix", &m_camera);
+    m_render_task_snr->setUniform("CameraMatrix", TransformGlobals::getCameraTransformMatrix());
 
     m_render_task_snr->setUniform("color", &m_supernova_color);
 
