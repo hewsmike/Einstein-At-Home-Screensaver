@@ -570,13 +570,19 @@ void Starsphere::make_local_geode_axes(GLfloat latitude, GLfloat longitude, glm:
     array_offset += COORDS_PER_VERTEX_COLOR;
 
     // Vector in direction of local north, same length as zenith vector.
-    temp = longitude + 180;
-    if(temp > 360.0f) {
-        temp = temp - 360.0f;
+    if(latitude > 0.0f) {
+        temp = longitude + 180;
+        if(temp > 360.0f) {
+            temp = temp - 360.0f;
+            }
+        else if(temp < 0.0f) {
+            temp = temp + 360.0f;
+            }
         }
-    else if(temp < 0.0f) {
-        temp = temp + 360.0f;
+    else {
+        temp = longitude;
         }
+
     glm::vec3 local_north = sphVertex3D(temp, 90.0 - abs(latitude), ZENITH_DELTA);
 
     glm::vec3 local_north_tip = corner + local_north;
@@ -635,7 +641,7 @@ void Starsphere::make_observatories(void) {
 
     // LIGO Livingston Observatory.
     // Corner station at :
-    GLfloat latitude_livingston = 30.5f;                    // Positive above equator.
+    GLfloat latitude_livingston = -30.5f;                    // Positive above equator.
     GLfloat longitude_livingston = 269.3f;                  // Positive easterly from Greenwich.
     make_local_geode_axes(latitude_livingston,
                           longitude_livingston,
@@ -649,7 +655,7 @@ void Starsphere::make_observatories(void) {
 
     // LIGO Hanford Observatory:
     // Corner station at :
-    GLfloat latitude_hanford = 46.5f;                       // Positive above equator.
+    GLfloat latitude_hanford = -46.5f;                       // Positive above equator.
     GLfloat longitude_hanford = 240.6f;                     // Positive easterly from Greenwich.
     // Arms :
     GLfloat X_arm_local_direction_hanford = 324.0f;         // Positive easterly of local north.
