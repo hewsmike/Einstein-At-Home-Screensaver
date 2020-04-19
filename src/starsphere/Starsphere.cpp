@@ -1445,10 +1445,8 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
 void Starsphere::render(const double timeOfDay) {
     const glm::mat4 identity(1.0f);
     const GLuint AUTO_ROTATE_FRAME_COUNT(300);
-    const GLfloat AUTO_ROTATE_TRIGGER_RADIUS(2.5f);
+    const GLfloat AUTO_ROTATE_TRIGGER_RADIUS(0.4f);
     const GLfloat EARTH_DRAG_SPEED_RATIO(0.02f);
-
-    glm::mat4 m_stance = identity;
 
 //    GLfloat xvp, yvp, zvp, vp_theta, vp_phi, vp_rad;
 //    GLfloat Zrot = 0.0, Zobs=0.0;
@@ -1511,22 +1509,9 @@ void Starsphere::render(const double timeOfDay) {
     // as per viewpoint radius.
     m_view = glm::translate(identity, glm::vec3(0.0f, 0.0f, -m_viewpt_radius));
 
-    // m_stance = m_view *
-
     // Stop autorotation if close to the Earth. Allow user manipulation
     // via dragging mouse pointer while holding down the left mouse button.
     if(m_viewpt_radius < EARTH_RADIUS * AUTO_ROTATE_TRIGGER_RADIUS) {
-
-        // For mouse this doesn't work : fix it.
-        m_axis = glm::vec3(0.0f,1.0f, 0.0f);
-        m_rotation = glm::rotate(m_rotation, -m_rotation_offset*EARTH_DRAG_SPEED_RATIO, m_axis);
-        m_rotation_offset = 0.0f;
-
-        m_axis = glm::vec3(1.0f, 0.0f, 0.0f);
-        m_rotation = glm::rotate(m_rotation, +m_viewpt_elev*EARTH_DRAG_SPEED_RATIO, m_axis);
-        m_viewpt_elev = 0.0f;
-        // m_axis = glm::vec3();
-        // m_rotation += glm::rotate(m_rotation, , );
         }
     else {
         // Calculate axis of autorotation on a regular basis.
