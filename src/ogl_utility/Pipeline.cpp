@@ -24,15 +24,20 @@
 
 Pipeline::Pipeline(Program* program, VertexFetch* vertex_fetch, TextureBuffer* texture) :
                    m_texture_buffer(texture) {
+    // A null texture pointer will just be stored. Trigger() will handle nullity.
     // Check Program pointer validity.
     if(program == NULL) {
+        // Got to have a Program involved.
         ErrorHandler::record("Pipeline::Pipeline() : No program provided.", ErrorHandler::FATAL);
         }
     m_program = program;
 
     // Check VertexFetch pointer validity.
     if(vertex_fetch == NULL) {
-        ErrorHandler::record("Pipeline::Pipeline() : No vertex fetch provided.", ErrorHandler::INFORM);
+        // Curiously you can have a Pipeline without vertex fetching,
+        // not that I can see the point of that for rendering. Not illegal
+        // per se, but probably a big enough error to flag fatally.
+        ErrorHandler::record("Pipeline::Pipeline() : No vertex fetch provided.", ErrorHandler::FATAL);
         }
     m_vertex_fetch = vertex_fetch;
     }
@@ -42,14 +47,15 @@ Pipeline::~Pipeline() {
     }
 
 void Pipeline::trigger(GLenum primitive, GLsizei count) {
-    // Link program if not done.
+    // Link program etc if not already done.
     if(m_program->status() == Program::NEVER_LINKED) {
         ErrorHandler::record("Pipeline::trigger() : program needs configuring ...", ErrorHandler::INFORM);
         m_program->configure();
         }
 
-    // Need to acquire Vertexfetch if not already.
+    // Need to configure Vertexfetch if not already.
     if((m_vertex_fetch != NULL) && (!m_vertex_fetch->isConfigured())) {
+        ErrorHandler::record("Pipeline::trigger() : vertex fetch needs configuring ...", ErrorHandler::INFORM);
         m_vertex_fetch->configure();
         }
 
@@ -60,6 +66,8 @@ void Pipeline::trigger(GLenum primitive, GLsizei count) {
 
     // Only if the program was successfully linked.
     if(m_program->status() == Program::LINKAGE_SUCCEEDED) {
+        // All this binding and unbinding is explicit so the
+        // state machine defaults need not be relied upon.
         m_program-> bind();
 
         m_vertex_fetch->bind();
@@ -69,8 +77,12 @@ void Pipeline::trigger(GLenum primitive, GLsizei count) {
             m_texture_buffer->bind();
             }
 
+        // This will load uniform data from client
+        // space into the vertex shader, once per
+        // rendered frame.
         m_program->frameCallBack();
 
+        // Finally start some rendering pipeline activity.
         m_vertex_fetch->trigger(primitive, count);
 
         // If texturing then unbind.

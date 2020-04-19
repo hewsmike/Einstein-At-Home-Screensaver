@@ -67,7 +67,8 @@ class Pipeline {
         /**
          * \brief Trigger pipeline activity. It is the responsibility
          *        of the calling routine to ensure that parameter choices
-         *        do not cause an over-run of the supplied buffer.
+         *        do not cause an over-run of the supplied buffer. NB
+         *        GL_QUADS is not available with OpenGL 3.x and above.
          *
          * \param primitive : one of the OpenGL primitives
          *          GL_POINTS
