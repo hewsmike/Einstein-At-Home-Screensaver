@@ -158,7 +158,7 @@ retrieve_freetype() {
     mkdir -p $ROOT/retrieval/freetype2 >> $LOGFILE || failure
 
     cd $ROOT/retrieval || failure
-    wget $FREETYPE_RETRIEVE_PATH >> $LOGFILE 2>&1 || failure
+    wget --no-check-certificate $FREETYPE_RETRIEVE_PATH >> $LOGFILE 2>&1 || failure
     tar -xjf $FREETYPE_RETRIEVE_FILE >> $LOGFILE 2>&1 || failure
     rm $FREETYPE_RETRIEVE_FILE >> $LOGFILE 2>&1 || failure
     # substitute old source tree
@@ -180,7 +180,7 @@ retrieve_glew() {
     mkdir -p $ROOT/retrieval/glew >> $LOGFILE || failure
 
     cd $ROOT/retrieval || failure
-    wget $GLEW_RETRIEVE_PATH >> $LOGFILE 2>&1 || failure
+    wget --no-check-certificate $GLEW_RETRIEVE_PATH >> $LOGFILE 2>&1 || failure
     tar -xf $GLEW_RETRIEVE_FILE >> $LOGFILE 2>&1 || failure
     rm $GLEW_RETRIEVE_FILE >> $LOGFILE 2>&1 || failure
     # substitute old source tree
@@ -204,7 +204,7 @@ retrieve_libxml() {
 
     cd $ROOT/retrieval || failure
     rm -f $LIBXML_RETRIEVE_FILE >> $LOGFILE 2>&1 || failure
-    wget --passive-ftp $LIBXML_RETRIEVE_PATH >> $LOGFILE 2>&1 || failure
+    wget --passive-ftp --no-check-certificate $LIBXML_RETRIEVE_PATH >> $LOGFILE 2>&1 || failure
     tar -xzf $LIBXML_RETRIEVE_FILE >> $LOGFILE 2>&1 || failure
     rm $LIBXML_RETRIEVE_FILE >> $LOGFILE 2>&1 || failure
     # substitute old source tree
@@ -227,7 +227,7 @@ retrieve_sdl() {
 
     cd $ROOT/retrieval || failure
     rm -f $SDL_RETRIEVE_FILE >> $LOGFILE 2>&1 || failure
-    wget $SDL_RETRIEVE_PATH >> $LOGFILE 2>&1 || failure
+    wget --no-check-certificate $SDL_RETRIEVE_PATH >> $LOGFILE 2>&1 || failure
     tar -xzf $SDL_RETRIEVE_FILE >> $LOGFILE 2>&1 || failure
     rm $SDL_RETRIEVE_FILE >> $LOGFILE 2>&1 || failure
     # substitute old source tree
@@ -250,7 +250,7 @@ retrieve_sdl_ttf() {
 
     cd $ROOT/retrieval || failure
     rm -f $SDL_TTF_RETRIEVE_FILE >> $LOGFILE 2>&1 || failure
-    wget $SDL_TTF_RETRIEVE_PATH >> $LOGFILE 2>&1 || failure
+    wget --no-check-certificate $SDL_TTF_RETRIEVE_PATH >> $LOGFILE 2>&1 || failure
     tar -xzf $SDL_TTF_RETRIEVE_FILE >> $LOGFILE 2>&1 || failure
     rm $SDL_TTF_RETRIEVE_FILE >> $LOGFILE 2>&1 || failure
     # substitute old source tree
