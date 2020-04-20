@@ -102,6 +102,7 @@ prepare_tree() {
     log "Preparing tree..."
 
     mkdir -p $ROOT/build >> $LOGFILE || failure
+    mkdir -p $ROOT/build/mingw >> $LOGFILE || failure
     mkdir -p $ROOT/build/boinc >> $LOGFILE || failure
     mkdir -p $ROOT/build/freetype2 >> $LOGFILE || failure
     mkdir -p $ROOT/build/glew >> $LOGFILE || failure
@@ -234,13 +235,15 @@ set_mingw() {
     PATH="$PATH_MINGW"
     export PATH
 
-    export CC=`which ${TARGET_SYSTEM}-gcc`
-    export CXX=`which ${TARGET_SYSTEM}-g++`
+    echo "PATH = $PATH"
+
+    export CC=i686-w64-mingw32-gcc
+    export CXX=i686-w64-mingw32-g++
 
     echo "CC = $CC"
     echo "CXX = $CXX"
 
-    export CPPFLAGS="-D_WIN32_WINDOWS=0x0410 -DMINGW_WIN32 $CPPFLAGS"
+    export CPPFLAGS="-D_WIN32_WINDOWS=0x0410 -DMINGW_WIN32 -DGLEW_BUILD -DGLEW_STATIC -m32 $CPPFLAGS"
 	}
 
 
@@ -250,14 +253,32 @@ build_mingw() {
     if [ $BUILDSTATE -ge $BS_BUILD_MINGW ]; then
         return 0
     fi
-    TARGET_HOST=i586-pc-mingw32
+    # Or find out you own system triplet and use that ( use 'gcc -dumpmachine' from your shell command line ).
+    BUILD_SYSTEM=x86_64-linux-gnu
 
-    echo "Building MinGW (this will take quite a while)..." | tee -a $LOGFILE
+    # A windows 32 bit build. If you want 64bit Windows use 'x86_64-w64-mingw32'
+    TARGET_SYSTEM=i686-w64-mingw32
+
+    log "Building MinGW (this could take quite a while)..."
     # note: the script's current config for unattended setup expects it to be run from three levels below root!
-    cd $ROOT/3rdparty/mingw/xscripts || failure
-    ./x86-mingw32-build.sh --unattended $TARGET_HOST >> $LOGFILE 2>&1 || failure
 
-    store_build_state $BS_BUILD_MINGW
+    # Must, you really must, build mingw headers first !!
+    # This can be done in tree.
+    log "Building MinGW headers first (this ought be quick )..."
+    cd $ROOT/3rdparty/mingw || failure
+    cd mingw-w64-headers
+    ./configure --host=x86_64-w64-mingw32 --prefix=$ROOT/install
+    make >> $LOGFILE 2>&1 || failure
+    make install >> $LOGFILE 2>&1 || failure
+
+    log "Building MinGW executables next (this ought be slow )..."
+    # If Windows 64 bit then '--enable-lib64'
+    cd ..
+    ./configure --enable-lib32 --build=$BUILD_SYSTEM --host=$TARGET_SYSTEM
+    make >> $LOGFILE 2>&1 || failure
+    make install >> $LOGFILE 2>&1 || failure
+
+    save_build_state $BS_BUILD_MINGW
     return 0
     }
 
@@ -272,7 +293,7 @@ build_boinc_mingw() {
     BOINC_PREFIX="$ROOT/install" RANLIB="${TARGET_SYSTEM}-ranlib" make -f Makefile.mingw install >> $LOGFILE 2>&1 || failure
     log "Successfully built and installed BOINC!"
 
-    # save_build_state $BS_BUILD_BOINC_MINGW || failure
+    save_build_state $BS_BUILD_BOINC_MINGW || failure
     return 0
     }
 
@@ -299,7 +320,7 @@ build_freetype_mingw() {
     ranlib #ROOT/install/lib/libfreetype.a
     log "Successfully built and installed Freetype2!"
 
-    # save_build_state $BS_BUILD_FREETYPE || failure
+    save_build_state $BS_BUILD_FREETYPE || failure
 
     return 0
     }
@@ -317,7 +338,7 @@ build_glew_mingw() {
 
     log "Successfully built and installed GLEW!"
 
-    #save_build_state $BS_BUILD_GLEW || failure
+    save_build_state $BS_BUILD_GLEW || failure
 
     return 0
     }
@@ -339,7 +360,7 @@ build_libxml_mingw() {
     make install >> $LOGFILE 2>&1 || failure
     log "Successfully built and installed libxml2!"
 
-    # save_build_state $BS_BUILD_LIBXML || failure
+    save_build_state $BS_BUILD_LIBXML || failure
     return 0
     }
 
@@ -363,7 +384,7 @@ build_sdl_mingw() {
 
     log "Successfully built and installed SDL!"
 
-    #save_build_state $BS_BUILD_SDL || failure
+    save_build_state $BS_BUILD_SDL || failure
 
     return 0
     }
@@ -393,7 +414,7 @@ build_sdl_ttf_mingw() {
 
     log "Successfully built and installed SDL TTF!"
 
-    #save_build_state $BS_BUILD_SDL_TTF || failure
+    save_build_state $BS_BUILD_SDL_TTF || failure
 
     return 0
     }
@@ -412,7 +433,7 @@ build_glm_mingw() {
 
     log "Successfully built and installed GLEW!"
 
-    #save_build_state $BS_BUILD_GLM || failure
+    save_build_state $BS_BUILD_GLM || failure
 
     return 0
     }
@@ -493,7 +514,7 @@ build_product_mingw() {
     }
 
 build_win32() {
-    log "Important for an official build: let CC and CXX point to mingw 4.9+ !"
+    log "Important for an official build: let CC and CXX point to mingw-w64 7.0.0 !"
     mkdir -p $ROOT/build/$PRODUCT >> $LOGFILE || failure
 
 	export CPPFLAGS="-D_WIN32_WINDOWS=0x0410 $CPPFLAGS"
@@ -501,14 +522,14 @@ build_win32() {
     # Make sure we have built MINGW.
     build_mingw || failure
 
-    # set_mingw || failure
+    set_mingw || failure
 
     # Make sure the base libraries are built.
-   	# build_boinc_mingw || failure
+   	build_boinc_mingw || failure
     # build_glew_mingw || failure
     # build_freetype_mingw || failure
-    # build_libxml_mingw || failure
-    # build_sdl_mingw || failure
+    build_libxml_mingw || failure
+    build_sdl_mingw || failure
     # build_sdl_ttf_mingw || failure
     # build_glm_mingw || failure
 

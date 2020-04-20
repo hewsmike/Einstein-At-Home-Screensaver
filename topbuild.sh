@@ -37,6 +37,7 @@ TAG_GFXAPPS="current_gw_apps"
 # For source fetches I use version strings as I'm
 # not entirely happy to commit to whatever some latest
 # library build might be.
+MINGW_VERSION=7.0.0
 FREETYPE_VERSION=2.5.1
 GLEW_VERSION=2.0.0
 LIBXML_VERSION=2.9.2
@@ -88,29 +89,40 @@ TOPBUILDSTATE=$TBS_NONE
 ### functions to obtain sources ####################################
 
 retrieve_mingw() {
-#    log "Retrieving MINGW..."
-#    mkdir -p $ROOT/retrieval/mingw >> $LOGFILE || failure
-#
-#    cd $ROOT/retrieval/mingw || failure
-#
-#    echo "Preparing MinGW source tree..." | tee -a $LOGFILE
-#    mkdir -p xscripts >> $LOGFILE || failure
-#    cd xscripts || failure
-#
-#    if [ -d CVS ]; then
-#        echo "Updating MinGW build script..." | tee -a $LOGFILE
-#        cvs update -C >> $LOGFILE 2>&1 || failure
-#    else
-#        cd .. || failure
-#        echo "Retrieving MinGW build script (this may take a while)..." | tee -a $LOGFILE
-#        cvs -z3 -d:pserver:anonymous@mingw.cvs.sourceforge.net:/cvsroot/mingw checkout -P xscripts >> $LOGFILE 2>&1 || failure
-#    fi
-#
-#    echo "Preparing MinGW build script..." | tee -a $LOGFILE
-#    # note: svn has no force/overwrite switch. the file might not be updated when patched
-#    # patch x86-mingw32-build.sh.conf < $ROOT/patches/x86-mingw32-build.sh.conf.patch >> $LOGFILE || failure
-#    chmod +x x86-mingw32-build.sh >> $LOGFILE || failure
-#
+    # What a simple name.
+    MINGW_RETRIEVE_STR=mingw-w64-v$MINGW_VERSION
+    # What a simple filename. It's actually a zip
+    MINGW_RETRIEVE_FILE=download
+    MINGW_RETRIEVE_DOMAIN=https://sourceforge.net/projects/mingw-w64/files/mingw-w64/mingw-w64-release/mingw-w64-v$MINGW_VERSION.zip/
+    MINGW_RETRIEVE_PATH=$MINGW_RETRIEVE_DOMAIN$MINGW_RETRIEVE_FILE
+
+    log "Retrieving MINGW64 version $MINGW_VERSION (this shouldn't take long )..."
+    # Go to the retrieval subdirectory
+    cd $ROOT/retrieval || failure
+
+    # Get rid of any prior mingw download. It's quicker this way
+    rm -rf /$ROOT/retrieval/mingw
+
+    # Make a new directory if there wasn't one.
+    # mkdir -p $ROOT/retrieval/mingw >> $LOGFILE || failure
+
+    # Yeah, I know, certificates are important ...
+    wget --no-check-certificate $MINGW_RETRIEVE_PATH >> $LOGFILE 2>&1 || failure
+
+    # Unzip it all. Yes for a file with no extension it's a zip, trust me.
+    unzip $MINGW_RETRIEVE_FILE >> $LOGFILE 2>&1 || failure
+
+    # Get rid of the original archive
+    rm $MINGW_RETRIEVE_FILE >> $LOGFILE 2>&1 || failure
+
+    # Move everything up one level
+    mv $ROOT/retrieval/$MINGW_RETRIEVE_STR mingw >> $LOGFILE 2>&1 || failure
+
+    echo "Preparing MinGW build script..." | tee -a $LOGFILE
+    # note: svn has no force/overwrite switch. the file might not be updated when patched
+    # patch x86-mingw32-build.sh.conf < $ROOT/patches/x86-mingw32-build.sh.conf.patch >> $LOGFILE || failure
+    # chmod +x x86-mingw32-build.sh >> $LOGFILE || failure
+
     save_topbuild_state $TBS_MINGW_RETRIEVED
     return 0
     }
