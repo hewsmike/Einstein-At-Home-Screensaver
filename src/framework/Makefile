@@ -1,6 +1,9 @@
 ###########################################################################
 #   Copyright (C) 2008 by Oliver Bock                                     #
-#   oliver.bock[AT]aei.mpg.de                                             #
+#   oliver.bock[AT]aei.mpg.de        					  #  
+#                                                                         #
+#   Copyright (C) 2020 by Mike Hewson	                                  #
+#   hewsmike[AT]iinet.net.au                                              #
 #                                                                         #
 #   This file is part of Einstein@Home.                                   #
 #                                                                         #
@@ -25,8 +28,11 @@ FRAMEWORK_INSTALL?=$(PWD)
 $(info FRAMEWORK_SRC is $(FRAMEWORK_SRC))
 $(info FRAMEWORK_INSTALL is $(FRAMEWORK_INSTALL))
 
-# Product specific. Activates code within GraphicsEngineFactory switch cases.
+# Product specific.
+# Linux 'tr' command translates, here converting lower case alphabetical
+# characters to uppercase eg. 'starsphere' -> 'STARSPHERE'
 PRODUCT_UPPER := $(shell echo $(PRODUCT) | tr a-z A-Z)
+# Triggers conditional compilation within GraphicsEngineFactory class.
 CPPFLAGS += -D$(PRODUCT_UPPER)
 
 # config values
@@ -49,7 +55,10 @@ OBJS = AbstractGraphicsEngine.o
 OBJS += ErrorHandler.o
 OBJS += GraphicsEngineFactory.o
 OBJS += WindowManager.o
-OBJS += Resource.o ResourceFactory.o BOINCClientAdapter.o Libxml2Adapter.o
+OBJS += Resource.o 
+OBJS += ResourceFactory.o 
+OBJS += BOINCClientAdapter.o
+OBJS += Libxml2Adapter.o
 
 # TODO: GraphicsEngineFactory obviously depends on the actual implementations (here solarsystem & starsphere)!
 # need to change the structure! what about plugins?
