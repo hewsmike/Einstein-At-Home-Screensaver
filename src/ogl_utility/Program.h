@@ -41,6 +41,8 @@
  * \brief This interface declares public methods to deal with OpenGL
  *        program objects. It's a wrapper.
  *
+ * \see Bindable
+ * \see Configurable
  * \see OGL_ID
  * \see FragmentShader
  * \see VertexShader
@@ -232,7 +234,7 @@ class Program : public OGL_ID, public Bindable, public Configurable {
         /// reference to them.
         typedef std::map<std::string, Program::uniform_data> uniformMap;
         uniformMap m_uniforms;
-  };
+    };
 
 /**
  * @}
