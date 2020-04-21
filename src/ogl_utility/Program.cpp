@@ -1,5 +1,5 @@
 /***************************************************************************
-acr *   Copyright (C) 2016 by Mike Hewson                                     *
+ *   Copyright (C) 2020 by Mike Hewson                                     *
  *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
@@ -60,17 +60,17 @@ bool Program::acquire(void) {
 
     // Only get a handle if none already.
 	if(this->ID() == OGL_ID::NO_ID) {
-		// Get an OpenGL handle for this program object.
-		GLuint temp = glCreateProgram();
-		set_ID(temp);
-		// If that handle acquisition failed the we have no other option ...
-		if(this->ID() == OGL_ID::NO_ID)  {
-			ErrorHandler::record("Program::acquire() : OpenGL handle acquisition failure !",
-								 ErrorHandler::FATAL);
-			}
-		}
+	    // Get an OpenGL handle for this program object.
+            GLuint temp = glCreateProgram();
+	    set_ID(temp);
+	    // If that handle acquisition failed the we have no other option ...
+	    if(this->ID() == OGL_ID::NO_ID)  {
+		ErrorHandler::record("Program::acquire() : OpenGL handle acquisition failure !",
+	                              ErrorHandler::FATAL);
+	        }
+        }
 
-	return ret_val;
+    return ret_val;
     }
 
 void Program::release(void) {
@@ -113,15 +113,15 @@ bool Program::isBound(void) const {
     }
 
 bool Program::configure(void) {
-	// Assume failure.
-	bool ret_val = false;
-	if(this->isAcquired() == false) {
-		this->acquire();
-		}
+    // Assume failure.
+    bool ret_val = false;
+    if(this->isAcquired() == false) {
+	this->acquire();
+	    }
 
     // Provided shaders have acquired and not deleted,
     // then attach them.
-	if((m_vertex_shader->isAcquired() == false) &&
+    if((m_vertex_shader->isAcquired() == false) &&
        (m_vertex_shader->isDeleted() == false)) {
         this->m_vertex_shader->acquire();
         }
@@ -130,12 +130,12 @@ bool Program::configure(void) {
         this->m_fragment_shader->acquire();
        }
 
-	// Provided a prior link attempt has not occurred.
-	if(m_link_status == Program::NEVER_LINKED) {
-		// Clear the linker log.
-		m_linker_log = "";
+    // Provided a prior link attempt has not occurred.
+    if(m_link_status == Program::NEVER_LINKED) {
+	// Clear the linker log.
+	m_linker_log = "";
 
-		std::stringstream vshader_msg;
+	std::stringstream vshader_msg;
         vshader_msg << "Program::acquire() : attaching vertex shader with ID = "
                     << m_vertex_shader->ID()
                     << " to program with ID = "
@@ -178,8 +178,8 @@ bool Program::configure(void) {
             }
         }
 
-	return ret_val;
-	}
+    return ret_val;
+    }
 
 bool Program::isDeleted(void) const {
     // Assume not marked for deletion.
@@ -264,8 +264,6 @@ bool Program::mapUniforms(void) {
 
     // Only proceed if linkage was attempted and succeeded.
     if(this->status() == LINKAGE_SUCCEEDED) {
-
-
         // How many uniforms does this program entity have ?
         GLuint temp;
         glGetProgramiv(this->ID(), GL_ACTIVE_UNIFORMS, (GLint*)(&temp));
