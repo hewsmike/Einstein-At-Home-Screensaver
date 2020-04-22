@@ -494,12 +494,10 @@ build_win32() {
     build_freetype_mingw || failure
     build_libxml_mingw || failure
     build_sdl_mingw || failure
-    build_sdl_ttf_mingw || failure *NOK because of SDl NOK
-    # build_glm_mingw || failure *OK
+    build_sdl_ttf_mingw || failure
+    build_glm_mingw || failure
 
-	# build_starsphere $TARGET_WIN32 || failure
-
-    # Now client code.
+	# Now client code.
     # build_orc_mingw || failure
     # build_framework_mingw || failure
     # build_ogl_utility_mingw || failure
