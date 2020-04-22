@@ -471,8 +471,8 @@ build_product_mingw() {
     export PROJECT_ROOT=$ROOT || failure
     cd $ROOT/build/$PRODUCT || failure
     cp $ROOT/src/$PRODUCT/*.res . >> $LOGFILE 2>&1 || failure
-    cp -f $ROOT/src/$PRODUCT/Makefile.common Makefile >> $LOGFILE 2>&1 || failure
-    make $makemode SYSTEM="linux" PRODUCT=$PRODUCT_NAME >> $LOGFILE 2>&1 || failure
+    make $makemode SYSTEM="win32" PRODUCT=$PRODUCT_NAME >> $LOGFILE 2>&1 || failure
+    log "Fuzzy wuzzy"
 
     make install >> $LOGFILE 2>&1 || failure
     log "Successfully built and installed $PRODUCT_NAME [Application]!"
@@ -503,7 +503,7 @@ build_win32() {
     build_orc_mingw || failure
     build_framework_mingw || failure
     build_ogl_utility_mingw || failure
-    # build_product_mingw || failure
+    build_product_mingw || failure
 
     return 0
     }

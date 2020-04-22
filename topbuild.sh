@@ -705,6 +705,9 @@ case $TARGET in
         rm -f $ROOT/win32/src/framework/Makefile.win32
         cp $ROOT/src/ogl_utility/Makefile.win32 $ROOT/win32/src/ogl_utility/Makefile
         rm -f $ROOT/win32/src/ogl_utility/Makefile.win32
+        cp $ROOT/src/starsphere/Makefile.win32 $ROOT/win32/src/starsphere/Makefile
+        rm -f $ROOT/win32/src/starsphere/Makefile.win32
+        rm -f $ROOT/win32/src/starsphere/Makefile.common
         # Need to find glew.c later on.
         cp -f $ROOT/retrieval/glew/src/glew.c $ROOT/win32/src/framework/glew.c
         log "For $PRODUCT_NAME : invoking Win32 build script ... "

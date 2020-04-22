@@ -77,6 +77,19 @@ CXX ?= g++
 ###########################################################################
 # Compiler variables.
 
+# Target specific.
+ifeq ".$(SYSTEM)" ".linux"
+    CPPFLAGS += -I/usr/include -I/usr/include/GL
+    CPPFLAGS += -DGL_GLEXT_PROTOTYPES
+    CPPFLAGS += -Iusr/include/GL
+endif
+ifeq ".$(SYSTEM)" ".win32"
+    CPPFLAGS += -I/usr/i686-w64-mingw32 -I/usr/i686-w64-mingw32/include
+    CPPFLAGS += -DGL_GLEXT_PROTOTYPES
+    CPPFLAGS += -DWIN32_GLEXT_LINKS
+    CPPFLAGS += -DGLEW_STATIC
+endif
+
 # Generic.
 CPPFLAGS += -std=c++11
 CPPFLAGS += -I$(PRODUCT_INSTALL)/include
@@ -87,20 +100,12 @@ CPPFLAGS += -I$(PRODUCT_INSTALL)/include/boinc
 CPPFLAGS += -I$(PRODUCT_INSTALL)/include/GL
 CPPFLAGS += -I$(PRODUCT_INSTALL)/include/glm
 CPPFLAGS += -I$(PRODUCT_INSTALL)/include/glm/gtc
-CPPFLAGS += -Iusr/include/GL
 CPPFLAGS += -I$(PRODUCT_INSTALL)/include/SDL2
 CPPFLAGS += -I$(FRAMEWORK_SRC) -I$(PROJECT_ROOT)/src/ -I$(PROJECT_ROOT)/src/framework -I$(PROJECT_ROOT)/src/ogl_utility
 
-# Target specific.
-ifeq ".$(SYSTEM)" ".linux"
-    CPPFLAGS += -I/usr/include -I/usr/include/GL
-    CPPFLAGS += -DGL_GLEXT_PROTOTYPES
-endif
-ifeq ".$(SYSTEM)" ".win32"
-    CPPFLAGS += -DGL_GLEXT_PROTOTYPES
-    CPPFLAGS += -DWIN32_GLEXT_LINKS
-    CPPFLAGS += -DGLEW_STATIC
-endif
+$(info ************************)
+$(info CPPFLAGS is $(CPPFLAGS))
+$(info ************************)
 
 ###########################################################################
 # Library variables. Note carefully the ordering with respect
@@ -228,8 +233,8 @@ $(RESOURCESPEC).o: $(PRODUCT_SRC)/$(RESOURCESPEC).orc
 # Target specific.
 ifeq ".$(SYSTEM)" ".win32"
 $(RESOURCESPEC)_mingw.o: $(PRODUCT_SRC)/$(RESOURCESPEC).rc
-	cp $(PRODUCT_SRC)/*.ico .
-	/usr/bin/i586-mingw32msvc-windres -O coff -o $(RESOURCESPEC)_mingw.o $(PRODUCT_SRC)/$(RESOURCESPEC).rc
+#	cp $(PRODUCT_SRC)/*.ico .
+#	/usr/bin/i586-mingw32msvc-windres -O coff -o $(RESOURCESPEC)_mingw.o $(PRODUCT_SRC)/$(RESOURCESPEC).rc
 endif
 
 ###########################################################################
