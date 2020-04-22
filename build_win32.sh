@@ -502,7 +502,7 @@ build_win32() {
 	# Now client code.
     build_orc_mingw || failure
     build_framework_mingw || failure
-    # build_ogl_utility_mingw || failure
+    build_ogl_utility_mingw || failure
     # build_product_mingw || failure
 
     return 0
