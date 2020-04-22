@@ -42,14 +42,13 @@ MODE=$MODE_DEBUG
 # Build stages.
 BS_NONE=0
 BS_PREPARE_TREE=1
-BS_BUILD_MINGW=2
-BS_BUILD_BOINC=3
-BS_BUILD_FREETYPE=4
-BS_BUILD_GLEW=5
-BS_BUILD_LIBXML=6
-BS_BUILD_SDL=7
-BS_BUILD_SDL_TTF=8
-BS_BUILD_GLM=9
+BS_BUILD_BOINC=2
+BS_BUILD_FREETYPE=3
+BS_BUILD_GLEW=4
+BS_BUILD_LIBXML=5
+BS_BUILD_SDL=6
+BS_BUILD_SDL_TTF=7
+BS_BUILD_GLM=8
 
 # No buildstate set initially.
 BUILDSTATE=$BS_NONE
@@ -246,41 +245,7 @@ set_mingw() {
     export CPPFLAGS="-D_WIN32_WINDOWS=0x0410 -DMINGW_WIN32 -DGLEW_BUILD -DGLEW_STATIC -m32 $CPPFLAGS"
 	}
 
-
 ### functions to build from sources for Win32 targets #################################################################
-
-build_mingw() {
-    if [ $BUILDSTATE -ge $BS_BUILD_MINGW ]; then
-        return 0
-    fi
-    # Or find out you own system triplet and use that ( use 'gcc -dumpmachine' from your shell command line ).
-    BUILD_SYSTEM=x86_64-linux-gnu
-
-    # A windows 32 bit build. If you want 64bit Windows use 'x86_64-w64-mingw32'
-    TARGET_SYSTEM=i686-w64-mingw32
-
-    log "Building MinGW (this could take quite a while)..."
-    # note: the script's current config for unattended setup expects it to be run from three levels below root!
-
-    # Must, you really must, build mingw headers first !!
-    # This can be done in tree.
-    log "Building MinGW headers first (this ought be quick )..."
-    cd $ROOT/3rdparty/mingw || failure
-    cd mingw-w64-headers
-    ./configure --host=x86_64-w64-mingw32 --prefix=$ROOT/install
-    make >> $LOGFILE 2>&1 || failure
-    make install >> $LOGFILE 2>&1 || failure
-
-    log "Building MinGW executables next (this ought be slow )..."
-    # If Windows 64 bit then '--enable-lib64'
-    cd ..
-    ./configure --enable-lib32 --build=$BUILD_SYSTEM --host=$TARGET_SYSTEM
-    make >> $LOGFILE 2>&1 || failure
-    make install >> $LOGFILE 2>&1 || failure
-
-    save_build_state $BS_BUILD_MINGW
-    return 0
-    }
 
 build_boinc_mingw() {
     if [ $BUILDSTATE -ge $BS_BUILD_BOINC ]; then
@@ -517,10 +482,11 @@ build_win32() {
     log "Important for an official build: let CC and CXX point to mingw-w64 7.0.0 !"
     mkdir -p $ROOT/build/$PRODUCT >> $LOGFILE || failure
 
-	export CPPFLAGS="-D_WIN32_WINDOWS=0x0410 $CPPFLAGS"
+	export CPPFLAGS="-D_WIN32_WINDOWS=0x0410 $CPPFLAGS -m32"
 
-    # Make sure we have built MINGW.
-    build_mingw || failure
+	prepare_tree
+
+    # Make sure we have set MINGW correctly.
 
     set_mingw || failure
 
