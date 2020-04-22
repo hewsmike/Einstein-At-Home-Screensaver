@@ -1,6 +1,6 @@
 ###########################################################################
-#   Copyright (C) 2008 by Oliver Bock                                     #
-#   oliver.bock[AT]aei.mpg.de                                             #
+#   Copyright (C) 2014 by Mike Hewson                                     #
+#   hewsmike[AT]iinet.net.au                                              #
 #                                                                         #
 #   This file is part of Einstein@Home.                                   #
 #                                                                         #
@@ -19,31 +19,49 @@
 ###########################################################################
 
 # path settings
-ORC_SRC?=$(PWD)
-ORC_INSTALL?=$(PWD)
+UTILITY_SRC?=$(PWD)
+UTILITY_INSTALL?=$(PWD)
 
 # config values
 CXX?=g++
 
 # variables
 CPPFLAGS += -std=c++11
-CPPFLAGS += -I/usr/include -I/usr/lib/x86_64-linux-gnu
-# Force search path for 'ld'
-CPPFLAGS += -B/usr/bin
-LDFLAGS +=
-LIBS += -L/usr/lib -L/usr/lib/x86_64-linux-gnu
+CPPFLAGS += -I$(UTILITY_SRC)
+CPPFLAGS += -I$(FRAMEWORK_SRC)
+CPPFLAGS += -I$(FRAMEWORK_INSTALL)/include/GL
+CPPFLAGS += -I$(FRAMEWORK_INSTALL)/include/SDL2
+CPPFLAGS += -I$(FRAMEWORK_INSTALL)/include/glm
+CPPFLAGS += -I$(FRAMEWORK_INSTALL)/include/glm/gtc
+# Bit of as hack, but forces correct header inclusions.
+# Paths here obviously depend upon the build system. :-(
+CPPFLAGS += -I/usr/i686-w64-mingw32 -I/usr/i686-w64-mingw32
 
-# Supress obtuse error in library throws std::ios::failure for Fedora 23 +
-# See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=69877
-CPPFLAGS += -D_GLIBCXX_USE_CXX11_ABI=0
-
-OBJS=ResourceCompiler.o
-DEPS=Makefile
+DEPS = Makefile
+OBJS += Acquirable.o
+OBJS += AttributeInputAdapter.o
+OBJS += Bindable.o
+OBJS += Buffer.o
+OBJS += Configurable.o
+OBJS += FragmentShader.o
+OBJS += IndexBuffer.o
+OBJS += OGL_ID.o
+OBJS += Pipeline.o
+OBJS += Program.o
+OBJS += RenderTask.o
+OBJS += Shader.o
+OBJS += TextureBuffer.o
+OBJS += TexturedParallelogram.o
+OBJS += TextString.o
+OBJS += TransformGlobals.o
+OBJS += VertexBuffer.o
+OBJS += VertexFetch.o
+OBJS += VertexShader.o
 
 # primary role based tagets
 default: release
-debug: orc
-release: clean orc
+debug: liboglutility.a
+release: clean liboglutility.a
 
 memcheck: clean debug
 callgrind: clean debug
@@ -51,17 +69,18 @@ callgrind: clean debug
 # target specific options
 debug: CPPFLAGS += -pg -ggdb3 -O0 -Wall -Wno-switch-enum
 release: CPPFLAGS += -DNDEBUG -ggdb3 -O3 -Wall -Wno-switch-enum
-release: LDFLAGS +=
 
-# file specific targets
-orc: $(DEPS) $(ORC_SRC)/orc.cpp $(OBJS)
-	$(CXX) -g $(CPPFLAGS) $(LDFLAGS) $(ORC_SRC)/orc.cpp -o orc $(OBJS) $(LIBS)
+# file based targets
+liboglutility.a: $(DEPS) $(OBJS)
+	ar rcs liboglutility.a $(OBJS)
 
-ResourceCompiler.o: $(DEPS) $(ORC_SRC)/ResourceCompiler.cpp $(ORC_SRC)/ResourceCompiler.h
-	$(CXX) -g $(CPPFLAGS) -c $(ORC_SRC)/ResourceCompiler.cpp
+# pattern rule for object files
+%.o: $(UTILITY_SRC)/%.cpp $(UTILITY_SRC)/%.h
+	$(CXX) -g ${CPPFLAGS} -c $< -o $@
 
+# tools
 install:
-	cp orc $(ORC_INSTALL)/bin
+	cp liboglutility.a $(UTILITY_INSTALL)/lib
 
 clean:
-	rm -f $(OBJS) orc
+	rm -f $(OBJS) liboglutility.a

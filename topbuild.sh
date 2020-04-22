@@ -697,7 +697,16 @@ case $TARGET in
     	export TARGET_SYSTEM="i686-w64-mingw32"
         realtarget
         prepare_directories win32
+        # Copy this targets' specific makefiles.
         cp -f $ROOT/build_win32.sh $ROOT/win32/build.sh
+        cp $ROOT/src/orc/Makefile.win32 $ROOT/win32/src/orc/Makefile
+        rm -f $ROOT/win32/src/orc/Makefile.win32
+        cp $ROOT/src/framework/Makefile.win32 $ROOT/win32/src/framework/Makefile
+        rm -f $ROOT/win32/src/framework/Makefile.win32
+        cp $ROOT/src/ogl_utility/Makefile.win32 $ROOT/win32/src/ogl_utility/Makefile
+        rm -f $ROOT/win32/src/ogl_utility/Makefile.win32
+        # Need to find glew.c later on.
+        cp -f $ROOT/retrieval/glew/src/glew.c $ROOT/win32/src/framework/glew.c
         log "For $PRODUCT_NAME : invoking Win32 build script ... "
         log "BUILD_SYSTEM = $BUILD_SYSTEM"
         log "TARGET_SYSTEM = $TARGET_SYSTEM"

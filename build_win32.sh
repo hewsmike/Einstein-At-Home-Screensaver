@@ -80,7 +80,7 @@ failure() {
         echo "Please check logfile: `basename $LOGFILE`"
         echo "These are the final ten lines:"
         echo "------------------------------------"
-        tail -n 14 $LOGFILE | head -n 10
+        tail
     fi
 
     log "++++++++++++++++++++++++++++++++++++"
@@ -291,16 +291,18 @@ build_glew_mingw() {
 
     cd $ROOT/src/framework
 
-    cp -f $ROOT/3rdparty/glew/src/glew.c glew.c
+    cp -f $ROOT/3rdparty/glew/src/glew.c $ROOT/src/framework/glew.c
 
-    cp -f $ROOT/3rdparty/glew/include/GL/glew.h glew.h
+    cp -f $ROOT/3rdparty/glew/include/GL/glew.h $ROOT/install/include/GL/glew.h
+
+    cp -f $ROOT/3rdparty/glew/include/GL/wglew.h $ROOT/install/include/GL/wglew.h
 
     # log "Building GLEW (this may take a while)..."
     # make glew.lib >> $LOGFILE 2>&1 || failure
     # SYSTEM=mingw-win32
     # make GLEW_DEST=$ROOT/install/ install >> $LOGFILE 2>&1 || failure
 
-    log "Successfully built and installed GLEW!"
+    log "Successfully installed GLEW!"
 
     save_build_state $BS_BUILD_GLEW || failure
 
@@ -498,8 +500,8 @@ build_win32() {
     build_glm_mingw || failure
 
 	# Now client code.
-    # build_orc_mingw || failure
-    # build_framework_mingw || failure
+    build_orc_mingw || failure
+    build_framework_mingw || failure
     # build_ogl_utility_mingw || failure
     # build_product_mingw || failure
 

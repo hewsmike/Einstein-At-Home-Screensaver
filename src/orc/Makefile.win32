@@ -27,7 +27,9 @@ CXX?=g++
 
 # variables
 CPPFLAGS += -std=c++11
-CPPFLAGS += -I/usr/include -I/usr/lib/x86_64-linux-gnu
+# Bit of as hack, but forces correct header inclusions.
+# Paths here obviously depend upon the build system. :-(
+CPPFLAGS += -I/usr/i686-w64-mingw32 -I/usr/i686-w64-mingw32
 # Force search path for 'ld'
 CPPFLAGS += -B/usr/bin
 LDFLAGS +=
