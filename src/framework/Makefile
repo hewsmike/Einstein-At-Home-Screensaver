@@ -1,6 +1,6 @@
 ###########################################################################
 #   Copyright (C) 2008 by Oliver Bock                                     #
-#   oliver.bock[AT]aei.mpg.de        					  #  
+#   oliver.bock[AT]aei.mpg.de        					  #
 #                                                                         #
 #   Copyright (C) 2020 by Mike Hewson	                                  #
 #   hewsmike[AT]iinet.net.au                                              #
@@ -54,9 +54,10 @@ DEPS = Makefile
 OBJS = AbstractGraphicsEngine.o
 OBJS += ErrorHandler.o
 OBJS += GraphicsEngineFactory.o
+OBJS += glew.o
 OBJS += WindowManager.o
-OBJS += Resource.o 
-OBJS += ResourceFactory.o 
+OBJS += Resource.o
+OBJS += ResourceFactory.o
 OBJS += BOINCClientAdapter.o
 OBJS += Libxml2Adapter.o
 
@@ -94,6 +95,9 @@ ErrorHandler.o: $(DEPS) $(FRAMEWORK_SRC)/ErrorHandler.cpp $(FRAMEWORK_SRC)/Error
 
 GraphicsEngineFactory.o: $(DEPS) $(FRAMEWORK_SRC)/GraphicsEngineFactory.cpp $(FRAMEWORK_SRC)/GraphicsEngineFactory.h
 	$(CXX) -g ${CPPFLAGS} -c $(FRAMEWORK_SRC)/GraphicsEngineFactory.cpp
+
+glew.o: $(DEPS) $(FRAMEWORK_SRC)/glew.c $(FRAMEWORK_SRC)/glew.h
+	$(CXX) -g ${CPPFLAGS} -c $(FRAMEWORK_SRC)/glew.c
 
 WindowManager.o: $(DEPS) $(FRAMEWORK_SRC)/WindowManager.cpp $(FRAMEWORK_SRC)/WindowManager.h
 	$(CXX) -g ${CPPFLAGS} -c $(FRAMEWORK_SRC)/WindowManager.cpp

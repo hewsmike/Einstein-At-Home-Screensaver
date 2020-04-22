@@ -101,7 +101,6 @@ prepare_tree() {
     log "Preparing tree..."
 
     mkdir -p $ROOT/build >> $LOGFILE || failure
-    mkdir -p $ROOT/build/mingw >> $LOGFILE || failure
     mkdir -p $ROOT/build/boinc >> $LOGFILE || failure
     mkdir -p $ROOT/build/freetype2 >> $LOGFILE || failure
     mkdir -p $ROOT/build/glew >> $LOGFILE || failure
@@ -228,21 +227,14 @@ write_version_header() {
 set_mingw() {
     # general config
     PREFIX=$ROOT/install
-    BUILD_HOST=$BUILD_SYSTEM
-    PATH_MINGW="$PREFIX/bin:$PREFIX/$TARGET_SYSTEM/bin:$PATH"
-    # echo $PATH_MINGW
-    PATH="$PATH_MINGW"
-    export PATH
 
-    echo "PATH = $PATH"
-
-    export CC=i686-w64-mingw32-gcc
-    export CXX=i686-w64-mingw32-g++
+    export CC=$TARGET_SYSTEM-gcc
+    export CXX=$TARGET_SYSTEM-g++
 
     echo "CC = $CC"
     echo "CXX = $CXX"
 
-    export CPPFLAGS="-D_WIN32_WINDOWS=0x0410 -DMINGW_WIN32 -DGLEW_BUILD -DGLEW_STATIC -m32 $CPPFLAGS"
+    export CPPFLAGS="-D_WIN32_WINDOWS=0x0410 -DMINGW_WIN32 -DGLEW_STATIC -m32 $CPPFLAGS"
 	}
 
 ### functions to build from sources for Win32 targets #################################################################
@@ -295,11 +287,18 @@ build_glew_mingw() {
         return 0
     fi
 
-    cd $ROOT/3rdparty/glew
+    log "Copying GLEW ..."
 
-    log "Building GLEW (this may take a while)..."
-    make glew.lib >> $LOGFILE 2>&1 || failure
-    make GLEW_DEST=$ROOT/install/ install >> $LOGFILE 2>&1 || failure
+    cd $ROOT/src/framework
+
+    cp -f $ROOT/3rdparty/glew/src/glew.c glew.c
+
+    cp -f $ROOT/3rdparty/glew/include/GL/glew.h glew.h
+
+    # log "Building GLEW (this may take a while)..."
+    # make glew.lib >> $LOGFILE 2>&1 || failure
+    # SYSTEM=mingw-win32
+    # make GLEW_DEST=$ROOT/install/ install >> $LOGFILE 2>&1 || failure
 
     log "Successfully built and installed GLEW!"
 
@@ -334,20 +333,21 @@ build_sdl_mingw() {
         return 0
     fi
 
-    log "Configuring SDL"
+    log "Configuring SDL2"
 
     cd $ROOT/3rdparty/sdl2 || failure
     chmod +x autogen.sh >> $LOGFILE 2>&1 || failure
     ./autogen.sh >> $LOGFILE 2>&1 || failure
     chmod +x configure >> $LOGFILE 2>&1 || failure
     cd $ROOT/build/sdl2 || failure
-    $ROOT/3rdparty/sdl2/configure --build=$BUILD_SYSTEM  --host=$TARGET_SYSTEM --prefix=$ROOT/install --enable-shared=no --enable-static=yes >> $LOGFILE 2>&1 || failure
+    # Buggy cross build if DirectX is factored in : disable it.
+    $ROOT/3rdparty/sdl2/configure --build=$BUILD_SYSTEM  --disable-directx --host=$TARGET_SYSTEM --prefix=$ROOT/install --enable-shared=no --enable-static=yes >> $LOGFILE 2>&1 || failure
 
-    log "Building SDL (this may take a while)..."
+    log "Building SDL2 (this may take a while)..."
     make >> $LOGFILE 2>&1 || failure
     make install >> $LOGFILE 2>&1 || failure
 
-    log "Successfully built and installed SDL!"
+    log "Successfully built and installed SDL2 !"
 
     save_build_state $BS_BUILD_SDL || failure
 
@@ -482,8 +482,6 @@ build_win32() {
     log "Important for an official build: let CC and CXX point to mingw-w64 7.0.0 !"
     mkdir -p $ROOT/build/$PRODUCT >> $LOGFILE || failure
 
-	export CPPFLAGS="-D_WIN32_WINDOWS=0x0410 $CPPFLAGS -m32"
-
 	prepare_tree
 
     # Make sure we have set MINGW correctly.
@@ -492,20 +490,20 @@ build_win32() {
 
     # Make sure the base libraries are built.
    	build_boinc_mingw || failure
-    # build_glew_mingw || failure
-    # build_freetype_mingw || failure
+    build_glew_mingw || failure
+    build_freetype_mingw || failure
     build_libxml_mingw || failure
     build_sdl_mingw || failure
-    # build_sdl_ttf_mingw || failure
-    # build_glm_mingw || failure
+    build_sdl_ttf_mingw || failure *NOK because of SDl NOK
+    # build_glm_mingw || failure *OK
 
 	# build_starsphere $TARGET_WIN32 || failure
 
     # Now client code.
-    #     build_orc_mingw || failure
-    #     build_framework_mingw || failure
-    #     build_ogl_utility_mingw || failure
-    #     build_product_mingw || failure
+    # build_orc_mingw || failure
+    # build_framework_mingw || failure
+    # build_ogl_utility_mingw || failure
+    # build_product_mingw || failure
 
     return 0
     }
