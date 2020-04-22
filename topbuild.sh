@@ -148,10 +148,9 @@ retrieve_boinc() {
         log "Retrieving BOINC (tag: $1) (this WILL take a while)..."
         cd $ROOT/retrieval || failure
         # git clone git://github.com/BOINC/boinc.git boinc >> $LOGFILE 2>&1 || failure
-        log "Direct git cloning from AEI GitLab ....."
         git clone https://gitlab.aei.uni-hannover.de/einsteinathome/boinc.git boinc >> $LOGFILE 2>&1 || failure
         cd $ROOT/retrieval/boinc || failure
-	log "Successful git clone from AEI !"
+        log "Successful git clone !"
         git checkout $1 >> $LOGFILE  2>&1 || failure
     fi
 
@@ -329,7 +328,7 @@ check_prerequisites() {
     log "Checking prerequisites..."
 
     # required toolchain
-    TOOLS="ar automake autoconf cmake cvs doxygen g++ gcc hg ld lex libtool m4 patch pkg-config svn tar valgrind wget yacc"
+    TOOLS="ar automake autoconf cmake cvs doxygen g++ gcc hg ld lex m4 patch pkg-config svn tar valgrind wget yacc"
 
     for tool in $TOOLS; do
         if ! ( type $tool >/dev/null 2>&1 ); then
@@ -351,7 +350,7 @@ check_retrieval() {
     log "Retrieving common library/sources..."
 
     # purge_toptree
-    # prepare_toptree
+    prepare_toptree
 
     if [ $TOPBUILDSTATE -lt $TBS_MINGW_RETRIEVED ]; then
         retrieve_mingw $TAG_GFXAPPS || failure

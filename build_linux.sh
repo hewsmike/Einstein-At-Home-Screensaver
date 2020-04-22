@@ -251,6 +251,8 @@ build_boinc() {
         $ROOT/3rdparty/boinc/configure --prefix=$ROOT/install --build=$BUILD_SYSTEM --host=$TARGET_SYSTEM --enable-shared=no --enable-static=yes --disable-server --disable-client --enable-install-headers --enable-libraries --disable-manager --disable-fcgi >> $LOGFILE 2>&1 || failure
     fi
 
+    # You want libssl1.0-dev installed !!
+    # If you have libssl1.1-dev or higher this will break.
     log "Building BOINC (this may take a while)..."
 
 	make >> $LOGFILE 2>&1 || failure
@@ -294,10 +296,12 @@ build_glew() {
     cd $ROOT/3rdparty/glew
 
     log "Building GLEW (this may take a while)..."
+    # Ensure 'sudo apt install libgl1-mesa-dev' is done !
+    # Ensure 'sudo apt-get install libglu1-mesa-dev' is done !
     # This gets glew.h into the correct include directory.
     make glew.lib >> $LOGFILE 2>&1 || failure
     make GLEW_DEST=$ROOT/install/ install >> $LOGFILE 2>&1 || failure
-    
+
     # This gets glew.c into the correct source code directory.
     cp --force $ROOT/3rdparty/glew/src/glew.c $ROOT/src/framework/glew.c
 
@@ -386,7 +390,7 @@ build_sdl_ttf() {
 
     return 0
     }
-    
+
 build_glm() {
     if [ $BUILDSTATE -ge $BS_BUILD_GLM ]; then
         return 0
@@ -395,16 +399,16 @@ build_glm() {
     cd $ROOT/install/include || failure
 
     log "Building GLM (this may take a while)..."
-    
+
     # Special instance here as glm is not a build but header only inclusion.
-    cp -rfu $ROOT/3rdparty/glm/glm/* $ROOT/install/include/glm >> $LOGFILE 2>&1 || failure 
-    
+    cp -rfu $ROOT/3rdparty/glm/glm/* $ROOT/install/include/glm >> $LOGFILE 2>&1 || failure
+
     log "Successfully built and installed GLEW!"
 
     save_build_state $BS_BUILD_GLM || failure
 
     return 0
-    }    
+    }
 
 ### specific build functions ###########################################################################################
 
