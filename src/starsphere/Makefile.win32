@@ -48,6 +48,7 @@ CPPFLAGS += -I$(STARSPHERE_SRC)/../ogl_utility
 CPPFLAGS += -I$(STARSPHERE_SRC)/../orc
 CPPFLAGS += -I$(STARSPHERE_INSTALL)/include
 CPPFLAGS += -I$(STARSPHERE_INSTALL)/include/GL
+CPPFLAGS += -I$(STARSPHERE_INSTALL)/include/glm
 CPPFLAGS += $(shell $(STARSPHERE_INSTALL)/bin/sdl-config --cflags)
 CPPFLAGS += $(shell $(STARSPHERE_INSTALL)/bin/freetype-config --cflags)
 CPPFLAGS += $(shell $(STARSPHERE_INSTALL)/bin/xml2-config --cflags)
@@ -57,8 +58,6 @@ CPPFLAGS += -D_WIN32_WINDOWS=0x0410
 $(info ************************)
 $(info CPPFLAGS is $(CPPFLAGS))
 $(info ************************)
-
-
 
 DEPS = Makefile
 OBJS = Starsphere.o StarsphereS5R3.o StarsphereRadio.o EinsteinS5R3Adapter.o EinsteinRadioAdapter.o starlist.o snr_list.o pulsar_list.o $(RESOURCESPEC).o $(RESOURCESPEC)_mingw.o
