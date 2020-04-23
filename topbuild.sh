@@ -353,7 +353,7 @@ check_retrieval() {
     prepare_toptree
 
     if [ $TOPBUILDSTATE -lt $TBS_MINGW_RETRIEVED ]; then
-        retrieve_mingw $TAG_GFXAPPS || failure
+    #   retrieve_mingw $TAG_GFXAPPS || failure
     fi
 
     if [ $TOPBUILDSTATE -lt $TBS_BOINC_RETRIEVED ]; then
