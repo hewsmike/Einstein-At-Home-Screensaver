@@ -472,8 +472,8 @@ build_product_mingw() {
     cd $ROOT/build/$PRODUCT || failure
     export STARSPHERE_SRC=$ROOT/src/$PRODUCT || failure
     export STARSPHERE_INSTALL=$ROOT/install || failure
-    cp $ROOT/src/$PRODUCT/Makefile.win32 $ROOT/src/$PRODUCT/Makefile || failure
-    make $makemode SYSTEM="win32" PRODUCT=$PRODUCT_NAME >> $LOGFILE 2>&1 || failure
+    cp $ROOT/src/$PRODUCT/Makefile.win32 Makefile || failure
+    make $makemode PRODUCT=$PRODUCT_NAME >> $LOGFILE 2>&1 || failure
     log "Fuzzy wuzzy"
 
     make install >> $LOGFILE 2>&1 || failure
@@ -490,7 +490,7 @@ build_win32() {
     set_mingw || failure
 
     # Make sure the base libraries are built.
-   	build_boinc_mingw || failure
+    build_boinc_mingw || failure
     build_glew_mingw || failure
     build_freetype_mingw || failure
     build_libxml_mingw || failure
