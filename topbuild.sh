@@ -352,9 +352,9 @@ check_retrieval() {
     # purge_toptree
     prepare_toptree
 
-    if [ $TOPBUILDSTATE -lt $TBS_MINGW_RETRIEVED ]; then
+    # if [ $TOPBUILDSTATE -lt $TBS_MINGW_RETRIEVED ]; then
     #   retrieve_mingw $TAG_GFXAPPS || failure
-    fi
+    # fi
 
     if [ $TOPBUILDSTATE -lt $TBS_BOINC_RETRIEVED ]; then
         retrieve_boinc $TAG_GFXAPPS || failure
@@ -698,10 +698,12 @@ case $TARGET in
         realtarget
         prepare_directories win32
         cp -f $ROOT/build_win32.sh $ROOT/win32/build.sh
+        cp -f $ROOT/retrieval/glew/src/glew.c $ROOT/win32/src/framework/glew.c
+        cp -f $ROOT/retrieval/glew/include/GL/glew.h $ROOT/win32/src/framework/glew.h
+        cp -f $ROOT/retrieval/glew/include/GL/wglew.h $ROOT/win32/src/framework/wglew.h
         log "For $PRODUCT_NAME : invoking Win32 build script ... "
         log "BUILD_SYSTEM = $BUILD_SYSTEM"
         log "TARGET_SYSTEM = $TARGET_SYSTEM"
-
         cd $ROOT/win32
         ./build.sh $2 $3
         cd ..

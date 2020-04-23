@@ -32,11 +32,10 @@ CXX ?= g++
 
 # variables
 LIBS += -Wl,-Bstatic
-LIBS += -lframework -loglft -L$(STARSPHERE_INSTALL)/lib
+LIBS += -lframework -lboinc -L$(STARSPHERE_INSTALL)/lib
 LIBS += $(shell $(STARSPHERE_INSTALL)/bin/freetype-config --libs)
 LIBS += $(shell $(STARSPHERE_INSTALL)/bin/xml2-config --libs)
 LIBS += -lws2_32 # required by libxml2
-LIBS += -lboinc
 LIBS += -Wl,-Bdynamic
 LIBS += $(shell $(STARSPHERE_INSTALL)/bin/sdl-config --static-libs)
 LIBS += -lopengl32 -lglu32
@@ -49,7 +48,12 @@ CPPFLAGS += -I$(STARSPHERE_SRC)/../orc
 CPPFLAGS += -I$(STARSPHERE_INSTALL)/include
 CPPFLAGS += -I$(STARSPHERE_INSTALL)/include/GL
 CPPFLAGS += -I$(STARSPHERE_INSTALL)/include/glm
-CPPFLAGS += $(shell $(STARSPHERE_INSTALL)/bin/sdl-config --cflags)
+CPPFLAGS += -I$(STARSPHERE_INSTALL)/include/glm/gtx
+CPPFLAGS += -I$(STARSPHERE_INSTALL)/include/glm/gtc
+CPPFLAGS += -I$(STARSPHERE_INSTALL)/include/glm/detail
+CPPFLAGS += -I$(STARSPHERE_INSTALL)/include/SDL2
+
+CPPFLAGS += $(shell $(STARSPHERE_INSTALL)/bin/sdl2-config --cflags)
 CPPFLAGS += $(shell $(STARSPHERE_INSTALL)/bin/freetype-config --cflags)
 CPPFLAGS += $(shell $(STARSPHERE_INSTALL)/bin/xml2-config --cflags)
 CPPFLAGS += -I$(STARSPHERE_INSTALL)/include/boinc
@@ -59,9 +63,10 @@ $(info ************************)
 $(info CPPFLAGS is $(CPPFLAGS))
 $(info ************************)
 
-DEPS = Makefile
-OBJS = Starsphere.o StarsphereS5R3.o StarsphereRadio.o EinsteinS5R3Adapter.o EinsteinRadioAdapter.o starlist.o snr_list.o pulsar_list.o $(RESOURCESPEC).o $(RESOURCESPEC)_mingw.o
 RESOURCESPEC = resources
+
+DEPS = Makefile
+OBJS = Starsphere.o starlist.o snr_list.o pulsar_list.o $(RESOURCESPEC).o $(RESOURCESPEC)_mingw.o
 
 # TODO: GraphicsEngineFactory obviously depends on the actual implementations (here starsphere)! need to change the structure! what about plugins?
 # This is UGLY ....
@@ -93,11 +98,11 @@ starsphere_Einstein_ABP: $(DEPS) $(STARSPHERE_SRC)/main.cpp $(OBJS)
 Starsphere.o: $(DEPS) $(STARSPHERE_SRC)/Starsphere.cpp $(STARSPHERE_SRC)/Starsphere.h
 	$(CXX) -g $(CPPFLAGS) -c $(STARSPHERE_SRC)/Starsphere.cpp
 
-StarsphereS5R3.o: $(DEPS) $(STARSPHERE_SRC)/StarsphereS5R3.cpp $(STARSPHERE_SRC)/StarsphereS5R3.h
-	$(CXX) -g $(CPPFLAGS) -c $(STARSPHERE_SRC)/StarsphereS5R3.cpp
-
-StarsphereRadio.o: $(DEPS) $(STARSPHERE_SRC)/StarsphereRadio.cpp $(STARSPHERE_SRC)/StarsphereRadio.h
-	$(CXX) -g $(CPPFLAGS) -c $(STARSPHERE_SRC)/StarsphereRadio.cpp
+#StarsphereS5R3.o: $(DEPS) $(STARSPHERE_SRC)/StarsphereS5R3.cpp $(STARSPHERE_SRC)/StarsphereS5R3.h
+#	$(CXX) -g $(CPPFLAGS) -c $(STARSPHERE_SRC)/StarsphereS5R3.cpp
+#
+#StarsphereRadio.o: $(DEPS) $(STARSPHERE_SRC)/StarsphereRadio.cpp $(STARSPHERE_SRC)/StarsphereRadio.h
+#	$(CXX) -g $(CPPFLAGS) -c $(STARSPHERE_SRC)/StarsphereRadio.cpp
 
 EinsteinS5R3Adapter.o: Makefile $(STARSPHERE_SRC)/EinsteinS5R3Adapter.cpp $(STARSPHERE_SRC)/EinsteinS5R3Adapter.h
 	$(CXX) -g $(CPPFLAGS) -c $(STARSPHERE_SRC)/EinsteinS5R3Adapter.cpp
@@ -105,14 +110,14 @@ EinsteinS5R3Adapter.o: Makefile $(STARSPHERE_SRC)/EinsteinS5R3Adapter.cpp $(STAR
 EinsteinRadioAdapter.o: Makefile $(STARSPHERE_SRC)/EinsteinRadioAdapter.cpp $(STARSPHERE_SRC)/EinsteinRadioAdapter.h
 	$(CXX) -g $(CPPFLAGS) -c $(STARSPHERE_SRC)/EinsteinRadioAdapter.cpp
 
-starlist.o: $(DEPS) $(STARSPHERE_SRC)/starlist.C
-	$(CXX) -g $(CPPFLAGS) -c $(STARSPHERE_SRC)/starlist.C
+starlist.o: $(DEPS) $(STARSPHERE_SRC)/starlist.c
+	$(CXX) -g $(CPPFLAGS) -c $(STARSPHERE_SRC)/starlist.c
 
-snr_list.o: $(DEPS) $(STARSPHERE_SRC)/snr_list.C
-	$(CXX) -g $(CPPFLAGS) -c $(STARSPHERE_SRC)/snr_list.C
+snr_list.o: $(DEPS) $(STARSPHERE_SRC)/snr_list.c
+	$(CXX) -g $(CPPFLAGS) -c $(STARSPHERE_SRC)/snr_list.c
 
-pulsar_list.o: $(DEPS) $(STARSPHERE_SRC)/pulsar_list.C
-	$(CXX) -g $(CPPFLAGS) -c $(STARSPHERE_SRC)/pulsar_list.C
+pulsar_list.o: $(DEPS) $(STARSPHERE_SRC)/pulsar_list.c
+	$(CXX) -g $(CPPFLAGS) -c $(STARSPHERE_SRC)/pulsar_list.c
 
 # resource compiler
 $(RESOURCESPEC).o: $(STARSPHERE_SRC)/$(RESOURCESPEC).orc
@@ -121,7 +126,7 @@ $(RESOURCESPEC).o: $(STARSPHERE_SRC)/$(RESOURCESPEC).orc
 
 $(RESOURCESPEC)_mingw.o: $(STARSPHERE_SRC)/$(RESOURCESPEC).rc
 	cp $(STARSPHERE_SRC)/*.ico .
-	$(STARSPHERE_INSTALL)/bin/i586-pc-mingw32-windres -O coff -o $(RESOURCESPEC)_mingw.o $(STARSPHERE_SRC)/$(RESOURCESPEC).rc
+	usr/bin/i686-w6-mingw32-windres -O coff -o $(RESOURCESPEC)_mingw.o $(STARSPHERE_SRC)/$(RESOURCESPEC).rc
 
 # tools
 install:

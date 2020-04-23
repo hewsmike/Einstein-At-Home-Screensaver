@@ -289,10 +289,6 @@ build_glew_mingw() {
 
     log "Copying GLEW ..."
 
-    cd $ROOT/src/framework
-
-    cp -f $ROOT/3rdparty/glew/src/glew.c $ROOT/src/framework/glew.c
-
     cp -f $ROOT/3rdparty/glew/include/GL/glew.h $ROOT/install/include/GL/glew.h
 
     cp -f $ROOT/3rdparty/glew/include/GL/wglew.h $ROOT/install/include/GL/wglew.h
@@ -470,6 +466,7 @@ build_product_mingw() {
     log "Building $PRODUCT_NAME [Application]..."
     export PROJECT_ROOT=$ROOT || failure
     cd $ROOT/build/$PRODUCT || failure
+    cp $ROOT/src/$PRODUCT/*.* .
     export STARSPHERE_SRC=$ROOT/src/$PRODUCT || failure
     export STARSPHERE_INSTALL=$ROOT/install || failure
     cp $ROOT/src/$PRODUCT/Makefile.win32 Makefile || failure

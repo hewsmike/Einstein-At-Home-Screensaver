@@ -101,7 +101,7 @@ ErrorHandler.o: $(DEPS) $(FRAMEWORK_SRC)/ErrorHandler.cpp $(FRAMEWORK_SRC)/Error
 GraphicsEngineFactory.o: $(DEPS) $(FRAMEWORK_SRC)/GraphicsEngineFactory.cpp $(FRAMEWORK_SRC)/GraphicsEngineFactory.h
 	$(CXX) -g ${CPPFLAGS} -c $(FRAMEWORK_SRC)/GraphicsEngineFactory.cpp
 
-glew.o: $(DEPS) $(FRAMEWORK_SRC)/glew.c $(FRAMEWORK_INSTALL)/include/GL/glew.h
+glew.o: $(DEPS) $(FRAMEWORK_SRC)/glew.c $(FRAMEWORK_SRC)/glew.h
 	$(CXX) -g ${CPPFLAGS} -c $(FRAMEWORK_SRC)/glew.c
 
 WindowManager.o: $(DEPS) $(FRAMEWORK_SRC)/WindowManager.cpp $(FRAMEWORK_SRC)/WindowManager.h
