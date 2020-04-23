@@ -22,6 +22,11 @@
 STARSPHERE_SRC?=$(PWD)
 STARSPHERE_INSTALL?=$(PWD)
 
+$(info ************************)
+$(info STARSPHERE_SRC is $(STARSPHERE_SRC))
+$(info STARSPHERE_INSTALL is $(STARSPHERE_INSTALL))
+$(info ************************)
+
 # config values
 CXX ?= g++
 
@@ -38,19 +43,30 @@ LIBS += -lopengl32 -lglu32
 
 LDFLAGS += -static-libgcc
 
+CPPFLAGS += -I$(STARSPHERE_SRC)/../framework
+CPPFLAGS += -I$(STARSPHERE_SRC)/../ogl_utility
+CPPFLAGS += -I$(STARSPHERE_SRC)/../orc
 CPPFLAGS += -I$(STARSPHERE_INSTALL)/include
+CPPFLAGS += -I$(STARSPHERE_INSTALL)/include/GL
 CPPFLAGS += $(shell $(STARSPHERE_INSTALL)/bin/sdl-config --cflags)
 CPPFLAGS += $(shell $(STARSPHERE_INSTALL)/bin/freetype-config --cflags)
 CPPFLAGS += $(shell $(STARSPHERE_INSTALL)/bin/xml2-config --cflags)
 CPPFLAGS += -I$(STARSPHERE_INSTALL)/include/boinc
 CPPFLAGS += -D_WIN32_WINDOWS=0x0410
 
+$(info ************************)
+$(info CPPFLAGS is $(CPPFLAGS))
+$(info ************************)
+
+
+
 DEPS = Makefile
 OBJS = Starsphere.o StarsphereS5R3.o StarsphereRadio.o EinsteinS5R3Adapter.o EinsteinRadioAdapter.o starlist.o snr_list.o pulsar_list.o $(RESOURCESPEC).o $(RESOURCESPEC)_mingw.o
 RESOURCESPEC = resources
 
 # TODO: GraphicsEngineFactory obviously depends on the actual implementations (here starsphere)! need to change the structure! what about plugins?
-CPPFLAGS += -I$(STARSPHERE_SRC) -I$(STARSPHERE_SRC)/../framework
+# This is UGLY ....
+CPPFLAGS += -I$(STARSPHERE_SRC)
 
 # primary role based tagets
 default: release
