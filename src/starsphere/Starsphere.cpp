@@ -1445,7 +1445,7 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
 void Starsphere::render(const double timeOfDay) {
     const glm::mat4 identity(1.0f);
     const GLuint AUTO_ROTATE_FRAME_COUNT(300);
-    const GLfloat RANDOM_ROLL_RATE(0.005f);
+    const GLfloat RANDOM_ROLL_RATE(0.0025f);
     const GLfloat AUTO_ROTATE_TRIGGER_RADIUS(0.4f);
     const GLfloat EARTH_DRAG_SPEED_RATIO(0.02f);
     GLuint rotate_interval;
