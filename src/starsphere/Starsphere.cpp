@@ -1445,8 +1445,10 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
 void Starsphere::render(const double timeOfDay) {
     const glm::mat4 identity(1.0f);
     const GLuint AUTO_ROTATE_FRAME_COUNT(300);
+    const GLfloat RANDOM_ROLL_RATE(0.005f);
     const GLfloat AUTO_ROTATE_TRIGGER_RADIUS(0.4f);
     const GLfloat EARTH_DRAG_SPEED_RATIO(0.02f);
+    GLuint rotate_interval;
 
 //    GLfloat xvp, yvp, zvp, vp_theta, vp_phi, vp_rad;
 //    GLfloat Zrot = 0.0, Zobs=0.0;
@@ -1517,7 +1519,10 @@ void Starsphere::render(const double timeOfDay) {
         // Calculate axis of autorotation on a regular basis.
         // Generates the appearance of arbitrary wandering
         // of viewpoint.
-        GLuint stagger = m_framecount % AUTO_ROTATE_FRAME_COUNT;
+        if((rotate_interval == 0) || (rotate_interval > AUTO_ROTATE_FRAME_COUNT)) {
+            rotate_interval = AUTO_ROTATE_FRAME_COUNT;
+            }
+        GLuint stagger = m_framecount % rotate_interval;
         if(stagger == 0) {
             // Rotate around some random axis.
             // Generate three 'random' numbers, each
@@ -1526,9 +1531,11 @@ void Starsphere::render(const double timeOfDay) {
             float random_y = (2.0f * rand()/float(RAND_MAX)) - 1.0f;
             float random_z = (2.0f * rand()/float(RAND_MAX)) - 1.0f;
             m_axis = glm::vec3(random_x, random_y, random_z);
+            // Set a new random value until next change of axis.
+            rotate_interval = rand() % AUTO_ROTATE_FRAME_COUNT;
             }
         if(!isFeature(ROLL_STOP)) {
-            m_rotation = glm::rotate(m_rotation, 0.001f, m_axis);
+            m_rotation = glm::rotate(m_rotation, RANDOM_ROLL_RATE, m_axis);
             }
         }
 
