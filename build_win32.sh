@@ -466,7 +466,7 @@ build_product_mingw() {
     log "Building $PRODUCT_NAME [Application]..."
     export PROJECT_ROOT=$ROOT || failure
     cd $ROOT/build/$PRODUCT || failure
-    cp $ROOT/src/$PRODUCT/*.* .
+    cp $ROOT/src/$PRODUCT/*.res .
     export STARSPHERE_SRC=$ROOT/src/$PRODUCT || failure
     export STARSPHERE_INSTALL=$ROOT/install || failure
     cp $ROOT/src/$PRODUCT/Makefile.win32 Makefile || failure
