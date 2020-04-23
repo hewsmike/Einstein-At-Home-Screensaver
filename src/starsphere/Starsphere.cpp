@@ -21,7 +21,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#include <cstdlib>          // For abs()
+#include <cstdlib>          // For abs() & rand()
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -1519,16 +1519,13 @@ void Starsphere::render(const double timeOfDay) {
         // of viewpoint.
         GLuint stagger = m_framecount % AUTO_ROTATE_FRAME_COUNT;
         if(stagger == 0) {
-            // Rotate around the x-axis.
-            m_axis = glm::vec3(1.0f, 0.0f, 0.0f);
-            }
-        else if(stagger == 100) {
-            // Rotate around the y-axis.
-            m_axis = glm::vec3(0.0f, 1.0f, 0.0f);
-            }
-        else if(stagger == 200){
-            // Rotate around the z-axis.
-            m_axis = glm::vec3(0.0f, 0.0f, 1.0f);
+            // Rotate around some random axis.
+            // Generate three 'random' numbers, each
+            // scaled b/w -1 to +1.
+            float random_x = (2.0f * rand()/float(RAND_MAX)) - 1.0f;
+            float random_y = (2.0f * rand()/float(RAND_MAX)) - 1.0f;
+            float random_z = (2.0f * rand()/float(RAND_MAX)) - 1.0f;
+            m_axis = glm::vec3(random_x, random_y, random_z);
             }
         if(!isFeature(ROLL_STOP)) {
             m_rotation = glm::rotate(m_rotation, 0.001f, m_axis);
