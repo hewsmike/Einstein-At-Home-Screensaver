@@ -90,13 +90,13 @@ Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
     m_constellation_lines = 0;
     m_globe_lines = 0;
 
-    m_perspective_projection = glm::mat4(0.0f);
-    m_orthographic_projection = glm::mat4(0.0f);
+    m_perspective_projection = glm::mat4(1.0f);
+    m_orthographic_projection = glm::mat4(1.0f);
 
-    m_view = glm::mat4(0);
-    m_rotation  = glm::mat4(0.0f);
+    m_view = glm::mat4(1.0f);
+    m_rotation = glm::mat4(1.0f);
     m_axis = glm::vec3(0.0f);
-    m_camera = glm::mat4(0.0f);
+    m_camera = glm::mat4(1.0f);
 
     // Render pointers initialised
     m_render_task_arms = NULL;
