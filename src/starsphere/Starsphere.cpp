@@ -166,7 +166,7 @@ Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
     m_arms_color = glm::vec3(1.0f, 0.5f, 0.5f);               // Arms are Pink.
     m_axes_color = glm::vec3(1.0f, 0.0f, 0.0f);               // Axes are Red.
     m_gamma_color = glm::vec3(0.0f, 1.0f, 0.0f);              // Gammas are Green.
-    m_globe_color = glm::vec3(0.25f, 0.25f, 0.25f);           // Globe is Grey.
+    m_grid_color = glm::vec3(0.15f, 0.15f, 0.15f);            // Grid is Grey.
     m_earth_color = glm::vec3(1.0f, 1.0f, 0.5f);
     m_pulsar_color = glm::vec3(0.80f, 0.0f, 0.85f);           // Pulsars are Purple.
     m_star_color = glm::vec3(1.0f, 1.0f, 1.0f);               // Stars are Silver.
@@ -1140,7 +1140,7 @@ void Starsphere::make_globe_mesh_lat_long(void) {
 
     // For program uniforms need client side pointers.
     m_render_task_globe->setUniform("CameraMatrix", TransformGlobals::getCameraTransformMatrix());
-    m_render_task_globe->setUniform("color", &m_globe_color);
+    m_render_task_globe->setUniform("color", &m_grid_color);
     m_render_task_globe->setUniform("point_size", &m_globe_point_size);
 
     // Claim all required state machine resources for this rendering task.

@@ -420,7 +420,7 @@ class Starsphere : public AbstractGraphicsEngine {
         glm::vec3 m_geode_axes_color;
         glm::vec3 m_arms_color;
         glm::vec3 m_gamma_color;
-        glm::vec3 m_globe_color;
+        glm::vec3 m_grid_color;
         glm::vec3 m_earth_color;
         glm::vec3 m_pulsar_color;
         glm::vec3 m_star_color;
