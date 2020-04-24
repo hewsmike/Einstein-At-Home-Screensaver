@@ -155,15 +155,15 @@ Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
     m_CurrentDeclination = -1.0f;
     m_RefreshSearchMarker = true;
 
-    m_geode_axes_color = glm::vec3(0.5f, 0.5f, 1.0f);         // Local geode axes are light blue.
-    m_arms_color = glm::vec3(1.0f, 0.5f, 0.5f);               // Arms are light red.
-    m_axes_color = glm::vec3(1.0f, 0.0f, 0.0f);               // Axes are red.
+    m_geode_axes_color = glm::vec3(0.5f, 0.5f, 1.0f);         // Local geode axes are Light Blue.
+    m_arms_color = glm::vec3(1.0f, 0.5f, 0.5f);               // Arms are Pink.
+    m_axes_color = glm::vec3(1.0f, 0.0f, 0.0f);               // Axes are Red.
     m_gamma_color = glm::vec3(0.0f, 1.0f, 0.0f);              // Gammas are Green.
     m_globe_color = glm::vec3(0.25f, 0.25f, 0.25f);           // Globe is Grey.
     m_earth_color = glm::vec3(1.0f, 1.0f, 0.5f);
     m_pulsar_color = glm::vec3(0.80f, 0.0f, 0.85f);           // Pulsars are Purple.
     m_star_color = glm::vec3(1.0f, 1.0f, 1.0f);               // Stars are Silver.
-    m_supernova_color = glm::vec3(1.0f, 0.0f, 0.0f);          // Supernovae are Sienna.
+    m_supernova_color = glm::vec3(1.0f, 0.3f, 0.0f);          // Supernovae are Orange.
     m_constellation_line_color = glm::vec3(0.2f, 0.2f, 0.0f); // Lines are Light yellow.
 
     m_gamma_point_size = 3.0f;
