@@ -21,7 +21,8 @@
  *                                                                         *
  ***************************************************************************/
 
-#include <cstdlib>          // For abs() & rand()
+#include <cstdlib>          // For abs(), rand(), srand()
+#include <ctime>            // for time()	
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -1311,6 +1312,9 @@ void Starsphere::resize(const int width, const int height) {
  *  What to do when graphics are "initialized".
  */
 void Starsphere::initialize(const int width, const int height, const Resource* font) {
+    // Initialise/seed random number generation using current time.
+    srand(time(NULL));
+	
     // Remember screen dimensions in global state class.
     TransformGlobals::setClientScreenDimensions(height, width);
 
