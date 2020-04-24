@@ -698,6 +698,7 @@ Uint32 WindowManager::timerCallbackBOINCUpdateEvent(Uint32 interval, void* param
 void WindowManager::toggleFullscreen(void) {
     if(m_CurrentScreenMode == WindowManager::WINDOWED) {
         if(SDL_SetWindowFullscreen(m_Window, SDL_WINDOW_FULLSCREEN) != 0){
+
             ErrorHandler::record("WindowManager::toggleFullscreen() : Couldn't toggle to fullscreen !", ErrorHandler::WARN);
             }
         else {
