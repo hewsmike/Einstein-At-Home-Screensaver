@@ -6,7 +6,7 @@
  *   oliver.bock[AT]aei.mpg.de                                             *
  *                                                                         *
  *   Copyright (C) 2020 by Mike Hewson                                     *
- *   hewsmike[at]iinet.net.au                                              * 
+ *   hewsmike[at]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
  *                                                                         *
@@ -25,7 +25,7 @@
  ***************************************************************************/
 
 #include <cstdlib>          // For abs(), rand(), srand()
-#include <ctime>            // for time()	
+#include <ctime>            // for time()
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -103,7 +103,7 @@ Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
 
     // Render pointers initialised
     m_render_task_arms = NULL;
-    m_render_task_axes = NULL;    
+    m_render_task_axes = NULL;
     m_render_task_cons = NULL;
     m_render_task_earth = NULL;
     m_render_task_gammas = NULL;
@@ -111,7 +111,7 @@ Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
     m_render_task_psr = NULL;
     m_render_task_snr = NULL;
     m_render_task_star = NULL;
-        
+
     m_rotation = glm::mat4(1.0f);
     m_axis = glm::vec3(1.0f, 0.0f, 0.0f);
 
@@ -170,7 +170,7 @@ Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
     m_earth_color = glm::vec3(1.0f, 1.0f, 0.5f);
     m_pulsar_color = glm::vec3(0.80f, 0.0f, 0.85f);           // Pulsars are Purple.
     m_star_color = glm::vec3(1.0f, 1.0f, 1.0f);               // Stars are Silver.
-    m_supernova_color = glm::vec3(1.0f, 0.3f, 0.0f);          // Supernovae are Orange.
+    m_supernova_color = glm::vec3(1.0f, 0.4f, 0.0f);          // Supernovae are Orange.
     m_constellation_line_color = glm::vec3(0.2f, 0.2f, 0.0f); // Lines are Light yellow.
 
     m_gamma_point_size = 3.0f;
@@ -209,7 +209,7 @@ Starsphere::~Starsphere() {
     if(m_render_task_globe) delete m_render_task_globe;
     if(m_render_task_psr) delete m_render_task_psr;
     if(m_render_task_snr) delete m_render_task_snr;
-    if(m_render_task_star) delete m_render_task_star;    
+    if(m_render_task_star) delete m_render_task_star;
     }
 
 glm::vec3 Starsphere::sphVertex3D(GLfloat RAdeg, GLfloat DEdeg, GLfloat radius) {
@@ -1321,7 +1321,7 @@ void Starsphere::resize(const int width, const int height) {
 void Starsphere::initialize(const int width, const int height, const Resource* font) {
     // Initialise/seed random number generation using current time.
     srand(time(NULL));
-	
+
     // Remember screen dimensions in global state class.
     TransformGlobals::setClientScreenDimensions(height, width);
 
