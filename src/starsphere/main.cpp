@@ -230,6 +230,7 @@ int main(int argc, char **argv) {
             ErrorHandler::record("Starsphere::main() : Fullscreen & demo mode ...", ErrorHandler::INFORM);
             // Initialised display is as a window,
             // so we transition to a fullscreen.
+            window.flushEvents();
             window.toggleFullscreen();
 #ifdef __APPLE__
             SetMacSSLevel();

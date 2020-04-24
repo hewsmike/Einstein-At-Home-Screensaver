@@ -294,16 +294,13 @@ void WindowManager::eventLoop(void) {
                     //Swap the buffers.
                     this->swap();
                     }
-
                 else if((current_event.type == SDL_USEREVENT) &&
                         (current_event.user.code == (Sint32)(WindowManager::BOINCUpdateEvent))) {
                 	// Sint32 is an SDL type.
                     // BOINC update falling due.
                     eventObservers.front()->refreshBOINCInformation();
                     }
-
                 // Check for ANY user input if in screensaver mode.
-
                 else if((m_ScreensaverMode == true) &&
                         ((current_event.type == SDL_MOUSEMOTION) ||
                          (current_event.type == SDL_MOUSEBUTTONDOWN) ||
@@ -315,7 +312,6 @@ void WindowManager::eventLoop(void) {
                     SDL_Quit();
                     return;
                     }
-
                 else if((current_event.type == SDL_MOUSEMOTION) &&
                         (SDL_GetMouseState(NULL, NULL)&SDL_BUTTON(WindowManager::LEFT_MOUSE_BUTTON))) {
                     // Mouse movement with left button pressed down.
@@ -323,7 +319,6 @@ void WindowManager::eventLoop(void) {
                                                            current_event.motion.yrel,
                                                            AbstractGraphicsEngine::MouseButtonLeft);
                     }
-
                 else if((current_event.type == SDL_MOUSEMOTION) &&
                         (SDL_GetMouseState(NULL, NULL)&SDL_BUTTON(WindowManager::RIGHT_MOUSE_BUTTON))) {
                     // Mouse movement with right button pressed down.
@@ -331,19 +326,16 @@ void WindowManager::eventLoop(void) {
                                                            current_event.motion.yrel,
                                                            AbstractGraphicsEngine::MouseButtonRight);
                     }
-
                 else if(current_event.type == SDL_MOUSEWHEEL) {
                     // Mouse wheel has been moved.
                     eventObservers.front()->mouseWheelEvent(current_event.wheel.y);
                     }
-
                 // Finicky : check the window event refers to the window we are using ... :-)
                 else if((current_event.type == SDL_WINDOWEVENT) &&
                         (current_event.window.windowID ==  m_WindowID) &&
                         (current_event.window.event == SDL_WINDOWEVENT_RESIZED)) {
                     m_CurrentWidth = m_WindowedWidth = current_event.window.data1;
                     m_CurrentHeight = m_WindowedHeight = current_event.window.data2;
-
                     // Use actual acquired ( as distinct from requested ) size.
                     SDL_GetWindowSize(m_Window,
                                       &m_CurrentWidth,
@@ -351,7 +343,6 @@ void WindowManager::eventLoop(void) {
 
                     eventObservers.front()->initialize(m_CurrentWidth, m_CurrentHeight, NULL);
                     }
-
                 // 'Normal' exit pathway if not screensaver.
                 // NB The ESC key mapping here is virtual and so eliminates
                 // any modified versions triggering eg. Ctrl + ESC. But on
@@ -369,7 +360,6 @@ void WindowManager::eventLoop(void) {
                     SDL_Quit();
                     return;
                     }
-
                 // Process printable character input using virtual keys, see
                 // above comments for ESC key.
                 else if(current_event.type == SDL_KEYDOWN) {
@@ -476,7 +466,6 @@ void WindowManager::eventLoop(void) {
                             break;
                         }
                     }
-
                 // Process non-printable keypresses using virtual keys, see
                 // above comments for ESC key.
                 else if(current_event.type == SDL_KEYDOWN) {
@@ -698,7 +687,6 @@ Uint32 WindowManager::timerCallbackBOINCUpdateEvent(Uint32 interval, void* param
 void WindowManager::toggleFullscreen(void) {
     if(m_CurrentScreenMode == WindowManager::WINDOWED) {
         if(SDL_SetWindowFullscreen(m_Window, SDL_WINDOW_FULLSCREEN) != 0){
-
             ErrorHandler::record("WindowManager::toggleFullscreen() : Couldn't toggle to fullscreen !", ErrorHandler::WARN);
             }
         else {
@@ -905,3 +893,14 @@ void WindowManager::checkContextAttributes(void) {
 							<< " requested )";
     ErrorHandler::record(msg_ContextMinorVersion.str(), ErrorHandler::INFORM);
 	}
+
+void WindowManager::flushEvents(void) {
+    // Holder of current event type.
+    SDL_Event current_event;
+
+    // Get all pending events into the queue.
+    SDL_PumpEvents();
+    // Then pull events of the queue until none remain.
+    while(SDL_PollEvent(&current_event) == WindowManager::EVENT_PENDING) {
+        }
+    }

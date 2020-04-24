@@ -191,6 +191,14 @@ class WindowManager {
          */
         void setScreensaverMode(const bool enabled);
 
+        /**
+         * \brief Flush all events from the event queue.
+         *
+         * Use this, carefully, when one wishes to clear all recieved events.
+         *
+         */
+        void flushEvents(void);
+
     private:
         /// Most of these statics are to remove magic numbers.
         /// Preferred/default screen behaviour.
