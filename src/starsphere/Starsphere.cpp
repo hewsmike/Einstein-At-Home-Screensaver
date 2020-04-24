@@ -98,13 +98,17 @@ Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
     m_axis = glm::vec3(0.0f);
     m_camera = glm::mat4(0.0f);
 
+    // Render pointers initialised
+    m_render_task_arms = NULL;
+    m_render_task_axes = NULL;    
     m_render_task_cons = NULL;
+    m_render_task_earth = NULL;
     m_render_task_gammas = NULL;
     m_render_task_globe = NULL;
     m_render_task_psr = NULL;
     m_render_task_snr = NULL;
     m_render_task_star = NULL;
-
+        
     m_rotation = glm::mat4(1.0f);
     m_axis = glm::vec3(1.0f, 0.0f, 0.0f);
 
@@ -192,17 +196,17 @@ Starsphere::~Starsphere() {
     if(m_FontLogo2) delete m_FontLogo2;
     if(m_FontHeader) delete m_FontHeader;
     if(m_FontText) delete m_FontText;
-//
 
+    // Delete render task pointers.
+    if(m_render_task_arms) delete m_render_task_arms;
+    if(m_render_task_axes) delete m_render_task_axes;
     if(m_render_task_cons) delete m_render_task_cons;
+    if(m_render_task_earth) delete m_render_task_earth;
     if(m_render_task_gammas) delete m_render_task_gammas;
+    if(m_render_task_globe) delete m_render_task_globe;
     if(m_render_task_psr) delete m_render_task_psr;
     if(m_render_task_snr) delete m_render_task_snr;
-    if(m_render_task_star) delete m_render_task_star;
-    if(m_render_task_globe) delete m_render_task_globe;
-    if(m_render_task_earth) delete m_render_task_earth;
-    if(m_render_task_axes) delete m_render_task_axes;
-    if(m_render_task_arms) delete m_render_task_arms;
+    if(m_render_task_star) delete m_render_task_star;    
     }
 
 glm::vec3 Starsphere::sphVertex3D(GLfloat RAdeg, GLfloat DEdeg, GLfloat radius) {
