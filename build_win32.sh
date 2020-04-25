@@ -234,6 +234,10 @@ set_mingw() {
     echo "CC = $CC"
     echo "CXX = $CXX"
 
+    PATH_MINGW="$PREFIX/bin:$PREFIX/$TARGET_SYSTEM/bin:$PATH"
+    PATH="$PATH_MINGW"
+    export PATH
+
     export CPPFLAGS="-D_WIN32_WINDOWS=0x0410 -DMINGW_WIN32 -DGLEW_STATIC -m32 $CPPFLAGS"
 	}
 
@@ -244,10 +248,21 @@ build_boinc_mingw() {
         return 0
     fi
 
-    cd $ROOT/3rdparty/boinc/lib || failure
     log "Building BOINC (this may take a while)..."
+    cd $ROOT/3rdparty/boinc || failure
+    chmod +x _autosetup >> $LOGFILE 2>&1 || failure
+    ./_autosetup >> $LOGFILE 2>&1 || failure
+    chmod +x configure >> $LOGFILE 2>&1 || failure
+    cd $ROOT/3rdparty/boinc/lib || failure
+    # note: configure is still required but we don't use the generated Makefile
+    log "DUFUS"
+    # $ROOT/3rdparty/boinc/configure --host=$TARGET_SYSTEM --build=$BUILD_SYSTEM --prefix=$ROOT/install --includedir=$ROOT/install/include --oldincludedir=$ROOT/install/include --enable-shared=no --enable-static=yes --disable-server --disable-client --enable-install-headers --enable-libraries --disable-manager --disable-fcgi >> $LOGFILE 2>&1 || failure
+
     BOINC_SRC="$ROOT/3rdparty/boinc" AR="${TARGET_SYSTEM}-ar" make -f Makefile.mingw >> $LOGFILE 2>&1 || failure
+    log "FUNGUS"
     BOINC_PREFIX="$ROOT/install" RANLIB="${TARGET_SYSTEM}-ranlib" make -f Makefile.mingw install >> $LOGFILE 2>&1 || failure
+    log "PLATYPUS"
+
     log "Successfully built and installed BOINC!"
 
     save_build_state $BS_BUILD_BOINC_MINGW || failure
@@ -473,8 +488,6 @@ build_product_mingw() {
     cp $ROOT/../src/$PRODUCT/Makefile.win32 Makefile
     # cp $ROOT/src/$PRODUCT/Makefile.win32 Makefile || failure
     make $makemode PRODUCT=$PRODUCT_NAME >> $LOGFILE 2>&1 || failure
-    log "Fuzzy wuzzy"
-
     make install >> $LOGFILE 2>&1 || failure
     log "Successfully built and installed $PRODUCT_NAME [Application]!"
 
