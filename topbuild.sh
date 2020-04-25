@@ -32,7 +32,7 @@ ROOT=`pwd`
 LOGFILE=$ROOT/topbuild.log
 
 # Required for correct access to the BOINC repository.
-TAG_GFXAPPS="current_gw_apps"
+TAG_GFXAPPS="current_gfx_apps"
 
 # For source fetches I use version strings as I'm
 # not entirely happy to commit to whatever some latest
@@ -132,16 +132,16 @@ retrieve_boinc() {
     mkdir -p $ROOT/retrieval/boinc >> $LOGFILE || failure
 
     cd $ROOT/retrieval/boinc || failure
-    if [ -d .git ]; then
-        log "Updating BOINC (tag: $1)..."
-        # make sure local changes (patches) are reverted to ensure fast-forward merge
-        git checkout -f $1 >> $LOGFILE  2>&1 || failure
-        # update tag info
-        git remote update >> $LOGFILE  2>&1 || failure
-        git fetch --tags >> $LOGFILE  2>&1 || failure
-        # checkout build revision
-        git checkout -f $1 >> $LOGFILE  2>&1 || failure
-    else
+#    if [ -d .git ]; then
+#        log "Updating BOINC (tag: $1)..."
+#        # make sure local changes (patches) are reverted to ensure fast-forward merge
+#        git checkout -f $1 >> $LOGFILE  2>&1 || failure
+#        # update tag info
+#        git remote update >> $LOGFILE  2>&1 || failure
+#        git fetch --tags >> $LOGFILE  2>&1 || failure
+#        # checkout build revision
+#        git checkout -f $1 >> $LOGFILE  2>&1 || failure
+#    else
         # workaround for old git versions
         rm -rf $ROOT/retrieval/boinc >> $LOGFILE || failure
 
@@ -149,12 +149,21 @@ retrieve_boinc() {
         cd $ROOT/retrieval || failure
         # git clone git://github.com/BOINC/boinc.git boinc >> $LOGFILE 2>&1 || failure
         git clone https://gitlab.aei.uni-hannover.de/einsteinathome/boinc.git boinc >> $LOGFILE 2>&1 || failure
+
         cd $ROOT/retrieval/boinc || failure
+        git checkout -f $1 >> $LOGFILE  2>&1 || failure
         log "Successful git clone !"
         git checkout $1 >> $LOGFILE  2>&1 || failure
-    fi
+#    fi
 
-    save_topbuild_state $TBS_BOINC_RETRIEVED
+    cd $ROOT/retrieval/boinc/lib
+    # patch: fix a couple of BOINC vs. MinGW issues
+#    patch boinc_win.h < $ROOT/patches/boinc.boinc_win.h.minggw.patch >> $LOGFILE 2>&1 || failure
+#    patch filesys.cpp < $ROOT/patches/boinc.filesys.cpp.mingw.patch >> $LOGFILE 2>&1 || failure
+#    save_topbuild_state $TBS_BOINC_RETRIEVED
+#
+#    log "Pause for thought"
+#    failure
 
     return 0
     }
