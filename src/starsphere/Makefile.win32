@@ -32,12 +32,14 @@ CXX ?= g++
 
 # variables
 LIBS += -Wl,-Bstatic
-LIBS += -lframework -lboinc -L$(STARSPHERE_INSTALL)/lib
+LIBS += -L$(STARSPHERE_INSTALL)/lib
+LIBS += $(shell $(STARSPHERE_INSTALL)/bin/sdl2-config --libs)
+LIBS += -lframework -lboinc -lboinc_api -lboinc_graphics2 -lboinc_opencl
+LIBS += -loglutility -lSDL2_ttf
 LIBS += $(shell $(STARSPHERE_INSTALL)/bin/freetype-config --libs)
 LIBS += $(shell $(STARSPHERE_INSTALL)/bin/xml2-config --libs)
 LIBS += -lws2_32 # required by libxml2
 LIBS += -Wl,-Bdynamic
-LIBS += $(shell $(STARSPHERE_INSTALL)/bin/sdl-config --static-libs)
 LIBS += -lopengl32 -lglu32
 
 LDFLAGS += -static-libgcc
@@ -66,7 +68,9 @@ $(info ************************)
 RESOURCESPEC = resources
 
 DEPS = Makefile
-OBJS = Starsphere.o starlist.o snr_list.o pulsar_list.o $(RESOURCESPEC).o $(RESOURCESPEC)_mingw.o
+OBJS = Starsphere.o StarsphereGravity.o StarsphereRadio.o EinsteinGravityAdapter.o EinsteinRadioAdapter.o
+OBJS += starlist.o snr_list.o pulsar_list.o gamma_list.o $(RESOURCESPEC).o
+# $(RESOURCESPEC)_mingw.o
 
 # TODO: GraphicsEngineFactory obviously depends on the actual implementations (here starsphere)! need to change the structure! what about plugins?
 # This is UGLY ....
@@ -83,7 +87,7 @@ callgrind: clean debug starsphere
 # target specific options
 debug: CPPFLAGS += -pg -gstabs3 -O0 -Wall -Wno-switch-enum
 release: CPPFLAGS += -DNDEBUG -gstabs3 -O3 -Wall -Wno-switch-enum
-starsphere_Einstein_LVC: CPPFLAGS += -D SCIENCE_APP=EinsteinS5R3
+starsphere_Einstein_LVC: CPPFLAGS += -D SCIENCE_APP=EinsteinGravity
 starsphere_Einstein_ABP: CPPFLAGS += -D SCIENCE_APP=EinsteinRadio
 memcheck: CPPFLAGS += $(DEBUGFLAGSCPP) -D DEBUG_VALGRIND
 callgrind: CPPFLAGS += $(DEBUGFLAGSCPP) -D DEBUG_VALGRIND
@@ -98,14 +102,14 @@ starsphere_Einstein_ABP: $(DEPS) $(STARSPHERE_SRC)/main.cpp $(OBJS)
 Starsphere.o: $(DEPS) $(STARSPHERE_SRC)/Starsphere.cpp $(STARSPHERE_SRC)/Starsphere.h
 	$(CXX) -g $(CPPFLAGS) -c $(STARSPHERE_SRC)/Starsphere.cpp
 
-#StarsphereS5R3.o: $(DEPS) $(STARSPHERE_SRC)/StarsphereS5R3.cpp $(STARSPHERE_SRC)/StarsphereS5R3.h
-#	$(CXX) -g $(CPPFLAGS) -c $(STARSPHERE_SRC)/StarsphereS5R3.cpp
-#
-#StarsphereRadio.o: $(DEPS) $(STARSPHERE_SRC)/StarsphereRadio.cpp $(STARSPHERE_SRC)/StarsphereRadio.h
-#	$(CXX) -g $(CPPFLAGS) -c $(STARSPHERE_SRC)/StarsphereRadio.cpp
+StarsphereGravity.o: $(DEPS) $(STARSPHERE_SRC)/StarsphereGravity.cpp $(STARSPHERE_SRC)/StarsphereGravity.h
+	$(CXX) -g $(CPPFLAGS) -c $(STARSPHERE_SRC)/StarsphereGravity.cpp
 
-EinsteinS5R3Adapter.o: Makefile $(STARSPHERE_SRC)/EinsteinS5R3Adapter.cpp $(STARSPHERE_SRC)/EinsteinS5R3Adapter.h
-	$(CXX) -g $(CPPFLAGS) -c $(STARSPHERE_SRC)/EinsteinS5R3Adapter.cpp
+StarsphereRadio.o: $(DEPS) $(STARSPHERE_SRC)/StarsphereRadio.cpp $(STARSPHERE_SRC)/StarsphereRadio.h
+	$(CXX) -g $(CPPFLAGS) -c $(STARSPHERE_SRC)/StarsphereRadio.cpp
+
+EinsteinGravityAdapter.o: Makefile $(STARSPHERE_SRC)/EinsteinGravityAdapter.cpp $(STARSPHERE_SRC)/EinsteinGravityAdapter.h
+	$(CXX) -g $(CPPFLAGS) -c $(STARSPHERE_SRC)/EinsteinGravityAdapter.cpp
 
 EinsteinRadioAdapter.o: Makefile $(STARSPHERE_SRC)/EinsteinRadioAdapter.cpp $(STARSPHERE_SRC)/EinsteinRadioAdapter.h
 	$(CXX) -g $(CPPFLAGS) -c $(STARSPHERE_SRC)/EinsteinRadioAdapter.cpp
@@ -119,6 +123,9 @@ snr_list.o: $(DEPS) $(STARSPHERE_SRC)/snr_list.c
 pulsar_list.o: $(DEPS) $(STARSPHERE_SRC)/pulsar_list.c
 	$(CXX) -g $(CPPFLAGS) -c $(STARSPHERE_SRC)/pulsar_list.c
 
+gamma_list.o: $(DEPS) $(STARSPHERE_SRC)/gamma_list.c
+	$(CXX) -g $(CPPFLAGS) -c $(STARSPHERE_SRC)/gamma_list.c
+
 # resource compiler
 $(RESOURCESPEC).o: $(STARSPHERE_SRC)/$(RESOURCESPEC).orc
 	$(STARSPHERE_INSTALL)/bin/orc $(STARSPHERE_SRC)/$(RESOURCESPEC).orc $(RESOURCESPEC).cpp
@@ -126,7 +133,7 @@ $(RESOURCESPEC).o: $(STARSPHERE_SRC)/$(RESOURCESPEC).orc
 
 $(RESOURCESPEC)_mingw.o: $(STARSPHERE_SRC)/$(RESOURCESPEC).rc
 	cp $(STARSPHERE_SRC)/*.ico .
-	usr/bin/i686-w6-mingw32-windres -O coff -o $(RESOURCESPEC)_mingw.o $(STARSPHERE_SRC)/$(RESOURCESPEC).rc
+	usr/bin/x86_64-w64-mingw32-windres -O coff -o $(RESOURCESPEC)_mingw.o $(STARSPHERE_SRC)/$(RESOURCESPEC).rc
 
 # tools
 install:

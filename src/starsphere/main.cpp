@@ -47,7 +47,7 @@ extern "C" {
 #endif
 #endif
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
     // Print version info if the command line requests it.
     if(argc == 2) {
         string param(argv[1]);
@@ -83,7 +83,7 @@ int main(int argc, char **argv) {
     // NB : FWIW This order of usage ( as recommended in the SDL2 Wiki )
     // contradicts the statement that SDL_Init() must be called before
     // using any other SDL function ! :-0
-    // SDL_DEBUG(SDL_SetMainReady());
+    SDL_DEBUG(SDL_SetMainReady());
     // Works with no discernable error as of 05/01/15 with the line above REM'ed.
 
     int init_flag = SDL_DEBUG(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_EVENTS));
@@ -150,7 +150,7 @@ int main(int argc, char **argv) {
 #ifdef SCIENCE_APP
     // The SCIENCE_APP symbol is defined in the makefile
     // that produces the build for this product.
-    scienceApplication = GraphicsEngineFactory::SCIENCE_APP;
+    scienceApplication = GraphicsEngineFactory::EinsteinGravity;
 #else
     // And if SCIENCE_APP was not given, this is the default.
     scienceApplication = GraphicsEngineFactory::EinsteinGravity;

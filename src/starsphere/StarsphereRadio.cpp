@@ -248,7 +248,7 @@ void StarsphereRadio::renderSearchInformation()
 //    if(m_QualitySetting == BOINCClientAdapter::HighGraphicsQualitySetting) {
 //        glEnable(GL_POINT_SMOOTH);
 //        glEnable(GL_LINE_SMOOTH);
-    }
+//    }
 }
 
 void StarsphereRadio::generatePowerSpectrumCoordSystem(const int originX, const int originY)

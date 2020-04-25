@@ -416,7 +416,9 @@ build_orc_mingw() {
     export ORC_INSTALL=$ROOT/install || failure
 
     cd $ROOT/build/orc || failure
-    cp $ROOT/src/orc/Makefile.win32 Makefile >> $LOGFILE 2>&1 || failure
+    # NB Build of ORC takes place build machine !!
+    cp $ROOT/../src/orc/Makefile Makefile >> $LOGFILE 2>&1 || failure
+    # cp $ROOT/src/orc/Makefile Makefile >> $LOGFILE 2>&1 || failure
 
     log "Building $PRODUCT_NAME [Object Resource Compiler]..."
     make $makemode >> $LOGFILE 2>&1 || failure
@@ -454,7 +456,6 @@ build_ogl_utility_mingw() {
     cd $ROOT/build/ogl_utility || failure
     cp -f $ROOT/src/ogl_utility/Makefile.win32 Makefile >> $LOGFILE 2>&1 || failure
 
-
     make $makemode PRODUCT=$PRODUCT_NAME >> $LOGFILE 2>&1 || failure
     make install >> $LOGFILE 2>&1 || failure
     log "Successfully built and installed $PRODUCT_NAME [OpenGL Utilities]!"
@@ -469,7 +470,8 @@ build_product_mingw() {
     cp $ROOT/src/$PRODUCT/*.res .
     export STARSPHERE_SRC=$ROOT/src/$PRODUCT || failure
     export STARSPHERE_INSTALL=$ROOT/install || failure
-    cp $ROOT/src/$PRODUCT/Makefile.win32 Makefile || failure
+    cp $ROOT/../src/$PRODUCT/Makefile.win32 Makefile
+    # cp $ROOT/src/$PRODUCT/Makefile.win32 Makefile || failure
     make $makemode PRODUCT=$PRODUCT_NAME >> $LOGFILE 2>&1 || failure
     log "Fuzzy wuzzy"
 

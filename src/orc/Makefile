@@ -23,7 +23,8 @@ ORC_SRC?=$(PWD)
 ORC_INSTALL?=$(PWD)
 
 # config values
-CXX?=g++
+# No cross compiling here.
+CXX=/usr/bin/g++
 
 # variables
 CPPFLAGS += -std=c++11
