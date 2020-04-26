@@ -101,6 +101,9 @@ Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
     m_axis = glm::vec3(0.0f);
     m_camera = glm::mat4(1.0f);
 
+    // HUD data pointers
+    m_logo_1 = NULL;
+
     // Render pointers initialised
     m_render_task_arms = NULL;
     m_render_task_axes = NULL;
@@ -144,7 +147,7 @@ Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
     /**
      * Viewpoint (can be changed with mouse)
      */
-    viewpt_fov = PERSPECTIVE_FOV_DEFAULT;
+    m_viewpt_fov = PERSPECTIVE_FOV_DEFAULT;
     m_aspect = 0.0f;
     m_viewpt_azimuth = 30.0f;
     m_viewpt_elev = 23.6f;
@@ -199,6 +202,9 @@ Starsphere::~Starsphere() {
     if(m_FontLogo2) delete m_FontLogo2;
     if(m_FontHeader) delete m_FontHeader;
     if(m_FontText) delete m_FontText;
+
+    // Delete HUD element pointers.
+    if(m_logo_1) delete m_logo_1;
 
     // Delete render task pointers.
     if(m_render_task_arms) delete m_render_task_arms;
@@ -1324,6 +1330,7 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
 
     // Remember screen dimensions in global state class.
     TransformGlobals::setClientScreenDimensions(height, width);
+    configTransformMatrices();
 
     // Remember transform matrix locations in global state class.
     TransformGlobals::setCameraTransformMatrix(&m_camera);
@@ -1375,7 +1382,26 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
             }
         }
 
-    // Create rendering tasks for given features.
+    // Create factory instance to then access the texture/bitmap.
+    ResourceFactory factory;
+
+    // Create HUD features
+    RenderTask::texture_buffer_group logo1_texture = {(const GLvoid*)factory.createInstance("AppIconBMP")->data()->data(),
+                                                      32*32*3,
+                                                      32,
+                                                      32,
+                                                      GL_RGB,
+                                                      GL_UNSIGNED_BYTE,
+                                                      GL_CLAMP,
+                                                      GL_CLAMP,
+                                                      true};
+
+    m_logo_1 = new TexturedHUDParallelogram(glm::vec2(0.0f, 0.0f),
+                                            glm::vec2(32.0f, 0.0f),
+                                            glm::vec2(0.0f, 32.0f),
+                                            logo1_texture);
+
+    // Create rendering tasks for given 3D features.
     make_constellations();
     make_gammas();
     make_globe_mesh_lat_long();
@@ -1461,56 +1487,8 @@ void Starsphere::render(const double timeOfDay) {
     const GLfloat EARTH_DRAG_SPEED_RATIO(0.02f);
     GLuint rotate_interval;
 
-//    GLfloat xvp, yvp, zvp, vp_theta, vp_phi, vp_rad;
-//    GLfloat Zrot = 0.0, Zobs=0.0;
-//    double revs, t, dt = 0;
-//    static double start_time=-1.0, last_time=-1.0;
-//
-//    // Calculate the real time t since we started (or reset) and the
-//    // time dt since the last render() call.    Both may be useful
-//    // for timing animations.  Note that time_of_day is dtime().
-//
-//    if (start_time < 0.0)
-//        start_time = timeOfDay;
-//    t = timeOfDay - start_time;
-//
-//    if (last_time < 0.0)
-//        last_time = timeOfDay - 0.01;
-//    dt = timeOfDay - last_time;
-//
-//    last_time = timeOfDay; // remember for next time
-//
-//    // Now determine the rotation angle based on the time since start
-//    // It is negative to get the rotation direction correct (the sun
-//    // rises in the East, so the sky sphere rotates E to W).
-//
-//    Zrot = t*rotation_speed/60.0;
-//    revs = Zrot/360.0;
-//    Zrot = -360.0 * (revs - (int)revs);
-
     // Start drawing with clearing the relevant buffers.
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    // now draw the scene...
-
-    // Vary the viewpoint with both a long period wobble of the elevation
-    // of the view and a longer period zoom in/out that might even penetrate
-    // The starsphere for a brief time.   Increase the power in pow(,) to
-    // make the visit inside briefer.
-//    vp_theta = 90.0 - viewpt_elev + wobble_amp*sin(PI2*t/(wobble_period*60.0));
-//    vp_phi = viewpt_azimuth;
-//    vp_rad = viewpt_radius - zoom_amp*sin(PI2*t/(zoom_period*60.0));
-//    if(vp_rad <0.0) vp_rad = 0.0; // cannot pass origin (confusing)
-//
-//    // TRIED THIS TOO: -zoom_amp*pow(fabs(sin(PI2*t/(zoom_period*60.0))),3);
-//    xvp = vp_rad * SIN(vp_theta) * SIN(vp_phi);
-//    zvp = vp_rad * SIN(vp_theta) * COS(vp_phi);
-//    yvp = vp_rad * COS(vp_theta);
-
-//      gluLookAt(0.0, 0.0, 5.0, // eyes position
-
-//              0.0, 0.0, 0.0, // looking toward here
-//                0.0, 1.0, 0.0); // which way is up?  y axis!
 
     // Default unrotated viewpoint is along the Open GL z-axis by an amount
     // as per viewpoint radius.
@@ -1579,6 +1557,8 @@ void Starsphere::render(const double timeOfDay) {
     // Render the 2D features in our HUD.
     m_camera = m_orthographic_projection * m_view * m_rotation;
 
+    m_logo_1->utilise();
+
     // draw the search marker (gunsight)
     if(isFeature(MARKER)) {
         /// TODO - call to render gunsight;
@@ -1633,15 +1613,15 @@ void Starsphere::mouseMoveEvent(const int deltaX, const int deltaY,
 void Starsphere::mouseWheelEvent(const int pos) {
     // Mouse wheel sets angle of field of view for perspective transform.3.0
     if(pos > 0) {
-        viewpt_fov += VIEWPOINT_MOUSEWHEEL_FOV_RATE;
-        if(viewpt_fov > PERSPECTIVE_FOV_MAX) {
-            viewpt_fov = PERSPECTIVE_FOV_MAX;
+        m_viewpt_fov += VIEWPOINT_MOUSEWHEEL_FOV_RATE;
+        if(m_viewpt_fov > PERSPECTIVE_FOV_MAX) {
+            m_viewpt_fov = PERSPECTIVE_FOV_MAX;
             }
         }
     else if (pos < 0) {
-        viewpt_fov -= VIEWPOINT_MOUSEWHEEL_FOV_RATE;
-        if(viewpt_fov < PERSPECTIVE_FOV_MIN) {
-            viewpt_fov = PERSPECTIVE_FOV_MIN;
+        m_viewpt_fov -= VIEWPOINT_MOUSEWHEEL_FOV_RATE;
+        if(m_viewpt_fov < PERSPECTIVE_FOV_MIN) {
+            m_viewpt_fov = PERSPECTIVE_FOV_MIN;
             }
         }
     // Re-compute transform matrix with new field of view angle.
@@ -1727,54 +1707,17 @@ void Starsphere::zoomSphere(const int relativeZoom) {
 
 void Starsphere::configTransformMatrices(void) {
     // Create desired perspective projection matrix based upon a frustum model.
-    m_perspective_projection = glm::perspective(viewpt_fov,
+    m_perspective_projection = glm::perspective(m_viewpt_fov,
                                     m_aspect,
                                     PERSPECTIVE_NEAR_FRUSTUM_DISTANCE,
                                     PERSPECTIVE_FAR_FRUSTUM_DISTANCE);
 
+    // The fourth entry of the fourth row/column.
     m_perspective_projection[3][3]= 1.0f;
-
-    std::cout << "m_perspective_projection = [["
-              << m_perspective_projection[0][0] << ", "
-              << m_perspective_projection[0][1] << ", "
-              << m_perspective_projection[0][2] << ", "
-              << m_perspective_projection[0][3] << "], ["
-              << m_perspective_projection[1][0] << ", "
-              << m_perspective_projection[1][1] << ", "
-              << m_perspective_projection[1][2] << ", "
-              << m_perspective_projection[1][3] << "], ["
-              << m_perspective_projection[2][0] << ", "
-              << m_perspective_projection[2][1] << ", "
-              << m_perspective_projection[2][2] << ", "
-              << m_perspective_projection[2][3] << "], ["
-              << m_perspective_projection[3][0] << ", "
-              << m_perspective_projection[3][1] << ", "
-              << m_perspective_projection[3][2] << ", "
-              << m_perspective_projection[3][3] << "]]"
-              << std::endl;
 
     // Create desired orthographic projection matrix based upon a frustum model.
     m_orthographic_projection = glm::ortho(GLfloat(0), GLfloat(TransformGlobals::getClientScreenWidth()),
                                            GLfloat(0), GLfloat(TransformGlobals::getClientScreenHeight()));
-
-    std::cout << "m_orthographic_projection = [["
-              << m_orthographic_projection[0][0] << ", "
-              << m_orthographic_projection[0][1] << ", "
-              << m_orthographic_projection[0][2] << ", "
-              << m_orthographic_projection[0][3] << "], ["
-              << m_orthographic_projection[1][0] << ", "
-              << m_orthographic_projection[1][1] << ", "
-              << m_orthographic_projection[1][2] << ", "
-              << m_orthographic_projection[1][3] << "], ["
-              << m_orthographic_projection[2][0] << ", "
-              << m_orthographic_projection[2][1] << ", "
-              << m_orthographic_projection[2][2] << ", "
-              << m_orthographic_projection[2][3] << "], ["
-              << m_orthographic_projection[3][0] << ", "
-              << m_orthographic_projection[3][1] << ", "
-              << m_orthographic_projection[3][2] << ", "
-              << m_orthographic_projection[3][3] << "]]"
-              << std::endl;
     }
 
 /**

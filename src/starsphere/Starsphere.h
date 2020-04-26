@@ -39,6 +39,7 @@
 #include "EinsteinGravityAdapter.h"
 #include "ogl_utility.h"
 #include "RenderTask.h"
+#include "TexturedHUDParallelogram.h"
 #include "WindowManager.h"
 
 #include "SDL_ttf.h"
@@ -401,6 +402,9 @@ class Starsphere : public AbstractGraphicsEngine {
         static const GLuint VERTICES_PER_LINE;
         static const GLuint NUMBER_OF_AXES;
 
+        /// HUD elements.
+        TexturedHUDParallelogram* m_logo_1;
+
         /// Cumulative frame count.
         GLuint m_framecount;
 
@@ -516,7 +520,7 @@ class Starsphere : public AbstractGraphicsEngine {
         // Viewpoint (can be changed with mouse)
 
         /// Angle of perspective field of view.
-        GLfloat viewpt_fov;
+        GLfloat m_viewpt_fov;
 
         /// Aspect ratio of screen.
         GLfloat m_aspect;

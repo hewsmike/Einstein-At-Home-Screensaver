@@ -31,7 +31,7 @@ const GLuint TexturedHUDParallelogram::VERTEX_COUNT(4);
 /// is required to avoid incorrect string length and termination,
 /// which would otherwise be exposed when the shaders are compiled.
 
-const std::string TexturedHUDParallelogram::m_vertex_shader_2D("#version 150\n"
+const std::string TexturedHUDParallelogram::m_vertex_shader_2D("#version 330\n"
 "\n"
 "// This is a vertex shader. Creates a parallel sided quadrilateral\n"
 "// area based at lower left corner, with offsets along the sides.\n"
@@ -72,7 +72,7 @@ const std::string TexturedHUDParallelogram::m_vertex_shader_2D("#version 150\n"
 "    gl_Position = CameraMatrix * vec4(position, 0.0f, 1.0f);\n"
 "}\n");
 
-const std::string TexturedHUDParallelogram::m_fragment_shader("#version 150\n"
+const std::string TexturedHUDParallelogram::m_fragment_shader("#version 330\n"
 "\n"
 "// This is a fragment shader. It samples/interpolates the\n"
 "// texture object currently bound to GL_TEXTURE0.\n"
@@ -87,8 +87,10 @@ const std::string TexturedHUDParallelogram::m_fragment_shader("#version 150\n"
 "out vec4 out_color;\n"
 "void main()\n"
 "{\n"
-"    out_color = texture(color_map, pass_text_coords.st);\n"
+"    out_color = vec4(1.0f,1.0f,1.0f,1.0f);\n"
 "}\n");
+
+// "    out_color = texture(color_map, pass_text_coords.st);\n"
 
 TexturedHUDParallelogram::TexturedHUDParallelogram(glm::vec2 position,
                                                    glm::vec2 height_offset,
@@ -150,5 +152,5 @@ void TexturedHUDParallelogram::utilise(void) {
     if(this->isConfigured() == false) {
         configure();
         }
-    m_render_task->render(GL_TRIANGLE_STRIP, VERTEX_COUNT);
+    m_render_task->render(GL_TRIANGLE_FAN, VERTEX_COUNT);
     }
