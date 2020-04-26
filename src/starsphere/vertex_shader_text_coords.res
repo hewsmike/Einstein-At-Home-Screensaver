@@ -1,4 +1,4 @@
-#version 150
+#version 330
 
 // This is a vertex shader. Pass through of two vertex
 // associated texture coordinates.

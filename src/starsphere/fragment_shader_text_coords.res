@@ -1,4 +1,4 @@
-#version 150
+#version 330
 
 // This is a fragment shader. It samples/interpolates the
 // texture object currently bound to GL_TEXTURE0.

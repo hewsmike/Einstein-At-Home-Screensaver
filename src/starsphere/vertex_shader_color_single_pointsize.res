@@ -1,4 +1,4 @@
-#version 150
+#version 330
 
 // This is a vertex shader. Camera transform & point size as uniforms.
 

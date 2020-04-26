@@ -1,4 +1,4 @@
-#version 150
+#version 330
 
 // This is a fragment shader. Two texture coords with
 // sampling from currently bound texture object.

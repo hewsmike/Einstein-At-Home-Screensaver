@@ -1,4 +1,4 @@
-#version 150
+#version 330
 
 // This is a plain pass through fragment shader.
 in vec4 pass_color;
