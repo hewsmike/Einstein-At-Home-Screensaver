@@ -69,12 +69,10 @@ void Pipeline::trigger(GLenum primitive, GLsizei count) {
         // All this binding and unbinding is explicit so the
         // state machine defaults need not be relied upon.
         m_program-> bind();
-
         m_vertex_fetch->bind();
 
         // If texturing then bind.
         if(m_texture_buffer != NULL) {
-            std::cout << "BOZO" << std::endl;
             m_texture_buffer->bind();
             }
 
