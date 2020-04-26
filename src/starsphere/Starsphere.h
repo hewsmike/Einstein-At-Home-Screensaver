@@ -223,7 +223,7 @@ class Starsphere : public AbstractGraphicsEngine {
             AXES = 1,
             CONSTELLATIONS = 2,
             GAMMAS = 4,
-            GLOBE = 8,
+            GRID = 8,
             LOGO = 16,
             MARKER = 32,
             OBSERVATORIES = 64,

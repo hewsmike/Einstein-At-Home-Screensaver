@@ -1394,7 +1394,7 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
     setFeature(SNRS, true);
     setFeature(STARS, true);
     setFeature(GAMMAS, true);
-    setFeature(GLOBE, true);
+    setFeature(GRID, false);
     setFeature(AXES, false);
     setFeature(SEARCHINFO, true);
     setFeature(LOGO, true);
@@ -1568,7 +1568,7 @@ void Starsphere::render(const double timeOfDay) {
     if(isFeature(CONSTELLATIONS)) {
         m_render_task_cons->render(GL_LINES, m_constellation_lines*VERTICES_PER_LINE);
         }
-    if(isFeature(GLOBE)) {
+    if(isFeature(GRID)) {
         m_render_task_globe->render(GL_LINES, m_globe_lines*VERTICES_PER_LINE);
         }
     if(isFeature(EARTH)) {
@@ -1668,7 +1668,7 @@ void Starsphere::keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey ke
             setFeature(SNRS, isFeature(SNRS) ? false : true);
             break;
         case KeyG:
-            setFeature(GLOBE, isFeature(GLOBE) ? false : true);
+            setFeature(GRID, isFeature(GRID) ? false : true);
             break;
         case KeyA:
             setFeature(AXES, isFeature(AXES) ? false : true);
