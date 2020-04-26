@@ -204,8 +204,16 @@ void RenderTask::setUniform(const std::string& uniform_name, GLvoid* load_point)
     }
 
 void RenderTask::render(GLenum primitive, GLsizei count) {
+    //
+    if(m_texture_buffer != 0) {
+        m_texture_buffer->bind();
+        }
     // Pass on to the underlying pipeline object.
     m_pipeline->trigger(primitive, count);
+
+    if(m_texture_buffer != 0) {
+        m_texture_buffer->unbind();
+        }
     }
 
 void RenderTask::acquire(void) {

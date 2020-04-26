@@ -116,7 +116,7 @@ bool Program::configure(void) {
     // Assume failure.
     bool ret_val = false;
     if(this->isAcquired() == false) {
-	this->acquire();
+        this->acquire();
 	    }
 
     // Provided shaders have acquired and not deleted,
@@ -128,14 +128,14 @@ bool Program::configure(void) {
     if((m_fragment_shader->isAcquired() == false ) &&
        (m_fragment_shader->isDeleted() == false)) {
         this->m_fragment_shader->acquire();
-       }
+        }
 
     // Provided a prior link attempt has not occurred.
     if(m_link_status == Program::NEVER_LINKED) {
-	// Clear the linker log.
-	m_linker_log = "";
+        // Clear the linker log.
+        m_linker_log = "";
 
-	std::stringstream vshader_msg;
+        std::stringstream vshader_msg;
         vshader_msg << "Program::acquire() : attaching vertex shader with ID = "
                     << m_vertex_shader->ID()
                     << " to program with ID = "

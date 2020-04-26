@@ -35,8 +35,8 @@ Pipeline::Pipeline(Program* program, VertexFetch* vertex_fetch, TextureBuffer* t
     // Check VertexFetch pointer validity.
     if(vertex_fetch == NULL) {
         // Curiously you can have a Pipeline without vertex fetching,
-        // not that I can see the point of that for rendering. Not illegal
-        // per se, but probably a big enough error to flag fatally.
+        // which is useful for vertex shader generated position, color
+        // & texture coordinate data.
         ErrorHandler::record("Pipeline::Pipeline() : No vertex fetch provided.", ErrorHandler::FATAL);
         }
     m_vertex_fetch = vertex_fetch;
@@ -74,6 +74,7 @@ void Pipeline::trigger(GLenum primitive, GLsizei count) {
 
         // If texturing then bind.
         if(m_texture_buffer != NULL) {
+            std::cout << "BOZO" << std::endl;
             m_texture_buffer->bind();
             }
 

@@ -1394,11 +1394,11 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
                                                       GL_UNSIGNED_BYTE,
                                                       GL_CLAMP,
                                                       GL_CLAMP,
-                                                      true};
+                                                      false};
 
     m_logo_1 = new TexturedHUDParallelogram(glm::vec2(0.0f, 0.0f),
-                                            glm::vec2(32.0f, 0.0f),
-                                            glm::vec2(0.0f, 32.0f),
+                                            glm::vec2(10.0f, 160.0f),
+                                            glm::vec2(160.0f, 30.0f),
                                             logo1_texture);
 
     // Create rendering tasks for given 3D features.

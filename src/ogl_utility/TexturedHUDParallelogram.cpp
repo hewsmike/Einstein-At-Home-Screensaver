@@ -52,23 +52,38 @@ const std::string TexturedHUDParallelogram::m_vertex_shader_2D("#version 330\n"
 "    // With texture coordinates of zero.\n"
 "    pass_text_coords.st = vec2(0.0, 0.0);\n"
 "\n"
-"    // For odd numbered vertices.\n"
-"    if((gl_VertexID % 2) == 1) {\n"
+"    // For second vertex.\n"
+"    if(gl_VertexID == 1) {\n"
 "        // Add the width_offset.\n"
-"        position += width_offset.xy;\n"
+"        position.x += width_offset.x;\n"
+"        position.y += width_offset.y; \n"
 "        // With the 's' texture coordinate is 1.0.\n"
 "        pass_text_coords.s = 1.0;\n"
 "        }\n"
 "\n"
-"    // For the vertex numbered two & three.\n"
-"    if(gl_VertexID > 1) {\n"
+"    // For third vertex.\n"
+"    if(gl_VertexID == 2) {\n"
+"        // Add the height & width_offset.\n"
+"        position.x += width_offset.x;\n"
+"        position.x += height_offset.x;\n"
+"        position.y += width_offset.y;\n"
+"        position.y += height_offset.y;\n"
+"        // With both texture coordinates 1.0.\n"
+"        pass_text_coords.s = 1.0;\n"
+"        pass_text_coords.t = 1.0;\n"
+"        }\n"
+"\n"
+"    // For the fourth/last vertex.\n"
+"    if(gl_VertexID == 3) {\n"
 "        // Add the height offset.\n"
-"        position += height_offset.xy;\n"
+"        position.x += height_offset.x;\n"
+"        position.y += height_offset.y;\n"
 "        // With the 't' texture coordinate being 1.0.\n"
 "        pass_text_coords.t = 1.0;\n"
 "        }\n"
 "\n"
 "    // Emit final position of the vertex.\n"
+"    // Note there is no z-coordinate and scale is unity.\n"
 "    gl_Position = CameraMatrix * vec4(position, 0.0f, 1.0f);\n"
 "}\n");
 
@@ -87,10 +102,8 @@ const std::string TexturedHUDParallelogram::m_fragment_shader("#version 330\n"
 "out vec4 out_color;\n"
 "void main()\n"
 "{\n"
-"    out_color = vec4(1.0f,1.0f,1.0f,1.0f);\n"
+"    out_color = texture(color_map, pass_text_coords.st);\n"
 "}\n");
-
-// "    out_color = texture(color_map, pass_text_coords.st);\n"
 
 TexturedHUDParallelogram::TexturedHUDParallelogram(glm::vec2 position,
                                                    glm::vec2 height_offset,
@@ -103,7 +116,17 @@ TexturedHUDParallelogram::TexturedHUDParallelogram(glm::vec2 position,
     if(t_group.texture_data == NULL) {
         ErrorHandler::record("TexturedParallelogram::TexturedParallelogram() : Texture not provided!", ErrorHandler::FATAL);
         }
-    m_t_group = t_group;
+
+    m_t_group.texture_data = t_group.texture_data;
+    m_t_group.bytes = t_group.bytes;
+    m_t_group.width = t_group.width;
+    m_t_group.height = t_group.height;
+    m_t_group.format = t_group.format;
+    m_t_group.data_type = t_group.data_type;
+    m_t_group.wrap_type_s = t_group.wrap_type_s;
+    m_t_group.wrap_type_t = t_group.wrap_type_t;
+    m_t_group.mipmaps = t_group.mipmaps;
+
     // I'm not going to check for 'sensible' choices of position and offsets.
     m_render_task = NULL;
     this->setConfigurationState(false);
