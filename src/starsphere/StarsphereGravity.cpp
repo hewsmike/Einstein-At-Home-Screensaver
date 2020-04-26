@@ -29,8 +29,8 @@ StarsphereGravity::StarsphereGravity() :
         Starsphere(EinsteinGravityAdapter::SharedMemoryIdentifier),
         m_EinsteinAdapter(&m_BoincAdapter) {
     m_CurrentTime = "";
-    m_logo_1 = NULL;
-    m_logo_2 = NULL;
+    //m_logo_1 = NULL;
+    //m_logo_2 = NULL;
     }
 
 StarsphereGravity::~StarsphereGravity() {
@@ -184,24 +184,24 @@ void StarsphereGravity::renderLogo() {
     SDL_Color color2 = {255, 100, 100, 255};
 
     if(m_isConfigured == false) {
-        // NB 2D version of TextString being summoned.
-        m_logo_1 = new TextString(glm::vec2(0.0f, TransformGlobals::getClientScreenHeight()),
-                                  glm::vec2(0.0f, -50.0f),
-                                  glm::vec2(250.0f, 0.0f),
-                                  m_FontLogo1,
-                                  "Einstein At Home",
-                                  TextString::SOLID,
-                                  color1);
-        m_logo_2 = new TextString(glm::vec2(TransformGlobals::getClientScreenWidth() - 300.0f, TransformGlobals::getClientScreenHeight()),
-                                  glm::vec2(0.0f, -50.0f),
-                                  glm::vec2(300.0f, 0.0f),
-                                  m_FontLogo1,
-                                  "World Year of Physics 2005",
-                                  TextString::SOLID,
-                                  color2);
-
-        m_isConfigured = true;
+//        // NB 2D version of TextString being summoned.
+//        m_logo_1 = new TextString(glm::vec2(0.0f, TransformGlobals::getClientScreenHeight()),
+//                                  glm::vec2(0.0f, -50.0f),
+//                                  glm::vec2(250.0f, 0.0f),
+//                                  m_FontLogo1,
+//                                  "Einstein At Home",
+//                                  TextString::SOLID,
+//                                  color1);
+//        m_logo_2 = new TextString(glm::vec2(TransformGlobals::getClientScreenWidth() - 300.0f, TransformGlobals::getClientScreenHeight()),
+//                                  glm::vec2(0.0f, -50.0f),
+//                                  glm::vec2(300.0f, 0.0f),
+//                                  m_FontLogo1,
+//                                  "World Year of Physics 2005",
+//                                  TextString::SOLID,
+//                                  color2);
+//
+//        m_isConfigured = true;
         }
-    m_logo_1->utilise();
-    //m_logo_2->utilise();
+    // m_logo_1->utilise();
+    // m_logo_2->utilise();
     }

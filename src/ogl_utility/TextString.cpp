@@ -43,7 +43,7 @@ TextString::TextString(glm::vec3 position,
                           m_background(background) {
     m_textured_parallelogram = NULL;
     m_configure_flag = false;
-    m_mode = TexturedParallelogram::VOLUME;
+    m_mode = TexturedHUDParallelogram::VOLUME;
     }
 
 TextString::TextString(glm::vec2 position,
@@ -62,7 +62,7 @@ TextString::TextString(glm::vec2 position,
                                    text_style,
                                    foreground,
                                    background) {
-    m_mode = TexturedParallelogram::FLAT;
+    m_mode = TexturedHUDParallelogram::FLAT;
     }
 
 TextString::~TextString() {
@@ -93,13 +93,13 @@ void TextString::configureTask(void) {
                                                      GL_CLAMP,
                                                      true};
 
-    if(m_mode == TexturedParallelogram::FLAT) {
-        m_textured_parallelogram = new TexturedParallelogram(m_position.xy(),
+    if(m_mode == TexturedHUDParallelogram::FLAT) {
+        m_textured_parallelogram = new TexturedHUDParallelogram(m_position.xy(),
                                                              m_height_offset.xy(),
                                                              m_width_offset.xy(),
 															 t_group);
-    } else if(m_mode == TexturedParallelogram::VOLUME) {
-        m_textured_parallelogram = new TexturedParallelogram(m_position,
+    } else if(m_mode == TexturedHUDParallelogram::VOLUME) {
+        m_textured_parallelogram = new TexturedHUDParallelogram(m_position,
                                                              m_height_offset,
                                                              m_width_offset,
 															 t_group);

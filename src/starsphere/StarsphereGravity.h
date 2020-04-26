@@ -25,7 +25,7 @@
 
 #include "Starsphere.h"
 #include "EinsteinGravityAdapter.h"
-#include "TextString.h"
+// #include "TextString.h"
 
 using namespace std;
 
@@ -100,8 +100,8 @@ class StarsphereGravity : public Starsphere {
          */
         inline void renderLogo();
 
-        TextString* m_logo_1;
-        TextString* m_logo_2;
+        // TextString* m_logo_1;
+        // TextString* m_logo_2;
 
         /**
          * \brief Render science run specific search information

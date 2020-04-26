@@ -231,11 +231,11 @@ bool VertexFetch::configure(void) {
                                       attrib->stride,
                                       attrib->pointer);
             	}
-        	}
-        	// Unbind the vertex buffer and VAO
-        	// You don't need to unbind the vertex buffer for the VAO to work but it is good practice.
-        	m_vertices->unbind();
-        	this->unbind();
+            // Unbind the vertex buffer and VAO
+            // You don't need to unbind the vertex buffer for the VAO to work but it is good practice.
+            m_vertices->unbind();
+            this->unbind();
+	      	}
 
         setConfigurationState(true);
         }

@@ -23,7 +23,7 @@
 
 #include "ogl_utility.h"
 
-#include "TexturedParallelogram.h"
+#include "TexturedHUDParallelogram.h"
 
 #include <string>
 
@@ -135,7 +135,7 @@ class TextString {
         const char* m_text_string;
 
         /// The choice of rendering mode.
-        TexturedParallelogram::render_mode m_mode;
+        TexturedHUDParallelogram::render_mode m_mode;
 
         /// The choice of rendering style.
         TextString::render_style m_text_style;
@@ -147,7 +147,7 @@ class TextString {
         SDL_Color m_background;
 
         /// The parallelogram to be used for rendering.
-        TexturedParallelogram* m_textured_parallelogram;
+        TexturedHUDParallelogram* m_textured_parallelogram;
 
         ///Has this object been configured ?
         bool m_configure_flag;
