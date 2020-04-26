@@ -53,6 +53,7 @@ RenderTask::RenderTask(RenderTask::shader_group s_group,
                                          t_group.format,
                                          t_group.data_type,
                                          t_group.wrap_type_s,
+                                         t_group.wrap_type_t,
                                          t_group.mipmaps);
     }
 
@@ -219,7 +220,6 @@ void RenderTask::acquire(void) {
     if(m_texture_buffer != NULL) {
         m_texture_buffer->acquire();
         }
-
     m_program->configure();
 
     m_vertex_fetch->configure();
