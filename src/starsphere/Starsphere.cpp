@@ -1512,12 +1512,6 @@ void Starsphere::render(const double timeOfDay) {
 //              0.0, 0.0, 0.0, // looking toward here
 //                0.0, 1.0, 0.0); // which way is up?  y axis!
 
-    // Draw axes before any rotation so they stay put in
-    // model/world space.
-    if(isFeature(AXES)) {
-        m_render_task_axes->render(GL_LINES, NUMBER_OF_AXES*VERTICES_PER_LINE);
-        }
-
     // Default unrotated viewpoint is along the Open GL z-axis by an amount
     // as per viewpoint radius.
     m_view = glm::translate(identity, glm::vec3(0.0f, 0.0f, -m_viewpt_radius));
@@ -1550,9 +1544,10 @@ void Starsphere::render(const double timeOfDay) {
             }
         }
 
+    // Render the 3D features in our model/world space.
     m_camera = m_perspective_projection * m_view * m_rotation;
 
-    // stars, pulsars, supernovae, grid
+    // stars, pulsars, supernovae, grid ....
     if(isFeature(GAMMAS)) {
         m_render_task_gammas->render(GL_POINTS, Ngammas);
         }
@@ -1577,6 +1572,12 @@ void Starsphere::render(const double timeOfDay) {
     if(isFeature(OBSERVATORIES)) {
         m_render_task_arms->render(GL_LINES, m_geode_lines*VERTICES_PER_LINE);
         }
+    if(isFeature(AXES)) {
+        m_render_task_axes->render(GL_LINES, NUMBER_OF_AXES*VERTICES_PER_LINE);
+        }
+
+    // Render the 2D features in our HUD.
+    m_camera = m_orthographic_projection * m_view * m_rotation;
 
     // draw the search marker (gunsight)
     if(isFeature(MARKER)) {
