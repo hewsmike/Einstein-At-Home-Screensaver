@@ -22,15 +22,10 @@
 STARSPHERE_SRC?=$(PWD)
 STARSPHERE_INSTALL?=$(PWD)
 
-$(info ************************)
-$(info STARSPHERE_SRC is $(STARSPHERE_SRC))
-$(info STARSPHERE_INSTALL is $(STARSPHERE_INSTALL))
-$(info ************************)
-
 # config values
 CXX ?= g++
 
-# variables
+# Library variables, change the order of these at your peril !
 LIBS += -Wl,-Bstatic
 LIBS += -lframework -L$(STARSPHERE_INSTALL)/lib
 LIBS += -loglutility -lSDL2_ttf
@@ -60,10 +55,6 @@ CPPFLAGS += $(shell $(STARSPHERE_INSTALL)/bin/freetype-config --cflags)
 CPPFLAGS += $(shell $(STARSPHERE_INSTALL)/bin/xml2-config --cflags)
 CPPFLAGS += -I$(STARSPHERE_INSTALL)/include/boinc
 CPPFLAGS += -D_WIN32_WINDOWS=0x0410
-
-$(info ************************)
-$(info CPPFLAGS is $(CPPFLAGS))
-$(info ************************)
 
 RESOURCESPEC = resources
 
@@ -131,9 +122,14 @@ $(RESOURCESPEC).o: $(STARSPHERE_SRC)/$(RESOURCESPEC).orc
 	$(STARSPHERE_INSTALL)/bin/orc $(STARSPHERE_SRC)/$(RESOURCESPEC).orc $(RESOURCESPEC).cpp
 	$(CXX) -g $(CPPFLAGS) -c $(RESOURCESPEC).cpp -o $(RESOURCESPEC).o
 
-$(RESOURCESPEC)_mingw.o: $(STARSPHERE_SRC)/$(RESOURCESPEC).rc
-	cp $(STARSPHERE_SRC)/*.ico .
-	usr/bin/x86_64-w64-mingw32-windres -O coff -o $(RESOURCESPEC)_mingw.o $(STARSPHERE_SRC)/$(RESOURCESPEC).rc
+# From the windres man page : The normal use is for you to write an "rc" file, use windres to
+# convert it to a COFF object file, and then link the COFF file into your application. This
+# will make the resources described in the "rc" file available to Windows. Do we need this
+# as resources are loaded into executable via ORC ?
+
+# $(RESOURCESPEC)_mingw.o: $(STARSPHERE_SRC)/$(RESOURCESPEC).rc
+#	cp $(STARSPHERE_SRC)/*.ico .
+#	usr/bin/x86_64-w64-mingw32-windres -O coff -o $(RESOURCESPEC)_mingw.o -i $(STARSPHERE_SRC)/$(RESOURCESPEC).rc
 
 # tools
 install:
