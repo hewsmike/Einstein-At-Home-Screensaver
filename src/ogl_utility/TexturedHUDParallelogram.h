@@ -41,13 +41,8 @@
  * \author Mike Hewson\n
  */
 
-class TexturedParallelogram {
+class TexturedHUDParallelogram : public Configurable {
     public :
-        /// The rendering mode.
-        /// FLAT :  render onto the frustum near face.
-        /// VOLUME : render into the world space volume.
-        enum render_mode{FLAT, VOLUME};
-
         /**
          * \brief Constructor for 3D perspective rendering
          *
@@ -59,59 +54,45 @@ class TexturedParallelogram {
          *                       of the parallelogram, from the lower left.
          * \param t_group - a RenderTask::texture_buffer_group structure instance.
          */
-        TexturedParallelogram(glm::vec3 position,
-                              glm::vec3 height_offset,
-                              glm::vec3 width_offset,
-                              RenderTask::texture_buffer_group t_group);
-
-        /**
-         * \brief Constructor for 2D orthographic rendering
-         *
-         * \param position - a vector to the point on the lower left corner
-         *                   of the parallelogram.
-         * \param height_offset - a vector directed to the upper left corner
-         *                        of the parallelogram, from the lower left.
-         * \param width_offset - a vector directed to the lower right corner
-         *                       of the parallelogram, from the lower left.
-         * \param t_group - a RenderTask::texture_buffer_group structure instance.
-         */
-        TexturedParallelogram(glm::vec2 position,
-                              glm::vec2 height_offset,
-                              glm::vec2 width_offset,
-							  RenderTask::texture_buffer_group t_group);
+        TexturedHUDParallelogram(glm::vec2 position,
+                                 glm::vec2 height_offset,
+                                 glm::vec2 width_offset,
+                                 RenderTask::texture_buffer_group t_group);
 
         /**
          * \brief Destructor
          */
-        virtual ~TexturedParallelogram();
+        virtual ~TexturedHUDParallelogram();
 
         /**
-         * \brief Set the lower left parallelogram corner.
+         * \brief Get the lower left parallelogram corner.
          *
-         * \param position - the lower left parallelogram corner.
+         * \return the lower left parallelogram corner.
          */
-        void setPosition(glm::vec3 position);
+        glm::vec2 position(void);
 
         /**
-         * \brief Set the 'vertical' offset from the lower left parallelogram corner.
+         * \brief Get the 'vertical' offset from the lower left parallelogram corner.
          *
-         * \param height_offset - the offset from lower left parallelogram corner.
+         * \return the offset from lower left parallelogram corner.
          */
-        void setHeightOffset(glm::vec3 height_offset);
+        glm::vec2 heightOffset(void);
 
         /**
-         * \brief Set the 'horizontal' offset from the lower left parallelogram corner.
+         * \brief Get the 'horizontal' offset from the lower left parallelogram corner.
          *
-         * \param width_offset - the offset from lower left parallelogram corner.
+         * \return the offset from lower left parallelogram corner.
          */
-        void setWidthOffset(glm::vec3 width_offset);
+        glm::vec2 widthOffset(void);
 
         /**
-         * \brief Set the texture to be applied to the parallelogram.
+         * \brief Actually configure any underlying object(s).
          *
-         * \param t_group - a RenderTask::texture_buffer_group structure instance.
+         * \return a boolean indicating success of configuration
+         *              - true, the configuration as successful.
+         *              - false, the configuration was not successful.
          */
-        void setTexture(RenderTask::texture_buffer_group t_group);
+        virtual bool configure(void);
 
         /**
          * \brief Invoke rendering activity.
@@ -123,26 +104,17 @@ class TexturedParallelogram {
 
         /// The shader code for this type of texturing.
         static const std::string m_vertex_shader_2D;
-        static const std::string m_vertex_shader_3D;
         static const std::string m_fragment_shader;
 
-        /// Flag to indicate if this object has been configured.
-        bool m_configure_flag;
-
         /// Positioning vectors for vertices.
-        glm::vec3 m_position;
-        glm::vec3 m_height_offset;
-        glm::vec3 m_width_offset;
+        glm::vec2 m_position;
+        glm::vec2 m_height_offset;
+        glm::vec2 m_width_offset;
 
         RenderTask::texture_buffer_group m_t_group;
 
-        TexturedParallelogram::render_mode m_render_mode;
-
         /// The rendering task to enact the texturing.
         RenderTask* m_render_task;
-
-        /// Create the rendering task.
-        void configureTask(void);
     };
 
 /**
