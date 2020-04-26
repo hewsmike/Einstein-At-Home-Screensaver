@@ -36,6 +36,7 @@ RenderTask::RenderTask(RenderTask::shader_group s_group) {
     m_vertex_fetch = new VertexFetch();
 
     setBaseCase(s_group);
+    m_pipeline = new Pipeline(m_program, m_vertex_fetch);
     }
 
 RenderTask::RenderTask(RenderTask::shader_group s_group,
@@ -55,6 +56,8 @@ RenderTask::RenderTask(RenderTask::shader_group s_group,
                                          t_group.wrap_type_s,
                                          t_group.wrap_type_t,
                                          t_group.mipmaps);
+
+    m_pipeline = new Pipeline(m_program, m_vertex_fetch, m_texture_buffer);
     }
 
 RenderTask::RenderTask(RenderTask::shader_group s_group,
@@ -81,6 +84,7 @@ RenderTask::RenderTask(RenderTask::shader_group s_group,
     m_vertex_fetch = new VertexFetch(m_attrib_adapt, m_vertex_buffer);
 
     setBaseCase(s_group);
+    m_pipeline = new Pipeline(m_program, m_vertex_fetch);
     }
 
 RenderTask::RenderTask(RenderTask::shader_group s_group,
@@ -101,6 +105,7 @@ RenderTask::RenderTask(RenderTask::shader_group s_group,
                                          t_group.wrap_type_s,
                                          t_group.mipmaps);
     m_texture_buffer->acquire();
+    m_pipeline = new Pipeline(m_program, m_vertex_fetch, m_texture_buffer);
     }
 
 RenderTask::RenderTask(RenderTask::shader_group s_group,
@@ -129,6 +134,8 @@ RenderTask::RenderTask(RenderTask::shader_group s_group,
  	m_vertex_fetch = new VertexFetch(m_attrib_adapt, m_vertex_buffer, m_index_buffer);
 
  	setBaseCase(s_group);
+
+ 	m_pipeline = new Pipeline(m_program, m_vertex_fetch);
  	}
 
 RenderTask::RenderTask(RenderTask::shader_group s_group,
@@ -167,6 +174,7 @@ RenderTask::RenderTask(RenderTask::shader_group s_group,
         m_index_buffer->acquire();
         }
 
+    //
     if((m_vertex_buffer == NULL)) {
         m_vertex_fetch = new VertexFetch();
         }
@@ -204,16 +212,8 @@ void RenderTask::setUniform(const std::string& uniform_name, GLvoid* load_point)
     }
 
 void RenderTask::render(GLenum primitive, GLsizei count) {
-    //
-    if(m_texture_buffer != 0) {
-        m_texture_buffer->bind();
-        }
     // Pass on to the underlying pipeline object.
     m_pipeline->trigger(primitive, count);
-
-    if(m_texture_buffer != 0) {
-        m_texture_buffer->unbind();
-        }
     }
 
 void RenderTask::acquire(void) {
@@ -251,5 +251,4 @@ void RenderTask::setBaseCase(RenderTask::shader_group s_group) {
     m_frag_shader = new FragmentShader(s_group.frag_shader_source);
     // Always have a program entity and a pipeline.
     m_program = new Program(m_vertex_shader, m_frag_shader, m_attrib_adapt);
-    m_pipeline = new Pipeline(m_program, m_vertex_fetch);
     }
