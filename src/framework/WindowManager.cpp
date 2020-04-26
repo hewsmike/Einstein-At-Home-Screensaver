@@ -48,7 +48,7 @@ const int WindowManager::NUM_MULTISAMPLES(2);
 
 const int WindowManager::CONTEXT_PROFILE_TYPE(SDL_GL_CONTEXT_PROFILE_CORE);
 const int WindowManager::OGL_MAJOR_VERSION(3);
-const int WindowManager::OGL_MINOR_VERSION(2);
+const int WindowManager::OGL_MINOR_VERSION(3);
 
 const int WindowManager::DISPLAY_ZERO(0);
 
