@@ -42,6 +42,7 @@
 #include "Pipeline.h"
 #include "Program.h"
 #include "ResourceFactory.h"
+#include "TexturedHUDParallelogram.h"
 #include "TransformGlobals.h"
 #include "VertexBuffer.h"
 #include "VertexFetch.h"
