@@ -22,15 +22,32 @@
 
 ROOT=`pwd`
 
-echo *****************************************************************
-echo **** Building linux and win32 targets for product starsphere ****
-echo *****************************************************************
+echo "*****************************************************************"
+echo "**** Building linux and win32 targets for product starsphere ****"
+echo "*****************************************************************"
 
+# First try to build for linux. 
 ./topbuild.sh --linux --debug -- starsphere
+if [ $? -ne 0 ] then
+    echo "An error occurred while making the linux product".
+    exit 1 
+fi
+
+# Only proceed with win32 build if the linux build was OK.
 ./topbuild.sh --win32 --debug --starsphere
+if [ $? -ne 0 ] then
+    echo "An error occurred while making the win32 product".
+    exit 2 
+fi
+
+# Both builds good, so get their products to local directory.
 mkdir dist
 cd dist
-cp -f $ROOT/linux/dist/graphics* .
-cp -f $ROOT/win32/dist/graphics* .
+cp -f $ROOT/linux/dist/graphics* graphics_TEST$1_linux64
+cp -f $ROOT/win32/dist/graphics* graphics_TEST$1_win32
 
-echo *****************************************************************
+echo "*****************************************************************"
+echo "**** Successful build of both products **************************"
+echo "*****************************************************************"
+
+exit 0
