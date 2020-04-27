@@ -33,7 +33,7 @@ if [ $? -ne 0 ] then
     exit 1 
 fi
 
-# Only proceed with win32 build if the linux build was OK.
+# Only proceed with the win32 build if the linux build was OK.
 ./topbuild.sh --win32 --debug --starsphere
 if [ $? -ne 0 ] then
     echo "An error occurred while making the win32 product".
@@ -43,8 +43,8 @@ fi
 # Both builds good, so get their products to local directory.
 mkdir dist
 cd dist
-cp -f $ROOT/linux/dist/graphics* graphics_TEST$1_linux64
-cp -f $ROOT/win32/dist/graphics* graphics_TEST$1_win32
+cp -f $ROOT/linux/dist/graphics* graphics_starsphere_TEST0$1_x86_64-pc-linux
+cp -f $ROOT/win32/dist/graphics* graphics_starsphere_TEST0$1_i686-w64-mingw32.exe
 
 echo "*****************************************************************"
 echo "**** Successful build of both products **************************"
