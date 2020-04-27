@@ -61,9 +61,7 @@ const GLuint Starsphere::TTF_FONT_LOAD_TEXT_POINT_SIZE(11);
 const GLfloat Starsphere::PERSPECTIVE_NEAR_FRUSTUM_DISTANCE(0.1f);
 const GLfloat Starsphere::PERSPECTIVE_FAR_FRUSTUM_DISTANCE(100.0f);
 const GLfloat Starsphere::PERSPECTIVE_FOV_DEFAULT(45.0f);
-const GLfloat Starsphere::PERSPECTIVE_FOV_MIN(20.0f);
-const GLfloat Starsphere::PERSPECTIVE_FOV_MAX(70.0f);
-const GLfloat Starsphere::VIEWPOINT_MOUSEWHEEL_FOV_RATE(0.1f);
+
 const GLuint Starsphere::GLOBE_LATITUDE_LAYERS(145);                    // Each pole is a layer in latitude too.
 const GLuint Starsphere::GLOBE_LONGITUDE_SLICES(288);
 const GLfloat Starsphere::GLOBE_TEXTURE_OFFSET(180.0f);                 // Texture map starts at longitude 180
@@ -1491,8 +1489,8 @@ void Starsphere::render(const double timeOfDay) {
     // Start drawing with clearing the relevant buffers.
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    // Default unrotated viewpoint is along the Open GL z-axis by an amount
-    // as per viewpoint radius.
+    // Unrotated viewpoint is along the Open GL positive z-axis
+    // by an amount as per viewpoint radius.
     m_view = glm::translate(identity, glm::vec3(0.0f, 0.0f, -m_viewpt_radius));
 
     // Stop autorotation if close to the Earth. Allow user manipulation
@@ -1612,21 +1610,25 @@ void Starsphere::mouseMoveEvent(const int deltaX, const int deltaY,
     }
 
 void Starsphere::mouseWheelEvent(const int pos) {
+    // TODO : FIX this so that viewpoint does not singularise & invert.
     // Mouse wheel sets angle of field of view for perspective transform.3.0
-    if(pos > 0) {
-        m_viewpt_fov += VIEWPOINT_MOUSEWHEEL_FOV_RATE;
-        if(m_viewpt_fov > PERSPECTIVE_FOV_MAX) {
-            m_viewpt_fov = PERSPECTIVE_FOV_MAX;
-            }
-        }
-    else if (pos < 0) {
-        m_viewpt_fov -= VIEWPOINT_MOUSEWHEEL_FOV_RATE;
-        if(m_viewpt_fov < PERSPECTIVE_FOV_MIN) {
-            m_viewpt_fov = PERSPECTIVE_FOV_MIN;
-            }
-        }
-    // Re-compute transform matrix with new field of view angle.
-    configTransformMatrices();
+//    const GLfloat PERSPECTIVE_FOV_MIN = 30.0f;
+//    const GLfloat PERSPECTIVE_FOV_MAX = 60.0f;
+//    const GLfloat VIEWPOINT_MOUSEWHEEL_FOV_RATE = 0.1f;
+//    if(pos > 0) {
+//        m_viewpt_fov += VIEWPOINT_MOUSEWHEEL_FOV_RATE;
+//        if(m_viewpt_fov > PERSPECTIVE_FOV_MAX) {
+//            m_viewpt_fov = PERSPECTIVE_FOV_MAX;
+//            }
+//        }
+//    else if (pos < 0) {
+//        m_viewpt_fov -= VIEWPOINT_MOUSEWHEEL_FOV_RATE;
+//        if(m_viewpt_fov < PERSPECTIVE_FOV_MIN) {
+//            m_viewpt_fov = PERSPECTIVE_FOV_MIN;
+//            }
+//        }
+//    // Re-compute transform matrix with new field of view angle.
+//    configTransformMatrices();
     }
 
 void Starsphere::keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey keyPressed) {
@@ -1714,9 +1716,9 @@ void Starsphere::zoomSphere(const int relativeZoom) {
 void Starsphere::configTransformMatrices(void) {
     // Create desired perspective projection matrix based upon a frustum model.
     m_perspective_projection = glm::perspective(m_viewpt_fov,
-                                    m_aspect,
-                                    PERSPECTIVE_NEAR_FRUSTUM_DISTANCE,
-                                    PERSPECTIVE_FAR_FRUSTUM_DISTANCE);
+                                                m_aspect,
+                                                PERSPECTIVE_NEAR_FRUSTUM_DISTANCE,
+                                                PERSPECTIVE_FAR_FRUSTUM_DISTANCE);
 
     // The fourth entry of the fourth row/column.
     m_perspective_projection[3][3]= 1.0f;

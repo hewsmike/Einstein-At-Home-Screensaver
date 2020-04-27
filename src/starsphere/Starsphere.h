@@ -377,9 +377,6 @@ class Starsphere : public AbstractGraphicsEngine {
 
         // Field of view angle extents.
         static const GLfloat PERSPECTIVE_FOV_DEFAULT;
-        static const GLfloat PERSPECTIVE_FOV_MIN;
-        static const GLfloat PERSPECTIVE_FOV_MAX;
-        static const GLfloat VIEWPOINT_MOUSEWHEEL_FOV_RATE;
 
         // Globe feature parameters.
         static const GLuint GLOBE_LATITUDE_LAYERS;
