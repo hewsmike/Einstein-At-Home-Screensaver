@@ -1695,15 +1695,17 @@ void Starsphere::rotateSphere(const int relativeRotation,
     }
 
 void Starsphere::zoomSphere(const int relativeZoom) {
+    GLfloat CLOSEST_APPROACH = 1.05;
     // zoom
     m_viewpt_radius -= relativeZoom/VIEWPOINT_ZOOM_RATE;
     if (m_viewpt_radius > VIEWPOINT_MAX_ZOOM)
         m_viewpt_radius = VIEWPOINT_MAX_ZOOM;
     // For a given radius, plus a certain choice of clipping
     // frustum, then this about as close as you can get without
-    // entering the interior of the Earth.
-    if (m_viewpt_radius < EARTH_RADIUS * 0.65f)
-        m_viewpt_radius = EARTH_RADIUS * 0.65f;
+    // entering the interior of the Earth. Also don't let
+    // the Earth hit the HUD !!
+    if (m_viewpt_radius < EARTH_RADIUS * CLOSEST_APPROACH)
+        m_viewpt_radius = EARTH_RADIUS * CLOSEST_APPROACH;
     }
 
 void Starsphere::configTransformMatrices(void) {
