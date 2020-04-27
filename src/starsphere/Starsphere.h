@@ -368,14 +368,12 @@ class Starsphere : public AbstractGraphicsEngine {
         static const GLuint TTF_FONT_LOAD_HEADER_POINT_SIZE;
         static const GLuint TTF_FONT_LOAD_TEXT_POINT_SIZE;
 
-        // Zoom facility.
-        static const GLfloat VIEWPOINT_MAX_ZOOM;
-        static const GLfloat VIEWPOINT_MIN_ZOOM;
-        static const GLfloat VIEWPOINT_ZOOM_RATE;
-
         // Transform parameters.
         static const GLfloat PERSPECTIVE_NEAR_FRUSTUM_DISTANCE;
         static const GLfloat PERSPECTIVE_FAR_FRUSTUM_DISTANCE;
+
+        // Limit of viewpoint.
+        static const GLfloat FARTHEST_VIEWPOINT;
 
         // Field of view angle extents.
         static const GLfloat PERSPECTIVE_FOV_DEFAULT;

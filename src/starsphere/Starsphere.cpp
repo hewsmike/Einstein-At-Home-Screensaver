@@ -58,9 +58,6 @@ const GLfloat Starsphere::EARTH_RADIUS(1.0f);
 const GLboolean Starsphere::TTF_FREE_SOURCE(false);
 const GLuint Starsphere::TTF_FONT_LOAD_HEADER_POINT_SIZE(13);
 const GLuint Starsphere::TTF_FONT_LOAD_TEXT_POINT_SIZE(11);
-const GLfloat Starsphere::VIEWPOINT_MAX_ZOOM(20.0f);
-const GLfloat Starsphere::VIEWPOINT_MIN_ZOOM(0.5f);
-const GLfloat Starsphere::VIEWPOINT_ZOOM_RATE(10.0f);
 const GLfloat Starsphere::PERSPECTIVE_NEAR_FRUSTUM_DISTANCE(0.1f);
 const GLfloat Starsphere::PERSPECTIVE_FAR_FRUSTUM_DISTANCE(100.0f);
 const GLfloat Starsphere::PERSPECTIVE_FOV_DEFAULT(45.0f);
@@ -84,6 +81,7 @@ const GLuint Starsphere::COORDS_PER_VERTEX_COLOR(6);
 const GLuint Starsphere::COORDS_PER_VERTEX_TEXTURE(5);
 const GLuint Starsphere::VERTICES_PER_ARM(2);
 const GLuint Starsphere::VERTICES_PER_LINE(2);
+const GLfloat Starsphere::FARTHEST_VIEWPOINT(20.0f);
 
 
 Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
@@ -152,7 +150,9 @@ Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
     m_aspect = 0.0f;
     m_viewpt_azimuth = 30.0f;
     m_viewpt_elev = 23.6f;
-    m_viewpt_radius = (SPHERE_RADIUS + VIEWPOINT_MAX_ZOOM)/ 2.0f;
+
+    // Begin midway b/w Earth's surface and greatest displacement.
+    m_viewpt_radius = (EARTH_RADIUS + FARTHEST_VIEWPOINT) / 2.0f;
 
     wobble_amp = 37.0f;
     wobble_period = 17.0f;
@@ -1695,17 +1695,20 @@ void Starsphere::rotateSphere(const int relativeRotation,
     }
 
 void Starsphere::zoomSphere(const int relativeZoom) {
-    GLfloat CLOSEST_APPROACH = 1.05;
-    // zoom
-    m_viewpt_radius -= relativeZoom/VIEWPOINT_ZOOM_RATE;
-    if (m_viewpt_radius > VIEWPOINT_MAX_ZOOM)
-        m_viewpt_radius = VIEWPOINT_MAX_ZOOM;
+    const GLfloat CLOSEST_APPROACH_RATIO = 1.05;
+    const GLfloat ZOOM_RATE = 10.0f;
+
+    // Zoom, the minus sign here means you zoom in by
+    // dragging the mouse pointer down the screen.
+    m_viewpt_radius -= relativeZoom/ZOOM_RATE;
+    if (m_viewpt_radius > FARTHEST_VIEWPOINT)
+        m_viewpt_radius = FARTHEST_VIEWPOINT;
     // For a given radius, plus a certain choice of clipping
     // frustum, then this about as close as you can get without
     // entering the interior of the Earth. Also don't let
     // the Earth hit the HUD !!
-    if (m_viewpt_radius < EARTH_RADIUS * CLOSEST_APPROACH)
-        m_viewpt_radius = EARTH_RADIUS * CLOSEST_APPROACH;
+    if (m_viewpt_radius < EARTH_RADIUS * CLOSEST_APPROACH_RATIO)
+        m_viewpt_radius = EARTH_RADIUS * CLOSEST_APPROACH_RATIO;
     }
 
 void Starsphere::configTransformMatrices(void) {
