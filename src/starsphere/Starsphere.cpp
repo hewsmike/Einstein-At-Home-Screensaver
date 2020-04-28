@@ -1381,23 +1381,27 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
             }
         }
 
+    // Here we set the byte alignment when unpacking data from memory
+    // to a one byte boundary. This done mainly for optimizing font setup.
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
     // Create factory instance to then access the texture/bitmap.
     ResourceFactory factory;
 
     // Create HUD features
     RenderTask::texture_buffer_group logo1_texture = {(const GLvoid*)factory.createInstance("AppIconBMP")->data()->data(),
-                                                      220*100*3,
-                                                      220,
-                                                      100,
+                                                      384*256*3,
+                                                      384,
+                                                      256,
                                                       GL_RGB,
                                                       GL_UNSIGNED_BYTE,
-                                                      GL_CLAMP,
-                                                      GL_CLAMP,
+                                                      GL_CLAMP_TO_EDGE,
+                                                      GL_CLAMP_TO_EDGE,
                                                       false};
 
     m_logo_1 = new TexturedHUDParallelogram(glm::vec2(10.0f, 10.0f),
-                                            glm::vec2(220.0f, 0.0f),
-                                            glm::vec2(0.0f, 100.0f),
+                                            glm::vec2(384.0f, 0.0f),
+                                            glm::vec2(0.0f, 256.0f),
                                             logo1_texture);
 
     // Create rendering tasks for given 3D features.
@@ -1426,10 +1430,6 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
     setFeature(MARKER, true);
     setFeature(EARTH, true);
     setFeature(ROLL_STOP, false);
-
-    // Here we set the byte alignment when unpacking data from memory
-    // to a one byte boundary. This done mainly for optimizing font setup.
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
     glActiveTexture(GL_TEXTURE0);
 
