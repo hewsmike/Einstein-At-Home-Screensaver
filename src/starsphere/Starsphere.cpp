@@ -1386,9 +1386,9 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
 
     // Create HUD features
     RenderTask::texture_buffer_group logo1_texture = {(const GLvoid*)factory.createInstance("AppIconBMP")->data()->data(),
-                                                      32*32*3,
-                                                      32,
-                                                      32,
+                                                      220*100*3,
+                                                      220,
+                                                      100,
                                                       GL_RGB,
                                                       GL_UNSIGNED_BYTE,
                                                       GL_CLAMP,
@@ -1396,8 +1396,8 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
                                                       false};
 
     m_logo_1 = new TexturedHUDParallelogram(glm::vec2(10.0f, 10.0f),
-                                            glm::vec2(0.0f, 48.0f),
-                                            glm::vec2(48.0f, 0.0f),
+                                            glm::vec2(220.0f, 0.0f),
+                                            glm::vec2(0.0f, 100.0f),
                                             logo1_texture);
 
     // Create rendering tasks for given 3D features.

@@ -107,12 +107,12 @@ const std::string TexturedHUDParallelogram::m_fragment_shader("#version 330\n"
 "}\n");
 
 TexturedHUDParallelogram::TexturedHUDParallelogram(glm::vec2 position,
-                                                   glm::vec2 height_offset,
                                                    glm::vec2 width_offset,
+                                                   glm::vec2 height_offset,
 											       RenderTask::texture_buffer_group t_group) :
                                                        m_position(position),
-                                                       m_height_offset(height_offset),
-                                                       m_width_offset(width_offset) {
+                                                       m_width_offset(width_offset),
+                                                       m_height_offset(height_offset) {
     // Check for nullity of texture data pointer.
     if(t_group.texture_data == NULL) {
         ErrorHandler::record("TexturedParallelogram::TexturedParallelogram() : Texture not provided!", ErrorHandler::FATAL);

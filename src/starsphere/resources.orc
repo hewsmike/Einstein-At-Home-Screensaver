@@ -21,7 +21,7 @@
 # Resource specification of: Einstein@Home graphics application
 
 FontSansSerif|LiberationSans-Regular.ttf.res
-AppIconBMP|EaH.bmp.res
+AppIconBMP|OCL.BMP.res
 
 # Shaders
 FragmentShader_Pass_Color3|fs_pass.res

@@ -48,15 +48,15 @@ class TexturedHUDParallelogram : public Configurable {
          *
          * \param position - a vector to the point on the lower left corner
          *                   of the parallelogram.
-         * \param height_offset - a vector directed to the upper left corner
-         *                        of the parallelogram, from the lower left.
          * \param width_offset - a vector directed to the lower right corner
          *                       of the parallelogram, from the lower left.
+         * \param height_offset - a vector directed to the upper left corner
+         *                        of the parallelogram, from the lower left.
          * \param t_group - a RenderTask::texture_buffer_group structure instance.
          */
         TexturedHUDParallelogram(glm::vec2 position,
-                                 glm::vec2 height_offset,
                                  glm::vec2 width_offset,
+                                 glm::vec2 height_offset,
                                  RenderTask::texture_buffer_group t_group);
 
         /**
