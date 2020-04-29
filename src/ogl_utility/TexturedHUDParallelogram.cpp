@@ -103,7 +103,7 @@ const std::string TexturedHUDParallelogram::m_fragment_shader("#version 330\n"
 "void main()\n"
 "{\n"
 "    out_color = texture(color_map, pass_text_coords.st);\n"
-"    out_color = vec4(out_color.r, out_color.g, out_color.b, 0.5);\n"
+"    out_color = vec4(out_color.r, out_color.g, out_color.b, out_color.a);\n"
 "}\n");
 
 TexturedHUDParallelogram::TexturedHUDParallelogram(glm::vec2 position,

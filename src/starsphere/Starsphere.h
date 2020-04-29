@@ -323,6 +323,9 @@ class Starsphere : public AbstractGraphicsEngine {
         /// X-coordinate position for head up display (HUD) positioning
         GLfloat m_XStartPosLeft;
 
+        /// X-coordinate position for head up display (HUD) positioning
+        GLfloat m_XStartPosRight;
+
         /// Y-coordinate position for head up display (HUD) positioning
         GLfloat m_YStartPosTop;
 
@@ -399,6 +402,8 @@ class Starsphere : public AbstractGraphicsEngine {
 
         /// HUD elements.
         TexturedHUDParallelogram* m_logo_1;
+        TexturedHUDParallelogram* m_logo_2;
+        TexturedHUDParallelogram* m_user_info;
 
         /// Cumulative frame count.
         GLuint m_framecount;
@@ -469,6 +474,11 @@ class Starsphere : public AbstractGraphicsEngine {
                                    glm::vec3 color,
                                    GLfloat* vertex_data,
                                    GLuint array_offset);
+
+        /// Generate TexturedHUDParalelograms for logos.
+        void make_logos(void);
+
+        void make_user_info(void);
 
         /// Generate rendering task for stars.
         void make_stars(void);

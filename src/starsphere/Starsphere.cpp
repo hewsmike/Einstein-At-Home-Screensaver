@@ -130,6 +130,7 @@ Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
     m_CurrentWidth = 0;
     m_CurrentHeight = 0;
     m_XStartPosLeft = 0;
+    m_XStartPosRight = 0;
     m_YStartPosTop = 0;
     m_YOffsetLarge = 0;
     m_CurrentRightAscension = 0;
@@ -204,6 +205,7 @@ Starsphere::~Starsphere() {
 
     // Delete HUD element pointers.
     if(m_logo_1) delete m_logo_1;
+    if(m_logo_2) delete m_logo_2;
 
     // Delete render task pointers.
     if(m_render_task_arms) delete m_render_task_arms;
@@ -1280,6 +1282,65 @@ void Starsphere::make_globe_mesh_texture(void) {
     m_render_task_earth->acquire();
     }
 
+void Starsphere::make_logos(void) {
+    // Create factory instance to then access the texture/bitmap.
+    ResourceFactory factory;
+
+    // Create HUD logo features.
+    RenderTask::texture_buffer_group logo1_texture = {(const GLvoid*)factory.createInstance("Logo_OCL")->data()->data(),
+                                                      330*150*4,
+                                                      330,
+                                                      150,
+                                                      GL_RGBA,
+                                                      GL_UNSIGNED_BYTE,
+                                                      GL_CLAMP_TO_EDGE,
+                                                      GL_CLAMP_TO_EDGE,
+                                                      false};
+
+    m_logo_1 = new TexturedHUDParallelogram(glm::vec2(10.0f, 10.0f),
+                                            glm::vec2(220.0f, 0.0f),
+                                            glm::vec2(0.0f, 100.0f),
+                                            logo1_texture);
+
+    RenderTask::texture_buffer_group logo2_texture = {(const GLvoid*)factory.createInstance("Logo_E@H")->data()->data(),
+                                                      178*115*4,
+                                                      178,
+                                                      115,
+                                                      GL_RGBA,
+                                                      GL_UNSIGNED_BYTE,
+                                                      GL_CLAMP_TO_EDGE,
+                                                      GL_CLAMP_TO_EDGE,
+                                                      false};
+
+    m_logo_2 = new TexturedHUDParallelogram(glm::vec2(10.0f, m_YStartPosTop - 115.0f),
+                                            glm::vec2(178.0f, 0.0f),
+                                            glm::vec2(0.0f, 115.0f),
+                                            logo2_texture);
+    }
+
+void Starsphere::make_user_info(void) {
+    SDL_Color color = {255, 255, 255, 0};
+    SDL_Surface *text_surface;
+    if(!(text_surface=TTF_RenderText_Blended(m_FontText ,"Mike Hewson", color))){
+        ErrorHandler::record("Starsphere::make_user() : can't make SDL_Surface ", ErrorHandler::FATAL);
+        }
+
+    RenderTask::texture_buffer_group user_info_texture = {(const GLvoid*)text_surface->pixels,
+                                                          text_surface->w * text_surface->h * 4,
+                                                          text_surface->w,
+                                                          text_surface->h,
+                                                          GL_RGBA,
+                                                          GL_UNSIGNED_BYTE,
+                                                          GL_CLAMP_TO_EDGE,
+                                                          GL_CLAMP_TO_EDGE,
+                                                          false};
+
+    m_user_info = new TexturedHUDParallelogram(glm::vec2(m_XStartPosRight - text_surface->w, m_YStartPosTop - text_surface->h),
+                                               glm::vec2(text_surface->w, 0.0f),
+                                               glm::vec2(0.0f, text_surface->h),
+                                               user_info_texture);
+    }
+
 /**
  * Window resize/remap
  */
@@ -1310,7 +1371,8 @@ void Starsphere::resize(const int width, const int height) {
     TransformGlobals::setClientScreenDimensions(height, width);
 
     // Adjust HUD config.
-    m_YStartPosTop = m_CurrentHeight - 25;
+    m_YStartPosTop = m_CurrentHeight - 10;
+    m_XStartPosRight = m_CurrentWidth -10;
 
     // Make sure the search marker is updated (conditional rendering!)
     m_RefreshSearchMarker = true;
@@ -1385,26 +1447,9 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
     // to a one byte boundary. This done mainly for optimizing font setup.
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-    // Create factory instance to then access the texture/bitmap.
-    ResourceFactory factory;
-
-    // Create HUD features
-    RenderTask::texture_buffer_group logo1_texture = {(const GLvoid*)factory.createInstance("AppIconBMP")->data()->data(),
-                                                      384*256*3,
-                                                      384,
-                                                      256,
-                                                      GL_RGB,
-                                                      GL_UNSIGNED_BYTE,
-                                                      GL_CLAMP_TO_EDGE,
-                                                      GL_CLAMP_TO_EDGE,
-                                                      false};
-
-    m_logo_1 = new TexturedHUDParallelogram(glm::vec2(10.0f, 10.0f),
-                                            glm::vec2(384.0f, 0.0f),
-                                            glm::vec2(0.0f, 256.0f),
-                                            logo1_texture);
-
     // Create rendering tasks for given 3D features.
+    make_logos();
+    make_user_info();
     make_constellations();
     make_gammas();
     make_globe_mesh_lat_long();
@@ -1557,6 +1602,9 @@ void Starsphere::render(const double timeOfDay) {
     m_camera = m_orthographic_projection * m_view * m_rotation;
 
     m_logo_1->utilise();
+    m_logo_2->utilise();
+
+    m_user_info->utilise();
 
     // draw the search marker (gunsight)
     if(isFeature(MARKER)) {
