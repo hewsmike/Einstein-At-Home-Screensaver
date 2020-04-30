@@ -48,6 +48,7 @@ void BOINCClientAdapter::initialize() {
 
         m_Initialized = true;
         }
+    std::cout << "A big HI from BOINCClientAdapter Initialisation Land !?" << std::endl;
     }
 
 void BOINCClientAdapter::refresh() {
@@ -82,6 +83,7 @@ void BOINCClientAdapter::readSharedMemoryArea() {
             // fine, get the contents recursively
             m_SharedMemoryAreaAvailable = true;
             readSharedMemoryArea();
+            std::cout << "Happy as a pig in it, from BOINCClientAdapter readSharedMemoryArea Land !?" << std::endl;
             }
         else {
             // bad luck

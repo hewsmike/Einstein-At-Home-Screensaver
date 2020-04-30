@@ -64,7 +64,9 @@ TextureBuffer::TextureBuffer(const GLvoid* texture_data,
        (format == GL_LUMINANCE) ||
        (format == GL_LUMINANCE_ALPHA) ||
        (format == GL_RGB) ||
-       (format == GL_RGBA)) {
+       (format == GL_BGR) ||
+       (format == GL_RGBA) ||
+       (format == GL_BGRA)) {
         m_format = format;
         }
     else {
@@ -162,7 +164,7 @@ void TextureBuffer::loadBuffer(void) {
     // list as we don't change/convert for this application.
     glTexImage2D(GL_TEXTURE_2D,
                  DEFAULT_MIPMAP_BASE_LEVEL,     // Mipmap level zero.
-                 m_format,                      // Storage format ( to be stored in state machine ) .
+                 GL_RGBA,                       // Storage format ( to be stored in state machine ) .
                  m_width,                       // image width in texels.
                  m_height,                      // image height in texels.
                  DEFAULT_IMAGE_BORDER_WIDTH,    // Usually no image border.

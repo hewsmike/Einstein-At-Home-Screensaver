@@ -1291,7 +1291,7 @@ void Starsphere::make_logos(void) {
                                                       330*150*4,
                                                       330,
                                                       150,
-                                                      GL_RGBA,
+                                                      GL_BGRA,
                                                       GL_UNSIGNED_BYTE,
                                                       GL_CLAMP_TO_EDGE,
                                                       GL_CLAMP_TO_EDGE,
@@ -1306,7 +1306,7 @@ void Starsphere::make_logos(void) {
                                                       178*115*4,
                                                       178,
                                                       115,
-                                                      GL_RGBA,
+                                                      GL_BGRA,
                                                       GL_UNSIGNED_BYTE,
                                                       GL_CLAMP_TO_EDGE,
                                                       GL_CLAMP_TO_EDGE,
@@ -1319,26 +1319,30 @@ void Starsphere::make_logos(void) {
     }
 
 void Starsphere::make_user_info(void) {
-    SDL_Color color = {255, 255, 255, 0};
-    SDL_Surface *text_surface;
-    if(!(text_surface=TTF_RenderText_Blended(m_FontText ,"Mike Hewson", color))){
+    this->refreshLocalBOINCInformation();
+    SDL_Color color = {255, 255, 255, 255};
+    SDL_Surface* text_surface;
+    if(!(text_surface=TTF_RenderText_Blended(m_FontText, m_UserName.c_str(), color))){
         ErrorHandler::record("Starsphere::make_user() : can't make SDL_Surface ", ErrorHandler::FATAL);
         }
 
     RenderTask::texture_buffer_group user_info_texture = {(const GLvoid*)text_surface->pixels,
-                                                          text_surface->w * text_surface->h * 4,
-                                                          text_surface->w,
-                                                          text_surface->h,
-                                                          GL_RGBA,
-                                                          GL_UNSIGNED_BYTE,
-                                                          GL_CLAMP_TO_EDGE,
-                                                          GL_CLAMP_TO_EDGE,
-                                                          false};
+                                                              text_surface->w * text_surface->h * 4,
+                                                              text_surface->w,
+                                                              text_surface->h,
+                                                              GL_RGBA,
+                                                              GL_UNSIGNED_BYTE,
+                                                              GL_CLAMP_TO_EDGE,
+                                                              GL_CLAMP_TO_EDGE,
+                                                              false};
 
-    m_user_info = new TexturedHUDParallelogram(glm::vec2(m_XStartPosRight - text_surface->w, m_YStartPosTop - text_surface->h),
-                                               glm::vec2(text_surface->w, 0.0f),
-                                               glm::vec2(0.0f, text_surface->h),
-                                               user_info_texture);
+    // The negative Y-offset vector here is in order to invert the SDL image.
+    m_user_info = new TexturedHUDParallelogram(glm::vec2(m_XStartPosRight - text_surface->w * 2, m_YStartPosTop),
+                                                   glm::vec2(text_surface->w * 2, 0.0f),
+                                                   glm::vec2(0.0f, -text_surface->h * 2),
+                                                   user_info_texture);
+
+    delete text_surface;
     }
 
 /**
@@ -1372,7 +1376,7 @@ void Starsphere::resize(const int width, const int height) {
 
     // Adjust HUD config.
     m_YStartPosTop = m_CurrentHeight - 10;
-    m_XStartPosRight = m_CurrentWidth -10;
+    m_XStartPosRight = m_CurrentWidth - 10;
 
     // Make sure the search marker is updated (conditional rendering!)
     m_RefreshSearchMarker = true;
@@ -1501,9 +1505,9 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
     glLineWidth(DEFAULT_LINE_WIDTH);
 
     // Some selected drawing quality choices.
-    glEnable(GL_POINT_SMOOTH);                            // Jaggy reduction, but this per primitve
-    glEnable(GL_LINE_SMOOTH);                            // anti-aliasing depends on hardware etc ...
-    glEnable(GL_CULL_FACE);                                // Culling of rear faces
+    glEnable(GL_POINT_SMOOTH);                          // Jaggy reduction, but this per primitve
+    glEnable(GL_LINE_SMOOTH);                           // anti-aliasing depends on hardware etc ...
+    // glEnable(GL_CULL_FACE);                          // No culling of rear faces, important for HUD.
     glFrontFace(GL_CCW);                                // Front facing is counterclockwise
 
     /// TODO - sort out this quality selection business ?

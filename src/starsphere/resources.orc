@@ -22,7 +22,7 @@
 
 FontSansSerif|LiberationSans-Regular.ttf.res
 # AppIconBMP|OCL_RGBA.data.res
-Logo_OCL|OCL_RGBA.data.res
+Logo_OCL|OCL_ABGR.data.res
 Logo_E@H|E@H_RGBA.data.res
 # Shaders
 FragmentShader_Pass_Color3|fs_pass.res
