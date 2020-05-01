@@ -48,7 +48,6 @@ void BOINCClientAdapter::initialize() {
 
         m_Initialized = true;
         }
-    std::cout << "A big HI from BOINCClientAdapter Initialisation Land !?" << std::endl;
     }
 
 void BOINCClientAdapter::refresh() {
