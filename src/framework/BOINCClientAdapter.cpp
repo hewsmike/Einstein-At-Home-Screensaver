@@ -82,7 +82,6 @@ void BOINCClientAdapter::readSharedMemoryArea() {
             // fine, get the contents recursively
             m_SharedMemoryAreaAvailable = true;
             readSharedMemoryArea();
-            std::cout << "Happy as a pig in it, from BOINCClientAdapter readSharedMemoryArea Land !?" << std::endl;
             }
         else {
             // bad luck
