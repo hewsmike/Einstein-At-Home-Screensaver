@@ -218,6 +218,8 @@ endif
 $(PRODUCT_LOWER)_Einstein_$(GRAV): $(DEPS) $(PRODUCT_SRC)/main.cpp $(TARGET_XTRA_DEPS) $(OBJS)
 	$(CXX) -g $(CPPFLAGS) $(LDFLAGS) $(PRODUCT_SRC)/main.cpp -o "graphics_app=einstein_RUNLABEL_VERSION_graphics_$(TARGET_APPEND)" $(OBJS) $(LIBS)
 
+# "graphics_app=einstein_RUNLABEL_VERSION_graphics_$(TARGET_APPEND)"
+
 #$(PRODUCT_LOWER)_Einstein_$(RADIO): $(DEPS) $(PRODUCT_SRC)/main.cpp $(TARGET_XTRA_DEPS) $(OBJS)
 #	$(CXX) -g $(CPPFLAGS) $(LDFLAGS) $(PRODUCT_SRC)/main.cpp -o "graphics_app=einsteinbinary_RUNLABEL_VERSION_graphics_$(TARGET_APPEND)" $(OBJS) $(LIBS)
 
@@ -243,7 +245,7 @@ endif
 # Generic.
 install:
 	mkdir -p $(PRODUCT_INSTALL)/../dist
-	cp graphics_app* $(PRODUCT_INSTALL)/../dist
+	cp -f graphics_app* $(PRODUCT_INSTALL)/../dist
 
 clean:
 	rm -rf $(RESOURCESPEC).cpp $(OBJS) graphics_app*
