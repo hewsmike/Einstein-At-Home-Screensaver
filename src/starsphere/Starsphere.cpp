@@ -99,7 +99,7 @@ Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
     m_camera = glm::mat4(1.0f);
 
     // HUD data pointers
-    m_logo_1 = NULL;
+    m_logo = NULL;
 
     // Render pointers initialised
     m_render_task_arms = NULL;
@@ -204,8 +204,7 @@ Starsphere::~Starsphere() {
     if(m_FontText) delete m_FontText;
 
     // Delete HUD element pointers.
-    if(m_logo_1) delete m_logo_1;
-    if(m_logo_2) delete m_logo_2;
+    if(m_logo) delete m_logo;
 
     // Delete render task pointers.
     if(m_render_task_arms) delete m_render_task_arms;
@@ -1282,27 +1281,11 @@ void Starsphere::make_globe_mesh_texture(void) {
     m_render_task_earth->acquire();
     }
 
-void Starsphere::make_logos(void) {
+void Starsphere::make_logo(void) {
     // Create factory instance to then access the texture/bitmap.
     ResourceFactory factory;
 
-    // Create HUD logo features.
-    RenderTask::texture_buffer_group logo1_texture = {(const GLvoid*)factory.createInstance("Logo_OCL")->data()->data(),
-                                                      330*150*4,
-                                                      330,
-                                                      150,
-                                                      GL_BGRA,
-                                                      GL_UNSIGNED_BYTE,
-                                                      GL_CLAMP_TO_EDGE,
-                                                      GL_CLAMP_TO_EDGE,
-                                                      false};
-
-    m_logo_1 = new TexturedHUDParallelogram(glm::vec2(10.0f, 10.0f),
-                                            glm::vec2(220.0f, 0.0f),
-                                            glm::vec2(0.0f, 100.0f),
-                                            logo1_texture);
-
-    RenderTask::texture_buffer_group logo2_texture = {(const GLvoid*)factory.createInstance("Logo_E@H")->data()->data(),
+    RenderTask::texture_buffer_group logo_texture = {(const GLvoid*)factory.createInstance("Logo_E@H")->data()->data(),
                                                       178*115*4,
                                                       178,
                                                       115,
@@ -1312,10 +1295,10 @@ void Starsphere::make_logos(void) {
                                                       GL_CLAMP_TO_EDGE,
                                                       false};
 
-    m_logo_2 = new TexturedHUDParallelogram(glm::vec2(10.0f, m_YStartPosTop - 115.0f),
+    m_logo = new TexturedHUDParallelogram(glm::vec2(10.0f, m_YStartPosTop - 115.0f),
                                             glm::vec2(178.0f, 0.0f),
                                             glm::vec2(0.0f, 115.0f),
-                                            logo2_texture);
+                                            logo_texture);
     }
 
 void Starsphere::make_user_info(void) {
@@ -1452,7 +1435,7 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
     // Create rendering tasks for given 3D features.
-    make_logos();
+    make_logo();
     make_user_info();
     make_constellations();
     make_gammas();
@@ -1605,8 +1588,7 @@ void Starsphere::render(const double timeOfDay) {
     // Render the 2D features in our HUD.
     m_camera = m_orthographic_projection * m_view * m_rotation;
 
-    m_logo_1->utilise();
-    m_logo_2->utilise();
+    m_logo->utilise();
 
     m_user_info->utilise();
 

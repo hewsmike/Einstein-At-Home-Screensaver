@@ -111,7 +111,7 @@ class Starsphere : public AbstractGraphicsEngine {
          *
          * \param timeOfDay The current time (e.g. BOINC's dtime(), used for time-based rendering evolution)
          */
-        void render(const double timeOfDay);
+        virtual void render(const double timeOfDay);
 
         /**
          * \brief Event handler for mouse button events
@@ -401,8 +401,7 @@ class Starsphere : public AbstractGraphicsEngine {
         static const GLuint NUMBER_OF_AXES;
 
         /// HUD elements.
-        TexturedHUDParallelogram* m_logo_1;
-        TexturedHUDParallelogram* m_logo_2;
+        TexturedHUDParallelogram* m_logo;
         TexturedHUDParallelogram* m_user_info;
 
         /// Cumulative frame count.
@@ -476,7 +475,7 @@ class Starsphere : public AbstractGraphicsEngine {
                                    GLuint array_offset);
 
         /// Generate TexturedHUDParalelograms for logos.
-        void make_logos(void);
+        void make_logo(void);
 
         void make_user_info(void);
 

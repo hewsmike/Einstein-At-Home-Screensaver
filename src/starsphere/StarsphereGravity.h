@@ -25,6 +25,8 @@
 
 #include "Starsphere.h"
 #include "EinsteinGravityAdapter.h"
+#include "TexturedHUDParallelogram.h"
+
 // #include "TextString.h"
 
 using namespace std;
@@ -79,6 +81,8 @@ class StarsphereGravity : public Starsphere {
          */
         void resize(const int width, const int height);
 
+        void render(const double timeOfDay);
+
         /**
          * \brief This method is called when the BOINC client information should be updated
          *
@@ -92,6 +96,8 @@ class StarsphereGravity : public Starsphere {
         void refreshBOINCInformation();
 
     private:
+        TexturedHUDParallelogram* m_logo;
+
         /**
          * \brief Render science run specific logo
          *

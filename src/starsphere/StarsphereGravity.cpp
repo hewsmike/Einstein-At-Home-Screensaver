@@ -23,21 +23,24 @@
 #include <time.h>
 
 #include "ErrorHandler.h"
+#include "ResourceFactory.h"
 #include "TransformGlobals.h"
 
 StarsphereGravity::StarsphereGravity() :
         Starsphere(EinsteinGravityAdapter::SharedMemoryIdentifier),
         m_EinsteinAdapter(&m_BoincAdapter) {
     m_CurrentTime = "";
-    //m_logo_1 = NULL;
-    //m_logo_2 = NULL;
+    m_logo = NULL;
     }
 
 StarsphereGravity::~StarsphereGravity() {
+    if(m_logo) delete m_logo;
     }
 
 void StarsphereGravity::initialize(const int width, const int height, const Resource* font) {
     Starsphere::initialize(width, height, font);
+
+    renderLogo();
 
     // Fatal error if no font resource supplied.
     if(!m_FontResource) {
@@ -97,6 +100,12 @@ void StarsphereGravity::resize(const int width, const int height) {
     // adjust HUD config
     m_XStartPosRight = m_CurrentWidth - 125;
     m_XStartPosClock = m_CurrentWidth - 98;
+    }
+
+void StarsphereGravity::render(const double timeOfDay) {
+    Starsphere::render(timeOfDay);
+
+    m_logo->utilise();
     }
 
 void StarsphereGravity::refreshBOINCInformation() {
@@ -178,30 +187,22 @@ void StarsphereGravity::renderSearchInformation() {
     }
 
 void StarsphereGravity::renderLogo() {
-    static bool m_isConfigured = false;
+    // Create factory instance to then access the texture/bitmap.
+    ResourceFactory factory;
 
-    SDL_Color color1 = {255, 255, 255, 255};
-    SDL_Color color2 = {255, 100, 100, 255};
+    // Create HUD logo features.
+    RenderTask::texture_buffer_group logo_texture = {(const GLvoid*)factory.createInstance("Logo_OCL")->data()->data(),
+                                                      330*150*4,
+                                                      330,
+                                                      150,
+                                                      GL_BGRA,
+                                                      GL_UNSIGNED_BYTE,
+                                                      GL_CLAMP_TO_EDGE,
+                                                      GL_CLAMP_TO_EDGE,
+                                                      false};
 
-    if(m_isConfigured == false) {
-//        // NB 2D version of TextString being summoned.
-//        m_logo_1 = new TextString(glm::vec2(0.0f, TransformGlobals::getClientScreenHeight()),
-//                                  glm::vec2(0.0f, -50.0f),
-//                                  glm::vec2(250.0f, 0.0f),
-//                                  m_FontLogo1,
-//                                  "Einstein At Home",
-//                                  TextString::SOLID,
-//                                  color1);
-//        m_logo_2 = new TextString(glm::vec2(TransformGlobals::getClientScreenWidth() - 300.0f, TransformGlobals::getClientScreenHeight()),
-//                                  glm::vec2(0.0f, -50.0f),
-//                                  glm::vec2(300.0f, 0.0f),
-//                                  m_FontLogo1,
-//                                  "World Year of Physics 2005",
-//                                  TextString::SOLID,
-//                                  color2);
-//
-//        m_isConfigured = true;
-        }
-    // m_logo_1->utilise();
-    // m_logo_2->utilise();
+    m_logo = new TexturedHUDParallelogram(glm::vec2(10.0f, 10.0f),
+                                          glm::vec2(220.0f, 0.0f),
+                                          glm::vec2(0.0f, 100.0f),
+                                          logo_texture);
     }
