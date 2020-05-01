@@ -1,6 +1,6 @@
 ###########################################################################
 #   Copyright (C) 2008 by Oliver Bock                                     #
-#   oliver.bock[AT]aei.mpg.de        					  #
+#   oliver.bock[AT]aei.mpg.de        					                  #
 #                                                                         #
 #   Copyright (C) 2020 by Mike Hewson	                                  #
 #   hewsmike[AT]iinet.net.au                                              #
@@ -39,6 +39,7 @@ CPPFLAGS += -D$(PRODUCT_UPPER)
 CXX?=g++
 
 # variables
+CPPFLAGS += -I$(FRAMEWORK_BUILD)
 CPPFLAGS += -std=c++11
 CPPFLAGS += $(shell $(FRAMEWORK_INSTALL)/bin/freetype-config --cflags)
 CPPFLAGS += $(shell $(FRAMEWORK_INSTALL)/bin/xml2-config --cflags)
@@ -67,7 +68,8 @@ CPPFLAGS += -I$(FRAMEWORK_SRC)/../solarsystem
 CPPFLAGS += -I$(FRAMEWORK_SRC)/../starsphere
 CPPFLAGS += -I$(FRAMEWORK_SRC)/../ogl_utility
 CPPFLAGS += -I$(FRAMEWORK_SRC)/../framework
-CPPFLAGS += -I$(SOLARSYSTEM_INSTALL)/include/boinc
+
+$(info CPPFLAGS is $(CPPFLAGS))
 
 # primary role based tagets
 default: release
@@ -83,7 +85,7 @@ release: CPPFLAGS += -DNDEBUG -ggdb3 -O3 -Wall -Wno-switch-enum
 $(info CPPFLAGS is $(CPPFLAGS))
 
 # file based targets
-libframework.a: $(OBJS) $(FRAMEWORK_SRC)/framework.h
+libframework.a: $(OBJS) $(FRAMEWORK_SRC)/framework.h $(FRAMEWORK_SRC)/glm_settings.h
 	ar rcs libframework.a $(OBJS)
 
 AbstractGraphicsEngine.o: $(DEPS) $(FRAMEWORK_SRC)/AbstractGraphicsEngine.cpp $(FRAMEWORK_SRC)/AbstractGraphicsEngine.h
