@@ -258,6 +258,10 @@ build_boinc() {
 	make >> $LOGFILE 2>&1 || failure
     make install >> $LOGFILE 2>&1 || failure
 
+    # Obtusely, and perversely, these need manually moving.
+    cp -f $ROOT/3rdparty/boinc/project_specific_defines.h $ROOT/install/include/boinc/project_specific_defines.h
+    cp -f $ROOT/build/boinc/config.h $ROOT/install/include/boinc/config.h
+
     log "Successfully built and installed BOINC!"
 
     save_build_state $BS_BUILD_BOINC || failure
