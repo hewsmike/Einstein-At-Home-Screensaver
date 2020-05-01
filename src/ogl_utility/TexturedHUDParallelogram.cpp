@@ -109,7 +109,7 @@ const std::string TexturedHUDParallelogram::m_fragment_shader("#version 330\n"
 TexturedHUDParallelogram::TexturedHUDParallelogram(glm::vec2 position,
                                                    glm::vec2 width_offset,
                                                    glm::vec2 height_offset,
-											       RenderTask::texture_buffer_group t_group) :
+						                           RenderTask::texture_buffer_group t_group) :
                                                        m_position(position),
                                                        m_width_offset(width_offset),
                                                        m_height_offset(height_offset) {
@@ -117,16 +117,7 @@ TexturedHUDParallelogram::TexturedHUDParallelogram(glm::vec2 position,
     if(t_group.texture_data == NULL) {
         ErrorHandler::record("TexturedParallelogram::TexturedParallelogram() : Texture not provided!", ErrorHandler::FATAL);
         }
-
-    m_t_group.texture_data = t_group.texture_data;
-    m_t_group.bytes = t_group.bytes;
-    m_t_group.width = t_group.width;
-    m_t_group.height = t_group.height;
-    m_t_group.format = t_group.format;
-    m_t_group.data_type = t_group.data_type;
-    m_t_group.wrap_type_s = t_group.wrap_type_s;
-    m_t_group.wrap_type_t = t_group.wrap_type_t;
-    m_t_group.mipmaps = t_group.mipmaps;
+    m_t_group = t_group;
 
     // I'm not going to check for 'sensible' choices of position and offsets.
     m_render_task = NULL;
@@ -151,21 +142,19 @@ glm::vec2 TexturedHUDParallelogram::widthOffset(void) {
 
 bool TexturedHUDParallelogram::configure(void) {
     // Construct a shader group structure.
+    // Use strings defined at top of file.
     RenderTask::shader_group m_s_group;
     m_s_group.frag_shader_source = m_fragment_shader;
-
     m_s_group.vert_shader_source = m_vertex_shader_2D;
 
+    // Construct a render task.	
     m_render_task = new RenderTask(m_s_group, m_t_group);
-
     m_render_task->setUniform("CameraMatrix", TransformGlobals::getOrthographicTransformMatrix());
-
     m_render_task->setUniform("base_position", &m_position);
-
     m_render_task->setUniform("height_offset", &m_height_offset);
-
     m_render_task->setUniform("width_offset", &m_width_offset);
-
+	
+	// Acquire OpenGL assets.
     m_render_task->acquire();
 
     this->setConfigurationState(true);
@@ -173,8 +162,9 @@ bool TexturedHUDParallelogram::configure(void) {
     }
 
 void TexturedHUDParallelogram::utilise(void) {
-    if(this->isConfigured() == false) {
+    if(!this->isConfigured()) {
         configure();
         }
+    // Render two triangles, four vertices in all.
     m_render_task->render(GL_TRIANGLE_FAN, VERTEX_COUNT);
     }
