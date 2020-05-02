@@ -62,7 +62,7 @@ class StarsphereGravity : public Starsphere {
          * \brief This method is called to initialize the engine
          *
          * As this method overrides its parent's implementation, it calls Starsphere::initialize()
-         * first in order to "add" the sepcialized parts afterwards.
+         * first in order to "add" the specialized parts afterwards.
          *
          * \param width The current width of the display surface
          * \param height The current height of the display surface
@@ -74,14 +74,22 @@ class StarsphereGravity : public Starsphere {
          * \brief This method is called when the windowing system encounters a window resize event
          *
          * As this method overrides its parent's implementation, it calls Starsphere::resize()
-         * first in order to "add" the sepcialized parts afterwards.
+         * first in order to "add" the specialized parts afterwards.
          *
          * \param width The new width of the display surface
          * \param height The new height of the display surface
          */
-        void resize(const int width, const int height);
+        virtual void resize(const int width, const int height);
 
-        void render(const double timeOfDay);
+         /**
+         * \brief This method is called when the windowing system encounters a window render event
+         *
+         * As this method overrides its parent's implementation, it calls Starsphere::render()
+         * first in order to "add" the specialized parts afterwards.
+         *
+         * \param timeOfDay The time of day
+         */
+        virtual void render(const double timeOfDay);
 
         /**
          * \brief This method is called when the BOINC client information should be updated

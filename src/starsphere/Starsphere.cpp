@@ -30,6 +30,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <util.h>           // for dday().
 
 #include "Starsphere.h"
 
@@ -81,7 +82,6 @@ const GLuint Starsphere::VERTICES_PER_ARM(2);
 const GLuint Starsphere::VERTICES_PER_LINE(2);
 const GLfloat Starsphere::FARTHEST_VIEWPOINT(20.0f);
 
-
 Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
     AbstractGraphicsEngine(sharedMemoryAreaIdentifier) {
     m_framecount = 0;
@@ -94,9 +94,9 @@ Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
     m_orthographic_projection = glm::mat4(1.0f);
 
     m_view = glm::mat4(1.0f);
-    m_rotation = glm::mat4(1.0f);
-    m_axis = glm::vec3(0.0f);
+    m_view_earth = glm::mat4(1.0f);
     m_camera = glm::mat4(1.0f);
+    m_camera_earth = glm::mat4(1.0f);
 
     // HUD data pointers
     m_logo = NULL;
@@ -113,6 +113,7 @@ Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
     m_render_task_star = NULL;
 
     m_rotation = glm::mat4(1.0f);
+    m_rotation_earth = glm::mat4(1.0f);
     m_axis = glm::vec3(1.0f, 0.0f, 0.0f);
 
     m_ObservatoryDrawTimeLocal = 0;
@@ -531,29 +532,27 @@ void Starsphere::make_gammas(void) {
  * Create markers on sky sphere for LLO, LHO, GEO and VIRGO
  */
 
-GLfloat Starsphere::RAofZenith(double T, GLfloat LONdeg) {
+GLfloat Starsphere::RAofZenithGreenwich(double T) {
+    // unix epoch at 12h  1/1/2000
+    const double T_0 = 946728000.0;
 
-//    // unix epoch at 12h  1/1/2000
-//    const double T_0 = 946728000.0;
-//
-//    //  UT seconds of the day
-//    double T_s = fmod(T, 24.0*3600.0);
-//
-//    // Julian centuries since 12h 1/1/2000 and 0h today
-//    double T_c = (T - T_s - T_0)/3155760000.0;
-//
-//    // GMST at 0h today in seconds
-//    double GMST0 = 6.0*3600.0 + 41.0*60.0 + 50.54841 + (8640184.812866
-//            + 0.093104*T_c)*T_c;
-//
-//    // GMST now in seconds
-//    double GMST = GMST0 + 1.002738*T_s;
-//
-//    // longitude defined as west positive
-//    GLfloat alpha = (GMST/(24.0*3600.0))*360.0 - LONdeg;
-//
-//    return alpha;
-    return 1.0f;
+    //  UT seconds of the day
+    double T_s = fmod(T, 24.0*3600.0);
+
+    // Julian centuries since 12h 1/1/2000 and 0h today
+    double T_c = (T - T_s - T_0)/3155760000.0;
+
+    // GMST at 0h today in seconds
+    double GMST0 = 6.0*3600.0 + 41.0*60.0 + 50.54841 + (8640184.812866
+            + 0.093104*T_c)*T_c;
+
+    // GMST now in seconds
+    double GMST = GMST0 + 1.002738*T_s;
+
+    // Now convert to RA.
+    GLfloat alpha = (GMST/(24.0*3600.0))*360.0;
+
+    return alpha;
     }
 
 void Starsphere::make_local_arms(GLfloat latitude, GLfloat longitude,
@@ -842,7 +841,7 @@ void Starsphere::make_observatories(void) {
     m_render_task_arms->addSpecification({1, "color", 3, GL_FLOAT, GL_FALSE});
 
     // For program uniforms need client side pointers.
-    m_render_task_arms->setUniform("CameraMatrix", TransformGlobals::getCameraTransformMatrix());
+    m_render_task_arms->setUniform("CameraMatrix", &m_camera_earth);
 
     m_render_task_arms->setUniform("point_size", &m_geode_line_width);
 
@@ -1274,7 +1273,7 @@ void Starsphere::make_globe_mesh_texture(void) {
     m_render_task_earth->addSpecification({1, "aTexCoord", 2, GL_FLOAT, GL_FALSE});
 
     // For program uniforms need client side pointers.
-    m_render_task_earth->setUniform("CameraMatrix", TransformGlobals::getCameraTransformMatrix());
+    m_render_task_earth->setUniform("CameraMatrix", &m_camera_earth);
     m_render_task_earth->setUniform("point_size", &m_globe_point_size);
 
     // Claim all required state machine resources for this rendering task.
@@ -1461,7 +1460,7 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
     setFeature(LOGO, true);
     setFeature(MARKER, true);
     setFeature(EARTH, true);
-    setFeature(ROLL_STOP, false);
+    setFeature(ROLL_STOP, true);
 
     glActiveTexture(GL_TEXTURE0);
 
@@ -1511,6 +1510,8 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
  * Rendering routine:  this is what does the drawing:
  */
 void Starsphere::render(const double timeOfDay) {
+    // timeOfDay is in Unix time ( seconds) since Epoch.
+
     const glm::mat4 identity(1.0f);
     const GLuint AUTO_ROTATE_FRAME_COUNT(300);
     const GLfloat RANDOM_ROLL_RATE(0.0025f);
@@ -1524,6 +1525,8 @@ void Starsphere::render(const double timeOfDay) {
     // Unrotated viewpoint is along the Open GL positive z-axis
     // by an amount as per viewpoint radius.
     m_view = glm::translate(identity, glm::vec3(0.0f, 0.0f, -m_viewpt_radius));
+
+    m_view_earth = m_view;
 
     // Stop autorotation if close to the Earth. Allow user manipulation
     // via dragging mouse pointer while holding down the left mouse button.
@@ -1544,7 +1547,7 @@ void Starsphere::render(const double timeOfDay) {
             float random_x = (2.0f * rand()/float(RAND_MAX)) - 1.0f;
             float random_y = (2.0f * rand()/float(RAND_MAX)) - 1.0f;
             float random_z = (2.0f * rand()/float(RAND_MAX)) - 1.0f;
-            m_axis = glm::vec3(random_x, random_y, random_z);
+            m_axis = glm::vec3(0.0f, 1.0f, 0.0f);
             // Set a new random value until next change of axis.
             rotate_interval = rand() % AUTO_ROTATE_FRAME_COUNT;
             }
@@ -1555,6 +1558,19 @@ void Starsphere::render(const double timeOfDay) {
 
     // Render the 3D features in our model/world space.
     m_camera = m_perspective_projection * m_view * m_rotation;
+
+    // The Earth and observatories are special cases, because they rotate in
+    // real-time with respect to the celestial sphere.
+    m_rotation_earth = m_rotation * glm::rotate(identity,
+                                                -glm::radians(RAofZenithGreenwich(timeOfDay)),
+                                                glm::vec3(0.0f, 1.0f, 0.0f));
+    m_camera_earth = m_perspective_projection * m_view_earth * m_rotation_earth;
+    if(isFeature(EARTH)) {
+        m_render_task_earth->render(GL_TRIANGLES, m_earth_triangles*VERTICES_PER_TRIANGLE);
+        }
+    if(isFeature(OBSERVATORIES)) {
+        m_render_task_arms->render(GL_LINES, m_geode_lines*VERTICES_PER_LINE);
+        }
 
     // stars, pulsars, supernovae, grid ....
     if(isFeature(GAMMAS)) {
@@ -1575,12 +1591,7 @@ void Starsphere::render(const double timeOfDay) {
     if(isFeature(GRID)) {
         m_render_task_globe->render(GL_LINES, m_globe_lines*VERTICES_PER_LINE);
         }
-    if(isFeature(EARTH)) {
-        m_render_task_earth->render(GL_TRIANGLES, m_earth_triangles*VERTICES_PER_TRIANGLE);
-        }
-    if(isFeature(OBSERVATORIES)) {
-        m_render_task_arms->render(GL_LINES, m_geode_lines*VERTICES_PER_LINE);
-        }
+
     if(isFeature(AXES)) {
         m_render_task_axes->render(GL_LINES, NUMBER_OF_AXES*VERTICES_PER_LINE);
         }

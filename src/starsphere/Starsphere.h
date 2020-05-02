@@ -262,17 +262,16 @@ class Starsphere : public AbstractGraphicsEngine {
 
         /**
          * \brief Computes the Right Ascension of the zenith at a given time (from
-         * the Unix epoch, in seconds) at a given Longitude (in degrees)
+         * the Unix epoch, in seconds).
          *
          * From 'The Cambridge Handbook of Physics Formulas', Graham Woan, 2003
          * edition, CUP. (NOT the first edition), p177.
          *
          * \param T Current time in seconds since the epoch
-         * \param LONdeg Longitude in degrees
          *
          * \return The right ascension of the zenith
          */
-        GLfloat RAofZenith(double T, GLfloat LONdeg);
+        GLfloat RAofZenithGreenwich(double T);
 
         /**
          * \brief Creates a GL vertex in 3D sky sphere coordinates
@@ -463,6 +462,10 @@ class Starsphere : public AbstractGraphicsEngine {
         glm::mat4 m_rotation;
         glm::vec3 m_axis;
         glm::mat4 m_camera;
+
+        glm::mat4 m_view_earth;
+        glm::mat4 m_camera_earth;
+        glm::mat4 m_rotation_earth;
 
         void make_local_arms(GLfloat latitude, GLfloat longitude,
                              GLfloat x_arm_azimuth, GLfloat y_arm_azimuth,
