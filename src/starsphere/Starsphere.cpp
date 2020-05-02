@@ -1562,7 +1562,7 @@ void Starsphere::render(const double timeOfDay) {
     // The Earth and observatories are special cases, because they rotate in
     // real-time with respect to the celestial sphere.
     m_rotation_earth = m_rotation * glm::rotate(identity,
-                                                -glm::radians(RAofZenithGreenwich(timeOfDay)),
+                                                glm::radians(RAofZenithGreenwich(timeOfDay)),
                                                 glm::vec3(0.0f, 1.0f, 0.0f));
     m_camera_earth = m_perspective_projection * m_view_earth * m_rotation_earth;
     if(isFeature(EARTH)) {
@@ -1591,7 +1591,6 @@ void Starsphere::render(const double timeOfDay) {
     if(isFeature(GRID)) {
         m_render_task_globe->render(GL_LINES, m_globe_lines*VERTICES_PER_LINE);
         }
-
     if(isFeature(AXES)) {
         m_render_task_axes->render(GL_LINES, NUMBER_OF_AXES*VERTICES_PER_LINE);
         }
