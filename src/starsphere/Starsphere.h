@@ -402,6 +402,9 @@ class Starsphere : public AbstractGraphicsEngine {
         /// HUD elements.
         TexturedHUDParallelogram* m_logo;
         TexturedHUDParallelogram* m_user_info;
+        TexturedHUDParallelogram* m_team_info;
+        TexturedHUDParallelogram* m_total_info;
+        TexturedHUDParallelogram* m_RAC_info;
 
         /// Cumulative frame count.
         GLuint m_framecount;
