@@ -35,4 +35,6 @@ VertexShader_Pulsars|vertex_shader_single_color_single_pointsize.res
 VertexShader_Stars|vertex_shader_single_color_single_pointsize.res
 VertexShader_Supernovae|vertex_shader_single_color_single_pointsize.res
 FragmentShader_Texture|fragment_shader_text_coords.res
+# For Earth texturing.
 Earthmap|earthmap.data.res
+EarthmapBump|earthbump4k.res
