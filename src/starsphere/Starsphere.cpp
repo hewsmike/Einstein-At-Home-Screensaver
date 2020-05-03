@@ -25,6 +25,8 @@
  ***************************************************************************/
 
 #include <cstdlib>          // For abs(), rand(), srand()
+#include <cmath>
+#include <ctgmath>          // For modf()
 #include <ctime>            // for time()
 #include <iostream>
 #include <sstream>
@@ -63,8 +65,8 @@ const GLfloat Starsphere::PERSPECTIVE_NEAR_FRUSTUM_DISTANCE(0.1f);
 const GLfloat Starsphere::PERSPECTIVE_FAR_FRUSTUM_DISTANCE(100.0f);
 const GLfloat Starsphere::PERSPECTIVE_FOV_DEFAULT(45.0f);
 
-const GLuint Starsphere::GLOBE_LATITUDE_LAYERS(145);                    // Each pole is a layer in latitude too.
-const GLuint Starsphere::GLOBE_LONGITUDE_SLICES(288);
+const GLuint Starsphere::GLOBE_LATITUDE_LAYERS(289);                    // Each pole is a layer in latitude too.
+const GLuint Starsphere::GLOBE_LONGITUDE_SLICES(576);
 const GLfloat Starsphere::GLOBE_TEXTURE_OFFSET(180.0f);                 // Texture map starts at longitude 180
 const GLuint Starsphere::GRID_LATITUDE_LAYERS(19);                      // Each pole is a layer in latitude too.
 const GLuint Starsphere::GRID_LONGITUDE_SLICES(36);
@@ -100,6 +102,10 @@ Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
 
     // HUD data pointers
     m_logo = NULL;
+    m_user_info = NULL;
+    m_team_info = NULL;
+    m_total_info = NULL;
+    m_RAC_info = NULL;
 
     // Render pointers initialised
     m_render_task_arms = NULL;
@@ -206,6 +212,10 @@ Starsphere::~Starsphere() {
 
     // Delete HUD element pointers.
     if(m_logo) delete m_logo;
+    if(m_user_info) delete m_user_info;
+    if(m_team_info) delete m_team_info;
+    if(m_total_info) delete m_total_info;
+    if(m_RAC_info) delete m_RAC_info;
 
     // Delete render task pointers.
     if(m_render_task_arms) delete m_render_task_arms;
@@ -1166,6 +1176,23 @@ void Starsphere::make_globe_mesh_texture(void) {
     GLuint EARTH_TEXTURE_WIDTH = 2048;
     GLuint EARTH_TEXTURE_HEIGHT = 1024;
     GLuint EARTH_TEXTURE_COLOR_DEPTH = 3;
+    GLuint EARTHBUMP_WIDTH = 4000;
+    GLuint EARTHBUMP_HEIGHT = 2000;
+    GLfloat EARTHBUMP_LONGITUDE_OFFSET = 0.5f;
+    GLfloat EARTH_MAX_OFFSET = 0.03 * EARTH_RADIUS;
+
+    // Set up bump map for access.
+    ResourceFactory factory1;
+
+    // Get a string representing an std::string of character data.
+    std::string bump_string = factory1.createInstance("EarthmapBump")->std_string();
+    // Create a character array for later bump lookup.
+    char bumps[EARTHBUMP_WIDTH][EARTHBUMP_HEIGHT];
+    for(GLuint i = 0; i < EARTHBUMP_WIDTH; ++i) {
+        for(GLuint j = 0; j < EARTHBUMP_HEIGHT; ++j) {
+        bumps[i][j] = bump_string[i * EARTHBUMP_WIDTH + j];
+        }
+    }
 
     // Populate a vertex array.
     // Calculate the number of vertices. This is a full number of longitudinal slices for
@@ -1196,14 +1223,33 @@ void Starsphere::make_globe_mesh_texture(void) {
                 // position to the line at zero degrees.
                 temp = 0.0f;
                 }
+            // These are the texture coordinates of the current vertex.
+            GLfloat texture_s = float(longitudinal_slice)*LONG_TEXTURE_STEP;
+            // Texture map is inverted in the t direction.
+            GLfloat texture_t = 1.0f - latitude_layer*LAT_TEXTURE_STEP;
+            // Need to look up bump map to determine the outward radial offset.
+            // Zero is ocean level, 255 is Mt Everest.
+            GLfloat radius = EARTH_RADIUS;
+            // Need to determine a longitudinal offset in the s texture
+            // coordinate direction for the bump map.
+            GLfloat intpart;
+            GLfloat long_s_offseted = std::modf(texture_s + EARTHBUMP_LONGITUDE_OFFSET, &intpart);
+            // By truncation, lookup the bump array.
+            GLuint bump_s = GLuint(long_s_offseted * (EARTHBUMP_WIDTH - 1));
+            GLuint bump_t = GLuint(texture_t * (EARTHBUMP_HEIGHT - 1));
+            GLfloat bump = bumps[bump_s][bump_t];
+            // Here's the offset as a fraction of the maximum allowed.
+            GLfloat offset = EARTH_MAX_OFFSET * (float(bump)/256.0f);
+            radius += offset;
+            // Now convert to x, y and z from spherical coordinates.
             // However need to slide texture around the mesh so that Greenwich meridian appears at zero longitude.
-    		glm::vec3 globe_vertex = sphVertex3D(temp*LONG_STEP+GLOBE_TEXTURE_OFFSET, 90 - latitude_layer*LAT_STEP, EARTH_RADIUS);
+            glm::vec3 globe_vertex = sphVertex3D(temp*LONG_STEP+GLOBE_TEXTURE_OFFSET, 90 - latitude_layer*LAT_STEP, radius);
     		globe_vertex_data[vertex_counter*COORDS_PER_VERTEX] = globe_vertex.x;
     		globe_vertex_data[vertex_counter*COORDS_PER_VERTEX + 1] = globe_vertex.y;
     		globe_vertex_data[vertex_counter*COORDS_PER_VERTEX + 2] = globe_vertex.z;
     		// Line of 360 degrees longitude has horizontal texture coordinate of 1.0f
-    		globe_vertex_data[vertex_counter*COORDS_PER_VERTEX + 3] = float(longitudinal_slice)*LONG_TEXTURE_STEP;
-    		globe_vertex_data[vertex_counter*COORDS_PER_VERTEX + 4] = 1.0f - latitude_layer*LAT_TEXTURE_STEP;
+    		globe_vertex_data[vertex_counter*COORDS_PER_VERTEX + 3] = texture_s;
+    		globe_vertex_data[vertex_counter*COORDS_PER_VERTEX + 4] = texture_t;
     		++vertex_counter;
     		}
     	}
@@ -1235,11 +1281,11 @@ void Starsphere::make_globe_mesh_texture(void) {
         }
 
     // Create factory instance to then access the shader strings.
-    ResourceFactory factory;
+    ResourceFactory factory2;
 
     // Populate data structure indicating GLSL code use.
-    RenderTask::shader_group s_group1 = {factory.createInstance("VertexShader_Texture")->std_string(),
-    		                             factory.createInstance("FragmentShader_Texture")->std_string()};
+    RenderTask::shader_group s_group1 = {factory2.createInstance("VertexShader_Texture")->std_string(),
+    		                             factory2.createInstance("FragmentShader_Texture")->std_string()};
 
     // Populate data structure for vertices.
     RenderTask::vertex_buffer_group v_group1 = {globe_vertex_data,
@@ -1255,7 +1301,7 @@ void Starsphere::make_globe_mesh_texture(void) {
 											   GL_UNSIGNED_INT};
 
     // To get at the underlying texture data from a Resource instance, then cast it void ...
-	RenderTask::texture_buffer_group t_group1 =	{(const GLvoid*)factory.createInstance("Earthmap")->data()->data(),
+	RenderTask::texture_buffer_group t_group1 =	{(const GLvoid*)factory2.createInstance("Earthmap")->data()->data(),
                                                 EARTH_TEXTURE_WIDTH*EARTH_TEXTURE_HEIGHT*EARTH_TEXTURE_COLOR_DEPTH,
                                                 EARTH_TEXTURE_WIDTH,
                                                 EARTH_TEXTURE_HEIGHT,
@@ -1305,24 +1351,90 @@ void Starsphere::make_user_info(void) {
     SDL_Color color = {255, 255, 255, 255};
     SDL_Surface* text_surface;
     if(!(text_surface=TTF_RenderText_Blended(m_FontText, m_UserName.c_str(), color))){
-        ErrorHandler::record("Starsphere::make_user() : can't make SDL_Surface ", ErrorHandler::FATAL);
+        ErrorHandler::record("Starsphere::make_user() : can't make SDL_Surface for user!", ErrorHandler::FATAL);
         }
 
     RenderTask::texture_buffer_group user_info_texture = {(const GLvoid*)text_surface->pixels,
-                                                              text_surface->w * text_surface->h * 4,
-                                                              text_surface->w,
-                                                              text_surface->h,
-                                                              GL_RGBA,
-                                                              GL_UNSIGNED_BYTE,
-                                                              GL_CLAMP_TO_EDGE,
-                                                              GL_CLAMP_TO_EDGE,
-                                                              false};
+                                                          text_surface->w * text_surface->h * 4,
+                                                          text_surface->w,
+                                                          text_surface->h,
+                                                          GL_RGBA,
+                                                          GL_UNSIGNED_BYTE,
+                                                          GL_CLAMP_TO_EDGE,
+                                                          GL_CLAMP_TO_EDGE,
+                                                          false};
 
     // The negative Y-offset vector here is in order to invert the SDL image.
     m_user_info = new TexturedHUDParallelogram(glm::vec2(m_XStartPosRight - text_surface->w * 2, m_YStartPosTop),
-                                                   glm::vec2(text_surface->w * 2, 0.0f),
-                                                   glm::vec2(0.0f, -text_surface->h * 2),
-                                                   user_info_texture);
+                                               glm::vec2(text_surface->w * 2, 0.0f),
+                                               glm::vec2(0.0f, -text_surface->h * 2),
+                                               user_info_texture);
+
+    GLfloat height_drop = text_surface->h * 1.8;
+
+    if(!(text_surface=TTF_RenderText_Blended(m_FontText, m_TeamName.c_str(), color))){
+        ErrorHandler::record("Starsphere::make_user() : can't make SDL_Surface for team!", ErrorHandler::FATAL);
+        }
+
+    RenderTask::texture_buffer_group team_info_texture = {(const GLvoid*)text_surface->pixels,
+                                                          text_surface->w * text_surface->h * 4,
+                                                          text_surface->w,
+                                                          text_surface->h,
+                                                          GL_RGBA,
+                                                          GL_UNSIGNED_BYTE,
+                                                          GL_CLAMP_TO_EDGE,
+                                                          GL_CLAMP_TO_EDGE,
+                                                          false};
+
+    // The negative Y-offset vector here is in order to invert the SDL image.
+    m_team_info = new TexturedHUDParallelogram(glm::vec2(m_XStartPosRight - text_surface->w * 2, m_YStartPosTop - height_drop),
+                                               glm::vec2(text_surface->w * 2, 0.0f),
+                                               glm::vec2(0.0f, -text_surface->h * 2),
+                                               team_info_texture);
+
+    height_drop += text_surface->h * 1.8f;
+
+    if(!(text_surface=TTF_RenderText_Blended(m_FontText, m_UserCredit.c_str(), color))){
+        ErrorHandler::record("Starsphere::make_user() : can't make SDL_Surface for total!", ErrorHandler::FATAL);
+        }
+
+    RenderTask::texture_buffer_group total_info_texture = {(const GLvoid*)text_surface->pixels,
+                                                          text_surface->w * text_surface->h * 4,
+                                                          text_surface->w,
+                                                          text_surface->h,
+                                                          GL_RGBA,
+                                                          GL_UNSIGNED_BYTE,
+                                                          GL_CLAMP_TO_EDGE,
+                                                          GL_CLAMP_TO_EDGE,
+                                                          false};
+
+    // The negative Y-offset vector here is in order to invert the SDL image.
+    m_total_info = new TexturedHUDParallelogram(glm::vec2(m_XStartPosRight - text_surface->w * 2, m_YStartPosTop - height_drop),
+                                               glm::vec2(text_surface->w * 2, 0.0f),
+                                               glm::vec2(0.0f, -text_surface->h * 2),
+                                               total_info_texture);
+
+    height_drop += text_surface->h * 1.8f;
+
+    if(!(text_surface=TTF_RenderText_Blended(m_FontText, m_UserRACredit.c_str(), color))){
+        ErrorHandler::record("Starsphere::make_user() : can't make SDL_Surface for RAC!", ErrorHandler::FATAL);
+        }
+
+    RenderTask::texture_buffer_group RAC_info_texture = {(const GLvoid*)text_surface->pixels,
+                                                          text_surface->w * text_surface->h * 4,
+                                                          text_surface->w,
+                                                          text_surface->h,
+                                                          GL_RGBA,
+                                                          GL_UNSIGNED_BYTE,
+                                                          GL_CLAMP_TO_EDGE,
+                                                          GL_CLAMP_TO_EDGE,
+                                                          false};
+
+    // The negative Y-offset vector here is in order to invert the SDL image.
+    m_RAC_info = new TexturedHUDParallelogram(glm::vec2(m_XStartPosRight - text_surface->w * 2, m_YStartPosTop - height_drop),
+                                               glm::vec2(text_surface->w * 2, 0.0f),
+                                               glm::vec2(0.0f, -text_surface->h * 2),
+                                               RAC_info_texture);
 
     delete text_surface;
     }
@@ -1601,6 +1713,9 @@ void Starsphere::render(const double timeOfDay) {
     m_logo->utilise();
 
     m_user_info->utilise();
+    m_team_info->utilise();
+    m_total_info->utilise();
+    m_RAC_info->utilise();
 
     // draw the search marker (gunsight)
     if(isFeature(MARKER)) {
