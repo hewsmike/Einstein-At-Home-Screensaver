@@ -32,8 +32,8 @@ BOINCClientAdapter::BOINCClientAdapter(string sharedMemoryIdentifier) {
 
     m_GraphicsFrameRate = 20;
     m_GraphicsQualitySetting = BOINCClientAdapter::LowGraphicsQualitySetting;
-    m_GraphicsWindowWidth = 800;
-    m_GraphicsWindowHeight = 600;
+    m_GraphicsWindowWidth = 1024;
+    m_GraphicsWindowHeight = 768;
     }
 
 BOINCClientAdapter::~BOINCClientAdapter() {
