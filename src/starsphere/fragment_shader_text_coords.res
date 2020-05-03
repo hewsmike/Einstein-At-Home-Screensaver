@@ -16,5 +16,4 @@ out vec4 out_color;
 void main()
 {
 	out_color = texture(color_map, TexCoord.st);
-	// out_color = vec4(this_color, 1.0f);
 }
