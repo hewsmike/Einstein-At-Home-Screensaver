@@ -19,6 +19,7 @@ doc/*.tag
 *.cscope_file_list
 *.res
 *.data
+*.depend
 
 # eclipse
 .project
