@@ -1227,12 +1227,12 @@ void Starsphere::make_globe_mesh_texture(void) {
             GLfloat radius = EARTH_RADIUS;
             // Need to determine a longitudinal offset in the s texture
             // coordinate direction for the bump map.
-            GLfloat intpart;
+            //GLfloat intpart;
 
-            GLfloat long_s_offseted = std::modf(texture_s + EARTHBUMP_LONGITUDE_OFFSET, &intpart);
+            //GLfloat long_s_offseted = std::modf(texture_s + EARTHBUMP_LONGITUDE_OFFSET, &intpart);
             // By truncation, lookup the bump array.
-            GLuint bump_s = GLuint(long_s_offseted * (EARTHBUMP_WIDTH - 1));
-            GLuint bump_t = GLuint(texture_t * (EARTHBUMP_HEIGHT - 1));
+            GLuint bump_s = GLuint(texture_s * (EARTHBUMP_WIDTH - 1));
+            GLuint bump_t = GLuint((1.0f - texture_t) * (EARTHBUMP_HEIGHT - 1));
             // Careful, data is stored linear but row by row.
             GLfloat bump = bump_map->data()->at(bump_t * EARTHBUMP_WIDTH + bump_s);
             // Here's the offset as a fraction of the maximum allowed.
