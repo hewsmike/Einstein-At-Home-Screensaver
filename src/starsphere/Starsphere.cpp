@@ -25,7 +25,7 @@
  ***************************************************************************/
 
 #include <cstdlib>          // For abs(), rand(), srand()
-#include <cmath>
+#include <cmath>            // For fmof();
 #include <ctgmath>          // For modf()
 #include <ctime>            // for time()
 #include <iostream>
@@ -68,7 +68,7 @@ const GLfloat Starsphere::PERSPECTIVE_FOV_DEFAULT(45.0f);
 
 const GLuint Starsphere::GLOBE_LATITUDE_LAYERS(289);                    // Each pole is a layer in latitude too.
 const GLuint Starsphere::GLOBE_LONGITUDE_SLICES(576);
-const GLfloat Starsphere::GLOBE_TEXTURE_OFFSET(180.0f);                 // Texture map starts at longitude 180
+const GLfloat Starsphere::GLOBE_TEXTURE_OFFSET(0.5f);                 // Texture map starts at longitude 180
 const GLuint Starsphere::GRID_LATITUDE_LAYERS(19);                      // Each pole is a layer in latitude too.
 const GLuint Starsphere::GRID_LONGITUDE_SLICES(36);
 const GLuint Starsphere::VERTICES_PER_TRIANGLE(3);
@@ -1218,7 +1218,8 @@ void Starsphere::make_globe_mesh_texture(void) {
                 temp = 0.0f;
                 }
             // These are the texture coordinates of the current vertex.
-            GLfloat texture_s = float(longitudinal_slice)*LONG_TEXTURE_STEP;
+            // However need to slide texture around the mesh so that Greenwich meridian appears at zero longitude.
+            GLfloat texture_s = fmod(float(longitudinal_slice)*LONG_TEXTURE_STEP + GLOBE_TEXTURE_OFFSET, 1.0f);
             // Texture map is inverted in the t direction.
             GLfloat texture_t = 1.0f - latitude_layer*LAT_TEXTURE_STEP;
             // Need to look up bump map to determine the outward radial offset.
@@ -1227,17 +1228,19 @@ void Starsphere::make_globe_mesh_texture(void) {
             // Need to determine a longitudinal offset in the s texture
             // coordinate direction for the bump map.
             GLfloat intpart;
+
             GLfloat long_s_offseted = std::modf(texture_s + EARTHBUMP_LONGITUDE_OFFSET, &intpart);
             // By truncation, lookup the bump array.
             GLuint bump_s = GLuint(long_s_offseted * (EARTHBUMP_WIDTH - 1));
             GLuint bump_t = GLuint(texture_t * (EARTHBUMP_HEIGHT - 1));
+            // Careful, data is stored linear but row by row.
             GLfloat bump = bump_map->data()->at(bump_t * EARTHBUMP_WIDTH + bump_s);
             // Here's the offset as a fraction of the maximum allowed.
             GLfloat offset = EARTH_MAX_OFFSET * (float(bump)/256.0f);
             radius += offset;
             // Now convert to x, y and z from spherical coordinates.
-            // However need to slide texture around the mesh so that Greenwich meridian appears at zero longitude.
-            glm::vec3 globe_vertex = sphVertex3D(temp*LONG_STEP+GLOBE_TEXTURE_OFFSET, 90 - latitude_layer*LAT_STEP, radius);
+
+            glm::vec3 globe_vertex = sphVertex3D(temp*LONG_STEP, 90 - latitude_layer*LAT_STEP, radius);
     		globe_vertex_data[vertex_counter*COORDS_PER_VERTEX] = globe_vertex.x;
     		globe_vertex_data[vertex_counter*COORDS_PER_VERTEX + 1] = globe_vertex.y;
     		globe_vertex_data[vertex_counter*COORDS_PER_VERTEX + 2] = globe_vertex.z;
