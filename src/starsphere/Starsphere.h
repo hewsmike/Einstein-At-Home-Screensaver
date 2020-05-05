@@ -364,6 +364,7 @@ class Starsphere : public AbstractGraphicsEngine {
         static const GLuint  PIXEL_UNPACK_BOUNDARY;
         static const GLfloat SPHERE_RADIUS;
         static const GLfloat EARTH_RADIUS;
+        static const GLfloat EARTH_MAX_OFFSET;
 
         // Fonts.
         static const GLboolean TTF_FREE_SOURCE;
@@ -469,6 +470,7 @@ class Starsphere : public AbstractGraphicsEngine {
         glm::mat4 m_view_earth;
         glm::mat4 m_camera_earth;
         glm::mat4 m_rotation_earth;
+        glm::vec3 m_vector_sun;
 
         void make_local_arms(GLfloat latitude, GLfloat longitude,
                              GLfloat x_arm_azimuth, GLfloat y_arm_azimuth,
