@@ -681,7 +681,7 @@ std::string Program::checkUniform(GLenum type) {
         default:
             std::stringstream chk_uni_msg;
             chk_uni_msg << "Program::checkUniform() : unknown type ( default case ) = "
-                        << type;
+                        << type << " (probably inactive uniform discarded at link)";
             ErrorHandler::record(chk_uni_msg.str(), ErrorHandler::WARN);
             ret_val = "UNKNOWN";
             break;
