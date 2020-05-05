@@ -58,7 +58,7 @@ const GLfloat Starsphere::DEFAULT_POINT_SIZE(1.5f);
 const GLuint Starsphere::PIXEL_UNPACK_BOUNDARY(1);
 const GLfloat Starsphere::SPHERE_RADIUS(5.0f);
 const GLfloat Starsphere::EARTH_RADIUS(1.0f);
-const GLfloat Starsphere::EARTH_MAX_OFFSET(0.05 * EARTH_RADIUS);
+const GLfloat Starsphere::EARTH_MAX_OFFSET(0.03 * EARTH_RADIUS);
 const GLboolean Starsphere::TTF_FREE_SOURCE(false);
 const GLuint Starsphere::TTF_FONT_LOAD_HEADER_POINT_SIZE(13);
 const GLuint Starsphere::TTF_FONT_LOAD_TEXT_POINT_SIZE(11);
@@ -1233,7 +1233,8 @@ void Starsphere::make_globe_mesh_texture(void) {
             // By truncation, lookup the bump array.
             GLuint bump_s = GLuint(texture_s * (EARTHBUMP_WIDTH - 1));
             GLuint bump_t = GLuint((1.0f - texture_t) * (EARTHBUMP_HEIGHT - 1));
-            // Careful, data is stored linear but row by row.
+            // Careful, data is stored linear but row by row, 'bump_t'
+            // counts the rows, 'bump_s' within a given row.
             GLfloat bump = bump_map->data()->at(bump_t * EARTHBUMP_WIDTH + bump_s);
             // Here's the offset as a fraction of the maximum allowed.
             GLfloat offset = EARTH_MAX_OFFSET * (float(bump)/256.0f);
@@ -1319,7 +1320,6 @@ void Starsphere::make_globe_mesh_texture(void) {
 
     // For program uniforms need client side pointers.
     m_render_task_earth->setUniform("CameraMatrix", &m_camera_earth);
-    m_render_task_earth->setUniform("EarthRotation", &m_rotation_earth);
     m_render_task_earth->setUniform("toSun", &m_vector_sun);
 
     // Claim all required state machine resources for this rendering task.
