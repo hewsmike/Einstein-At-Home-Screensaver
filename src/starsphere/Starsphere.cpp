@@ -58,6 +58,7 @@ const GLfloat Starsphere::DEFAULT_POINT_SIZE(1.5f);
 const GLuint Starsphere::PIXEL_UNPACK_BOUNDARY(1);
 const GLfloat Starsphere::SPHERE_RADIUS(5.0f);
 const GLfloat Starsphere::EARTH_RADIUS(1.0f);
+const GLfloat Starsphere::EARTH_MAX_OFFSET(0.05 * EARTH_RADIUS);
 const GLboolean Starsphere::TTF_FREE_SOURCE(false);
 const GLuint Starsphere::TTF_FONT_LOAD_HEADER_POINT_SIZE(13);
 const GLuint Starsphere::TTF_FONT_LOAD_TEXT_POINT_SIZE(11);
@@ -121,6 +122,7 @@ Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
     m_rotation = glm::mat4(1.0f);
     m_rotation_earth = glm::mat4(1.0f);
     m_axis = glm::vec3(1.0f, 0.0f, 0.0f);
+    m_vector_sun = glm::vec3(1.0f, 0.0f, 0.0f);
 
     m_ObservatoryDrawTimeLocal = 0;
 
@@ -1179,20 +1181,12 @@ void Starsphere::make_globe_mesh_texture(void) {
     GLuint EARTHBUMP_WIDTH = 4000;
     GLuint EARTHBUMP_HEIGHT = 2000;
     GLfloat EARTHBUMP_LONGITUDE_OFFSET = 0.5f;
-    GLfloat EARTH_MAX_OFFSET = 0.03 * EARTH_RADIUS;
 
     // Set up bump map for access.
     ResourceFactory factory1;
 
     // Get a string representing an std::string of character data.
-    std::string bump_string = factory1.createInstance("EarthmapBump")->std_string();
-    // Create a character array for later bump lookup.
-    char bumps[EARTHBUMP_WIDTH][EARTHBUMP_HEIGHT];
-    for(GLuint i = 0; i < EARTHBUMP_WIDTH; ++i) {
-        for(GLuint j = 0; j < EARTHBUMP_HEIGHT; ++j) {
-        bumps[i][j] = bump_string[i * EARTHBUMP_WIDTH + j];
-        }
-    }
+    const Resource* bump_map = factory1.createInstance("EarthmapBump");
 
     // Populate a vertex array.
     // Calculate the number of vertices. This is a full number of longitudinal slices for
@@ -1237,7 +1231,7 @@ void Starsphere::make_globe_mesh_texture(void) {
             // By truncation, lookup the bump array.
             GLuint bump_s = GLuint(long_s_offseted * (EARTHBUMP_WIDTH - 1));
             GLuint bump_t = GLuint(texture_t * (EARTHBUMP_HEIGHT - 1));
-            GLfloat bump = bumps[bump_s][bump_t];
+            GLfloat bump = bump_map->data()->at(bump_t * EARTHBUMP_WIDTH + bump_s);
             // Here's the offset as a fraction of the maximum allowed.
             GLfloat offset = EARTH_MAX_OFFSET * (float(bump)/256.0f);
             radius += offset;
@@ -1253,6 +1247,8 @@ void Starsphere::make_globe_mesh_texture(void) {
     		++vertex_counter;
     		}
     	}
+
+    delete bump_map;
 
     // Allocate a temporary array for vertex buffer indices. Note the array
     // type is suitable for indices ie. unsigned integer. The GL_TRIANGLES enumerant is to be used at
@@ -1284,8 +1280,8 @@ void Starsphere::make_globe_mesh_texture(void) {
     ResourceFactory factory2;
 
     // Populate data structure indicating GLSL code use.
-    RenderTask::shader_group s_group1 = {factory2.createInstance("VertexShader_Texture")->std_string(),
-    		                             factory2.createInstance("FragmentShader_Texture")->std_string()};
+    RenderTask::shader_group s_group1 = {factory2.createInstance("VertexShader_Earth")->std_string(),
+    		                             factory2.createInstance("FragmentShader_Earth")->std_string()};
 
     // Populate data structure for vertices.
     RenderTask::vertex_buffer_group v_group1 = {globe_vertex_data,
@@ -1320,7 +1316,8 @@ void Starsphere::make_globe_mesh_texture(void) {
 
     // For program uniforms need client side pointers.
     m_render_task_earth->setUniform("CameraMatrix", &m_camera_earth);
-    m_render_task_earth->setUniform("point_size", &m_globe_point_size);
+    m_render_task_earth->setUniform("EarthRotation", &m_rotation_earth);
+    m_render_task_earth->setUniform("toSun", &m_vector_sun);
 
     // Claim all required state machine resources for this rendering task.
     m_render_task_earth->acquire();
