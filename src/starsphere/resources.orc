@@ -37,4 +37,4 @@ VertexShader_Supernovae|vertex_shader_single_color_single_pointsize.res
 FragmentShader_Earth|fragment_shader_text_coords_earth.res
 # For Earth texturing.
 Earthmap|earthmap.data.res
-EarthmapBump|earthbump4k.res
+EarthmapBump|earthbump1k.data.res

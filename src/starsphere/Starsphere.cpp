@@ -1242,8 +1242,8 @@ void Starsphere::make_globe_mesh_texture(void) {
     GLuint EARTH_TEXTURE_WIDTH = 2048;
     GLuint EARTH_TEXTURE_HEIGHT = 1024;
     GLuint EARTH_TEXTURE_COLOR_DEPTH = 3;
-    GLuint EARTHBUMP_WIDTH = 4000;
-    GLuint EARTHBUMP_HEIGHT = 2000;
+    GLuint EARTHBUMP_WIDTH = 1000;
+    GLuint EARTHBUMP_HEIGHT = 500;
     GLfloat EARTHBUMP_LONGITUDE_OFFSET = 0.5f;
 
     // Set up bump map for access.
