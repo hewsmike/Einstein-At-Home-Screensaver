@@ -43,7 +43,7 @@ GLEW_VERSION=2.0.0
 LIBXML_VERSION=2.9.2
 SDL_VERSION=2.0.12
 SDL_TTF_VERSION=2.0.12
-GLM_VERSION=0.9.6.1
+GLM_VERSION=0.9.9.7
 
 # Target variants.
 TARGET_NONE=0
@@ -290,7 +290,7 @@ retrieve_glm() {
 
     # https://github.com/g-truc/glm/archive/0.9.6.1.tar.gz
 
-    log "Preparing GLM version $GLM_VERSION ..."
+    log "Retrieving GLM version $GLM_VERSION ..."
 
     cd $ROOT/retrieval || failure
     rm -rf glm
