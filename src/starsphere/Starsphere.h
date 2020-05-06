@@ -274,6 +274,22 @@ class Starsphere : public AbstractGraphicsEngine {
         GLfloat RAofZenithGreenwich(double T);
 
         /**
+         * \brief By accessing the system clock computes the number of days
+         * since the first of January.
+         *
+         * \return The day number for th current year.
+         */
+        GLuint dayOfYear(void);
+
+        /**
+         * \brief Calculate and store the right ascension and declination of
+         * the Sun on the celestial sphere, also a vector from the origin
+         * to the Sun on the celestial sphere.
+         *
+         */
+        void setSunPosition(void);
+
+        /**
          * \brief Creates a GL vertex in 3D sky sphere coordinates
          *
          * Use like glVertex()
@@ -471,6 +487,9 @@ class Starsphere : public AbstractGraphicsEngine {
         glm::mat4 m_camera_earth;
         glm::mat4 m_rotation_earth;
         glm::vec3 m_vector_sun;
+
+        GLfloat m_sun_RA;
+        GLfloat m_sun_DEC;
 
         void make_local_arms(GLfloat latitude, GLfloat longitude,
                              GLfloat x_arm_azimuth, GLfloat y_arm_azimuth,

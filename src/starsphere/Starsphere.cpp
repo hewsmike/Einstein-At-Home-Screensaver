@@ -197,6 +197,9 @@ Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
 
     m_geode_lines = 0;
     m_arms_lines = 0;
+
+    m_sun_RA = 0.0f;
+    m_sun_DEC =0.0f;
     }
 
 Starsphere::~Starsphere() {
@@ -564,7 +567,68 @@ GLfloat Starsphere::RAofZenithGreenwich(double T) {
     // Now convert to RA.
     GLfloat alpha = (GMST/(24.0*3600.0))*360.0;
 
+    alpha = std::fmod(alpha, 360.0);
+
     return alpha;
+    }
+
+GLuint Starsphere::dayOfYear(void) {
+    // First get the system time.
+    std::time_t now = std::time(nullptr);
+
+    // Convert to a tm structure to ...
+    std::tm* tm_now = std::gmtime(&now);
+
+    // ... read of the number of days since January 1st.
+    return tm_now->tm_yday;
+    }
+
+void Starsphere::setSunPosition(void) {
+    // December 22 is usually the solstice day.
+    GLuint JANUARY_FIRST_SOLSTICE_OFFSET(10);
+    // The Sun is at approx 18 hrs 40 minutes of right
+    // ascension @ noon on the first day of the year.
+    // ( Baily 1827 )
+    GLfloat JANUARY_FIRST_RA_OFFSET(18.67);
+    GLuint DAYS_PER_MOST_YEARS(365);
+    GLfloat DEGREES_PER_FULL_CIRCLE(360.0f);
+    GLfloat DEGREES_PER_HALF_CIRCLE(180.0f);
+    GLfloat OBLIQUITY_OF_ECLIPTIC_DEGREES(23.4f);
+    GLuint HOURS_PER_DAY(24);
+
+    // How many days since the December Solstice.
+    m_sun_DEC = dayOfYear() + JANUARY_FIRST_SOLSTICE_OFFSET;
+
+    // How many degrees would that be.
+    m_sun_DEC *= (DEGREES_PER_FULL_CIRCLE/DAYS_PER_MOST_YEARS);
+
+    // That in radians.
+    m_sun_DEC *= PI / DEGREES_PER_HALF_CIRCLE;
+
+    // Take the cosine.
+    m_sun_DEC = cos(m_sun_DEC);
+
+    // The greatest offset from celestial equator is the obliquity,
+    // negative sign here as we are timing from December Solstice.
+    m_sun_DEC *= -OBLIQUITY_OF_ECLIPTIC_DEGREES;
+
+    // Let's just say it's a circular orbit, forget about The
+    // Equation of time etc. Start on January 1st and in degrees
+    m_sun_RA = JANUARY_FIRST_RA_OFFSET * (DEGREES_PER_FULL_CIRCLE/HOURS_PER_DAY);
+
+    // So many days since January the first at a constant rate.
+    m_sun_RA += dayOfYear() * DEGREES_PER_FULL_CIRCLE/DAYS_PER_MOST_YEARS;
+
+    // Account for wrap around at the March Equinox.
+    if(m_sun_RA >= DEGREES_PER_FULL_CIRCLE) {
+        m_sun_RA -= DEGREES_PER_FULL_CIRCLE;
+        }
+
+    m_vector_sun = sphVertex3D(m_sun_RA, m_sun_DEC, SPHERE_RADIUS);
+
+    std::cout << "Sun declination = " << m_sun_DEC << std::endl;
+    std::cout << "Sun right ascension = " << m_sun_RA << std::endl;
+
     }
 
 void Starsphere::make_local_arms(GLfloat latitude, GLfloat longitude,
@@ -1323,6 +1387,7 @@ void Starsphere::make_globe_mesh_texture(void) {
     // For program uniforms need client side pointers.
     m_render_task_earth->setUniform("CameraMatrix", &m_camera_earth);
     m_render_task_earth->setUniform("toSun", &m_vector_sun);
+    m_render_task_earth->setUniform("RotationEarth", &m_rotation_earth);
 
     // Claim all required state machine resources for this rendering task.
     m_render_task_earth->acquire();
@@ -1486,6 +1551,9 @@ void Starsphere::resize(const int width, const int height) {
  *  What to do when graphics are "initialized".
  */
 void Starsphere::initialize(const int width, const int height, const Resource* font) {
+    // Calculate the Sun's position.
+    setSunPosition();
+
     // Initialise/seed random number generation using current time.
     srand(time(NULL));
 
@@ -1674,11 +1742,13 @@ void Starsphere::render(const double timeOfDay) {
     m_camera = m_perspective_projection * m_view * m_rotation;
 
     // The Earth and observatories are special cases, because they rotate in
-    // real-time with respect to the celestial sphere.
-    m_rotation_earth = m_rotation * glm::rotate(identity,
-                                                glm::radians(RAofZenithGreenwich(timeOfDay)),
-                                                glm::vec3(0.0f, 1.0f, 0.0f));
-    m_camera_earth = m_perspective_projection * m_view_earth * m_rotation_earth;
+    // real-time with respect to the celestial sphere. Rotate around the
+    // y-axis in the easterly direction.
+    m_rotation_earth = glm::rotate(identity,
+                                   glm::radians(RAofZenithGreenwich(timeOfDay)),
+                                   glm::vec3(0.0f, 1.0f, 0.0f));
+
+    m_camera_earth = m_perspective_projection * m_view_earth * m_rotation * m_rotation_earth;
     if(isFeature(EARTH)) {
         m_render_task_earth->render(GL_TRIANGLES, m_earth_triangles*VERTICES_PER_TRIANGLE);
         }
