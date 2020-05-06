@@ -58,7 +58,7 @@ const GLfloat Starsphere::DEFAULT_POINT_SIZE(1.5f);
 const GLuint Starsphere::PIXEL_UNPACK_BOUNDARY(1);
 const GLfloat Starsphere::SPHERE_RADIUS(5.0f);
 const GLfloat Starsphere::EARTH_RADIUS(1.0f);
-const GLfloat Starsphere::EARTH_MAX_OFFSET(0.03 * EARTH_RADIUS);
+const GLfloat Starsphere::EARTH_MAX_OFFSET(0.04 * EARTH_RADIUS);
 const GLboolean Starsphere::TTF_FREE_SOURCE(false);
 const GLuint Starsphere::TTF_FONT_LOAD_HEADER_POINT_SIZE(13);
 const GLuint Starsphere::TTF_FONT_LOAD_TEXT_POINT_SIZE(11);
@@ -68,7 +68,7 @@ const GLfloat Starsphere::PERSPECTIVE_FOV_DEFAULT(45.0f);
 
 const GLuint Starsphere::GLOBE_LATITUDE_LAYERS(289);                    // Each pole is a layer in latitude too.
 const GLuint Starsphere::GLOBE_LONGITUDE_SLICES(576);
-const GLfloat Starsphere::GLOBE_TEXTURE_OFFSET(0.5f);                 // Texture map starts at longitude 180
+const GLfloat Starsphere::GLOBE_TEXTURE_OFFSET(0.50f);                 // Texture map starts at longitude 180
 const GLuint Starsphere::GRID_LATITUDE_LAYERS(19);                      // Each pole is a layer in latitude too.
 const GLuint Starsphere::GRID_LONGITUDE_SLICES(36);
 const GLuint Starsphere::VERTICES_PER_TRIANGLE(3);
@@ -1219,7 +1219,8 @@ void Starsphere::make_globe_mesh_texture(void) {
                 }
             // These are the texture coordinates of the current vertex.
             // However need to slide texture around the mesh so that Greenwich meridian appears at zero longitude.
-            GLfloat texture_s = fmod(float(longitudinal_slice)*LONG_TEXTURE_STEP + GLOBE_TEXTURE_OFFSET, 1.0f);
+            GLfloat integral_part;
+            GLfloat texture_s = longitudinal_slice*LONG_TEXTURE_STEP + GLOBE_TEXTURE_OFFSET;
             // Texture map is inverted in the t direction.
             GLfloat texture_t = 1.0f - latitude_layer*LAT_TEXTURE_STEP;
             // Need to look up bump map to determine the outward radial offset.
@@ -1231,11 +1232,12 @@ void Starsphere::make_globe_mesh_texture(void) {
 
             //GLfloat long_s_offseted = std::modf(texture_s + EARTHBUMP_LONGITUDE_OFFSET, &intpart);
             // By truncation, lookup the bump array.
-            GLuint bump_s = GLuint(texture_s * (EARTHBUMP_WIDTH - 1));
+            GLuint bump_s = GLuint(texture_s * EARTHBUMP_WIDTH);
             GLuint bump_t = GLuint((1.0f - texture_t) * (EARTHBUMP_HEIGHT - 1));
             // Careful, data is stored linear but row by row, 'bump_t'
             // counts the rows, 'bump_s' within a given row.
-            GLfloat bump = bump_map->data()->at(bump_t * EARTHBUMP_WIDTH + bump_s);
+            GLfloat bump = 0;
+            //bump_map->data()->at(bump_t * EARTHBUMP_WIDTH + bump_s);
             // Here's the offset as a fraction of the maximum allowed.
             GLfloat offset = EARTH_MAX_OFFSET * (float(bump)/256.0f);
             radius += offset;
