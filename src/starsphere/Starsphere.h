@@ -277,7 +277,7 @@ class Starsphere : public AbstractGraphicsEngine {
          * \brief By accessing the system clock computes the number of days
          * since the first of January.
          *
-         * \return The day number for th current year.
+         * \return The day number for the current year.
          */
         GLuint dayOfYear(void);
 

@@ -1708,8 +1708,6 @@ void Starsphere::render(const double timeOfDay) {
     // by an amount as per viewpoint radius.
     m_view = glm::translate(identity, glm::vec3(0.0f, 0.0f, -m_viewpt_radius));
 
-    m_view_earth = m_view;
-
     // Stop autorotation if close to the Earth. Allow user manipulation
     // via dragging mouse pointer while holding down the left mouse button.
     if(m_viewpt_radius < EARTH_RADIUS * AUTO_ROTATE_TRIGGER_RADIUS) {
@@ -1748,7 +1746,7 @@ void Starsphere::render(const double timeOfDay) {
                                    glm::radians(RAofZenithGreenwich(timeOfDay)),
                                    glm::vec3(0.0f, 1.0f, 0.0f));
 
-    m_camera_earth = m_perspective_projection * m_view_earth * m_rotation * m_rotation_earth;
+    m_camera_earth = m_perspective_projection * m_view * m_rotation * m_rotation_earth;
     if(isFeature(EARTH)) {
         m_render_task_earth->render(GL_TRIANGLES, m_earth_triangles*VERTICES_PER_TRIANGLE);
         }
