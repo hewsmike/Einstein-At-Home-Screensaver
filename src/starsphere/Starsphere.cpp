@@ -575,7 +575,7 @@ void Starsphere::make_local_arms(GLfloat latitude, GLfloat longitude,
     glm::vec3 temp_cross_product(0.0f, 0.0f, 0.0f);
 
     // Vector from centre of Earth to corner station of interferometer.
-    glm::vec3 corner = sphVertex3D(longitude, latitude, EARTH_RADIUS * 1.0f);
+    glm::vec3 corner = sphVertex3D(longitude, latitude, EARTH_RADIUS * (1.0f + EARTH_MAX_OFFSET/4));
 
     // Unit vector in the direction of the local zenith :
     glm::vec3 local_zenith = glm::normalize(corner);
@@ -655,7 +655,7 @@ void Starsphere::make_local_geode_axes(GLfloat latitude, GLfloat longitude, glm:
     glm::vec3 temp_cross_product(0.0f, 0.0f, 0.0f);
 
     // Vector from centre of Earth to corner station of interferometer.
-    glm::vec3 corner = sphVertex3D(longitude, latitude, EARTH_RADIUS * 1.0f);
+    glm::vec3 corner = sphVertex3D(longitude, latitude, EARTH_RADIUS * (1.0f + EARTH_MAX_OFFSET/4));
     // Unit vector to the local zenith from the corder station.
     glm::vec3 local_zenith = sphVertex3D(longitude, latitude, 1.0f);
     glm::vec3 local_zenith_tip = sphVertex3D(longitude, latitude, EARTH_RADIUS * (1.0f + ZENITH_DELTA));
