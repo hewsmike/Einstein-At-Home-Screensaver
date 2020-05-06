@@ -8,6 +8,7 @@ doc/html
 /android
 /ios
 /win32
+/win64
 /linux
 /mac
 /mac_osx

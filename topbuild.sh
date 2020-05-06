@@ -43,7 +43,7 @@ GLEW_VERSION=2.0.0
 LIBXML_VERSION=2.9.2
 SDL_VERSION=2.0.12
 SDL_TTF_VERSION=2.0.12
-GLM_VERSION=0.9.9.7
+GLM_VERSION=0.9.6.1
 
 # Target variants.
 TARGET_NONE=0
@@ -52,10 +52,11 @@ TARGET_ANDROID=2
 TARGET_IOS=3
 TARGET_LINUX=4
 TARGET_WIN32=5
-TARGET_DOC=6
-TARGET_GETBASE=7
-TARGET_CLEAN=8
-TARGET_DISTCLEAN=9
+TARGET_WIN64=6
+TARGET_DOC=7
+TARGET_GETBASE=8
+TARGET_CLEAN=9
+TARGET_DISTCLEAN=10
 
 # No target set initially.
 TARGET=$TARGET_NONE
@@ -318,8 +319,12 @@ distclean() {
     cd $ROOT/linux
     ./build.sh --distclean
 
-    log "Cleaning Win32... "
+     log "Cleaning Win32... "
     cd $ROOT/win32
+    ./build.sh --distclean
+
+    log "Cleaning Win64... "
+    cd $ROOT/win64
     ./build.sh --distclean
 
     cd $ROOT
@@ -502,6 +507,7 @@ print_usage() {
     echo "          --ios"
     echo "          --linux"
     echo "          --win32"
+    echo "          --win64"
     echo
     echo "      Available modes:"
     echo "          --debug"
@@ -610,6 +616,9 @@ if [ $# -eq 3 ]; then
         "--win32")
             TARGET=$TARGET_WIN32
             ;;
+        "--win64")
+            TARGET=$TARGET_WIN64
+            ;;
         *)
             log "Incorrect first argument given !!"
             print_usage
@@ -714,6 +723,21 @@ case $TARGET in
         log "BUILD_SYSTEM = $BUILD_SYSTEM"
         log "TARGET_SYSTEM = $TARGET_SYSTEM"
         cd $ROOT/win32
+        ./build.sh $2 $3
+        cd ..
+        ;;
+    $TARGET_WIN64)
+    	export TARGET_SYSTEM="x86_64-w64-mingw32"
+        realtarget
+        prepare_directories win64
+        cp -f $ROOT/build_win64.sh $ROOT/win64/build.sh
+        cp -f $ROOT/retrieval/glew/src/glew.c $ROOT/win64/src/framework/glew.c
+        cp -f $ROOT/retrieval/glew/include/GL/glew.h $ROOT/win64/src/framework/glew.h
+        cp -f $ROOT/retrieval/glew/include/GL/wglew.h $ROOT/win64/src/framework/wglew.h
+        log "For $PRODUCT_NAME : invoking Win64 build script ... "
+        log "BUILD_SYSTEM = $BUILD_SYSTEM"
+        log "TARGET_SYSTEM = $TARGET_SYSTEM"
+        cd $ROOT/win64
         ./build.sh $2 $3
         cd ..
         ;;

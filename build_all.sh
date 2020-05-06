@@ -40,14 +40,21 @@ if [ $? -ne 0 ]; then
     exit 2
 fi
 
-# Both builds good, so get their products to local directory.
+# Only proceed with the win64 build if the linux & win32 builds were OK.
+./topbuild.sh --win64 --debug --starsphere
+if [ $? -ne 0 ]; then
+    echo "An error occurred while making the win64 product"
+    exit 3
+fi
+
+# All builds good, so get their products to local directory.
 mkdir -p dist
 cd dist
 cp -f $ROOT/linux/dist/graphics_app=einstein_RUNLABEL_VERSION_graphics_x86_64-pc-linux-pc-linux-gnu graphics_starsphere_TEST0$1_x86_64-pc-linux
 cp -f $ROOT/win32/dist/graphics_app=einstein_RUNLABEL_VERSION_graphics_windows_intelx86.exe graphics_starsphere_TEST0$1_i686-w64-mingw32.exe
-
+cp -f $ROOT/win64/dist/graphics_app=einstein_RUNLABEL_VERSION_graphics_windows_intelx86.exe graphics_starsphere_TEST0$1_x86_64-w64-mingw32.exe
 echo "*****************************************************************"
-echo "**** Successful build of both products **************************"
+echo "**** Successful build of all products **************************"
 echo "*****************************************************************"
 
 exit 0
