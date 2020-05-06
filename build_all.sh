@@ -23,7 +23,7 @@
 ROOT=`pwd`
 
 echo "*****************************************************************"
-echo "**** Building linux and win32 targets for product starsphere ****"
+echo "***** Building linux, win32 & win 64 targets for starsphere *****"
 echo "*****************************************************************"
 
 # First try to build for linux.
