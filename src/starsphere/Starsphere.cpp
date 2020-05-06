@@ -1218,7 +1218,9 @@ void Starsphere::make_globe_mesh_texture(void) {
                 temp = 0.0f;
                 }
             // These are the texture coordinates of the current vertex.
-            // However need to slide texture around the mesh so that Greenwich meridian appears at zero longitude.
+            // However need to slide texture around the mesh so that Greenwich meridian
+            // appears at zero longitude. Line of 360 degrees longitude has horizontal
+            // texture coordinate of 1.0f, relying on GL_REPEAT to wrap it.
             GLfloat integral_part;
             GLfloat texture_s = longitudinal_slice*LONG_TEXTURE_STEP + GLOBE_TEXTURE_OFFSET;
             // Texture map is inverted in the t direction.
@@ -1228,21 +1230,19 @@ void Starsphere::make_globe_mesh_texture(void) {
             GLfloat radius = EARTH_RADIUS;
             // Need to determine a longitudinal offset in the s texture
             // coordinate direction for the bump map.
-            //GLfloat intpart;
+            GLfloat intpart;
 
-            //GLfloat long_s_offseted = std::modf(texture_s + EARTHBUMP_LONGITUDE_OFFSET, &intpart);
+            GLfloat long_s_offseted = std::modf(texture_s, &intpart);
             // By truncation, lookup the bump array.
-            GLuint bump_s = GLuint(texture_s * EARTHBUMP_WIDTH);
+            GLuint bump_s = GLuint(long_s_offseted * (EARTHBUMP_WIDTH - 1));
             GLuint bump_t = GLuint((1.0f - texture_t) * (EARTHBUMP_HEIGHT - 1));
             // Careful, data is stored linear but row by row, 'bump_t'
             // counts the rows, 'bump_s' within a given row.
-            GLfloat bump = 0;
-            //bump_map->data()->at(bump_t * EARTHBUMP_WIDTH + bump_s);
+            GLfloat bump = bump_map->data()->at(bump_t * EARTHBUMP_WIDTH + bump_s);
             // Here's the offset as a fraction of the maximum allowed.
             GLfloat offset = EARTH_MAX_OFFSET * (float(bump)/256.0f);
             radius += offset;
             // Now convert to x, y and z from spherical coordinates.
-
             glm::vec3 globe_vertex = sphVertex3D(temp*LONG_STEP, 90 - latitude_layer*LAT_STEP, radius);
     		globe_vertex_data[vertex_counter*COORDS_PER_VERTEX] = globe_vertex.x;
     		globe_vertex_data[vertex_counter*COORDS_PER_VERTEX + 1] = globe_vertex.y;
