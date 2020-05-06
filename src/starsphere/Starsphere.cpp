@@ -66,8 +66,8 @@ const GLfloat Starsphere::PERSPECTIVE_NEAR_FRUSTUM_DISTANCE(0.1f);
 const GLfloat Starsphere::PERSPECTIVE_FAR_FRUSTUM_DISTANCE(100.0f);
 const GLfloat Starsphere::PERSPECTIVE_FOV_DEFAULT(45.0f);
 
-const GLuint Starsphere::GLOBE_LATITUDE_LAYERS(289);                    // Each pole is a layer in latitude too.
-const GLuint Starsphere::GLOBE_LONGITUDE_SLICES(576);
+const GLuint Starsphere::GLOBE_LATITUDE_LAYERS(145);                    // Each pole is a layer in latitude too.
+const GLuint Starsphere::GLOBE_LONGITUDE_SLICES(288);
 const GLfloat Starsphere::GLOBE_TEXTURE_OFFSET(0.50f);                 // Texture map starts at longitude 180
 const GLuint Starsphere::GRID_LATITUDE_LAYERS(19);                      // Each pole is a layer in latitude too.
 const GLuint Starsphere::GRID_LONGITUDE_SLICES(36);
@@ -1246,15 +1246,15 @@ void Starsphere::make_globe_mesh_texture(void) {
     GLuint EARTHBUMP_HEIGHT = 500;
     GLfloat EARTHBUMP_LONGITUDE_OFFSET = 0.5f;
 
-    // Set up bump map for access.
-    ResourceFactory factory1;
+    // Set up for bump map and shader access.
+    ResourceFactory factory;
 
     // Get a string representing an std::string of character data.
-    const Resource* bump_map = factory1.createInstance("EarthmapBump");
+    const Resource* bump_map = factory.createInstance("EarthmapBump");
 
     // Populate a vertex array.
-    // Calculate the number of vertices. This is a full number of longitudinal slices for
-    // each latitude layer, including each pole.
+    // Calculate the number of vertices. This is a full number of longitudinal
+    // slices for each latitude layer, including each pole.
     GLuint NUM_VERTICES = GLOBE_LATITUDE_LAYERS * (GLOBE_LONGITUDE_SLICES + 1);
 
     m_earth_triangles = GLOBE_LATITUDE_LAYERS * GLOBE_LONGITUDE_SLICES * 2;
@@ -1347,27 +1347,27 @@ void Starsphere::make_globe_mesh_texture(void) {
         }
 
     // Create factory instance to then access the shader strings.
-    ResourceFactory factory2;
+    //ResourceFactory factory2;
 
     // Populate data structure indicating GLSL code use.
-    RenderTask::shader_group s_group1 = {factory2.createInstance("VertexShader_Earth")->std_string(),
-    		                             factory2.createInstance("FragmentShader_Earth")->std_string()};
+    RenderTask::shader_group s_group = {factory.createInstance("VertexShader_Earth")->std_string(),
+    		                            factory.createInstance("FragmentShader_Earth")->std_string()};
 
     // Populate data structure for vertices.
-    RenderTask::vertex_buffer_group v_group1 = {globe_vertex_data,
-    		 	 	 	 	 	 	 	 	 	GLuint(sizeof(globe_vertex_data)),
-												NUM_VERTICES,
-    		                                    GL_STATIC_DRAW,
-    		                                    VertexBuffer::BY_VERTEX};
+    RenderTask::vertex_buffer_group v_group = {globe_vertex_data,
+    		 	 	 	 	 	 	 	 	   GLuint(sizeof(globe_vertex_data)),
+											   NUM_VERTICES,
+    		                                   GL_STATIC_DRAW,
+    		                                   VertexBuffer::BY_VERTEX};
     // Populate data structure for indices.
-    RenderTask::index_buffer_group i_group1 = {globe_index_data,
-        		 	 	 	 	 	 	 	   GLuint(sizeof(globe_index_data)),
-    										   m_earth_triangles*VERTICES_PER_TRIANGLE,
-        		                               GL_STATIC_DRAW,
-											   GL_UNSIGNED_INT};
+    RenderTask::index_buffer_group i_group = {globe_index_data,
+        		 	 	 	 	 	 	      GLuint(sizeof(globe_index_data)),
+    										  m_earth_triangles*VERTICES_PER_TRIANGLE,
+        		                              GL_STATIC_DRAW,
+											  GL_UNSIGNED_INT};
 
     // To get at the underlying texture data from a Resource instance, then cast it void ...
-	RenderTask::texture_buffer_group t_group1 =	{(const GLvoid*)factory2.createInstance("Earthmap")->data()->data(),
+	RenderTask::texture_buffer_group t_group = {(const GLvoid*)factory.createInstance("Earthmap")->data()->data(),
                                                 EARTH_TEXTURE_WIDTH*EARTH_TEXTURE_HEIGHT*EARTH_TEXTURE_COLOR_DEPTH,
                                                 EARTH_TEXTURE_WIDTH,
                                                 EARTH_TEXTURE_HEIGHT,
@@ -1378,7 +1378,7 @@ void Starsphere::make_globe_mesh_texture(void) {
                                                 true};
 
 	// Instantiate a rendering task with the provided information.
-    m_render_task_earth = new RenderTask(s_group1, v_group1, i_group1, t_group1);
+    m_render_task_earth = new RenderTask(s_group, v_group, i_group, t_group);
 
     // For vertex input need to correlate with vertex shader code.
     m_render_task_earth->addSpecification({0, "position", 3, GL_FLOAT, GL_FALSE});
