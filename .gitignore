@@ -18,7 +18,6 @@ doc/html
 # patterns
 doc/*.tag
 *.cscope_file_list
-*.res
 *.data
 *.depend
 
