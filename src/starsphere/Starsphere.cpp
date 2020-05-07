@@ -1727,7 +1727,8 @@ void Starsphere::render(const double timeOfDay) {
             float random_x = (2.0f * rand()/float(RAND_MAX)) - 1.0f;
             float random_y = (2.0f * rand()/float(RAND_MAX)) - 1.0f;
             float random_z = (2.0f * rand()/float(RAND_MAX)) - 1.0f;
-            m_axis = glm::vec3(random_x, random_y, random_z);
+            // m_axis = glm::vec3(random_x, random_y, random_z);
+            m_axis = glm::vec3(0.0f, 1.0f, 0.0f);
             // Set a new random value until next change of axis.
             rotate_interval = rand() % AUTO_ROTATE_FRAME_COUNT;
             }
