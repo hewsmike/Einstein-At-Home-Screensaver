@@ -234,7 +234,7 @@ class Starsphere : public AbstractGraphicsEngine {
             STARS = 1024,
             XRAYS = 2048,
             EARTH = 4096,
-            ROLL_STOP = 8192
+            AUTO_ROLL = 8192
             };
 
         /**
@@ -480,7 +480,6 @@ class Starsphere : public AbstractGraphicsEngine {
 
         glm::mat4 m_view;
         glm::mat4 m_rotation;
-        glm::vec3 m_axis;
         glm::mat4 m_camera;
 
         glm::mat4 m_view_earth;

@@ -121,7 +121,6 @@ Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
 
     m_rotation = glm::mat4(1.0f);
     m_rotation_earth = glm::mat4(1.0f);
-    m_axis = glm::vec3(1.0f, 0.0f, 0.0f);
     m_vector_sun = glm::vec3(1.0f, 0.0f, 0.0f);
 
     m_ObservatoryDrawTimeLocal = 0;
@@ -157,7 +156,7 @@ Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
     m_viewpt_fov = PERSPECTIVE_FOV_DEFAULT;
     m_aspect = 0.0f;
     m_viewpt_azimuth = 30.0f;
-    m_viewpt_elev = 23.6f;
+    m_viewpt_elev = 0.0f;
 
     // Begin midway b/w Earth's surface and greatest displacement.
     m_viewpt_radius = (EARTH_RADIUS + FARTHEST_VIEWPOINT) / 2.0f;
@@ -1642,7 +1641,7 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
     setFeature(LOGO, true);
     setFeature(MARKER, true);
     setFeature(EARTH, true);
-    setFeature(ROLL_STOP, false);
+    setFeature(AUTO_ROLL, true);
 
     glActiveTexture(GL_TEXTURE0);
 
@@ -1693,48 +1692,26 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
  */
 void Starsphere::render(const double timeOfDay) {
     // timeOfDay is in Unix time ( seconds) since Epoch.
-
     const glm::mat4 identity(1.0f);
-    const GLuint AUTO_ROTATE_FRAME_COUNT(300);
-    const GLfloat RANDOM_ROLL_RATE(0.0025f);
-    const GLfloat AUTO_ROTATE_TRIGGER_RADIUS(0.4f);
-    const GLfloat EARTH_DRAG_SPEED_RATIO(0.02f);
-    GLuint rotate_interval;
+    const GLfloat ROLL_RATE(0.0025f);
 
     // Start drawing with clearing the relevant buffers.
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    // Stay in the principal domain [0, 360.0f)
+    m_rotation_offset = fmod(m_rotation_offset, 360.0f);
+
     // Unrotated viewpoint is along the Open GL positive z-axis
     // by an amount as per viewpoint radius.
-    m_view = glm::translate(identity, glm::vec3(0.0f, 0.0f, -m_viewpt_radius));
+    // TODO Problem here as rotations about differing axes
+    // don't in general commute ....
 
-    // Stop autorotation if close to the Earth. Allow user manipulation
-    // via dragging mouse pointer while holding down the left mouse button.
-    if(m_viewpt_radius < EARTH_RADIUS * AUTO_ROTATE_TRIGGER_RADIUS) {
-        }
-    else {
-        // Calculate axis of autorotation on a regular basis.
-        // Generates the appearance of arbitrary wandering
-        // of viewpoint.
-        if((rotate_interval == 0) || (rotate_interval > AUTO_ROTATE_FRAME_COUNT)) {
-            rotate_interval = AUTO_ROTATE_FRAME_COUNT;
-            }
-        GLuint stagger = m_framecount % rotate_interval;
-        if(stagger == 0) {
-            // Rotate around some random axis.
-            // Generate three 'random' numbers, each
-            // scaled b/w -1 to +1.
-            float random_x = (2.0f * rand()/float(RAND_MAX)) - 1.0f;
-            float random_y = (2.0f * rand()/float(RAND_MAX)) - 1.0f;
-            float random_z = (2.0f * rand()/float(RAND_MAX)) - 1.0f;
-            // m_axis = glm::vec3(random_x, random_y, random_z);
-            m_axis = glm::vec3(0.0f, 1.0f, 0.0f);
-            // Set a new random value until next change of axis.
-            rotate_interval = rand() % AUTO_ROTATE_FRAME_COUNT;
-            }
-        if(!isFeature(ROLL_STOP)) {
-            m_rotation = glm::rotate(m_rotation, RANDOM_ROLL_RATE, m_axis);
-            }
+    m_view = glm::translate(identity, glm::vec3(0.0f, 0.0f, -m_viewpt_radius));
+    m_view = glm::rotate(m_view, glm::radians(m_rotation_offset), glm::vec3(0.0f, 1.0f, 0.0f));
+    m_view = glm::rotate(m_view, glm::radians(m_viewpt_elev), glm::vec3(1.0f, 0.0f, 0.0f));
+
+    if(isFeature(AUTO_ROLL)) {
+        m_rotation = glm::rotate(m_rotation, ROLL_RATE, glm::vec3(0.0f, 1.0f, 0.0f));
         }
 
     // Render the 3D features in our model/world space.
@@ -1903,7 +1880,7 @@ void Starsphere::keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey ke
             setFeature(EARTH, isFeature(EARTH) ? false : true);
             break;
         case KeyH:
-            setFeature(ROLL_STOP, isFeature(ROLL_STOP) ? false : true);
+            setFeature(AUTO_ROLL, isFeature(AUTO_ROLL) ? false : true);
             break;
         default:
             break;
@@ -1923,7 +1900,7 @@ void Starsphere::rotateSphere(const int relativeRotation,
         m_viewpt_elev = -89.0f;
 
     // rotation
-    m_rotation_offset -= relativeRotation/10.0f;
+    m_rotation_offset += relativeRotation/10.0f;
     }
 
 void Starsphere::zoomSphere(const int relativeZoom) {
