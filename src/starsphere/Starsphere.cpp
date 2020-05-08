@@ -1896,15 +1896,19 @@ void Starsphere::keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey ke
  */
 void Starsphere::rotateSphere(const int relativeRotation,
                               const int relativeElevation) {
-    // elevation
-    m_viewpt_elev += relativeElevation/10.0f;
-    if (m_viewpt_elev > 89.0f)
-        m_viewpt_elev = +89.0f;
-    if (m_viewpt_elev < -89.0f)
-        m_viewpt_elev = -89.0f;
-
     // rotation
     m_rotation_offset += relativeRotation/10.0f;
+
+    m_viewpt_elev += relativeElevation/10.0f;
+
+    if (m_viewpt_elev > 89.0f) {
+        m_viewpt_elev = +89.0f;
+        }
+    if (m_viewpt_elev < -89.0f) {
+        m_viewpt_elev = -89.0f;
+        }
+
+    return;
     }
 
 void Starsphere::zoomSphere(const int relativeZoom) {
