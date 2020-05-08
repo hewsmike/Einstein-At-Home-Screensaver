@@ -35,7 +35,7 @@ void main() {
         }
     else {
         // No need to test for lower bound.
-        out_color = (1 - 6.0 * contrast_factor) * out_color;
+        out_color = (1 - 7.0 * contrast_factor) * out_color;
         }
 
     // Opaque fragment regardless.
