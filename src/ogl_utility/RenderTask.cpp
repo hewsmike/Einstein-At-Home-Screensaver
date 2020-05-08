@@ -23,7 +23,7 @@
 #include <sstream>
 
 RenderTask::RenderTask(RenderTask::shader_group s_group) {
-	ErrorHandler::record("RenderTask::RenderTask(): MINUMUM", ErrorHandler::INFORM);
+    ErrorHandler::record("RenderTask::RenderTask(): MINUMUM", ErrorHandler::INFORM);
 
     // Set unused pointers to NULL.
     m_index_buffer = NULL;
@@ -42,7 +42,7 @@ RenderTask::RenderTask(RenderTask::shader_group s_group) {
 RenderTask::RenderTask(RenderTask::shader_group s_group,
                        RenderTask::texture_buffer_group t_group) :
                            RenderTask(s_group) {
-	ErrorHandler::record("RenderTask::RenderTask(): MINUMUM + TEXTURE", ErrorHandler::INFORM);
+    ErrorHandler::record("RenderTask::RenderTask(): MINUMUM + TEXTURE", ErrorHandler::INFORM);
 
     if(t_group.texture_data == NULL) {
         ErrorHandler::record("RenderTask::RenderTask(): Texture not provided!", ErrorHandler::FATAL);
@@ -62,7 +62,7 @@ RenderTask::RenderTask(RenderTask::shader_group s_group,
 
 RenderTask::RenderTask(RenderTask::shader_group s_group,
                        RenderTask::vertex_buffer_group v_group) {
-	ErrorHandler::record("RenderTask::RenderTask(): MINUMUM + VERTICES", ErrorHandler::INFORM);
+    ErrorHandler::record("RenderTask::RenderTask(): MINUMUM + VERTICES", ErrorHandler::INFORM);
 
     if(v_group.buffer_data == NULL) {
         ErrorHandler::record("RenderTask::RenderTask(): Vertex data not provided!", ErrorHandler::FATAL);
@@ -91,7 +91,7 @@ RenderTask::RenderTask(RenderTask::shader_group s_group,
                    RenderTask::vertex_buffer_group v_group,
                    RenderTask::texture_buffer_group t_group) :
                         RenderTask(s_group, v_group) {
- 	ErrorHandler::record("RenderTask::RenderTask(): MINUMUM + VERTICES + TEXTURE", ErrorHandler::INFORM);
+    ErrorHandler::record("RenderTask::RenderTask(): MINUMUM + VERTICES + TEXTURE", ErrorHandler::INFORM);
 
     if(t_group.texture_data == NULL) {
         ErrorHandler::record("RenderTask::RenderTask: Texture not provided!", ErrorHandler::FATAL);
@@ -111,41 +111,41 @@ RenderTask::RenderTask(RenderTask::shader_group s_group,
 RenderTask::RenderTask(RenderTask::shader_group s_group,
                    RenderTask::vertex_buffer_group v_group,
                    RenderTask::index_buffer_group i_group) {
- 	 ErrorHandler::record("RenderTask::RenderTask(): MINUMUM + VERTICES + INDICES", ErrorHandler::INFORM);
+     ErrorHandler::record("RenderTask::RenderTask(): MINUMUM + VERTICES + INDICES", ErrorHandler::INFORM);
 
- 	m_vertex_buffer = new VertexBuffer(v_group.buffer_data,
- 	                                       v_group.bytes,
- 	                                       v_group.vertices,
- 	                                       v_group.usage,
- 	                                       v_group.mix);
+    m_vertex_buffer = new VertexBuffer(v_group.buffer_data,
+                                           v_group.bytes,
+                                           v_group.vertices,
+                                           v_group.usage,
+                                           v_group.mix);
 
- 	m_index_buffer = new IndexBuffer(i_group.buffer_data,
-                    				 i_group.bytes,
-									 i_group.indices,
-									 i_group.usage,
-									 i_group.index_type);
+    m_index_buffer = new IndexBuffer(i_group.buffer_data,
+                                     i_group.bytes,
+                                     i_group.indices,
+                                     i_group.usage,
+                                     i_group.index_type);
 
- 	// Set unused pointers to NULL.
- 	m_texture_buffer = NULL;
+    // Set unused pointers to NULL.
+    m_texture_buffer = NULL;
 
- 	// Need to define an attribute adapter.
- 	m_attrib_adapt = new AttributeInputAdapter();
- 	// Always need a trigger for the pipeline.
- 	m_vertex_fetch = new VertexFetch(m_attrib_adapt, m_vertex_buffer, m_index_buffer);
+    // Need to define an attribute adapter.
+    m_attrib_adapt = new AttributeInputAdapter();
+    // Always need a trigger for the pipeline.
+    m_vertex_fetch = new VertexFetch(m_attrib_adapt, m_vertex_buffer, m_index_buffer);
 
- 	setBaseCase(s_group);
+    setBaseCase(s_group);
 
- 	m_pipeline = new Pipeline(m_program, m_vertex_fetch);
- 	}
+    m_pipeline = new Pipeline(m_program, m_vertex_fetch);
+    }
 
 RenderTask::RenderTask(RenderTask::shader_group s_group,
                        RenderTask::vertex_buffer_group v_group,
-					   RenderTask::index_buffer_group i_group,
-					   RenderTask::texture_buffer_group t_group) {
- 	ErrorHandler::record("RenderTask::RenderTask(): MINUMUM + VERTICES + INDICES + TEXTURE", ErrorHandler::INFORM);
+                       RenderTask::index_buffer_group i_group,
+                       RenderTask::texture_buffer_group t_group) {
+    ErrorHandler::record("RenderTask::RenderTask(): MINUMUM + VERTICES + INDICES + TEXTURE", ErrorHandler::INFORM);
 
     //
-	m_texture_buffer = new TextureBuffer(t_group.texture_data,
+    m_texture_buffer = new TextureBuffer(t_group.texture_data,
                                          t_group.bytes,
                                          t_group.width,
                                          t_group.height,

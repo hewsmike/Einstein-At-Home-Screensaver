@@ -37,8 +37,8 @@
  *
  *      - the location of the 4x4 float matrix representing the model/view
  * perspective transform. It is a matter of programmer rigour to assure that :
- * 			- inadvertent dereferencing does not occur ie. such a location
- *        	  ought be valid for all usage instances. Only one action of
+ *          - inadvertent dereferencing does not occur ie. such a location
+ *            ought be valid for all usage instances. Only one action of
  *            setting the value is allowed. A fatal error is generated if
  *            accessed before being set.
  *          - have suitable and consistent GLSL typing with respect to

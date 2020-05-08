@@ -59,15 +59,15 @@ bool Program::acquire(void) {
     bool ret_val = false;
 
     // Only get a handle if none already.
-	if(this->ID() == OGL_ID::NO_ID) {
-	    // Get an OpenGL handle for this program object.
+    if(this->ID() == OGL_ID::NO_ID) {
+        // Get an OpenGL handle for this program object.
             GLuint temp = glCreateProgram();
-	    set_ID(temp);
-	    // If that handle acquisition failed the we have no other option ...
-	    if(this->ID() == OGL_ID::NO_ID)  {
-		ErrorHandler::record("Program::acquire() : OpenGL handle acquisition failure !",
-	                              ErrorHandler::FATAL);
-	        }
+        set_ID(temp);
+        // If that handle acquisition failed the we have no other option ...
+        if(this->ID() == OGL_ID::NO_ID)  {
+        ErrorHandler::record("Program::acquire() : OpenGL handle acquisition failure !",
+                                  ErrorHandler::FATAL);
+            }
         }
 
     return ret_val;
@@ -117,7 +117,7 @@ bool Program::configure(void) {
     bool ret_val = false;
     if(this->isAcquired() == false) {
         this->acquire();
-	    }
+        }
 
     // Provided shaders have acquired and not deleted,
     // then attach them.

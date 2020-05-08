@@ -31,8 +31,8 @@ GraphicsEngineFactory::GraphicsEngineFactory() {
 AbstractGraphicsEngine* GraphicsEngineFactory::createInstance(
                         GraphicsEngineFactory::Engines engine,
                         GraphicsEngineFactory::Applications application) {
-	// Assume failure.
-	AbstractGraphicsEngine* ret_val = NULL;
+    // Assume failure.
+    AbstractGraphicsEngine* ret_val = NULL;
 
     // First switch upon engine type, then variants.
     // A NULL return indicates failure to instantiate.
@@ -41,17 +41,17 @@ AbstractGraphicsEngine* GraphicsEngineFactory::createInstance(
         case SolarSystem :
             switch(application) {
                 case EinsteinGravity :
-                	ret_val = new SolarSystemGravity();
+                    ret_val = new SolarSystemGravity();
                     break;
                 case EinsteinRadio :
-                	ret_val = new SolarSystemRadio();
+                    ret_val = new SolarSystemRadio();
                     break;
                 case EinsteinGamma :
-                	ret_val = new SolarSystemGamma();
+                    ret_val = new SolarSystemGamma();
                     break;
                 default:
-                	// Ideal use ought not arrive here. Big problem if so.
-                	ErrorHandler::record("GraphicsEngineFactory::createInstance() : bad switch case ( Solarsystem engine default )", ErrorHandler::FATAL);
+                    // Ideal use ought not arrive here. Big problem if so.
+                    ErrorHandler::record("GraphicsEngineFactory::createInstance() : bad switch case ( Solarsystem engine default )", ErrorHandler::FATAL);
                     break;
                 }
             break;
@@ -60,21 +60,21 @@ AbstractGraphicsEngine* GraphicsEngineFactory::createInstance(
         case Starsphere:
             switch(application) {
                 case EinsteinGravity :
-                	ret_val = new StarsphereGravity();
+                    ret_val = new StarsphereGravity();
                     break;
                 case EinsteinRadio :
                     // return new StarsphereRadio();
                     break;
                 default:
-                	// Ideal use ought not arrive here. Big problem if so.
-                	ErrorHandler::record("GraphicsEngineFactory::createInstance() : bad switch case ( Starsphere engine default )", ErrorHandler::FATAL);
+                    // Ideal use ought not arrive here. Big problem if so.
+                    ErrorHandler::record("GraphicsEngineFactory::createInstance() : bad switch case ( Starsphere engine default )", ErrorHandler::FATAL);
                     break;
             }
             break;
 #endif
         default:
-        	// Ideal use ought not arrive here. Big problem if so.
-        	ErrorHandler::record("GraphicsEngineFactory::createInstance() : bad switch case ( no engine default )", ErrorHandler::FATAL);
+            // Ideal use ought not arrive here. Big problem if so.
+            ErrorHandler::record("GraphicsEngineFactory::createInstance() : bad switch case ( no engine default )", ErrorHandler::FATAL);
             break;
         }
 

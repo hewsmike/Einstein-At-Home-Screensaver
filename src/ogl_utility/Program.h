@@ -78,50 +78,50 @@ class Program : public OGL_ID, public Bindable, public Configurable {
         virtual ~Program();
 
         /**
-		 * \brief Obtains the resources.
-		 *
-		 * \return a boolean indicating success of acquisition
-		 *              true - resources acquired without error
-		 *              false - resources were not acquired
-		 */
-		virtual bool acquire(void);
-
-		/**
-		 * \brief Releases the object resources.
-		 */
-		virtual void release(void);
+         * \brief Obtains the resources.
+         *
+         * \return a boolean indicating success of acquisition
+         *              true - resources acquired without error
+         *              false - resources were not acquired
+         */
+        virtual bool acquire(void);
 
         /**
-		 * \brief Perform any binding to the OpenGL pipeline.
-		 */
-		virtual void bind(void);
+         * \brief Releases the object resources.
+         */
+        virtual void release(void);
 
-		/**
-		 * \brief Remove any binding to the OpenGL pipeline.
-		 */
-		virtual void unbind(void);
+        /**
+         * \brief Perform any binding to the OpenGL pipeline.
+         */
+        virtual void bind(void);
 
-		/**
-		 * \brief The binding state of any underlying OpenGL objects
-		 *        to the OpenGL state machine. This is a
-		 *        dynamic inquiry.
-		 *
-		 * \return a boolean indicating binding state :
-		 *          true - the object is bound
-		 *          false - the object is not bound
-		 */
-		virtual bool isBound(void) const;
+        /**
+         * \brief Remove any binding to the OpenGL pipeline.
+         */
+        virtual void unbind(void);
 
-		/**
-		 * \brief Actually configure any underlying object(s).
-		 *
-		 * \return a boolean indicating success of configuration
-		 *              - true, the configuration as successful.
-		 *              - false, the configuration was not successful.
-		 */
-		virtual bool configure(void);
+        /**
+         * \brief The binding state of any underlying OpenGL objects
+         *        to the OpenGL state machine. This is a
+         *        dynamic inquiry.
+         *
+         * \return a boolean indicating binding state :
+         *          true - the object is bound
+         *          false - the object is not bound
+         */
+        virtual bool isBound(void) const;
 
-		/**
+        /**
+         * \brief Actually configure any underlying object(s).
+         *
+         * \return a boolean indicating success of configuration
+         *              - true, the configuration as successful.
+         *              - false, the configuration was not successful.
+         */
+        virtual bool configure(void);
+
+        /**
          * \brief Determine if program has been MARKED for deletion.
          *
          * \return a boolean indicating deletion status

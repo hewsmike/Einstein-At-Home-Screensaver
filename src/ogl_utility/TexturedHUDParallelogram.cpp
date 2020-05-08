@@ -109,7 +109,7 @@ const std::string TexturedHUDParallelogram::m_fragment_shader("#version 330\n"
 TexturedHUDParallelogram::TexturedHUDParallelogram(glm::vec2 position,
                                                    glm::vec2 width_offset,
                                                    glm::vec2 height_offset,
-						                           RenderTask::texture_buffer_group t_group) :
+                                                   RenderTask::texture_buffer_group t_group) :
                                                        m_position(position),
                                                        m_width_offset(width_offset),
                                                        m_height_offset(height_offset) {
@@ -147,14 +147,14 @@ bool TexturedHUDParallelogram::configure(void) {
     m_s_group.frag_shader_source = m_fragment_shader;
     m_s_group.vert_shader_source = m_vertex_shader_2D;
 
-    // Construct a render task.	
+    // Construct a render task. 
     m_render_task = new RenderTask(m_s_group, m_t_group);
     m_render_task->setUniform("CameraMatrix", TransformGlobals::getOrthographicTransformMatrix());
     m_render_task->setUniform("base_position", &m_position);
     m_render_task->setUniform("height_offset", &m_height_offset);
     m_render_task->setUniform("width_offset", &m_width_offset);
-	
-	// Acquire OpenGL assets.
+    
+    // Acquire OpenGL assets.
     m_render_task->acquire();
 
     this->setConfigurationState(true);

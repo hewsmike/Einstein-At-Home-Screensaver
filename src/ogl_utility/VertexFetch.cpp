@@ -212,8 +212,8 @@ bool VertexFetch::configure(void) {
             // You must not unbind this when the VAO is bound, as this will change the VAO's state and the index buffer
             // cannot be used for rendering at a later point. Think of this as simply 'telling' the VAO what index buffer to use.
             if(m_operating_mode == VERTICES_AND_INDICES){
-            	m_indices->bind();
-            	}
+                m_indices->bind();
+                }
 
             // Enable fetching for all supplied vertex attribute indices,
             // these corresponding to 'location' definitions within the
@@ -230,12 +230,12 @@ bool VertexFetch::configure(void) {
                                       attrib->a_spec.normalised,
                                       attrib->stride,
                                       attrib->pointer);
-            	}
+                }
             // Unbind the vertex buffer and VAO
             // You don't need to unbind the vertex buffer for the VAO to work but it is good practice.
             m_vertices->unbind();
             this->unbind();
-	      	}
+            }
 
         setConfigurationState(true);
         }

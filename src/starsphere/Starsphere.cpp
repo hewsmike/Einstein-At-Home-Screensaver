@@ -1103,18 +1103,18 @@ void Starsphere::make_globe_mesh_lat_long(void) {
 
     // For each non-pole latitude layer.
     for(GLuint lat_layer = 1; lat_layer < (GRID_LATITUDE_LAYERS - 1); ++lat_layer ){
-    	// For each longitude layer.
-    	for(GLuint long_slice = 0; long_slice < GRID_LONGITUDE_SLICES; ++long_slice){
-    		// NB sphVertex3D() measures declination above/below equator, but here
-    		// latitude is measured from the North Pole = 0 downwards to Equator = 90
-    		// and then South Pole = 180.
-    		glm::vec3 globe_vertex = sphVertex3D(long_slice*LONG_STEP, 90 - lat_layer*LAT_STEP, globe_radius);
-    		++vertex_counter;
-    		globe_vertex_data[vertex_counter*3] = globe_vertex.x;
-    		globe_vertex_data[vertex_counter*3 + 1] = globe_vertex.y;
-    		globe_vertex_data[vertex_counter*3 + 2] = globe_vertex.z;
-    		}
-    	}
+        // For each longitude layer.
+        for(GLuint long_slice = 0; long_slice < GRID_LONGITUDE_SLICES; ++long_slice){
+            // NB sphVertex3D() measures declination above/below equator, but here
+            // latitude is measured from the North Pole = 0 downwards to Equator = 90
+            // and then South Pole = 180.
+            glm::vec3 globe_vertex = sphVertex3D(long_slice*LONG_STEP, 90 - lat_layer*LAT_STEP, globe_radius);
+            ++vertex_counter;
+            globe_vertex_data[vertex_counter*3] = globe_vertex.x;
+            globe_vertex_data[vertex_counter*3 + 1] = globe_vertex.y;
+            globe_vertex_data[vertex_counter*3 + 2] = globe_vertex.z;
+            }
+        }
 
     // Do the South Pole vertex last. This will be at RA = 0, DEC = -90 times radius.
     // Set & remember the index of the South Pole.
@@ -1132,7 +1132,7 @@ void Starsphere::make_globe_mesh_lat_long(void) {
     m_globe_lines = GRID_LONGITUDE_SLICES * (GRID_LATITUDE_LAYERS - 1)
                     + (GRID_LATITUDE_LAYERS - 2) * GRID_LONGITUDE_SLICES;
 
-	// Allocate a temporary array for vertex buffer indices. Note the array
+    // Allocate a temporary array for vertex buffer indices. Note the array
     // type is suitable for indices ie. unsigned integer. The GL_LINES enumerant is to be used at
     // rendering time.
     GLuint globe_index_data[m_globe_lines*2];
@@ -1197,22 +1197,22 @@ void Starsphere::make_globe_mesh_lat_long(void) {
 
     // Populate data structure indicating GLSL code use.
     RenderTask::shader_group s_group1 = {factory.createInstance("VertexShader_Stars")->std_string(),
-    		                             factory.createInstance("FragmentShader_Pass_Color3")->std_string()};
+                                         factory.createInstance("FragmentShader_Pass_Color3")->std_string()};
 
     // Populate data structure for vertices.
     RenderTask::vertex_buffer_group v_group1 = {globe_vertex_data,
-    		 	 	 	 	 	 	 	 	 	GLuint(sizeof(globe_vertex_data)),
-												num_vertices,
-    		                                    GL_STATIC_DRAW,
-    		                                    VertexBuffer::BY_VERTEX};
+                                                GLuint(sizeof(globe_vertex_data)),
+                                                num_vertices,
+                                                GL_STATIC_DRAW,
+                                                VertexBuffer::BY_VERTEX};
     // Populate data structure for indices.
     RenderTask::index_buffer_group i_group1 = {globe_index_data,
-        		 	 	 	 	 	 	 	   GLuint(sizeof(globe_index_data)),
-    										   m_globe_lines*2,
-        		                               GL_STATIC_DRAW,
-											   GL_UNSIGNED_INT};
+                                               GLuint(sizeof(globe_index_data)),
+                                               m_globe_lines*2,
+                                               GL_STATIC_DRAW,
+                                               GL_UNSIGNED_INT};
 
-	// Instantiate a rendering task with the provided information.
+    // Instantiate a rendering task with the provided information.
     m_render_task_globe = new RenderTask(s_group1, v_group1, i_group1);
 
     // For vertex input need to correlate with vertex shader code.
@@ -1270,12 +1270,12 @@ void Starsphere::make_globe_mesh_texture(void) {
     // For each latitude layer.
     for(GLuint latitude_layer = 0; latitude_layer < GLOBE_LATITUDE_LAYERS; ++latitude_layer ){
         // For each longitude layer.
-    	for(GLuint longitudinal_slice = 0; longitudinal_slice < GLOBE_LONGITUDE_SLICES +1; ++longitudinal_slice){
-    		// NB sphVertex3D() measures declination above/below equator, but here
-    		// latitude is measured from the North Pole = 0 downwards to Equator = 90
-    		// and then South Pole = 180.
-    		GLfloat temp = float(longitudinal_slice);
-    		if(longitudinal_slice == GLOBE_LONGITUDE_SLICES){
+        for(GLuint longitudinal_slice = 0; longitudinal_slice < GLOBE_LONGITUDE_SLICES +1; ++longitudinal_slice){
+            // NB sphVertex3D() measures declination above/below equator, but here
+            // latitude is measured from the North Pole = 0 downwards to Equator = 90
+            // and then South Pole = 180.
+            GLfloat temp = float(longitudinal_slice);
+            if(longitudinal_slice == GLOBE_LONGITUDE_SLICES){
                 // Line of longitude at 360 degrees is equivalent in
                 // position to the line at zero degrees.
                 temp = 0.0f;
@@ -1307,15 +1307,15 @@ void Starsphere::make_globe_mesh_texture(void) {
             radius += offset;
             // Now convert to x, y and z from spherical coordinates.
             glm::vec3 globe_vertex = sphVertex3D(temp*LONG_STEP, 90 - latitude_layer*LAT_STEP, radius);
-    		globe_vertex_data[vertex_counter*COORDS_PER_VERTEX] = globe_vertex.x;
-    		globe_vertex_data[vertex_counter*COORDS_PER_VERTEX + 1] = globe_vertex.y;
-    		globe_vertex_data[vertex_counter*COORDS_PER_VERTEX + 2] = globe_vertex.z;
-    		// Line of 360 degrees longitude has horizontal texture coordinate of 1.0f
-    		globe_vertex_data[vertex_counter*COORDS_PER_VERTEX + 3] = texture_s;
-    		globe_vertex_data[vertex_counter*COORDS_PER_VERTEX + 4] = texture_t;
-    		++vertex_counter;
-    		}
-    	}
+            globe_vertex_data[vertex_counter*COORDS_PER_VERTEX] = globe_vertex.x;
+            globe_vertex_data[vertex_counter*COORDS_PER_VERTEX + 1] = globe_vertex.y;
+            globe_vertex_data[vertex_counter*COORDS_PER_VERTEX + 2] = globe_vertex.z;
+            // Line of 360 degrees longitude has horizontal texture coordinate of 1.0f
+            globe_vertex_data[vertex_counter*COORDS_PER_VERTEX + 3] = texture_s;
+            globe_vertex_data[vertex_counter*COORDS_PER_VERTEX + 4] = texture_t;
+            ++vertex_counter;
+            }
+        }
 
     delete bump_map;
 
@@ -1350,23 +1350,23 @@ void Starsphere::make_globe_mesh_texture(void) {
 
     // Populate data structure indicating GLSL code use.
     RenderTask::shader_group s_group = {factory.createInstance("VertexShader_Earth")->std_string(),
-    		                            factory.createInstance("FragmentShader_Earth")->std_string()};
+                                        factory.createInstance("FragmentShader_Earth")->std_string()};
 
     // Populate data structure for vertices.
     RenderTask::vertex_buffer_group v_group = {globe_vertex_data,
-    		 	 	 	 	 	 	 	 	   GLuint(sizeof(globe_vertex_data)),
-											   NUM_VERTICES,
-    		                                   GL_STATIC_DRAW,
-    		                                   VertexBuffer::BY_VERTEX};
+                                               GLuint(sizeof(globe_vertex_data)),
+                                               NUM_VERTICES,
+                                               GL_STATIC_DRAW,
+                                               VertexBuffer::BY_VERTEX};
     // Populate data structure for indices.
     RenderTask::index_buffer_group i_group = {globe_index_data,
-        		 	 	 	 	 	 	      GLuint(sizeof(globe_index_data)),
-    										  m_earth_triangles*VERTICES_PER_TRIANGLE,
-        		                              GL_STATIC_DRAW,
-											  GL_UNSIGNED_INT};
+                                              GLuint(sizeof(globe_index_data)),
+                                              m_earth_triangles*VERTICES_PER_TRIANGLE,
+                                              GL_STATIC_DRAW,
+                                              GL_UNSIGNED_INT};
 
     // To get at the underlying texture data from a Resource instance, then cast it void ...
-	RenderTask::texture_buffer_group t_group = {(const GLvoid*)factory.createInstance("Earthmap")->data()->data(),
+    RenderTask::texture_buffer_group t_group = {(const GLvoid*)factory.createInstance("Earthmap")->data()->data(),
                                                 EARTH_TEXTURE_WIDTH*EARTH_TEXTURE_HEIGHT*EARTH_TEXTURE_COLOR_DEPTH,
                                                 EARTH_TEXTURE_WIDTH,
                                                 EARTH_TEXTURE_HEIGHT,
@@ -1376,7 +1376,7 @@ void Starsphere::make_globe_mesh_texture(void) {
                                                 GL_REPEAT,
                                                 true};
 
-	// Instantiate a rendering task with the provided information.
+    // Instantiate a rendering task with the provided information.
     m_render_task_earth = new RenderTask(s_group, v_group, i_group, t_group);
 
     // For vertex input need to correlate with vertex shader code.
@@ -1518,10 +1518,10 @@ void Starsphere::resize(const int width, const int height) {
         // Dimensions acceptable.
         m_aspect = (float)m_CurrentWidth / (float)m_CurrentHeight;
         std::stringstream msg1;
-		msg1 << "Starsphere::resize() : m_aspect = " << m_CurrentWidth
-			<< "/" << m_CurrentHeight << " = " << m_aspect;
-		ErrorHandler::record(msg1.str(), ErrorHandler::INFORM);
-		}
+        msg1 << "Starsphere::resize() : m_aspect = " << m_CurrentWidth
+            << "/" << m_CurrentHeight << " = " << m_aspect;
+        ErrorHandler::record(msg1.str(), ErrorHandler::INFORM);
+        }
     else {
         // Negative or zero for one or both of width and height.
         std::stringstream msg2;
