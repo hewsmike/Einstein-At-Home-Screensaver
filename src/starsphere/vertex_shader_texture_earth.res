@@ -15,9 +15,6 @@ uniform mat4 RotationEarth;
 uniform vec3 toSun;
 
 void main() {
-    // Assume night time at this vertex.
-    day = 0.0;
-
     vec4 toVertex = RotationEarth * vec4(position, 0.0f);
 
     // Check for angle b/w position and the
@@ -25,9 +22,7 @@ void main() {
     // product then they lie on the same side
     // of the origin ie. the vertex is in
     // "daylight'.
-    if(dot(toVertex, vec4(toSun, 0.0f)) > 0.0) {
-        day = 1.0;
-        }
+    day = dot(toVertex, vec4(toSun, 0.0f));
 
     // Transform to camera/eye coordinates.
     gl_Position = CameraMatrix * vec4(position, 1.0f);
