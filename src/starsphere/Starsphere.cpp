@@ -1882,6 +1882,10 @@ void Starsphere::keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey ke
         case KeyH:
             setFeature(AUTO_ROLL, isFeature(AUTO_ROLL) ? false : true);
             break;
+        case KeyN:
+            m_viewpt_elev = 0;
+            m_rotation_offset = 0;
+            break;
         default:
             break;
         }
