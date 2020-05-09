@@ -1404,7 +1404,7 @@ void Starsphere::make_logos(void) {
                                                       178*115*4,
                                                       178,
                                                       115,
-                                                      GL_RGBA,
+                                                      GL_BGRA,
                                                       GL_UNSIGNED_BYTE,
                                                       GL_CLAMP_TO_EDGE,
                                                       GL_CLAMP_TO_EDGE,
