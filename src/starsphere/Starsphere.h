@@ -417,7 +417,8 @@ class Starsphere : public AbstractGraphicsEngine {
         static const GLuint NUMBER_OF_AXES;
 
         /// HUD elements.
-        TexturedHUDParallelogram* m_logo;
+        TexturedHUDParallelogram* m_logo1;
+        TexturedHUDParallelogram* m_logo2;
         TexturedHUDParallelogram* m_user_info;
         TexturedHUDParallelogram* m_team_info;
         TexturedHUDParallelogram* m_total_info;
@@ -501,7 +502,7 @@ class Starsphere : public AbstractGraphicsEngine {
                                    GLuint array_offset);
 
         /// Generate TexturedHUDParalelograms for logos.
-        void make_logo(void);
+        void make_logos(void);
 
         void make_user_info(void);
 

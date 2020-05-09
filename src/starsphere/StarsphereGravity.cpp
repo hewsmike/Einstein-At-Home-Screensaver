@@ -201,7 +201,7 @@ void StarsphereGravity::renderLogo() {
                                                       GL_CLAMP_TO_EDGE,
                                                       false};
 
-    m_logo = new TexturedHUDParallelogram(glm::vec2(10.0f, 10.0f),
+    m_logo = new TexturedHUDParallelogram(glm::vec2(10.0f, 10.0f + (m_YStartPosTop - 10 - 50)/2),
                                           glm::vec2(220.0f, 0.0f),
                                           glm::vec2(0.0f, 100.0f),
                                           logo_texture);

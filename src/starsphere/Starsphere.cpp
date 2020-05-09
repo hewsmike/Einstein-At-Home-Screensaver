@@ -102,7 +102,8 @@ Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
     m_camera_earth = glm::mat4(1.0f);
 
     // HUD data pointers
-    m_logo = NULL;
+    m_logo1 = NULL;
+    m_logo2 = NULL;
     m_user_info = NULL;
     m_team_info = NULL;
     m_total_info = NULL;
@@ -215,7 +216,8 @@ Starsphere::~Starsphere() {
     if(m_FontText) delete m_FontText;
 
     // Delete HUD element pointers.
-    if(m_logo) delete m_logo;
+    if(m_logo1) delete m_logo1;
+    if(m_logo2) delete m_logo2;
     if(m_user_info) delete m_user_info;
     if(m_team_info) delete m_team_info;
     if(m_total_info) delete m_total_info;
@@ -1392,24 +1394,43 @@ void Starsphere::make_globe_mesh_texture(void) {
     m_render_task_earth->acquire();
     }
 
-void Starsphere::make_logo(void) {
+void Starsphere::make_logos(void) {
     // Create factory instance to then access the texture/bitmap.
     ResourceFactory factory;
 
-    RenderTask::texture_buffer_group logo_texture = {(const GLvoid*)factory.createInstance("Logo_E@H")->data()->data(),
+    const Resource* logo1 = factory.createInstance("Logo_E@H");
+
+    RenderTask::texture_buffer_group logo_texture1 = {(const GLvoid*)logo1->data()->data(),
                                                       178*115*4,
                                                       178,
                                                       115,
-                                                      GL_BGRA,
+                                                      GL_RGBA,
                                                       GL_UNSIGNED_BYTE,
                                                       GL_CLAMP_TO_EDGE,
                                                       GL_CLAMP_TO_EDGE,
                                                       false};
 
-    m_logo = new TexturedHUDParallelogram(glm::vec2(10.0f, m_YStartPosTop - 115.0f),
-                                            glm::vec2(178.0f, 0.0f),
-                                            glm::vec2(0.0f, 115.0f),
-                                            logo_texture);
+    m_logo1 = new TexturedHUDParallelogram(glm::vec2(10.0f, m_YStartPosTop - 115.0f),
+                                           glm::vec2(178.0f, 0.0f),
+                                           glm::vec2(0.0f, 115.0f),
+                                           logo_texture1);
+
+    const Resource* logo2 = factory.createInstance("Logo_BOINC");
+
+    RenderTask::texture_buffer_group logo_texture2 = {(const GLvoid*)logo2->data()->data(),
+                                                      874*386*4,
+                                                      874,
+                                                      386,
+                                                      GL_RGBA,
+                                                      GL_UNSIGNED_BYTE,
+                                                      GL_CLAMP_TO_EDGE,
+                                                      GL_CLAMP_TO_EDGE,
+                                                      false};
+
+    m_logo2 = new TexturedHUDParallelogram(glm::vec2(15.0f, 15.0f),
+                                           glm::vec2(218.0f, 0.0f),
+                                           glm::vec2(0.0f, 96.0f),
+                                           logo_texture2);
     }
 
 void Starsphere::make_user_info(void) {
@@ -1615,7 +1636,7 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
     // Create rendering tasks for given 3D features.
-    make_logo();
+    make_logos();
     make_user_info();
     make_constellations();
     make_gammas();
@@ -1758,7 +1779,8 @@ void Starsphere::render(const double timeOfDay) {
     // Render the 2D features in our HUD.
     m_camera = m_orthographic_projection * m_view * m_rotation;
 
-    m_logo->utilise();
+    m_logo1->utilise();
+    m_logo2->utilise();
 
     m_user_info->utilise();
     m_team_info->utilise();
@@ -1912,7 +1934,7 @@ void Starsphere::rotateSphere(const int relativeRotation,
     }
 
 void Starsphere::zoomSphere(const int relativeZoom) {
-    const GLfloat CLOSEST_APPROACH_RATIO = 1.05;
+    const GLfloat CLOSEST_APPROACH_RATIO = 1.1;
     const GLfloat ZOOM_RATE = 10.0f;
 
     // Zoom, the minus sign here means you zoom in by
