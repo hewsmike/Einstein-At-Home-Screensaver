@@ -1724,6 +1724,7 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
 
     // Create the texts of help messages.
     make_HUD_help_entries();
+    make_HUD_help_entry();
 
     // Create rendering tasks for given 3D features.
     make_logos();
