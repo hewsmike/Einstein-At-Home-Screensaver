@@ -1559,7 +1559,6 @@ void Starsphere::make_HUD_help_entries(void) {
     m_HUD_help_texts.push_back("HELP !! I'm trapped inside a virtual Earth mesh model !");
 
     m_num_help_entries = m_HUD_help_texts.size();
-    m_current_help_entry = 0;
     }
 
 void Starsphere::make_HUD_help_entry() {
