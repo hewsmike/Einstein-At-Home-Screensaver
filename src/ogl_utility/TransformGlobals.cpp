@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2016 by Mike Hewson                                     *
+ *   Copyright (C) 2020 by Mike Hewson                                     *
  *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
@@ -25,7 +25,7 @@
 #include "ErrorHandler.h"
 
 /// Initial values of static variables.
-glm::mat4* TransformGlobals::m_transform_matrix_camera(NULL);
+glm::mat4* TransformGlobals::m_transform_matrix_perspective(NULL);
 glm::mat4* TransformGlobals::m_transform_matrix_orthographic(NULL);
 
 /// Screen has zero dimensions.
@@ -38,16 +38,16 @@ TransformGlobals::TransformGlobals(void) {
 TransformGlobals::~TransformGlobals(){
     }
 
-void TransformGlobals::setCameraTransformMatrix(glm::mat4* load_point) {
-    m_transform_matrix_camera = load_point;
+void TransformGlobals::setPerspectiveTransformMatrix(glm::mat4* load_point) {
+    m_transform_matrix_perspective = load_point;
     }
 
-glm::mat4* TransformGlobals::getCameraTransformMatrix(void) {
-    if(m_transform_matrix_camera == NULL) {
+glm::mat4* TransformGlobals::getPerspectiveTransformMatrix(void) {
+    if(m_transform_matrix_perspective == NULL) {
         ErrorHandler::record("TransformGlobals::getPerspectiveTransformMatrix() : access attempt before set !",
                          ErrorHandler::FATAL);
         }
-    return m_transform_matrix_camera;
+    return m_transform_matrix_perspective;
     }
 
 void TransformGlobals::setOrthographicTransformMatrix(glm::mat4* load_point) {

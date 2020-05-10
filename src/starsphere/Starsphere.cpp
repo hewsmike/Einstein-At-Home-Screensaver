@@ -45,7 +45,7 @@
 #include "Pipeline.h"
 #include "Program.h"
 #include "ResourceFactory.h"
-#include "TexturedHUDParallelogram.h"
+#include "TexturedParallelogram.h"
 #include "TransformGlobals.h"
 #include "VertexBuffer.h"
 #include "VertexFetch.h"
@@ -1416,10 +1416,10 @@ void Starsphere::make_logos(void) {
                                                       GL_CLAMP_TO_EDGE,
                                                       false};
 
-    m_logo1 = new TexturedHUDParallelogram(glm::vec2(10.0f, m_YStartPosTop - 115.0f),
-                                           glm::vec2(178.0f, 0.0f),
-                                           glm::vec2(0.0f, 115.0f),
-                                           logo_texture1);
+    m_logo1 = new TexturedParallelogram(glm::vec2(10.0f, m_YStartPosTop - 115.0f),
+                                        glm::vec2(178.0f, 0.0f),
+                                        glm::vec2(0.0f, 115.0f),
+                                        logo_texture1);
 
     const Resource* logo2 = factory.createInstance("Logo_BOINC");
 
@@ -1433,10 +1433,10 @@ void Starsphere::make_logos(void) {
                                                       GL_CLAMP_TO_EDGE,
                                                       false};
 
-    m_logo2 = new TexturedHUDParallelogram(glm::vec2(15.0f, 15.0f),
-                                           glm::vec2(218.0f, 0.0f),
-                                           glm::vec2(0.0f, 96.0f),
-                                           logo_texture2);
+    m_logo2 = new TexturedParallelogram(glm::vec2(15.0f, 15.0f),
+                                        glm::vec2(218.0f, 0.0f),
+                                        glm::vec2(0.0f, 96.0f),
+                                        logo_texture2);
     }
 
 void Starsphere::make_user_info(void) {
@@ -1458,10 +1458,10 @@ void Starsphere::make_user_info(void) {
                                                           false};
 
     // The negative Y-offset vector here is in order to invert the SDL image.
-    m_user_info = new TexturedHUDParallelogram(glm::vec2(m_XStartPosRight - text_surface->w * 2, m_YStartPosTop),
-                                               glm::vec2(text_surface->w * 2, 0.0f),
-                                               glm::vec2(0.0f, -text_surface->h * 2),
-                                               user_info_texture);
+    m_user_info = new TexturedParallelogram(glm::vec2(m_XStartPosRight - text_surface->w * 2, m_YStartPosTop),
+                                            glm::vec2(text_surface->w * 2, 0.0f),
+                                            glm::vec2(0.0f, -text_surface->h * 2),
+                                            user_info_texture);
 
     GLfloat height_drop = text_surface->h * 1.8;
 
@@ -1480,10 +1480,10 @@ void Starsphere::make_user_info(void) {
                                                           false};
 
     // The negative Y-offset vector here is in order to invert the SDL image.
-    m_team_info = new TexturedHUDParallelogram(glm::vec2(m_XStartPosRight - text_surface->w * 2, m_YStartPosTop - height_drop),
-                                               glm::vec2(text_surface->w * 2, 0.0f),
-                                               glm::vec2(0.0f, -text_surface->h * 2),
-                                               team_info_texture);
+    m_team_info = new TexturedParallelogram(glm::vec2(m_XStartPosRight - text_surface->w * 2, m_YStartPosTop - height_drop),
+                                            glm::vec2(text_surface->w * 2, 0.0f),
+                                            glm::vec2(0.0f, -text_surface->h * 2),
+                                            team_info_texture);
 
     height_drop += text_surface->h * 1.8f;
 
@@ -1502,10 +1502,10 @@ void Starsphere::make_user_info(void) {
                                                           false};
 
     // The negative Y-offset vector here is in order to invert the SDL image.
-    m_total_info = new TexturedHUDParallelogram(glm::vec2(m_XStartPosRight - text_surface->w * 2, m_YStartPosTop - height_drop),
-                                               glm::vec2(text_surface->w * 2, 0.0f),
-                                               glm::vec2(0.0f, -text_surface->h * 2),
-                                               total_info_texture);
+    m_total_info = new TexturedParallelogram(glm::vec2(m_XStartPosRight - text_surface->w * 2, m_YStartPosTop - height_drop),
+                                             glm::vec2(text_surface->w * 2, 0.0f),
+                                             glm::vec2(0.0f, -text_surface->h * 2),
+                                             total_info_texture);
 
     height_drop += text_surface->h * 1.8f;
 
@@ -1524,10 +1524,10 @@ void Starsphere::make_user_info(void) {
                                                           false};
 
     // The negative Y-offset vector here is in order to invert the SDL image.
-    m_RAC_info = new TexturedHUDParallelogram(glm::vec2(m_XStartPosRight - text_surface->w * 2, m_YStartPosTop - height_drop),
-                                               glm::vec2(text_surface->w * 2, 0.0f),
-                                               glm::vec2(0.0f, -text_surface->h * 2),
-                                               RAC_info_texture);
+    m_RAC_info = new TexturedParallelogram(glm::vec2(m_XStartPosRight - text_surface->w * 2, m_YStartPosTop - height_drop),
+                                           glm::vec2(text_surface->w * 2, 0.0f),
+                                           glm::vec2(0.0f, -text_surface->h * 2),
+                                           RAC_info_texture);
 
     delete text_surface;
     }
@@ -1580,7 +1580,7 @@ void Starsphere::make_HUD_help_entry() {
         m_current_help_entry = 0;
         }
 
-    // Delete any old TexturedHUDParalellogram.
+    // Delete any old TexturedParalellogram.
     if(m_help_info != NULL) {
         delete m_help_info;
         m_help_info = NULL;
@@ -1611,10 +1611,10 @@ void Starsphere::make_HUD_help_entry() {
     GLuint help_x_offset = (10.0f +  m_XStartPosRight)/2 - (m_help_text_surface->w/2.0f)*2.5f;
 
     // The negative Y-offset vector here is in order to invert the SDL image.
-    m_help_info = new TexturedHUDParallelogram(glm::vec2(help_x_offset, 10.0f + m_help_text_surface->h*2.5f),
-                                               glm::vec2(m_help_text_surface->w * 2.5f, 0.0f),
-                                               glm::vec2(0.0f, -m_help_text_surface->h*2.5f),
-                                               help_info_texture);
+    m_help_info = new TexturedParallelogram(glm::vec2(help_x_offset, 10.0f + m_help_text_surface->h*2.5f),
+                                            glm::vec2(m_help_text_surface->w * 2.5f, 0.0f),
+                                            glm::vec2(0.0f, -m_help_text_surface->h*2.5f),
+                                            help_info_texture);
     }
 
 /**

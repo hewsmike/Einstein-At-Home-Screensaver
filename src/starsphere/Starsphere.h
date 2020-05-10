@@ -39,7 +39,7 @@
 #include "EinsteinGravityAdapter.h"
 #include "ogl_utility.h"
 #include "RenderTask.h"
-#include "TexturedHUDParallelogram.h"
+#include "TexturedParallelogram.h"
 #include "WindowManager.h"
 
 #include "SDL_ttf.h"
@@ -410,13 +410,13 @@ class Starsphere : public AbstractGraphicsEngine {
         static const GLuint NUMBER_OF_AXES;
 
         /// HUD elements.
-        TexturedHUDParallelogram* m_logo1;
-        TexturedHUDParallelogram* m_logo2;
-        TexturedHUDParallelogram* m_user_info;
-        TexturedHUDParallelogram* m_team_info;
-        TexturedHUDParallelogram* m_total_info;
-        TexturedHUDParallelogram* m_RAC_info;
-        TexturedHUDParallelogram* m_help_info;
+        TexturedParallelogram* m_logo1;
+        TexturedParallelogram* m_logo2;
+        TexturedParallelogram* m_user_info;
+        TexturedParallelogram* m_team_info;
+        TexturedParallelogram* m_total_info;
+        TexturedParallelogram* m_RAC_info;
+        TexturedParallelogram* m_help_info;
 
         /// Cumulative frame count.
         GLuint m_framecount;
@@ -508,7 +508,7 @@ class Starsphere : public AbstractGraphicsEngine {
          */
         void setSunPosition(void);
 
-        /// Generate TexturedHUDParalelograms for logos.
+        /// Generate TexturedParallelograms for logos.
         void make_logos(void);
 
         void make_user_info(void);

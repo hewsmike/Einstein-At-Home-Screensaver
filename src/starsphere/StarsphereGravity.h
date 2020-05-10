@@ -25,7 +25,7 @@
 
 #include "Starsphere.h"
 #include "EinsteinGravityAdapter.h"
-#include "TexturedHUDParallelogram.h"
+#include "TexturedParallelogram.h"
 
 // #include "TextString.h"
 
@@ -104,7 +104,7 @@ class StarsphereGravity : public Starsphere {
         void refreshBOINCInformation();
 
     private:
-        TexturedHUDParallelogram* m_logo;
+        TexturedParallelogram* m_logo;
 
         /**
          * \brief Render science run specific logo

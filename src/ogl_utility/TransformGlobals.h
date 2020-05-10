@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2016 by Mike Hewson                                     *
+ *   Copyright (C) 2020 by Mike Hewson                                     *
  *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
@@ -47,10 +47,6 @@
  *      - the dimensions of the client screen area ie. it's width and height.
  * These may be set to new values as often as desired eg. after screen resizing.
  *
- *      - I include a helper function to precalculate the uniform variable that
- * would be used for proper scaling to the screen client area in Normalised
- * Device Coordinates. This could be useful for orthographic projections.
- *
  * \author Mike Hewson\n
  */
 
@@ -68,7 +64,7 @@ class TransformGlobals {
          *                     Obviously that should be persistent and
          *                     available before first dereference.
          */
-        static void setCameraTransformMatrix(glm::mat4* load_point);
+        static void setPerspectiveTransformMatrix(glm::mat4* load_point);
 
         /**
          * \brief Get the location of the camera transform matrix.
@@ -77,9 +73,9 @@ class TransformGlobals {
          *         Obviously that should be set to a valid location prior
          *         to the first dereference. A FATAL error will be generated
          *         if this is called before value setting has occured via
-         *         setCameraTransformMatrix().
+         *         setPerspectiveTransformMatrix().
          */
-        static glm::mat4* getCameraTransformMatrix(void);
+        static glm::mat4* getPerspectiveTransformMatrix(void);
 
         /**
          * \brief Set the location of the orthographic transform matrix.
@@ -125,7 +121,7 @@ class TransformGlobals {
 
     private:
         /// The 3D perspective transform matrix.
-        static glm::mat4* m_transform_matrix_camera;
+        static glm::mat4* m_transform_matrix_perspective;
 
         /// The 2D orthographic transform matrix.
         static glm::mat4* m_transform_matrix_orthographic;

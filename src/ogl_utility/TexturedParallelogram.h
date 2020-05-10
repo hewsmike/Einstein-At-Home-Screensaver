@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2016 by Mike Hewson                                     *
+ *   Copyright (C) 2020 by Mike Hewson                                     *
  *   hewsmike[AT]iinet.net.au                                              *
  *                                                                         *
  *   This file is part of Einstein@Home.                                   *
@@ -33,15 +33,16 @@
  */
 
 /**
- * \brief This class models a four vertex convex parallel
- *           sided planar area onto which a given texture is applied.
+ * \brief This class models a four vertex convex parallel side
+ *        planar area onto which a given texture is applied and
+ *        to be placed using orthographic projection.
  *
  * \see TextureBuffer
  *
  * \author Mike Hewson\n
  */
 
-class TexturedHUDParallelogram : public Configurable {
+class TexturedParallelogram : public Configurable {
     public :
         /**
          * \brief Constructor for 3D perspective rendering
@@ -54,36 +55,43 @@ class TexturedHUDParallelogram : public Configurable {
          *                        of the parallelogram, from the lower left.
          * \param t_group - a RenderTask::texture_buffer_group structure instance.
          */
-        TexturedHUDParallelogram(glm::vec2 position,
-                                 glm::vec2 width_offset,
-                                 glm::vec2 height_offset,
-                                 RenderTask::texture_buffer_group t_group);
+        TexturedParallelogram(glm::vec3 position,
+                              glm::vec3 width_offset,
+                              glm::vec3 height_offset,
+                              RenderTask::texture_buffer_group t_group);
 
         /**
          * \brief Destructor
          */
-        virtual ~TexturedHUDParallelogram();
+        virtual ~TexturedParallelogram();
 
         /**
          * \brief Get the lower left parallelogram corner.
          *
          * \return the lower left parallelogram corner.
          */
-        glm::vec2 position(void);
+        glm::vec3 position(void);
 
         /**
          * \brief Get the 'vertical' offset from the lower left parallelogram corner.
          *
          * \return the offset from lower left parallelogram corner.
          */
-        glm::vec2 heightOffset(void);
+        glm::vec3 heightOffset(void);
 
         /**
          * \brief Get the 'horizontal' offset from the lower left parallelogram corner.
          *
          * \return the offset from lower left parallelogram corner.
          */
-        glm::vec2 widthOffset(void);
+        glm::vec3 widthOffset(void);
+
+        /**
+         * \brief Gets the flag idicating whether it renders in 3D space or on the HUD.
+         *
+         * \return the flag indicating true or false.
+         */
+        bool isThreeDimensional(void);
 
         /**
          * \brief Actually configure any underlying object(s).
@@ -99,18 +107,30 @@ class TexturedHUDParallelogram : public Configurable {
          */
         void utilise(void);
 
+    protected :
+        /**
+         * \brief Set the proper transform. For the base class this
+         *        will be perspectivetransform so that the
+         *        parallelogram is in 3D space.
+         */
+        virtual void setTransform(void);
+
     private :
         static const GLuint VERTEX_COUNT;
 
         /// The shader code for this type of texturing.
-        static const std::string m_vertex_shader_2D;
+        static const std::string m_vertex_shader_3D;
         static const std::string m_fragment_shader;
 
         /// Positioning vectors for vertices.
-        glm::vec2 m_position;
-        glm::vec2 m_height_offset;
-        glm::vec2 m_width_offset;
+        glm::vec3 m_position;
+        glm::vec3 m_height_offset;
+        glm::vec3 m_width_offset;
 
+        // Whether the parallelogram is rendered in 3D or flat on HUD.
+        bool is3D;
+
+        // The texture buffer details.
         RenderTask::texture_buffer_group m_t_group;
 
         /// The rendering task to enact the texturing.
