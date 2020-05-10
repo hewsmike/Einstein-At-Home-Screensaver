@@ -228,6 +228,7 @@ Starsphere::~Starsphere() {
     if(m_team_info) delete m_team_info;
     if(m_total_info) delete m_total_info;
     if(m_RAC_info) delete m_RAC_info;
+    if(m_help_info) delete m_help_info;
 
     // Delete render task pointers.
     if(m_render_task_arms) delete m_render_task_arms;
@@ -1815,7 +1816,7 @@ void Starsphere::render(const double timeOfDay) {
     const GLuint HELP_HUD_REFRESH_INTERVAL(250);
 
     // Is it time to update the help message ?
-    if((m_framecount % HELP_HUD_REFRESH_INTERVAL) == 0) {
+    if(isFeature(HELP) && (m_framecount % HELP_HUD_REFRESH_INTERVAL) == 0) {
         make_HUD_help_entry();
         }
 
