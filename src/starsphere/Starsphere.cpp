@@ -632,10 +632,6 @@ void Starsphere::setSunPosition(void) {
         }
 
     m_vector_sun = sphVertex3D(m_sun_RA, m_sun_DEC, SPHERE_RADIUS);
-
-    std::cout << "Sun declination = " << m_sun_DEC << std::endl;
-    std::cout << "Sun right ascension = " << m_sun_RA << std::endl;
-
     }
 
 void Starsphere::make_local_arms(GLfloat latitude, GLfloat longitude,
