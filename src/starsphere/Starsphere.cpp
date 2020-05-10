@@ -108,6 +108,12 @@ Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
     m_team_info = NULL;
     m_total_info = NULL;
     m_RAC_info = NULL;
+    m_help_info = NULL;
+
+    // Help info display.
+    m_num_help_entries = 0;
+    m_current_help_entry = 0;
+    m_help_text_surface = NULL;
 
     // Render pointers initialised
     m_render_task_arms = NULL;
@@ -1526,6 +1532,86 @@ void Starsphere::make_user_info(void) {
     delete text_surface;
     }
 
+void Starsphere::make_HUD_help_entries(void) {
+    // First empty any existing help entries. In case
+    // we re-initialise.
+    m_HUD_help_texts.clear();
+
+    // Now to fill with text entries.
+    m_HUD_help_texts.push_back("Press Q to toggle this menu");
+    m_HUD_help_texts.push_back("Press A to toggle the x/y/z axes");
+    m_HUD_help_texts.push_back("Press C to toggle the constellations");
+    m_HUD_help_texts.push_back("Press E to toggle the Earth");
+    m_HUD_help_texts.push_back("Press G to toggle the celestial sphere grid");
+    m_HUD_help_texts.push_back("Press H to toggle the rotation");
+    m_HUD_help_texts.push_back("Press I to toggle the search information");
+    m_HUD_help_texts.push_back("Press L to toggle the logos");
+    m_HUD_help_texts.push_back("Press M to toggle the search marker");
+    m_HUD_help_texts.push_back("Press N to reset the viewpoint");
+    m_HUD_help_texts.push_back("Press O to toggle the observatories");
+    m_HUD_help_texts.push_back("Press P to toggle the pulsars");
+    m_HUD_help_texts.push_back("Press R to toggle the supernovae remnants");
+    m_HUD_help_texts.push_back("Press S to toggle the stars");
+    m_HUD_help_texts.push_back("Press U to toggle the gamma emitters");
+    m_HUD_help_texts.push_back("Hold down left mouse key & drag to roll viewpoint");
+    m_HUD_help_texts.push_back("Hold down right mouse key & drag to zoom viewpoint");
+    m_HUD_help_texts.push_back("Scroll mouse wheel to change field of view");
+    m_HUD_help_texts.push_back("Press ESC to exit the program");
+    m_HUD_help_texts.push_back("Go to einsteinathome.org to join up !!");
+    m_HUD_help_texts.push_back("Sit back with a coffee and chill, watch the show ....");
+
+    m_num_help_entries = m_HUD_help_texts.size();
+    m_current_help_entry = 0;
+    }
+
+void Starsphere::make_HUD_help_entry() {
+    // Help text will be bright yellow.
+    const SDL_Color help_color = {255, 255, 0, 255};
+
+    // Increment to next HUD entry but
+    // wrap around to start if necessary.
+    ++m_current_help_entry;
+    if(m_current_help_entry >= m_num_help_entries) {
+        m_current_help_entry = 0;
+        }
+
+    // Delete any old TexturedHUDParalellogram.
+    if(m_help_info != NULL) {
+        delete m_help_info;
+        m_help_info = NULL;
+        }
+
+    // Delete any SDL assets
+    if(m_help_text_surface != NULL) {
+        SDL_FreeSurface(m_help_text_surface);
+        m_help_text_surface = NULL;
+        }
+
+    if(!(m_help_text_surface=TTF_RenderText_Blended(m_FontText,
+                                             m_HUD_help_texts.at(m_current_help_entry).c_str(),
+                                             help_color))){
+        ErrorHandler::record("Starsphere::make_HUD_help_entry() : can't make SDL_Surface for help menu!", ErrorHandler::FATAL);
+        }
+
+    RenderTask::texture_buffer_group help_info_texture = {(const GLvoid*)m_help_text_surface->pixels,
+                                                          m_help_text_surface->w * m_help_text_surface->h * 4,
+                                                          m_help_text_surface->w,
+                                                          m_help_text_surface->h,
+                                                          GL_RGBA,
+                                                          GL_UNSIGNED_BYTE,
+                                                          GL_CLAMP_TO_EDGE,
+                                                          GL_CLAMP_TO_EDGE,
+                                                          false};
+
+    GLuint help_x_offset = (10.0f +  m_XStartPosRight)/2 - m_help_text_surface->w;
+
+    // The negative Y-offset vector here is in order to invert the SDL image.
+    m_help_info = new TexturedHUDParallelogram(glm::vec2(help_x_offset, 10.0f + m_help_text_surface->h*2),
+                                               glm::vec2(m_help_text_surface->w * 2, 0.0f),
+                                               glm::vec2(0.0f, -m_help_text_surface->h*2),
+                                               help_info_texture);
+    }
+
 /**
  * Window resize/remap
  */
@@ -1635,6 +1721,10 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
     // to a one byte boundary. This done mainly for optimizing font setup.
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
+    // Create the texts of help messages.
+    make_HUD_help_entries();
+    make_HUD_help_entry();
+
     // Create rendering tasks for given 3D features.
     make_logos();
     make_user_info();
@@ -1663,6 +1753,7 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
     setFeature(MARKER, true);
     setFeature(EARTH, true);
     setFeature(AUTO_ROLL, true);
+    setFeature(HELP, true);
 
     glActiveTexture(GL_TEXTURE0);
 
@@ -1713,8 +1804,20 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
  */
 void Starsphere::render(const double timeOfDay) {
     // timeOfDay is in Unix time ( seconds) since Epoch.
+
+    // the 4 by 4 identity matrix.
     const glm::mat4 identity(1.0f);
+
+    // The auto rotate roll rate.
     const GLfloat ROLL_RATE(0.0025f);
+
+    // The number of frames b/w help HUD updates.
+    const GLuint HELP_HUD_REFRESH_INTERVAL(200);
+
+    // I sit time to update the message ?
+    if((m_framecount % HELP_HUD_REFRESH_INTERVAL) == 0) {
+        make_HUD_help_entry();
+        }
 
     // Start drawing with clearing the relevant buffers.
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -1779,8 +1882,15 @@ void Starsphere::render(const double timeOfDay) {
     // Render the 2D features in our HUD.
     m_camera = m_orthographic_projection * m_view * m_rotation;
 
-    m_logo1->utilise();
-    m_logo2->utilise();
+    if(isFeature(HELP)) {
+        m_help_info->utilise();
+        }
+
+    if(isFeature(LOGO)) {
+        // Show the E@H and BOINC logos.
+        m_logo1->utilise();
+        m_logo2->utilise();
+        }
 
     m_user_info->utilise();
     m_team_info->utilise();
@@ -1903,6 +2013,9 @@ void Starsphere::keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey ke
             break;
         case KeyH:
             setFeature(AUTO_ROLL, isFeature(AUTO_ROLL) ? false : true);
+            break;
+        case KeyQ:
+            setFeature(HELP, isFeature(HELP) ? false : true);
             break;
         case KeyN:
             m_viewpt_elev = 0;

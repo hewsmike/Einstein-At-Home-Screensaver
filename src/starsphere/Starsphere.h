@@ -234,7 +234,8 @@ class Starsphere : public AbstractGraphicsEngine {
             STARS = 1024,
             XRAYS = 2048,
             EARTH = 4096,
-            AUTO_ROLL = 8192
+            AUTO_ROLL = 8192,
+            HELP = 16384
             };
 
         /**
@@ -280,14 +281,6 @@ class Starsphere : public AbstractGraphicsEngine {
          * \return The day number for the current year.
          */
         GLuint dayOfYear(void);
-
-        /**
-         * \brief Calculate and store the right ascension and declination of
-         * the Sun on the celestial sphere, also a vector from the origin
-         * to the Sun on the celestial sphere.
-         *
-         */
-        void setSunPosition(void);
 
         /**
          * \brief Creates a GL vertex in 3D sky sphere coordinates
@@ -423,6 +416,7 @@ class Starsphere : public AbstractGraphicsEngine {
         TexturedHUDParallelogram* m_team_info;
         TexturedHUDParallelogram* m_total_info;
         TexturedHUDParallelogram* m_RAC_info;
+        TexturedHUDParallelogram* m_help_info;
 
         /// Cumulative frame count.
         GLuint m_framecount;
@@ -491,6 +485,11 @@ class Starsphere : public AbstractGraphicsEngine {
         GLfloat m_sun_RA;
         GLfloat m_sun_DEC;
 
+        GLuint m_current_help_entry;
+        GLuint m_num_help_entries;
+        std::vector<std::string> m_HUD_help_texts;
+        SDL_Surface* m_help_text_surface;
+
         void make_local_arms(GLfloat latitude, GLfloat longitude,
                              GLfloat x_arm_azimuth, GLfloat y_arm_azimuth,
                              glm::vec3 color, GLfloat* vertex_data, GLuint array_offset);
@@ -500,6 +499,14 @@ class Starsphere : public AbstractGraphicsEngine {
                                    glm::vec3 color,
                                    GLfloat* vertex_data,
                                    GLuint array_offset);
+
+        /**
+         * \brief Calculate and store the right ascension and declination of
+         * the Sun on the celestial sphere, also a vector from the origin
+         * to the Sun on the celestial sphere.
+         *
+         */
+        void setSunPosition(void);
 
         /// Generate TexturedHUDParalelograms for logos.
         void make_logos(void);
@@ -531,7 +538,12 @@ class Starsphere : public AbstractGraphicsEngine {
         void make_globe_mesh_texture(void);
 
         void make_observatories(void);
-               /**
+
+        void make_HUD_help_entries(void);
+
+        void make_HUD_help_entry(void);
+
+        /**
          * \brief Generate OpenGL display list for search marker (gunsight)
          *
          * \param RAdeg Right ascension in degrees
