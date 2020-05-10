@@ -105,7 +105,9 @@ void StarsphereGravity::resize(const int width, const int height) {
 void StarsphereGravity::render(const double timeOfDay) {
     Starsphere::render(timeOfDay);
 
-    m_logo->utilise();
+    if(isFeature(LOGO)) {
+        m_logo->utilise();
+        }
     }
 
 void StarsphereGravity::refreshBOINCInformation() {
