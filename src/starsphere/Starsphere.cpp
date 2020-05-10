@@ -1559,6 +1559,7 @@ void Starsphere::make_HUD_help_entries(void) {
     m_HUD_help_texts.push_back("Press ESC to exit the program");
     m_HUD_help_texts.push_back("Go to einsteinathome.org to join up !!");
     m_HUD_help_texts.push_back("Sit back with a coffee and chill, watch the show ....");
+    m_HUD_help_texts.push_back("HELP !! I'm trapped inside a virtual Earth mesh model !");
 
     m_num_help_entries = m_HUD_help_texts.size();
     m_current_help_entry = 0;
@@ -1566,7 +1567,11 @@ void Starsphere::make_HUD_help_entries(void) {
 
 void Starsphere::make_HUD_help_entry() {
     // Help text will be bright yellow.
-    const SDL_Color help_color = {255, 255, 0, 255};
+    SDL_Color help_color;
+    help_color.r = 255;
+    help_color.g = 255;
+    help_color.b = 0;
+    help_color.a = 255;
 
     // Increment to next HUD entry but
     // wrap around to start if necessary.
@@ -1588,8 +1593,8 @@ void Starsphere::make_HUD_help_entry() {
         }
 
     if(!(m_help_text_surface=TTF_RenderText_Blended(m_FontText,
-                                             m_HUD_help_texts.at(m_current_help_entry).c_str(),
-                                             help_color))){
+                                                    m_HUD_help_texts.at(m_current_help_entry).c_str(),
+                                                    help_color))){
         ErrorHandler::record("Starsphere::make_HUD_help_entry() : can't make SDL_Surface for help menu!", ErrorHandler::FATAL);
         }
 
@@ -1603,12 +1608,12 @@ void Starsphere::make_HUD_help_entry() {
                                                           GL_CLAMP_TO_EDGE,
                                                           false};
 
-    GLuint help_x_offset = (10.0f +  m_XStartPosRight)/2 - m_help_text_surface->w;
+    GLuint help_x_offset = (10.0f +  m_XStartPosRight)/2 - (m_help_text_surface->w/2.0f)*2.5f;
 
     // The negative Y-offset vector here is in order to invert the SDL image.
-    m_help_info = new TexturedHUDParallelogram(glm::vec2(help_x_offset, 10.0f + m_help_text_surface->h*2),
-                                               glm::vec2(m_help_text_surface->w * 2, 0.0f),
-                                               glm::vec2(0.0f, -m_help_text_surface->h*2),
+    m_help_info = new TexturedHUDParallelogram(glm::vec2(help_x_offset, 10.0f + m_help_text_surface->h*2.5f),
+                                               glm::vec2(m_help_text_surface->w * 2.5f, 0.0f),
+                                               glm::vec2(0.0f, -m_help_text_surface->h*2.5f),
                                                help_info_texture);
     }
 
@@ -1723,7 +1728,6 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
 
     // Create the texts of help messages.
     make_HUD_help_entries();
-    make_HUD_help_entry();
 
     // Create rendering tasks for given 3D features.
     make_logos();
@@ -1812,9 +1816,9 @@ void Starsphere::render(const double timeOfDay) {
     const GLfloat ROLL_RATE(0.0025f);
 
     // The number of frames b/w help HUD updates.
-    const GLuint HELP_HUD_REFRESH_INTERVAL(200);
+    const GLuint HELP_HUD_REFRESH_INTERVAL(250);
 
-    // I sit time to update the message ?
+    // Is it time to update the help message ?
     if((m_framecount % HELP_HUD_REFRESH_INTERVAL) == 0) {
         make_HUD_help_entry();
         }
