@@ -116,7 +116,7 @@ TexturedParallelogram::TexturedParallelogram(glm::vec3 position,
                                              RenderTask::texture_buffer_group t_group) :
                                                  m_position(position),
                                                  m_width_offset(width_offset),
-                                                 m_height_offset(height_offset)
+                                                 m_height_offset(height_offset),
                                                  is3D(true) {
     // Check for nullity of texture data pointer.
     if(t_group.texture_data == NULL) {
@@ -135,7 +135,7 @@ TexturedParallelogram::TexturedParallelogram(glm::vec2 position,
                                              RenderTask::texture_buffer_group t_group) :
                                                  m_position(position, 0.0f),
                                                  m_width_offset(width_offset, 0.0f),
-                                                 m_height_offset(height_offset, 0.0f)
+                                                 m_height_offset(height_offset, 0.0f),
                                                  is3D(false) {
     // Check for nullity of texture data pointer.
     if(t_group.texture_data == NULL) {
@@ -181,7 +181,7 @@ bool TexturedParallelogram::configure(void) {
         m_render_task->setUniform("CameraMatrix", TransformGlobals::getOrthographicTransformMatrix());
         }
     else {
-        m_render_task->setUniform("CameraMatrix", TransformGlobals::getCameraTransformMatrix());
+        m_render_task->setUniform("CameraMatrix", TransformGlobals::getPerspectiveTransformMatrix());
         }
     m_render_task->setUniform("base_position", &m_position);
     m_render_task->setUniform("height_offset", &m_height_offset);

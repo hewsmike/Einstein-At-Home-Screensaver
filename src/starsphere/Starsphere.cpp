@@ -315,7 +315,7 @@ void Starsphere::make_stars(void) {
     m_render_task_star->addSpecification({0, "position", 3, GL_FLOAT, GL_FALSE});
 
     // For program uniforms need client side pointers.
-    m_render_task_star->setUniform("CameraMatrix", TransformGlobals::getCameraTransformMatrix());
+    m_render_task_star->setUniform("CameraMatrix", TransformGlobals::getPerspectiveTransformMatrix());
 
     m_render_task_star->setUniform("color", &m_star_color);
 
@@ -367,7 +367,7 @@ void Starsphere::make_pulsars(void) {
     m_render_task_psr->addSpecification({0, "position", 3, GL_FLOAT, GL_FALSE});
 
     // For program uniforms need client side pointers.
-    m_render_task_psr->setUniform("CameraMatrix", TransformGlobals::getCameraTransformMatrix());
+    m_render_task_psr->setUniform("CameraMatrix", TransformGlobals::getPerspectiveTransformMatrix());
 
     m_render_task_psr->setUniform("color", &m_pulsar_color);
 
@@ -419,7 +419,7 @@ void Starsphere::make_snrs(void) {
     m_render_task_snr->addSpecification({0, "position", 3, GL_FLOAT, GL_FALSE});
 
     // For program uniforms need client side pointers.
-    m_render_task_snr->setUniform("CameraMatrix", TransformGlobals::getCameraTransformMatrix());
+    m_render_task_snr->setUniform("CameraMatrix", TransformGlobals::getPerspectiveTransformMatrix());
 
     m_render_task_snr->setUniform("color", &m_supernova_color);
 
@@ -486,7 +486,7 @@ void Starsphere::make_constellations(void) {
     m_render_task_cons->addSpecification({0, "position", 3, GL_FLOAT, GL_FALSE});
 
     // For program uniforms need client side pointers.
-    m_render_task_cons->setUniform("CameraMatrix", TransformGlobals::getCameraTransformMatrix());
+    m_render_task_cons->setUniform("CameraMatrix", TransformGlobals::getPerspectiveTransformMatrix());
 
     m_render_task_cons->setUniform("color", &m_constellation_line_color);
 
@@ -538,7 +538,7 @@ void Starsphere::make_gammas(void) {
     m_render_task_gammas->addSpecification({0, "position", 3, GL_FLOAT, GL_FALSE});
 
     // For program uniforms need client side pointers.
-    m_render_task_gammas->setUniform("CameraMatrix", TransformGlobals::getCameraTransformMatrix());
+    m_render_task_gammas->setUniform("CameraMatrix", TransformGlobals::getPerspectiveTransformMatrix());
 
     m_render_task_gammas->setUniform("color", &m_gamma_color);
 
@@ -1067,7 +1067,7 @@ void Starsphere::make_axes(void) {
     m_render_task_axes->addSpecification({0, "position", 3, GL_FLOAT, GL_FALSE});
 
     // For program uniforms need client side pointers.
-    m_render_task_axes->setUniform("CameraMatrix", TransformGlobals::getCameraTransformMatrix());
+    m_render_task_axes->setUniform("CameraMatrix", TransformGlobals::getPerspectiveTransformMatrix());
 
     m_render_task_axes->setUniform("color", &m_axes_color);
 
@@ -1227,7 +1227,7 @@ void Starsphere::make_globe_mesh_lat_long(void) {
     m_render_task_globe->addSpecification({0, "position", 3, GL_FLOAT, GL_FALSE});
 
     // For program uniforms need client side pointers.
-    m_render_task_globe->setUniform("CameraMatrix", TransformGlobals::getCameraTransformMatrix());
+    m_render_task_globe->setUniform("CameraMatrix", TransformGlobals::getPerspectiveTransformMatrix());
     m_render_task_globe->setUniform("color", &m_grid_color);
     m_render_task_globe->setUniform("point_size", &m_globe_point_size);
 
@@ -1673,7 +1673,7 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
     configTransformMatrices();
 
     // Remember transform matrix locations in global state class.
-    TransformGlobals::setCameraTransformMatrix(&m_camera);
+    TransformGlobals::setPerspectiveTransformMatrix(&m_camera);
     TransformGlobals::setOrthographicTransformMatrix(&m_orthographic_projection);
 
     // Setup initial dimensions.

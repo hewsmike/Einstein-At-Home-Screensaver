@@ -61,6 +61,22 @@ class TexturedParallelogram : public Configurable {
                               RenderTask::texture_buffer_group t_group);
 
         /**
+         * \brief Constructor for 2D orthographic rendering
+         *
+         * \param position - a vector to the point on the lower left corner
+         *                   of the parallelogram.
+         * \param width_offset - a vector directed to the lower right corner
+         *                       of the parallelogram, from the lower left.
+         * \param height_offset - a vector directed to the upper left corner
+         *                        of the parallelogram, from the lower left.
+         * \param t_group - a RenderTask::texture_buffer_group structure instance.
+         */
+        TexturedParallelogram(glm::vec2 position,
+                              glm::vec2 width_offset,
+                              glm::vec2 height_offset,
+                              RenderTask::texture_buffer_group t_group);
+
+        /**
          * \brief Destructor
          */
         virtual ~TexturedParallelogram();
@@ -107,15 +123,7 @@ class TexturedParallelogram : public Configurable {
          */
         void utilise(void);
 
-    protected :
-        /**
-         * \brief Set the proper transform. For the base class this
-         *        will be perspectivetransform so that the
-         *        parallelogram is in 3D space.
-         */
-        virtual void setTransform(void);
-
-    private :
+   private :
         static const GLuint VERTEX_COUNT;
 
         /// The shader code for this type of texturing.
