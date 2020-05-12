@@ -1550,8 +1550,8 @@ void Starsphere::make_HUD_help_entries(void) {
     m_HUD_help_texts.push_back("Press R to toggle the supernovae remnants");
     m_HUD_help_texts.push_back("Press S to toggle the stars");
     m_HUD_help_texts.push_back("Press U to toggle the gamma emitters");
-    m_HUD_help_texts.push_back("Hold down left mouse key & drag to roll viewpoint");
-    m_HUD_help_texts.push_back("Hold down right mouse key & drag to zoom viewpoint");
+    m_HUD_help_texts.push_back("Hold down left mouse button & drag to roll viewpoint");
+    m_HUD_help_texts.push_back("Hold down right mouse button & drag to zoom viewpoint");
     m_HUD_help_texts.push_back("Scroll mouse wheel to change field of view");
     m_HUD_help_texts.push_back("Press ESC to exit the program");
     m_HUD_help_texts.push_back("Go to einsteinathome.org to join up !!");
@@ -1604,12 +1604,12 @@ void Starsphere::make_HUD_help_entry() {
                                                           GL_CLAMP_TO_EDGE,
                                                           false};
 
-    GLuint help_x_offset = (10.0f +  m_XStartPosRight)/2 - (m_help_text_surface->w/2.0f)*2.5f;
+    GLuint help_x_offset = (10.0f +  m_XStartPosRight)/2 - (m_help_text_surface->w/2.0f)*1.5f;
 
     // The negative Y-offset vector here is in order to invert the SDL image.
-    m_help_info = new TexturedParallelogram(glm::vec2(help_x_offset, 10.0f + m_help_text_surface->h*2.5f),
-                                            glm::vec2(m_help_text_surface->w * 2.5f, 0.0f),
-                                            glm::vec2(0.0f, -m_help_text_surface->h*2.5f),
+    m_help_info = new TexturedParallelogram(glm::vec2(help_x_offset, 10.0f + m_help_text_surface->h*1.5f),
+                                            glm::vec2(m_help_text_surface->w * 1.5f, 0.0f),
+                                            glm::vec2(0.0f, -m_help_text_surface->h*1.5f),
                                             help_info_texture);
     }
 

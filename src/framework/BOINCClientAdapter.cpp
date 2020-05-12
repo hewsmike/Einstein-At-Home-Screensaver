@@ -47,7 +47,6 @@ void BOINCClientAdapter::initialize() {
         readProjectPreferences();
 
         m_Initialized = true;
-        std::cout << "BOINC Client Adapter has initialised" <<std::endl;
         }
     }
 
@@ -62,13 +61,11 @@ void BOINCClientAdapter::refresh() {
         cerr << "The BOINC Client Adapter has not yet been initialized! Doing so now..." << endl;
         initialize();
         }
-    std::cout << "BOINC Client Adapter has refreshed" <<std::endl;
     }
 
 void BOINCClientAdapter::readUserInfo() {
     boinc_parse_init_data_file();
     boinc_get_init_data(m_UserData);
-    std::cout << "BOINC Client Adapter has read user info" <<std::endl;
     }
 
 void BOINCClientAdapter::readSharedMemoryArea() {

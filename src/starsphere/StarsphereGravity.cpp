@@ -44,7 +44,6 @@ void StarsphereGravity::initialize(const int width, const int height, const Reso
 
     // Fatal error if no font resource supplied.
     if(!m_FontResource) {
-        std::cout << "Hello from StarsphereGravity::initialize no font resource available !" << std::endl;
         // ErrorHandler::record("StarsphereGravity::initialize()", ErrorHandler::FATAL);
         }
     else {

@@ -26,7 +26,7 @@
 #include "ErrorHandler.h"
 #include "SolarSystemGlobals.h"
 
-const string EinsteinGravityAdapter::SharedMemoryIdentifier = "hsgamma_FGRP5_1.08_x86_64-pc-linux-gnu__FGRPSSE";
+const string EinsteinGravityAdapter::SharedMemoryIdentifier = "einstein_S5R6_1.01_graphics_i686-pc-linux-gnu";
 
 EinsteinGravityAdapter::EinsteinGravityAdapter(BOINCClientAdapter* boincClient) {
     p_boincClient = boincClient;
