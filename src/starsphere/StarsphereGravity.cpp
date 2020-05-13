@@ -40,7 +40,10 @@ StarsphereGravity::~StarsphereGravity() {
 void StarsphereGravity::initialize(const int width, const int height, const Resource* font) {
     Starsphere::initialize(width, height, font);
 
+    refreshBOINCInformation();
+
     renderLogo();
+    renderSearchInformation();
 
     // Fatal error if no font resource supplied.
     if(!m_FontResource) {
@@ -168,7 +171,7 @@ void StarsphereGravity::refreshBOINCInformation() {
     m_CurrentTime = string(cBuffer);
     }
 
-void StarsphereGravity::renderSearchInformation() {
+void StarsphereGravity::prepareSearchInformation() {
 //        // clock
 //        m_FontLogo1->draw(m_XStartPosClock, m_YStartPosTop, m_CurrentTime.c_str());
 //
@@ -187,7 +190,7 @@ void StarsphereGravity::renderSearchInformation() {
 //        m_FontText->draw(m_XStartPosRight, m_Y4StartPosBottom, m_WUCPUTime.c_str());
     }
 
-void StarsphereGravity::renderLogo() {
+void StarsphereGravity::prepareLogo() {
     // Create factory instance to then access the texture/bitmap.
     ResourceFactory factory;
 

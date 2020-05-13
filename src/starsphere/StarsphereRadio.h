@@ -105,7 +105,7 @@ private:
      * This specific implementation shows the usual "Einstein@Home" logo combined
      * with "International Year of Astronomy 2009" as subtitle
      */
-    inline void renderLogo();
+    void prepareLogo();
 
     /**
      * \brief Render science run specific search information
@@ -113,15 +113,7 @@ private:
      * For this specific implementation this also includes the "BOINC Statistics"
      * as it is top-aligned to the "Search Information".
      */
-    inline void renderSearchInformation();
-
-    /**
-     * \brief Renders the Arecibo observatory
-     *
-     * This specific implementation invokes a single display list rendering the
-     * Arecibo observatory. It overrides the (empty) base class implementation.
-     */
-    inline void renderAdditionalObservatories();
+    void prepareSearchInformation();
 
     /**
      * \brief Creates an OpenGL call list which contains the static power spectrum coordinate system

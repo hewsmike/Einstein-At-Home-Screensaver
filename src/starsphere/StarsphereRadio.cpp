@@ -39,71 +39,7 @@ void StarsphereRadio::initialize(const int width, const int height, const Resour
 
     // store quality setting
     m_QualitySetting = m_BoincAdapter.graphicsQualitySetting();
-
-    /// TODO - retain this code ? Alternate method/flag ?
-//    // check whether we initialize the first time or have to recycle (required for windoze)
-//    if(!recycle) {
-//
-//        // adjust HUD config
-//        m_YOffsetMedium = 15.0;
-//        m_XStartPosRightWidthOffset = 125.0;
-//        m_XStartPosRight = width - m_XStartPosRightWidthOffset;
-//        m_YStartPosBottom = 100.0;
-//        m_Y1StartPosBottom = m_YStartPosBottom  - m_YOffsetMedium;
-//        m_Y2StartPosBottom = m_Y1StartPosBottom - m_YOffsetMedium;
-//        m_Y3StartPosBottom = m_Y2StartPosBottom - m_YOffsetMedium;
-//        m_Y4StartPosBottom = m_Y3StartPosBottom - m_YOffsetMedium;
-//        m_Y5StartPosBottom = m_Y4StartPosBottom - m_YOffsetMedium;
-//        m_Y6StartPosBottom = m_Y5StartPosBottom - m_YOffsetMedium;
-//
-//        // adjust Power Spectrum config
-//        m_PowerSpectrumWidth = 200.0;
-//        m_PowerSpectrumHeight = 50.0;
-//        m_PowerSpectrumOriginWidthOffset = 210.0;
-//        m_PowerSpectrumOriginHeightOffset = 60.0;
-//        m_PowerSpectrumXPos = width - m_PowerSpectrumOriginWidthOffset;
-//        m_PowerSpectrumYPos = height - m_PowerSpectrumOriginHeightOffset;
-//        m_PowerSpectrumAxesWidth = 2.0;
-//        m_PowerSpectrumBinWidth = 3.0;
-//        m_PowerSpectrumBinDistance = 2.0;
-//        m_PowerSpectrumLabelXOffset = (m_PowerSpectrumWidth - 150.0) / 2;
-//        m_PowerSpectrumLabelYOffset = 15.0;
-//        m_PowerSpectrumLabelXPos = m_PowerSpectrumXPos + m_PowerSpectrumLabelXOffset;
-//        m_PowerSpectrumLabelYPos = m_PowerSpectrumYPos - m_PowerSpectrumLabelYOffset;
-//    }
-
-    // create large font instances using font resource (base address + size)
-//    m_FontLogo1 = new OGLFT::Translucent(
-//                                &m_FontResource->data()->at(0),
-//                                m_FontResource->data()->size(),
-//                                26, 78 );
-//
-//    if ( m_FontLogo1 == 0 || !m_FontLogo1->isValid() ) {
-//         cerr << "Could not construct logo1 font face from in memory resource!" << endl;
-//         return;
-//    }
-//
-//    m_FontLogo1->setForegroundColor(1.0, 1.0, 0.0, 1.0);
-//
-//    // create medium font instances using font resource (base address + size)
-//    m_FontLogo2 = new OGLFT::Translucent(
-//                                &m_FontResource->data()->at(0),
-//                                m_FontResource->data()->size(),
-//                                12, 72 );
-//
-//    if ( m_FontLogo2 == 0 || !m_FontLogo2->isValid() ) {
-//         cerr << "Could not construct logo2 font face from in memory resource!" << endl;
-//         return;
-//    }
-//
-//    m_FontLogo2->setForegroundColor(0.75, 0.75, 0.75, 1.0);
-
-    // prepare power spectrum
-    generatePowerSpectrumCoordSystem(m_PowerSpectrumXPos, m_PowerSpectrumYPos);
-
-    // prepare base class observatories (dimmed to 33%)
-    //generateObservatories(0.33);
-}
+    }
 
 void StarsphereRadio::resize(const int width, const int height)
 {
@@ -121,10 +57,6 @@ void StarsphereRadio::resize(const int width, const int height)
 
     generatePowerSpectrumCoordSystem(m_PowerSpectrumXPos, m_PowerSpectrumYPos);
     generatePowerSpectrumBins(m_PowerSpectrumXPos, m_PowerSpectrumYPos);
-}
-
-void StarsphereRadio::renderAdditionalObservatories() {
-//    glCallList(m_areciboObservatory);
 }
 
 void StarsphereRadio::refreshBOINCInformation()
@@ -206,7 +138,7 @@ void StarsphereRadio::refreshBOINCInformation()
     generatePowerSpectrumBins(m_PowerSpectrumXPos, m_PowerSpectrumYPos);
 }
 
-void StarsphereRadio::renderSearchInformation() {
+void StarsphereRadio::prepare SearchInformation() {
     // disable opt-in quality feature for power spectrum
     if(m_QualitySetting == BOINCClientAdapter::HighGraphicsQualitySetting) {
 //        glDisable(GL_POINT_SMOOTH);
@@ -298,7 +230,7 @@ void StarsphereRadio::generatePowerSpectrumBins(const int originX, const int ori
 //    glEndList();
 }
 
-void StarsphereRadio::renderLogo()
+void StarsphereRadio::prepareLogo()
 {
 //    m_FontLogo1->draw(m_XStartPosLeft, m_YStartPosTop, "Einstein@Home");
 //    m_FontLogo2->draw(m_XStartPosLeft, m_YStartPosTop - m_YOffsetLarge, "International Year of Astronomy 2009");

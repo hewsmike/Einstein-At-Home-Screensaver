@@ -112,7 +112,7 @@ class StarsphereGravity : public Starsphere {
          * This specific implementation shows the usual "Einstein@Home" logo combined
          * with "World Year of Physics 2005" as subtitle
          */
-        inline void renderLogo();
+        void prepareLogo();
 
         // TextString* m_logo_1;
         // TextString* m_logo_2;
@@ -123,7 +123,7 @@ class StarsphereGravity : public Starsphere {
          * For this specific implementation this also includes the "BOINC Statistics"
          * as it is top-aligned to the "Search Information".
          */
-        inline void renderSearchInformation();
+        void prepareSearchInformation();
 
         /**
          * \brief Generates the OpenGL call lists for the displayed observatories

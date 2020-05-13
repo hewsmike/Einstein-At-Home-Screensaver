@@ -25,113 +25,43 @@
 
 StarsphereGamma::StarsphereGamma() :
     Starsphere(EinsteinGammaAdapter::SharedMemoryIdentifier),
-    m_EinsteinAdapter(&m_BoincAdapter)
-{
-    m_WUDispersionMeasureValue = -1.0;
-    m_PowerSpectrumCoordSystemList = 0;
-    m_PowerSpectrumBinList = 0;
-    m_PowerSpectrumFreqBins = 0;
-}
+    m_EinsteinAdapter(&m_BoincAdapter) {
+    m_right_ascension_info = NULL;
+    m_declination_info = NULL;
+    m_percent_done_info = NULL;
+    m_cpu_time_info = NULL;
+    }
 
-StarsphereGamma::~StarsphereGamma()
-{
-}
+StarsphereGamma::~StarsphereGamma() {
+    }
 
 void StarsphereGamma::initialize(const int width, const int height, const Resource* font) {
     Starsphere::initialize(width, height, font);
 
+    prepareLogo();
+    std::cout << "Let's get search info" << std::endl;
+
+    prepareSearchInformation();
+
     // store quality setting
     m_QualitySetting = m_BoincAdapter.graphicsQualitySetting();
+    }
 
-    /// TODO - retain this code ? Alternate method/flag ?
-//    // check whether we initialize the first time or have to recycle (required for windoze)
-//    if(!recycle) {
-//
-//        // adjust HUD config
-//        m_YOffsetMedium = 15.0;
-//        m_XStartPosRightWidthOffset = 125.0;
-//        m_XStartPosRight = width - m_XStartPosRightWidthOffset;
-//        m_YStartPosBottom = 100.0;
-//        m_Y1StartPosBottom = m_YStartPosBottom  - m_YOffsetMedium;
-//        m_Y2StartPosBottom = m_Y1StartPosBottom - m_YOffsetMedium;
-//        m_Y3StartPosBottom = m_Y2StartPosBottom - m_YOffsetMedium;
-//        m_Y4StartPosBottom = m_Y3StartPosBottom - m_YOffsetMedium;
-//        m_Y5StartPosBottom = m_Y4StartPosBottom - m_YOffsetMedium;
-//        m_Y6StartPosBottom = m_Y5StartPosBottom - m_YOffsetMedium;
-//
-//        // adjust Power Spectrum config
-//        m_PowerSpectrumWidth = 200.0;
-//        m_PowerSpectrumHeight = 50.0;
-//        m_PowerSpectrumOriginWidthOffset = 210.0;
-//        m_PowerSpectrumOriginHeightOffset = 60.0;
-//        m_PowerSpectrumXPos = width - m_PowerSpectrumOriginWidthOffset;
-//        m_PowerSpectrumYPos = height - m_PowerSpectrumOriginHeightOffset;
-//        m_PowerSpectrumAxesWidth = 2.0;
-//        m_PowerSpectrumBinWidth = 3.0;
-//        m_PowerSpectrumBinDistance = 2.0;
-//        m_PowerSpectrumLabelXOffset = (m_PowerSpectrumWidth - 150.0) / 2;
-//        m_PowerSpectrumLabelYOffset = 15.0;
-//        m_PowerSpectrumLabelXPos = m_PowerSpectrumXPos + m_PowerSpectrumLabelXOffset;
-//        m_PowerSpectrumLabelYPos = m_PowerSpectrumYPos - m_PowerSpectrumLabelYOffset;
-//    }
-
-    // create large font instances using font resource (base address + size)
-//    m_FontLogo1 = new OGLFT::Translucent(
-//                                &m_FontResource->data()->at(0),
-//                                m_FontResource->data()->size(),
-//                                26, 78 );
-//
-//    if ( m_FontLogo1 == 0 || !m_FontLogo1->isValid() ) {
-//         cerr << "Could not construct logo1 font face from in memory resource!" << endl;
-//         return;
-//    }
-//
-//    m_FontLogo1->setForegroundColor(1.0, 1.0, 0.0, 1.0);
-//
-//    // create medium font instances using font resource (base address + size)
-//    m_FontLogo2 = new OGLFT::Translucent(
-//                                &m_FontResource->data()->at(0),
-//                                m_FontResource->data()->size(),
-//                                12, 72 );
-//
-//    if ( m_FontLogo2 == 0 || !m_FontLogo2->isValid() ) {
-//         cerr << "Could not construct logo2 font face from in memory resource!" << endl;
-//         return;
-//    }
-//
-//    m_FontLogo2->setForegroundColor(0.75, 0.75, 0.75, 1.0);
-
-    // prepare power spectrum
-    generatePowerSpectrumCoordSystem(m_PowerSpectrumXPos, m_PowerSpectrumYPos);
-
-    // prepare base class observatories (dimmed to 33%)
-    //generateObservatories(0.33);
-}
-
-void StarsphereGamma::resize(const int width, const int height)
-{
+void StarsphereGamma::resize(const int width, const int height) {
     Starsphere::resize(width, height);
+    }
 
-    // update HUD config
-    m_XStartPosRight = width - m_XStartPosRightWidthOffset;
+void StarsphereGamma::render(const double timeOfDay) {
+    Starsphere::render(timeOfDay);
 
+    if(isFeature(LOGO)) {
+        /// m_logo->utilise();
+        }
 
-    // update power spectrum
-    m_PowerSpectrumXPos = width - m_PowerSpectrumOriginWidthOffset;
-    m_PowerSpectrumYPos = height - m_PowerSpectrumOriginHeightOffset;
-    m_PowerSpectrumLabelXPos = m_PowerSpectrumXPos + m_PowerSpectrumLabelXOffset;
-    m_PowerSpectrumLabelYPos = m_PowerSpectrumYPos - m_PowerSpectrumLabelYOffset;
+    m_right_ascension_info->utilise();
+    }
 
-    generatePowerSpectrumCoordSystem(m_PowerSpectrumXPos, m_PowerSpectrumYPos);
-    generatePowerSpectrumBins(m_PowerSpectrumXPos, m_PowerSpectrumYPos);
-}
-
-void StarsphereGamma::renderAdditionalObservatories() {
-//    glCallList(m_areciboObservatory);
-}
-
-void StarsphereGamma::refreshBOINCInformation()
-{
+void StarsphereGamma::refreshBOINCInformation() {
     // call base class implementation
     Starsphere::refreshLocalBOINCInformation();
 
@@ -164,31 +94,6 @@ void StarsphereGamma::refreshBOINCInformation()
         buffer.str("");
         }
 
-    if(m_WUDispersionMeasureValue != m_EinsteinAdapter.wuDispersionMeasure()) {
-        // we've got a new dispersion measure, update HUD
-        m_WUDispersionMeasureValue = m_EinsteinAdapter.wuDispersionMeasure();
-        buffer << "DM: " << fixed << m_WUDispersionMeasureValue << " pc/cm3" << ends;
-        m_WUDispersionMeasure = buffer.str();
-        buffer.str("");
-        }
-
-    // update the following information every time (no need to check first)
-
-    buffer.precision(3);
-    buffer << "Orb. Radius: " << fixed << m_EinsteinAdapter.wuTemplateOrbitalRadius() << " ls" << ends;
-    m_WUTemplateOrbitalRadius = buffer.str();
-    buffer.str("");
-
-    buffer.precision(0);
-    buffer << "Orb. Period: " << fixed << m_EinsteinAdapter.wuTemplateOrbitalPeriod() << " s" << ends;
-    m_WUTemplateOrbitalPeriod = buffer.str();
-    buffer.str("");
-
-    buffer.precision(2);
-    buffer << "Orb. Phase: " << fixed << m_EinsteinAdapter.wuTemplateOrbitalPhase() << " rad" << ends;
-    m_WUTemplateOrbitalPhase = buffer.str();
-    buffer.str("");
-
     buffer << "WU Completed: " << fixed << m_EinsteinAdapter.wuFractionDone() * 100 << " %" << ends;
     m_WUPercentDone = buffer.str();
     buffer.str("");
@@ -204,105 +109,39 @@ void StarsphereGamma::refreshBOINCInformation()
                               << right << setw(2) << sec << ends;
 
     m_WUCPUTime = buffer.str();
+    }
 
-    // update power spectrum bin data
-    generatePowerSpectrumBins(m_PowerSpectrumXPos, m_PowerSpectrumYPos);
-}
-
-void StarsphereGamma::renderSearchInformation() {
-    // disable opt-in quality feature for power spectrum
+void StarsphereGamma::prepareSearchInformation() {
     if(m_QualitySetting == BOINCClientAdapter::HighGraphicsQualitySetting) {
-//        glDisable(GL_POINT_SMOOTH);
-//        glDisable(GL_LINE_SMOOTH);
+        //glDisable(GL_POINT_SMOOTH);
+        //        glDisable(GL_LINE_SMOOTH);
+        }
+    this->refreshBOINCInformation();
+    SDL_Color color = {255, 255, 255, 255};
+    SDL_Surface* text_surface;
+    if(!(text_surface=TTF_RenderText_Blended(m_FontText, m_WUSkyPosRightAscension.c_str(), color))){
+        ErrorHandler::record("StarsphereGamma::renderSearchInformation() : can't make SDL_Surface for right asccension!", ErrorHandler::FATAL);
+        }
+    std::cout << "m_WUSkyPosRightAscension.c_str() = '" << m_WUSkyPosRightAscension.c_str() << "'" << std::endl;
+
+    RenderTask::texture_buffer_group search_info_texture = {(const GLvoid*)text_surface->pixels,
+                                                            text_surface->w * text_surface->h * 4,
+                                                            text_surface->w,
+                                                            text_surface->h,
+                                                            GL_RGBA,
+                                                            GL_UNSIGNED_BYTE,
+                                                            GL_CLAMP_TO_EDGE,
+                                                            GL_CLAMP_TO_EDGE,
+                                                            false};
+
+    // The negative Y-offset vector here is in order to invert the SDL image.
+    m_right_ascension_info = new TexturedParallelogram(glm::vec2(m_XStartPosRight - text_surface->w * 2, 10.0f + 200.0f),
+                                                       glm::vec2(text_surface->w * 2, 0.0f),
+                                                       glm::vec2(0.0f, -text_surface->h * 2),
+                                                       search_info_texture);
+
+    delete text_surface;
     }
 
+void StarsphereGamma::prepareLogo() {
     }
-
-void StarsphereGamma::generatePowerSpectrumCoordSystem(const int originX, const int originY)
-{
-    GLfloat offsetX = (GLfloat)originX;
-    GLfloat offsetY = (GLfloat)originY;
-
-    // delete existing, create new (required for windoze)
-//    if(m_PowerSpectrumCoordSystemList) glDeleteLists(m_PowerSpectrumCoordSystemList, 1);
-//    m_PowerSpectrumCoordSystemList = glGenLists(1);
-//    glNewList(m_PowerSpectrumCoordSystemList, GL_COMPILE);
-//
-//        glLineWidth(m_PowerSpectrumAxesWidth);
-//
-//        // draw coordinate system axes
-//        glBegin(GL_LINE_STRIP);
-//            glColor4f(1.0, 1.0, 0.0, 1.0);
-//            glVertex2f(offsetX, offsetY + m_PowerSpectrumHeight);
-//            glVertex2f(offsetX, offsetY);
-//            glVertex2f(offsetX + m_PowerSpectrumWidth + 1, offsetY);
-//        glEnd();
-//
-//        glPointSize(m_PowerSpectrumAxesWidth);
-//
-//        // draw origin (axes joint)
-//        glBegin(GL_POINTS);
-//            glColor4f(1.0, 1.0, 0.0, 1.0);
-//            glVertex2f(offsetX, offsetY);
-//        glEnd();
-//
-//        //TODO: for high quality mode: draw coord. system backdrop with alpha = ~0.3 (attn: alpha blend. deactivated!)
-//
-//    glEndList();
-}
-
-void StarsphereGamma::generatePowerSpectrumBins(const int originX, const int originY)
-{
-    GLfloat offsetX = (GLfloat)originX;
-    GLfloat offsetY = (GLfloat)originY;
-    GLfloat axesXOffset = m_PowerSpectrumAxesWidth + 2;
-    GLfloat axesYOffset = m_PowerSpectrumAxesWidth / 2.0 + 1;
-    GLfloat binXOffset = m_PowerSpectrumBinWidth + m_PowerSpectrumBinDistance;
-
-    // set pixel normalization factor for maximum bin height
-    GLfloat normalizationFactor = 255.0 / (m_PowerSpectrumHeight - axesYOffset);
-
-    // fetch pointer to power spectrum data
-    m_PowerSpectrumFreqBins = m_EinsteinAdapter.wuTemplatePowerSpectrum();
-    if(!m_PowerSpectrumFreqBins) {
-        cerr << "Power spectrum data currently unavailable!" << endl;
-        return;
-    }
-
-    // delete existing, create new (required for windoze)
-//    if(m_PowerSpectrumBinList) glDeleteLists(m_PowerSpectrumBinList, 1);
-//    m_PowerSpectrumBinList = glGenLists(1);
-//    glNewList(m_PowerSpectrumBinList, GL_COMPILE);
-//
-//        glLineWidth(m_PowerSpectrumBinWidth);
-//
-//        // draw frequency bins
-//        glBegin(GL_LINES);
-//            // iterate over all bins
-//            for(int i = 0; i < POWERSPECTRUM_BINS; ++i) {
-//                // show potential candidates (power >= 100)...
-//                if(m_PowerSpectrumFreqBins->at(i) >= 100) {
-//                     // ...in bright white
-//                    glColor4f(1.0, 1.0, 1.0, 1.0);
-//                }
-//                else {
-//                    // ...in light grey
-//                    glColor4f(0.66, 0.66, 0.66, 1.0);
-//                }
-//                // lower vertex
-//                glVertex2f(offsetX + axesXOffset + i*binXOffset,
-//                           offsetY + axesYOffset);
-//                // upper vertex
-//                glVertex2f(offsetX + axesXOffset + i*binXOffset,
-//                           offsetY + axesYOffset + m_PowerSpectrumFreqBins->at(i) / normalizationFactor);
-//            }
-//        glEnd();
-//
-//    glEndList();
-}
-
-void StarsphereGamma::renderLogo()
-{
-//    m_FontLogo1->draw(m_XStartPosLeft, m_YStartPosTop, "Einstein@Home");
-//    m_FontLogo2->draw(m_XStartPosLeft, m_YStartPosTop - m_YOffsetLarge, "International Year of Astronomy 2009");
-}

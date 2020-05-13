@@ -168,7 +168,7 @@ class Starsphere : public AbstractGraphicsEngine {
          * This abtract method is to be defined by derived classes implementing
          * the science run specific logo rendering.
          */
-        virtual void renderLogo(void) = 0;
+        virtual void prepareLogo(void) = 0;
 
         /**
          * \brief Render science run specific search information
@@ -179,7 +179,7 @@ class Starsphere : public AbstractGraphicsEngine {
          * Note: for this engine this also includes the "BOINC Statistics"
          * as it is top-aligned to the "Search Information".
          */
-        virtual void renderSearchInformation(void) = 0;
+        virtual void prepareSearchInformation(void) = 0;
 
         /**
          * \brief This method has to be called in order to update the BOINC client information
