@@ -4,7 +4,7 @@
 #   Copyright (C) 2008-2009 by Oliver Bock                                #
 #   oliver.bock[AT]aei.mpg.de                                             #
 #                                                                         #
-#   Copyright (C) 2013 by Mike Hewson  [ any & all errors are mine :-) ]  #
+#   Copyright (C) 2020 by Mike Hewson  [ any & all errors are mine :-) ]  #
 #   hewsmike[AT]iinet.net.au                                              #
 #                                                                         #
 #   This file is part of Einstein@Home.                                   #
@@ -82,7 +82,7 @@ failure() {
     if [ -f "$LOGFILE" ]; then
         echo "------------------------------------"
         echo "Please check logfile: `basename $LOGFILE`"
-        echo "These are the final ten lines:"
+        echo "These are the final lines:"
         echo "------------------------------------"
         tail -n 14 $LOGFILE | head -n 10
     fi

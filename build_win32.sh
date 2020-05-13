@@ -78,9 +78,9 @@ failure() {
     if [ -f "$LOGFILE" ]; then
         echo "------------------------------------"
         echo "Please check logfile: `basename $LOGFILE`"
-        echo "These are the final ten lines:"
+        echo "These are the final lines:"
         echo "------------------------------------"
-        tail
+        tail -n 14 $LOGFILE | head -n 10
     fi
 
     log "++++++++++++++++++++++++++++++++++++"
