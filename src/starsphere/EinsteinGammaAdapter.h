@@ -89,41 +89,6 @@ class EinsteinGammaAdapter {
       double wuSkyPosDeclination() const;
 
       /**
-       * \brief Retrieves the dispersion measure of the currently searched sky position
-       *
-       * \return The dispersion measure
-       */
-      double wuDispersionMeasure() const;
-
-      /**
-       * \brief Retrieves the projected orbital radius of the currently active template
-       *
-       * \return The projected orbital radius
-       */
-      double wuTemplateOrbitalRadius() const;
-
-      /**
-       * \brief Retrieves the orbital period of the currently active template
-       *
-       * \return The orbital period of the currently active template
-       */
-      double wuTemplateOrbitalPeriod() const;
-
-      /**
-       * \brief Retrieves the initial orbital phase of the currently active template
-       *
-       * \return The initial orbital phase of the currently active template
-       */
-      double wuTemplateOrbitalPhase() const;
-
-      /**
-       * \brief Retrieves the power spectrum of the currently active template
-       *
-       * \return The power spectrum of the currently active template
-       */
-      const vector<unsigned char>* wuTemplatePowerSpectrum() const;
-
-      /**
        * \brief Retrieves the completion fraction of the currently active work unit
        *
        * \return The completion fraction (range 0-1)
@@ -177,24 +142,6 @@ class EinsteinGammaAdapter {
 
       /// Declination of the currently searched sky position (in degrees)
       double m_WUSkyPosDeclination;
-
-      /// Dispersion measure of the currently searched sky position
-      double m_WUDispersionMeasure;
-
-      /// Projected orbital radius of the currently active template
-      double m_WUTemplateOrbitalRadius;
-
-      /// Orbital period of the currently active template
-      double m_WUTemplateOrbitalPeriod;
-
-      /// Initial orbital phase of the currently active template
-      double m_WUTemplateOrbitalPhase;
-
-      /// Power spectrum of the currently active template (string)
-      string m_WUTemplatePowerSpectrumString;
-
-      /// Power spectrum of the currently active template (values)
-      vector<unsigned char> m_WUTemplatePowerSpectrum;
 
       /// The completion fraction of the active work unit
       double m_WUFractionDone;
