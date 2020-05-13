@@ -517,7 +517,6 @@ print_usage() {
     echo
     echo "      Available products:"
     echo "          --starsphere"
-    echo "          --solarsystem"
     echo
     echo "  With one parameter :"
     echo "  ------------------"
@@ -647,10 +646,6 @@ if [ $# -eq 3 ]; then
     esac
 
     case "$3" in
-        "--solarsystem")
-            PRODUCT=solarsystem
-            PRODUCT_NAME="SolarSystem"
-            ;;
         "--starsphere")
             PRODUCT=starsphere
             PRODUCT_NAME="Starsphere"
