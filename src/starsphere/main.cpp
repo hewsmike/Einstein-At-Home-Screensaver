@@ -150,7 +150,7 @@ int main(int argc, char** argv) {
 #ifdef SCIENCE_APP
     // The SCIENCE_APP symbol is defined in the makefile
     // that produces the build for this product.
-    scienceApplication = GraphicsEngineFactory::EinsteinGravity;
+    scienceApplication = GraphicsEngineFactory::SCIENCE_APP;
 #else
     // And if SCIENCE_APP was not given, this is the default.
     scienceApplication = GraphicsEngineFactory::EinsteinGravity;

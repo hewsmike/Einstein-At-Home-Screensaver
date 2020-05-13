@@ -27,7 +27,8 @@
 
 const string EinsteinGammaAdapter::SharedMemoryIdentifier = "EinsteinRadio";
 
-EinsteinGammaAdapter::EinsteinGammaAdapter(BOINCClientAdapter *boincClient) :
+EinsteinGammaAdapter::EinsteinGammaAdapter(BOINCClientAdapter *boincClient) {
+    this->boincClient = boincClient;
     m_WUSkyPosRightAscension = 0.0;
     m_WUSkyPosDeclination = 0.0;
     m_WUFractionDone = 0.0;
@@ -136,21 +137,6 @@ void EinsteinGammaAdapter::processXmlNode(const xmlTextReaderPtr xmlReader,
             }
         else if(xmlStrEqual(nodeName, BAD_CAST("skypos_dec"))) {
             converter >> fixed >> m_WUSkyPosDeclination;
-            }
-        else if(xmlStrEqual(nodeName, BAD_CAST("dispersion"))) {
-            converter >> fixed >> m_WUDispersionMeasure;
-            }
-        else if(xmlStrEqual(nodeName, BAD_CAST("orb_radius"))) {
-            converter >> fixed >> m_WUTemplateOrbitalRadius;
-            }
-        else if(xmlStrEqual(nodeName, BAD_CAST("orb_period"))) {
-            converter >> fixed >> m_WUTemplateOrbitalPeriod;
-            }
-        else if(xmlStrEqual(nodeName, BAD_CAST("orb_phase"))) {
-            converter >> fixed >> m_WUTemplateOrbitalPhase;
-            }
-        else if(xmlStrEqual(nodeName, BAD_CAST("power_spectrum"))) {
-            converter >> m_WUTemplatePowerSpectrumString;
             }
         else if(xmlStrEqual(nodeName, BAD_CAST("fraction_done"))) {
             converter >> fixed >> m_WUFractionDone;

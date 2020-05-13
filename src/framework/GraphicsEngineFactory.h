@@ -24,15 +24,10 @@
 #include "AbstractGraphicsEngine.h"
 
 // Edit this lot with any changes to the target executable set.
-#ifdef SOLARSYSTEM
-#include "../solarsystem/SolarSystemGravity.h"
-#include "../solarsystem/SolarSystemRadio.h"
-#include "../solarsystem/SolarSystemGamma.h"
-#endif
-
 #ifdef STARSPHERE
 #include "../starsphere/StarsphereGravity.h"
 #include "../starsphere/StarsphereRadio.h"
+#include "../starsphere/StarsphereGamma.h"
 #endif
 
 /**
@@ -57,7 +52,6 @@ class GraphicsEngineFactory {
         /// Identifiers ( arbitrary but distinct ) of supported graphics engines
         enum Engines {
             Starsphere = 1,
-            SolarSystem = 50
             };
 
         /// Identifiers ( arbitrary but distinct ) of supported science applications

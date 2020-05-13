@@ -22,13 +22,12 @@
 
 StarsphereRadio::StarsphereRadio() :
     Starsphere(EinsteinRadioAdapter::SharedMemoryIdentifier),
-    m_EinsteinAdapter(&m_BoincAdapter)
-{
+    m_EinsteinAdapter(&m_BoincAdapter) {
     m_WUDispersionMeasureValue = -1.0;
     m_PowerSpectrumCoordSystemList = 0;
     m_PowerSpectrumBinList = 0;
     m_PowerSpectrumFreqBins = 0;
-}
+    }
 
 StarsphereRadio::~StarsphereRadio()
 {
@@ -138,7 +137,7 @@ void StarsphereRadio::refreshBOINCInformation()
     generatePowerSpectrumBins(m_PowerSpectrumXPos, m_PowerSpectrumYPos);
 }
 
-void StarsphereRadio::prepare SearchInformation() {
+void StarsphereRadio::prepareSearchInformation() {
     // disable opt-in quality feature for power spectrum
     if(m_QualitySetting == BOINCClientAdapter::HighGraphicsQualitySetting) {
 //        glDisable(GL_POINT_SMOOTH);

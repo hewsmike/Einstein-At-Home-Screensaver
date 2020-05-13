@@ -37,41 +37,26 @@ AbstractGraphicsEngine* GraphicsEngineFactory::createInstance(
     // First switch upon engine type, then variants.
     // A NULL return indicates failure to instantiate.
     switch(engine) {
-#ifdef SOLARSYSTEM
-        case SolarSystem :
-            switch(application) {
-                case EinsteinGravity :
-                    ret_val = new SolarSystemGravity();
-                    break;
-                case EinsteinRadio :
-                    ret_val = new SolarSystemRadio();
-                    break;
-                case EinsteinGamma :
-                    ret_val = new SolarSystemGamma();
-                    break;
-                default:
-                    // Ideal use ought not arrive here. Big problem if so.
-                    ErrorHandler::record("GraphicsEngineFactory::createInstance() : bad switch case ( Solarsystem engine default )", ErrorHandler::FATAL);
-                    break;
-                }
-            break;
-#endif
-#ifdef STARSPHERE
         case Starsphere:
             switch(application) {
                 case EinsteinGravity :
                     ret_val = new StarsphereGravity();
+                    std::cout << "I made a Gravity !!!!!!!" << std::endl;
                     break;
                 case EinsteinRadio :
-                    // return new StarsphereRadio();
+                    ret_val = new StarsphereRadio();
+                    std::cout << "I made a Radio !!!!!!!" << std::endl;
+                    break;
+                case EinsteinGamma :
+                    ret_val = new StarsphereGamma();
+                    std::cout << "I made a Gamma !!!!!!!" << std::endl;
                     break;
                 default:
                     // Ideal use ought not arrive here. Big problem if so.
                     ErrorHandler::record("GraphicsEngineFactory::createInstance() : bad switch case ( Starsphere engine default )", ErrorHandler::FATAL);
                     break;
-            }
+                }
             break;
-#endif
         default:
             // Ideal use ought not arrive here. Big problem if so.
             ErrorHandler::record("GraphicsEngineFactory::createInstance() : bad switch case ( no engine default )", ErrorHandler::FATAL);

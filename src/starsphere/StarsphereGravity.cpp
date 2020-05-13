@@ -42,8 +42,8 @@ void StarsphereGravity::initialize(const int width, const int height, const Reso
 
     refreshBOINCInformation();
 
-    renderLogo();
-    renderSearchInformation();
+    prepareLogo();
+    prepareSearchInformation();
 
     // Fatal error if no font resource supplied.
     if(!m_FontResource) {
