@@ -503,8 +503,8 @@ build_linux() {
     build_glm || failure
 
     # Now client code.
-    build_orc || failure
     build_framework || failure
+    build_orc || failure
     build_ogl_utility || failure
     build_product || failure
 
