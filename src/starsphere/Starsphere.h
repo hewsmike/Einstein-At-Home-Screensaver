@@ -182,20 +182,6 @@ class Starsphere : public AbstractGraphicsEngine {
         virtual void renderSearchInformation(void) = 0;
 
         /**
-         * \brief Render additional observatories
-         *
-         * This method doesn't do anything in its local implementation. It's provided
-         * for potential specializing classes to add additional observatories by
-         * overriding the empty default implementation.
-         *
-         * Important: overriding classes should just provide additional display lists
-         * by via calls to glCallList().
-         *
-         * \see StarsphereRadio::renderAdditionalObservatories()
-         */
-        virtual void renderAdditionalObservatories(void);
-
-        /**
          * \brief This method has to be called in order to update the BOINC client information
          *
          * This is the local/generic implementation which calls

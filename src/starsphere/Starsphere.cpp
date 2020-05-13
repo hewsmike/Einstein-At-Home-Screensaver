@@ -1927,10 +1927,6 @@ void Starsphere::render(const double timeOfDay) {
     ++m_framecount;
     }
 
-void Starsphere::renderAdditionalObservatories() {
-    // default implementation doesn't do anything
-    }
-
 void Starsphere::mouseButtonEvent(const int positionX, const int positionY,
                                   const AbstractGraphicsEngine::MouseButton buttonPressed) {
     }
