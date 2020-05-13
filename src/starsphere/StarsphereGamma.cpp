@@ -2,6 +2,9 @@
  *   Copyright (C) 2008 by Oliver Bock                                     *
  *   oliver.bock[AT]aei.mpg.de                                             *
  *                                                                         *
+ *   Copyright (C) 2020 by Mike Hewson                                     *
+ *   hewsmike[AT]iinet.net.au                                              *
+ *                                                                         *
  *   This file is part of Einstein@Home.                                   *
  *                                                                         *
  *   Einstein@Home is free software: you can redistribute it and/or modify *
@@ -18,10 +21,10 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "StarsphereRadio.h"
+#include "StarsphereGamma.h"
 
-StarsphereRadio::StarsphereRadio() :
-    Starsphere(EinsteinRadioAdapter::SharedMemoryIdentifier),
+StarsphereGamma::StarsphereGamma() :
+    Starsphere(EinsteinGammaAdapter::SharedMemoryIdentifier),
     m_EinsteinAdapter(&m_BoincAdapter)
 {
     m_WUDispersionMeasureValue = -1.0;
@@ -30,11 +33,11 @@ StarsphereRadio::StarsphereRadio() :
     m_PowerSpectrumFreqBins = 0;
 }
 
-StarsphereRadio::~StarsphereRadio()
+StarsphereGamma::~StarsphereGamma()
 {
 }
 
-void StarsphereRadio::initialize(const int width, const int height, const Resource* font) {
+void StarsphereGamma::initialize(const int width, const int height, const Resource* font) {
     Starsphere::initialize(width, height, font);
 
     // store quality setting
@@ -105,7 +108,7 @@ void StarsphereRadio::initialize(const int width, const int height, const Resour
     //generateObservatories(0.33);
 }
 
-void StarsphereRadio::resize(const int width, const int height)
+void StarsphereGamma::resize(const int width, const int height)
 {
     Starsphere::resize(width, height);
 
@@ -123,11 +126,11 @@ void StarsphereRadio::resize(const int width, const int height)
     generatePowerSpectrumBins(m_PowerSpectrumXPos, m_PowerSpectrumYPos);
 }
 
-void StarsphereRadio::renderAdditionalObservatories() {
+void StarsphereGamma::renderAdditionalObservatories() {
 //    glCallList(m_areciboObservatory);
 }
 
-void StarsphereRadio::refreshBOINCInformation()
+void StarsphereGamma::refreshBOINCInformation()
 {
     // call base class implementation
     Starsphere::refreshLocalBOINCInformation();
@@ -206,7 +209,7 @@ void StarsphereRadio::refreshBOINCInformation()
     generatePowerSpectrumBins(m_PowerSpectrumXPos, m_PowerSpectrumYPos);
 }
 
-void StarsphereRadio::renderSearchInformation() {
+void StarsphereGamma::renderSearchInformation() {
     // disable opt-in quality feature for power spectrum
     if(m_QualitySetting == BOINCClientAdapter::HighGraphicsQualitySetting) {
 //        glDisable(GL_POINT_SMOOTH);
@@ -215,7 +218,7 @@ void StarsphereRadio::renderSearchInformation() {
 
     }
 
-void StarsphereRadio::generatePowerSpectrumCoordSystem(const int originX, const int originY)
+void StarsphereGamma::generatePowerSpectrumCoordSystem(const int originX, const int originY)
 {
     GLfloat offsetX = (GLfloat)originX;
     GLfloat offsetY = (GLfloat)originY;
@@ -248,7 +251,7 @@ void StarsphereRadio::generatePowerSpectrumCoordSystem(const int originX, const 
 //    glEndList();
 }
 
-void StarsphereRadio::generatePowerSpectrumBins(const int originX, const int originY)
+void StarsphereGamma::generatePowerSpectrumBins(const int originX, const int originY)
 {
     GLfloat offsetX = (GLfloat)originX;
     GLfloat offsetY = (GLfloat)originY;
@@ -298,7 +301,7 @@ void StarsphereRadio::generatePowerSpectrumBins(const int originX, const int ori
 //    glEndList();
 }
 
-void StarsphereRadio::renderLogo()
+void StarsphereGamma::renderLogo()
 {
 //    m_FontLogo1->draw(m_XStartPosLeft, m_YStartPosTop, "Einstein@Home");
 //    m_FontLogo2->draw(m_XStartPosLeft, m_YStartPosTop - m_YOffsetLarge, "International Year of Astronomy 2009");

@@ -21,8 +21,8 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef EINSTEINGAMMAADAPTER_H_
-#define EINSTEINGAMMAADAPTER_H_
+#ifndef EINSTEIN_GAMMA_ADAPTER_H_
+#define EINSTEIN_GAMMA_ADAPTER_H_
 
 #include <string>
 #include <sstream>
@@ -36,8 +36,6 @@
 using namespace std;
 
 #define PI 3.14159265
-#define POWERSPECTRUM_BINS 40
-#define POWERSPECTRUM_BIN_BYTES 80
 
 /**
  * \addtogroup starsphere Starsphere
@@ -65,7 +63,7 @@ class EinsteinGammaAdapter {
       EinsteinGammaAdapter(BOINCClientAdapter* boincClient);
 
       /// Destructor
-      virtual ~EinsteinRadioAdapter();
+      virtual ~EinsteinGammaAdapter();
 
       /**
        * \brief Refreshes dynamic data (e.g. search information)
@@ -209,4 +207,4 @@ class EinsteinGammaAdapter {
  * @}
  */
 
-#endif /*EINSTEINGAMMAADAPTER_H_*/
+#endif /*EINSTEIN_GAMMA_ADAPTER_H_*/
