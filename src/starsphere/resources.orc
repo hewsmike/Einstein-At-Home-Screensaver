@@ -25,6 +25,7 @@ AppIconBMP|EaH.bmp.res
 Logo_OCL|OCL_ABGR.data.res
 Logo_E@H|E@H_RGBA.data.res
 Logo_BOINC|boinc_logo.data.res
+Logo_FERMI|Fermi.data.res
 # Shaders
 FragmentShader_Pass_Color3|fs_pass.res
 FragmentShader_Pass_Color4|fragment_shader_pass_color4.res
