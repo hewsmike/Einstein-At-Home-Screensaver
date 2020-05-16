@@ -50,17 +50,17 @@ fi
 # All builds good, so get their products to local directory.
 mkdir -p dist
 cd dist
-cp -f $ROOT/linux/dist/graphics_app=einsteinGravity_RUNLABEL_VERSION_graphics_x86_64-pc-linux-pc-linux-gnu graphics_Gravity_starsphere_TEST0$1_x86_64-pc-linux
-cp -f $ROOT/linux/dist/graphics_app=einsteinGamma_RUNLABEL_VERSION_graphics_x86_64-pc-linux-pc-linux-gnu graphics_Gamma_starsphere_TEST0$1_x86_64-pc-linux
-cp -f $ROOT/linux/dist/graphics_app=einsteinRadio_RUNLABEL_VERSION_graphics_x86_64-pc-linux-pc-linux-gnu graphics_Radio_starsphere_TEST0$1_x86_64-pc-linux
+cp -f $ROOT/linux/dist/graphics_app=einsteinGravity_RUNLABEL_VERSION_graphics_x86_64-pc-linux-gnu graphics_Gravity_starsphere_TEST0$1_x86_64-pc-linux
+cp -f $ROOT/linux/dist/graphics_app=einsteinGamma_RUNLABEL_VERSION_graphics_x86_64-pc-linux-gnu graphics_Gamma_starsphere_TEST0$1_x86_64-pc-linux
+cp -f $ROOT/linux/dist/graphics_app=einsteinRadio_RUNLABEL_VERSION_graphics_x86_64-pc-linux-gnu graphics_Radio_starsphere_TEST0$1_x86_64-pc-linux
 
-cp -f $ROOT/win32/dist/graphics_app=einsteinGravity_RUNLABEL_VERSION_graphics_windows_intelx86.exe graphics_Gravity_starsphere_TEST0$1_i686-w64-mingw32.exe
-cp -f $ROOT/win32/dist/graphics_app=einsteinGamma_RUNLABEL_VERSION_graphics_windows_intelx86.exe graphics_Gamma_starsphere_TEST0$1_i686-w64-mingw32.exe
-cp -f $ROOT/win32/dist/graphics_app=einsteinRadio_RUNLABEL_VERSION_graphics_windows_intelx86.exe graphics_Radio_starsphere_TEST0$1_i686-w64-mingw32.exe
+cp -f $ROOT/win32/dist/graphics_app=einsteinGravity_RUNLABEL_VERSION_graphics_windows_intelx86.exe graphics_Gravity_starsphere_TEST0$1_i686-mingw32.exe
+cp -f $ROOT/win32/dist/graphics_app=einsteinGamma_RUNLABEL_VERSION_graphics_windows_intelx86.exe graphics_Gamma_starsphere_TEST0$1_i686-mingw32.exe
+cp -f $ROOT/win32/dist/graphics_app=einsteinRadio_RUNLABEL_VERSION_graphics_windows_intelx86.exe graphics_Radio_starsphere_TEST0$1_i686-mingw32.exe
 
-cp -f $ROOT/win64/dist/graphics_app=einsteinGravity_RUNLABEL_VERSION_graphics_windows_intelx86.exe graphics_Gravity_starsphere_TEST0$1_x86_64-w64-mingw32.exe
-cp -f $ROOT/win64/dist/graphics_app=einsteinGamma_RUNLABEL_VERSION_graphics_windows_intelx86.exe graphics_Gamma_starsphere_TEST0$1_x86_64-w64-mingw32.exe
-cp -f $ROOT/win64/dist/graphics_app=einsteinRadio_RUNLABEL_VERSION_graphics_windows_intelx86.exe graphics_Radio_starsphere_TEST0$1_x86_64-w64-mingw32.exe
+cp -f $ROOT/win64/dist/graphics_app=einsteinGravity_RUNLABEL_VERSION_graphics_windows_intelx86.exe graphics_Gravity_starsphere_TEST0$1_x86_64-w64.exe
+cp -f $ROOT/win64/dist/graphics_app=einsteinGamma_RUNLABEL_VERSION_graphics_windows_intelx86.exe graphics_Gamma_starsphere_TEST0$1_x86_64-w64.exe
+cp -f $ROOT/win64/dist/graphics_app=einsteinRadio_RUNLABEL_VERSION_graphics_windows_intelx86.exe graphics_Radio_starsphere_TEST0$1_x86_64-w64.exe
 echo "*****************************************************************"
 echo "***** Successful build of all products **************************"
 echo "*****************************************************************"
