@@ -41,15 +41,12 @@ AbstractGraphicsEngine* GraphicsEngineFactory::createInstance(
             switch(application) {
                 case EinsteinGravity :
                     ret_val = new StarsphereGravity();
-                    std::cout << "I made a Gravity !!!!!!!" << std::endl;
                     break;
                 case EinsteinRadio :
                     ret_val = new StarsphereRadio();
-                    std::cout << "I made a Radio !!!!!!!" << std::endl;
                     break;
                 case EinsteinGamma :
                     ret_val = new StarsphereGamma();
-                    std::cout << "I made a Gamma !!!!!!!" << std::endl;
                     break;
                 default:
                     // Ideal use ought not arrive here. Big problem if so.
