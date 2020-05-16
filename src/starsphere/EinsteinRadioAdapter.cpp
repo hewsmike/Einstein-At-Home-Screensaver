@@ -22,7 +22,7 @@
 
 #include <sstream>
 
-const string EinsteinRadioAdapter::SharedMemoryIdentifier = "EinsteinRadio";
+const string EinsteinRadioAdapter::SharedMemoryIdentifier = "EinsteinHS";
 
 EinsteinRadioAdapter::EinsteinRadioAdapter(BOINCClientAdapter *boincClient) :
    m_WUTemplatePowerSpectrum(POWERSPECTRUM_BINS, 0) {
