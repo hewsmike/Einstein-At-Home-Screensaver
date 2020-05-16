@@ -280,6 +280,9 @@ class Starsphere : public AbstractGraphicsEngine {
 
         glm::vec3 sphVertex(GLfloat RAdeg, GLfloat DEdeg);
 
+        /// Cumulative frame count.
+        GLuint m_framecount;
+
         /// Observatory movement (in seconds since 1970 with usec precision)
         double m_ObservatoryDrawTimeLocal;
 
@@ -403,9 +406,6 @@ class Starsphere : public AbstractGraphicsEngine {
         TexturedParallelogram* m_total_info;
         TexturedParallelogram* m_RAC_info;
         TexturedParallelogram* m_help_info;
-
-        /// Cumulative frame count.
-        GLuint m_framecount;
 
         /// Pointers to rendering tasks.
         RenderTask* m_render_task_cons;
