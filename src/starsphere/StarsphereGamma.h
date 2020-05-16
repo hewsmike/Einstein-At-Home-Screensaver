@@ -28,6 +28,7 @@
 
 #include "Starsphere.h"
 #include "EinsteinGammaAdapter.h"
+#include "TexturedParallelogram.h"
 
 using namespace std;
 

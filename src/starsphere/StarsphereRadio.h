@@ -26,6 +26,7 @@
 
 #include "Starsphere.h"
 #include "EinsteinRadioAdapter.h"
+#include "TexturedParallelogram.h"
 
 //FIXME: these can be removed after FFT testing!
 #include <cstdlib>
@@ -39,7 +40,7 @@ using namespace std;
  */
 
 /**
- * \brief Specialized rendering engine for the "Arecibo Radio Pulsar Search" science run
+ * \brief Specialized rendering engine for the "Radio Pulsar Search" science run
  *
  * This class comprises the specialized parts of the Starsphere rendering engine.
  * The main differences stem from the fact that most science runs differ in their
