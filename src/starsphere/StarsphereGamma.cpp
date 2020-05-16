@@ -36,6 +36,10 @@ StarsphereGamma::StarsphereGamma() :
 
 StarsphereGamma::~StarsphereGamma() {
     if(m_logo) delete m_logo;
+    if(m_right_ascension_info) delete m_right_ascension_info;
+    if(m_declination_info) delete m_declination_info;
+    if(m_percent_done_info) delete m_percent_done_info;
+    if(m_cpu_time_info) delete m_cpu_time_info;
     }
 
 void StarsphereGamma::initialize(const int width, const int height, const Resource* font) {
@@ -55,6 +59,12 @@ void StarsphereGamma::resize(const int width, const int height) {
 
 void StarsphereGamma::render(const double timeOfDay) {
     Starsphere::render(timeOfDay);
+
+    // Every 1000 frames update search progress data.
+    if((m_framecount % 1000) == 0) {
+        refreshBOINCInformation();
+        prepareSearchInformation();
+        }
 
     if(isFeature(LOGO)) {
         m_logo->utilise();
@@ -141,6 +151,7 @@ void StarsphereGamma::prepareSearchInformation() {
                                                         false};
 
     // The negative Y-offset vector here is in order to invert the SDL image.
+    if(m_right_ascension_info) delete m_right_ascension_info;
     m_right_ascension_info = new TexturedParallelogram(glm::vec2(m_XStartPosRight - text_surface->w * 2, 10.0f + wu_top_line),
                                                        glm::vec2(text_surface->w * 2, 0.0f),
                                                        glm::vec2(0.0f, -text_surface->h * 2),
@@ -162,6 +173,7 @@ void StarsphereGamma::prepareSearchInformation() {
                                                          false};
 
     // The negative Y-offset vector here is in order to invert the SDL image.
+    if(m_declination_info) delete m_declination_info;
     m_declination_info = new TexturedParallelogram(glm::vec2(m_XStartPosRight - text_surface->w * 2, 10.0f + wu_top_line),
                                                    glm::vec2(text_surface->w * 2, 0.0f),
                                                    glm::vec2(0.0f, -text_surface->h * 2),
@@ -184,13 +196,14 @@ void StarsphereGamma::prepareSearchInformation() {
                                                              false};
 
     // The negative Y-offset vector here is in order to invert the SDL image.
-     m_percent_done_info = new TexturedParallelogram(glm::vec2(m_XStartPosRight - text_surface->w * 2, 10.0f + wu_top_line),
+    if(m_percent_done_info) delete m_percent_done_info;
+    m_percent_done_info = new TexturedParallelogram(glm::vec2(m_XStartPosRight - text_surface->w * 2, 10.0f + wu_top_line),
                                                      glm::vec2(text_surface->w * 2, 0.0f),
                                                      glm::vec2(0.0f, -text_surface->h * 2),
                                                      percent_info_texture);
     wu_top_line -= text_surface->h *2;
 
-     if(!(text_surface=TTF_RenderText_Blended(m_FontText, m_WUCPUTime.c_str(), color))){
+    if(!(text_surface=TTF_RenderText_Blended(m_FontText, m_WUCPUTime.c_str(), color))){
         ErrorHandler::record("StarsphereGamma::renderSearchInformation() : can't make SDL_Surface for CPU time!", ErrorHandler::FATAL);
         }
 
@@ -205,6 +218,7 @@ void StarsphereGamma::prepareSearchInformation() {
                                                               false};
 
     // The negative Y-offset vector here is in order to invert the SDL image.
+    if(m_cpu_time_info) delete m_cpu_time_info;
     m_cpu_time_info = new TexturedParallelogram(glm::vec2(m_XStartPosRight - text_surface->w * 2, 10.0f + wu_top_line),
                                                 glm::vec2(text_surface->w * 2, 0.0f),
                                                 glm::vec2(0.0f, -text_surface->h * 2),
@@ -228,7 +242,7 @@ void StarsphereGamma::prepareLogo() {
                                                       GL_CLAMP_TO_EDGE,
                                                       false};
 
-    m_logo = new TexturedParallelogram(glm::vec2(10.0f, 10.0f + (m_YStartPosTop - 10 - 50)/2),
+    m_logo = new TexturedParallelogram(glm::vec2(10.0f, m_YStartPosTop/2 + 10.0f - 50.0f),
                                        glm::vec2(160.0f, 0.0f),
                                        glm::vec2(0.0f, 100.0f),
                                        logo_texture);
