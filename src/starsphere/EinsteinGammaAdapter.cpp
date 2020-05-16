@@ -25,10 +25,12 @@
 
 #include <sstream>
 
-const string EinsteinGammaAdapter::SharedMemoryIdentifier = "EinsteinRadio";
+const string EinsteinGammaAdapter::SharedMemoryIdentifier = "EinsteinHS";
 
 EinsteinGammaAdapter::EinsteinGammaAdapter(BOINCClientAdapter *boincClient) {
     this->boincClient = boincClient;
+
+
     m_WUSkyPosRightAscension = 0.0;
     m_WUSkyPosDeclination = 0.0;
     m_WUFractionDone = 0.0;
@@ -36,117 +38,38 @@ EinsteinGammaAdapter::EinsteinGammaAdapter(BOINCClientAdapter *boincClient) {
     }
 
 EinsteinGammaAdapter::~EinsteinGammaAdapter() {
-    if(m_xmlReader) xmlFreeTextReader(m_xmlReader);
-        xmlCleanupParser();
-   }
-
-void EinsteinGammaAdapter::refresh() {
-   boincClient->refresh();
-   parseApplicationInformation();
-   }
-
-void EinsteinGammaAdapter::parseApplicationInformation() {
-   // get updated application information
-   string info = boincClient->applicationInformation();
-
-   // do we have any data?
-   if(info.length() > 0) {
-       int result = 0;
-
-       // prepare conversion stream
-       stringstream converter;
-       converter.precision(3);
-       converter.exceptions(ios_base::badbit | ios_base::failbit);
-
-       if(!m_xmlReader) {
-           // set up SAX style XML reader (create instance)
-           m_xmlReader = xmlReaderForMemory(info.c_str(),
-                                            info.length(),
-                                            "http://einstein.phys.uwm.edu",
-                                            "UTF-8",
-                                            0);
-           if(!m_xmlReader) {
-               cerr << "Error creating XML reader for shared memory data!" << endl;
-               return;
-               }
-           }
-       else {
-           // set up SAX style XML reader (reusing existing instance)
-           if(xmlReaderNewMemory(m_xmlReader,
-                                 info.c_str(),
-                                 info.length(),
-                                 "http://einstein.phys.uwm.edu",
-                                 "UTF-8",
-                                 0)) {
-               cerr << "Error updating XML reader for shared memory data!" << endl;
-               return;
-               }
-           }
-
-        // parse XML fragment and process nodes
-        result = xmlTextReaderRead(m_xmlReader);
-        while (result == 1) {
-            processXmlNode(m_xmlReader, converter);
-            result = xmlTextReaderRead(m_xmlReader);
-            }
-        }
-
-    // convert radians to degrees
-    m_WUSkyPosRightAscension *= 180/PI;
-    m_WUSkyPosDeclination *= 180/PI;
     }
 
-void EinsteinGammaAdapter::processXmlNode(const xmlTextReaderPtr xmlReader,
-                                          stringstream& converter) {
-    // we only parse element nodes
-    if(xmlTextReaderNodeType(xmlReader) != XML_READER_TYPE_ELEMENT) return;
+void EinsteinGammaAdapter::refresh() {
+    boincClient->refresh();
+    parseApplicationInformation();
+    }
 
-    // buffers (will be deallocated automatically)
-    const xmlChar *nodeName = NULL, *nodeValue = NULL;
+void EinsteinGammaAdapter::parseApplicationInformation() {
+    // get updated application information
+    string info = boincClient->applicationInformation();
 
-    // get element node's name
-    nodeName = xmlTextReaderConstLocalName(xmlReader);
+    // do we have any data?
+    if(info.length() > 0) {
 
-    if (nodeName == NULL) {
-        cerr << "Error parsing XML node (invalid name)" << endl;
-        return;
-        }
-
-    // move to node's text content (child node) or return if unavailable
-    if(! (xmlTextReaderRead(m_xmlReader) && xmlTextReaderHasValue(xmlReader))) {
-        return;
-        }
-
-    // get text node's value
-    nodeValue = xmlTextReaderConstValue(xmlReader);
-
-    if (nodeValue == NULL) {
-        cerr << "Error parsing XML node (invalid value)" << endl;
-        return;
-        }
-
-    try {
-        // prepare converter stream
-        converter.clear();
-        converter.str("");
-        converter << nodeValue;
-
-        // assign node value to respective data member
-        if(xmlStrEqual(nodeName, BAD_CAST("skypos_rac"))) {
-            converter >> fixed >> m_WUSkyPosRightAscension;
+        // parse data into members
+        if(4 != sscanf(info.c_str(),
+                "<graphics_info>\n"
+                "  <skypos_rac>%lf</skypos_rac>\n"
+                "  <skypos_dec>%lf</skypos_dec>\n"
+                "  <fraction_done>%lf</fraction_done>\n"
+                "  <cpu_time>%lf</cpu_time>\n",
+                &m_WUSkyPosRightAscension,
+                &m_WUSkyPosDeclination,
+                &m_WUFractionDone,
+                &m_WUCPUTime)) {
+            cerr << "Incompatible shared memory data encountered!" << endl;
             }
-        else if(xmlStrEqual(nodeName, BAD_CAST("skypos_dec"))) {
-            converter >> fixed >> m_WUSkyPosDeclination;
+        else {
+            // convert radians to degrees
+            m_WUSkyPosRightAscension *= 180/PI;
+            m_WUSkyPosDeclination *= 180/PI;
             }
-        else if(xmlStrEqual(nodeName, BAD_CAST("fraction_done"))) {
-            converter >> fixed >> m_WUFractionDone;
-            }
-        else if(xmlStrEqual(nodeName, BAD_CAST("cpu_time"))) {
-            converter >> fixed >> m_WUCPUTime;
-            }
-        }
-    catch(ios_base::failure) {
-        cerr << "Error converting XML reader node content!" << endl;
         }
     }
 

@@ -103,7 +103,7 @@ class EinsteinGammaAdapter {
          */
         double wuCPUTime() const;
 
-        /// The identifier of the Einstein\@Home Radio Pulsar science application's shared memory area
+        /// The identifier of the Einstein\@Home Gamma Pulsar science application's shared memory area
         static const string SharedMemoryIdentifier;
 
     private:
@@ -117,25 +117,8 @@ class EinsteinGammaAdapter {
          */
         void parseApplicationInformation();
 
-        /**
-         * \brief Processes single element nodes found by the XML parser
-         *
-         * This method can sort of resembles the callback method used in conjunction with SAX parsers.
-         * It's called to process single XML nodes (in our case element nodes only) encountered
-         * during XML document (tree) traversal.
-         *
-         * \param xmlReader The pointer to the current xmlReader instance
-         * \param converter Reference to an existing string stream for value/type conversion
-         *
-         * \see parseApplicationInformation()
-         */
-        void processXmlNode(const xmlTextReaderPtr xmlReader, stringstream& converter);
-
         /// Pointer to the (parent) BOINC client adapter
         BOINCClientAdapter *boincClient;
-
-        /// Pointer to the XML reader (SAX style)
-        xmlTextReaderPtr m_xmlReader;
 
         /// Right ascension of the currently searched sky position (in degrees)
         double m_WUSkyPosRightAscension;
