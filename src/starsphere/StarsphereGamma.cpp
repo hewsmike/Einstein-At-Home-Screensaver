@@ -23,6 +23,8 @@
 
 #include "StarsphereGamma.h"
 
+#include "ResourceFactory.h"
+
 StarsphereGamma::StarsphereGamma() :
     Starsphere(EinsteinGammaAdapter::SharedMemoryIdentifier),
     m_EinsteinAdapter(&m_BoincAdapter) {
@@ -217,9 +219,9 @@ void StarsphereGamma::prepareLogo() {
 
     // Create HUD logo features.
     RenderTask::texture_buffer_group logo_texture = {(const GLvoid*)factory.createInstance("Logo_FERMI")->data()->data(),
-                                                      330*150*4,
-                                                      330,
-                                                      150,
+                                                      512*431*4,
+                                                      512,
+                                                      431,
                                                       GL_BGRA,
                                                       GL_UNSIGNED_BYTE,
                                                       GL_CLAMP_TO_EDGE,
@@ -227,7 +229,7 @@ void StarsphereGamma::prepareLogo() {
                                                       false};
 
     m_logo = new TexturedParallelogram(glm::vec2(10.0f, 10.0f + (m_YStartPosTop - 10 - 50)/2),
-                                       glm::vec2(220.0f, 0.0f),
+                                       glm::vec2(180.0f, 0.0f),
                                        glm::vec2(0.0f, 100.0f),
                                        logo_texture);
     }

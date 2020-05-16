@@ -24,15 +24,10 @@
 #ifndef STARSPHERE_GAMMA_H_
 #define STARSPHERE_GAMMA_H_
 
-#include <sstream>
-#include <vector>
+#include <string>
 
 #include "Starsphere.h"
 #include "EinsteinGammaAdapter.h"
-
-//FIXME: these can be removed after FFT testing!
-#include <cstdlib>
-#include <ctime>
 
 using namespace std;
 
@@ -47,11 +42,7 @@ using namespace std;
  * This class comprises the specialized parts of the Starsphere rendering engine.
  * The main differences stem from the fact that most science runs differ in their
  * search configuration and parameters. Thus the parameters exposed by the HUD
- * (head-up display) are positioned and rendered here. For the time being the
- * "BOINC Information" are top-aligned to the "Search Parameters", hence they're
- * also positioned and rendered here. This specific implementation also introduces a
- * nice feature that visualizes the \a actual search data in guise of a \a real-time power
- * spectrum.
+ * (head-up display) are positioned and rendered here.
  *
  * \author Oliver Bock\n
  * Max-Planck-Institute for Gravitational Physics\n
@@ -114,16 +105,14 @@ class StarsphereGamma : public Starsphere {
         TexturedParallelogram* m_logo;
 
         /**
-         * \brief Render science run specific logo
+         * \brief Prepare science run specific logo
          *
          */
         void prepareLogo();
 
         /**
-         * \brief Render science run specific search information
+         * \brief Prepare science run specific search information
          *
-         * For this specific implementation this also includes the "BOINC Statistics"
-         * as it is top-aligned to the "Search Information".
          */
         void prepareSearchInformation();
 
