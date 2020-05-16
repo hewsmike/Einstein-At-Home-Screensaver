@@ -229,7 +229,7 @@ void StarsphereGamma::prepareLogo() {
                                                       false};
 
     m_logo = new TexturedParallelogram(glm::vec2(10.0f, 10.0f + (m_YStartPosTop - 10 - 50)/2),
-                                       glm::vec2(220.0f, 0.0f),
+                                       glm::vec2(160.0f, 0.0f),
                                        glm::vec2(0.0f, 100.0f),
                                        logo_texture);
     }
