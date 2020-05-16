@@ -213,13 +213,13 @@ endif
 ###########################################################################
 # File based targets.
 # Required product executables.
-$(PRODUCT_LOWER)_Einstein_$(GRAV): $(DEPS) $(PRODUCT_SRC)/main.cpp $(TARGET_XTRA_DEPS) $(OBJS)
+$(PRODUCT_LOWER)_Einstein_$(GRAV): $(DEPS) $(PRODUCT_SRC)/main.cpp $(OBJS)
 	$(CXX) -g $(CPPFLAGS) $(LDFLAGS) $(PRODUCT_SRC)/main.cpp -o "graphics_app=einsteinGravity_RUNLABEL_VERSION_graphics_$(TARGET_APPEND)" $(OBJS) $(LIBS)
 
-$(PRODUCT_LOWER)_Einstein_$(RADIO): $(DEPS) $(PRODUCT_SRC)/main.cpp $(TARGET_XTRA_DEPS) $(OBJS)
+$(PRODUCT_LOWER)_Einstein_$(RADIO): $(DEPS) $(PRODUCT_SRC)/main.cpp $(OBJS)
 	$(CXX) -g $(CPPFLAGS) $(LDFLAGS) $(PRODUCT_SRC)/main.cpp -o "graphics_app=einsteinRadio_RUNLABEL_VERSION_graphics_$(TARGET_APPEND)" $(OBJS) $(LIBS)
 
-$(PRODUCT_LOWER)_Einstein_$(GAMMA): $(DEPS) $(PRODUCT_SRC)/main.cpp $(TARGET_XTRA_DEPS) $(OBJS)
+$(PRODUCT_LOWER)_Einstein_$(GAMMA): $(DEPS) $(PRODUCT_SRC)/main.cpp $(OBJS)
 	$(CXX) -g $(CPPFLAGS) $(LDFLAGS) $(PRODUCT_SRC)/main.cpp -o "graphics_app=einsteinGamma_RUNLABEL_VERSION_graphics_$(TARGET_APPEND)" $(OBJS) $(LIBS)
 
 ###########################################################################
