@@ -111,6 +111,8 @@ class StarsphereGamma : public Starsphere {
         void refreshBOINCInformation();
 
     private:
+        TexturedParallelogram* m_logo;
+
         /**
          * \brief Render science run specific logo
          *

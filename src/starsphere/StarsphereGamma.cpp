@@ -33,6 +33,7 @@ StarsphereGamma::StarsphereGamma() :
     }
 
 StarsphereGamma::~StarsphereGamma() {
+    if(m_logo) delete m_logo;
     }
 
 void StarsphereGamma::initialize(const int width, const int height, const Resource* font) {
@@ -54,7 +55,7 @@ void StarsphereGamma::render(const double timeOfDay) {
     Starsphere::render(timeOfDay);
 
     if(isFeature(LOGO)) {
-        /// m_logo->utilise();
+        m_logo->utilise();
         }
 
     m_right_ascension_info->utilise();
@@ -211,4 +212,22 @@ void StarsphereGamma::prepareSearchInformation() {
     }
 
 void StarsphereGamma::prepareLogo() {
+ // Create factory instance to then access the texture/bitmap.
+    ResourceFactory factory;
+
+    // Create HUD logo features.
+    RenderTask::texture_buffer_group logo_texture = {(const GLvoid*)factory.createInstance("Logo_FERMI")->data()->data(),
+                                                      330*150*4,
+                                                      330,
+                                                      150,
+                                                      GL_BGRA,
+                                                      GL_UNSIGNED_BYTE,
+                                                      GL_CLAMP_TO_EDGE,
+                                                      GL_CLAMP_TO_EDGE,
+                                                      false};
+
+    m_logo = new TexturedParallelogram(glm::vec2(10.0f, 10.0f + (m_YStartPosTop - 10 - 50)/2),
+                                       glm::vec2(220.0f, 0.0f),
+                                       glm::vec2(0.0f, 100.0f),
+                                       logo_texture);
     }
