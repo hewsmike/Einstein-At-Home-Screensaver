@@ -1439,6 +1439,18 @@ void Starsphere::make_logos(void) {
 void Starsphere::make_user_info(void) {
     this->refreshLocalBOINCInformation();
     SDL_Color color = {255, 255, 255, 255};
+
+    // Delete any old TexturedParalellogram.
+    if(m_user_info != NULL) {
+        delete m_user_info;
+        m_user_info = NULL;
+        }
+    // Delete any SDL assets
+    if(m_help_text_surface != NULL) {
+        SDL_FreeSurface(m_help_text_surface);
+        m_help_text_surface = NULL;
+        }
+
     SDL_Surface* text_surface;
     if(!(text_surface=TTF_RenderText_Blended(m_FontText, m_UserName.c_str(), color))){
         ErrorHandler::record("Starsphere::make_user() : can't make SDL_Surface for user!", ErrorHandler::FATAL);
@@ -1462,6 +1474,12 @@ void Starsphere::make_user_info(void) {
 
     GLfloat height_drop = text_surface->h * 1.8;
 
+    // Delete any old TexturedParalellogram.
+    if(m_team_info != NULL) {
+        delete m_team_info;
+        m_team_info = NULL;
+        }
+
     if(!(text_surface=TTF_RenderText_Blended(m_FontText, m_TeamName.c_str(), color))){
         ErrorHandler::record("Starsphere::make_user() : can't make SDL_Surface for team!", ErrorHandler::FATAL);
         }
@@ -1484,6 +1502,12 @@ void Starsphere::make_user_info(void) {
 
     height_drop += text_surface->h * 1.8f;
 
+    // Delete any old TexturedParalellogram.
+    if(m_total_info != NULL) {
+        delete m_total_info;
+        m_total_info = NULL;
+        }
+
     if(!(text_surface=TTF_RenderText_Blended(m_FontText, m_UserCredit.c_str(), color))){
         ErrorHandler::record("Starsphere::make_user() : can't make SDL_Surface for total!", ErrorHandler::FATAL);
         }
@@ -1505,6 +1529,12 @@ void Starsphere::make_user_info(void) {
                                              total_info_texture);
 
     height_drop += text_surface->h * 1.8f;
+
+    // Delete any old TexturedParalellogram.
+    if(m_RAC_info != NULL) {
+        delete m_RAC_info;
+        m_RAC_info = NULL;
+        }
 
     if(!(text_surface=TTF_RenderText_Blended(m_FontText, m_UserRACredit.c_str(), color))){
         ErrorHandler::record("Starsphere::make_user() : can't make SDL_Surface for RAC!", ErrorHandler::FATAL);
@@ -1815,9 +1845,29 @@ void Starsphere::render(const double timeOfDay) {
     // The number of frames b/w help HUD updates.
     const GLuint HELP_HUD_REFRESH_INTERVAL(250);
 
+    // The number of frames b/w user info updates.
+    const GLuint USER_INFO_REFRESH_INTERVAL(2000);
+
+    // The number of frames b/w Sun position updates.
+    // At 20 - 25 frames per second this will be
+    // several hours apart.
+    const GLuint SUN_POSITION_REFRESH_INTERVAL(200000);
+
     // Is it time to update the help message ?
-    if(isFeature(HELP) && (m_framecount % HELP_HUD_REFRESH_INTERVAL) == 0) {
-        make_HUD_help_entry();
+    if((m_framecount % HELP_HUD_REFRESH_INTERVAL) == 0) {
+        if(isFeature(HELP)) {
+            make_HUD_help_entry();
+            }
+
+        // Better update user information regularly too.
+        if((m_framecount % USER_INFO_REFRESH_INTERVAL) == 0) {
+            make_user_info();
+
+            // Very occasionally recheck the Sun's position.
+            if((m_framecount % SUN_POSITION_REFRESH_INTERVAL) == 0) {
+                setSunPosition();
+                }
+            }
         }
 
     // Start drawing with clearing the relevant buffers.
