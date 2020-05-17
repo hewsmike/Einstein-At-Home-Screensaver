@@ -34,7 +34,7 @@ const int WindowManager::PREFERRED_SCREEN_WIDTH(1024);
 const int WindowManager::PREFERRED_SCREEN_HEIGHT(768);
 const int WindowManager::PREFERRED_SCREEN_FRAME_RATE(20);
 
-const std::string WindowManager::m_WindowTitle("Einstein At Home");
+const std::string WindowManager::m_WindowTitle("Einstein@Home");
 
 const int WindowManager::RED_BITS(8);
 const int WindowManager::GREEN_BITS(8);
@@ -214,7 +214,7 @@ bool WindowManager::initialize(const int width, const int height, const int fram
                                               SDL_WINDOWPOS_CENTERED,
                                               m_WindowedWidth,
                                               m_WindowedHeight,
-                                              SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE));
+                                              SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN));
 
         // Check that the window was successfully made.
         if(m_Window == NULL) {

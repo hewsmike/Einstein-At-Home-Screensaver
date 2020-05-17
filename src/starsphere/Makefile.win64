@@ -85,13 +85,13 @@ starsphere_Einstein_Gamma: CPPFLAGS += -D SCIENCE_APP=EinsteinGamma
 
 # file based targets
 starsphere_Einstein_Gamma: $(DEPS) $(STARSPHERE_SRC)/main.cpp $(OBJS)
-	$(CXX) -g $(CPPFLAGS) $(LDFLAGS) $(STARSPHERE_SRC)/main.cpp -o "graphics_app=einsteinGamma_RUNLABEL_VERSION_graphics_windows_intelx86.exe" $(OBJS) $(LIBS)
+	$(CXX) -g $(CPPFLAGS) $(LDFLAGS) $(STARSPHERE_SRC)/main.cpp -o "graphics_app=einsteinGamma_RUNLABEL_VERSION_graphics_windows_intelx86_64.exe" $(OBJS) $(LIBS)
 
 starsphere_Einstein_Gravity: $(DEPS) $(STARSPHERE_SRC)/main.cpp $(OBJS)
-	$(CXX) -g $(CPPFLAGS) $(LDFLAGS) $(STARSPHERE_SRC)/main.cpp -o "graphics_app=einsteinGravity_RUNLABEL_VERSION_graphics_windows_intelx86.exe" $(OBJS) $(LIBS)
+	$(CXX) -g $(CPPFLAGS) $(LDFLAGS) $(STARSPHERE_SRC)/main.cpp -o "graphics_app=einsteinGravity_RUNLABEL_VERSION_graphics_windows_intelx86_64.exe" $(OBJS) $(LIBS)
 
 starsphere_Einstein_Radio: $(DEPS) $(STARSPHERE_SRC)/main.cpp $(OBJS)
-	$(CXX) -g $(CPPFLAGS) $(LDFLAGS) $(STARSPHERE_SRC)/main.cpp -o "graphics_app=einsteinRadio_RUNLABEL_VERSION_graphics_windows_intelx86.exe" $(OBJS) $(LIBS)
+	$(CXX) -g $(CPPFLAGS) $(LDFLAGS) $(STARSPHERE_SRC)/main.cpp -o "graphics_app=einsteinRadio_RUNLABEL_VERSION_graphics_windows_intelx86_64.exe" $(OBJS) $(LIBS)
 
 Starsphere.o: $(DEPS) $(STARSPHERE_SRC)/Starsphere.cpp $(STARSPHERE_SRC)/Starsphere.h
 	$(CXX) -g $(CPPFLAGS) -c $(STARSPHERE_SRC)/Starsphere.cpp

@@ -25,6 +25,7 @@
 #include <diagnostics.h>
 #include <boinc_api.h>
 #include <svn_version.h>
+#include <unistd.h>
 
 #include "../erp_git_version.h"
 #include "framework.h"
@@ -140,6 +141,14 @@ int main(int argc, char** argv) {
     /// TODO: we might want to optimize this for glibc- and mingw-based stacktraces!
     boinc_init_graphics_diagnostics(BOINC_DIAG_DEFAULTS);
 
+#if defined(_WIN32) || defined(_WIN64)
+    // For Windows use the following path.
+    chdir("C:\\Program Data\\BOINC\\slots\\0");
+#else
+    // For linux use the following path.
+    chdir("/var/lib/boinc-client/slots/0");
+#endif
+
 #ifdef __APPLE__
     // Supply an icon for Mac's.
     setMacIcon(argv[0], MacAppIconData, sizeof(MacAppIconData));
@@ -212,11 +221,10 @@ int main(int argc, char** argv) {
     // Prepare for rendering by initialising chosen engine.
     graphics->initialize(window.windowWidth(), window.windowHeight(), fontResource);
 
+    window.setScreensaverMode(false);
+
     // Get up to date BOINC information.
     graphics->refreshBOINCInformation();
-
-    // For testing keep out of screensaver mode.
-    window.setScreensaverMode(false);
 
     // Check other optional command line parameters
     if(argc == 2) {
@@ -228,10 +236,9 @@ int main(int argc, char** argv) {
             }
         if((param == "--demo") || (param == "--fullscreen")) {
             ErrorHandler::record("Starsphere::main() : Fullscreen & demo mode ...", ErrorHandler::INFORM);
-            // Initialised display is as a window,
-            // so we transition to a fullscreen.
+            // Initialised display is as a fullscreen.
             window.flushEvents();
-            window.toggleFullscreen();
+            // window.toggleFullscreen();
 #ifdef __APPLE__
             SetMacSSLevel();
 #endif
