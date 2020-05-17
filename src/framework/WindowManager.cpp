@@ -80,7 +80,7 @@ WindowManager::WindowManager(void) {
     m_WindowedWidth = 0;
     m_WindowedHeight = 0;
     m_ScreensaverMode = true;
-    m_CurrentScreenMode = WINDOWED;
+    m_CurrentScreenMode = FULLSCREEN;
     m_BoincAdapter = new BOINCClientAdapter("");
     }
 
@@ -208,7 +208,7 @@ bool WindowManager::initialize(const int width, const int height, const int fram
         /// TODO - check after successful context creation to see if we got what we asked for.
         // Set desired OpenGL context attributes for our window.
 
-        // Start in windowed mode.
+        // Start in full screen mode.
         m_Window = SDL_DEBUG(SDL_CreateWindow(m_WindowTitle.c_str(),
                                               SDL_WINDOWPOS_CENTERED,
                                               SDL_WINDOWPOS_CENTERED,
