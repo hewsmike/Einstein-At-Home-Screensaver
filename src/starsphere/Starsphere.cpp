@@ -1607,7 +1607,7 @@ void Starsphere::make_HUD_help_entry() {
     GLuint help_x_offset = (10.0f +  m_XStartPosRight)/2 - (m_help_text_surface->w/2.0f)*1.5f;
 
     // The negative Y-offset vector here is in order to invert the SDL image.
-    m_help_info = new TexturedParallelogram(glm::vec2(help_x_offset, 10.0f + m_help_text_surface->h*1.5f),
+    m_help_info = new TexturedParallelogram(glm::vec2(help_x_offset, m_YStartPosTop),
                                             glm::vec2(m_help_text_surface->w * 1.5f, 0.0f),
                                             glm::vec2(0.0f, -m_help_text_surface->h*1.5f),
                                             help_info_texture);
