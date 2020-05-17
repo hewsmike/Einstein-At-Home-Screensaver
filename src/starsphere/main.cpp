@@ -143,10 +143,10 @@ int main(int argc, char** argv) {
 
 #if defined(_WIN32) || defined(_WIN64)
     // For Windows use the following path.
-    chdir("C:\\Program Data\\BOINC\\slots\\0");
+    chdir("..\\..\\slots\\0");
 #else
     // For linux use the following path.
-    chdir("/var/lib/boinc-client/slots/0");
+    chdir("../../slots/0");
 #endif
 
 #ifdef __APPLE__
