@@ -60,16 +60,20 @@ void StarsphereGamma::resize(const int width, const int height) {
 void StarsphereGamma::render(const double timeOfDay) {
     Starsphere::render(timeOfDay);
 
-    // Every 1000 frames update search progress data.
-    if((m_framecount % 1000) == 0) {
+    const GLuint SEARCH_INFO_REFRESH_INTERVAL(500);
+
+    // Regularly update search progress data.
+    if((m_framecount % SEARCH_INFO_REFRESH_INTERVAL) == 0) {
         refreshBOINCInformation();
         prepareSearchInformation();
         }
 
+    // Display the Fermi Telescope logo.
     if(isFeature(LOGO)) {
         m_logo->utilise();
         }
 
+    // Show the search data, if any.
     m_right_ascension_info->utilise();
     m_declination_info->utilise();
     m_percent_done_info->utilise();
