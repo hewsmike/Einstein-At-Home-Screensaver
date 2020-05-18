@@ -36,6 +36,7 @@ StarsphereGamma::StarsphereGamma() :
 
 StarsphereGamma::~StarsphereGamma() {
     if(m_logo) delete m_logo;
+    if(m_text_surface) SDL_FreeSurface(m_text_surface);
     if(m_right_ascension_info) delete m_right_ascension_info;
     if(m_declination_info) delete m_declination_info;
     if(m_percent_done_info) delete m_percent_done_info;
@@ -139,15 +140,15 @@ void StarsphereGamma::prepareSearchInformation() {
 
     this->refreshBOINCInformation();
     SDL_Color color = {255, 255, 255, 255};
-    SDL_Surface* text_surface;
-    if(!(text_surface=TTF_RenderText_Blended(m_FontText, m_WUSkyPosRightAscension.c_str(), color))){
+
+    if(!(m_text_surface=TTF_RenderText_Blended(m_FontText, m_WUSkyPosRightAscension.c_str(), color))){
         ErrorHandler::record("StarsphereGamma::renderSearchInformation() : can't make SDL_Surface for right asccension!", ErrorHandler::FATAL);
         }
 
-    RenderTask::texture_buffer_group RA_info_texture = {(const GLvoid*)text_surface->pixels,
-                                                        text_surface->w * text_surface->h * 4,
-                                                        text_surface->w,
-                                                        text_surface->h,
+    RenderTask::texture_buffer_group RA_info_texture = {(const GLvoid*)m_text_surface->pixels,
+                                                        m_text_surface->w * m_text_surface->h,
+                                                        m_text_surface->w,
+                                                        m_text_surface->h,
                                                         GL_RGBA,
                                                         GL_UNSIGNED_BYTE,
                                                         GL_CLAMP_TO_EDGE,
@@ -156,20 +157,22 @@ void StarsphereGamma::prepareSearchInformation() {
 
     // The negative Y-offset vector here is in order to invert the SDL image.
     if(m_right_ascension_info) delete m_right_ascension_info;
-    m_right_ascension_info = new TexturedParallelogram(glm::vec2(m_XStartPosRight - text_surface->w * 2, 10.0f + wu_top_line),
-                                                       glm::vec2(text_surface->w * 2, 0.0f),
-                                                       glm::vec2(0.0f, -text_surface->h * 2),
+    m_right_ascension_info = new TexturedParallelogram(glm::vec2(m_XStartPosRight - m_text_surface->w, 10.0f + wu_top_line),
+                                                       glm::vec2(m_text_surface->w, 0.0f),
+                                                       glm::vec2(0.0f, -m_text_surface->h),
                                                        RA_info_texture);
-    wu_top_line -= text_surface->h *2;
+    // Delete any SDL assets.
+    //SDL_FreeSurface(m_text_surface);
+    wu_top_line -= m_text_surface->h;
 
-    if(!(text_surface=TTF_RenderText_Blended(m_FontText, m_WUSkyPosDeclination.c_str(), color))){
+    if(!(m_text_surface=TTF_RenderText_Blended(m_FontText, m_WUSkyPosDeclination.c_str(), color))){
         ErrorHandler::record("StarsphereGamma::renderSearchInformation() : can't make SDL_Surface for declination!", ErrorHandler::FATAL);
         }
 
-    RenderTask::texture_buffer_group DEC_info_texture = {(const GLvoid*)text_surface->pixels,
-                                                         text_surface->w * text_surface->h * 4,
-                                                         text_surface->w,
-                                                         text_surface->h,
+    RenderTask::texture_buffer_group DEC_info_texture = {(const GLvoid*)m_text_surface->pixels,
+                                                         m_text_surface->w * m_text_surface->h,
+                                                         m_text_surface->w,
+                                                         m_text_surface->h,
                                                          GL_RGBA,
                                                          GL_UNSIGNED_BYTE,
                                                          GL_CLAMP_TO_EDGE,
@@ -178,21 +181,23 @@ void StarsphereGamma::prepareSearchInformation() {
 
     // The negative Y-offset vector here is in order to invert the SDL image.
     if(m_declination_info) delete m_declination_info;
-    m_declination_info = new TexturedParallelogram(glm::vec2(m_XStartPosRight - text_surface->w * 2, 10.0f + wu_top_line),
-                                                   glm::vec2(text_surface->w * 2, 0.0f),
-                                                   glm::vec2(0.0f, -text_surface->h * 2),
+    m_declination_info = new TexturedParallelogram(glm::vec2(m_XStartPosRight - m_text_surface->w, 10.0f + wu_top_line),
+                                                   glm::vec2(m_text_surface->w, 0.0f),
+                                                   glm::vec2(0.0f, -m_text_surface->h),
                                                    DEC_info_texture);
+    // Delete any SDL assets.
+    //SDL_FreeSurface(m_text_surface);
 
-    wu_top_line -= text_surface->h *2;
+    wu_top_line -= m_text_surface->h;
 
-    if(!(text_surface=TTF_RenderText_Blended(m_FontText, m_WUPercentDone.c_str(), color))){
+    if(!(m_text_surface=TTF_RenderText_Blended(m_FontText, m_WUPercentDone.c_str(), color))){
         ErrorHandler::record("StarsphereGamma::renderSearchInformation() : can't make SDL_Surface for percent done!", ErrorHandler::FATAL);
         }
 
-    RenderTask::texture_buffer_group percent_info_texture = {(const GLvoid*)text_surface->pixels,
-                                                             text_surface->w * text_surface->h * 4,
-                                                             text_surface->w,
-                                                             text_surface->h,
+    RenderTask::texture_buffer_group percent_info_texture = {(const GLvoid*)m_text_surface->pixels,
+                                                             m_text_surface->w * m_text_surface->h,
+                                                             m_text_surface->w,
+                                                             m_text_surface->h,
                                                              GL_RGBA,
                                                              GL_UNSIGNED_BYTE,
                                                              GL_CLAMP_TO_EDGE,
@@ -201,20 +206,23 @@ void StarsphereGamma::prepareSearchInformation() {
 
     // The negative Y-offset vector here is in order to invert the SDL image.
     if(m_percent_done_info) delete m_percent_done_info;
-    m_percent_done_info = new TexturedParallelogram(glm::vec2(m_XStartPosRight - text_surface->w * 2, 10.0f + wu_top_line),
-                                                     glm::vec2(text_surface->w * 2, 0.0f),
-                                                     glm::vec2(0.0f, -text_surface->h * 2),
+    m_percent_done_info = new TexturedParallelogram(glm::vec2(m_XStartPosRight - m_text_surface->w, 10.0f + wu_top_line),
+                                                     glm::vec2(m_text_surface->w, 0.0f),
+                                                     glm::vec2(0.0f, -m_text_surface->h),
                                                      percent_info_texture);
-    wu_top_line -= text_surface->h *2;
+    // Delete any SDL assets.
+    //SDL_FreeSurface(m_text_surface);
 
-    if(!(text_surface=TTF_RenderText_Blended(m_FontText, m_WUCPUTime.c_str(), color))){
+    wu_top_line -= m_text_surface->h;
+
+    if(!(m_text_surface=TTF_RenderText_Blended(m_FontText, m_WUCPUTime.c_str(), color))){
         ErrorHandler::record("StarsphereGamma::renderSearchInformation() : can't make SDL_Surface for CPU time!", ErrorHandler::FATAL);
         }
 
-    RenderTask::texture_buffer_group CPU_time_info_texture = {(const GLvoid*)text_surface->pixels,
-                                                              text_surface->w * text_surface->h * 4,
-                                                              text_surface->w,
-                                                              text_surface->h,
+    RenderTask::texture_buffer_group CPU_time_info_texture = {(const GLvoid*)m_text_surface->pixels,
+                                                              m_text_surface->w * m_text_surface->h,
+                                                              m_text_surface->w,
+                                                              m_text_surface->h,
                                                               GL_RGBA,
                                                               GL_UNSIGNED_BYTE,
                                                               GL_CLAMP_TO_EDGE,
@@ -223,12 +231,13 @@ void StarsphereGamma::prepareSearchInformation() {
 
     // The negative Y-offset vector here is in order to invert the SDL image.
     if(m_cpu_time_info) delete m_cpu_time_info;
-    m_cpu_time_info = new TexturedParallelogram(glm::vec2(m_XStartPosRight - text_surface->w * 2, 10.0f + wu_top_line),
-                                                glm::vec2(text_surface->w * 2, 0.0f),
-                                                glm::vec2(0.0f, -text_surface->h * 2),
+    m_cpu_time_info = new TexturedParallelogram(glm::vec2(m_XStartPosRight - m_text_surface->w, 10.0f + wu_top_line),
+                                                glm::vec2(m_text_surface->w, 0.0f),
+                                                glm::vec2(0.0f, -m_text_surface->h),
                                                 CPU_time_info_texture);
 
-    delete text_surface;
+    // Delete any SDL assets.
+    //SDL_FreeSurface(m_text_surface);
     }
 
 void StarsphereGamma::prepareLogo() {

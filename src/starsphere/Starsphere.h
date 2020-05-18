@@ -476,6 +476,8 @@ class Starsphere : public AbstractGraphicsEngine {
         std::vector<std::string> m_HUD_help_texts;
         SDL_Surface* m_help_text_surface;
 
+        SDL_Surface* m_info_text_surface;
+
         void make_local_arms(GLfloat latitude, GLfloat longitude,
                              GLfloat x_arm_azimuth, GLfloat y_arm_azimuth,
                              glm::vec3 color, GLfloat* vertex_data, GLuint array_offset);

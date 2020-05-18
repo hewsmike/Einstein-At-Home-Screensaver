@@ -230,6 +230,10 @@ Starsphere::~Starsphere() {
     if(m_RAC_info) delete m_RAC_info;
     if(m_help_info) delete m_help_info;
 
+    // SDL Surfaces.
+    if(m_info_text_surface) SDL_FreeSurface(m_info_text_surface);
+    if(m_help_text_surface) SDL_FreeSurface(m_help_text_surface);
+
     // Delete render task pointers.
     if(m_render_task_arms) delete m_render_task_arms;
     if(m_render_task_axes) delete m_render_task_axes;
@@ -1413,7 +1417,7 @@ void Starsphere::make_logos(void) {
                                                       GL_CLAMP_TO_EDGE,
                                                       false};
 
-    m_logo1 = new TexturedParallelogram(glm::vec2(10.0f, m_YStartPosTop - 165.0f),
+    m_logo1 = new TexturedParallelogram(glm::vec2(10.0f, m_YStartPosTop - 115.0f),
                                         glm::vec2(178.0f, 0.0f),
                                         glm::vec2(0.0f, 115.0f),
                                         logo_texture1);
@@ -1441,25 +1445,16 @@ void Starsphere::make_user_info(void) {
     SDL_Color color = {255, 255, 255, 255};
 
     // Delete any old TexturedParalellogram.
-    if(m_user_info != NULL) {
-        delete m_user_info;
-        m_user_info = NULL;
-        }
-    // Delete any SDL assets
-    if(text_surface != NULL) {
-        SDL_FreeSurface(text_surface);
-        text_surface = NULL;
-        }
+    if(m_user_info != NULL) delete m_user_info;
 
-    SDL_Surface* text_surface;
-    if(!(text_surface = TTF_RenderText_Blended(m_FontText, m_UserName.c_str(), color))){
+    if(!(m_info_text_surface = TTF_RenderText_Blended(m_FontText, m_UserName.c_str(), color))){
         ErrorHandler::record("Starsphere::make_user() : can't make SDL_Surface for user!", ErrorHandler::FATAL);
         }
 
-    RenderTask::texture_buffer_group user_info_texture = {(const GLvoid*)text_surface->pixels,
-                                                          text_surface->w * text_surface->h * 4,
-                                                          text_surface->w,
-                                                          text_surface->h,
+    RenderTask::texture_buffer_group user_info_texture = {(const GLvoid*)m_info_text_surface->pixels,
+                                                          m_info_text_surface->w * m_info_text_surface->h,
+                                                          m_info_text_surface->w,
+                                                          m_info_text_surface->h,
                                                           GL_RGBA,
                                                           GL_UNSIGNED_BYTE,
                                                           GL_CLAMP_TO_EDGE,
@@ -1467,32 +1462,24 @@ void Starsphere::make_user_info(void) {
                                                           false};
 
     // The negative Y-offset vector here is in order to invert the SDL image.
-    m_user_info = new TexturedParallelogram(glm::vec2(m_XStartPosRight - text_surface->w * 2, m_YStartPosTop - 100),
-                                            glm::vec2(text_surface->w * 2, 0.0f),
-                                            glm::vec2(0.0f, -text_surface->h * 2),
+    m_user_info = new TexturedParallelogram(glm::vec2(m_XStartPosRight - m_info_text_surface->w, m_YStartPosTop),
+                                            glm::vec2(m_info_text_surface->w, 0.0f),
+                                            glm::vec2(0.0f, -m_info_text_surface->h),
                                             user_info_texture);
 
-    GLfloat height_drop = text_surface->h * 1.8 - 100;
+    GLfloat height_drop = m_info_text_surface->h;
 
     // Delete any old TexturedParalellogram.
-    if(m_team_info != NULL) {
-        delete m_team_info;
-        m_team_info = NULL;
-        }
-    // Delete any SDL assets
-    if(text_surface != NULL) {
-        SDL_FreeSurface(text_surface);
-        text_surface = NULL;
-        }
+    if(m_team_info != NULL) delete m_team_info;
 
-    if(!(text_surface = TTF_RenderText_Blended(m_FontText, m_TeamName.c_str(), color))){
+    if(!(m_info_text_surface = TTF_RenderText_Blended(m_FontText, m_TeamName.c_str(), color))){
         ErrorHandler::record("Starsphere::make_user() : can't make SDL_Surface for team!", ErrorHandler::FATAL);
         }
 
-    RenderTask::texture_buffer_group team_info_texture = {(const GLvoid*)text_surface->pixels,
-                                                          text_surface->w * text_surface->h * 4,
-                                                          text_surface->w,
-                                                          text_surface->h,
+    RenderTask::texture_buffer_group team_info_texture = {(const GLvoid*)m_info_text_surface->pixels,
+                                                          m_info_text_surface->w * m_info_text_surface->h,
+                                                          m_info_text_surface->w,
+                                                          m_info_text_surface->h,
                                                           GL_RGBA,
                                                           GL_UNSIGNED_BYTE,
                                                           GL_CLAMP_TO_EDGE,
@@ -1500,32 +1487,24 @@ void Starsphere::make_user_info(void) {
                                                           false};
 
     // The negative Y-offset vector here is in order to invert the SDL image.
-    m_team_info = new TexturedParallelogram(glm::vec2(m_XStartPosRight - text_surface->w * 2, m_YStartPosTop - height_drop),
-                                            glm::vec2(text_surface->w * 2, 0.0f),
-                                            glm::vec2(0.0f, -text_surface->h * 2),
+    m_team_info = new TexturedParallelogram(glm::vec2(m_XStartPosRight - m_info_text_surface->w, m_YStartPosTop - height_drop),
+                                            glm::vec2(m_info_text_surface->w, 0.0f),
+                                            glm::vec2(0.0f, -m_info_text_surface->h),
                                             team_info_texture);
 
-    height_drop += text_surface->h * 1.8f;
+    height_drop += m_info_text_surface->h;
 
     // Delete any old TexturedParalellogram.
-    if(m_total_info != NULL) {
-        delete m_total_info;
-        m_total_info = NULL;
-        }
-    // Delete any SDL assets
-    if(text_surface != NULL) {
-        SDL_FreeSurface(text_surface);
-        text_surface = NULL;
-        }
+    if(m_total_info != NULL) delete m_total_info;
 
-    if(!(text_surface = TTF_RenderText_Blended(m_FontText, m_UserCredit.c_str(), color))){
+    if(!(m_info_text_surface = TTF_RenderText_Blended(m_FontText, m_UserCredit.c_str(), color))){
         ErrorHandler::record("Starsphere::make_user() : can't make SDL_Surface for total!", ErrorHandler::FATAL);
         }
 
-    RenderTask::texture_buffer_group total_info_texture = {(const GLvoid*)text_surface->pixels,
-                                                          text_surface->w * text_surface->h * 4,
-                                                          text_surface->w,
-                                                          text_surface->h,
+    RenderTask::texture_buffer_group total_info_texture = {(const GLvoid*)m_info_text_surface->pixels,
+                                                          m_info_text_surface->w * m_info_text_surface->h,
+                                                          m_info_text_surface->w,
+                                                          m_info_text_surface->h,
                                                           GL_RGBA,
                                                           GL_UNSIGNED_BYTE,
                                                           GL_CLAMP_TO_EDGE,
@@ -1533,32 +1512,23 @@ void Starsphere::make_user_info(void) {
                                                           false};
 
     // The negative Y-offset vector here is in order to invert the SDL image.
-    m_total_info = new TexturedParallelogram(glm::vec2(m_XStartPosRight - text_surface->w * 2, m_YStartPosTop - height_drop),
-                                             glm::vec2(text_surface->w * 2, 0.0f),
-                                             glm::vec2(0.0f, -text_surface->h * 2),
+    m_total_info = new TexturedParallelogram(glm::vec2(m_XStartPosRight - m_info_text_surface->w, m_YStartPosTop - height_drop),
+                                             glm::vec2(m_info_text_surface->w, 0.0f),
+                                             glm::vec2(0.0f, -m_info_text_surface->h),
                                              total_info_texture);
-
-    height_drop += text_surface->h * 1.8f;
+    height_drop += m_info_text_surface->h;
 
     // Delete any old TexturedParalellogram.
-    if(m_RAC_info != NULL) {
-        delete m_RAC_info;
-        m_RAC_info = NULL;
-        }
-    // Delete any SDL assets
-    if(text_surface != NULL) {
-        SDL_FreeSurface(text_surface);
-        text_surface = NULL;
-        }
+    if(m_RAC_info != NULL) delete m_RAC_info;
 
-    if(!(text_surface = TTF_RenderText_Blended(m_FontText, m_UserRACredit.c_str(), color))){
+    if(!(m_info_text_surface = TTF_RenderText_Blended(m_FontText, m_UserRACredit.c_str(), color))){
         ErrorHandler::record("Starsphere::make_user() : can't make SDL_Surface for RAC!", ErrorHandler::FATAL);
         }
 
-    RenderTask::texture_buffer_group RAC_info_texture = {(const GLvoid*)text_surface->pixels,
-                                                          text_surface->w * text_surface->h * 4,
-                                                          text_surface->w,
-                                                          text_surface->h,
+    RenderTask::texture_buffer_group RAC_info_texture = {(const GLvoid*)m_info_text_surface->pixels,
+                                                          m_info_text_surface->w * m_info_text_surface->h,
+                                                          m_info_text_surface->w,
+                                                          m_info_text_surface->h,
                                                           GL_RGBA,
                                                           GL_UNSIGNED_BYTE,
                                                           GL_CLAMP_TO_EDGE,
@@ -1566,9 +1536,9 @@ void Starsphere::make_user_info(void) {
                                                           false};
 
     // The negative Y-offset vector here is in order to invert the SDL image.
-    m_RAC_info = new TexturedParallelogram(glm::vec2(m_XStartPosRight - text_surface->w * 2, m_YStartPosTop - height_drop),
-                                           glm::vec2(text_surface->w * 2, 0.0f),
-                                           glm::vec2(0.0f, -text_surface->h * 2),
+    m_RAC_info = new TexturedParallelogram(glm::vec2(m_XStartPosRight - m_info_text_surface->w, m_YStartPosTop - height_drop),
+                                           glm::vec2(m_info_text_surface->w, 0.0f),
+                                           glm::vec2(0.0f, -m_info_text_surface->h),
                                            RAC_info_texture);
     }
 
@@ -1620,16 +1590,7 @@ void Starsphere::make_HUD_help_entry() {
         }
 
     // Delete any old TexturedParalellogram.
-    if(m_help_info != NULL) {
-        delete m_help_info;
-        m_help_info = NULL;
-        }
-
-    // Delete any SDL assets
-    if(m_help_text_surface != NULL) {
-        SDL_FreeSurface(m_help_text_surface);
-        m_help_text_surface = NULL;
-        }
+    if(m_help_info != NULL) delete m_help_info;
 
     if(!(m_help_text_surface=TTF_RenderText_Blended(m_FontText,
                                                     m_HUD_help_texts.at(m_current_help_entry).c_str(),
@@ -1638,7 +1599,7 @@ void Starsphere::make_HUD_help_entry() {
         }
 
     RenderTask::texture_buffer_group help_info_texture = {(const GLvoid*)m_help_text_surface->pixels,
-                                                          m_help_text_surface->w * m_help_text_surface->h * 4,
+                                                          m_help_text_surface->w * m_help_text_surface->h,
                                                           m_help_text_surface->w,
                                                           m_help_text_surface->h,
                                                           GL_RGBA,
@@ -1647,12 +1608,12 @@ void Starsphere::make_HUD_help_entry() {
                                                           GL_CLAMP_TO_EDGE,
                                                           false};
 
-    GLuint help_x_offset = (10.0f +  m_XStartPosRight)/2 - (m_help_text_surface->w/2.0f)*1.5f;
+    GLuint help_x_offset = (10.0f +  m_XStartPosRight)/2 - (m_help_text_surface->w * 0.75f)/2.0f;
 
     // The negative Y-offset vector here is in order to invert the SDL image.
-    m_help_info = new TexturedParallelogram(glm::vec2(help_x_offset, m_YStartPosTop),
-                                            glm::vec2(m_help_text_surface->w * 1.5f, 0.0f),
-                                            glm::vec2(0.0f, -m_help_text_surface->h*1.5f),
+    m_help_info = new TexturedParallelogram(glm::vec2(help_x_offset, m_CurrentHeight * 0.67f + m_help_text_surface->h/2.0f),
+                                            glm::vec2(m_help_text_surface->w * 0.75f, 0.0f),
+                                            glm::vec2(0.0f, -m_help_text_surface->h * 0.75f),
                                             help_info_texture);
     }
 
@@ -1856,7 +1817,7 @@ void Starsphere::render(const double timeOfDay) {
     const GLfloat ROLL_RATE(0.0025f);
 
     // The number of frames b/w help HUD updates.
-    const GLuint HELP_HUD_REFRESH_INTERVAL(250);
+    const GLuint HELP_HUD_REFRESH_INTERVAL(150);
 
     // The number of frames b/w user info updates.
     const GLuint USER_INFO_REFRESH_INTERVAL(2000);

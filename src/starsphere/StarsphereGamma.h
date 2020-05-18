@@ -105,6 +105,8 @@ class StarsphereGamma : public Starsphere {
     private:
         TexturedParallelogram* m_logo;
 
+        SDL_Surface* m_text_surface;
+
         /**
          * \brief Prepare science run specific logo
          *
