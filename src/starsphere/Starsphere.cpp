@@ -60,8 +60,8 @@ const GLfloat Starsphere::SPHERE_RADIUS(5.0f);
 const GLfloat Starsphere::EARTH_RADIUS(1.0f);
 const GLfloat Starsphere::EARTH_MAX_OFFSET(0.04 * EARTH_RADIUS);
 const GLboolean Starsphere::TTF_FREE_SOURCE(false);
-const GLuint Starsphere::TTF_FONT_LOAD_HEADER_POINT_SIZE(13);
-const GLuint Starsphere::TTF_FONT_LOAD_TEXT_POINT_SIZE(11);
+const GLuint Starsphere::TTF_FONT_LOAD_HEADER_POINT_SIZE(26);
+const GLuint Starsphere::TTF_FONT_LOAD_TEXT_POINT_SIZE(22);
 const GLfloat Starsphere::PERSPECTIVE_NEAR_FRUSTUM_DISTANCE(0.1f);
 const GLfloat Starsphere::PERSPECTIVE_FAR_FRUSTUM_DISTANCE(100.0f);
 const GLfloat Starsphere::PERSPECTIVE_FOV_DEFAULT(45.0f);
@@ -1413,7 +1413,7 @@ void Starsphere::make_logos(void) {
                                                       GL_CLAMP_TO_EDGE,
                                                       false};
 
-    m_logo1 = new TexturedParallelogram(glm::vec2(10.0f, m_YStartPosTop - 115.0f),
+    m_logo1 = new TexturedParallelogram(glm::vec2(10.0f, m_YStartPosTop - 165.0f),
                                         glm::vec2(178.0f, 0.0f),
                                         glm::vec2(0.0f, 115.0f),
                                         logo_texture1);
@@ -1431,8 +1431,8 @@ void Starsphere::make_logos(void) {
                                                       false};
 
     m_logo2 = new TexturedParallelogram(glm::vec2(15.0f, 15.0f),
-                                        glm::vec2(218.0f, 0.0f),
-                                        glm::vec2(0.0f, 96.0f),
+                                        glm::vec2(175.0f, 0.0f),
+                                        glm::vec2(0.0f, 77.0f),
                                         logo_texture2);
     }
 
@@ -1446,13 +1446,13 @@ void Starsphere::make_user_info(void) {
         m_user_info = NULL;
         }
     // Delete any SDL assets
-    if(m_help_text_surface != NULL) {
-        SDL_FreeSurface(m_help_text_surface);
-        m_help_text_surface = NULL;
+    if(text_surface != NULL) {
+        SDL_FreeSurface(text_surface);
+        text_surface = NULL;
         }
 
     SDL_Surface* text_surface;
-    if(!(text_surface=TTF_RenderText_Blended(m_FontText, m_UserName.c_str(), color))){
+    if(!(text_surface = TTF_RenderText_Blended(m_FontText, m_UserName.c_str(), color))){
         ErrorHandler::record("Starsphere::make_user() : can't make SDL_Surface for user!", ErrorHandler::FATAL);
         }
 
@@ -1467,20 +1467,25 @@ void Starsphere::make_user_info(void) {
                                                           false};
 
     // The negative Y-offset vector here is in order to invert the SDL image.
-    m_user_info = new TexturedParallelogram(glm::vec2(m_XStartPosRight - text_surface->w * 2, m_YStartPosTop),
+    m_user_info = new TexturedParallelogram(glm::vec2(m_XStartPosRight - text_surface->w * 2, m_YStartPosTop - 100),
                                             glm::vec2(text_surface->w * 2, 0.0f),
                                             glm::vec2(0.0f, -text_surface->h * 2),
                                             user_info_texture);
 
-    GLfloat height_drop = text_surface->h * 1.8;
+    GLfloat height_drop = text_surface->h * 1.8 - 100;
 
     // Delete any old TexturedParalellogram.
     if(m_team_info != NULL) {
         delete m_team_info;
         m_team_info = NULL;
         }
+    // Delete any SDL assets
+    if(text_surface != NULL) {
+        SDL_FreeSurface(text_surface);
+        text_surface = NULL;
+        }
 
-    if(!(text_surface=TTF_RenderText_Blended(m_FontText, m_TeamName.c_str(), color))){
+    if(!(text_surface = TTF_RenderText_Blended(m_FontText, m_TeamName.c_str(), color))){
         ErrorHandler::record("Starsphere::make_user() : can't make SDL_Surface for team!", ErrorHandler::FATAL);
         }
 
@@ -1507,8 +1512,13 @@ void Starsphere::make_user_info(void) {
         delete m_total_info;
         m_total_info = NULL;
         }
+    // Delete any SDL assets
+    if(text_surface != NULL) {
+        SDL_FreeSurface(text_surface);
+        text_surface = NULL;
+        }
 
-    if(!(text_surface=TTF_RenderText_Blended(m_FontText, m_UserCredit.c_str(), color))){
+    if(!(text_surface = TTF_RenderText_Blended(m_FontText, m_UserCredit.c_str(), color))){
         ErrorHandler::record("Starsphere::make_user() : can't make SDL_Surface for total!", ErrorHandler::FATAL);
         }
 
@@ -1535,8 +1545,13 @@ void Starsphere::make_user_info(void) {
         delete m_RAC_info;
         m_RAC_info = NULL;
         }
+    // Delete any SDL assets
+    if(text_surface != NULL) {
+        SDL_FreeSurface(text_surface);
+        text_surface = NULL;
+        }
 
-    if(!(text_surface=TTF_RenderText_Blended(m_FontText, m_UserRACredit.c_str(), color))){
+    if(!(text_surface = TTF_RenderText_Blended(m_FontText, m_UserRACredit.c_str(), color))){
         ErrorHandler::record("Starsphere::make_user() : can't make SDL_Surface for RAC!", ErrorHandler::FATAL);
         }
 
@@ -1555,8 +1570,6 @@ void Starsphere::make_user_info(void) {
                                            glm::vec2(text_surface->w * 2, 0.0f),
                                            glm::vec2(0.0f, -text_surface->h * 2),
                                            RAC_info_texture);
-
-    delete text_surface;
     }
 
 void Starsphere::make_HUD_help_entries(void) {
@@ -1720,8 +1733,8 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
         if(m_FontHeader == NULL) {
             m_FontHeader = TTF_OpenFontRW(SDL_RWFromConstMem(&m_FontResource->data()->at(0),
                                                              m_FontResource->data()->size()),
-                                          TTF_FREE_SOURCE,
-                                          TTF_FONT_LOAD_HEADER_POINT_SIZE);
+                                                             TTF_FREE_SOURCE,
+                                                             TTF_FONT_LOAD_HEADER_POINT_SIZE);
 
             if(m_FontHeader == NULL) {
                 std::stringstream font_header_error;
@@ -1735,8 +1748,8 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
         if(m_FontText == NULL) {
             m_FontText = TTF_OpenFontRW(SDL_RWFromConstMem(&m_FontResource->data()->at(0),
                                                            m_FontResource->data()->size()),
-                                        TTF_FREE_SOURCE,
-                                        TTF_FONT_LOAD_TEXT_POINT_SIZE);
+                                                           TTF_FREE_SOURCE,
+                                                           TTF_FONT_LOAD_TEXT_POINT_SIZE);
 
             if(m_FontText == NULL) {
                 std::stringstream font_text_error;
