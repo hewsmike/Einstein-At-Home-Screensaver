@@ -221,6 +221,7 @@ int main(int argc, char** argv) {
     // Prepare for rendering by initialising chosen engine.
     graphics->initialize(window.windowWidth(), window.windowHeight(), fontResource);
 
+    // Just for testing purposes
     window.setScreensaverMode(false);
 
     // Get up to date BOINC information.
