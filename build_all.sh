@@ -58,9 +58,9 @@ cp -f $ROOT/win32/dist/graphics_app=einsteinGravity_RUNLABEL_VERSION_graphics_wi
 cp -f $ROOT/win32/dist/graphics_app=einsteinGamma_RUNLABEL_VERSION_graphics_windows_intelx86.exe graphics_Gamma_starsphere_TEST0$1_i686-mingw32.exe
 cp -f $ROOT/win32/dist/graphics_app=einsteinRadio_RUNLABEL_VERSION_graphics_windows_intelx86.exe graphics_Radio_starsphere_TEST0$1_i686-mingw32.exe
 
-cp -f $ROOT/win64/dist/graphics_app=einsteinGravity_RUNLABEL_VERSION_graphics_windows_intelx86_64.exe graphics_Gravity_starsphere_TEST0$1_x86_64.exe
-cp -f $ROOT/win64/dist/graphics_app=einsteinGamma_RUNLABEL_VERSION_graphics_windows_intelx86_64.exe graphics_Gamma_starsphere_TEST0$1_x86_64.exe
-cp -f $ROOT/win64/dist/graphics_app=einsteinRadio_RUNLABEL_VERSION_graphics_windows_intelx86_64.exe graphics_Radio_starsphere_TEST0$1_x86_64.exe
+cp -f $ROOT/win64/dist/graphics_app=einsteinGravity_RUNLABEL_VERSION_graphics_windows_intelx86_64.exe graphics_Gravity_starsphere_TEST0$1_x86_win64.exe
+cp -f $ROOT/win64/dist/graphics_app=einsteinGamma_RUNLABEL_VERSION_graphics_windows_intelx86_64.exe graphics_Gamma_starsphere_TEST0$1_x86_win64.exe
+cp -f $ROOT/win64/dist/graphics_app=einsteinRadio_RUNLABEL_VERSION_graphics_windows_intelx86_64.exe graphics_Radio_starsphere_TEST0$1_x86_win64.exe
 echo "*****************************************************************"
 echo "***** Successful build of all products **************************"
 echo "*****************************************************************"
