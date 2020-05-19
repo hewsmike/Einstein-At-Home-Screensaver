@@ -113,7 +113,7 @@ void StarsphereGravity::refreshBOINCInformation() {
 
 void StarsphereGravity::prepareSearchInformation() {
 //        // clock
-//        m_FontLogo1->draw(m_XStartPosClock, m_YStartPosTop, m_CurrentTime.c_str());
+//        m_FontLogo1->draw(m_XStartPosClock, m_HUD_YTop, m_CurrentTime.c_str());
 //
 //        // left info block
 //        m_FontHeader->draw(m_XStartPosLeft, m_YStartPosBottom, "BOINC Statistics");
@@ -123,11 +123,11 @@ void StarsphereGravity::prepareSearchInformation() {
 //        m_FontText->draw(m_XStartPosLeft, m_Y4StartPosBottom, m_UserRACredit.c_str());
 //
 //        // right info block
-//        m_FontHeader->draw(m_XStartPosRight, m_YStartPosBottom, "Search Information");
-//        m_FontText->draw(m_XStartPosRight, m_Y1StartPosBottom, m_WUSkyPosRightAscension.c_str());
-//        m_FontText->draw(m_XStartPosRight, m_Y2StartPosBottom, m_WUSkyPosDeclination.c_str());
-//        m_FontText->draw(m_XStartPosRight, m_Y3StartPosBottom, m_WUPercentDone.c_str());
-//        m_FontText->draw(m_XStartPosRight, m_Y4StartPosBottom, m_WUCPUTime.c_str());
+//        m_FontHeader->draw(m_HUD_XRight, m_YStartPosBottom, "Search Information");
+//        m_FontText->draw(m_HUD_XRight, m_Y1StartPosBottom, m_WUSkyPosRightAscension.c_str());
+//        m_FontText->draw(m_HUD_XRight, m_Y2StartPosBottom, m_WUSkyPosDeclination.c_str());
+//        m_FontText->draw(m_HUD_XRight, m_Y3StartPosBottom, m_WUPercentDone.c_str());
+//        m_FontText->draw(m_HUD_XRight, m_Y4StartPosBottom, m_WUCPUTime.c_str());
     }
 
 void StarsphereGravity::prepareLogo() {
@@ -145,7 +145,7 @@ void StarsphereGravity::prepareLogo() {
                                                       GL_CLAMP_TO_EDGE,
                                                       false};
 
-    m_logo = new TexturedParallelogram(glm::vec2(10.0f, 10.0f + (m_YStartPosTop - 10 - 50)/2),
+    m_logo = new TexturedParallelogram(glm::vec2(10.0f, 10.0f + (m_HUD_YTop - 10 - 50)/2),
                                        glm::vec2(220.0f, 0.0f),
                                        glm::vec2(0.0f, 100.0f),
                                        logo_texture);

@@ -60,7 +60,6 @@ const GLfloat Starsphere::SPHERE_RADIUS(5.0f);
 const GLfloat Starsphere::EARTH_RADIUS(1.0f);
 const GLfloat Starsphere::EARTH_MAX_OFFSET(0.04 * EARTH_RADIUS);
 const GLboolean Starsphere::TTF_FREE_SOURCE(false);
-const GLuint Starsphere::TTF_FONT_LOAD_HEADER_POINT_SIZE(26);
 const GLuint Starsphere::TTF_FONT_LOAD_TEXT_POINT_SIZE(22);
 const GLfloat Starsphere::PERSPECTIVE_NEAR_FRUSTUM_DISTANCE(0.1f);
 const GLfloat Starsphere::PERSPECTIVE_FAR_FRUSTUM_DISTANCE(100.0f);
@@ -72,7 +71,7 @@ const GLfloat Starsphere::GLOBE_TEXTURE_OFFSET(0.50f);                  // Textu
 const GLuint Starsphere::GRID_LATITUDE_LAYERS(19);                      // Each pole is a layer in latitude too.
 const GLuint Starsphere::GRID_LONGITUDE_SLICES(36);
 const GLuint Starsphere::VERTICES_PER_TRIANGLE(3);
-const GLuint Starsphere::AXES_LINE_LENGTH(100);
+const GLuint Starsphere::AXES_LINE_LENGTH(10);
 const GLuint Starsphere::NUMBER_OF_AXES(3);
 
 const GLuint Starsphere::OBSERVATORY_COUNT(4);
@@ -130,8 +129,6 @@ Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
     m_rotation_earth = glm::mat4(1.0f);
     m_vector_sun = glm::vec3(1.0f, 0.0f, 0.0f);
 
-    m_ObservatoryDrawTimeLocal = 0;
-
     m_FontResource = NULL;
 
     m_vertex_shader_resource = NULL;
@@ -141,10 +138,13 @@ Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
 
     m_CurrentWidth = 0;
     m_CurrentHeight = 0;
-    m_XStartPosLeft = 0;
-    m_XStartPosRight = 0;
-    m_YStartPosTop = 0;
-    m_YOffsetLarge = 0;
+
+    // HUD dimensions
+    m_HUD_Margin = 10.0f;
+    m_HUD_XLeft = m_HUD_Margin;
+    m_HUD_XRight = 0;
+    m_HUD_YTop = 0;
+    m_HUD_YBottom = m_HUD_Margin;
     m_CurrentRightAscension = 0;
     m_CurrentDeclination = 0;
     m_RefreshSearchMarker = false;
@@ -1411,7 +1411,7 @@ void Starsphere::make_logos(void) {
                                                       GL_CLAMP_TO_EDGE,
                                                       false};
 
-    m_logo1 = new TexturedParallelogram(glm::vec2(10.0f, m_YStartPosTop - 115.0f),
+    m_logo1 = new TexturedParallelogram(glm::vec2(10.0f, m_HUD_YTop - 115.0f),
                                         glm::vec2(178.0f, 0.0f),
                                         glm::vec2(0.0f, 115.0f),
                                         logo_texture1);
@@ -1456,7 +1456,7 @@ void Starsphere::make_user_info(void) {
                                                           false};
 
     // The negative Y-offset vector here is in order to invert the SDL image.
-    m_user_info = new TexturedParallelogram(glm::vec2(m_XStartPosRight - m_info_text_surface->w, m_YStartPosTop),
+    m_user_info = new TexturedParallelogram(glm::vec2(m_HUD_XRight - m_info_text_surface->w, m_HUD_YTop),
                                             glm::vec2(m_info_text_surface->w, 0.0f),
                                             glm::vec2(0.0f, -m_info_text_surface->h),
                                             user_info_texture);
@@ -1481,7 +1481,7 @@ void Starsphere::make_user_info(void) {
                                                           false};
 
     // The negative Y-offset vector here is in order to invert the SDL image.
-    m_team_info = new TexturedParallelogram(glm::vec2(m_XStartPosRight - m_info_text_surface->w, m_YStartPosTop - height_drop),
+    m_team_info = new TexturedParallelogram(glm::vec2(m_HUD_XRight - m_info_text_surface->w, m_HUD_YTop - height_drop),
                                             glm::vec2(m_info_text_surface->w, 0.0f),
                                             glm::vec2(0.0f, -m_info_text_surface->h),
                                             team_info_texture);
@@ -1506,7 +1506,7 @@ void Starsphere::make_user_info(void) {
                                                           false};
 
     // The negative Y-offset vector here is in order to invert the SDL image.
-    m_total_info = new TexturedParallelogram(glm::vec2(m_XStartPosRight - m_info_text_surface->w, m_YStartPosTop - height_drop),
+    m_total_info = new TexturedParallelogram(glm::vec2(m_HUD_XRight - m_info_text_surface->w, m_HUD_YTop - height_drop),
                                              glm::vec2(m_info_text_surface->w, 0.0f),
                                              glm::vec2(0.0f, -m_info_text_surface->h),
                                              total_info_texture);
@@ -1530,15 +1530,15 @@ void Starsphere::make_user_info(void) {
                                                           false};
 
     // The negative Y-offset vector here is in order to invert the SDL image.
-    m_RAC_info = new TexturedParallelogram(glm::vec2(m_XStartPosRight - m_info_text_surface->w, m_YStartPosTop - height_drop),
+    m_RAC_info = new TexturedParallelogram(glm::vec2(m_HUD_XRight - m_info_text_surface->w, m_HUD_YTop - height_drop),
                                            glm::vec2(m_info_text_surface->w, 0.0f),
                                            glm::vec2(0.0f, -m_info_text_surface->h),
                                            RAC_info_texture);
     }
 
 void Starsphere::make_HUD_help_entries(void) {
-    // First empty any existing help entries. In case
-    // we re-initialise.
+    // First erase any existing help entries. In case
+    // we are re-initialising at this point.
     m_HUD_help_texts.clear();
 
     // Now to fill with text entries.
@@ -1569,29 +1569,31 @@ void Starsphere::make_HUD_help_entries(void) {
     }
 
 void Starsphere::make_HUD_help_entry() {
-    // Help text will be bright yellow.
+    // Help text color.
     SDL_Color help_color;
     help_color.r = 255;
     help_color.g = 255;
     help_color.b = 0;
     help_color.a = 255;
 
-    // Increment to next HUD entry but
-    // wrap around to start if necessary.
-    ++m_current_help_entry;
-    if(m_current_help_entry >= m_num_help_entries) {
-        m_current_help_entry = 0;
-        }
+    // Scale the font.
+    GLfloat HUD_help_font_scale = 0.75f;
+
+    // Position the help text with respect to the entire window.
+    GLfloat HUD_help_offset = 0.67f;
 
     // Delete any old TexturedParalellogram.
     if(m_help_info != NULL) delete m_help_info;
 
+    // Attempt to make an SDL_Surface from font instance and current help text ...
     if(!(m_help_text_surface=TTF_RenderText_Blended(m_FontText,
                                                     m_HUD_help_texts.at(m_current_help_entry).c_str(),
                                                     help_color))){
+        // ... and this is fatal in the lack.
         ErrorHandler::record("Starsphere::make_HUD_help_entry() : can't make SDL_Surface for help menu!", ErrorHandler::FATAL);
         }
 
+    // Create texture information from SDL_Surface.
     RenderTask::texture_buffer_group help_info_texture = {(const GLvoid*)m_help_text_surface->pixels,
                                                           m_help_text_surface->w * m_help_text_surface->h,
                                                           m_help_text_surface->w,
@@ -1602,13 +1604,27 @@ void Starsphere::make_HUD_help_entry() {
                                                           GL_CLAMP_TO_EDGE,
                                                           false};
 
-    GLuint help_x_offset = (10.0f +  m_XStartPosRight)/2 - (m_help_text_surface->w * 0.75f)/2.0f;
+    // Careful position of text in middle of window horizontal margins ....
+    GLuint help_x_offset = (m_HUD_XRight - m_HUD_XLeft)/2.0f -
+                           (m_help_text_surface->w * HUD_help_font_scale)/2.0f;
+
+    // ... a constant fraction of the vertical margins up from the bottom.
+    GLuint help_y_offset = m_HUD_YBottom +
+                           (m_HUD_YTop - m_HUD_YBottom) * HUD_help_offset +
+                           (m_help_text_surface->h * HUD_help_font_scale)/2.0f;
 
     // The negative Y-offset vector here is in order to invert the SDL image.
-    m_help_info = new TexturedParallelogram(glm::vec2(help_x_offset, m_CurrentHeight * 0.67f + m_help_text_surface->h/2.0f),
-                                            glm::vec2(m_help_text_surface->w * 0.75f, 0.0f),
-                                            glm::vec2(0.0f, -m_help_text_surface->h * 0.75f),
+    m_help_info = new TexturedParallelogram(glm::vec2(help_x_offset, help_y_offset),
+                                            glm::vec2(m_help_text_surface->w * HUD_help_font_scale, 0.0f),
+                                            glm::vec2(0.0f, -m_help_text_surface->h * HUD_help_font_scale),
                                             help_info_texture);
+
+    // Increment to next HUD entry but
+    // wrap around to start if necessary.
+    ++m_current_help_entry;
+    if(m_current_help_entry >= m_num_help_entries) {
+        m_current_help_entry = 0;
+        }
     }
 
 /**
@@ -1641,8 +1657,8 @@ void Starsphere::resize(const int width, const int height) {
     TransformGlobals::setClientScreenDimensions(height, width);
 
     // Adjust HUD config.
-    m_YStartPosTop = m_CurrentHeight - 10;
-    m_XStartPosRight = m_CurrentWidth - 10;
+    m_HUD_YTop = m_CurrentHeight - m_HUD_Margin;
+    m_HUD_XRight = m_CurrentWidth - m_HUD_Margin;
 
     // Make sure the search marker is updated (conditional rendering!)
     m_RefreshSearchMarker = true;

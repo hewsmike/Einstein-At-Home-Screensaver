@@ -42,10 +42,9 @@
 #include "EinsteinGravityAdapter.h"
 #include "ogl_utility.h"
 #include "RenderTask.h"
+#include "SDL_ttf.h"
 #include "TexturedParallelogram.h"
 #include "WindowManager.h"
-
-#include "SDL_ttf.h"
 
 // SIN and COS take arguments in DEGREES
 #define PI 3.14159265
@@ -74,8 +73,6 @@ using namespace std;
  * that the four main gravitational wave observatory locations are shown at their actual
  * real-time position. Furthermore a head-up display (HUD) shows relevant BOINC
  * statistics as well as information on the current workunit (WU) being processed.
- *
- * For more details please refer to http://einstein.phys.uwm.edu/starsphere.php
  *
  * Note: all science run specific parts are implemented in specialized subclasses
  * of this engine.
@@ -286,9 +283,6 @@ class Starsphere : public AbstractGraphicsEngine {
         /// Cumulative frame count.
         GLuint m_framecount;
 
-        /// Observatory movement (in seconds since 1970 with usec precision)
-        double m_ObservatoryDrawTimeLocal;
-
         // resource handling
 
         /// Font resource instance
@@ -311,17 +305,20 @@ class Starsphere : public AbstractGraphicsEngine {
 
         // HUD text rendering config (maybe overridden in subclasses)
 
-        /// X-coordinate position for head up display (HUD) positioning
-        GLfloat m_XStartPosLeft;
+        /// Margin from edge of screen to place HUD ( in pixels ).
+        GLfloat m_HUD_Margin;
 
         /// X-coordinate position for head up display (HUD) positioning
-        GLfloat m_XStartPosRight;
+        GLfloat m_HUD_XLeft;
+
+        /// X-coordinate position for head up display (HUD) positioning
+        GLfloat m_HUD_XRight;
 
         /// Y-coordinate position for head up display (HUD) positioning
-        GLfloat m_YStartPosTop;
+        GLfloat m_HUD_YTop;
 
         /// Y-coordinate line offset for head up display (HUD) positioning
-        GLfloat m_YOffsetLarge;
+        GLfloat m_HUD_YBottom;
 
         // local HUD contents
 
@@ -360,7 +357,6 @@ class Starsphere : public AbstractGraphicsEngine {
 
         // Fonts.
         static const GLboolean TTF_FREE_SOURCE;
-        static const GLuint TTF_FONT_LOAD_HEADER_POINT_SIZE;
         static const GLuint TTF_FONT_LOAD_TEXT_POINT_SIZE;
 
         // Transform parameters.
@@ -370,7 +366,7 @@ class Starsphere : public AbstractGraphicsEngine {
         // Limit of viewpoint.
         static const GLfloat FARTHEST_VIEWPOINT;
 
-        // Field of view angle extents.
+        // Field of view angle.
         static const GLfloat PERSPECTIVE_FOV_DEFAULT;
 
         // Globe feature parameters.
@@ -381,6 +377,7 @@ class Starsphere : public AbstractGraphicsEngine {
         static const GLuint GRID_LONGITUDE_SLICES;
         static const GLuint VERTICES_PER_TRIANGLE;
         static const GLuint AXES_LINE_LENGTH;
+        static const GLuint NUMBER_OF_AXES;
 
         static const GLuint OBSERVATORY_COUNT;
         static const GLuint GEODE_AXES_PER_OBSERVATORY;
@@ -390,7 +387,7 @@ class Starsphere : public AbstractGraphicsEngine {
         static const GLuint COORDS_PER_VERTEX_TEXTURE;
         static const GLuint VERTICES_PER_ARM;
         static const GLuint VERTICES_PER_LINE;
-        static const GLuint NUMBER_OF_AXES;
+
 
         /// HUD elements.
         TexturedParallelogram* m_logo1;

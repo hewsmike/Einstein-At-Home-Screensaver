@@ -157,7 +157,7 @@ void StarsphereGamma::prepareSearchInformation() {
 
     // The negative Y-offset vector here is in order to invert the SDL image.
     if(m_right_ascension_info) delete m_right_ascension_info;
-    m_right_ascension_info = new TexturedParallelogram(glm::vec2(m_XStartPosRight - m_text_surface->w, 10.0f + wu_top_line),
+    m_right_ascension_info = new TexturedParallelogram(glm::vec2(m_HUD_XRight - m_text_surface->w, 10.0f + wu_top_line),
                                                        glm::vec2(m_text_surface->w, 0.0f),
                                                        glm::vec2(0.0f, -m_text_surface->h),
                                                        RA_info_texture);
@@ -181,7 +181,7 @@ void StarsphereGamma::prepareSearchInformation() {
 
     // The negative Y-offset vector here is in order to invert the SDL image.
     if(m_declination_info) delete m_declination_info;
-    m_declination_info = new TexturedParallelogram(glm::vec2(m_XStartPosRight - m_text_surface->w, 10.0f + wu_top_line),
+    m_declination_info = new TexturedParallelogram(glm::vec2(m_HUD_XRight - m_text_surface->w, 10.0f + wu_top_line),
                                                    glm::vec2(m_text_surface->w, 0.0f),
                                                    glm::vec2(0.0f, -m_text_surface->h),
                                                    DEC_info_texture);
@@ -206,7 +206,7 @@ void StarsphereGamma::prepareSearchInformation() {
 
     // The negative Y-offset vector here is in order to invert the SDL image.
     if(m_percent_done_info) delete m_percent_done_info;
-    m_percent_done_info = new TexturedParallelogram(glm::vec2(m_XStartPosRight - m_text_surface->w, 10.0f + wu_top_line),
+    m_percent_done_info = new TexturedParallelogram(glm::vec2(m_HUD_XRight - m_text_surface->w, 10.0f + wu_top_line),
                                                      glm::vec2(m_text_surface->w, 0.0f),
                                                      glm::vec2(0.0f, -m_text_surface->h),
                                                      percent_info_texture);
@@ -231,7 +231,7 @@ void StarsphereGamma::prepareSearchInformation() {
 
     // The negative Y-offset vector here is in order to invert the SDL image.
     if(m_cpu_time_info) delete m_cpu_time_info;
-    m_cpu_time_info = new TexturedParallelogram(glm::vec2(m_XStartPosRight - m_text_surface->w, 10.0f + wu_top_line),
+    m_cpu_time_info = new TexturedParallelogram(glm::vec2(m_HUD_XRight - m_text_surface->w, 10.0f + wu_top_line),
                                                 glm::vec2(m_text_surface->w, 0.0f),
                                                 glm::vec2(0.0f, -m_text_surface->h),
                                                 CPU_time_info_texture);
@@ -255,7 +255,7 @@ void StarsphereGamma::prepareLogo() {
                                                       GL_CLAMP_TO_EDGE,
                                                       false};
 
-    m_logo = new TexturedParallelogram(glm::vec2(10.0f, m_YStartPosTop/2 + 10.0f - 50.0f),
+    m_logo = new TexturedParallelogram(glm::vec2(10.0f, m_HUD_YTop/2 + 10.0f - 50.0f),
                                        glm::vec2(160.0f, 0.0f),
                                        glm::vec2(0.0f, 100.0f),
                                        logo_texture);
