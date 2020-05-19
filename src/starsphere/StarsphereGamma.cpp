@@ -28,10 +28,16 @@
 StarsphereGamma::StarsphereGamma() :
     Starsphere(EinsteinGammaAdapter::SharedMemoryIdentifier),
     m_EinsteinAdapter(&m_BoincAdapter) {
+    m_logo = NULL;
+    m_text_surface = NULL;
+
+
     m_right_ascension_info = NULL;
     m_declination_info = NULL;
     m_percent_done_info = NULL;
     m_cpu_time_info = NULL;
+
+
     }
 
 StarsphereGamma::~StarsphereGamma() {
@@ -141,8 +147,8 @@ void StarsphereGamma::prepareSearchInformation() {
     this->refreshBOINCInformation();
     SDL_Color color = {255, 255, 255, 255};
 
-    if(!(m_text_surface=TTF_RenderText_Blended(m_FontText, m_WUSkyPosRightAscension.c_str(), color))){
-        ErrorHandler::record("StarsphereGamma::renderSearchInformation() : can't make SDL_Surface for right asccension!", ErrorHandler::FATAL);
+    if(!(m_text_surface = TTF_RenderText_Blended(m_FontText, m_WUSkyPosRightAscension.c_str(), color))){
+        ErrorHandler::record("StarsphereGamma::prepareSearchInformation() : can't make SDL_Surface for right asccension!", ErrorHandler::FATAL);
         }
 
     RenderTask::texture_buffer_group RA_info_texture = {(const GLvoid*)m_text_surface->pixels,
@@ -165,8 +171,8 @@ void StarsphereGamma::prepareSearchInformation() {
     //SDL_FreeSurface(m_text_surface);
     wu_top_line -= m_text_surface->h;
 
-    if(!(m_text_surface=TTF_RenderText_Blended(m_FontText, m_WUSkyPosDeclination.c_str(), color))){
-        ErrorHandler::record("StarsphereGamma::renderSearchInformation() : can't make SDL_Surface for declination!", ErrorHandler::FATAL);
+    if(!(m_text_surface = TTF_RenderText_Blended(m_FontText, m_WUSkyPosDeclination.c_str(), color))){
+        ErrorHandler::record("StarsphereGamma::prepareSearchInformation() : can't make SDL_Surface for declination!", ErrorHandler::FATAL);
         }
 
     RenderTask::texture_buffer_group DEC_info_texture = {(const GLvoid*)m_text_surface->pixels,
@@ -190,8 +196,8 @@ void StarsphereGamma::prepareSearchInformation() {
 
     wu_top_line -= m_text_surface->h;
 
-    if(!(m_text_surface=TTF_RenderText_Blended(m_FontText, m_WUPercentDone.c_str(), color))){
-        ErrorHandler::record("StarsphereGamma::renderSearchInformation() : can't make SDL_Surface for percent done!", ErrorHandler::FATAL);
+    if(!(m_text_surface = TTF_RenderText_Blended(m_FontText, m_WUPercentDone.c_str(), color))){
+        ErrorHandler::record("StarsphereGamma::prepareSearchInformation() : can't make SDL_Surface for percent done!", ErrorHandler::FATAL);
         }
 
     RenderTask::texture_buffer_group percent_info_texture = {(const GLvoid*)m_text_surface->pixels,
@@ -215,8 +221,8 @@ void StarsphereGamma::prepareSearchInformation() {
 
     wu_top_line -= m_text_surface->h;
 
-    if(!(m_text_surface=TTF_RenderText_Blended(m_FontText, m_WUCPUTime.c_str(), color))){
-        ErrorHandler::record("StarsphereGamma::renderSearchInformation() : can't make SDL_Surface for CPU time!", ErrorHandler::FATAL);
+    if(!(m_text_surface = TTF_RenderText_Blended(m_FontText, m_WUCPUTime.c_str(), color))){
+        ErrorHandler::record("StarsphereGamma::prepareSearchInformation() : can't make SDL_Surface for CPU time!", ErrorHandler::FATAL);
         }
 
     RenderTask::texture_buffer_group CPU_time_info_texture = {(const GLvoid*)m_text_surface->pixels,
@@ -235,16 +241,13 @@ void StarsphereGamma::prepareSearchInformation() {
                                                 glm::vec2(m_text_surface->w, 0.0f),
                                                 glm::vec2(0.0f, -m_text_surface->h),
                                                 CPU_time_info_texture);
-
-    // Delete any SDL assets.
-    //SDL_FreeSurface(m_text_surface);
     }
 
 void StarsphereGamma::prepareLogo() {
- // Create factory instance to then access the texture/bitmap.
+    // Create factory instance to then access the texture/bitmap.
     ResourceFactory factory;
 
-    // Create HUD logo features.
+    // Create HUD logo texture characteristics from logo as a Resource.
     RenderTask::texture_buffer_group logo_texture = {(const GLvoid*)factory.createInstance("Logo_FERMI")->data()->data(),
                                                       512*431*4,
                                                       512,
@@ -255,7 +258,8 @@ void StarsphereGamma::prepareLogo() {
                                                       GL_CLAMP_TO_EDGE,
                                                       false};
 
-    m_logo = new TexturedParallelogram(glm::vec2(10.0f, m_HUD_YTop/2 + 10.0f - 50.0f),
+    //
+    m_logo = new TexturedParallelogram(glm::vec2(10.0f, (m_HUD_YTop - m_HUD_YBottom)/2.0f + m_HUD_YBottom - 50.0f),
                                        glm::vec2(160.0f, 0.0f),
                                        glm::vec2(0.0f, 100.0f),
                                        logo_texture);

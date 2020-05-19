@@ -112,8 +112,8 @@ Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
     m_HUD_YBottom = m_HUD_Margin;
 
     // Search marker.
-    m_CurrentRightAscension = 0;
-    m_CurrentDeclination = 0;
+    m_CurrentRightAscension = -1.0f;
+    m_CurrentDeclination = -1.0f;
     m_RefreshSearchMarker = false;
 
     // Now initialise private variables.
@@ -200,6 +200,9 @@ Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
     m_num_help_entries = 0;
     m_current_help_entry = 0;
     m_help_text_surface = NULL;
+
+    //
+    m_info_text_surface = NULL;
 
     // Initial state, no features !
     featureFlags = 0;
