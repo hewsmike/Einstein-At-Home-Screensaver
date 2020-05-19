@@ -2,6 +2,9 @@
  *   Copyright (C) 2008 by Oliver Bock                                     *
  *   oliver.bock[AT]aei.mpg.de                                             *
  *                                                                         *
+ *   Copyright (C) 2020 by Mike Hewson                                     *
+ *   hewsmike[AT]iinet.net.au                                              *
+ *                                                                         *
  *   This file is part of Einstein@Home.                                   *
  *                                                                         *
  *   Einstein@Home is free software: you can redistribute it and/or modify *
@@ -18,8 +21,8 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef StarsphereGravity_H_
-#define StarsphereGravity_H_
+#ifndef STARSPHERE_GRAVITY_H_
+#define STARSPHERE_GRAVITY_H_
 
 #include <sstream>
 
@@ -43,7 +46,7 @@ using namespace std;
  * engine. The main differences stem from the fact that most science runs differ
  * in their search configuration and parameters. Thus the parameters exposed by
  * the HUD (head-up display) are positioned and rendered here. For the time
- * being the "BOINC Statistics" are top-aligned to the "Search Parameters",
+ * being the "BOINC Statistics" are right-aligned to the "Search Parameters",
  * hence they're also positioned and rendered here.
  *
  * \author Oliver Bock\n
@@ -109,30 +112,17 @@ class StarsphereGravity : public Starsphere {
         /**
          * \brief Render science run specific logo
          *
-         * This specific implementation shows the usual "Einstein@Home" logo combined
-         * with "World Year of Physics 2005" as subtitle
+         * This specific implementation shows the OpenCL logo.
          */
         void prepareLogo();
 
-        // TextString* m_logo_1;
-        // TextString* m_logo_2;
-
-        /**
+       /**
          * \brief Render science run specific search information
          *
          * For this specific implementation this also includes the "BOINC Statistics"
          * as it is top-aligned to the "Search Information".
          */
         void prepareSearchInformation();
-
-        /**
-         * \brief Generates the OpenGL call lists for the displayed observatories
-         *
-         * \param dimFactor A dim factor (range: 0 <= x <= 1) that will, well, dim the color
-         * of the observatories. Right now the factor is propagated to the base class
-         * implementation, hence dims the IFOs.
-         */
-        // void generateObservatories(const float dimFactor);
 
         /// Specialized BOINC client adapter instance for information retrieval
         EinsteinGravityAdapter m_EinsteinAdapter;
@@ -148,37 +138,10 @@ class StarsphereGravity : public Starsphere {
 
         /// Local copy of the current WU's search parameter "CPU Time"
         string m_WUCPUTime;
-
-        /// String representation of the current time
-        string m_CurrentTime;
-
-        /// HUD configuration setting (line offset for medium sized font)
-        GLfloat m_YOffsetMedium;
-
-        /// HUD configuration setting (horizontal start position for the right part)
-        GLfloat m_XStartPosRight;
-
-        /// HUD configuration setting (horizontal start position for the clock display)
-        GLfloat m_XStartPosClock;
-
-        /// HUD configuration setting (vertical start postion for the bottom part, header)
-        GLfloat m_YStartPosBottom;
-
-        /// HUD configuration setting (vertical start postion for the bottom part, line 1)
-        GLfloat m_Y1StartPosBottom;
-
-        /// HUD configuration setting (vertical start postion for the bottom part, line 2)
-        GLfloat m_Y2StartPosBottom;
-
-        /// HUD configuration setting (vertical start postion for the bottom part, line 3)
-        GLfloat m_Y3StartPosBottom;
-
-        /// HUD configuration setting (vertical start postion for the bottom part, line 4)
-        GLfloat m_Y4StartPosBottom;
     };
 
 /**
  * @}
  */
 
-#endif /*StarsphereGravity_H_*/
+#endif /*STARSPHERE_GRAVITY_H_*/

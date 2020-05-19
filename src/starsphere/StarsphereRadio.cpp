@@ -2,6 +2,9 @@
  *   Copyright (C) 2008 by Oliver Bock                                     *
  *   oliver.bock[AT]aei.mpg.de                                             *
  *                                                                         *
+ *   Copyright (C) 2020 by Mike Hewson                                     *
+ *   hewsmike[AT]iinet.net.au                                              *
+ *                                                                         *
  *   This file is part of Einstein@Home.                                   *
  *                                                                         *
  *   Einstein@Home is free software: you can redistribute it and/or modify *
@@ -23,15 +26,10 @@
 StarsphereRadio::StarsphereRadio() :
     Starsphere(EinsteinRadioAdapter::SharedMemoryIdentifier),
     m_EinsteinAdapter(&m_BoincAdapter) {
-    m_WUDispersionMeasureValue = -1.0;
-    m_PowerSpectrumCoordSystemList = 0;
-    m_PowerSpectrumBinList = 0;
-    m_PowerSpectrumFreqBins = 0;
     }
 
-StarsphereRadio::~StarsphereRadio()
-{
-}
+StarsphereRadio::~StarsphereRadio() {
+    }
 
 void StarsphereRadio::initialize(const int width, const int height, const Resource* font) {
     Starsphere::initialize(width, height, font);
@@ -40,26 +38,11 @@ void StarsphereRadio::initialize(const int width, const int height, const Resour
     m_QualitySetting = m_BoincAdapter.graphicsQualitySetting();
     }
 
-void StarsphereRadio::resize(const int width, const int height)
-{
+void StarsphereRadio::resize(const int width, const int height) {
     Starsphere::resize(width, height);
+    }
 
-    // update HUD config
-    m_XStartPosRight = width - m_XStartPosRightWidthOffset;
-
-
-    // update power spectrum
-    m_PowerSpectrumXPos = width - m_PowerSpectrumOriginWidthOffset;
-    m_PowerSpectrumYPos = height - m_PowerSpectrumOriginHeightOffset;
-    m_PowerSpectrumLabelXPos = m_PowerSpectrumXPos + m_PowerSpectrumLabelXOffset;
-    m_PowerSpectrumLabelYPos = m_PowerSpectrumYPos - m_PowerSpectrumLabelYOffset;
-
-    generatePowerSpectrumCoordSystem(m_PowerSpectrumXPos, m_PowerSpectrumYPos);
-    generatePowerSpectrumBins(m_PowerSpectrumXPos, m_PowerSpectrumYPos);
-}
-
-void StarsphereRadio::refreshBOINCInformation()
-{
+void StarsphereRadio::refreshBOINCInformation() {
     // call base class implementation
     Starsphere::refreshLocalBOINCInformation();
 
@@ -92,31 +75,6 @@ void StarsphereRadio::refreshBOINCInformation()
         buffer.str("");
         }
 
-    if(m_WUDispersionMeasureValue != m_EinsteinAdapter.wuDispersionMeasure()) {
-        // we've got a new dispersion measure, update HUD
-        m_WUDispersionMeasureValue = m_EinsteinAdapter.wuDispersionMeasure();
-        buffer << "DM: " << fixed << m_WUDispersionMeasureValue << " pc/cm3" << ends;
-        m_WUDispersionMeasure = buffer.str();
-        buffer.str("");
-        }
-
-    // update the following information every time (no need to check first)
-
-    buffer.precision(3);
-    buffer << "Orb. Radius: " << fixed << m_EinsteinAdapter.wuTemplateOrbitalRadius() << " ls" << ends;
-    m_WUTemplateOrbitalRadius = buffer.str();
-    buffer.str("");
-
-    buffer.precision(0);
-    buffer << "Orb. Period: " << fixed << m_EinsteinAdapter.wuTemplateOrbitalPeriod() << " s" << ends;
-    m_WUTemplateOrbitalPeriod = buffer.str();
-    buffer.str("");
-
-    buffer.precision(2);
-    buffer << "Orb. Phase: " << fixed << m_EinsteinAdapter.wuTemplateOrbitalPhase() << " rad" << ends;
-    m_WUTemplateOrbitalPhase = buffer.str();
-    buffer.str("");
-
     buffer << "WU Completed: " << fixed << m_EinsteinAdapter.wuFractionDone() * 100 << " %" << ends;
     m_WUPercentDone = buffer.str();
     buffer.str("");
@@ -132,105 +90,13 @@ void StarsphereRadio::refreshBOINCInformation()
                               << right << setw(2) << sec << ends;
 
     m_WUCPUTime = buffer.str();
-
-    // update power spectrum bin data
-    generatePowerSpectrumBins(m_PowerSpectrumXPos, m_PowerSpectrumYPos);
-}
+    }
 
 void StarsphereRadio::prepareSearchInformation() {
     // disable opt-in quality feature for power spectrum
     if(m_QualitySetting == BOINCClientAdapter::HighGraphicsQualitySetting) {
-//        glDisable(GL_POINT_SMOOTH);
-//        glDisable(GL_LINE_SMOOTH);
+        }
     }
 
+void StarsphereRadio::prepareLogo() {
     }
-
-void StarsphereRadio::generatePowerSpectrumCoordSystem(const int originX, const int originY)
-{
-    GLfloat offsetX = (GLfloat)originX;
-    GLfloat offsetY = (GLfloat)originY;
-
-    // delete existing, create new (required for windoze)
-//    if(m_PowerSpectrumCoordSystemList) glDeleteLists(m_PowerSpectrumCoordSystemList, 1);
-//    m_PowerSpectrumCoordSystemList = glGenLists(1);
-//    glNewList(m_PowerSpectrumCoordSystemList, GL_COMPILE);
-//
-//        glLineWidth(m_PowerSpectrumAxesWidth);
-//
-//        // draw coordinate system axes
-//        glBegin(GL_LINE_STRIP);
-//            glColor4f(1.0, 1.0, 0.0, 1.0);
-//            glVertex2f(offsetX, offsetY + m_PowerSpectrumHeight);
-//            glVertex2f(offsetX, offsetY);
-//            glVertex2f(offsetX + m_PowerSpectrumWidth + 1, offsetY);
-//        glEnd();
-//
-//        glPointSize(m_PowerSpectrumAxesWidth);
-//
-//        // draw origin (axes joint)
-//        glBegin(GL_POINTS);
-//            glColor4f(1.0, 1.0, 0.0, 1.0);
-//            glVertex2f(offsetX, offsetY);
-//        glEnd();
-//
-//        //TODO: for high quality mode: draw coord. system backdrop with alpha = ~0.3 (attn: alpha blend. deactivated!)
-//
-//    glEndList();
-}
-
-void StarsphereRadio::generatePowerSpectrumBins(const int originX, const int originY)
-{
-    GLfloat offsetX = (GLfloat)originX;
-    GLfloat offsetY = (GLfloat)originY;
-    GLfloat axesXOffset = m_PowerSpectrumAxesWidth + 2;
-    GLfloat axesYOffset = m_PowerSpectrumAxesWidth / 2.0 + 1;
-    GLfloat binXOffset = m_PowerSpectrumBinWidth + m_PowerSpectrumBinDistance;
-
-    // set pixel normalization factor for maximum bin height
-    GLfloat normalizationFactor = 255.0 / (m_PowerSpectrumHeight - axesYOffset);
-
-    // fetch pointer to power spectrum data
-    m_PowerSpectrumFreqBins = m_EinsteinAdapter.wuTemplatePowerSpectrum();
-    if(!m_PowerSpectrumFreqBins) {
-        cerr << "Power spectrum data currently unavailable!" << endl;
-        return;
-    }
-
-    // delete existing, create new (required for windoze)
-//    if(m_PowerSpectrumBinList) glDeleteLists(m_PowerSpectrumBinList, 1);
-//    m_PowerSpectrumBinList = glGenLists(1);
-//    glNewList(m_PowerSpectrumBinList, GL_COMPILE);
-//
-//        glLineWidth(m_PowerSpectrumBinWidth);
-//
-//        // draw frequency bins
-//        glBegin(GL_LINES);
-//            // iterate over all bins
-//            for(int i = 0; i < POWERSPECTRUM_BINS; ++i) {
-//                // show potential candidates (power >= 100)...
-//                if(m_PowerSpectrumFreqBins->at(i) >= 100) {
-//                     // ...in bright white
-//                    glColor4f(1.0, 1.0, 1.0, 1.0);
-//                }
-//                else {
-//                    // ...in light grey
-//                    glColor4f(0.66, 0.66, 0.66, 1.0);
-//                }
-//                // lower vertex
-//                glVertex2f(offsetX + axesXOffset + i*binXOffset,
-//                           offsetY + axesYOffset);
-//                // upper vertex
-//                glVertex2f(offsetX + axesXOffset + i*binXOffset,
-//                           offsetY + axesYOffset + m_PowerSpectrumFreqBins->at(i) / normalizationFactor);
-//            }
-//        glEnd();
-//
-//    glEndList();
-}
-
-void StarsphereRadio::prepareLogo()
-{
-//    m_FontLogo1->draw(m_XStartPosLeft, m_YStartPosTop, "Einstein@Home");
-//    m_FontLogo2->draw(m_XStartPosLeft, m_YStartPosTop - m_YOffsetLarge, "International Year of Astronomy 2009");
-}

@@ -2,6 +2,9 @@
  *   Copyright (C) 2008 by Oliver Bock                                     *
  *   oliver.bock[AT]aei.mpg.de                                             *
  *                                                                         *
+ *   Copyright (C) 2020 by Mike Hewson                                     *
+ *   hewsmike[AT]iinet.net.au                                              *
+ *                                                                         *
  *   This file is part of Einstein@Home.                                   *
  *                                                                         *
  *   Einstein@Home is free software: you can redistribute it and/or modify *
@@ -29,7 +32,6 @@
 StarsphereGravity::StarsphereGravity() :
         Starsphere(EinsteinGravityAdapter::SharedMemoryIdentifier),
         m_EinsteinAdapter(&m_BoincAdapter) {
-    m_CurrentTime = "";
     m_logo = NULL;
     }
 
@@ -44,64 +46,10 @@ void StarsphereGravity::initialize(const int width, const int height, const Reso
 
     prepareLogo();
     prepareSearchInformation();
-
-    // Fatal error if no font resource supplied.
-    if(!m_FontResource) {
-        // ErrorHandler::record("StarsphereGravity::initialize()", ErrorHandler::FATAL);
-        }
-    else {
-        // Create two logo font instances using font resource, if not done already.
-        if(m_FontLogo1 == NULL) {
-            m_FontLogo1 = TTF_OpenFontRW(SDL_RWFromConstMem(&m_FontResource->data()->at(0),
-                                                            m_FontResource->data()->size()),
-                                         0,
-                                         24);
-
-            if(m_FontLogo1 == NULL) {
-                stringstream font_logo1_error;
-                font_logo1_error << "StarsphereGravity::initialize() : "
-                                 << "Could not construct logo1 font face from in memory resource!"
-                                 << std::endl;
-                ErrorHandler::record(font_logo1_error.str(), ErrorHandler::FATAL);
-                }
-            }
-
-        if(m_FontLogo2 == NULL) {
-            m_FontLogo2 = TTF_OpenFontRW(SDL_RWFromConstMem(&m_FontResource->data()->at(0),
-                                                            m_FontResource->data()->size()),
-                                         0,
-                                         13);
-
-            if(m_FontLogo2 == NULL) {
-                stringstream font_logo2_error;
-                font_logo2_error << "StarsphereGravity::initialize() : "
-                                 << "Could not construct logo2 font face from in memory resource!"
-                                 << std::endl;
-                ErrorHandler::record(font_logo2_error.str(), ErrorHandler::FATAL);
-                }
-            }
-        }
-
-    // adjust HUD config
-    m_YOffsetMedium = 15;
-    m_XStartPosRight = width - 125;
-    m_XStartPosClock = width - 98;
-    m_YStartPosBottom = 70;
-    m_Y1StartPosBottom = m_YStartPosBottom  - m_YOffsetMedium;
-    m_Y2StartPosBottom = m_Y1StartPosBottom - m_YOffsetMedium;
-    m_Y3StartPosBottom = m_Y2StartPosBottom - m_YOffsetMedium;
-    m_Y4StartPosBottom = m_Y3StartPosBottom - m_YOffsetMedium;
-
-    // prepare base class observatories (not dimmed)
-    //generateObservatories(1.0);
     }
 
 void StarsphereGravity::resize(const int width, const int height) {
     Starsphere::resize(width, height);
-
-    // adjust HUD config
-    m_XStartPosRight = m_CurrentWidth - 125;
-    m_XStartPosClock = m_CurrentWidth - 98;
     }
 
 void StarsphereGravity::render(const double timeOfDay) {
@@ -161,14 +109,6 @@ void StarsphereGravity::refreshBOINCInformation() {
                             << right << setw(2) << sec << ends;
 
     m_WUCPUTime = buffer.str();
-
-    // update current time string (clock)
-    char cBuffer[10] = {0};
-    time_t timeNow = time(0);
-    struct tm* timeLocal = localtime(&timeNow);
-    strftime(cBuffer, sizeof(cBuffer) - 1, "%H:%M:%S", timeLocal);
-
-    m_CurrentTime = string(cBuffer);
     }
 
 void StarsphereGravity::prepareSearchInformation() {

@@ -2,6 +2,9 @@
  *   Copyright (C) 2008 by Oliver Bock                                     *
  *   oliver.bock[AT]aei.mpg.de                                             *
  *                                                                         *
+ *   Copyright (C) 2020 by Mike Hewson                                     *
+ *   hewsmike[AT]iinet.net.au                                              *
+ *                                                                         *
  *   This file is part of Einstein@Home.                                   *
  *                                                                         *
  *   Einstein@Home is free software: you can redistribute it and/or modify *
@@ -18,8 +21,8 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef STARSPHERERADIO_H_
-#define STARSPHERERADIO_H_
+#ifndef STARSPHERE_RADIO_H_
+#define STARSPHERE_RADIO_H_
 
 #include <sstream>
 #include <vector>
@@ -46,10 +49,8 @@ using namespace std;
  * The main differences stem from the fact that most science runs differ in their
  * search configuration and parameters. Thus the parameters exposed by the HUD
  * (head-up display) are positioned and rendered here. For the time being the
- * "BOINC Information" are top-aligned to the "Search Parameters", hence they're
- * also positioned and rendered here. This specific implementation also introduces a
- * nice feature that visualizes the \a actual search data in guise of a \a real-time power
- * spectrum.
+ * "BOINC Information" are right-aligned to the "Search Parameters", hence they're
+ * also positioned and rendered here.
  *
  * \author Oliver Bock\n
  * Max-Planck-Institute for Gravitational Physics\n
@@ -117,22 +118,6 @@ private:
     void prepareSearchInformation();
 
     /**
-     * \brief Creates an OpenGL call list which contains the static power spectrum coordinate system
-     *
-     * \param originX The x-screen coordinate of the power spectrum's origin
-     * \param originY The y-screen coordinate of the power spectrum's origin
-     */
-    void generatePowerSpectrumCoordSystem(const int originX, const int originY);
-
-    /**
-     * \brief Creates an OpenGL call list which contains the dynamic power spectrum frequency bins
-     *
-     * \param originX The x-screen coordinate of the power spectrum's origin
-     * \param originY The y-screen coordinate of the power spectrum's origin
-     */
-    void generatePowerSpectrumBins(const int originX, const int originY);
-
-    /**
      * \brief Generates the OpenGL call lists for the displayed observatories
      *
      * \param dimFactor A dim factor (range: 0 <= x <= 1) that will, well, dim the color
@@ -141,54 +126,6 @@ private:
      * unaffected.
      */
     //void generateObservatories(const float dimFactor);
-
-    /// ID of the OpenGL call list which contains the static power spectrum coordinate system
-    GLuint m_PowerSpectrumCoordSystemList;
-
-    /// ID of the OpenGL call list which contains the dynamic power spectrum frequency bins
-    GLuint m_PowerSpectrumBinList;
-
-    /// Byte vector to hold the current power spectrum bin values
-    const vector<unsigned char>* m_PowerSpectrumFreqBins;
-
-    /// Power Spectrum configuration setting (width)
-    GLfloat m_PowerSpectrumWidth;
-
-    /// Power Spectrum configuration setting (height)
-    GLfloat m_PowerSpectrumHeight;
-
-    /// Power Spectrum configuration setting (horizontal position of the origin relative to the window width)
-    GLfloat m_PowerSpectrumOriginWidthOffset;
-
-    /// Power Spectrum configuration setting (vertical position of the origin relative to the window height)
-    GLfloat m_PowerSpectrumOriginHeightOffset;
-
-    /// Power Spectrum configuration setting (horizontal position)
-    GLfloat m_PowerSpectrumXPos;
-
-    /// Power Spectrum configuration setting (vertical position)
-    GLfloat m_PowerSpectrumYPos;
-
-    /// Power Spectrum configuration setting (axes width)
-    GLfloat m_PowerSpectrumAxesWidth;
-
-    /// Power Spectrum configuration setting (bin width)
-    GLfloat m_PowerSpectrumBinWidth;
-
-    /// Power Spectrum configuration setting (bin distance)
-    GLfloat m_PowerSpectrumBinDistance;
-
-    /// Power Spectrum label configuration setting (horizontal position)
-    GLfloat m_PowerSpectrumLabelXPos;
-
-    /// Power Spectrum label configuration setting (vertical position)
-    GLfloat m_PowerSpectrumLabelYPos;
-
-    /// Power Spectrum label configuration setting (horizontal position relative to the power spectrum origin)
-    GLfloat m_PowerSpectrumLabelXOffset;
-
-    /// Power Spectrum label configuration setting (vertical position relative to the power spectrum origin)
-    GLfloat m_PowerSpectrumLabelYOffset;
 
     /// Active render quality setting
     BOINCClientAdapter::GraphicsQualitySetting m_QualitySetting;
@@ -202,63 +139,15 @@ private:
     /// Formatted string copy of the current WU's search parameter "Declination" (degrees)
     string m_WUSkyPosDeclination;
 
-    /// Formatted string copy of the current WU's search parameter "Dispersion measure"
-    string m_WUDispersionMeasure;
-
-    /// Local value copy of the current WU's search parameter "Dispersion measure"
-    double m_WUDispersionMeasureValue;
-
-    /// Formatted string copy of the current template's search parameter "Projected orbital radius"
-    string m_WUTemplateOrbitalRadius;
-
-    /// Formatted string copy of the current template's search parameter "Orbital period"
-    string m_WUTemplateOrbitalPeriod;
-
-    /// Formatted string copy of the current template's search parameter "Initial orbital phase"
-    string m_WUTemplateOrbitalPhase;
-
     /// Formatted string copy of the current WU's search parameter "Percent done"
     string m_WUPercentDone;
 
     /// Formatted string copy of the current WU's search parameter "CPU Time"
     string m_WUCPUTime;
-
-    /// HUD configuration setting (line offset for medium sized font)
-    GLfloat m_YOffsetMedium;
-
-    /// HUD configuration setting (horizontal start position for the right part)
-    GLfloat m_XStartPosRight;
-
-    /// HUD configuration setting (horizontal start position for the right part relative to the window width)
-    GLfloat m_XStartPosRightWidthOffset;
-
-    /// HUD configuration setting (vertical start position for the bottom part, header)
-    GLfloat m_YStartPosBottom;
-
-    /// HUD configuration setting (vertical start position for the bottom part, line 1)
-    GLfloat m_Y1StartPosBottom;
-
-    /// HUD configuration setting (vertical start position for the bottom part, line 2)
-    GLfloat m_Y2StartPosBottom;
-
-    /// HUD configuration setting (vertical start position for the bottom part, line 3)
-    GLfloat m_Y3StartPosBottom;
-
-    /// HUD configuration setting (vertical start position for the bottom part, line 4)
-    GLfloat m_Y4StartPosBottom;
-
-    /// HUD configuration setting (vertical start position for the bottom part, line 5)
-    GLfloat m_Y5StartPosBottom;
-
-    /// HUD configuration setting (vertical start position for the bottom part, line 6)
-    GLfloat m_Y6StartPosBottom;
-
-    /// Arecibo Observatory display list
-    GLuint m_areciboObservatory;
-};
+    };
 
 /**
  * @}
  */
 
-#endif /*STARSPHERES5R3_H_*/
+#endif /*STARSPHERE_RADIO_H_*/

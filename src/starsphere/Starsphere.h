@@ -5,6 +5,9 @@
  *   Copyright (C) 2008 by Oliver Bock                                     *
  *   oliver.bock[AT]aei.mpg.de                                             *
  *                                                                         *
+ *   Copyright (C) 2020 by Mike Hewson                                     *
+ *   hewsmike[AT]iinet.net.au                                              *
+ *                                                                         *
  *   This file is part of Einstein@Home.                                   *
  *                                                                         *
  *   Einstein@Home is free software: you can redistribute it and/or modify *
@@ -294,15 +297,6 @@ class Starsphere : public AbstractGraphicsEngine {
         /// Shader resource instance
         const Resource* m_vertex_shader_resource;
         const Resource* m_fragment_shader_resource;
-
-        /// Font texture instance for logo title rendering
-        TTF_Font* m_FontLogo1;
-
-        /// Font texture instance for logo subtitle rendering
-        TTF_Font* m_FontLogo2;
-
-        /// Font texture instance for info box header rendering
-        TTF_Font* m_FontHeader;
 
         /// Font texture instance for info box content rendering
         TTF_Font* m_FontText;

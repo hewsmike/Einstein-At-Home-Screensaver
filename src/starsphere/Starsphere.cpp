@@ -64,11 +64,11 @@ const GLuint Starsphere::TTF_FONT_LOAD_HEADER_POINT_SIZE(26);
 const GLuint Starsphere::TTF_FONT_LOAD_TEXT_POINT_SIZE(22);
 const GLfloat Starsphere::PERSPECTIVE_NEAR_FRUSTUM_DISTANCE(0.1f);
 const GLfloat Starsphere::PERSPECTIVE_FAR_FRUSTUM_DISTANCE(100.0f);
-const GLfloat Starsphere::PERSPECTIVE_FOV_DEFAULT(45.0f);
+const GLfloat Starsphere::PERSPECTIVE_FOV_DEFAULT(60.0f);               // In decimal degrees.
 
 const GLuint Starsphere::GLOBE_LATITUDE_LAYERS(145);                    // Each pole is a layer in latitude too.
 const GLuint Starsphere::GLOBE_LONGITUDE_SLICES(288);
-const GLfloat Starsphere::GLOBE_TEXTURE_OFFSET(0.50f);                 // Texture map starts at longitude 180
+const GLfloat Starsphere::GLOBE_TEXTURE_OFFSET(0.50f);                  // Texture map starts at longitude 180
 const GLuint Starsphere::GRID_LATITUDE_LAYERS(19);                      // Each pole is a layer in latitude too.
 const GLuint Starsphere::GRID_LONGITUDE_SLICES(36);
 const GLuint Starsphere::VERTICES_PER_TRIANGLE(3);
@@ -137,9 +137,6 @@ Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
     m_vertex_shader_resource = NULL;
     m_fragment_shader_resource = NULL;
 
-    m_FontLogo1 = NULL;
-    m_FontLogo2 = NULL;
-    m_FontHeader = NULL;
     m_FontText = NULL;
 
     m_CurrentWidth = 0;
@@ -216,9 +213,6 @@ Starsphere::~Starsphere() {
 //    /// TODO - longstanding unhappiness ( but compiles )
 //    /// "warning: invalid use of incomplete type ‘struct _TTF_Font’"
 //    /// "warning: forward declaration of ‘struct _TTF_Font’"
-    if(m_FontLogo1) delete m_FontLogo1;
-    if(m_FontLogo2) delete m_FontLogo2;
-    if(m_FontHeader) delete m_FontHeader;
     if(m_FontText) delete m_FontText;
 
     // Delete HUD element pointers.
@@ -1688,24 +1682,7 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
         ErrorHandler::record("Starsphere::initialize() - no fontResource supplied!", ErrorHandler::WARN);
         }
     else {
-        // NB : initialization of logo font instances is done in subclasses!
-        // Create header and text font instances using font resource,
-        // if not done already.
-        if(m_FontHeader == NULL) {
-            m_FontHeader = TTF_OpenFontRW(SDL_RWFromConstMem(&m_FontResource->data()->at(0),
-                                                             m_FontResource->data()->size()),
-                                                             TTF_FREE_SOURCE,
-                                                             TTF_FONT_LOAD_HEADER_POINT_SIZE);
-
-            if(m_FontHeader == NULL) {
-                std::stringstream font_header_error;
-                font_header_error << "Starsphere::initialize() : "
-                                  << "Could not construct header font face from in memory resource!"
-                                  << std::endl;
-                ErrorHandler::record(font_header_error.str(), ErrorHandler::FATAL);
-                }
-            }
-
+        // Create text font instances using font resource, if not done already.
         if(m_FontText == NULL) {
             m_FontText = TTF_OpenFontRW(SDL_RWFromConstMem(&m_FontResource->data()->at(0),
                                                            m_FontResource->data()->size()),
@@ -1970,25 +1947,24 @@ void Starsphere::mouseMoveEvent(const int deltaX, const int deltaY,
     }
 
 void Starsphere::mouseWheelEvent(const int pos) {
-    // TODO : FIX this so that viewpoint does not singularise & invert.
     // Mouse wheel sets angle of field of view for perspective transform.3.0
-//    const GLfloat PERSPECTIVE_FOV_MIN = 30.0f;
-//    const GLfloat PERSPECTIVE_FOV_MAX = 60.0f;
-//    const GLfloat VIEWPOINT_MOUSEWHEEL_FOV_RATE = 0.1f;
-//    if(pos > 0) {
-//        m_viewpt_fov += VIEWPOINT_MOUSEWHEEL_FOV_RATE;
-//        if(m_viewpt_fov > PERSPECTIVE_FOV_MAX) {
-//            m_viewpt_fov = PERSPECTIVE_FOV_MAX;
-//            }
-//        }
-//    else if (pos < 0) {
-//        m_viewpt_fov -= VIEWPOINT_MOUSEWHEEL_FOV_RATE;
-//        if(m_viewpt_fov < PERSPECTIVE_FOV_MIN) {
-//            m_viewpt_fov = PERSPECTIVE_FOV_MIN;
-//            }
-//        }
-//    // Re-compute transform matrix with new field of view angle.
-//    configTransformMatrices();
+    const GLfloat PERSPECTIVE_FOV_MIN = 20.0f;
+    const GLfloat PERSPECTIVE_FOV_MAX = 70.0f;
+    const GLfloat VIEWPOINT_MOUSEWHEEL_FOV_RATE = 1.5f;
+    if(pos > 0) {
+        m_viewpt_fov += VIEWPOINT_MOUSEWHEEL_FOV_RATE;
+        if(m_viewpt_fov > PERSPECTIVE_FOV_MAX) {
+            m_viewpt_fov = PERSPECTIVE_FOV_MAX;
+            }
+        }
+    else if (pos < 0) {
+        m_viewpt_fov -= VIEWPOINT_MOUSEWHEEL_FOV_RATE;
+        if(m_viewpt_fov < PERSPECTIVE_FOV_MIN) {
+            m_viewpt_fov = PERSPECTIVE_FOV_MIN;
+            }
+        }
+    // Re-compute transform matrix with new field of view angle.
+    configTransformMatrices();
     }
 
 void Starsphere::keyboardPressEvent(const AbstractGraphicsEngine::KeyBoardKey keyPressed) {
@@ -2068,7 +2044,7 @@ void Starsphere::rotateSphere(const int relativeRotation,
     }
 
 void Starsphere::zoomSphere(const int relativeZoom) {
-    const GLfloat CLOSEST_APPROACH_RATIO = 1.1;
+    const GLfloat CLOSEST_APPROACH_RATIO = 1.25f;
     const GLfloat ZOOM_RATE = 10.0f;
 
     // Zoom, the minus sign here means you zoom in by
@@ -2086,7 +2062,8 @@ void Starsphere::zoomSphere(const int relativeZoom) {
 
 void Starsphere::configTransformMatrices(void) {
     // Create desired perspective projection matrix based upon a frustum model.
-    m_perspective_projection = glm::perspective(m_viewpt_fov,
+    // Note we store the FOV in degrees, but this function expects radian measure.
+    m_perspective_projection = glm::perspective(glm::radians(m_viewpt_fov),
                                                 m_aspect,
                                                 PERSPECTIVE_NEAR_FRUSTUM_DISTANCE,
                                                 PERSPECTIVE_FAR_FRUSTUM_DISTANCE);
