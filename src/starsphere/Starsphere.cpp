@@ -86,21 +86,38 @@ const GLfloat Starsphere::FARTHEST_VIEWPOINT(20.0f);
 
 Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
     AbstractGraphicsEngine(sharedMemoryAreaIdentifier) {
+    // Firstly initialise protected variables.
+    // Start frame count at zero of course.
     m_framecount = 0;
 
-    m_distinct_stars = 0;
-    m_constellation_lines = 0;
-    m_globe_lines = 0;
+    // Font resource pointer.
+    m_FontResource = NULL;
 
-    m_perspective_projection = glm::mat4(1.0f);
-    m_orthographic_projection = glm::mat4(1.0f);
+    // Shader resource pointers.
+    m_vertex_shader_resource = NULL;
+    m_fragment_shader_resource = NULL;
 
-    m_view = glm::mat4(1.0f);
-    m_view_earth = glm::mat4(1.0f);
-    m_camera = glm::mat4(1.0f);
-    m_camera_earth = glm::mat4(1.0f);
+    // The true type font pointer.
+    m_FontText = NULL;
 
-    // HUD data pointers
+    // Rendering area dimensions.
+    m_CurrentWidth = 0;
+    m_CurrentHeight = 0;
+
+    // HUD screen alignment.
+    m_HUD_Margin = 10.0f;
+    m_HUD_XLeft = m_HUD_Margin;
+    m_HUD_XRight = 0;
+    m_HUD_YTop = 0;
+    m_HUD_YBottom = m_HUD_Margin;
+
+    // Search marker.
+    m_CurrentRightAscension = 0;
+    m_CurrentDeclination = 0;
+    m_RefreshSearchMarker = false;
+
+    // Now initialise private variables.
+    // HUD parallelogram pointers.
     m_logo1 = NULL;
     m_logo2 = NULL;
     m_user_info = NULL;
@@ -109,12 +126,7 @@ Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
     m_RAC_info = NULL;
     m_help_info = NULL;
 
-    // Help info display.
-    m_num_help_entries = 0;
-    m_current_help_entry = 0;
-    m_help_text_surface = NULL;
-
-    // Render pointers initialised
+    // Rendering pointers.
     m_render_task_arms = NULL;
     m_render_task_axes = NULL;
     m_render_task_cons = NULL;
@@ -125,33 +137,71 @@ Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
     m_render_task_snr = NULL;
     m_render_task_star = NULL;
 
+    // Basic colors of the features.
+    m_geode_axes_color = glm::vec3(0.5f, 0.5f, 1.0f);         // Local geode axes are Light Blue.
+    m_arms_color = glm::vec3(1.0f, 0.5f, 0.5f);               // Arms are Pink.
+    m_axes_color = glm::vec3(1.0f, 0.0f, 0.0f);               // Axes are Red.
+    m_gamma_color = glm::vec3(0.0f, 1.0f, 0.0f);              // Gammas are Green.
+    m_grid_color = glm::vec3(0.15f, 0.15f, 0.15f);            // Grid is Grey.
+    m_earth_color = glm::vec3(1.0f, 1.0f, 0.5f);
+    m_pulsar_color = glm::vec3(0.80f, 0.0f, 0.85f);           // Pulsars are Purple.
+    m_star_color = glm::vec3(1.0f, 1.0f, 1.0f);               // Stars are Silver.
+    m_supernova_color = glm::vec3(1.0f, 0.4f, 0.0f);          // Supernovae are Orange.
+    m_constellation_line_color = glm::vec3(0.2f, 0.2f, 0.0f); // Lines are Light yellow.
+
+    // Point and line sizes.
+    m_gamma_point_size = 3.0f;
+    m_globe_point_size = 0.5f;
+    m_pulsar_point_size = 3.0f;
+    m_star_point_size = 4.0f;
+    m_supernova_point_size = 3.0f;
+    m_constellation_line_width = 1.0f;
+    m_axes_line_width = 2.0f;
+    m_geode_line_width = 3.0f;
+    m_arms_line_width = 5.0f;
+
+    // Star count.
+    m_distinct_stars = 0;
+
+    // Number of constellation lines.
+    m_constellation_lines = 0;
+
+    // For gravitational observatories.
+    m_arms_lines = 0;
+    m_geode_lines = 0;
+
+    // For the globe mesh model.
+    m_globe_vertices = 0;
+    m_globe_lines = 0;
+    m_earth_triangles = 0;
+
+    // Projection matrices. Quite important
+    // to begin with identities.
+    m_orthographic_projection = glm::mat4(1.0f);
+    m_perspective_projection = glm::mat4(1.0f);
+
+    // Transforms for general scene objects.
+    m_view = glm::mat4(1.0f);
     m_rotation = glm::mat4(1.0f);
+    m_camera = glm::mat4(1.0f);
+
+    // Transforms for the Earth specifically.
+    m_view_earth = glm::mat4(1.0f);
     m_rotation_earth = glm::mat4(1.0f);
+    m_camera_earth = glm::mat4(1.0f);
+
+    // Positioning of the Sun. Implicitly begin at
+    // March Equinox ( in the direction of X axis ).
     m_vector_sun = glm::vec3(1.0f, 0.0f, 0.0f);
+    m_sun_RA = 0;
+    m_sun_DEC = 0;
 
-    m_FontResource = NULL;
+    // Help info display.
+    m_num_help_entries = 0;
+    m_current_help_entry = 0;
+    m_help_text_surface = NULL;
 
-    m_vertex_shader_resource = NULL;
-    m_fragment_shader_resource = NULL;
-
-    m_FontText = NULL;
-
-    m_CurrentWidth = 0;
-    m_CurrentHeight = 0;
-
-    // HUD dimensions
-    m_HUD_Margin = 10.0f;
-    m_HUD_XLeft = m_HUD_Margin;
-    m_HUD_XRight = 0;
-    m_HUD_YTop = 0;
-    m_HUD_YBottom = m_HUD_Margin;
-    m_CurrentRightAscension = 0;
-    m_CurrentDeclination = 0;
-    m_RefreshSearchMarker = false;
-
-    /**
-     * Parameters and State info
-     */
+    // Initial state, no features !
     featureFlags = 0;
 
     /**
@@ -165,44 +215,8 @@ Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
     // Begin midway b/w Earth's surface and greatest displacement.
     m_viewpt_radius = (EARTH_RADIUS + FARTHEST_VIEWPOINT) / 2.0f;
 
-    wobble_amp = 37.0f;
-    wobble_period = 17.0f;
-    zoom_amp = 0.00f;
-    zoom_period = 29.0f;
-
+    // Initially unrotated ie. Greenwich zenith is along X axis.
     m_rotation_offset = 0.0f;
-    rotation_speed = 180.0f;
-
-    m_CurrentRightAscension = -1.0f;
-    m_CurrentDeclination = -1.0f;
-    m_RefreshSearchMarker = true;
-
-    m_geode_axes_color = glm::vec3(0.5f, 0.5f, 1.0f);         // Local geode axes are Light Blue.
-    m_arms_color = glm::vec3(1.0f, 0.5f, 0.5f);               // Arms are Pink.
-    m_axes_color = glm::vec3(1.0f, 0.0f, 0.0f);               // Axes are Red.
-    m_gamma_color = glm::vec3(0.0f, 1.0f, 0.0f);              // Gammas are Green.
-    m_grid_color = glm::vec3(0.15f, 0.15f, 0.15f);            // Grid is Grey.
-    m_earth_color = glm::vec3(1.0f, 1.0f, 0.5f);
-    m_pulsar_color = glm::vec3(0.80f, 0.0f, 0.85f);           // Pulsars are Purple.
-    m_star_color = glm::vec3(1.0f, 1.0f, 1.0f);               // Stars are Silver.
-    m_supernova_color = glm::vec3(1.0f, 0.4f, 0.0f);          // Supernovae are Orange.
-    m_constellation_line_color = glm::vec3(0.2f, 0.2f, 0.0f); // Lines are Light yellow.
-
-    m_gamma_point_size = 3.0f;
-    m_globe_point_size = 0.5f;
-    m_pulsar_point_size = 3.0f;
-    m_star_point_size = 4.0f;
-    m_supernova_point_size = 3.0f;
-    m_constellation_line_width = 1.0f;
-    m_axes_line_width = 2.0f;
-    m_geode_line_width = 3.0f;
-    m_arms_line_width = 5.0f;
-
-    m_geode_lines = 0;
-    m_arms_lines = 0;
-
-    m_sun_RA = 0.0f;
-    m_sun_DEC =0.0f;
     }
 
 Starsphere::~Starsphere() {

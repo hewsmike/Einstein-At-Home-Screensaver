@@ -388,7 +388,6 @@ class Starsphere : public AbstractGraphicsEngine {
         static const GLuint VERTICES_PER_ARM;
         static const GLuint VERTICES_PER_LINE;
 
-
         /// HUD elements.
         TexturedParallelogram* m_logo1;
         TexturedParallelogram* m_logo2;
@@ -455,8 +454,9 @@ class Starsphere : public AbstractGraphicsEngine {
         glm::mat4 m_camera;
 
         glm::mat4 m_view_earth;
-        glm::mat4 m_camera_earth;
         glm::mat4 m_rotation_earth;
+        glm::mat4 m_camera_earth;
+
         glm::vec3 m_vector_sun;
 
         GLfloat m_sun_RA;
@@ -556,23 +556,8 @@ class Starsphere : public AbstractGraphicsEngine {
         /// Viewpoint distance out
         GLfloat m_viewpt_radius;
 
-        /// Viewpoint wobble amplitude in degrees
-        GLfloat wobble_amp;
-
-        /// Viewpoint wobble up/down period in minutes
-        GLfloat wobble_period;
-
-        /// Viewpoint radial zoom amplitude
-        GLfloat zoom_amp;
-
-        /// Viewpoint zoom in/out period in minutes
-        GLfloat zoom_period;
-
         /// Viewpoint rotation offset
         GLfloat m_rotation_offset;
-
-        /// Viewpoint rotations in degrees per minute
-        GLfloat rotation_speed;
 
         // view control
 
@@ -595,6 +580,10 @@ class Starsphere : public AbstractGraphicsEngine {
          */
         void zoomSphere(const int relativeZoom);
 
+        /**
+         * \brief Configures the perspective and orthographic transform matrices.
+         *
+         */
         void configTransformMatrices(void);
     };
 
