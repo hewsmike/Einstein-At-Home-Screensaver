@@ -152,7 +152,7 @@ void StarsphereGamma::prepareSearchInformation() {
         }
 
     RenderTask::texture_buffer_group RA_info_texture = {(const GLvoid*)m_text_surface->pixels,
-                                                        m_text_surface->w * m_text_surface->h,
+                                                        m_text_surface->w * m_text_surface->h * BYTES_PER_TEXEL,
                                                         m_text_surface->w,
                                                         m_text_surface->h,
                                                         GL_RGBA,
@@ -176,7 +176,7 @@ void StarsphereGamma::prepareSearchInformation() {
         }
 
     RenderTask::texture_buffer_group DEC_info_texture = {(const GLvoid*)m_text_surface->pixels,
-                                                         m_text_surface->w * m_text_surface->h,
+                                                         m_text_surface->w * m_text_surface->h * BYTES_PER_TEXEL,
                                                          m_text_surface->w,
                                                          m_text_surface->h,
                                                          GL_RGBA,
@@ -201,7 +201,7 @@ void StarsphereGamma::prepareSearchInformation() {
         }
 
     RenderTask::texture_buffer_group percent_info_texture = {(const GLvoid*)m_text_surface->pixels,
-                                                             m_text_surface->w * m_text_surface->h,
+                                                             m_text_surface->w * m_text_surface->h * BYTES_PER_TEXEL,
                                                              m_text_surface->w,
                                                              m_text_surface->h,
                                                              GL_RGBA,
@@ -226,7 +226,7 @@ void StarsphereGamma::prepareSearchInformation() {
         }
 
     RenderTask::texture_buffer_group CPU_time_info_texture = {(const GLvoid*)m_text_surface->pixels,
-                                                              m_text_surface->w * m_text_surface->h,
+                                                              m_text_surface->w * m_text_surface->h * BYTES_PER_TEXEL,
                                                               m_text_surface->w,
                                                               m_text_surface->h,
                                                               GL_RGBA,
@@ -244,23 +244,29 @@ void StarsphereGamma::prepareSearchInformation() {
     }
 
 void StarsphereGamma::prepareLogo() {
+    // Constants for this rendering.
+    const GLuint TEXTURE_WIDTH = 431;
+    const GLuint TEXTURE_HEIGHT = 512;
+    const GLuint LOGO_SCREEN_WIDTH = 160;
+    const GLuint LOGO_SCREEN_HEIGHT =100;
+
     // Create factory instance to then access the texture/bitmap.
     ResourceFactory factory;
 
     // Create HUD logo texture characteristics from logo as a Resource.
     RenderTask::texture_buffer_group logo_texture = {(const GLvoid*)factory.createInstance("Logo_FERMI")->data()->data(),
-                                                      512*431*4,
-                                                      512,
-                                                      431,
+                                                      TEXTURE_HEIGHT*TEXTURE_WIDTH*BYTES_PER_TEXEL,
+                                                      TEXTURE_HEIGHT,
+                                                      TEXTURE_WIDTH,
                                                       GL_BGRA,
                                                       GL_UNSIGNED_BYTE,
                                                       GL_CLAMP_TO_EDGE,
                                                       GL_CLAMP_TO_EDGE,
                                                       false};
 
-    //
-    m_logo = new TexturedParallelogram(glm::vec2(10.0f, (m_HUD_YTop - m_HUD_YBottom)/2.0f + m_HUD_YBottom - 50.0f),
-                                       glm::vec2(160.0f, 0.0f),
-                                       glm::vec2(0.0f, 100.0f),
+    // Decorate and prepare to place a parallelogram on the HUD.
+    m_logo = new TexturedParallelogram(glm::vec2(m_HUD_XLeft, (m_HUD_YTop - m_HUD_YBottom)/2.0f + m_HUD_YBottom - LOGO_SCREEN_HEIGHT/2.0f),
+                                       glm::vec2(LOGO_SCREEN_WIDTH  0.0f),
+                                       glm::vec2(0.0f, LOGO_SCREEN_HEIGHT),
                                        logo_texture);
     }

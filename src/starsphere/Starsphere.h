@@ -280,6 +280,9 @@ class Starsphere : public AbstractGraphicsEngine {
 
         glm::vec3 sphVertex(GLfloat RAdeg, GLfloat DEdeg);
 
+        /// How many bytes for an RGBA pixel/texel ?
+        static const GLuint BYTES_PER_TEXEL;
+
         /// Cumulative frame count.
         GLuint m_framecount;
 

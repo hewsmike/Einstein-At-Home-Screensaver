@@ -52,6 +52,7 @@
 #include "VertexShader.h"
 
 // Class static constants
+const GLuint Starsphere::BYTES_PER_TEXEL(4);
 const GLfloat Starsphere::DEFAULT_CLEAR_DEPTH(1.0f);
 const GLfloat Starsphere::DEFAULT_LINE_WIDTH(2.0f);
 const GLfloat Starsphere::DEFAULT_POINT_SIZE(1.5f);
@@ -1463,7 +1464,7 @@ void Starsphere::make_user_info(void) {
         }
 
     RenderTask::texture_buffer_group user_info_texture = {(const GLvoid*)m_info_text_surface->pixels,
-                                                          m_info_text_surface->w * m_info_text_surface->h,
+                                                          m_info_text_surface->w * m_info_text_surface->h * BYTES_PER_TEXEL,
                                                           m_info_text_surface->w,
                                                           m_info_text_surface->h,
                                                           GL_RGBA,
@@ -1488,7 +1489,7 @@ void Starsphere::make_user_info(void) {
         }
 
     RenderTask::texture_buffer_group team_info_texture = {(const GLvoid*)m_info_text_surface->pixels,
-                                                          m_info_text_surface->w * m_info_text_surface->h,
+                                                          m_info_text_surface->w * m_info_text_surface->h * BYTES_PER_TEXEL,
                                                           m_info_text_surface->w,
                                                           m_info_text_surface->h,
                                                           GL_RGBA,
@@ -1513,7 +1514,7 @@ void Starsphere::make_user_info(void) {
         }
 
     RenderTask::texture_buffer_group total_info_texture = {(const GLvoid*)m_info_text_surface->pixels,
-                                                          m_info_text_surface->w * m_info_text_surface->h,
+                                                          m_info_text_surface->w * m_info_text_surface->h * BYTES_PER_TEXEL,
                                                           m_info_text_surface->w,
                                                           m_info_text_surface->h,
                                                           GL_RGBA,
@@ -1537,7 +1538,7 @@ void Starsphere::make_user_info(void) {
         }
 
     RenderTask::texture_buffer_group RAC_info_texture = {(const GLvoid*)m_info_text_surface->pixels,
-                                                          m_info_text_surface->w * m_info_text_surface->h,
+                                                          m_info_text_surface->w * m_info_text_surface->h * BYTES_PER_TEXEL,
                                                           m_info_text_surface->w,
                                                           m_info_text_surface->h,
                                                           GL_RGBA,
@@ -1612,7 +1613,7 @@ void Starsphere::make_HUD_help_entry() {
 
     // Create texture information from SDL_Surface.
     RenderTask::texture_buffer_group help_info_texture = {(const GLvoid*)m_help_text_surface->pixels,
-                                                          m_help_text_surface->w * m_help_text_surface->h,
+                                                          m_help_text_surface->w * m_help_text_surface->h * BYTES_PER_TEXEL,
                                                           m_help_text_surface->w,
                                                           m_help_text_surface->h,
                                                           GL_RGBA,
