@@ -31,13 +31,10 @@ StarsphereGamma::StarsphereGamma() :
     m_logo = NULL;
     m_text_surface = NULL;
 
-
     m_right_ascension_info = NULL;
     m_declination_info = NULL;
     m_percent_done_info = NULL;
     m_cpu_time_info = NULL;
-
-
     }
 
 StarsphereGamma::~StarsphereGamma() {
@@ -163,12 +160,10 @@ void StarsphereGamma::prepareSearchInformation() {
 
     // The negative Y-offset vector here is in order to invert the SDL image.
     if(m_right_ascension_info) delete m_right_ascension_info;
-    m_right_ascension_info = new TexturedParallelogram(glm::vec2(m_HUD_XRight - m_text_surface->w, 10.0f + wu_top_line),
+    m_right_ascension_info = new TexturedParallelogram(glm::vec2(m_HUD_XRight - m_text_surface->w, m_HUD_YBottom + wu_top_line),
                                                        glm::vec2(m_text_surface->w, 0.0f),
                                                        glm::vec2(0.0f, -m_text_surface->h),
                                                        RA_info_texture);
-    // Delete any SDL assets.
-    //SDL_FreeSurface(m_text_surface);
     wu_top_line -= m_text_surface->h;
 
     if(!(m_text_surface = TTF_RenderText_Blended(m_FontText, m_WUSkyPosDeclination.c_str(), color))){
@@ -187,12 +182,10 @@ void StarsphereGamma::prepareSearchInformation() {
 
     // The negative Y-offset vector here is in order to invert the SDL image.
     if(m_declination_info) delete m_declination_info;
-    m_declination_info = new TexturedParallelogram(glm::vec2(m_HUD_XRight - m_text_surface->w, 10.0f + wu_top_line),
+    m_declination_info = new TexturedParallelogram(glm::vec2(m_HUD_XRight - m_text_surface->w, m_HUD_YBottom + wu_top_line),
                                                    glm::vec2(m_text_surface->w, 0.0f),
                                                    glm::vec2(0.0f, -m_text_surface->h),
                                                    DEC_info_texture);
-    // Delete any SDL assets.
-    //SDL_FreeSurface(m_text_surface);
 
     wu_top_line -= m_text_surface->h;
 
@@ -212,12 +205,10 @@ void StarsphereGamma::prepareSearchInformation() {
 
     // The negative Y-offset vector here is in order to invert the SDL image.
     if(m_percent_done_info) delete m_percent_done_info;
-    m_percent_done_info = new TexturedParallelogram(glm::vec2(m_HUD_XRight - m_text_surface->w, 10.0f + wu_top_line),
+    m_percent_done_info = new TexturedParallelogram(glm::vec2(m_HUD_XRight - m_text_surface->w, m_HUD_YBottom + wu_top_line),
                                                      glm::vec2(m_text_surface->w, 0.0f),
                                                      glm::vec2(0.0f, -m_text_surface->h),
                                                      percent_info_texture);
-    // Delete any SDL assets.
-    //SDL_FreeSurface(m_text_surface);
 
     wu_top_line -= m_text_surface->h;
 
@@ -237,7 +228,7 @@ void StarsphereGamma::prepareSearchInformation() {
 
     // The negative Y-offset vector here is in order to invert the SDL image.
     if(m_cpu_time_info) delete m_cpu_time_info;
-    m_cpu_time_info = new TexturedParallelogram(glm::vec2(m_HUD_XRight - m_text_surface->w, 10.0f + wu_top_line),
+    m_cpu_time_info = new TexturedParallelogram(glm::vec2(m_HUD_XRight - m_text_surface->w, m_HUD_YBottom + wu_top_line),
                                                 glm::vec2(m_text_surface->w, 0.0f),
                                                 glm::vec2(0.0f, -m_text_surface->h),
                                                 CPU_time_info_texture);
@@ -245,19 +236,19 @@ void StarsphereGamma::prepareSearchInformation() {
 
 void StarsphereGamma::prepareLogo() {
     // Constants for this rendering.
-    const GLuint TEXTURE_WIDTH = 431;
-    const GLuint TEXTURE_HEIGHT = 512;
+    const GLuint TEXTURE_WIDTH = 512;
+    const GLuint TEXTURE_HEIGHT = 431;
     const GLuint LOGO_SCREEN_WIDTH = 160;
-    const GLuint LOGO_SCREEN_HEIGHT =100;
+    const GLuint LOGO_SCREEN_HEIGHT = 100;
 
     // Create factory instance to then access the texture/bitmap.
     ResourceFactory factory;
 
     // Create HUD logo texture characteristics from logo as a Resource.
     RenderTask::texture_buffer_group logo_texture = {(const GLvoid*)factory.createInstance("Logo_FERMI")->data()->data(),
-                                                      TEXTURE_HEIGHT*TEXTURE_WIDTH*BYTES_PER_TEXEL,
-                                                      TEXTURE_HEIGHT,
+                                                      TEXTURE_WIDTH * TEXTURE_HEIGHT * BYTES_PER_TEXEL,
                                                       TEXTURE_WIDTH,
+                                                      TEXTURE_HEIGHT,
                                                       GL_BGRA,
                                                       GL_UNSIGNED_BYTE,
                                                       GL_CLAMP_TO_EDGE,
@@ -266,7 +257,7 @@ void StarsphereGamma::prepareLogo() {
 
     // Decorate and prepare to place a parallelogram on the HUD.
     m_logo = new TexturedParallelogram(glm::vec2(m_HUD_XLeft, (m_HUD_YTop - m_HUD_YBottom)/2.0f + m_HUD_YBottom - LOGO_SCREEN_HEIGHT/2.0f),
-                                       glm::vec2(LOGO_SCREEN_WIDTH  0.0f),
+                                       glm::vec2(LOGO_SCREEN_WIDTH, 0.0f),
                                        glm::vec2(0.0f, LOGO_SCREEN_HEIGHT),
                                        logo_texture);
     }
