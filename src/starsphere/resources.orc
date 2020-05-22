@@ -23,9 +23,10 @@
 FontSansSerif|LiberationSans-Regular.ttf.res
 AppIconBMP|EaH.bmp.res
 Logo_OCL|OCL_ABGR.data.res
-Logo_E@H|E@H_RGBA.data.res
-Logo_BOINC|boinc_logo.data.res
-Logo_FERMI|Fermi.data.res
+Logo_E@H|E@H.logo.178x115.res
+Logo_BOINC|boinc.logo.874x386.res
+Logo_FERMI|Fermi.logo.512x431.res
+Logo_AO|AO.logo.538x406.res
 # Shaders
 FragmentShader_Pass_Color3|fs_pass.res
 FragmentShader_Pass_Color4|fragment_shader_pass_color4.res
