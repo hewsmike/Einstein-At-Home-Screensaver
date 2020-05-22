@@ -280,6 +280,11 @@ class Starsphere : public AbstractGraphicsEngine {
 
         glm::vec3 sphVertex(GLfloat RAdeg, GLfloat DEdeg);
 
+        struct formatNumber : std::numpunct<char> {
+            char do_thousands_sep ()    const { return ','; }   // Separate with commas.
+            std::string do_grouping ()  const { return "\3"; }  // Groups of three digits
+            };
+
         /// How many bytes for an RGBA pixel/texel ?
         static const GLuint BYTES_PER_TEXEL;
 
@@ -295,7 +300,7 @@ class Starsphere : public AbstractGraphicsEngine {
         const Resource* m_vertex_shader_resource;
         const Resource* m_fragment_shader_resource;
 
-        /// Font texture instance for info box content rendering
+        /// Font texture instance for info content rendering
         TTF_Font* m_FontText;
 
         // Graphics state info:

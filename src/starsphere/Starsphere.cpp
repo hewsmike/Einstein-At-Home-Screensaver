@@ -29,10 +29,11 @@
 #include <ctgmath>          // For modf()
 #include <ctime>            // for time()
 #include <iostream>
+#include <locale>
 #include <sstream>
 #include <string>
-#include <vector>
 #include <util.h>           // for dday().
+#include <vector>
 
 #include "Starsphere.h"
 
@@ -1414,41 +1415,52 @@ void Starsphere::make_globe_mesh_texture(void) {
     }
 
 void Starsphere::make_logos(void) {
+    // Constants for this rendering.
+    const GLuint EAH_TEXTURE_WIDTH = 178;
+    const GLuint EAH_TEXTURE_HEIGHT = 115;
+    const GLuint EAH_LOGO_SCREEN_WIDTH = 160;
+    const GLuint EAH_LOGO_SCREEN_HEIGHT = 100;
+
+    const GLuint BOINC_TEXTURE_WIDTH = 874;
+    const GLuint BOINC_TEXTURE_HEIGHT = 386;
+    const GLuint BOINC_LOGO_SCREEN_WIDTH = 175;
+    const GLuint BOINC_LOGO_SCREEN_HEIGHT = 77;
+
     // Create factory instance to then access the texture/bitmap.
     ResourceFactory factory;
 
     const Resource* logo1 = factory.createInstance("Logo_E@H");
 
     RenderTask::texture_buffer_group logo_texture1 = {(const GLvoid*)logo1->data()->data(),
-                                                      178*115*4,
-                                                      178,
-                                                      115,
+                                                      EAH_TEXTURE_WIDTH * EAH_TEXTURE_HEIGHT * BYTES_PER_TEXEL,
+                                                      EAH_TEXTURE_WIDTH,
+                                                      EAH_TEXTURE_HEIGHT,
                                                       GL_BGRA,
                                                       GL_UNSIGNED_BYTE,
                                                       GL_CLAMP_TO_EDGE,
                                                       GL_CLAMP_TO_EDGE,
                                                       false};
 
-    m_logo1 = new TexturedParallelogram(glm::vec2(10.0f, m_HUD_YTop - 115.0f),
-                                        glm::vec2(178.0f, 0.0f),
-                                        glm::vec2(0.0f, 115.0f),
+    m_logo1 = new TexturedParallelogram(glm::vec2(m_HUD_XLeft, m_HUD_YTop - EAH_LOGO_SCREEN_HEIGHT),
+                                        glm::vec2(EAH_LOGO_SCREEN_WIDTH, 0.0f),
+                                        glm::vec2(0.0f, EAH_LOGO_SCREEN_HEIGHT),
                                         logo_texture1);
 
     const Resource* logo2 = factory.createInstance("Logo_BOINC");
 
     RenderTask::texture_buffer_group logo_texture2 = {(const GLvoid*)logo2->data()->data(),
-                                                      874*386*4,
-                                                      874,
-                                                      386,
+                                                      BOINC_TEXTURE_WIDTH * BOINC_TEXTURE_HEIGHT * BYTES_PER_TEXEL,
+                                                      BOINC_TEXTURE_WIDTH,
+                                                      BOINC_TEXTURE_HEIGHT,
                                                       GL_RGBA,
                                                       GL_UNSIGNED_BYTE,
                                                       GL_CLAMP_TO_EDGE,
                                                       GL_CLAMP_TO_EDGE,
                                                       false};
 
-    m_logo2 = new TexturedParallelogram(glm::vec2(15.0f, 15.0f),
-                                        glm::vec2(175.0f, 0.0f),
-                                        glm::vec2(0.0f, 77.0f),
+    m_logo2 = new TexturedParallelogram(glm::vec2(m_HUD_XLeft, m_HUD_YBottom),
+                                        glm::vec2(BOINC_LOGO_SCREEN_WIDTH, 0.0f),
+                                        glm::vec2(0.0f, BOINC_LOGO_SCREEN_HEIGHT),
                                         logo_texture2);
     }
 
@@ -2135,6 +2147,8 @@ void Starsphere::refreshLocalBOINCInformation() {
     // store content required for our HUD (user info)
     m_UserName = "User: " + m_BoincAdapter.userName();
     m_TeamName = "Team: " + m_BoincAdapter.teamName();
+
+    buffer.imbue(std::locale(buffer.getloc(), new formatNumber));
 
     buffer << "Project Credit: " << fixed << m_BoincAdapter.userCredit() << ends;
     m_UserCredit = buffer.str();
