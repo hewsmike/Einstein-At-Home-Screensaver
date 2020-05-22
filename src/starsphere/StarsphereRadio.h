@@ -89,6 +89,16 @@ public:
     void resize(const int width, const int height);
 
     /**
+     * \brief This method is called when the windowing system encounters a window render event
+     *
+     * As this method overrides its parent's implementation, it calls Starsphere::render()
+     * first in order to "add" the specialized parts afterwards.
+     *
+     * \param timeOfDay The time of day
+     */
+    virtual void render(const double timeOfDay);
+
+    /**
      * \brief This method is called when the BOINC client information should be updated
      *
      * This method implements AbstractGraphicsEngine::refreshBOINCInformation() and calls
@@ -101,11 +111,13 @@ public:
     void refreshBOINCInformation();
 
 private:
+    TexturedParallelogram* m_logo;
+
+    SDL_Surface* m_text_surface;
+
     /**
      * \brief Render science run specific logo
      *
-     * This specific implementation shows the usual "Einstein@Home" logo combined
-     * with "International Year of Astronomy 2009" as subtitle
      */
     void prepareLogo();
 
@@ -113,19 +125,15 @@ private:
      * \brief Render science run specific search information
      *
      * For this specific implementation this also includes the "BOINC Statistics"
-     * as it is top-aligned to the "Search Information".
+     * as it is right-aligned to the "Search Information".
      */
     void prepareSearchInformation();
 
-    /**
-     * \brief Generates the OpenGL call lists for the displayed observatories
-     *
-     * \param dimFactor A dim factor (range: 0 <= x <= 1) that will, well, dim the color
-     * of the observatories. Right now the factor is propagated to the base class
-     * implementation, hence dims the IFOs. The local Arecibo observatory is currently
-     * unaffected.
-     */
-    //void generateObservatories(const float dimFactor);
+    ///
+    TexturedParallelogram* m_right_ascension_info;
+    TexturedParallelogram* m_declination_info;
+    TexturedParallelogram* m_percent_done_info;
+    TexturedParallelogram* m_cpu_time_info;
 
     /// Active render quality setting
     BOINCClientAdapter::GraphicsQualitySetting m_QualitySetting;
