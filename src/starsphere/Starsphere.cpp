@@ -1781,7 +1781,7 @@ void Starsphere::initialize(const int width, const int height, const Resource* f
     setFeature(MARKER, true);
     setFeature(EARTH, true);
     setFeature(AUTO_ROLL, true);
-    setFeature(HELP, true);
+    setFeature(HELP, false);
 
     glActiveTexture(GL_TEXTURE0);
 
@@ -1930,16 +1930,19 @@ void Starsphere::render(const double timeOfDay) {
     // Render the 2D features in our HUD.
     m_camera = m_orthographic_projection * m_view * m_rotation;
 
+    // Show help if anabled.
     if(isFeature(HELP)) {
         m_help_info->utilise();
         }
 
+    // Show logos if enabled.
     if(isFeature(LOGO)) {
         // Show the E@H and BOINC logos.
         m_logo1->utilise();
         m_logo2->utilise();
         }
 
+    // Show user iformation.
     m_user_info->utilise();
     m_team_info->utilise();
     m_total_info->utilise();
@@ -2148,7 +2151,8 @@ void Starsphere::refreshLocalBOINCInformation() {
     m_UserName = "User: " + m_BoincAdapter.userName();
     m_TeamName = "Team: " + m_BoincAdapter.teamName();
 
-    buffer.imbue(std::locale(buffer.getloc(), new formatNumber));
+    // buffer.imbue(std::locale(buffer.getloc(), new formatNumber));
+    buffer.imbue(std::locale(""));
 
     buffer << "Project Credit: " << fixed << m_BoincAdapter.userCredit() << ends;
     m_UserCredit = buffer.str();

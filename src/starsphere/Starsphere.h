@@ -193,14 +193,6 @@ class Starsphere : public AbstractGraphicsEngine {
         virtual void refreshLocalBOINCInformation(void);
 
         /**
-         * \brief Generates the OpenGL call lists for the displayed observatories
-         *
-         * \param dimFactor A dim factor (range: 0 <= x <= 1) that will, well, dim the color
-         * of the observatories.
-         */
-        // virtual void generateObservatories(const float dimFactor);
-
-        /**
          * \brief Available feature IDs
          *
          * \see Starsphere::setFeature()
