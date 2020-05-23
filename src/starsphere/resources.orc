@@ -22,9 +22,9 @@
 
 FontSansSerif|LiberationSans-Regular.ttf.res
 AppIconBMP|EaH.bmp.res
-Logo_OCL|OCL_ABGR.data.res
+Logo_OCL|OCL.logo.330x150.res
 Logo_E@H|E@H.logo.178x115.res
-Logo_BOINC|boinc.logo.874x386.res
+Logo_BOINC|Boinc.logo.874x386.res
 Logo_FERMI|Fermi.logo.512x431.res
 Logo_AO|AO.logo.538x406.res
 # Shaders
