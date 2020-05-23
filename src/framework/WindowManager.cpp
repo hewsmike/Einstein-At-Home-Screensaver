@@ -208,13 +208,13 @@ bool WindowManager::initialize(const int width, const int height, const int fram
         /// TODO - check after successful context creation to see if we got what we asked for.
         // Set desired OpenGL context attributes for our window.
 
-        // Start in full screen mode.
+        // Start in windowed mode.
         m_Window = SDL_DEBUG(SDL_CreateWindow(m_WindowTitle.c_str(),
                                               SDL_WINDOWPOS_CENTERED,
                                               SDL_WINDOWPOS_CENTERED,
                                               m_WindowedWidth,
                                               m_WindowedHeight,
-                                              SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN));
+                                              SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE));
 
         // Check that the window was successfully made.
         if(m_Window == NULL) {
