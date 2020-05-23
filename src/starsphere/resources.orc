@@ -22,7 +22,7 @@
 
 FontSansSerif|LiberationSans-Regular.ttf.res
 AppIconBMP|EaH.bmp.res
-Logo_OCL|OCL.logo.330x150.res
+Logo_OCL|OCL.logo.307x148.res
 Logo_E@H|E@H.logo.178x115.res
 Logo_BOINC|Boinc.logo.874x386.res
 Logo_FERMI|Fermi.logo.512x431.res

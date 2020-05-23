@@ -27,25 +27,35 @@
 
 #include "ErrorHandler.h"
 #include "ResourceFactory.h"
-#include "TransformGlobals.h"
 
 StarsphereGravity::StarsphereGravity() :
         Starsphere(EinsteinGravityAdapter::SharedMemoryIdentifier),
         m_EinsteinAdapter(&m_BoincAdapter) {
     m_logo = NULL;
+
+    m_text_surface = NULL;
+
+    m_right_ascension_info = NULL;
+    m_declination_info = NULL;
+    m_percent_done_info = NULL;
+    m_cpu_time_info = NULL;
     }
 
 StarsphereGravity::~StarsphereGravity() {
     if(m_logo) delete m_logo;
+    if(m_text_surface) SDL_FreeSurface(m_text_surface);
+    if(m_right_ascension_info) delete m_right_ascension_info;
+    if(m_declination_info) delete m_declination_info;
+    if(m_percent_done_info) delete m_percent_done_info;
+    if(m_cpu_time_info) delete m_cpu_time_info;
     }
 
 void StarsphereGravity::initialize(const int width, const int height, const Resource* font) {
     Starsphere::initialize(width, height, font);
 
-    refreshBOINCInformation();
-
     prepareLogo();
     prepareSearchInformation();
+
     }
 
 void StarsphereGravity::resize(const int width, const int height) {
@@ -54,10 +64,24 @@ void StarsphereGravity::resize(const int width, const int height) {
 
 void StarsphereGravity::render(const double timeOfDay) {
     Starsphere::render(timeOfDay);
+    const GLuint SEARCH_INFO_REFRESH_INTERVAL(500);
 
+    // Regularly update search progress data.
+    if((m_framecount % SEARCH_INFO_REFRESH_INTERVAL) == 0) {
+        refreshBOINCInformation();
+        prepareSearchInformation();
+        }
+
+    // Display the Open CL logo.
     if(isFeature(LOGO)) {
         m_logo->utilise();
         }
+
+    // Show the search data, if any.
+    m_right_ascension_info->utilise();
+    m_declination_info->utilise();
+    m_percent_done_info->utilise();
+    m_cpu_time_info->utilise();
     }
 
 void StarsphereGravity::refreshBOINCInformation() {
@@ -112,41 +136,127 @@ void StarsphereGravity::refreshBOINCInformation() {
     }
 
 void StarsphereGravity::prepareSearchInformation() {
-//        // clock
-//        m_FontLogo1->draw(m_XStartPosClock, m_HUD_YTop, m_CurrentTime.c_str());
-//
-//        // left info block
-//        m_FontHeader->draw(m_XStartPosLeft, m_YStartPosBottom, "BOINC Statistics");
-//        m_FontText->draw(m_XStartPosLeft, m_Y1StartPosBottom, m_UserName.c_str());
-//        m_FontText->draw(m_XStartPosLeft, m_Y2StartPosBottom, m_TeamName.c_str());
-//        m_FontText->draw(m_XStartPosLeft, m_Y3StartPosBottom, m_UserCredit.c_str());
-//        m_FontText->draw(m_XStartPosLeft, m_Y4StartPosBottom, m_UserRACredit.c_str());
-//
-//        // right info block
-//        m_FontHeader->draw(m_HUD_XRight, m_YStartPosBottom, "Search Information");
-//        m_FontText->draw(m_HUD_XRight, m_Y1StartPosBottom, m_WUSkyPosRightAscension.c_str());
-//        m_FontText->draw(m_HUD_XRight, m_Y2StartPosBottom, m_WUSkyPosDeclination.c_str());
-//        m_FontText->draw(m_HUD_XRight, m_Y3StartPosBottom, m_WUPercentDone.c_str());
-//        m_FontText->draw(m_HUD_XRight, m_Y4StartPosBottom, m_WUCPUTime.c_str());
+    if(m_QualitySetting == BOINCClientAdapter::HighGraphicsQualitySetting) {
+        //glDisable(GL_POINT_SMOOTH);
+        //        glDisable(GL_LINE_SMOOTH);
+        }
+    GLfloat wu_top_line = 100.0f;
+
+    this->refreshBOINCInformation();
+    SDL_Color color = {255, 255, 255, 255};
+
+    if(!(m_text_surface = TTF_RenderText_Blended(m_FontText, m_WUSkyPosRightAscension.c_str(), color))){
+        ErrorHandler::record("StarsphereGravity::prepareSearchInformation() : can't make SDL_Surface for right asccension!", ErrorHandler::FATAL);
+        }
+
+    RenderTask::texture_buffer_group RA_info_texture = {(const GLvoid*)m_text_surface->pixels,
+                                                        m_text_surface->w * m_text_surface->h * BYTES_PER_TEXEL,
+                                                        m_text_surface->w,
+                                                        m_text_surface->h,
+                                                        GL_RGBA,
+                                                        GL_UNSIGNED_BYTE,
+                                                        GL_CLAMP_TO_EDGE,
+                                                        GL_CLAMP_TO_EDGE,
+                                                        false};
+
+    // The negative Y-offset vector here is in order to invert the SDL image.
+    if(m_right_ascension_info) delete m_right_ascension_info;
+    m_right_ascension_info = new TexturedParallelogram(glm::vec2(m_HUD_XRight - m_text_surface->w, m_HUD_YBottom + wu_top_line),
+                                                       glm::vec2(m_text_surface->w, 0.0f),
+                                                       glm::vec2(0.0f, -m_text_surface->h),
+                                                       RA_info_texture);
+    wu_top_line -= m_text_surface->h;
+
+    if(!(m_text_surface = TTF_RenderText_Blended(m_FontText, m_WUSkyPosDeclination.c_str(), color))){
+        ErrorHandler::record("StarsphereGravity::prepareSearchInformation() : can't make SDL_Surface for declination!", ErrorHandler::FATAL);
+        }
+
+    RenderTask::texture_buffer_group DEC_info_texture = {(const GLvoid*)m_text_surface->pixels,
+                                                         m_text_surface->w * m_text_surface->h * BYTES_PER_TEXEL,
+                                                         m_text_surface->w,
+                                                         m_text_surface->h,
+                                                         GL_RGBA,
+                                                         GL_UNSIGNED_BYTE,
+                                                         GL_CLAMP_TO_EDGE,
+                                                         GL_CLAMP_TO_EDGE,
+                                                         false};
+
+    // The negative Y-offset vector here is in order to invert the SDL image.
+    if(m_declination_info) delete m_declination_info;
+    m_declination_info = new TexturedParallelogram(glm::vec2(m_HUD_XRight - m_text_surface->w, m_HUD_YBottom + wu_top_line),
+                                                   glm::vec2(m_text_surface->w, 0.0f),
+                                                   glm::vec2(0.0f, -m_text_surface->h),
+                                                   DEC_info_texture);
+    wu_top_line -= m_text_surface->h;
+
+    if(!(m_text_surface = TTF_RenderText_Blended(m_FontText, m_WUPercentDone.c_str(), color))){
+        ErrorHandler::record("StarsphereGravity::prepareSearchInformation() : can't make SDL_Surface for percent done!", ErrorHandler::FATAL);
+        }
+
+    RenderTask::texture_buffer_group percent_info_texture = {(const GLvoid*)m_text_surface->pixels,
+                                                             m_text_surface->w * m_text_surface->h * BYTES_PER_TEXEL,
+                                                             m_text_surface->w,
+                                                             m_text_surface->h,
+                                                             GL_RGBA,
+                                                             GL_UNSIGNED_BYTE,
+                                                             GL_CLAMP_TO_EDGE,
+                                                             GL_CLAMP_TO_EDGE,
+                                                             false};
+
+    // The negative Y-offset vector here is in order to invert the SDL image.
+    if(m_percent_done_info) delete m_percent_done_info;
+    m_percent_done_info = new TexturedParallelogram(glm::vec2(m_HUD_XRight - m_text_surface->w, m_HUD_YBottom + wu_top_line),
+                                                     glm::vec2(m_text_surface->w, 0.0f),
+                                                     glm::vec2(0.0f, -m_text_surface->h),
+                                                     percent_info_texture);
+    wu_top_line -= m_text_surface->h;
+
+    if(!(m_text_surface = TTF_RenderText_Blended(m_FontText, m_WUCPUTime.c_str(), color))){
+        ErrorHandler::record("StarsphereGravity::prepareSearchInformation() : can't make SDL_Surface for CPU time!", ErrorHandler::FATAL);
+        }
+
+    RenderTask::texture_buffer_group CPU_time_info_texture = {(const GLvoid*)m_text_surface->pixels,
+                                                              m_text_surface->w * m_text_surface->h * BYTES_PER_TEXEL,
+                                                              m_text_surface->w,
+                                                              m_text_surface->h,
+                                                              GL_RGBA,
+                                                              GL_UNSIGNED_BYTE,
+                                                              GL_CLAMP_TO_EDGE,
+                                                              GL_CLAMP_TO_EDGE,
+                                                              false};
+
+    // The negative Y-offset vector here is in order to invert the SDL image.
+    if(m_cpu_time_info) delete m_cpu_time_info;
+    m_cpu_time_info = new TexturedParallelogram(glm::vec2(m_HUD_XRight - m_text_surface->w, m_HUD_YBottom + wu_top_line),
+                                                glm::vec2(m_text_surface->w, 0.0f),
+                                                glm::vec2(0.0f, -m_text_surface->h),
+                                                CPU_time_info_texture);
     }
 
 void StarsphereGravity::prepareLogo() {
+    // Constants for this rendering.
+    const GLuint TEXTURE_WIDTH = 307;
+    const GLuint TEXTURE_HEIGHT = 148;
+    const GLuint LOGO_SCREEN_WIDTH = 160;
+    const GLuint LOGO_SCREEN_HEIGHT = 110;
+
     // Create factory instance to then access the texture/bitmap.
     ResourceFactory factory;
 
     // Create HUD logo features.
     RenderTask::texture_buffer_group logo_texture = {(const GLvoid*)factory.createInstance("Logo_OCL")->data()->data(),
-                                                      330*150*4,
-                                                      330,
-                                                      150,
+                                                      TEXTURE_WIDTH * TEXTURE_HEIGHT * BYTES_PER_TEXEL,
+                                                      TEXTURE_WIDTH,
+                                                      TEXTURE_HEIGHT,
                                                       GL_BGRA,
                                                       GL_UNSIGNED_BYTE,
                                                       GL_CLAMP_TO_EDGE,
                                                       GL_CLAMP_TO_EDGE,
                                                       false};
 
-    m_logo = new TexturedParallelogram(glm::vec2(10.0f, 10.0f + (m_HUD_YTop - 10 - 50)/2),
-                                       glm::vec2(220.0f, 0.0f),
-                                       glm::vec2(0.0f, 100.0f),
+   // Decorate and prepare to place a parallelogram on the HUD.
+    m_logo = new TexturedParallelogram(glm::vec2(m_HUD_XLeft, (m_HUD_YTop - m_HUD_YBottom)/2.0f + m_HUD_YBottom - LOGO_SCREEN_HEIGHT/2.0f),
+                                       glm::vec2(LOGO_SCREEN_WIDTH, 0.0f),
+                                       glm::vec2(0.0f, LOGO_SCREEN_HEIGHT),
                                        logo_texture);
     }

@@ -72,7 +72,7 @@ void StarsphereRadio::render(const double timeOfDay) {
         prepareSearchInformation();
         }
 
-    // Display the Fermi Telescope logo.
+    // Display the Arecibo Observatory logo.
     if(isFeature(LOGO)) {
         m_logo->utilise();
         }

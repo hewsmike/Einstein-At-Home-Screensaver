@@ -109,6 +109,8 @@ class StarsphereGravity : public Starsphere {
     private:
         TexturedParallelogram* m_logo;
 
+        SDL_Surface* m_text_surface;
+
         /**
          * \brief Render science run specific logo
          *
@@ -123,6 +125,15 @@ class StarsphereGravity : public Starsphere {
          * as it is top-aligned to the "Search Information".
          */
         void prepareSearchInformation();
+
+        ///
+        TexturedParallelogram* m_right_ascension_info;
+        TexturedParallelogram* m_declination_info;
+        TexturedParallelogram* m_percent_done_info;
+        TexturedParallelogram* m_cpu_time_info;
+
+        /// Active render quality setting
+        BOINCClientAdapter::GraphicsQualitySetting m_QualitySetting;
 
         /// Specialized BOINC client adapter instance for information retrieval
         EinsteinGravityAdapter m_EinsteinAdapter;
