@@ -33,6 +33,8 @@ StarsphereGravity::StarsphereGravity() :
         m_EinsteinAdapter(&m_BoincAdapter) {
     m_logo = NULL;
 
+    m_target = NULL;
+
     m_text_surface = NULL;
 
     m_right_ascension_info = NULL;
@@ -43,6 +45,7 @@ StarsphereGravity::StarsphereGravity() :
 
 StarsphereGravity::~StarsphereGravity() {
     if(m_logo) delete m_logo;
+    if(m_target) delete m_target;
     if(m_text_surface) SDL_FreeSurface(m_text_surface);
     if(m_right_ascension_info) delete m_right_ascension_info;
     if(m_declination_info) delete m_declination_info;
@@ -55,7 +58,7 @@ void StarsphereGravity::initialize(const int width, const int height, const Reso
 
     prepareLogo();
     prepareSearchInformation();
-
+    prepareTargetReticle();
     }
 
 void StarsphereGravity::resize(const int width, const int height) {
@@ -65,16 +68,24 @@ void StarsphereGravity::resize(const int width, const int height) {
 void StarsphereGravity::render(const double timeOfDay) {
     Starsphere::render(timeOfDay);
     const GLuint SEARCH_INFO_REFRESH_INTERVAL(500);
+    const GLuint TARGET_RETICLE_BLINK_INTERVAL(16);
 
     // Regularly update search progress data.
     if((m_framecount % SEARCH_INFO_REFRESH_INTERVAL) == 0) {
         refreshBOINCInformation();
         prepareSearchInformation();
+        prepareTargetReticle();
         }
 
     // Display the Open CL logo.
     if(isFeature(LOGO)) {
         m_logo->utilise();
+        }
+
+    if(isFeature(MARKER)) {
+        if((m_framecount%TARGET_RETICLE_BLINK_INTERVAL) < 6) {
+            m_target->utilise();
+            }
         }
 
     // Show the search data, if any.
@@ -231,6 +242,51 @@ void StarsphereGravity::prepareSearchInformation() {
                                                 glm::vec2(m_text_surface->w, 0.0f),
                                                 glm::vec2(0.0f, -m_text_surface->h),
                                                 CPU_time_info_texture);
+    }
+
+void StarsphereGravity::prepareTargetReticle(void) {
+    const GLfloat reticle_diameter = 0.5f;
+
+    this->refreshBOINCInformation();
+
+    const SDL_Color color = {255, 255, 0, 255};
+
+    if(!(m_text_surface = TTF_RenderText_Blended(m_FontText, "+", color))){
+        ErrorHandler::record("StarsphereGravity::prepareTargetReticle() : can't make SDL_Surface for target reticle !", ErrorHandler::FATAL);
+        }
+
+    RenderTask::texture_buffer_group reticle_info_texture = {(const GLvoid*)m_text_surface->pixels,
+                                                             m_text_surface->w * m_text_surface->h * BYTES_PER_TEXEL,
+                                                             m_text_surface->w,
+                                                             m_text_surface->h,
+                                                             GL_RGBA,
+                                                             GL_UNSIGNED_BYTE,
+                                                             GL_CLAMP_TO_EDGE,
+                                                             GL_CLAMP_TO_EDGE,
+                                                             false};
+
+    if(m_target) delete m_target;
+
+    GLfloat target_base_RA = m_CurrentRightAscension;
+
+    GLfloat target_base_DEC = m_CurrentDeclination;
+
+    glm::vec3 target_base = sphVertex(target_base_RA, target_base_DEC);
+
+    glm::vec3 target_base_width = sphVertex(target_base_RA + 90.0f, 0.0f);
+
+    target_base_width = glm::normalize(target_base_width);
+
+    glm::vec3 target_base_height = glm::cross(glm::normalize(target_base), target_base_width);
+
+    target_base_width = reticle_diameter * target_base_width;
+
+    target_base_height = reticle_diameter * glm::normalize(target_base_height);
+
+    m_target = new TexturedParallelogram(target_base - 0.5f * target_base_width - 0.5f * target_base_height,
+                                         target_base_width,
+                                         target_base_height,
+                                         reticle_info_texture);
     }
 
 void StarsphereGravity::prepareLogo() {

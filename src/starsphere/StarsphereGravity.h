@@ -107,7 +107,11 @@ class StarsphereGravity : public Starsphere {
         void refreshBOINCInformation();
 
     private:
+        // For scinece run specific logo
         TexturedParallelogram* m_logo;
+
+        /// For celestial sphere target reticle
+        TexturedParallelogram* m_target;
 
         SDL_Surface* m_text_surface;
 
@@ -116,15 +120,20 @@ class StarsphereGravity : public Starsphere {
          *
          * This specific implementation shows the OpenCL logo.
          */
-        void prepareLogo();
+        void prepareLogo(void);
 
-       /**
+        /**
          * \brief Render science run specific search information
          *
          * For this specific implementation this also includes the "BOINC Statistics"
          * as it is top-aligned to the "Search Information".
          */
-        void prepareSearchInformation();
+        void prepareSearchInformation(void);
+
+        /**
+         * \brief Target reticle as per search parameters
+         */
+        void prepareTargetReticle(void);
 
         ///
         TexturedParallelogram* m_right_ascension_info;

@@ -1928,8 +1928,6 @@ void Starsphere::render(const double timeOfDay) {
         }
 
     // Render the 2D features in our HUD.
-    m_camera = m_orthographic_projection * m_view * m_rotation;
-
     // Show help if anabled.
     if(isFeature(HELP)) {
         m_help_info->utilise();
@@ -1942,7 +1940,7 @@ void Starsphere::render(const double timeOfDay) {
         m_logo2->utilise();
         }
 
-    // Show user iformation.
+    // Show user information.
     m_user_info->utilise();
     m_team_info->utilise();
     m_total_info->utilise();

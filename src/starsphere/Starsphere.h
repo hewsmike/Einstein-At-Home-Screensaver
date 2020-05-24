@@ -280,6 +280,9 @@ class Starsphere : public AbstractGraphicsEngine {
         /// How many bytes for an RGBA pixel/texel ?
         static const GLuint BYTES_PER_TEXEL;
 
+        /// Waht is the radius of the celestial sphere ?
+        static const GLfloat SPHERE_RADIUS;
+
         /// Cumulative frame count.
         GLuint m_framecount;
 
@@ -351,7 +354,6 @@ class Starsphere : public AbstractGraphicsEngine {
         static const GLfloat DEFAULT_LINE_WIDTH;
         static const GLfloat DEFAULT_POINT_SIZE;
         static const GLuint  PIXEL_UNPACK_BOUNDARY;
-        static const GLfloat SPHERE_RADIUS;
         static const GLfloat EARTH_RADIUS;
         static const GLfloat EARTH_MAX_OFFSET;
 
