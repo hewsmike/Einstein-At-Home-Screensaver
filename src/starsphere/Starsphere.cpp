@@ -116,7 +116,7 @@ Starsphere::Starsphere(string sharedMemoryAreaIdentifier) :
     // Search marker.
     m_CurrentRightAscension = -1.0f;
     m_CurrentDeclination = -1.0f;
-    m_RefreshSearchMarker = false;
+    m_RefreshSearchMarker = true;
 
     // Now initialise private variables.
     // HUD parallelogram pointers.

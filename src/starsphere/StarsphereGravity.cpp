@@ -74,7 +74,9 @@ void StarsphereGravity::render(const double timeOfDay) {
     if((m_framecount % SEARCH_INFO_REFRESH_INTERVAL) == 0) {
         refreshBOINCInformation();
         prepareSearchInformation();
-        prepareTargetReticle();
+        if(m_RefreshSearchMarker == true) {
+            prepareTargetReticle();
+            }
         }
 
     // Display the Open CL logo.
@@ -245,16 +247,19 @@ void StarsphereGravity::prepareSearchInformation() {
     }
 
 void StarsphereGravity::prepareTargetReticle(void) {
+    // How wide and high ought the reticle be ?
     const GLfloat reticle_diameter = 0.5f;
 
-    this->refreshBOINCInformation();
-
+    // This turns ought aqua when I wanted yellow. Oh well.
     const SDL_Color color = {255, 255, 0, 255};
 
+    // Try to get an SDL_Surface composed of the rendering of the target reticle.
     if(!(m_text_surface = TTF_RenderText_Blended(m_FontText, "+", color))){
+        // Fatal out in the lack.
         ErrorHandler::record("StarsphereGravity::prepareTargetReticle() : can't make SDL_Surface for target reticle !", ErrorHandler::FATAL);
         }
 
+    // Gather togethere all the info for the target reticle to be rendered.
     RenderTask::texture_buffer_group reticle_info_texture = {(const GLvoid*)m_text_surface->pixels,
                                                              m_text_surface->w * m_text_surface->h * BYTES_PER_TEXEL,
                                                              m_text_surface->w,
@@ -265,28 +270,41 @@ void StarsphereGravity::prepareTargetReticle(void) {
                                                              GL_CLAMP_TO_EDGE,
                                                              false};
 
+    // Delete any prior TexturedParallelogram.
     if(m_target) delete m_target;
 
+    // These are the target coordinates.
     GLfloat target_base_RA = m_CurrentRightAscension;
-
     GLfloat target_base_DEC = m_CurrentDeclination;
 
+    // Vector to those coordinates.
     glm::vec3 target_base = sphVertex(target_base_RA, target_base_DEC);
 
+    // Vector at right angles to the above and in direction of increasing
+    // right ascension.
     glm::vec3 target_base_width = sphVertex(target_base_RA + 90.0f, 0.0f);
 
+    // Unit vector of the above.
     target_base_width = glm::normalize(target_base_width);
 
+    // New vector in the direction of increasing declination.
     glm::vec3 target_base_height = glm::cross(glm::normalize(target_base), target_base_width);
 
+    // The full width of the area to be textured.
     target_base_width = reticle_diameter * target_base_width;
 
+    // The full height of the area to be texteured.
     target_base_height = reticle_diameter * glm::normalize(target_base_height);
 
+    // Note we offset the base vector by half the width and height which brings the centre
+    // of the texture nicely at exactly the correct right ascension and declination.
     m_target = new TexturedParallelogram(target_base - 0.5f * target_base_width - 0.5f * target_base_height,
                                          target_base_width,
                                          target_base_height,
                                          reticle_info_texture);
+
+    // As we've just updated the search marker ....
+    m_RefreshSearchMarker = false;
     }
 
 void StarsphereGravity::prepareLogo() {
