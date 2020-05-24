@@ -2149,8 +2149,8 @@ void Starsphere::refreshLocalBOINCInformation() {
     m_UserName = "User: " + m_BoincAdapter.userName();
     m_TeamName = "Team: " + m_BoincAdapter.teamName();
 
-    // buffer.imbue(std::locale(buffer.getloc(), new formatNumber));
-    buffer.imbue(std::locale(""));
+    buffer.imbue(std::locale(buffer.getloc(), new formatNumber));
+    // buffer.imbue(std::locale(""));
 
     buffer << "Project Credit: " << fixed << m_BoincAdapter.userCredit() << ends;
     m_UserCredit = buffer.str();
