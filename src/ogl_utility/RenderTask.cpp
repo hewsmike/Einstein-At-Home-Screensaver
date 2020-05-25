@@ -111,7 +111,7 @@ RenderTask::RenderTask(RenderTask::shader_group s_group,
 RenderTask::RenderTask(RenderTask::shader_group s_group,
                    RenderTask::vertex_buffer_group v_group,
                    RenderTask::index_buffer_group i_group) {
-     ErrorHandler::record("RenderTask::RenderTask(): MINUMUM + VERTICES + INDICES", ErrorHandler::INFORM);
+    ErrorHandler::record("RenderTask::RenderTask(): MINUMUM + VERTICES + INDICES", ErrorHandler::INFORM);
 
     m_vertex_buffer = new VertexBuffer(v_group.buffer_data,
                                            v_group.bytes,
@@ -192,13 +192,14 @@ RenderTask::RenderTask(RenderTask::shader_group s_group,
 
 RenderTask::~RenderTask() {
     if(m_attrib_adapt) delete m_attrib_adapt;
+    if(m_vertex_shader) delete m_vertex_shader;
     if(m_frag_shader) delete m_frag_shader;
-    if(m_index_buffer) delete m_index_buffer;
-    if(m_pipeline) delete m_pipeline;
     if(m_program) delete m_program;
     if(m_vertex_buffer) delete m_vertex_buffer;
+    if(m_index_buffer) delete m_index_buffer;
+    if(m_texture_buffer) delete m_texture_buffer;
     if(m_vertex_fetch) delete m_vertex_fetch;
-    if(m_vertex_shader) delete m_vertex_shader;
+    if(m_pipeline) delete m_pipeline;
     }
 
 void RenderTask::addSpecification(const AttributeInputAdapter::attribute_spec spec) {

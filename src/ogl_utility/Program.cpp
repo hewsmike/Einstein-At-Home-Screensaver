@@ -309,7 +309,7 @@ bool Program::mapUniforms(void) {
                 ErrorHandler::record(msg.str(), ErrorHandler::INFORM);
                 }
             }
-        delete u_name;
+        delete[] u_name;
 
         ret_val = true;
         }

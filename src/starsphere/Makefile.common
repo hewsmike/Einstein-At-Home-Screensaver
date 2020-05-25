@@ -252,7 +252,7 @@ clean:
 # Target specific tools.
 ifeq ".$(SYSTEM)" ".linux"
 memcheck:
-	valgrind --tool=memcheck --track-fds=yes --time-stamp=yes --log-file=$(PWD)/memcheck.out.%p --leak-check=full $(PWD)/graphics_app=einstein_RUNLABEL_VERSION_graphics_$(TARGET_APPEND)
+	valgrind --tool=memcheck --track-fds=yes --time-stamp=yes --log-file=$(PWD)/memcheck.out.%p --leak-check=full $(PWD)/graphics_app=einsteinGravity_RUNLABEL_VERSION_graphics_$(TARGET_APPEND)
 callgrind:
-	valgrind --tool=callgrind --track-fds=yes --time-stamp=yes $(PWD)/graphics_app=einstein_RUNLABEL_VERSION_graphics_$(TARGET_APPEND)
+	valgrind --tool=callgrind --track-fds=yes --time-stamp=yes $(PWD)/graphics_app=einsteinGravity_RUNLABEL_VERSION_graphics_$(TARGET_APPEND)
 endif

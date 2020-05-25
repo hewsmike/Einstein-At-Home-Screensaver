@@ -242,8 +242,10 @@ void StarsphereRadio::prepareLogo() {
     // Create factory instance to then access the texture/bitmap.
     ResourceFactory factory;
 
+    const Resource* logo_resource = factory.createInstance("Logo_AO");
+
     // Create HUD logo texture characteristics from logo as a Resource.
-    RenderTask::texture_buffer_group logo_texture = {(const GLvoid*)factory.createInstance("Logo_AO")->data()->data(),
+    RenderTask::texture_buffer_group logo_texture = {(const GLvoid*)logo_resource->data()->data(),
                                                       TEXTURE_WIDTH * TEXTURE_HEIGHT * BYTES_PER_TEXEL,
                                                       TEXTURE_WIDTH,
                                                       TEXTURE_HEIGHT,
@@ -258,4 +260,6 @@ void StarsphereRadio::prepareLogo() {
                                        glm::vec2(LOGO_SCREEN_WIDTH, 0.0f),
                                        glm::vec2(0.0f, LOGO_SCREEN_HEIGHT),
                                        logo_texture);
+    m_logo->configure();
+    if(logo_resource) delete logo_resource;
     }

@@ -232,11 +232,12 @@ Starsphere::~Starsphere() {
 //    /// TODO - longstanding unhappiness ( but compiles )
 //    /// "warning: invalid use of incomplete type ‘struct _TTF_Font’"
 //    /// "warning: forward declaration of ‘struct _TTF_Font’"
-    if(m_FontText) delete m_FontText;
+    if(m_FontText) TTF_CloseFont(m_FontText);
 
     // Delete HUD element pointers.
     if(m_logo1) delete m_logo1;
     if(m_logo2) delete m_logo2;
+
     if(m_user_info) delete m_user_info;
     if(m_team_info) delete m_team_info;
     if(m_total_info) delete m_total_info;
@@ -1387,8 +1388,10 @@ void Starsphere::make_globe_mesh_texture(void) {
                                               GL_STATIC_DRAW,
                                               GL_UNSIGNED_INT};
 
+    const Resource* earthmap = factory.createInstance("Earthmap");
+
     // To get at the underlying texture data from a Resource instance, then cast it void ...
-    RenderTask::texture_buffer_group t_group = {(const GLvoid*)factory.createInstance("Earthmap")->data()->data(),
+    RenderTask::texture_buffer_group t_group = {(const GLvoid*)earthmap->data()->data(),
                                                 EARTH_TEXTURE_WIDTH*EARTH_TEXTURE_HEIGHT*EARTH_TEXTURE_COLOR_DEPTH,
                                                 EARTH_TEXTURE_WIDTH,
                                                 EARTH_TEXTURE_HEIGHT,
@@ -1412,6 +1415,7 @@ void Starsphere::make_globe_mesh_texture(void) {
 
     // Claim all required state machine resources for this rendering task.
     m_render_task_earth->acquire();
+    if(earthmap) delete earthmap;
     }
 
 void Starsphere::make_logos(void) {
@@ -1429,9 +1433,9 @@ void Starsphere::make_logos(void) {
     // Create factory instance to then access the texture/bitmap.
     ResourceFactory factory;
 
-    const Resource* logo1 = factory.createInstance("Logo_E@H");
+    const Resource* m_logo_resource1 = factory.createInstance("Logo_E@H");
 
-    RenderTask::texture_buffer_group logo_texture1 = {(const GLvoid*)logo1->data()->data(),
+    RenderTask::texture_buffer_group logo_texture1 = {(const GLvoid*)m_logo_resource1->data()->data(),
                                                       EAH_TEXTURE_WIDTH * EAH_TEXTURE_HEIGHT * BYTES_PER_TEXEL,
                                                       EAH_TEXTURE_WIDTH,
                                                       EAH_TEXTURE_HEIGHT,
@@ -1445,10 +1449,12 @@ void Starsphere::make_logos(void) {
                                         glm::vec2(EAH_LOGO_SCREEN_WIDTH, 0.0f),
                                         glm::vec2(0.0f, EAH_LOGO_SCREEN_HEIGHT),
                                         logo_texture1);
+    m_logo1->configure();
+    if(m_logo_resource1) delete m_logo_resource1;
 
-    const Resource* logo2 = factory.createInstance("Logo_BOINC");
+    const Resource* m_logo_resource2 = factory.createInstance("Logo_BOINC");
 
-    RenderTask::texture_buffer_group logo_texture2 = {(const GLvoid*)logo2->data()->data(),
+    RenderTask::texture_buffer_group logo_texture2 = {(const GLvoid*)m_logo_resource2->data()->data(),
                                                       BOINC_TEXTURE_WIDTH * BOINC_TEXTURE_HEIGHT * BYTES_PER_TEXEL,
                                                       BOINC_TEXTURE_WIDTH,
                                                       BOINC_TEXTURE_HEIGHT,
@@ -1462,6 +1468,8 @@ void Starsphere::make_logos(void) {
                                         glm::vec2(BOINC_LOGO_SCREEN_WIDTH, 0.0f),
                                         glm::vec2(0.0f, BOINC_LOGO_SCREEN_HEIGHT),
                                         logo_texture2);
+    m_logo2->configure();
+    if(m_logo_resource2) delete m_logo_resource2;
     }
 
 void Starsphere::make_user_info(void) {
@@ -1471,6 +1479,7 @@ void Starsphere::make_user_info(void) {
     // Delete any old TexturedParalellogram.
     if(m_user_info != NULL) delete m_user_info;
 
+    if(m_info_text_surface) SDL_FreeSurface(m_info_text_surface);
     if(!(m_info_text_surface = TTF_RenderText_Blended(m_FontText, m_UserName.c_str(), color))){
         ErrorHandler::record("Starsphere::make_user() : can't make SDL_Surface for user!", ErrorHandler::FATAL);
         }
@@ -1491,11 +1500,14 @@ void Starsphere::make_user_info(void) {
                                             glm::vec2(0.0f, -m_info_text_surface->h),
                                             user_info_texture);
 
+    m_user_info->configure();
+
     GLfloat height_drop = m_info_text_surface->h;
 
     // Delete any old TexturedParalellogram.
     if(m_team_info != NULL) delete m_team_info;
 
+    if(m_info_text_surface) SDL_FreeSurface(m_info_text_surface);
     if(!(m_info_text_surface = TTF_RenderText_Blended(m_FontText, m_TeamName.c_str(), color))){
         ErrorHandler::record("Starsphere::make_user() : can't make SDL_Surface for team!", ErrorHandler::FATAL);
         }
@@ -1515,12 +1527,14 @@ void Starsphere::make_user_info(void) {
                                             glm::vec2(m_info_text_surface->w, 0.0f),
                                             glm::vec2(0.0f, -m_info_text_surface->h),
                                             team_info_texture);
+    m_team_info->configure();
 
     height_drop += m_info_text_surface->h;
 
     // Delete any old TexturedParalellogram.
     if(m_total_info != NULL) delete m_total_info;
 
+    if(m_info_text_surface) SDL_FreeSurface(m_info_text_surface);
     if(!(m_info_text_surface = TTF_RenderText_Blended(m_FontText, m_UserCredit.c_str(), color))){
         ErrorHandler::record("Starsphere::make_user() : can't make SDL_Surface for total!", ErrorHandler::FATAL);
         }
@@ -1540,11 +1554,14 @@ void Starsphere::make_user_info(void) {
                                              glm::vec2(m_info_text_surface->w, 0.0f),
                                              glm::vec2(0.0f, -m_info_text_surface->h),
                                              total_info_texture);
+    m_total_info->configure();
+
     height_drop += m_info_text_surface->h;
 
     // Delete any old TexturedParalellogram.
     if(m_RAC_info != NULL) delete m_RAC_info;
 
+    if(m_info_text_surface) SDL_FreeSurface(m_info_text_surface);
     if(!(m_info_text_surface = TTF_RenderText_Blended(m_FontText, m_UserRACredit.c_str(), color))){
         ErrorHandler::record("Starsphere::make_user() : can't make SDL_Surface for RAC!", ErrorHandler::FATAL);
         }
@@ -1564,6 +1581,7 @@ void Starsphere::make_user_info(void) {
                                            glm::vec2(m_info_text_surface->w, 0.0f),
                                            glm::vec2(0.0f, -m_info_text_surface->h),
                                            RAC_info_texture);
+    m_RAC_info->configure();
     }
 
 void Starsphere::make_HUD_help_entries(void) {
@@ -1615,6 +1633,7 @@ void Starsphere::make_HUD_help_entry() {
     // Delete any old TexturedParalellogram.
     if(m_help_info != NULL) delete m_help_info;
 
+    if(m_help_text_surface) SDL_FreeSurface(m_help_text_surface);
     // Attempt to make an SDL_Surface from font instance and current help text ...
     if(!(m_help_text_surface=TTF_RenderText_Blended(m_FontText,
                                                     m_HUD_help_texts.at(m_current_help_entry).c_str(),

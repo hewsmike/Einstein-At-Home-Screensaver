@@ -250,8 +250,8 @@ void StarsphereGravity::prepareTargetReticle(void) {
     // How wide and high ought the reticle be ?
     const GLfloat reticle_diameter = 0.5f;
 
-    // This turns ought aqua when I wanted yellow. Oh well.
-    const SDL_Color color = {255, 255, 0, 255};
+    // This turns out aqua when I wanted yellow. Oh well.
+    const SDL_Color color = {0, 255, 255, 255};
 
     // Try to get an SDL_Surface composed of the rendering of the target reticle.
     if(!(m_text_surface = TTF_RenderText_Blended(m_FontText, "+", color))){
@@ -259,7 +259,7 @@ void StarsphereGravity::prepareTargetReticle(void) {
         ErrorHandler::record("StarsphereGravity::prepareTargetReticle() : can't make SDL_Surface for target reticle !", ErrorHandler::FATAL);
         }
 
-    // Gather togethere all the info for the target reticle to be rendered.
+    // Gather together all the info for the target reticle to be rendered.
     RenderTask::texture_buffer_group reticle_info_texture = {(const GLvoid*)m_text_surface->pixels,
                                                              m_text_surface->w * m_text_surface->h * BYTES_PER_TEXEL,
                                                              m_text_surface->w,
@@ -317,8 +317,10 @@ void StarsphereGravity::prepareLogo() {
     // Create factory instance to then access the texture/bitmap.
     ResourceFactory factory;
 
+    const Resource* logo_resource = factory.createInstance("Logo_OCL");
+
     // Create HUD logo features.
-    RenderTask::texture_buffer_group logo_texture = {(const GLvoid*)factory.createInstance("Logo_OCL")->data()->data(),
+    RenderTask::texture_buffer_group logo_texture = {(const GLvoid*)logo_resource->data()->data(),
                                                       TEXTURE_WIDTH * TEXTURE_HEIGHT * BYTES_PER_TEXEL,
                                                       TEXTURE_WIDTH,
                                                       TEXTURE_HEIGHT,
@@ -333,4 +335,6 @@ void StarsphereGravity::prepareLogo() {
                                        glm::vec2(LOGO_SCREEN_WIDTH, 0.0f),
                                        glm::vec2(0.0f, LOGO_SCREEN_HEIGHT),
                                        logo_texture);
+    m_logo->configure();
+    if(logo_resource) delete logo_resource;
     }
