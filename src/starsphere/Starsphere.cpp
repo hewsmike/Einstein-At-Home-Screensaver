@@ -301,7 +301,7 @@ void Starsphere::make_stars(void) {
                 break;
                 }
             }
-        if (!is_dupe) {
+        if(!is_dupe) {
             // Vector for a single position.
             glm::vec3 temp = sphVertex3D(star_info[i][0], star_info[i][1], SPHERE_RADIUS);
 
@@ -316,9 +316,12 @@ void Starsphere::make_stars(void) {
     // Create factory instance to then access the shader strings.
     ResourceFactory factory;
 
+    const Resource* vshader_res = factory.createInstance("VertexShader_Stars");
+    const Resource* fshader_res = factory.createInstance("FragmentShader_Pass_Color3");
+
     // Populate data structure indicating GLSL code use.
-    RenderTask::shader_group s_group1 = {factory.createInstance("VertexShader_Stars")->std_string(),
-                                         factory.createInstance("FragmentShader_Pass_Color3")->std_string()};
+    RenderTask::shader_group s_group1 = {vshader_res->std_string(),
+                                         fshader_res->std_string()};
 
       // Populate data structure for vertices.
     RenderTask::vertex_buffer_group v_group1 = {star_vertex_data,
@@ -342,6 +345,9 @@ void Starsphere::make_stars(void) {
 
     // Claim all required state machine resources for this rendering task.
     m_render_task_star->acquire();
+
+    if(vshader_res) delete vshader_res;
+    if(fshader_res) delete fshader_res;
 
     return;
     }
@@ -368,10 +374,12 @@ void Starsphere::make_pulsars(void) {
     // Create factory instance to then access the shader strings.
     ResourceFactory factory;
 
-    // Populate data structure indicating GLSL code use.
-    RenderTask::shader_group s_group1 = {factory.createInstance("VertexShader_Pulsars")->std_string(),
-                                         factory.createInstance("FragmentShader_Pass_Color3")->std_string()};
+    const Resource* vshader_res = factory.createInstance("VertexShader_Stars");
+    const Resource* fshader_res = factory.createInstance("FragmentShader_Pass_Color3");
 
+    // Populate data structure indicating GLSL code use.
+    RenderTask::shader_group s_group1 = {vshader_res->std_string(),
+                                         fshader_res->std_string()};
     // Populate data structure for vertices.
     RenderTask::vertex_buffer_group v_group1 = {pulsar_vertex_data,
                                                 GLuint(sizeof(pulsar_vertex_data)),
@@ -394,6 +402,9 @@ void Starsphere::make_pulsars(void) {
 
     // Claim all required state machine resources for this rendering task.
     m_render_task_psr->acquire();
+
+    if(vshader_res) delete vshader_res;
+    if(fshader_res) delete fshader_res;
 
     return;
     }
@@ -420,9 +431,12 @@ void Starsphere::make_snrs(void) {
     // Create factory instance to then access the shader strings.
     ResourceFactory factory;
 
+    const Resource* vshader_res = factory.createInstance("VertexShader_Stars");
+    const Resource* fshader_res = factory.createInstance("FragmentShader_Pass_Color3");
+
     // Populate data structure indicating GLSL code use.
-    RenderTask::shader_group s_group1 = {factory.createInstance("VertexShader_Supernovae")->std_string(),
-                                         factory.createInstance("FragmentShader_Pass_Color3")->std_string()};
+    RenderTask::shader_group s_group1 = {vshader_res->std_string(),
+                                         fshader_res->std_string()};
 
     // Instantiate a rendering task with the provided information.
     RenderTask::vertex_buffer_group v_group1 = {snr_vertex_data,
@@ -446,6 +460,9 @@ void Starsphere::make_snrs(void) {
 
     // Claim all required state machine resources for this rendering task.
     m_render_task_snr->acquire();
+
+    if(vshader_res) delete vshader_res;
+    if(fshader_res) delete fshader_res;
 
     return;
     }
@@ -487,9 +504,12 @@ void Starsphere::make_constellations(void) {
     // Create factory instance to then access the shader strings.
     ResourceFactory factory;
 
+    const Resource* vshader_res = factory.createInstance("VertexShader_Stars");
+    const Resource* fshader_res = factory.createInstance("FragmentShader_Pass_Color3");
+
     // Populate data structure indicating GLSL code use.
-    RenderTask::shader_group s_group1 = {factory.createInstance("VertexShader_Stars")->std_string(),
-                                         factory.createInstance("FragmentShader_Pass_Color3")->std_string()};
+    RenderTask::shader_group s_group1 = {vshader_res->std_string(),
+                                         fshader_res->std_string()};
 
     // Populate data structure for vertices.
     RenderTask::vertex_buffer_group v_group1 = {star_vertex_data,
@@ -513,6 +533,9 @@ void Starsphere::make_constellations(void) {
 
     // Claim all required state machine resources for this rendering task.
     m_render_task_cons->acquire();
+
+    if(vshader_res) delete vshader_res;
+    if(fshader_res) delete fshader_res;
 
     return;
     }
@@ -539,9 +562,12 @@ void Starsphere::make_gammas(void) {
     // Create factory instance to then access the shader strings.
     ResourceFactory factory;
 
+    const Resource* vshader_res = factory.createInstance("VertexShader_Stars");
+    const Resource* fshader_res = factory.createInstance("FragmentShader_Pass_Color3");
+
     // Populate data structure indicating GLSL code use.
-    RenderTask::shader_group s_group1 = {factory.createInstance("VertexShader_Gammas")->std_string(),
-                                         factory.createInstance("FragmentShader_Pass_Color3")->std_string()};
+    RenderTask::shader_group s_group1 = {vshader_res->std_string(),
+                                         fshader_res->std_string()};
 
     // Instantiate a rendering task with the provided information.
     RenderTask::vertex_buffer_group v_group1 = {gamma_vertex_data,
@@ -565,6 +591,9 @@ void Starsphere::make_gammas(void) {
 
     // Claim all required state machine resources for this rendering task.
     m_render_task_gammas->acquire();
+
+    if(vshader_res) delete vshader_res;
+    if(fshader_res) delete fshader_res;
 
     return;
     }
@@ -914,9 +943,12 @@ void Starsphere::make_observatories(void) {
     // Create factory instance to then access the shader strings.
     ResourceFactory factory;
 
+    const Resource* vshader_res = factory.createInstance("VertexShader_Geode_Axes");
+    const Resource* fshader_res = factory.createInstance("FragmentShader_Pass_Color3");
+
     // Populate data structure indicating GLSL code use.
-    RenderTask::shader_group s_group = {factory.createInstance("VertexShader_Geode_Axes")->std_string(),
-                                        factory.createInstance("FragmentShader_Pass_Color3")->std_string()};
+    RenderTask::shader_group s_group = {vshader_res->std_string(),
+                                        fshader_res->std_string()};
 
     // Populate data structure for vertices.
     RenderTask::vertex_buffer_group v_group = {arms_vertex_data,
@@ -945,6 +977,9 @@ void Starsphere::make_observatories(void) {
 
     // Claim all required state machine resources for this rendering task.
     m_render_task_arms->acquire();
+
+    if(vshader_res) delete vshader_res;
+    if(fshader_res) delete fshader_res;
 
     return;
     }
@@ -1064,9 +1099,12 @@ void Starsphere::make_axes(void) {
     // Create factory instance to then access the shader strings.
     ResourceFactory factory;
 
+    const Resource* vshader_res = factory.createInstance("VertexShader_Axes");
+    const Resource* fshader_res = factory.createInstance("FragmentShader_Pass_Color3");
+
     // Populate data structure indicating GLSL code use.
-    RenderTask::shader_group s_group = {factory.createInstance("VertexShader_Axes")->std_string(),
-                                        factory.createInstance("FragmentShader_Pass_Color3")->std_string()};
+    RenderTask::shader_group s_group = {vshader_res->std_string(),
+                                        fshader_res->std_string()};
 
     // Populate data structure for vertices.
     RenderTask::vertex_buffer_group v_group = {axes_vertex_data,
@@ -1090,6 +1128,9 @@ void Starsphere::make_axes(void) {
 
     // Claim all required state machine resources for this rendering task.
     m_render_task_axes->acquire();
+
+    if(vshader_res) delete vshader_res;
+    if(fshader_res) delete fshader_res;
 
     return;
     }
@@ -1218,25 +1259,28 @@ void Starsphere::make_globe_mesh_lat_long(void) {
     // Create factory instance to then access the shader strings.
     ResourceFactory factory;
 
+    const Resource* vshader_res = factory.createInstance("VertexShader_Stars");
+    const Resource* fshader_res = factory.createInstance("FragmentShader_Pass_Color3");
+
     // Populate data structure indicating GLSL code use.
-    RenderTask::shader_group s_group1 = {factory.createInstance("VertexShader_Stars")->std_string(),
-                                         factory.createInstance("FragmentShader_Pass_Color3")->std_string()};
+    RenderTask::shader_group s_group = {vshader_res->std_string(),
+                                        fshader_res->std_string()};
 
     // Populate data structure for vertices.
-    RenderTask::vertex_buffer_group v_group1 = {globe_vertex_data,
-                                                GLuint(sizeof(globe_vertex_data)),
-                                                num_vertices,
-                                                GL_STATIC_DRAW,
-                                                VertexBuffer::BY_VERTEX};
-    // Populate data structure for indices.
-    RenderTask::index_buffer_group i_group1 = {globe_index_data,
-                                               GLuint(sizeof(globe_index_data)),
-                                               m_globe_lines*2,
+    RenderTask::vertex_buffer_group v_group = {globe_vertex_data,
+                                               GLuint(sizeof(globe_vertex_data)),
+                                               num_vertices,
                                                GL_STATIC_DRAW,
-                                               GL_UNSIGNED_INT};
+                                               VertexBuffer::BY_VERTEX};
+    // Populate data structure for indices.
+    RenderTask::index_buffer_group i_group = {globe_index_data,
+                                              GLuint(sizeof(globe_index_data)),
+                                              m_globe_lines*2,
+                                              GL_STATIC_DRAW,
+                                              GL_UNSIGNED_INT};
 
     // Instantiate a rendering task with the provided information.
-    m_render_task_globe = new RenderTask(s_group1, v_group1, i_group1);
+    m_render_task_globe = new RenderTask(s_group, v_group, i_group);
 
     // For vertex input need to correlate with vertex shader code.
     m_render_task_globe->addSpecification({0, "position", 3, GL_FLOAT, GL_FALSE});
@@ -1248,6 +1292,11 @@ void Starsphere::make_globe_mesh_lat_long(void) {
 
     // Claim all required state machine resources for this rendering task.
     m_render_task_globe->acquire();
+
+    if(vshader_res) delete vshader_res;
+    if(fshader_res) delete fshader_res;
+
+    return;
     }
 
 /**
@@ -1368,12 +1417,13 @@ void Starsphere::make_globe_mesh_texture(void) {
             }
         }
 
-    // Create factory instance to then access the shader strings.
-    //ResourceFactory factory2;
+    // Use the same factory instance to then access the shader strings.
+    const Resource* vshader_res = factory.createInstance("VertexShader_Earth");
+    const Resource* fshader_res = factory.createInstance("FragmentShader_Earth");
 
     // Populate data structure indicating GLSL code use.
-    RenderTask::shader_group s_group = {factory.createInstance("VertexShader_Earth")->std_string(),
-                                        factory.createInstance("FragmentShader_Earth")->std_string()};
+    RenderTask::shader_group s_group = {vshader_res->std_string(),
+                                        fshader_res->std_string()};
 
     // Populate data structure for vertices.
     RenderTask::vertex_buffer_group v_group = {globe_vertex_data,
@@ -1416,6 +1466,10 @@ void Starsphere::make_globe_mesh_texture(void) {
     // Claim all required state machine resources for this rendering task.
     m_render_task_earth->acquire();
     if(earthmap) delete earthmap;
+    if(vshader_res) delete vshader_res;
+    if(fshader_res) delete fshader_res;
+
+    return;
     }
 
 void Starsphere::make_logos(void) {

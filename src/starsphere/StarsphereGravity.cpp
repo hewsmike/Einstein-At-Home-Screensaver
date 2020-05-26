@@ -158,6 +158,7 @@ void StarsphereGravity::prepareSearchInformation() {
     this->refreshBOINCInformation();
     SDL_Color color = {255, 255, 255, 255};
 
+    if(m_text_surface) SDL_FreeSurface(m_text_surface);
     if(!(m_text_surface = TTF_RenderText_Blended(m_FontText, m_WUSkyPosRightAscension.c_str(), color))){
         ErrorHandler::record("StarsphereGravity::prepareSearchInformation() : can't make SDL_Surface for right asccension!", ErrorHandler::FATAL);
         }
@@ -179,6 +180,8 @@ void StarsphereGravity::prepareSearchInformation() {
                                                        glm::vec2(0.0f, -m_text_surface->h),
                                                        RA_info_texture);
     wu_top_line -= m_text_surface->h;
+    m_right_ascension_info->configure();
+    if(m_text_surface) SDL_FreeSurface(m_text_surface);
 
     if(!(m_text_surface = TTF_RenderText_Blended(m_FontText, m_WUSkyPosDeclination.c_str(), color))){
         ErrorHandler::record("StarsphereGravity::prepareSearchInformation() : can't make SDL_Surface for declination!", ErrorHandler::FATAL);
@@ -201,6 +204,8 @@ void StarsphereGravity::prepareSearchInformation() {
                                                    glm::vec2(0.0f, -m_text_surface->h),
                                                    DEC_info_texture);
     wu_top_line -= m_text_surface->h;
+    m_declination_info->configure();
+    if(m_text_surface) SDL_FreeSurface(m_text_surface);
 
     if(!(m_text_surface = TTF_RenderText_Blended(m_FontText, m_WUPercentDone.c_str(), color))){
         ErrorHandler::record("StarsphereGravity::prepareSearchInformation() : can't make SDL_Surface for percent done!", ErrorHandler::FATAL);
@@ -224,6 +229,9 @@ void StarsphereGravity::prepareSearchInformation() {
                                                      percent_info_texture);
     wu_top_line -= m_text_surface->h;
 
+    m_percent_done_info->configure();
+    if(m_text_surface) SDL_FreeSurface(m_text_surface);
+
     if(!(m_text_surface = TTF_RenderText_Blended(m_FontText, m_WUCPUTime.c_str(), color))){
         ErrorHandler::record("StarsphereGravity::prepareSearchInformation() : can't make SDL_Surface for CPU time!", ErrorHandler::FATAL);
         }
@@ -244,6 +252,8 @@ void StarsphereGravity::prepareSearchInformation() {
                                                 glm::vec2(m_text_surface->w, 0.0f),
                                                 glm::vec2(0.0f, -m_text_surface->h),
                                                 CPU_time_info_texture);
+    m_cpu_time_info->configure();
+    if(m_text_surface) SDL_FreeSurface(m_text_surface);
     }
 
 void StarsphereGravity::prepareTargetReticle(void) {
