@@ -40,9 +40,11 @@ RenderTask::RenderTask(RenderTask::shader_group s_group) {
     }
 
 RenderTask::RenderTask(RenderTask::shader_group s_group,
-                       RenderTask::texture_buffer_group t_group) :
-                           RenderTask(s_group) {
+                       RenderTask::texture_buffer_group t_group) {
     ErrorHandler::record("RenderTask::RenderTask(): MINIMUM + TEXTURE", ErrorHandler::INFORM);
+    // Set unused pointers to null.
+    m_index_buffer = NULL;
+    m_vertex_buffer = NULL;
 
     if(t_group.texture_data == NULL) {
         ErrorHandler::record("RenderTask::RenderTask(): Texture not provided!", ErrorHandler::FATAL);
@@ -57,6 +59,12 @@ RenderTask::RenderTask(RenderTask::shader_group s_group,
                                          t_group.wrap_type_t,
                                          t_group.mipmaps);
 
+    // Always need to define an attribute adapter, even though not used here.
+    m_attrib_adapt = new AttributeInputAdapter();
+    // Always need a trigger for the pipeline.
+    m_vertex_fetch = new VertexFetch();
+    setBaseCase(s_group);
+
     m_pipeline = new Pipeline(m_program, m_vertex_fetch, m_texture_buffer);
     }
 
@@ -67,7 +75,6 @@ RenderTask::RenderTask(RenderTask::shader_group s_group,
     if(v_group.buffer_data == NULL) {
         ErrorHandler::record("RenderTask::RenderTask(): Vertex data not provided!", ErrorHandler::FATAL);
         }
-
     m_vertex_buffer = new VertexBuffer(v_group.buffer_data,
                                        v_group.bytes,
                                        v_group.vertices,
@@ -89,9 +96,19 @@ RenderTask::RenderTask(RenderTask::shader_group s_group,
 
 RenderTask::RenderTask(RenderTask::shader_group s_group,
                    RenderTask::vertex_buffer_group v_group,
-                   RenderTask::texture_buffer_group t_group) :
-                        RenderTask(s_group, v_group) {
+                   RenderTask::texture_buffer_group t_group) {
     ErrorHandler::record("RenderTask::RenderTask(): MINIMUM + VERTICES + TEXTURE", ErrorHandler::INFORM);
+    // Set unused pointers to NULL.
+    m_index_buffer = NULL;
+
+    if(v_group.buffer_data == NULL) {
+        ErrorHandler::record("RenderTask::RenderTask(): Vertex data not provided!", ErrorHandler::FATAL);
+        }
+    m_vertex_buffer = new VertexBuffer(v_group.buffer_data,
+                                       v_group.bytes,
+                                       v_group.vertices,
+                                       v_group.usage,
+                                       v_group.mix);
 
     if(t_group.texture_data == NULL) {
         ErrorHandler::record("RenderTask::RenderTask: Texture not provided!", ErrorHandler::FATAL);
@@ -105,6 +122,13 @@ RenderTask::RenderTask(RenderTask::shader_group s_group,
                                          t_group.wrap_type_s,
                                          t_group.mipmaps);
     m_texture_buffer->acquire();
+
+    // Need to define an attribute adapter.
+    m_attrib_adapt = new AttributeInputAdapter();
+    // Always need a trigger for the pipeline.
+    m_vertex_fetch = new VertexFetch(m_attrib_adapt, m_vertex_buffer);
+
+    setBaseCase(s_group);
     m_pipeline = new Pipeline(m_program, m_vertex_fetch, m_texture_buffer);
     }
 
@@ -114,10 +138,10 @@ RenderTask::RenderTask(RenderTask::shader_group s_group,
     ErrorHandler::record("RenderTask::RenderTask(): MINIMUM + VERTICES + INDICES", ErrorHandler::INFORM);
 
     m_vertex_buffer = new VertexBuffer(v_group.buffer_data,
-                                           v_group.bytes,
-                                           v_group.vertices,
-                                           v_group.usage,
-                                           v_group.mix);
+                                       v_group.bytes,
+                                       v_group.vertices,
+                                       v_group.usage,
+                                       v_group.mix);
 
     m_index_buffer = new IndexBuffer(i_group.buffer_data,
                                      i_group.bytes,
