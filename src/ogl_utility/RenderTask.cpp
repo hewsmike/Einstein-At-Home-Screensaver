@@ -23,31 +23,34 @@
 #include <sstream>
 
 RenderTask::RenderTask(RenderTask::shader_group s_group) {
-    ErrorHandler::record("RenderTask::RenderTask(): MINUMUM", ErrorHandler::INFORM);
+    ErrorHandler::record("RenderTask::RenderTask(A): MINIMUM", ErrorHandler::INFORM);
 
     // Set unused pointers to NULL.
+    m_vertex_buffer = NULL;
     m_index_buffer = NULL;
     m_texture_buffer = NULL;
-    m_vertex_buffer = NULL;
 
-    // Always need to define an attribute adapter, even though not used here.
-    m_attrib_adapt = new AttributeInputAdapter();
-    // Always need a trigger for the pipeline.
+    // Set the basic requirements.
+    setBaseCase(s_group);
+
+    // Always need a trigger for the pipeline, type will
+    // vary with use case.
     m_vertex_fetch = new VertexFetch();
 
-    setBaseCase(s_group);
+    // Always need a pipeline, likewise type will vary with
+    // use case.
     m_pipeline = new Pipeline(m_program, m_vertex_fetch);
     }
 
 RenderTask::RenderTask(RenderTask::shader_group s_group,
                        RenderTask::texture_buffer_group t_group) {
-    ErrorHandler::record("RenderTask::RenderTask(): MINIMUM + TEXTURE", ErrorHandler::INFORM);
+    ErrorHandler::record("RenderTask::RenderTask(B): MINIMUM + TEXTURE", ErrorHandler::INFORM);
     // Set unused pointers to null.
-    m_index_buffer = NULL;
     m_vertex_buffer = NULL;
+    m_index_buffer = NULL;
 
     if(t_group.texture_data == NULL) {
-        ErrorHandler::record("RenderTask::RenderTask(): Texture not provided!", ErrorHandler::FATAL);
+        ErrorHandler::record("RenderTask::RenderTask(B): Texture not provided!", ErrorHandler::FATAL);
         }
     m_texture_buffer = new TextureBuffer(t_group.texture_data,
                                          t_group.bytes,
@@ -58,22 +61,30 @@ RenderTask::RenderTask(RenderTask::shader_group s_group,
                                          t_group.wrap_type_s,
                                          t_group.wrap_type_t,
                                          t_group.mipmaps);
+    m_texture_buffer->acquire();
 
-    // Always need to define an attribute adapter, even though not used here.
-    m_attrib_adapt = new AttributeInputAdapter();
-    // Always need a trigger for the pipeline.
-    m_vertex_fetch = new VertexFetch();
+    // Set the basic requirements.
     setBaseCase(s_group);
 
+    // Always need a trigger for the pipeline, type will
+    // vary with use case.
+    m_vertex_fetch = new VertexFetch();
+
+    // Always need a pipeline, likewise type will vary with
+    // use case.
     m_pipeline = new Pipeline(m_program, m_vertex_fetch, m_texture_buffer);
     }
 
 RenderTask::RenderTask(RenderTask::shader_group s_group,
                        RenderTask::vertex_buffer_group v_group) {
-    ErrorHandler::record("RenderTask::RenderTask(): MINIMUM + VERTICES", ErrorHandler::INFORM);
+    ErrorHandler::record("RenderTask::RenderTask(C): MINIMUM + VERTICES", ErrorHandler::INFORM);
+
+    // Set unused pointers to NULL.
+    m_index_buffer = NULL;
+    m_texture_buffer = NULL;
 
     if(v_group.buffer_data == NULL) {
-        ErrorHandler::record("RenderTask::RenderTask(): Vertex data not provided!", ErrorHandler::FATAL);
+        ErrorHandler::record("RenderTask::RenderTask(C): Vertex data not provided!", ErrorHandler::FATAL);
         }
     m_vertex_buffer = new VertexBuffer(v_group.buffer_data,
                                        v_group.bytes,
@@ -81,28 +92,27 @@ RenderTask::RenderTask(RenderTask::shader_group s_group,
                                        v_group.usage,
                                        v_group.mix);
 
-    // Set unused pointers to NULL.
-    m_index_buffer = NULL;
-    m_texture_buffer = NULL;
+    // Set the basic requirements.
+    setBaseCase(s_group);
 
-    // Need to define an attribute adapter.
-    m_attrib_adapt = new AttributeInputAdapter();
-    // Always need a trigger for the pipeline.
+    // Always need a trigger for the pipeline, type will
+    // vary with use case.
     m_vertex_fetch = new VertexFetch(m_attrib_adapt, m_vertex_buffer);
 
-    setBaseCase(s_group);
+    // Always need a pipeline, likewise type will vary with
+    // use case.
     m_pipeline = new Pipeline(m_program, m_vertex_fetch);
     }
 
 RenderTask::RenderTask(RenderTask::shader_group s_group,
                    RenderTask::vertex_buffer_group v_group,
                    RenderTask::texture_buffer_group t_group) {
-    ErrorHandler::record("RenderTask::RenderTask(): MINIMUM + VERTICES + TEXTURE", ErrorHandler::INFORM);
+    ErrorHandler::record("RenderTask::RenderTask(D): MINIMUM + VERTICES + TEXTURE", ErrorHandler::INFORM);
     // Set unused pointers to NULL.
     m_index_buffer = NULL;
 
     if(v_group.buffer_data == NULL) {
-        ErrorHandler::record("RenderTask::RenderTask(): Vertex data not provided!", ErrorHandler::FATAL);
+        ErrorHandler::record("RenderTask::RenderTask(D): Vertex data not provided!", ErrorHandler::FATAL);
         }
     m_vertex_buffer = new VertexBuffer(v_group.buffer_data,
                                        v_group.bytes,
@@ -111,7 +121,7 @@ RenderTask::RenderTask(RenderTask::shader_group s_group,
                                        v_group.mix);
 
     if(t_group.texture_data == NULL) {
-        ErrorHandler::record("RenderTask::RenderTask: Texture not provided!", ErrorHandler::FATAL);
+        ErrorHandler::record("RenderTask::RenderTask(D): Texture not provided!", ErrorHandler::FATAL);
         }
     m_texture_buffer = new TextureBuffer(t_group.texture_data,
                                          t_group.bytes,
@@ -123,42 +133,53 @@ RenderTask::RenderTask(RenderTask::shader_group s_group,
                                          t_group.mipmaps);
     m_texture_buffer->acquire();
 
-    // Need to define an attribute adapter.
-    m_attrib_adapt = new AttributeInputAdapter();
-    // Always need a trigger for the pipeline.
+    // Set the basic requirements.
+    setBaseCase(s_group);
+
+    // Always need a trigger for the pipeline, type will
+    // vary with use case.
     m_vertex_fetch = new VertexFetch(m_attrib_adapt, m_vertex_buffer);
 
-    setBaseCase(s_group);
+    // Always need a pipeline, likewise type will vary with
+    // use case.
     m_pipeline = new Pipeline(m_program, m_vertex_fetch, m_texture_buffer);
     }
 
 RenderTask::RenderTask(RenderTask::shader_group s_group,
                    RenderTask::vertex_buffer_group v_group,
                    RenderTask::index_buffer_group i_group) {
-    ErrorHandler::record("RenderTask::RenderTask(): MINIMUM + VERTICES + INDICES", ErrorHandler::INFORM);
+    ErrorHandler::record("RenderTask::RenderTask(E): MINIMUM + VERTICES + INDICES", ErrorHandler::INFORM);
 
+    // Set unused pointers to NULL.
+    m_texture_buffer = NULL;
+
+    if(v_group.buffer_data == NULL) {
+        ErrorHandler::record("RenderTask::RenderTask(E): Vertex data not provided!", ErrorHandler::FATAL);
+        }
     m_vertex_buffer = new VertexBuffer(v_group.buffer_data,
                                        v_group.bytes,
                                        v_group.vertices,
                                        v_group.usage,
                                        v_group.mix);
 
+    if(i_group.buffer_data == NULL) {
+        ErrorHandler::record("RenderTask::RenderTask(E): Index data not provided!", ErrorHandler::FATAL);
+        }
     m_index_buffer = new IndexBuffer(i_group.buffer_data,
                                      i_group.bytes,
                                      i_group.indices,
                                      i_group.usage,
                                      i_group.index_type);
 
-    // Set unused pointers to NULL.
-    m_texture_buffer = NULL;
-
-    // Need to define an attribute adapter.
-    m_attrib_adapt = new AttributeInputAdapter();
-    // Always need a trigger for the pipeline.
-    m_vertex_fetch = new VertexFetch(m_attrib_adapt, m_vertex_buffer, m_index_buffer);
-
+    // Set the basic requirements.
     setBaseCase(s_group);
 
+    // Always need a trigger for the pipeline, type will
+    // vary with use case.
+    m_vertex_fetch = new VertexFetch(m_attrib_adapt, m_vertex_buffer, m_index_buffer);
+
+    // Always need a pipeline, likewise type will vary with
+    // use case.
     m_pipeline = new Pipeline(m_program, m_vertex_fetch);
     }
 
@@ -166,23 +187,7 @@ RenderTask::RenderTask(RenderTask::shader_group s_group,
                        RenderTask::vertex_buffer_group v_group,
                        RenderTask::index_buffer_group i_group,
                        RenderTask::texture_buffer_group t_group) {
-    ErrorHandler::record("RenderTask::RenderTask(): MINIMUM + VERTICES + INDICES + TEXTURE", ErrorHandler::INFORM);
-
-    //
-    m_texture_buffer = new TextureBuffer(t_group.texture_data,
-                                         t_group.bytes,
-                                         t_group.width,
-                                         t_group.height,
-                                         t_group.format,
-                                         t_group.data_type,
-                                         t_group.wrap_type_s,
-                                         t_group.wrap_type_t,
-                                         t_group.mipmaps);
-
-    m_vertex_shader = new VertexShader(s_group.vert_shader_source);
-    m_frag_shader = new FragmentShader(s_group.frag_shader_source);
-    m_attrib_adapt = new AttributeInputAdapter();
-    m_program = new Program(m_vertex_shader, m_frag_shader, m_attrib_adapt);
+    ErrorHandler::record("RenderTask::RenderTask(F): MINIMUM + VERTICES + INDICES + TEXTURE", ErrorHandler::INFORM);
 
     // Is a vertex buffer being used ?
     m_vertex_buffer = NULL;
@@ -198,7 +203,24 @@ RenderTask::RenderTask(RenderTask::shader_group s_group,
         m_index_buffer->acquire();
         }
 
-    //
+    if(t_group.texture_data == NULL) {
+        ErrorHandler::record("RenderTask::RenderTask(F): Texture not provided!", ErrorHandler::FATAL);
+        }
+    m_texture_buffer = new TextureBuffer(t_group.texture_data,
+                                         t_group.bytes,
+                                         t_group.width,
+                                         t_group.height,
+                                         t_group.format,
+                                         t_group.data_type,
+                                         t_group.wrap_type_s,
+                                         t_group.wrap_type_t,
+                                         t_group.mipmaps);
+
+
+
+    // Set the basic requirements.
+    setBaseCase(s_group);
+
     if((m_vertex_buffer == NULL)) {
         m_vertex_fetch = new VertexFetch();
         }
@@ -271,6 +293,8 @@ void RenderTask::acquire(void) {
 
 void RenderTask::setBaseCase(RenderTask::shader_group s_group) {
     // Now configure the basic components.
+    // Always need to define an attribute adapter, even though not always used.
+    m_attrib_adapt = new AttributeInputAdapter();
     // Always need shader code.
     m_vertex_shader = new VertexShader(s_group.vert_shader_source);
     m_frag_shader = new FragmentShader(s_group.frag_shader_source);
