@@ -246,14 +246,14 @@ class RenderTask {
 
     private:
         AttributeInputAdapter* m_attrib_adapt;
-        FragmentShader* m_frag_shader;
-        IndexBuffer* m_index_buffer;
-        Pipeline* m_pipeline;
-        Program* m_program;
-        TextureBuffer* m_texture_buffer;
-        VertexBuffer* m_vertex_buffer;
-        VertexFetch* m_vertex_fetch;
         VertexShader* m_vertex_shader;
+        FragmentShader* m_frag_shader;
+        Program* m_program;
+        VertexBuffer* m_vertex_buffer;
+        IndexBuffer* m_index_buffer;
+        TextureBuffer* m_texture_buffer;
+        VertexFetch* m_vertex_fetch;
+        Pipeline* m_pipeline;
 
         void setBaseCase(RenderTask::shader_group s_group);
     };

@@ -49,6 +49,7 @@ RenderTask::RenderTask(RenderTask::shader_group s_group,
     m_vertex_buffer = NULL;
     m_index_buffer = NULL;
 
+    // Check for actual presence of texture data.
     if(t_group.texture_data == NULL) {
         ErrorHandler::record("RenderTask::RenderTask(B): Texture not provided!", ErrorHandler::FATAL);
         }
@@ -61,8 +62,6 @@ RenderTask::RenderTask(RenderTask::shader_group s_group,
                                          t_group.wrap_type_s,
                                          t_group.wrap_type_t,
                                          t_group.mipmaps);
-    m_texture_buffer->acquire();
-
     // Set the basic requirements.
     setBaseCase(s_group);
 
@@ -83,6 +82,7 @@ RenderTask::RenderTask(RenderTask::shader_group s_group,
     m_index_buffer = NULL;
     m_texture_buffer = NULL;
 
+    // Check for actual presence of vertex data.
     if(v_group.buffer_data == NULL) {
         ErrorHandler::record("RenderTask::RenderTask(C): Vertex data not provided!", ErrorHandler::FATAL);
         }
@@ -111,6 +111,7 @@ RenderTask::RenderTask(RenderTask::shader_group s_group,
     // Set unused pointers to NULL.
     m_index_buffer = NULL;
 
+    // Check for actual presence of vertex data.
     if(v_group.buffer_data == NULL) {
         ErrorHandler::record("RenderTask::RenderTask(D): Vertex data not provided!", ErrorHandler::FATAL);
         }
@@ -120,6 +121,7 @@ RenderTask::RenderTask(RenderTask::shader_group s_group,
                                        v_group.usage,
                                        v_group.mix);
 
+    // Check for actual presence of texture data.
     if(t_group.texture_data == NULL) {
         ErrorHandler::record("RenderTask::RenderTask(D): Texture not provided!", ErrorHandler::FATAL);
         }
@@ -131,8 +133,6 @@ RenderTask::RenderTask(RenderTask::shader_group s_group,
                                          t_group.data_type,
                                          t_group.wrap_type_s,
                                          t_group.mipmaps);
-    m_texture_buffer->acquire();
-
     // Set the basic requirements.
     setBaseCase(s_group);
 
@@ -153,6 +153,7 @@ RenderTask::RenderTask(RenderTask::shader_group s_group,
     // Set unused pointers to NULL.
     m_texture_buffer = NULL;
 
+    // Check for actual presence of vertex data.
     if(v_group.buffer_data == NULL) {
         ErrorHandler::record("RenderTask::RenderTask(E): Vertex data not provided!", ErrorHandler::FATAL);
         }
@@ -162,6 +163,7 @@ RenderTask::RenderTask(RenderTask::shader_group s_group,
                                        v_group.usage,
                                        v_group.mix);
 
+    // Check for actual presence of index data.
     if(i_group.buffer_data == NULL) {
         ErrorHandler::record("RenderTask::RenderTask(E): Index data not provided!", ErrorHandler::FATAL);
         }
@@ -189,20 +191,27 @@ RenderTask::RenderTask(RenderTask::shader_group s_group,
                        RenderTask::texture_buffer_group t_group) {
     ErrorHandler::record("RenderTask::RenderTask(F): MINIMUM + VERTICES + INDICES + TEXTURE", ErrorHandler::INFORM);
 
-    // Is a vertex buffer being used ?
-    m_vertex_buffer = NULL;
-    if(v_group.buffer_data != NULL) {
-        m_vertex_buffer = new VertexBuffer(v_group.buffer_data, v_group.bytes, v_group.vertices, v_group.usage, v_group.mix);
-        m_vertex_buffer->acquire();
+    // Check for actual presence of vertex data.
+    if(v_group.buffer_data == NULL) {
+        ErrorHandler::record("RenderTask::RenderTask(F): Vertex data not provided!", ErrorHandler::FATAL);
         }
+    m_vertex_buffer = new VertexBuffer(v_group.buffer_data,
+                                       v_group.bytes,
+                                       v_group.vertices,
+                                       v_group.usage,
+                                       v_group.mix);
 
-    // Is an index buffer being used ?
-    m_index_buffer = NULL;
-    if(i_group.buffer_data != NULL) {
-        m_index_buffer = new IndexBuffer(i_group.buffer_data, i_group.bytes, i_group.indices, i_group.usage, i_group.index_type);
-        m_index_buffer->acquire();
+    // Check for actual presence of index data.
+    if(i_group.buffer_data == NULL) {
+        ErrorHandler::record("RenderTask::RenderTask(F): Index data not provided!", ErrorHandler::FATAL);
         }
+    m_index_buffer = new IndexBuffer(i_group.buffer_data,
+                                     i_group.bytes,
+                                     i_group.indices,
+                                     i_group.usage,
+                                     i_group.index_type);
 
+    // Check for actual presence of texture data.
     if(t_group.texture_data == NULL) {
         ErrorHandler::record("RenderTask::RenderTask(F): Texture not provided!", ErrorHandler::FATAL);
         }
@@ -216,23 +225,15 @@ RenderTask::RenderTask(RenderTask::shader_group s_group,
                                          t_group.wrap_type_t,
                                          t_group.mipmaps);
 
-
-
     // Set the basic requirements.
     setBaseCase(s_group);
 
-    if((m_vertex_buffer == NULL)) {
-        m_vertex_fetch = new VertexFetch();
-        }
-    else {
-        if(m_index_buffer == NULL) {
-            m_vertex_fetch = new VertexFetch(m_attrib_adapt, m_vertex_buffer);
-            }
-        else {
-            m_vertex_fetch = new VertexFetch(m_attrib_adapt, m_vertex_buffer, m_index_buffer);
-            }
-        }
+    // Always need a trigger for the pipeline, type will
+    // vary with use case.
+    m_vertex_fetch = new VertexFetch(m_attrib_adapt, m_vertex_buffer, m_index_buffer);
 
+    // Always need a pipeline, likewise type will vary with
+    // use case.
     m_pipeline = new Pipeline(m_program, m_vertex_fetch, m_texture_buffer);
     }
 
