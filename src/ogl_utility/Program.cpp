@@ -61,12 +61,12 @@ bool Program::acquire(void) {
     // Only get a handle if none already.
     if(this->ID() == OGL_ID::NO_ID) {
         // Get an OpenGL handle for this program object.
-            GLuint temp = glCreateProgram();
+        GLuint temp = glCreateProgram();
         set_ID(temp);
         // If that handle acquisition failed the we have no other option ...
         if(this->ID() == OGL_ID::NO_ID)  {
         ErrorHandler::record("Program::acquire() : OpenGL handle acquisition failure !",
-                                  ErrorHandler::FATAL);
+                             ErrorHandler::FATAL);
             }
         }
 
@@ -119,8 +119,8 @@ bool Program::configure(void) {
         this->acquire();
         }
 
-    // Provided shaders have acquired and not deleted,
-    // then attach them.
+    // Provided shaders have not acquired and not deleted,
+    // then acquire them.
     if((m_vertex_shader->isAcquired() == false) &&
        (m_vertex_shader->isDeleted() == false)) {
         this->m_vertex_shader->acquire();
@@ -136,7 +136,7 @@ bool Program::configure(void) {
         m_linker_log = "";
 
         std::stringstream vshader_msg;
-        vshader_msg << "Program::acquire() : attaching vertex shader with ID = "
+        vshader_msg << "Program::configure() : attaching vertex shader with ID = "
                     << m_vertex_shader->ID()
                     << " to program with ID = "
                     << this->ID();
@@ -144,7 +144,7 @@ bool Program::configure(void) {
         glAttachShader(this->ID(), m_vertex_shader->ID());
 
         std::stringstream fshader_msg;
-        fshader_msg << "Program::acquire() : attaching fragment shader with ID = "
+        fshader_msg << "Program::configure() : attaching fragment shader with ID = "
                     << m_fragment_shader->ID()
                     << " to program with ID = "
                     << this->ID();
