@@ -111,7 +111,8 @@ class StarsphereGravity : public Starsphere {
         TexturedParallelogram* m_logo;
 
         /// For celestial sphere target reticle
-        TexturedParallelogram* m_target;
+        TexturedParallelogram* m_target1;
+        TexturedParallelogram* m_target2;
 
         SDL_Surface* m_text_surface;
 

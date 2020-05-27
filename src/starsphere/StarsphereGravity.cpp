@@ -33,7 +33,8 @@ StarsphereGravity::StarsphereGravity() :
         m_EinsteinAdapter(&m_BoincAdapter) {
     m_logo = NULL;
 
-    m_target = NULL;
+    m_target1 = NULL;
+    m_target2 = NULL;
 
     m_text_surface = NULL;
 
@@ -45,7 +46,8 @@ StarsphereGravity::StarsphereGravity() :
 
 StarsphereGravity::~StarsphereGravity() {
     if(m_logo) delete m_logo;
-    if(m_target) delete m_target;
+    if(m_target1) delete m_target1;
+    if(m_target2) delete m_target2;
     if(m_text_surface) SDL_FreeSurface(m_text_surface);
     if(m_right_ascension_info) delete m_right_ascension_info;
     if(m_declination_info) delete m_declination_info;
@@ -86,7 +88,10 @@ void StarsphereGravity::render(const double timeOfDay) {
 
     if(isFeature(MARKER)) {
         if((m_framecount%TARGET_RETICLE_BLINK_INTERVAL) < 6) {
-            m_target->utilise();
+            m_target1->utilise();
+            }
+        else {
+            m_target2->utilise();
             }
         }
 
@@ -181,8 +186,8 @@ void StarsphereGravity::prepareSearchInformation() {
                                                        RA_info_texture);
     wu_top_line -= m_text_surface->h;
     m_right_ascension_info->configure();
-    if(m_text_surface) SDL_FreeSurface(m_text_surface);
 
+    if(m_text_surface) SDL_FreeSurface(m_text_surface);
     if(!(m_text_surface = TTF_RenderText_Blended(m_FontText, m_WUSkyPosDeclination.c_str(), color))){
         ErrorHandler::record("StarsphereGravity::prepareSearchInformation() : can't make SDL_Surface for declination!", ErrorHandler::FATAL);
         }
@@ -205,8 +210,8 @@ void StarsphereGravity::prepareSearchInformation() {
                                                    DEC_info_texture);
     wu_top_line -= m_text_surface->h;
     m_declination_info->configure();
-    if(m_text_surface) SDL_FreeSurface(m_text_surface);
 
+    if(m_text_surface) SDL_FreeSurface(m_text_surface);
     if(!(m_text_surface = TTF_RenderText_Blended(m_FontText, m_WUPercentDone.c_str(), color))){
         ErrorHandler::record("StarsphereGravity::prepareSearchInformation() : can't make SDL_Surface for percent done!", ErrorHandler::FATAL);
         }
@@ -230,8 +235,8 @@ void StarsphereGravity::prepareSearchInformation() {
     wu_top_line -= m_text_surface->h;
 
     m_percent_done_info->configure();
-    if(m_text_surface) SDL_FreeSurface(m_text_surface);
 
+    if(m_text_surface) SDL_FreeSurface(m_text_surface);
     if(!(m_text_surface = TTF_RenderText_Blended(m_FontText, m_WUCPUTime.c_str(), color))){
         ErrorHandler::record("StarsphereGravity::prepareSearchInformation() : can't make SDL_Surface for CPU time!", ErrorHandler::FATAL);
         }
@@ -253,7 +258,6 @@ void StarsphereGravity::prepareSearchInformation() {
                                                 glm::vec2(0.0f, -m_text_surface->h),
                                                 CPU_time_info_texture);
     m_cpu_time_info->configure();
-    if(m_text_surface) SDL_FreeSurface(m_text_surface);
     }
 
 void StarsphereGravity::prepareTargetReticle(void) {
@@ -262,26 +266,6 @@ void StarsphereGravity::prepareTargetReticle(void) {
 
     // This turns out aqua when I wanted yellow. Oh well.
     const SDL_Color color = {0, 255, 255, 255};
-
-    // Try to get an SDL_Surface composed of the rendering of the target reticle.
-    if(!(m_text_surface = TTF_RenderText_Blended(m_FontText, "+", color))){
-        // Fatal out in the lack.
-        ErrorHandler::record("StarsphereGravity::prepareTargetReticle() : can't make SDL_Surface for target reticle !", ErrorHandler::FATAL);
-        }
-
-    // Gather together all the info for the target reticle to be rendered.
-    RenderTask::texture_buffer_group reticle_info_texture = {(const GLvoid*)m_text_surface->pixels,
-                                                             m_text_surface->w * m_text_surface->h * BYTES_PER_TEXEL,
-                                                             m_text_surface->w,
-                                                             m_text_surface->h,
-                                                             GL_RGBA,
-                                                             GL_UNSIGNED_BYTE,
-                                                             GL_CLAMP_TO_EDGE,
-                                                             GL_CLAMP_TO_EDGE,
-                                                             false};
-
-    // Delete any prior TexturedParallelogram.
-    if(m_target) delete m_target;
 
     // These are the target coordinates.
     GLfloat target_base_RA = m_CurrentRightAscension;
@@ -306,12 +290,61 @@ void StarsphereGravity::prepareTargetReticle(void) {
     // The full height of the area to be texteured.
     target_base_height = reticle_diameter * glm::normalize(target_base_height);
 
+    // Try to get an SDL_Surface composed of the rendering of the target reticle.
+    if(m_text_surface) SDL_FreeSurface(m_text_surface);
+    if(!(m_text_surface = TTF_RenderText_Blended(m_FontText, "><", color))){
+        // Fatal out in the lack.
+        ErrorHandler::record("StarsphereGravity::prepareTargetReticle() : can't make SDL_Surface for target reticle !", ErrorHandler::FATAL);
+        }
+
+    // Gather together all the info for the target reticle to be rendered.
+    RenderTask::texture_buffer_group reticle_info_texture1 = {(const GLvoid*)m_text_surface->pixels,
+                                                             m_text_surface->w * m_text_surface->h * BYTES_PER_TEXEL,
+                                                             m_text_surface->w,
+                                                             m_text_surface->h,
+                                                             GL_RGBA,
+                                                             GL_UNSIGNED_BYTE,
+                                                             GL_CLAMP_TO_EDGE,
+                                                             GL_CLAMP_TO_EDGE,
+                                                             false};
+
+    // Delete any prior TexturedParallelogram.
+    if(m_target1) delete m_target1;
     // Note we offset the base vector by half the width and height which brings the centre
     // of the texture nicely at exactly the correct right ascension and declination.
-    m_target = new TexturedParallelogram(target_base - 0.5f * target_base_width - 0.5f * target_base_height,
+    m_target1 = new TexturedParallelogram(target_base - 0.5f * target_base_width - 0.5f * target_base_height,
                                          target_base_width,
                                          target_base_height,
-                                         reticle_info_texture);
+                                         reticle_info_texture1);
+    m_target1->configure();
+
+     // Try to get an SDL_Surface composed of the rendering of the target reticle.
+    if(m_text_surface) SDL_FreeSurface(m_text_surface);
+    if(!(m_text_surface = TTF_RenderText_Blended(m_FontText, "+", color))){
+        // Fatal out in the lack.
+        ErrorHandler::record("StarsphereGravity::prepareTargetReticle() : can't make SDL_Surface for target reticle !", ErrorHandler::FATAL);
+        }
+
+    // Gather together all the info for the target reticle to be rendered.
+    RenderTask::texture_buffer_group reticle_info_texture2 = {(const GLvoid*)m_text_surface->pixels,
+                                                             m_text_surface->w * m_text_surface->h * BYTES_PER_TEXEL,
+                                                             m_text_surface->w,
+                                                             m_text_surface->h,
+                                                             GL_RGBA,
+                                                             GL_UNSIGNED_BYTE,
+                                                             GL_CLAMP_TO_EDGE,
+                                                             GL_CLAMP_TO_EDGE,
+                                                             false};
+
+    // Delete any prior TexturedParallelogram.
+    if(m_target2) delete m_target2;
+    // Note we offset the base vector by half the width and height which brings the centre
+    // of the texture nicely at exactly the correct right ascension and declination.
+    m_target2 = new TexturedParallelogram(target_base - 0.5f * target_base_width - 0.5f * target_base_height,
+                                         target_base_width,
+                                         target_base_height,
+                                         reticle_info_texture2);
+    m_target2->configure();
 
     // As we've just updated the search marker ....
     m_RefreshSearchMarker = false;
